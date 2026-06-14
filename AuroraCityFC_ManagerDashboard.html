@@ -2580,6 +2580,75 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 
 
+
+/* ===================== SECTION: DYNAMIC NEXT FIXTURE IMAGE WIRING ===================== */
+.next-fixture{
+  position:relative!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  min-height:100%!important;
+}
+.next-fixture::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.38),rgba(2,6,23,.78)),
+    var(--next-fixture-image, url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/fixtures/default.png")) center center / cover no-repeat!important;
+  opacity:.58!important;
+  z-index:-2!important;
+}
+.next-fixture::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  background:
+    radial-gradient(circle at 50% 8%,rgba(34,211,238,.18),transparent 34%),
+    linear-gradient(90deg,rgba(2,6,23,.62),rgba(2,6,23,.30),rgba(2,6,23,.62))!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+}
+.next-fixture .fixture-crest.opponent-crest{
+  background:rgba(2,6,23,.38)!important;
+  border:1px solid rgba(96,165,250,.28)!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+  box-shadow:0 0 18px rgba(34,211,238,.10)!important;
+}
+.next-fixture .fixture-crest.opponent-crest img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:16px!important;
+  display:block!important;
+  content:normal!important;
+}
+.next-fixture .fixture-crest.opponent-crest .fixture-emoji{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  font-size:26px;
+}
+.fixture-type-pill{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  width:max-content;
+  margin:0 auto 8px;
+  border:1px solid rgba(251,191,36,.34);
+  background:rgba(120,53,15,.24);
+  color:#fde68a;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:1000;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  box-shadow:0 0 18px rgba(251,191,36,.08);
+}
+
+
 </style>
 </head>
 
@@ -2669,11 +2738,12 @@ tr:hover td{background:rgba(96,165,250,.06)}
           <div class="news-feed" id="clubNewsFeed"><div class="loading">Loading club news…</div></div>
         </div>
         <div class="next-fixture">
-          <div class="card-title"><h3>Next Fixture</h3><span class="badge amber">Payday Window</span></div>
+          <div class="card-title"><h3>Next Fixture</h3><span class="badge amber" id="nextFixtureTypeBadge">Payday Window</span></div>
+          <div class="fixture-type-pill" id="nextFixtureImageLabel">Dynamic fixture</div>
           <div class="fixture-vs">
             <div class="fixture-team"><div class="fixture-crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div><strong>Aurora City</strong><span class="note">Home</span></div>
             <strong>VS</strong>
-            <div class="fixture-team"><div class="fixture-crest">💼</div><strong>Transfer Window</strong><span class="note">Next Friday</span></div>
+            <div class="fixture-team"><div class="fixture-crest opponent-crest" id="opponentFixtureCrest"><span class="fixture-emoji">💼</span></div><strong id="opponentFixtureName">Transfer Window</strong><span class="note" id="opponentFixtureLabel">Next Friday</span></div>
           </div>
           <div class="fixture-countdown">
             <div><strong id="countDays">—</strong><small>days</small></div>
@@ -3108,6 +3178,71 @@ function formatFixtureDate(date){
     short:date.toLocaleDateString('en-GB',{weekday:'short', day:'2-digit', month:'short'})
   };
 }
+
+/* ===================== SECTION: DYNAMIC FIXTURE IMAGE ENGINE ===================== */
+const FIXTURE_IMAGE_BASE = "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/fixtures/";
+
+const FIXTURE_IMAGE_MAP = {
+  "payday fc": "payday.png",
+  "payday": "payday.png",
+  "transfer window": "payday.png",
+
+  "training ground": "training.png",
+  "training ground day": "training.png",
+  "training": "training.png",
+
+  "board review": "boardroom.png",
+  "boardroom united": "boardroom.png",
+  "boardroom": "boardroom.png",
+  "pressure albion": "boardroom.png",
+
+  "press conference day": "press_day.png",
+  "press day": "press_day.png",
+  "media day": "press_day.png",
+
+  "scout mission": "scout_mission.png",
+  "scout mission day": "scout_mission.png",
+
+  "opening day": "opening_day.png",
+  "opening day fc": "opening_day.png",
+  "season opener": "opening_day.png",
+
+  "cup draw day": "cup_draw.png",
+  "cup draw": "cup_draw.png",
+
+  "derby day": "derby_day.png",
+  "derby day fc": "derby_day.png",
+
+  "dividend day": "default.png",
+  "default": "default.png"
+};
+
+function fixtureSlug(name){
+  return String(name || '')
+    .toLowerCase()
+    .replace(/&/g,'and')
+    .replace(/[^a-z0-9]+/g,'_')
+    .replace(/^_+|_+$/g,'');
+}
+function fixtureImageFor(name){
+  const key = String(name || '').toLowerCase().trim();
+  return FIXTURE_IMAGE_BASE + (FIXTURE_IMAGE_MAP[key] || `${fixtureSlug(name)}.png`);
+}
+function setDynamicFixtureImage(nextFixture){
+  const card = document.querySelector('.next-fixture');
+  if(!card || !nextFixture) return;
+  const imageUrl = fixtureImageFor(nextFixture.opponent);
+  const fallbackUrl = FIXTURE_IMAGE_BASE + FIXTURE_IMAGE_MAP.default;
+  card.style.setProperty('--next-fixture-image', `url("${imageUrl}")`);
+
+  const crest = $('opponentFixtureCrest');
+  if(crest){
+    crest.innerHTML = `<img src="${imageUrl}" alt="${nextFixture.opponent} fixture image" onerror="this.onerror=null;this.src='${fallbackUrl}';">`;
+  }
+  if($('nextFixtureTypeBadge')) $('nextFixtureTypeBadge').textContent = nextFixture.label || 'Fixture';
+  if($('nextFixtureImageLabel')) $('nextFixtureImageLabel').textContent = `${nextFixture.opponent} image`;
+}
+
 function nextFixtureForHome(annualIncome, monthlyIncome, boardScore){
   const now = new Date();
   const friday = daysUntilWeekday(5);
@@ -3120,44 +3255,96 @@ function nextFixtureForHome(annualIncome, monthlyIncome, boardScore){
       opponent:'Payday FC',
       icon:'💼',
       label:'Payday Window',
-      note:'Next Friday transfer review and allocation check.',
+      note:'Payday transfer review. Funds available, but no panic buys.',
       date:friday
     };
   }
+
   if(daysToMonthEnd <= 4){
     return {
-      opponent:'Board Review',
+      opponent:'Boardroom',
       icon:'👔',
-      label:'Month End',
-      note:'Boardroom review of income progress and discipline.',
+      label:'Board Review',
+      note:'Chairman wants income progress, squad discipline and clean decision-making.',
       date:monthEnd
     };
   }
+
   if(boardScore < 82){
     return {
-      opponent:'Pressure Albion',
+      opponent:'Boardroom',
       icon:'📉',
       label:'Board Pressure',
       note:'Board wants clearer progress toward the next income milestone.',
       date:friday
     };
   }
+
+  const seasonEvents = [
+    {
+      opponent:'Opening Day',
+      icon:'🏟️',
+      label:'Season Opener',
+      note:'The new Aurora City campaign begins. Board expects discipline, supporters expect progress.'
+    },
+    {
+      opponent:'Derby Day',
+      icon:'🔥',
+      label:'Rivalry Fixture',
+      note:'Big atmosphere, big pressure. Keep the plan calm and make the right call.'
+    },
+    {
+      opponent:'Training Ground',
+      icon:'🏃',
+      label:'Squad Session',
+      note:'Coaching staff review morale, form and weak spots before the next decision.'
+    },
+    {
+      opponent:'Press Conference Day',
+      icon:'🎙️',
+      label:'Media Day',
+      note:'The gaffer faces the press. Clear message: ambition without chaos.'
+    },
+    {
+      opponent:'Scout Mission',
+      icon:'🔎',
+      label:'Recruitment Watch',
+      note:'Recruitment team looks for hidden gems and value opportunities.'
+    },
+    {
+      opponent:'Cup Draw Day',
+      icon:'🏆',
+      label:'Special Event',
+      note:'Cup draw atmosphere. A chance for a big story without forcing a transfer.'
+    },
+    {
+      opponent:'Dividend Day',
+      icon:'£',
+      label:'Income Fixture',
+      note:'Next income checkpoint and dividend calendar watch.'
+    }
+  ];
+
+  const dayIndex = Math.floor(now.getTime() / 86400000) % seasonEvents.length;
+  const event = seasonEvents[dayIndex];
+
   return {
-    opponent:'Dividend Day',
-    icon:'£',
-    label:'Income Fixture',
-    note:'Next income checkpoint and dividend calendar watch.',
+    ...event,
     date:friday
   };
 }
 function renderHomeFixture(nextFixture){
-  const crest = document.querySelector('.next-fixture .fixture-vs .fixture-team:nth-child(3) .fixture-crest');
-  const opponent = document.querySelector('.next-fixture .fixture-vs .fixture-team:nth-child(3) strong');
-  const note = document.querySelector('.next-fixture .fixture-vs .fixture-team:nth-child(3) .note');
-  if(crest) crest.textContent = nextFixture.icon;
+  const crest = $('opponentFixtureCrest') || document.querySelector('.next-fixture .fixture-vs .fixture-team:nth-child(3) .fixture-crest');
+  const opponent = $('opponentFixtureName') || document.querySelector('.next-fixture .fixture-vs .fixture-team:nth-child(3) strong');
+  const note = $('opponentFixtureLabel') || document.querySelector('.next-fixture .fixture-vs .fixture-team:nth-child(3) .note');
   if(opponent) opponent.textContent = nextFixture.opponent;
   if(note) note.textContent = nextFixture.label;
   if($('nextFixtureMessage')) $('nextFixtureMessage').textContent = nextFixture.note;
+  if(typeof setDynamicFixtureImage === 'function'){
+    setDynamicFixtureImage(nextFixture);
+  } else if(crest) {
+    crest.textContent = nextFixture.icon;
+  }
 }
 function renderTodayBriefing(annualIncome, monthlyIncome, boardScore, rep, nextFixture){
   const el = $('todayBriefing');
@@ -4010,7 +4197,7 @@ function renderAll(){
     {icon:'💼', title:'TRANSFER COMMITTEE READY', text:`Recommended route: ${preferred}.`, date:'Today'},
     {icon:'📈', title:`${rep.current.label.toUpperCase()} STATUS`, text:`Aurora City FC currently tracks ${money(monthlyIncome)} monthly income.`, date:'Board'},
     {icon:'🏟️', title:'DEPARTMENT SPLIT APPROVED', text:'Transfers, boardroom and squad hub now get their own specialist pages.', date:'Club'},
-    {icon:'⚽', title:'NEXT FIXTURE: PAYDAY WINDOW', text:'Countdown now points to the next Friday transfer review.', date:'Payday'}
+    {icon:'⚽', title:'NEXT FIXTURE IMAGE ACTIVE', text:'Fixture card now auto-switches image by opponent.', date:'Dynamic'}
   ];
   if($('clubNewsFeed')) $('clubNewsFeed').innerHTML = news.map(n=>`
     <div class="news-item">
