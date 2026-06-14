@@ -2594,7 +2594,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
   inset:0!important;
   background:
     linear-gradient(180deg,rgba(2,6,23,.38),rgba(2,6,23,.78)),
-    var(--next-fixture-image, url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/fixtures/default.png")) center center / cover no-repeat!important;
+    var(--next-fixture-image, url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/fixture/default.png")) center center / cover no-repeat!important;
   opacity:.58!important;
   z-index:-2!important;
 }
@@ -2646,6 +2646,23 @@ tr:hover td{background:rgba(96,165,250,.06)}
   text-transform:uppercase;
   letter-spacing:.07em;
   box-shadow:0 0 18px rgba(251,191,36,.08);
+}
+
+
+
+/* ===================== SECTION: OPPONENT FIXTURE IMAGE HARD FIX ===================== */
+.next-fixture .opponent-crest img{
+  content:unset!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:16px!important;
+  display:block!important;
+  background:#020617!important;
+}
+.next-fixture .opponent-crest{
+  background:#020617!important;
 }
 
 
@@ -3180,7 +3197,8 @@ function formatFixtureDate(date){
 }
 
 /* ===================== SECTION: DYNAMIC FIXTURE IMAGE ENGINE ===================== */
-const FIXTURE_IMAGE_BASE = "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/fixtures/";
+const FIXTURE_IMAGE_BASE = "assets/aurora-city-fc/fixture/";
+const FIXTURE_ASSET_VERSION = "v=20260614";
 
 const FIXTURE_IMAGE_MAP = {
   "payday fc": "payday.png",
@@ -3226,13 +3244,13 @@ function fixtureSlug(name){
 }
 function fixtureImageFor(name){
   const key = String(name || '').toLowerCase().trim();
-  return FIXTURE_IMAGE_BASE + (FIXTURE_IMAGE_MAP[key] || `${fixtureSlug(name)}.png`);
+  return FIXTURE_IMAGE_BASE + (FIXTURE_IMAGE_MAP[key] || `${fixtureSlug(name)}.png`) + `?${FIXTURE_ASSET_VERSION}`;
 }
 function setDynamicFixtureImage(nextFixture){
   const card = document.querySelector('.next-fixture');
   if(!card || !nextFixture) return;
   const imageUrl = fixtureImageFor(nextFixture.opponent);
-  const fallbackUrl = FIXTURE_IMAGE_BASE + FIXTURE_IMAGE_MAP.default;
+  const fallbackUrl = FIXTURE_IMAGE_BASE + FIXTURE_IMAGE_MAP.default + `?${FIXTURE_ASSET_VERSION}`;
   card.style.setProperty('--next-fixture-image', `url("${imageUrl}")`);
 
   const crest = $('opponentFixtureCrest');
