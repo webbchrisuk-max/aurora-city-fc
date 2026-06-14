@@ -2259,35 +2259,40 @@ function targetRows(){
     .slice(0,8);
 }
 
-function renderTransferTicker(targets, preferred, route){
-  const tickerEl = $('transferTicker');
-  if(!tickerEl) return;
 
-  const topTargets = (targets || []).slice(0,3).map((r,i)=>{
-    const score = num(impact(r) || buyStrength(r));
-    return `<span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Target ${i+1}</b> ${displayTicker(r.ticker)} <strong>${score}</strong> scout</span>`;
-  }).join('');
+/* ===================== SECTION: TRANSFER TICKER DUPLICATE TARGET FIX ===================== */
+function uniqueRouteWithoutTopTarget(route, topTicker){
+  const top = cleanTicker(topTicker);
+  const seen = new Set([top]);
+  return (route || []).filter(t=>{
+    const key = cleanTicker(t);
+    if(!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function renderTransferTicker(targets, preferred, route){
+  const ticker = document.querySelector('.transfer-ticker-track') || $('transferTicker');
+  if(!ticker) return;
 
   const top = targets?.[0] || null;
-  const routeNames = (route || []).map(t=>displayTicker(t)).filter(Boolean).slice(0,4).join(" • ");
-  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
-  const incomeStats = routeStats(route || []);
-  const dealCount = (targets || []).filter(r => (impact(r) || buyStrength(r) || 0) >= 70).length;
-  const topName = top ? `${displayTicker(top.ticker)} — ${displayName(top)}` : 'No top target loaded';
+  const topTicker = top ? displayTicker(top.ticker) : '—';
+  const topScore = top ? num(buyStrength(top) || impact(top)) : '—';
 
-  const content = `
-    <div class="transfer-ticker-content">
-      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>No.1 Target</b> ${topName}</span>
-      ${topTargets}
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Strategy</b> ${preferred || '—'}</span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Route</b> ${routeNames || 'checking shortlist'}</span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Budget</b> ${money(budget)}</span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Est. Income</b> <strong>${money(incomeStats.totalIncome)}/yr</strong></span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Deals Ready</b> ${dealCount}</span>
-    </div>`;
+  const cleanRoute = uniqueRouteWithoutTopTarget(route, topTicker);
+  const routeItems = cleanRoute.slice(0,4).map((t,i)=>{
+    const row = findSecurity(t);
+    const score = row ? num(buyStrength(row) || impact(row)) : '—';
+    return `<span class="ticker-item">Target ${i+2}: ${displayTicker(t)} ${score}</span>`;
+  }).join('');
 
-  tickerEl.innerHTML = content + content.replace('<div class="transfer-ticker-content">','<div class="transfer-ticker-content" aria-hidden="true">');
+  ticker.innerHTML = `
+    <span class="ticker-item">No.1 Target: ${topTicker}</span>
+    <span class="ticker-item">${preferred || 'Optimiser Route'}</span>
+    <span class="ticker-item">Target Score: ${topScore}</span>
+    ${routeItems}
+  `;
 }
 
 function renderTargetList(rows){
@@ -2444,6 +2449,23 @@ function getSelectedPlan(){
   if(selectedTactic === 'recommended') return recommended;
   return plans.find(p=>p.key === selectedTactic) || recommended;
 }
+
+/* ===================== SECTION: OPTIMISER-LED HEADLINE STRATEGY ===================== */
+function headlinePlanFromOptimiser(){
+  const {recommended} = buildOptimiserPlans();
+  return recommended;
+}
+function routeFromPlan(plan){
+  return (plan?.allocations || []).map(a=>cleanTicker(a.row.ticker)).filter(Boolean);
+}
+function optimiserStrategyText(plan){
+  if(!plan) return 'Waiting for optimiser data.';
+  if(plan.key === 'income') return 'The optimiser is prioritising income return for this transfer fee. Use this as the board-approved deal sheet, then check sizing before submitting.';
+  if(plan.key === 'upgrade') return 'The optimiser is prioritising squad quality and promotion impact. Income is still considered, but the gaffer is backing better players over forced yield.';
+  if(plan.key === 'balanced') return 'The optimiser is spreading the transfer fee across a balanced route. Sensible, diversified, and less likely to turn into payday chaos.';
+  return 'The optimiser has selected the strongest tactical route from the live candidates.';
+}
+
 function renderOptimiser(){
   const {plans,recommended} = buildOptimiserPlans();
   const selected = getSelectedPlan();
@@ -2653,24 +2675,23 @@ function renderAll(){
     $('topTargetImpact').textContent = num(impact(top) || buyStrength(top));
   }
 
-  const incomeStats = routeStats(INCOME_FOUR);
-  const upgradeStats = routeStats(UPGRADE_FOUR);
-  const incomeGap = incomeStats.totalIncome - upgradeStats.totalIncome;
-  const preferred = Math.abs(incomeGap) >= IMPACT_INCOME_TRIGGER ? 'Club-Recommended Four' : 'Highest Squad-Upgrade Four';
-  const route = preferred === 'Club-Recommended Four' ? INCOME_FOUR : UPGRADE_FOUR;
+  const optimiserPlan = headlinePlanFromOptimiser();
+  const preferred = optimiserPlan?.routeName || 'Optimiser Route';
+  const route = routeFromPlan(optimiserPlan);
 
-  $('bestRoute').textContent = preferred === 'Club-Recommended Four' ? 'Income Four' : 'Upgrade Four';
-  $('bestRouteNote').textContent = preferred === 'Club-Recommended Four'
-    ? `${money(incomeStats.totalIncome)} est. annual income from selected deployment`
-    : `${num(upgradeStats.avgImpact)} avg impact score`;
-  $('readiness').textContent = targets.length >= 4 ? 'Ready' : 'Scout';
+  $('bestRoute').textContent = preferred;
+  $('bestRouteNote').textContent = optimiserPlan
+    ? `${money(optimiserPlan.totalIncome)} est. annual income • ${Number.isFinite(optimiserPlan.avgImpact) ? Math.round(optimiserPlan.avgImpact) + '/100 avg impact' : 'impact —'}`
+    : 'Optimiser route loading';
+  $('readiness').textContent = route.length >= 4 ? 'Ready' : 'Scout';
 
   $('managerVerdict').textContent = preferred;
-  $('managerVerdictText').textContent = preferred === 'Club-Recommended Four'
-    ? 'The income route currently has enough advantage to justify the club-recommended four.'
-    : 'The income gap is small, so the gaffer favours higher squad quality and promotion impact. Classic sensible menace.';
-  $('incomeRouteBtn').classList.toggle('active', preferred === 'Club-Recommended Four');
-  $('upgradeRouteBtn').classList.toggle('active', preferred !== 'Club-Recommended Four');
+  $('managerVerdictText').textContent = optimiserStrategyText(optimiserPlan);
+
+  if($('incomeRouteBtn')) $('incomeRouteBtn').textContent = optimiserPlan?.key === 'income' ? 'Optimiser Pick: Income' : 'Income Route';
+  if($('upgradeRouteBtn')) $('upgradeRouteBtn').textContent = optimiserPlan?.key === 'upgrade' ? 'Optimiser Pick: Upgrade' : 'Upgrade Route';
+  $('incomeRouteBtn')?.classList.toggle('active', optimiserPlan?.key === 'income' || optimiserPlan?.key === 'balanced');
+  $('upgradeRouteBtn')?.classList.toggle('active', optimiserPlan?.key === 'upgrade');
 
   renderTransferTicker(targets, preferred, route);
   renderTargetList(targets);
@@ -2681,10 +2702,16 @@ function renderAll(){
   updateDeadlineCountdown();
 }
 $('refreshBtn')?.addEventListener('click', loadData);
-$('transferBudgetInput')?.addEventListener('input', ()=>{ renderOptimiser(); const targets = targetRows(); const preferred = $('managerVerdict')?.textContent || '—'; const route = preferred === 'Club-Recommended Four' ? INCOME_FOUR : UPGRADE_FOUR; renderTransferTicker(targets, preferred, route); updateDeadlineCountdown(); });
+$('transferBudgetInput')?.addEventListener('input', ()=>{ renderOptimiser(); const targets = targetRows(); const plan = headlinePlanFromOptimiser(); const preferred = plan?.routeName || $('managerVerdict')?.textContent || '—'; const route = routeFromPlan(plan); renderTransferTicker(targets, preferred, route); renderPlatformList(route); updateDeadlineCountdown(); });
 $('transferTacticSelect')?.addEventListener('change', e=>{
   selectedTactic = e.target.value;
   renderOptimiser();
+  const targets = targetRows();
+  const plan = headlinePlanFromOptimiser();
+  const preferred = plan?.routeName || $('managerVerdict')?.textContent || '—';
+  const route = routeFromPlan(plan);
+  renderTransferTicker(targets, preferred, route);
+  renderPlatformList(route);
 });
 
 setInterval(updateDeadlineCountdown, 1000);
