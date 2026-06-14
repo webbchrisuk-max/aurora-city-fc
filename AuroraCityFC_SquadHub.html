@@ -1816,6 +1816,259 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 
 
+
+/* ===================== SECTION: TROPHY CABINET LIGHTING UPGRADE ===================== */
+.honours-cabinet-shell{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(96,165,250,.10), transparent 32%),
+    linear-gradient(180deg, rgba(8,18,38,.94), rgba(4,10,24,.98));
+}
+.honours-trophy{
+  overflow:hidden;
+}
+.honours-trophy:before{
+  height:138px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02) 34%,rgba(0,0,0,.10) 100%),
+    radial-gradient(circle at 18% 0%,rgba(255,255,255,.18),transparent 18%),
+    radial-gradient(circle at 50% 0%,rgba(255,255,255,.16),transparent 20%),
+    radial-gradient(circle at 82% 0%,rgba(255,255,255,.18),transparent 18%),
+    linear-gradient(180deg,rgba(8,16,34,.78),rgba(5,12,26,.92));
+}
+.trophy-image-stage{
+  position:relative;
+  z-index:1;
+  height:132px;
+  display:grid;
+  place-items:center;
+  margin-bottom:10px;
+  border-radius:18px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,.12), transparent 20%),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.12), transparent 22%),
+    radial-gradient(circle at 80% 0%, rgba(255,255,255,.12), transparent 20%),
+    linear-gradient(180deg, rgba(5,12,24,.70) 0%, rgba(3,8,18,.92) 72%, rgba(2,6,14,.98) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 -24px 30px rgba(0,0,0,.34);
+}
+.trophy-image-stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 50% -8%, rgba(255,244,200,.26), transparent 38%),
+    radial-gradient(ellipse at 20% -8%, rgba(255,244,200,.18), transparent 24%),
+    radial-gradient(ellipse at 80% -8%, rgba(255,244,200,.18), transparent 24%),
+    linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.20) 65%, rgba(0,0,0,.34));
+  pointer-events:none;
+  z-index:1;
+}
+.trophy-image-stage::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+  pointer-events:none;
+  z-index:3;
+}
+.trophy-image-stage img{
+  position:relative;
+  z-index:2;
+  width:100%;
+  height:120px;
+  object-fit:contain;
+  display:block;
+  padding:12px 10px 6px;
+  filter:brightness(.84) contrast(1.10) saturate(.92) drop-shadow(0 14px 18px rgba(0,0,0,.40));
+  mix-blend-mode:multiply;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  filter:grayscale(.65) brightness(.74) contrast(1.05) drop-shadow(0 10px 14px rgba(0,0,0,.28));
+  mix-blend-mode:multiply;
+  opacity:.68;
+}
+.trophy-placeholder{
+  position:relative;
+  z-index:2;
+}
+
+/* ===================== SECTION: TROPHY IMAGE VISIBILITY / CABINET SPOTLIGHT FINAL ===================== */
+/* Keeps the white/checker trophy image background hidden inside a darker lit cabinet,
+   while bringing the actual silver/gold cups back up so they don't look buried. */
+.trophy-image-stage{
+  background:
+    radial-gradient(ellipse at 50% -12%,rgba(255,244,200,.32),transparent 38%),
+    radial-gradient(circle at 20% 0%,rgba(125,211,252,.10),transparent 22%),
+    radial-gradient(circle at 80% 0%,rgba(125,211,252,.10),transparent 22%),
+    linear-gradient(180deg,rgba(3,10,22,.92),rgba(2,6,18,.98) 74%,rgba(1,4,12,1) 100%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -34px 38px rgba(0,0,0,.52),
+    0 10px 28px rgba(0,0,0,.30)!important;
+}
+.trophy-image-stage::before{
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(255,247,215,.42),transparent 42%),
+    linear-gradient(180deg,rgba(0,0,0,.00),rgba(0,0,0,.16) 60%,rgba(0,0,0,.32))!important;
+  mix-blend-mode:screen;
+}
+.trophy-image-stage img{
+  opacity:.98!important;
+  mix-blend-mode:multiply!important;
+  filter:
+    brightness(1.85)
+    contrast(1.38)
+    saturate(.96)
+    drop-shadow(0 16px 18px rgba(0,0,0,.54))!important;
+  transform:scale(1.06);
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.58!important;
+  mix-blend-mode:multiply!important;
+  filter:
+    grayscale(.75)
+    brightness(1.38)
+    contrast(1.20)
+    drop-shadow(0 10px 14px rgba(0,0,0,.34))!important;
+}
+.honours-trophy.unlocked .trophy-image-stage,
+.honours-trophy.in-reach .trophy-image-stage{
+  border:1px solid rgba(251,191,36,.18);
+}
+
+
+
+/* ===================== SECTION: TROPHY BLACK DISPLAY CARD FINAL ===================== */
+/* Designed for the new trophy images on black/dark backgrounds.
+   The cup sits on its own black showcase card so any image border blends away,
+   while the cup itself stays bright and visible. */
+.trophy-image-stage{
+  position:relative!important;
+  isolation:isolate!important;
+  height:158px!important;
+  padding:8px!important;
+  border-radius:20px!important;
+  overflow:hidden!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.18),transparent 30%),
+    radial-gradient(ellipse at 50% 96%,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,#05080f 0%,#02040a 58%,#000 100%)!important;
+  border:1px solid rgba(148,163,184,.16)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    inset 0 -28px 34px rgba(0,0,0,.55),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.trophy-image-stage:before{
+  content:""!important;
+  position:absolute!important;
+  left:10%!important;
+  right:10%!important;
+  top:0!important;
+  height:44%!important;
+  border-radius:999px!important;
+  background:radial-gradient(ellipse at center,rgba(255,247,215,.25),transparent 66%)!important;
+  pointer-events:none!important;
+  z-index:2!important;
+  mix-blend-mode:screen!important;
+}
+.trophy-image-stage:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  border-radius:20px!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.03),transparent 34%,rgba(0,0,0,.18)),
+    linear-gradient(90deg,rgba(255,255,255,.035),transparent 22%,transparent 78%,rgba(255,255,255,.025))!important;
+  pointer-events:none!important;
+  z-index:3!important;
+}
+.trophy-image-stage img{
+  position:relative!important;
+  z-index:1!important;
+  width:100%!important;
+  height:142px!important;
+  object-fit:contain!important;
+  display:block!important;
+  padding:0!important;
+  margin:0!important;
+  opacity:1!important;
+  mix-blend-mode:normal!important;
+  transform:none!important;
+  filter:
+    brightness(1.08)
+    contrast(1.08)
+    saturate(1.04)
+    drop-shadow(0 14px 20px rgba(0,0,0,.60))!important;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.48!important;
+  mix-blend-mode:normal!important;
+  filter:
+    grayscale(.72)
+    brightness(.70)
+    contrast(1.02)
+    drop-shadow(0 10px 16px rgba(0,0,0,.42))!important;
+}
+.honours-trophy.unlocked .trophy-image-stage{
+  border-color:rgba(52,211,153,.28)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -28px 34px rgba(0,0,0,.50),
+    0 0 24px rgba(52,211,153,.10),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.honours-trophy.in-reach .trophy-image-stage{
+  border-color:rgba(251,191,36,.30)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -28px 34px rgba(0,0,0,.50),
+    0 0 24px rgba(251,191,36,.11),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.honours-trophy:before{
+  height:164px!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.01)),
+    radial-gradient(ellipse at 50% 0%,rgba(251,191,36,.10),transparent 46%),
+    linear-gradient(180deg,rgba(5,12,24,.62),rgba(2,6,16,.88))!important;
+}
+@media(max-width:760px){
+  .trophy-image-stage{height:190px!important}
+  .trophy-image-stage img{height:174px!important}
+  .honours-trophy:before{height:196px!important}
+}
+
+
+
+/* ===================== SECTION: TROPHY LOCKED VISIBILITY BOOST ===================== */
+/* Keeps locked trophies visually dimmed, but no longer so dark that the cup disappears. */
+.honours-trophy.locked{
+  opacity:.92!important;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.72!important;
+  filter:
+    grayscale(.48)
+    brightness(.92)
+    contrast(1.10)
+    saturate(.90)
+    drop-shadow(0 12px 18px rgba(0,0,0,.52))!important;
+}
+.honours-trophy.in-reach .trophy-image-stage img,
+.honours-trophy.unlocked .trophy-image-stage img{
+  opacity:1!important;
+  filter:
+    brightness(1.12)
+    contrast(1.10)
+    saturate(1.04)
+    drop-shadow(0 15px 20px rgba(0,0,0,.62))!important;
+}
+.trophy-image-stage img{
+  transform:scale(1.10)!important;
+}
+
 </style>
 </head>
 <body>
