@@ -1469,6 +1469,35 @@ tr:hover td{background:rgba(96,165,250,.06)}
   visibility:hidden!important;
 }
 
+
+/* ===================== SECTION: PAYDAY TRANSFER SLIP OPTIMISER ===================== */
+.optimiser-panel{display:grid;gap:12px;margin-top:12px}
+.optimiser-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:1px solid var(--line);background:rgba(2,6,23,.28);border-radius:18px;padding:10px}
+.optimiser-control{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(15,23,42,.62);border-radius:999px;padding:7px 10px}
+.optimiser-control span{color:var(--muted);font-size:12px;white-space:nowrap}
+.optimiser-control input,.optimiser-control select{border:0;outline:0;background:transparent;color:var(--txt);font-weight:900;font-size:13px}
+.optimiser-control input{width:82px}
+.optimiser-control select option{background:#07111f;color:var(--txt)}
+.optimiser-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.optimiser-stat{border:1px solid var(--line);background:rgba(2,6,23,.28);border-radius:16px;padding:10px}
+.optimiser-stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.optimiser-stat strong{display:block;font-size:18px;margin-top:4px;color:#bbf7d0}
+.optimiser-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.optimiser-option{cursor:pointer;border:1px solid var(--line);background:rgba(15,23,42,.52);border-radius:18px;padding:11px;min-height:112px;text-align:left;color:var(--txt)}
+.optimiser-option.active{border-color:rgba(34,211,238,.48);background:radial-gradient(circle at top right,rgba(34,211,238,.14),transparent 34%),rgba(8,47,73,.28);box-shadow:0 0 24px rgba(34,211,238,.08)}
+.optimiser-option strong{display:block;font-size:14px}
+.optimiser-option span{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}
+.optimiser-option b{display:block;color:#bbf7d0;margin-top:8px;font-size:13px}
+.optimiser-slip{display:grid;gap:8px}
+.optimiser-slip-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);background:rgba(2,6,23,.24);border-radius:15px;padding:10px}
+.optimiser-slip-row strong{display:block;font-size:14px}
+.optimiser-slip-row span{display:block;color:var(--muted);font-size:12px;margin-top:2px;line-height:1.35}
+.optimiser-amount{text-align:right;white-space:nowrap}
+.optimiser-amount strong{font-size:16px;color:var(--txt)}
+.optimiser-amount span{color:#bbf7d0}
+.optimiser-verdict{border:1px solid rgba(52,211,153,.28);background:rgba(6,78,59,.14);border-radius:18px;padding:12px;color:var(--soft);font-size:13px;line-height:1.45}
+@media(max-width:900px){.optimiser-summary,.optimiser-options{grid-template-columns:1fr}.optimiser-slip-row{grid-template-columns:1fr}.optimiser-amount{text-align:left}}
+
 </style>
 </head>
 <body>
@@ -1565,8 +1594,27 @@ tr:hover td{background:rgba(96,165,250,.06)}
         <div class="platform-list" id="platformList"><div class="loading">Loading platform split…</div></div>
       </div>
       <div class="transfer-card w6">
-        <div class="card-title"><h3>Payday transfer slip</h3><span class="badge amber">£500 window</span></div>
-        <div class="transfer-slip" id="transferSlip"><div class="loading">Building transfer slip…</div></div>
+        <div class="card-title"><h3>Payday transfer slip optimiser</h3><span class="badge amber">£500 window</span></div>
+        <div class="optimiser-panel">
+          <div class="optimiser-controls">
+            <label class="optimiser-control"><span>Transfer Fee</span><input id="transferBudgetInput" type="number" min="0" step="25" value="500"></label>
+            <label class="optimiser-control"><span>Tactic</span><select id="transferTacticSelect">
+              <option value="recommended">Club Recommended</option>
+              <option value="balanced">Balanced Split</option>
+              <option value="income">Best Income Return</option>
+              <option value="upgrade">Best Squad Upgrade</option>
+            </select></label>
+          </div>
+          <div class="optimiser-summary">
+            <div class="optimiser-stat"><small>Selected Route</small><strong id="optimiserRouteName">—</strong></div>
+            <div class="optimiser-stat"><small>Estimated Income</small><strong id="optimiserIncome">—</strong></div>
+            <div class="optimiser-stat"><small>Avg Impact</small><strong id="optimiserImpact">—</strong></div>
+            <div class="optimiser-stat"><small>Verdict</small><strong id="optimiserVerdictShort">—</strong></div>
+          </div>
+          <div class="optimiser-options" id="optimiserOptions"><div class="loading">Building tactical options…</div></div>
+          <div class="optimiser-slip" id="transferSlip"><div class="loading">Building transfer slip…</div></div>
+          <div class="optimiser-verdict" id="optimiserVerdict">The transfer committee is calculating the best use of the fee.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -1584,8 +1632,9 @@ let AURORA_MASTER_CACHE = null;
 
 const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
 const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
-const DEPLOYMENT_PER_PLAYER = 112.5;
+const DEPLOYMENT_PER_PLAYER = 125;
 const IMPACT_INCOME_TRIGGER = 20;
+let selectedTactic = 'recommended';
 
 const PLATFORM_RULES = {
   "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
@@ -1710,6 +1759,84 @@ function renderScoutReport(top){
       <div class="score-pill">${r[1]}</div>
     </div>`).join('');
 }
+
+function candidatePool(){
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.holdings||[])])
+    .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
+}
+function bestIncomeCandidates(){
+  return candidatePool().filter(r=>Number.isFinite(parseYield(r))).sort((a,b)=>parseYield(b)-parseYield(a)).slice(0,4).map(r=>cleanTicker(r.ticker));
+}
+function bestUpgradeCandidates(){
+  return candidatePool().sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0)).slice(0,4).map(r=>cleanTicker(r.ticker));
+}
+function buildRoutePlan(routeName,tickers,budget,weights){
+  const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
+  const usableWeights = rows.map((_,i)=>weights?.[i] ?? 1);
+  const totalWeight = usableWeights.reduce((s,w)=>s+w,0) || rows.length || 1;
+  const allocations = rows.map((r,i)=>{
+    const amount = budget * (usableWeights[i] / totalWeight);
+    const y = parseYield(r);
+    const estIncome = Number.isFinite(y) ? amount * y : 0;
+    const imp = impact(r) || buyStrength(r) || 0;
+    return {row:r,amount,estIncome,impact:imp,yield:y,platform:platformFor(r.ticker)};
+  });
+  const totalIncome = allocations.reduce((s,a)=>s+a.estIncome,0);
+  const avgImpact = allocations.length ? allocations.reduce((s,a)=>s+a.impact,0)/allocations.length : NaN;
+  const avgYield = budget > 0 ? totalIncome / budget : NaN;
+  return {routeName,allocations,totalIncome,avgImpact,avgYield,budget};
+}
+function buildOptimiserPlans(){
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const incomeTickers = bestIncomeCandidates();
+  const upgradeTickers = bestUpgradeCandidates();
+  const balancedBase = UPGRADE_FOUR.map(t=>findSecurity(t)).filter(Boolean).length >= 4 ? UPGRADE_FOUR : upgradeTickers;
+  const incomeBase = incomeTickers.length >= 4 ? incomeTickers : INCOME_FOUR;
+  const upgradeBase = upgradeTickers.length >= 4 ? upgradeTickers : UPGRADE_FOUR;
+  const balanced = buildRoutePlan('Balanced Split', balancedBase, budget, [1,1,1,1]);
+  const income = buildRoutePlan('Best Income Return', incomeBase, budget, [4,3,2,1]);
+  const upgrade = buildRoutePlan('Best Squad Upgrade', upgradeBase, budget, [4,3,2,1]);
+  const plans = [
+    {...balanced,key:'balanced',score:balanced.totalIncome*1.1+(balanced.avgImpact||0)*0.65,note:'Equal split. Safe, simple, diversified.'},
+    {...income,key:'income',score:income.totalIncome*1.8+(income.avgImpact||0)*0.45,note:'Weighted toward the highest income return for the fee.'},
+    {...upgrade,key:'upgrade',score:upgrade.totalIncome*0.8+(upgrade.avgImpact||0)*0.85,note:'Weighted toward highest promotion impact and squad quality.'}
+  ];
+  const recommended = [...plans].sort((a,b)=>b.score-a.score)[0] || plans[0];
+  return {budget,plans,recommended};
+}
+function getSelectedPlan(){
+  const {plans,recommended} = buildOptimiserPlans();
+  if(selectedTactic === 'recommended') return recommended;
+  return plans.find(p=>p.key === selectedTactic) || recommended;
+}
+function renderOptimiser(){
+  const {plans,recommended} = buildOptimiserPlans();
+  const selected = getSelectedPlan();
+  if($('optimiserRouteName')) $('optimiserRouteName').textContent = selected.routeName;
+  if($('optimiserIncome')) $('optimiserIncome').textContent = `${money(selected.totalIncome)}/yr`;
+  if($('optimiserImpact')) $('optimiserImpact').textContent = Number.isFinite(selected.avgImpact) ? `${Math.round(selected.avgImpact)}/100` : '—';
+  if($('optimiserVerdictShort')) $('optimiserVerdictShort').textContent = selected.key === recommended.key ? 'Recommended' : 'Manual';
+  const options = $('optimiserOptions');
+  if(options){
+    options.innerHTML = plans.map(plan=>`<button class="optimiser-option ${plan.key===selected.key?'active':''}" data-tactic="${plan.key}">
+      <strong>${plan.routeName}</strong><span>${plan.note}</span><b>${money(plan.totalIncome)}/yr • ${Number.isFinite(plan.avgImpact)?Math.round(plan.avgImpact)+'/100 impact':'impact —'}</b>
+    </button>`).join('');
+    options.querySelectorAll('[data-tactic]').forEach(btn=>btn.addEventListener('click',()=>{selectedTactic=btn.dataset.tactic;if($('transferTacticSelect')) $('transferTacticSelect').value=selectedTactic;renderOptimiser();}));
+  }
+  const slip = $('transferSlip');
+  if(slip){
+    slip.innerHTML = selected.allocations.length ? selected.allocations.map(a=>`<div class="optimiser-slip-row">
+      <div><strong>${displayTicker(a.row.ticker)} — ${displayName(a.row)}</strong><span>${a.platform} • ${Number.isFinite(a.yield)?(a.yield*100).toFixed(2)+'% yield':'yield unknown'} • impact ${num(a.impact)}</span></div>
+      <div class="optimiser-amount"><strong>${money(a.amount)}</strong><span>${money(a.estIncome)}/yr est.</span></div>
+    </div>`).join('') : '<div class="loading">No transfer route selected.</div>';
+  }
+  if($('optimiserVerdict')){
+    const monthly = selected.totalIncome / 12;
+    const top = selected.allocations[0];
+    $('optimiserVerdict').textContent = top ? `Recommended call: ${selected.routeName}. Lead signing is ${displayTicker(top.row.ticker)} at ${money(top.amount)}. Estimated return from this ${money(selected.budget)} transfer fee is ${money(selected.totalIncome)} yearly, around ${money(monthly)} monthly.` : 'No available candidates found for this transfer slip.';
+  }
+}
+
 function renderPlatformList(route){
   const rows = route.map(t=>findSecurity(t)).filter(Boolean);
   $('platformList').innerHTML = rows.length ? rows.map((r,i)=>`
@@ -1720,16 +1847,7 @@ function renderPlatformList(route){
     </div>`).join('') : '<div class="loading">No platform data found.</div>';
 }
 function renderTransferSlip(route){
-  const rows = route.map(t=>findSecurity(t)).filter(Boolean);
-  const amount = rows.length ? 500 / rows.length : 0;
-  $('transferSlip').innerHTML = rows.length ? rows.map(r=>{
-    const y = parseYield(r);
-    const estIncome = Number.isFinite(y) ? amount * y : NaN;
-    return `<div class="slip-row">
-      <div><strong>${displayTicker(r.ticker)} — ${displayName(r)}</strong><span>${platformFor(r.ticker)} • impact ${num(impact(r)||buyStrength(r))}</span></div>
-      <div><strong>${money(amount)}</strong><span>${Number.isFinite(estIncome) ? money(estIncome) + '/yr est.' : 'yield unknown'}</span></div>
-    </div>`;
-  }).join('') : '<div class="loading">No transfer route selected.</div>';
+  renderOptimiser();
 }
 function renderAll(){
   if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
@@ -1751,7 +1869,7 @@ function renderAll(){
 
   $('bestRoute').textContent = preferred === 'Club-Recommended Four' ? 'Income Four' : 'Upgrade Four';
   $('bestRouteNote').textContent = preferred === 'Club-Recommended Four'
-    ? `${money(incomeStats.totalIncome)} est. annual income from £450 deployment`
+    ? `${money(incomeStats.totalIncome)} est. annual income from selected deployment`
     : `${num(upgradeStats.avgImpact)} avg impact score`;
   $('readiness').textContent = targets.length >= 4 ? 'Ready' : 'Scout';
 
@@ -1768,6 +1886,11 @@ function renderAll(){
   renderTransferSlip(route);
 }
 $('refreshBtn')?.addEventListener('click', loadData);
+$('transferBudgetInput')?.addEventListener('input', renderOptimiser);
+$('transferTacticSelect')?.addEventListener('change', e=>{
+  selectedTactic = e.target.value;
+  renderOptimiser();
+});
 loadData();
 </script>
 </body>
