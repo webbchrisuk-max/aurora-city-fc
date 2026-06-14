@@ -1498,6 +1498,97 @@ tr:hover td{background:rgba(96,165,250,.06)}
 .optimiser-verdict{border:1px solid rgba(52,211,153,.28);background:rgba(6,78,59,.14);border-radius:18px;padding:12px;color:var(--soft);font-size:13px;line-height:1.45}
 @media(max-width:900px){.optimiser-summary,.optimiser-options{grid-template-columns:1fr}.optimiser-slip-row{grid-template-columns:1fr}.optimiser-amount{text-align:left}}
 
+
+/* ===================== SECTION: TRANSFER NEWS TICKER ===================== */
+.transfer-ticker{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(34,211,238,.24);
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.92),rgba(8,47,73,.58),rgba(2,6,23,.92));
+  border-radius:18px;
+  margin:0 0 14px;
+  box-shadow:0 10px 34px rgba(0,0,0,.24);
+}
+.transfer-ticker:before,
+.transfer-ticker:after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:46px;
+  z-index:2;
+  pointer-events:none;
+}
+.transfer-ticker:before{
+  left:0;
+  background:linear-gradient(90deg,#030712,transparent);
+}
+.transfer-ticker:after{
+  right:0;
+  background:linear-gradient(270deg,#030712,transparent);
+}
+.transfer-ticker-track{
+  display:flex;
+  width:max-content;
+  animation:transferTickerScroll 34s linear infinite;
+}
+.transfer-ticker:hover .transfer-ticker-track{
+  animation-play-state:paused;
+}
+.transfer-ticker-content{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:10px 14px;
+  white-space:nowrap;
+}
+.transfer-ticker-item{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:var(--soft);
+  font-size:12px;
+  font-weight:800;
+}
+.transfer-ticker-item b{
+  color:#bfdbfe;
+  font-weight:1000;
+}
+.transfer-ticker-item strong{
+  color:#bbf7d0;
+  font-weight:1000;
+}
+.transfer-ticker-dot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:var(--cyan);
+  box-shadow:0 0 12px rgba(34,211,238,.8);
+  flex:0 0 7px;
+}
+.transfer-ticker-tag{
+  display:inline-flex;
+  align-items:center;
+  border:1px solid rgba(34,211,238,.28);
+  background:rgba(14,165,233,.14);
+  color:#cffafe;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:1000;
+}
+@keyframes transferTickerScroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+@media(max-width:760px){
+  .transfer-ticker-content{gap:10px;padding:9px 12px}
+  .transfer-ticker-item{font-size:11px}
+}
+
 </style>
 </head>
 <body>
@@ -1522,6 +1613,21 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </div>
 
 <main class="app">
+
+  <!-- ===================== SECTION: TRANSFER NEWS TICKER ===================== -->
+  <section class="transfer-ticker" aria-label="Transfer news ticker">
+    <div class="transfer-ticker-track" id="transferTicker">
+      <div class="transfer-ticker-content">
+        <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora scouting updates…</span>
+      </div>
+      <div class="transfer-ticker-content" aria-hidden="true">
+        <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora scouting updates…</span>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== SECTION: TRANSFER HERO ===================== -->
   <section class="transfer-hero">
     <div class="transfer-hero-content">
@@ -1541,28 +1647,27 @@ tr:hover td{background:rgba(96,165,250,.06)}
   <section class="section">
     <div class="transfer-grid">
       <div class="transfer-card w3">
-        <div class="card-title"><h3>Top Target</h3><span class="badge green">Live</span></div>
+        <div class="card-title"><h3>No.1 Target</h3><span class="badge green">Live</span></div>
         <div class="transfer-kpi"><strong id="topTargetTicker">—</strong><span id="topTargetName">Loading target…</span></div>
       </div>
       <div class="transfer-card w3">
-        <div class="card-title"><h3>Impact Score</h3><span class="badge blue">Scout</span></div>
+        <div class="card-title"><h3>Squad Impact</h3><span class="badge blue">Scout</span></div>
         <div class="transfer-kpi"><strong id="topTargetImpact">—</strong><span>promotion impact</span></div>
       </div>
       <div class="transfer-card w3">
-        <div class="card-title"><h3>Best Route</h3><span class="badge amber">Decision</span></div>
+        <div class="card-title"><h3>Best Transfer Strategy</h3><span class="badge amber">Decision</span></div>
         <div class="transfer-kpi"><strong id="bestRoute">—</strong><span id="bestRouteNote">Checking route…</span></div>
       </div>
       <div class="transfer-card w3">
-        <div class="card-title"><h3>Payday Readiness</h3><span class="badge purple">£500</span></div>
+        <div class="card-title"><h3>Deal Readiness</h3><span class="badge purple">£500</span></div>
         <div class="transfer-kpi"><strong id="readiness">—</strong><span>transfer committee status</span></div>
       </div>
     </div>
   </section>
-
-  <!-- ===================== SECTION: MANAGER VERDICT ===================== -->
+<!-- ===================== SECTION: MANAGER VERDICT ===================== -->
   <section class="section">
     <div class="transfer-card w12">
-      <div class="card-title"><h3>Manager verdict</h3><span class="badge green">Final call</span></div>
+      <div class="card-title"><h3>Gaffer’s Final Call</h3><span class="badge green">Final call</span></div>
       <div class="big-verdict" id="managerVerdict">Loading the gaffer’s notebook…</div>
       <p class="note" id="managerVerdictText">The spreadsheet goblins are comparing impact, income and squad balance.</p>
       <div class="route-tabs">
@@ -1576,11 +1681,11 @@ tr:hover td{background:rgba(96,165,250,.06)}
   <section class="section">
     <div class="transfer-grid">
       <div class="transfer-card w7">
-        <div class="card-title"><h3>Transfer shortlist</h3><span class="badge blue">Top candidates</span></div>
+        <div class="card-title"><h3>Scouting Shortlist</h3><span class="badge blue">Top candidates</span></div>
         <div class="target-list" id="targetList"><div class="loading">Loading shortlist…</div></div>
       </div>
       <div class="transfer-card w5">
-        <div class="card-title"><h3>Chief scout report</h3><span class="badge green">Recommendation</span></div>
+        <div class="card-title"><h3>Chief Scout Player Report</h3><span class="badge green">Recommendation</span></div>
         <div class="scout-list" id="scoutReport"><div class="loading">Loading scout report…</div></div>
       </div>
     </div>
@@ -1590,11 +1695,11 @@ tr:hover td{background:rgba(96,165,250,.06)}
   <section class="section">
     <div class="transfer-grid">
       <div class="transfer-card w6">
-        <div class="card-title"><h3>Platform split</h3><span class="badge purple">IG / Trade212</span></div>
+        <div class="card-title"><h3>Registration Desk</h3><span class="badge purple">IG / Trade212</span></div>
         <div class="platform-list" id="platformList"><div class="loading">Loading platform split…</div></div>
       </div>
       <div class="transfer-card w6">
-        <div class="card-title"><h3>Payday transfer slip optimiser</h3><span class="badge amber">£500 window</span></div>
+        <div class="card-title"><h3>Transfer Budget Optimiser</h3><span class="badge amber">£500 window</span></div>
         <div class="optimiser-panel">
           <div class="optimiser-controls">
             <label class="optimiser-control"><span>Transfer Fee</span><input id="transferBudgetInput" type="number" min="0" step="25" value="500"></label>
@@ -1786,6 +1891,38 @@ function targetRows(){
     .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
     .slice(0,8);
 }
+
+function renderTransferTicker(targets, preferred, route){
+  const tickerEl = $('transferTicker');
+  if(!tickerEl) return;
+
+  const topTargets = (targets || []).slice(0,3).map((r,i)=>{
+    const score = num(impact(r) || buyStrength(r));
+    return `<span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Target ${i+1}</b> ${displayTicker(r.ticker)} <strong>${score}</strong> scout</span>`;
+  }).join('');
+
+  const top = targets?.[0] || null;
+  const routeNames = (route || []).map(t=>displayTicker(t)).filter(Boolean).slice(0,4).join(" • ");
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const incomeStats = routeStats(route || []);
+  const dealCount = (targets || []).filter(r => (impact(r) || buyStrength(r) || 0) >= 70).length;
+  const topName = top ? `${displayTicker(top.ticker)} — ${displayName(top)}` : 'No top target loaded';
+
+  const content = `
+    <div class="transfer-ticker-content">
+      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>No.1 Target</b> ${topName}</span>
+      ${topTargets}
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Strategy</b> ${preferred || '—'}</span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Route</b> ${routeNames || 'checking shortlist'}</span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Budget</b> ${money(budget)}</span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Est. Income</b> <strong>${money(incomeStats.totalIncome)}/yr</strong></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span><b>Deals Ready</b> ${dealCount}</span>
+    </div>`;
+
+  tickerEl.innerHTML = content + content.replace('<div class="transfer-ticker-content">','<div class="transfer-ticker-content" aria-hidden="true">');
+}
+
 function renderTargetList(rows){
   $('targetList').innerHTML = rows.length ? rows.map((r,i)=>`
     <div class="target-row">
@@ -1903,6 +2040,21 @@ function renderOptimiser(){
   }
 }
 
+
+function renderTransferWindowStatus(targets, preferred){
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const top = targets?.[0] || null;
+  const dealsReady = (targets || []).filter(r => (impact(r) || buyStrength(r) || 0) >= 70).length;
+  const topScore = top ? (impact(top) || buyStrength(top) || 0) : 0;
+  const confidence = topScore >= 85 && dealsReady >= 4 ? 'High' : topScore >= 70 && dealsReady >= 3 ? 'Good' : 'Building';
+
+  if($('windowBudget')) $('windowBudget').textContent = money(budget);
+  if($('windowTactic')) $('windowTactic').textContent = preferred || '—';
+  if($('windowTopTarget')) $('windowTopTarget').textContent = top ? displayTicker(top.ticker) : '—';
+  if($('windowDealsReady')) $('windowDealsReady').textContent = `${dealsReady}`;
+  if($('windowConfidence')) $('windowConfidence').textContent = confidence;
+}
+
 function renderPlatformList(route){
   const rows = route.map(t=>findSecurity(t)).filter(Boolean);
   $('platformList').innerHTML = rows.length ? rows.map((r,i)=>`
@@ -1946,13 +2098,14 @@ function renderAll(){
   $('incomeRouteBtn').classList.toggle('active', preferred === 'Club-Recommended Four');
   $('upgradeRouteBtn').classList.toggle('active', preferred !== 'Club-Recommended Four');
 
+  renderTransferTicker(targets, preferred, route);
   renderTargetList(targets);
   renderScoutReport(top);
   renderPlatformList(route);
   renderTransferSlip(route);
 }
 $('refreshBtn')?.addEventListener('click', loadData);
-$('transferBudgetInput')?.addEventListener('input', renderOptimiser);
+$('transferBudgetInput')?.addEventListener('input', ()=>{ renderOptimiser(); const targets = targetRows(); const preferred = $('managerVerdict')?.textContent || '—'; const route = preferred === 'Club-Recommended Four' ? INCOME_FOUR : UPGRADE_FOUR; renderTransferTicker(targets, preferred, route); });
 $('transferTacticSelect')?.addEventListener('change', e=>{
   selectedTactic = e.target.value;
   renderOptimiser();
