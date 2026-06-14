@@ -1657,6 +1657,84 @@ tr:hover td{background:rgba(96,165,250,.06)}
   white-space:nowrap;
 }
 
+
+/* ===================== SECTION: INTERACTIVE REGISTRATION DESK ===================== */
+.platform-row.registration-row{
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.platform-row.registration-row:hover{
+  transform:translateY(-1px);
+  border-color:rgba(34,211,238,.34);
+  background:rgba(8,47,73,.28);
+}
+.registration-panel{
+  display:none;
+  margin:-2px 0 8px 54px;
+  border:1px solid rgba(34,211,238,.24);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.10),transparent 34%),
+    rgba(2,6,23,.30);
+  border-radius:16px;
+  padding:11px;
+}
+.registration-panel.open{
+  display:block;
+}
+.registration-panel-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.registration-stat{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.50);
+  border-radius:13px;
+  padding:8px;
+}
+.registration-stat small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.registration-stat strong{
+  display:block;
+  color:#bbf7d0;
+  font-size:13px;
+  margin-top:4px;
+}
+.registration-note{
+  margin-top:9px;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.42;
+}
+.registration-action{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:9px;
+}
+.registration-action span{
+  border:1px solid rgba(96,165,250,.24);
+  background:rgba(96,165,250,.10);
+  color:#bfdbfe;
+  border-radius:999px;
+  padding:5px 7px;
+  font-size:10px;
+  font-weight:900;
+}
+@media(max-width:760px){
+  .registration-panel{
+    margin-left:0;
+  }
+  .registration-panel-grid{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2195,15 +2273,75 @@ function renderTransferWindowStatus(targets, preferred){
   if($('windowConfidence')) $('windowConfidence').textContent = confidence;
 }
 
+
+function registrationStatus(row){
+  const p = platformFor(row.ticker);
+  if(p.includes('Check')) return 'Paperwork check';
+  return 'Cleared to register';
+}
+function registrationReason(row){
+  const t = shortTicker(row.ticker);
+  const p = platformFor(row.ticker);
+  const imp = impact(row) || buyStrength(row) || 0;
+  const y = incomeRate(row);
+  const incomeText = Number.isFinite(y) ? `${(y*100).toFixed(2)}% income profile` : 'income profile still being checked';
+
+  if(p.includes('Check')){
+    return `${displayTicker(row.ticker)} has a strong scout case with impact ${num(imp)} and ${incomeText}, but the desk should confirm platform availability before the fee is committed.`;
+  }
+  if(p.includes('IG')){
+    return `${displayTicker(row.ticker)} is suited to the IG ISA route. Good for main-squad registration where quality, control and long-term holding discipline matter.`;
+  }
+  if(p.includes('Trade212')){
+    return `${displayTicker(row.ticker)} fits the Trade212 route. Useful for tactical income deployment and keeping the transfer fee flexible.`;
+  }
+  return `${displayTicker(row.ticker)} needs a platform check before registration is approved.`;
+}
+function registrationTags(row){
+  const p = platformFor(row.ticker);
+  const tags = [];
+  if(p.includes('Check')) tags.push('Check before signing');
+  else tags.push('Ready for paperwork');
+  tags.push(p);
+  const imp = impact(row) || buyStrength(row) || 0;
+  if(imp >= 85) tags.push('Priority file');
+  else if(imp >= 70) tags.push('Squad option');
+  else tags.push('Monitor');
+  return tags;
+}
+function renderRegistrationPanel(row, i){
+  const y = incomeRate(row);
+  const fee = DEPLOYMENT_PER_PLAYER;
+  const estIncome = annualIncomeForAmount(row, fee);
+  return `<div class="registration-panel" id="registrationPanel${i}">
+    <div class="registration-panel-grid">
+      <div class="registration-stat"><small>Registration Status</small><strong>${registrationStatus(row)}</strong></div>
+      <div class="registration-stat"><small>Platform Licence</small><strong>${platformFor(row.ticker)}</strong></div>
+      <div class="registration-stat"><small>£125 Est. Income</small><strong>${money(estIncome)}/yr</strong></div>
+    </div>
+    <div class="registration-note">${registrationReason(row)}</div>
+    <div class="registration-action">${registrationTags(row).map(tag=>`<span>${tag}</span>`).join('')}</div>
+  </div>`;
+}
+function toggleRegistrationPanel(i){
+  const panel = $(`registrationPanel${i}`);
+  if(!panel) return;
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.registration-panel.open').forEach(el=>el.classList.remove('open'));
+  if(!isOpen) panel.classList.add('open');
+}
+
 function renderPlatformList(route){
   const rows = route.map(t=>findSecurity(t)).filter(Boolean);
   $('platformList').innerHTML = rows.length ? rows.map((r,i)=>`
-    <div class="platform-row">
+    <div class="platform-row registration-row" role="button" tabindex="0" onclick="toggleRegistrationPanel(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleRegistrationPanel(${i});}">
       <div class="rank-badge">${i+1}</div>
       <div><strong>${displayTicker(r.ticker)}</strong><span>${displayName(r)}</span></div>
       <div class="score-pill">${platformFor(r.ticker)}</div>
-    </div>`).join('') : '<div class="loading">No platform data found.</div>';
+    </div>
+    ${renderRegistrationPanel(r,i)}`).join('') : '<div class="loading">No platform data found.</div>';
 }
+
 function renderTransferSlip(route){
   renderOptimiser();
 }
