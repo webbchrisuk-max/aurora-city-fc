@@ -278,6 +278,71 @@ tr:hover td{background:rgba(96,165,250,.06)}
 .squad-box h3{margin:0 0 8px;font-size:16px}
 .squad-list{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 12px}
 .squad-list span{background:rgba(96,165,250,.13);border:1px solid rgba(96,165,250,.22);border-radius:999px;padding:6px 8px;font-size:12px;font-weight:700}
+
+/* ===================== SECTION: FIRST TEAM PITCH ===================== */
+.formation-wrap{display:grid;gap:12px;margin-top:12px}
+.formation-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.formation-toolbar p{margin:0;color:var(--muted);font-size:12px}
+.pitch-board{
+  position:relative;
+  min-height:760px;
+  overflow:hidden;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.12);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.05),transparent 28%),
+    repeating-linear-gradient(180deg,rgba(255,255,255,.045) 0 44px,rgba(255,255,255,.02) 44px 88px),
+    linear-gradient(180deg,#1b7d35 0%,#14692c 100%);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.04), inset 0 18px 40px rgba(0,0,0,.14);
+}
+.pitch-mark{position:absolute;pointer-events:none}
+.pitch-outline{inset:16px;border:2px solid rgba(255,255,255,.20);border-radius:20px}
+.pitch-half{top:16px;bottom:16px;left:50%;width:2px;transform:translateX(-50%);background:rgba(255,255,255,.20)}
+.pitch-centre-circle{width:150px;height:150px;border-radius:50%;border:2px solid rgba(255,255,255,.20);left:50%;top:50%;transform:translate(-50%,-50%)}
+.pitch-centre-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.85);left:50%;top:50%;transform:translate(-50%,-50%)}
+.pitch-box-top,.pitch-box-bottom{left:50%;width:38%;height:120px;transform:translateX(-50%);border:2px solid rgba(255,255,255,.20)}
+.pitch-box-top{top:16px;border-top:0;border-radius:0 0 16px 16px}
+.pitch-box-bottom{bottom:16px;border-bottom:0;border-radius:16px 16px 0 0}
+.pitch-six-top,.pitch-six-bottom{left:50%;width:20%;height:54px;transform:translateX(-50%);border:2px solid rgba(255,255,255,.20)}
+.pitch-six-top{top:16px;border-top:0;border-radius:0 0 12px 12px}
+.pitch-six-bottom{bottom:16px;border-bottom:0;border-radius:12px 12px 0 0}
+.pitch-player{position:absolute;transform:translate(-50%,-50%);width:128px;display:grid;justify-items:center;gap:7px;text-align:center}
+.pitch-player.empty{opacity:.88}
+.pitch-player-core{position:relative;width:96px;height:86px}
+.pitch-pos{position:absolute;top:-8px;left:-12px;z-index:3;padding:4px 8px;border-radius:999px;background:rgba(96,165,250,.16);border:1px solid rgba(96,165,250,.28);color:#dbeafe;font-size:10px;font-weight:900;letter-spacing:.10em;box-shadow:0 8px 16px rgba(0,0,0,.16)}
+.pitch-score{position:absolute;top:-9px;right:-10px;z-index:3;min-width:32px;height:32px;padding:0 8px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#22c55e,#15803d);border:2px solid rgba(255,255,255,.78);color:white;font-size:12px;font-weight:900;box-shadow:0 10px 18px rgba(0,0,0,.18)}
+.pitch-shirt{position:absolute;inset:6px 0 0;display:flex;align-items:center;justify-content:center;clip-path:polygon(23% 0%,37% 0%,43% 10%,57% 10%,63% 0%,77% 0%,97% 18%,87% 36%,86% 100%,14% 100%,13% 36%,3% 18%);background:linear-gradient(180deg,#102a57 0%,#0b1f43 100%);border:2px solid rgba(173,216,255,.28);box-shadow:0 14px 22px rgba(0,0,0,.22)}
+.pitch-shirt:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 22%,rgba(34,211,238,.26) 22% 28%,transparent 28% 72%,rgba(34,211,238,.26) 72% 78%,transparent 78% 100%);opacity:.95}
+.pitch-shirt:after{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:18px;height:10px;border-radius:0 0 12px 12px;border:2px solid rgba(255,255,255,.82);border-top:0}
+.pitch-shirt-badge{position:absolute;left:26px;top:22px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fef3c7,#f59e0b 70%,#92400e 100%);border:1px solid rgba(255,255,255,.62);box-shadow:0 0 0 2px rgba(15,23,42,.24)}
+.pitch-shirt-code{position:relative;z-index:2;color:#fff;font-size:18px;font-weight:1000;letter-spacing:-.04em;text-shadow:0 2px 8px rgba(0,0,0,.32)}
+.pitch-name{display:block;color:#e2e8f0;font-size:11px;line-height:1.2;max-width:118px}
+.pitch-meta{display:block;color:#bbf7d0;font-size:10px;font-weight:900;letter-spacing:.02em}
+.pitch-player.empty .pitch-shirt{background:linear-gradient(180deg,rgba(15,23,42,.68),rgba(15,23,42,.52));border-style:dashed;border-color:rgba(255,255,255,.22)}
+.pitch-player.empty .pitch-shirt:before,.pitch-player.empty .pitch-shirt:after,.pitch-player.empty .pitch-shirt-badge{display:none}
+.pitch-player.empty .pitch-shirt-code{font-size:14px;color:#cbd5e1}
+.pitch-player.empty .pitch-score{background:linear-gradient(180deg,#475569,#334155);color:#e2e8f0}
+.pitch-player.empty .pitch-name,.pitch-player.empty .pitch-meta{color:var(--muted)}
+@media (max-width: 980px){
+  .pitch-board{min-height:680px}
+  .pitch-player{width:112px}
+  .pitch-player-core{width:86px;height:78px}
+  .pitch-shirt-code{font-size:16px}
+  .pitch-name{font-size:10px;max-width:106px}
+}
+@media (max-width: 640px){
+  .pitch-board{min-height:620px}
+  .pitch-centre-circle{width:108px;height:108px}
+  .pitch-box-top,.pitch-box-bottom{height:92px;width:46%}
+  .pitch-six-top,.pitch-six-bottom{height:44px;width:26%}
+  .pitch-player{width:86px;gap:5px}
+  .pitch-player-core{width:68px;height:62px}
+  .pitch-pos{top:-7px;left:-8px;font-size:8px;padding:3px 6px}
+  .pitch-score{top:-8px;right:-8px;min-width:26px;height:26px;font-size:10px;padding:0 6px}
+  .pitch-shirt-code{font-size:12px}
+  .pitch-shirt-badge{left:18px;top:17px;width:10px;height:10px}
+  .pitch-name,.pitch-meta{font-size:9px;max-width:84px}
+}
 .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .metric{border:1px solid var(--line);border-radius:16px;padding:9px;background:rgba(2,6,23,.28)}
 .metric small{display:block;color:var(--muted);font-size:11px}
@@ -1415,8 +1480,14 @@ tr:hover td{background:rgba(96,165,250,.06)}
   <section class="section">
     <div class="squad-grid">
       <div class="squad-card w8">
-        <div class="card-title"><h3>First-team form table</h3><span class="badge green">Top performers</span></div>
-        <div class="squad-list" id="firstTeamList"><div class="loading">Loading first team…</div></div>
+        <div class="card-title"><h3>First-team formation</h3><span class="badge green">Matchday XI</span></div>
+        <div class="formation-wrap">
+          <div class="formation-toolbar">
+            <p>Real-pitch squad view. Top holdings are set up in a proper football shape, with open slots ready for future signings.</p>
+            <span class="badge green">4-3-3 shape</span>
+          </div>
+          <div class="pitch-board" id="firstTeamPitch"><div class="loading">Setting the team up on the pitch…</div></div>
+        </div>
       </div>
       <div class="squad-card w4">
         <div class="card-title"><h3>Relegation watch</h3><span class="badge red">Review</span></div>
@@ -1566,7 +1637,7 @@ async function loadData(){
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['firstTeamList','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['firstTeamPitch','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
@@ -1583,6 +1654,68 @@ function renderRows(rows, target, mode){
       <div class="squad-pill ${cls}">${num(score)}</div>
     </div>`;
   }).join('') : '<div class="loading">No players found.</div>';
+}
+function renderFormation(rows, target){
+  const el = $(target);
+  if(!el) return;
+
+  const formationSlots = [
+    { key:'ST',  top:14, left:50 },
+    { key:'LW',  top:26, left:18 },
+    { key:'RW',  top:26, left:82 },
+    { key:'LCM', top:46, left:26 },
+    { key:'CM',  top:50, left:50 },
+    { key:'RCM', top:46, left:74 },
+    { key:'LB',  top:70, left:18 },
+    { key:'LCB', top:74, left:38 },
+    { key:'RCB', top:74, left:62 },
+    { key:'RB',  top:70, left:82 },
+    { key:'GK',  top:88, left:50 }
+  ];
+
+  const starters = [...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(0,11);
+  const markup = formationSlots.map((slot, i) => {
+    const row = starters[i];
+    if(row){
+      const score = Math.round(squadScore(row));
+      const name = displayName(row);
+      return '<div class="pitch-player" style="top:' + slot.top + '%;left:' + slot.left + '%" title="' + displayTicker(row.ticker) + ' — ' + name + '">' +
+        '<div class="pitch-player-core">' +
+          '<div class="pitch-pos">' + slot.key + '</div>' +
+          '<div class="pitch-score">' + score + '</div>' +
+          '<div class="pitch-shirt">' +
+            '<div class="pitch-shirt-badge"></div>' +
+            '<div class="pitch-shirt-code">' + displayTicker(row.ticker) + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<span class="pitch-name">' + name + '</span>' +
+        '<small class="pitch-meta">Squad rating ' + score + '</small>' +
+      '</div>';
+    }
+    return '<div class="pitch-player empty" style="top:' + slot.top + '%;left:' + slot.left + '%">' +
+      '<div class="pitch-player-core">' +
+        '<div class="pitch-pos">' + slot.key + '</div>' +
+        '<div class="pitch-score">--</div>' +
+        '<div class="pitch-shirt">' +
+          '<div class="pitch-shirt-code">OPEN</div>' +
+        '</div>' +
+      '</div>' +
+      '<span class="pitch-name">Scout slot</span>' +
+      '<small class="pitch-meta">Future signing</small>' +
+    '</div>';
+  }).join('');
+
+  el.innerHTML = [
+    '<div class="pitch-mark pitch-outline"></div>',
+    '<div class="pitch-mark pitch-half"></div>',
+    '<div class="pitch-mark pitch-centre-circle"></div>',
+    '<div class="pitch-mark pitch-centre-dot"></div>',
+    '<div class="pitch-mark pitch-box-top"></div>',
+    '<div class="pitch-mark pitch-box-bottom"></div>',
+    '<div class="pitch-mark pitch-six-top"></div>',
+    '<div class="pitch-mark pitch-six-bottom"></div>',
+    markup
+  ].join('');
 }
 function renderLegends(rows){
   const legends = [...rows]
@@ -1650,7 +1783,7 @@ function renderAll(){
   $('currentDivision').textContent = division;
   $('divisionNote').textContent = divisionNote;
 
-  renderRows(rows.slice(0,8),'firstTeamList','top');
+  renderFormation(rows,'firstTeamPitch');
   renderRows([...rows].sort((a,b)=>squadScore(a)-squadScore(b)).slice(0,5),'relegationWatch','low');
   renderChemistry(rows);
   renderLegends(rows);
