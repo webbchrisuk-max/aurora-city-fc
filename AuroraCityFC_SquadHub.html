@@ -1313,25 +1313,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
   background:linear-gradient(180deg,transparent,rgba(2,6,23,.88));
   pointer-events:none;
 }
-.legend-shirt-fallback{
-  width:72px;
-  height:84px;
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  clip-path:polygon(23% 0%,37% 0%,43% 10%,57% 10%,63% 0%,77% 0%,97% 18%,87% 36%,86% 100%,14% 100%,13% 36%,3% 18%);
-  background:linear-gradient(180deg,#102a57 0%,#0b1f43 100%);
-  border:2px solid rgba(173,216,255,.28);
-  color:#fff;
-  font-size:18px;
-  font-weight:1000;
-  letter-spacing:-.04em;
-  text-shadow:0 2px 8px rgba(0,0,0,.32);
-}
+.legend-shirt-fallback{display:none!important}
 .legend-player-body{
   position:relative;
   padding:12px;
@@ -1989,8 +1971,7 @@ function renderLegends(rows){
     const role = legendRole(r.ticker);
     return `<div class="legend-tile">
       <div class="legend-player-img">
-        <div class="legend-shirt-fallback">${ticker}</div>
-        <img src="${img}" alt="${ticker} legend portrait" onerror="this.style.display='none'">
+        <img src="${img}" alt="${ticker} legend portrait">
       </div>
       <div class="legend-player-body">
         <div class="legend-role">${role}</div>
