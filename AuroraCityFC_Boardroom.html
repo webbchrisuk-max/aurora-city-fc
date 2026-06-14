@@ -2314,6 +2314,8 @@ function renderAll(){
       ? 'The board are strongly supportive. Keep income growing and avoid silly transfer-window chaos.'
       : 'The board are stable, but want clearer progress toward the next monthly income milestone.';
 
+  renderExecutiveControl(boardScore, supporterScore, monthly, annualIncome, rep, avgStrength, targets);
+
   renderObjectives(monthly);
 
   renderBoardRows('financeOversight', [
@@ -2334,6 +2336,24 @@ function renderAll(){
 }
 $('refreshBtn')?.addEventListener('click', loadData);
 loadData();
+
+/* ===================== SECTION: EXECUTIVE CONTROL FALLBACK GUARD ===================== */
+setTimeout(()=>{
+  if($('chairmanVerdictTitle') && $('chairmanVerdictTitle').textContent.includes('Loading')){
+    const annualIncome = portfolioAnnualIncome();
+    const monthly = annualIncome / 12;
+    const value = portfolioValue();
+    const avgStrength = avgBuyStrength();
+    const targets = targetRows();
+    const rep = currentReputation(annualIncome);
+    const boardScore = boardScoreCalc(annualIncome, value, avgStrength);
+    const supporterScore = supporterScoreCalc(avgStrength, targets);
+    if(typeof renderExecutiveControl === 'function'){
+      renderExecutiveControl(boardScore, supporterScore, monthly, annualIncome, rep, avgStrength, targets);
+    }
+  }
+}, 900);
+
 </script>
 
 <!-- ===================== SECTION: BOARD MINUTES MODAL ===================== -->
