@@ -1528,13 +1528,20 @@ function currentReputation(annualIncome){
   const next = ladder.find(step=>monthly < step.monthly);
   return { current, next, monthly };
 }
-function scoreFromIncome(annualIncome){
-  if(annualIncome >= 24000) return 100;
-  if(annualIncome >= 12000) return 96;
-  if(annualIncome >= 6000) return 90;
-  if(annualIncome >= 3000) return 84;
-  if(annualIncome >= 1000) return 78;
-  return 70;
+/* ===================== SECTION: BOARDROOM-MATCHED CONFIDENCE LOGIC ===================== */
+/* Board confidence now matches the Boardroom calculation rather than using the older generous Home formula. */
+function avgBuyStrength(){
+  const rows = uniqueByTicker(state.holdings);
+  const vals = rows.map(buyStrength).filter(Number.isFinite);
+  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 70;
+}
+function boardScoreCalc(annualIncome, value, avgStrength){
+  const monthly = annualIncome / 12;
+  const incomeScore = Math.min(100, Math.max(55, (monthly / 500) * 100));
+  const strengthScore = Math.min(100, Math.max(55, avgStrength));
+  const disciplineScore = 94;
+  const growthPlanScore = monthly >= 400 ? 92 : monthly >= 250 ? 86 : 78;
+  return Math.round((incomeScore * .30) + (strengthScore * .25) + (disciplineScore * .25) + (growthPlanScore * .20));
 }
 async function fetchTab(tab){
   if(!AURORA_MASTER_CACHE){
@@ -1591,7 +1598,7 @@ function renderAll(){
   const monthlyIncome = annualIncome / 12;
   const value = portfolioValue();
   const rep = currentReputation(annualIncome);
-  const boardScore = Math.round((scoreFromIncome(annualIncome) + 98 + 94 + 88) / 4);
+  const boardScore = boardScoreCalc(annualIncome, value, avgBuyStrength());
   const avgYield = value > 0 ? annualIncome / value : NaN;
 
   if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
@@ -1609,7 +1616,7 @@ function renderAll(){
   if($('boardScore')) $('boardScore').textContent = `${boardScore}%`;
   if($('homeBoardScore')) $('homeBoardScore').textContent = `${boardScore}%`;
   if($('homeBoardLabel')) $('homeBoardLabel').textContent = boardScore >= 90 ? 'excellent' : boardScore >= 80 ? 'strong' : 'building';
-  if($('boardComment')) $('boardComment').textContent = boardScore >= 90 ? 'Board delighted with the promotion push.' : 'Board supportive, but wants more income growth.';
+  if($('boardComment')) $('boardComment').textContent = boardScore >= 90 ? 'Board delighted with the promotion push.' : boardScore >= 82 ? 'Board strongly supportive. Keep income growing and avoid silly transfer-window chaos.' : 'Board supportive, but wants more income growth.';
 
   const incomeStats = routeStats(INCOME_FOUR);
   const upgradeStats = routeStats(UPGRADE_FOUR);
