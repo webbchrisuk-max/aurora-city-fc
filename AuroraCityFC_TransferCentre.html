@@ -1659,15 +1659,55 @@ function displayName(row){
   return row.name || row.company_name || row.company || row.Company || row.Name || row.security_name || row.stock_name || row["Company Name"] || row["Security Name"] || displayTicker(row.ticker) || '—';
 }
 function parseYield(row){
-  const direct = row.yield_pct ?? row.Yield ?? row.yield ?? '';
+  const direct = row.dividend_yield ?? row.div_yield ?? row.yield_pct ?? row.Yield ?? row.yield ?? '';
   if(String(direct).includes('%')) return parseNum(direct) / 100;
   const directNum = parseNum(direct);
   if(Number.isFinite(directNum) && directNum > 0 && directNum < 1) return directNum;
-  if(Number.isFinite(directNum) && directNum >= 1) return directNum / 100;
+  if(Number.isFinite(directNum) && directNum >= 1 && directNum <= 15) return directNum / 100;
   const dps = parseNum(row.annual_dps);
   const price = parseNum(row.live_price);
   if(Number.isFinite(dps) && Number.isFinite(price) && price > 0) return dps / price;
   return NaN;
+}
+function scoutIncomeFrom500(row){
+  const priorityKeys = [
+    'return_from_500','income_from_500','annual_return_from_500','annual_income_from_500',
+    'return_500','income_500','income_on_500','return_on_500',
+    '£500_return','£500_income','500_return','500_income',
+    'Return From £500','Income From £500','Annual Return From £500','Annual Income From £500',
+    'Return from £500','Income from £500','Projected Income From £500','Projected Return From £500'
+  ];
+  for(const key of priorityKeys){
+    if(row[key] !== undefined){
+      const v = parseNum(row[key]);
+      if(Number.isFinite(v) && v >= 0) return v;
+    }
+  }
+  for(const key of Object.keys(row || {})){
+    const k = String(key).toLowerCase();
+    const looksLike500Income =
+      k.includes('500') &&
+      (k.includes('income') || k.includes('return') || k.includes('dividend')) &&
+      !k.includes('yield') &&
+      !k.includes('score') &&
+      !k.includes('%');
+    if(looksLike500Income){
+      const v = parseNum(row[key]);
+      if(Number.isFinite(v) && v >= 0 && v < 150) return v;
+    }
+  }
+  return NaN;
+}
+function incomeRate(row){
+  const from500 = scoutIncomeFrom500(row);
+  if(Number.isFinite(from500)) return from500 / 500;
+  const y = parseYield(row);
+  if(Number.isFinite(y)) return y;
+  return NaN;
+}
+function annualIncomeForAmount(row, amount){
+  const rate = incomeRate(row);
+  return Number.isFinite(rate) ? amount * rate : 0;
 }
 function impact(row){ return parseNum(row.promotion_impact_score); }
 function buyStrength(row){ return parseNum(row.buy_strength ?? row.buy_strength_score ?? row.BuyStrength ?? row.score ?? row.buy_score); }
@@ -1765,7 +1805,7 @@ function candidatePool(){
     .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
 }
 function bestIncomeCandidates(){
-  return candidatePool().filter(r=>Number.isFinite(parseYield(r))).sort((a,b)=>parseYield(b)-parseYield(a)).slice(0,4).map(r=>cleanTicker(r.ticker));
+  return candidatePool().filter(r=>Number.isFinite(incomeRate(r))).sort((a,b)=>incomeRate(b)-incomeRate(a)).slice(0,4).map(r=>cleanTicker(r.ticker));
 }
 function bestUpgradeCandidates(){
   return candidatePool().sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0)).slice(0,4).map(r=>cleanTicker(r.ticker));
@@ -1776,8 +1816,8 @@ function buildRoutePlan(routeName,tickers,budget,weights){
   const totalWeight = usableWeights.reduce((s,w)=>s+w,0) || rows.length || 1;
   const allocations = rows.map((r,i)=>{
     const amount = budget * (usableWeights[i] / totalWeight);
-    const y = parseYield(r);
-    const estIncome = Number.isFinite(y) ? amount * y : 0;
+    const y = incomeRate(r);
+    const estIncome = annualIncomeForAmount(r, amount);
     const imp = impact(r) || buyStrength(r) || 0;
     return {row:r,amount,estIncome,impact:imp,yield:y,platform:platformFor(r.ticker)};
   });
@@ -1826,14 +1866,14 @@ function renderOptimiser(){
   const slip = $('transferSlip');
   if(slip){
     slip.innerHTML = selected.allocations.length ? selected.allocations.map(a=>`<div class="optimiser-slip-row">
-      <div><strong>${displayTicker(a.row.ticker)} — ${displayName(a.row)}</strong><span>${a.platform} • ${Number.isFinite(a.yield)?(a.yield*100).toFixed(2)+'% yield':'yield unknown'} • impact ${num(a.impact)}</span></div>
+      <div><strong>${displayTicker(a.row.ticker)} — ${displayName(a.row)}</strong><span>${a.platform} • ${Number.isFinite(a.yield)?(a.yield*100).toFixed(2)+'% income rate':'income unknown'} • impact ${num(a.impact)}</span></div>
       <div class="optimiser-amount"><strong>${money(a.amount)}</strong><span>${money(a.estIncome)}/yr est.</span></div>
     </div>`).join('') : '<div class="loading">No transfer route selected.</div>';
   }
   if($('optimiserVerdict')){
     const monthly = selected.totalIncome / 12;
     const top = selected.allocations[0];
-    $('optimiserVerdict').textContent = top ? `Recommended call: ${selected.routeName}. Lead signing is ${displayTicker(top.row.ticker)} at ${money(top.amount)}. Estimated return from this ${money(selected.budget)} transfer fee is ${money(selected.totalIncome)} yearly, around ${money(monthly)} monthly.` : 'No available candidates found for this transfer slip.';
+    $('optimiserVerdict').textContent = top ? `Recommended call: ${selected.routeName}. Lead signing is ${displayTicker(top.row.ticker)} at ${money(top.amount)}. Estimated return from this ${money(selected.budget)} transfer fee is ${money(selected.totalIncome)} yearly, around ${money(monthly)} monthly, using Aurora Scout income-from-£500 data where available.` : 'No available candidates found for this transfer slip.';
   }
 }
 
