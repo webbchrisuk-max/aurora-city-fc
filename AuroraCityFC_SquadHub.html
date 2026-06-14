@@ -1532,15 +1532,15 @@ tr:hover td{background:rgba(96,165,250,.06)}
           <div class="bench-wrap">
             <div class="bench-header">
               <div class="card-title" style="margin:0;padding:0;background:none;border:none;box-shadow:none"><h3>Bench & depth chart</h3><span class="badge amber">Rotation options</span></div>
-              <p>Next best squad names ready to step in as cover, competition or future upgrades.</p>
+              <p>Next names after the starting XI. No duplicates from the pitch.</p>
             </div>
             <div class="bench-list" id="benchList"><div class="loading">Loading bench…</div></div>
           </div>
         </div>
       </div>
       <div class="squad-card w4">
-        <div class="card-title"><h3>Relegation watch</h3><span class="badge red">Review</span></div>
-        <div class="squad-list" id="relegationWatch"><div class="loading">Checking weak links…</div></div>
+        <div class="card-title"><h3>Backup team</h3><span class="badge blue">After bench</span></div>
+        <div class="squad-list" id="relegationWatch"><div class="loading">Checking backup team…</div></div>
       </div>
     </div>
   </section>
@@ -1707,9 +1707,9 @@ function renderRows(rows, target, mode){
 
 
 function squadStars(score){
-  if(!Number.isFinite(score)) return '☆☆☆☆☆';
+  if(!Number.isFinite(score)) return '';
   const full = score >= 85 ? 5 : score >= 75 ? 4 : score >= 60 ? 3 : score >= 45 ? 2 : 1;
-  return '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
+  return '★★★★★'.slice(0, full);
 }
 
 function renderFormation(rows, target){
@@ -1776,12 +1776,12 @@ function renderFormation(rows, target){
 function renderBench(rows, target){
   const el = $(target);
   if(!el) return;
-  const bench = [...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(11,15);
+  const bench = [...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(11,16);
   el.innerHTML = bench.length ? bench.map(r=>`<div class="bench-card">
     <div class="bench-shirt-mini"><span>${displayTicker(r.ticker)}</span></div>
     <div class="bench-meta"><strong>${displayName(r)}</strong><small>${money(annualIncomeFromRow(r))} annual income</small></div>
     <div class="bench-score">${num(squadScore(r))}</div>
-  </div>`).join('') : '<div class="loading">No bench players yet — add more holdings to fill the squad depth chart.</div>';
+  </div>`).join('') : '<div class="loading">No bench players yet — once the XI is full, the next strongest holdings appear here.</div>';
 }
 
 function renderLegends(rows){
@@ -1820,6 +1820,18 @@ function renderTrophies(annualIncome){
     </div>`;
   }).join('');
 }
+
+function renderBackupTeam(rows, target){
+  const el = $(target);
+  if(!el) return;
+  const backups = [...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(16,21);
+  if(!backups.length){
+    el.innerHTML = '<div class="loading">No backup team yet — current squad depth is already being used by the XI and bench.</div>';
+    return;
+  }
+  renderRows(backups, target, 'top');
+}
+
 function renderChemistry(rows){
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
   const low = rows.filter(r=>squadScore(r)<60).length;
@@ -1852,7 +1864,7 @@ function renderAll(){
 
   renderFormation(rows,'firstTeamPitch');
   renderBench(rows,'benchList');
-  renderRows([...rows].sort((a,b)=>squadScore(a)-squadScore(b)).slice(0,5),'relegationWatch','low');
+  renderBackupTeam(rows,'relegationWatch');
   renderChemistry(rows);
   renderLegends(rows);
   renderTrophies(annualIncome);
