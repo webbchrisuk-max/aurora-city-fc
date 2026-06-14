@@ -1735,6 +1735,178 @@ tr:hover td{background:rgba(96,165,250,.06)}
   }
 }
 
+
+/* ===================== SECTION: DEADLINE DAY COUNTDOWN ===================== */
+.deadline-day-box{
+  margin-top:12px;
+  border:1px solid rgba(251,191,36,.28);
+  background:
+    radial-gradient(circle at top right,rgba(251,191,36,.12),transparent 34%),
+    radial-gradient(circle at bottom left,rgba(34,211,238,.10),transparent 32%),
+    rgba(2,6,23,.30);
+  border-radius:18px;
+  padding:12px;
+  overflow:hidden;
+}
+.deadline-day-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.deadline-day-head h4{
+  margin:0;
+  font-size:15px;
+  letter-spacing:-.02em;
+}
+.deadline-day-head p{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+.deadline-countdown{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+.deadline-unit{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.52);
+  border-radius:14px;
+  padding:9px 7px;
+  text-align:center;
+}
+.deadline-unit strong{
+  display:block;
+  color:#fde68a;
+  font-size:22px;
+  line-height:1;
+  letter-spacing:-.04em;
+}
+.deadline-unit span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.deadline-wire{
+  margin-top:10px;
+  border:1px solid rgba(34,211,238,.20);
+  background:rgba(8,47,73,.18);
+  border-radius:14px;
+  overflow:hidden;
+}
+.deadline-wire-track{
+  display:flex;
+  width:max-content;
+  animation:deadlineWireScroll 26s linear infinite;
+}
+.deadline-wire:hover .deadline-wire-track{
+  animation-play-state:paused;
+}
+.deadline-wire-content{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  white-space:nowrap;
+  padding:8px 10px;
+  color:var(--soft);
+  font-size:11px;
+  font-weight:850;
+}
+.deadline-wire-dot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:var(--amber);
+  box-shadow:0 0 12px rgba(251,191,36,.8);
+  flex:0 0 7px;
+}
+.deadline-wire-content b{
+  color:#fde68a;
+  font-weight:1000;
+}
+.deadline-note{
+  margin-top:9px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.42;
+}
+@keyframes deadlineWireScroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+@media(max-width:760px){
+  .deadline-countdown{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+
+/* ===================== SECTION: DEADLINE DAY COMMAND BRIEF ===================== */
+.command-brief{
+  margin-top:10px;
+  border:1px solid rgba(52,211,153,.24);
+  background:
+    radial-gradient(circle at top left,rgba(52,211,153,.10),transparent 34%),
+    rgba(15,23,42,.42);
+  border-radius:16px;
+  padding:11px;
+}
+.command-brief-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:9px;
+}
+.command-brief-title h4{
+  margin:0;
+  font-size:14px;
+  letter-spacing:-.02em;
+}
+.command-brief-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.command-brief-item{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:13px;
+  padding:8px;
+}
+.command-brief-item small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.command-brief-item strong{
+  display:block;
+  color:#bbf7d0;
+  font-size:13px;
+  margin-top:4px;
+}
+.command-brief-instruction{
+  margin-top:9px;
+  border:1px solid rgba(251,191,36,.22);
+  background:rgba(120,53,15,.13);
+  border-radius:13px;
+  padding:9px;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.42;
+}
+@media(max-width:760px){
+  .command-brief-grid{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1850,6 +2022,48 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <div class="transfer-card w6">
         <div class="card-title"><h3>Registration Desk</h3><span class="badge purple">IG / Trade212</span></div>
         <div class="platform-list" id="platformList"><div class="loading">Loading platform split…</div></div>
+        <div class="deadline-day-box">
+          <div class="deadline-day-head">
+            <div>
+              <h4>Deadline Day Countdown</h4>
+              <p>Payday acts as the transfer window deadline for this squad upgrade.</p>
+            </div>
+            <span class="badge amber" id="deadlineStatus">Live clock</span>
+          </div>
+          <div class="deadline-countdown">
+            <div class="deadline-unit"><strong id="deadlineDays">—</strong><span>Days</span></div>
+            <div class="deadline-unit"><strong id="deadlineHours">—</strong><span>Hours</span></div>
+            <div class="deadline-unit"><strong id="deadlineMinutes">—</strong><span>Mins</span></div>
+            <div class="deadline-unit"><strong id="deadlineSeconds">—</strong><span>Secs</span></div>
+          </div>
+          <div class="deadline-wire" aria-label="Deadline day ticker">
+            <div class="deadline-wire-track" id="deadlineWire">
+              <div class="deadline-wire-content">
+                <span><span class="deadline-wire-dot"></span> Loading deadline-day instruction…</span>
+              </div>
+              <div class="deadline-wire-content" aria-hidden="true">
+                <span><span class="deadline-wire-dot"></span> Loading deadline-day instruction…</span>
+              </div>
+            </div>
+          </div>
+          <div class="deadline-note" id="deadlineNote">The recruitment room is syncing the payday deadline.</div>
+
+          <div class="command-brief">
+            <div class="command-brief-title">
+              <h4>Deadline Day Command Brief</h4>
+              <span class="badge green">Final instruction</span>
+            </div>
+            <div class="command-brief-grid">
+              <div class="command-brief-item"><small>Current Plan</small><strong id="briefCurrentPlan">—</strong></div>
+              <div class="command-brief-item"><small>Lead Signing</small><strong id="briefLeadSigning">—</strong></div>
+              <div class="command-brief-item"><small>Budget</small><strong id="briefBudget">—</strong></div>
+              <div class="command-brief-item"><small>Registration Status</small><strong id="briefRegistration">—</strong></div>
+            </div>
+            <div class="command-brief-instruction" id="briefInstruction">Final command brief loading…</div>
+          </div>
+
+        </div>
+
       </div>
       <div class="transfer-card w6">
         <div class="card-title"><h3>Transfer Budget Optimiser</h3><span class="badge amber">£500 window</span></div>
@@ -2274,6 +2488,88 @@ function renderTransferWindowStatus(targets, preferred){
 }
 
 
+
+const PAYDAY_BASE_ISO = "2026-06-19T00:00:00+01:00";
+const PAYDAY_CYCLE_DAYS = 28;
+
+function nextPaydayDate(){
+  const base = new Date(PAYDAY_BASE_ISO);
+  const now = new Date();
+  const cycleMs = PAYDAY_CYCLE_DAYS * 24 * 60 * 60 * 1000;
+  if(now <= base) return base;
+  const cycles = Math.ceil((now - base) / cycleMs);
+  return new Date(base.getTime() + cycles * cycleMs);
+}
+function renderDeadlineWire(deadline, diffMs){
+  const wire = $('deadlineWire');
+  if(!wire) return;
+  const targets = targetRows();
+  const top = targets[0];
+  const topText = top ? `${displayTicker(top.ticker)} leads the window` : 'Top target loading';
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const days = Math.max(0, Math.floor(diffMs / (24*60*60*1000)));
+  const deadlineText = deadline.toLocaleDateString('en-GB', { weekday:'short', day:'2-digit', month:'short' });
+
+  const content = `
+    <div class="deadline-wire-content">
+      <span><span class="deadline-wire-dot"></span><b>DEADLINE DAY</b> ${deadlineText}</span>
+      <span><span class="deadline-wire-dot"></span><b>TOP TRANSFER</b> ${topText}</span>
+      <span><span class="deadline-wire-dot"></span><b>DEAL SHEET</b> ${money(budget)} budget waiting for approval</span>
+      <span><span class="deadline-wire-dot"></span><b>REGISTRATION DESK</b> Platform paperwork active</span>
+      <span><span class="deadline-wire-dot"></span><b>WINDOW STATUS</b> ${days <= 1 ? 'Final checks in progress' : 'Scouting room open'}</span>
+      <span><span class="deadline-wire-dot"></span><b>SCOUT ROOM</b> Top three reports under review</span>
+      <span><span class="deadline-wire-dot"></span><b>BOARDROOM</b> Budget release pending payday</span>
+      <span><span class="deadline-wire-dot"></span><b>MANAGER INSTRUCTION</b> Run optimiser before submitting deal sheet</span>
+    </div>`;
+  wire.innerHTML = content + content.replace('<div class="deadline-wire-content">','<div class="deadline-wire-content" aria-hidden="true">');
+}
+
+function updateDeadlineCommandBrief(){
+  const targets = targetRows();
+  const top = targets[0] || null;
+  const preferred = $('managerVerdict')?.textContent || '—';
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const topPlatform = top ? platformFor(top.ticker) : '—';
+  const registration = top ? (topPlatform.includes('Check') ? 'Check platform first' : 'Cleared to register') : 'Awaiting scout data';
+
+  if($('briefCurrentPlan')) $('briefCurrentPlan').textContent = preferred;
+  if($('briefLeadSigning')) $('briefLeadSigning').textContent = top ? displayTicker(top.ticker) : '—';
+  if($('briefBudget')) $('briefBudget').textContent = money(budget);
+  if($('briefRegistration')) $('briefRegistration').textContent = registration;
+
+  if($('briefInstruction')){
+    const lead = top ? displayTicker(top.ticker) : 'the lead target';
+    const platformLine = top ? `${lead} route: ${topPlatform}. ` : '';
+    $('briefInstruction').textContent = `${platformLine}Final instruction: check the Registration Desk, confirm the optimiser route, then submit the payday deal sheet before the deadline clock hits zero.`;
+  }
+}
+
+function updateDeadlineCountdown(){
+  const deadline = nextPaydayDate();
+  const now = new Date();
+  const diffMs = Math.max(0, deadline - now);
+  const dayMs = 24*60*60*1000;
+  const hourMs = 60*60*1000;
+  const minMs = 60*1000;
+
+  const days = Math.floor(diffMs / dayMs);
+  const hours = Math.floor((diffMs % dayMs) / hourMs);
+  const mins = Math.floor((diffMs % hourMs) / minMs);
+  const secs = Math.floor((diffMs % minMs) / 1000);
+
+  if($('deadlineDays')) $('deadlineDays').textContent = String(days);
+  if($('deadlineHours')) $('deadlineHours').textContent = String(hours).padStart(2,'0');
+  if($('deadlineMinutes')) $('deadlineMinutes').textContent = String(mins).padStart(2,'0');
+  if($('deadlineSeconds')) $('deadlineSeconds').textContent = String(secs).padStart(2,'0');
+
+  const deadlineLabel = deadline.toLocaleDateString('en-GB', { weekday:'long', day:'2-digit', month:'long' });
+  if($('deadlineStatus')) $('deadlineStatus').textContent = days <= 1 ? 'Final day' : 'Live clock';
+  if($('deadlineNote')) $('deadlineNote').textContent = `Transfer window closes on payday: ${deadlineLabel}. Use the Registration Desk and Transfer Budget Optimiser before the deal sheet goes in.`;
+
+  renderDeadlineWire(deadline, diffMs);
+  updateDeadlineCommandBrief();
+}
+
 function registrationStatus(row){
   const p = platformFor(row.ticker);
   if(p.includes('Check')) return 'Paperwork check';
@@ -2382,13 +2678,16 @@ function renderAll(){
   renderScoutReport(top);
   renderPlatformList(route);
   renderTransferSlip(route);
+  updateDeadlineCountdown();
 }
 $('refreshBtn')?.addEventListener('click', loadData);
-$('transferBudgetInput')?.addEventListener('input', ()=>{ renderOptimiser(); const targets = targetRows(); const preferred = $('managerVerdict')?.textContent || '—'; const route = preferred === 'Club-Recommended Four' ? INCOME_FOUR : UPGRADE_FOUR; renderTransferTicker(targets, preferred, route); });
+$('transferBudgetInput')?.addEventListener('input', ()=>{ renderOptimiser(); const targets = targetRows(); const preferred = $('managerVerdict')?.textContent || '—'; const route = preferred === 'Club-Recommended Four' ? INCOME_FOUR : UPGRADE_FOUR; renderTransferTicker(targets, preferred, route); updateDeadlineCountdown(); });
 $('transferTacticSelect')?.addEventListener('change', e=>{
   selectedTactic = e.target.value;
   renderOptimiser();
 });
+
+setInterval(updateDeadlineCountdown, 1000);
 loadData();
 </script>
 </body>
