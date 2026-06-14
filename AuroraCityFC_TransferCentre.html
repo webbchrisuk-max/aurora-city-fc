@@ -1641,6 +1641,17 @@ const PLATFORM_RULES = {
   "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212"
 };
 
+const PLAYER_PORTRAITS = {
+  RGL: "assets/aurora-city-fc/players/rgl_player.png",
+  RKT: "assets/aurora-city-fc/players/rkt_player.png",
+  ULVR: "assets/aurora-city-fc/players/ulvr_player.png",
+  TRIG: "assets/aurora-city-fc/players/trig_player.png",
+  GCP: "assets/aurora-city-fc/players/gcp_player.png",
+  SBRY: "assets/aurora-city-fc/players/sbry_player.png",
+  OMP: "assets/aurora-city-fc/players/omp_player.png",
+  IMB: "assets/aurora-city-fc/players/imb_player.png"
+};
+
 let state = { holdings:[], watchlist:[], scout:[] };
 
 const $ = id => document.getElementById(id);
@@ -1738,6 +1749,10 @@ function platformFor(ticker){
   const s = shortTicker(ticker);
   return PLATFORM_RULES[s] || "Check platform";
 }
+function portraitFor(ticker){
+  const s = shortTicker(ticker);
+  return PLAYER_PORTRAITS[s] || "";
+}
 async function fetchTab(tab){
   if(!AURORA_MASTER_CACHE){
     const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
@@ -1785,20 +1800,29 @@ function renderScoutReport(top){
     return;
   }
   const y = parseYield(top);
+  const ticker = displayTicker(top.ticker);
+  const portrait = portraitFor(top.ticker);
   const rows = [
-    ['Player', displayTicker(top.ticker), displayName(top)],
+    ['Player', ticker, displayName(top)],
     ['Impact', num(impact(top) || buyStrength(top)), 'Promotion improvement score'],
     ['Yield', Number.isFinite(y) ? `${(y*100).toFixed(2)}%` : '—', 'Income profile'],
     ['Platform', platformFor(top.ticker), 'Likely trading venue'],
     ['Verdict', (impact(top)||0) >= 85 ? 'Ready to sign' : 'Watchlist', 'Scout committee call']
   ];
-  $('scoutReport').innerHTML = rows.map((r,i)=>`
+
+  const portraitCard = portrait ? `
+    <div class="scout-row" style="grid-template-columns:1fr;padding:0;overflow:hidden;">
+      <img src="${portrait}" alt="${ticker} player portrait" style="width:100%;height:auto;display:block;object-fit:cover;">
+    </div>` : '';
+
+  $('scoutReport').innerHTML = portraitCard + rows.map((r,i)=>`
     <div class="scout-row">
       <div class="rank-badge">${i+1}</div>
       <div><strong>${r[0]}</strong><span>${r[2]}</span></div>
       <div class="score-pill">${r[1]}</div>
     </div>`).join('');
 }
+
 
 function candidatePool(){
   return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.holdings||[])])
