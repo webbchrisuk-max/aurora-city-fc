@@ -2273,7 +2273,7 @@ function uniqueRouteWithoutTopTarget(route, topTicker){
 }
 
 function renderTransferTicker(targets, preferred, route){
-  const ticker = document.querySelector('.transfer-ticker-track') || $('transferTicker');
+  const ticker = $('transferTicker');
   if(!ticker) return;
 
   const top = targets?.[0] || null;
@@ -2281,18 +2281,30 @@ function renderTransferTicker(targets, preferred, route){
   const topScore = top ? num(buyStrength(top) || impact(top)) : '—';
 
   const cleanRoute = uniqueRouteWithoutTopTarget(route, topTicker);
-  const routeItems = cleanRoute.slice(0,4).map((t,i)=>{
+  const routeItems = cleanRoute.slice(0,3).map((t,i)=>{
     const row = findSecurity(t);
     const score = row ? num(buyStrength(row) || impact(row)) : '—';
-    return `<span class="ticker-item">Target ${i+2}: ${displayTicker(t)} ${score}</span>`;
+    return `<span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Target ${i+2}: <b>${displayTicker(t)}</b> <strong>${score}</strong></span>`;
   }).join('');
 
-  ticker.innerHTML = `
-    <span class="ticker-item">No.1 Target: ${topTicker}</span>
-    <span class="ticker-item">${preferred || 'Optimiser Route'}</span>
-    <span class="ticker-item">Target Score: ${topScore}</span>
-    ${routeItems}
+  const content = `
+    <div class="transfer-ticker-content">
+      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>No.1 Target: <b>${topTicker}</b></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Strategy: <strong>${preferred || 'Optimiser Route'}</strong></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Top Score: <strong>${topScore}</strong></span>
+      ${routeItems}
+    </div>
+    <div class="transfer-ticker-content" aria-hidden="true">
+      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>No.1 Target: <b>${topTicker}</b></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Strategy: <strong>${preferred || 'Optimiser Route'}</strong></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Top Score: <strong>${topScore}</strong></span>
+      ${routeItems}
+    </div>
   `;
+
+  ticker.innerHTML = content;
 }
 
 function renderTargetList(rows){
