@@ -1589,6 +1589,74 @@ tr:hover td{background:rgba(96,165,250,.06)}
   .transfer-ticker-item{font-size:11px}
 }
 
+
+/* ===================== SECTION: SCOUTING SHORTLIST NOTES ===================== */
+.scout-notes-panel{
+  margin-top:12px;
+  border-top:1px solid rgba(148,163,184,.14);
+  padding-top:12px;
+}
+.scout-notes-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:10px;
+}
+.scout-notes-title h4{
+  margin:0;
+  font-size:14px;
+  letter-spacing:-.02em;
+}
+.scout-notes-grid{
+  display:grid;
+  gap:8px;
+}
+.scout-note-card{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.24);
+  border-radius:16px;
+  padding:10px;
+}
+.scout-note-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.scout-note-top strong{
+  display:block;
+  font-size:14px;
+}
+.scout-note-top span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
+}
+.scout-note-card p{
+  margin:8px 0 0;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.42;
+}
+.scout-note-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:9px;
+}
+.scout-note-tags span{
+  border:1px solid rgba(96,165,250,.22);
+  background:rgba(96,165,250,.10);
+  color:#bfdbfe;
+  border-radius:999px;
+  padding:5px 7px;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
 </style>
 </head>
 <body>
@@ -1683,6 +1751,13 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <div class="transfer-card w7">
         <div class="card-title"><h3>Scouting Shortlist</h3><span class="badge blue">Top candidates</span></div>
         <div class="target-list" id="targetList"><div class="loading">Loading shortlist…</div></div>
+        <div class="scout-notes-panel">
+          <div class="scout-notes-title">
+            <h4>Scout Notes</h4>
+            <span class="badge blue">Top 3 only</span>
+          </div>
+          <div class="scout-notes-grid" id="candidateReports"><div class="loading">Building player reports…</div></div>
+        </div>
       </div>
       <div class="transfer-card w5">
         <div class="card-title"><h3>Chief Scout Player Report</h3><span class="badge green">Recommendation</span></div>
@@ -1931,6 +2006,71 @@ function renderTargetList(rows){
       <div class="score-pill">${num(impact(r) || buyStrength(r))}</div>
     </div>`).join('') : '<div class="loading">No transfer targets found.</div>';
 }
+
+function playerRole(row){
+  const t = shortTicker(row.ticker);
+  const roles = {
+    RGL:'High-risk bargain striker',
+    RKT:'Elite defensive forward',
+    ULVR:'Veteran leader',
+    TRIG:'Engine-room income runner',
+    GCP:'Set-piece income specialist',
+    SBRY:'Domestic value winger',
+    OMP:'Watchlist prospect',
+    IMB:'Veteran income finisher',
+    FSFL:'Solar-powered income engine',
+    UKW:'Wind-powered midfield runner'
+  };
+  return roles[t] || 'Squad improvement candidate';
+}
+function playerReason(row){
+  const t = shortTicker(row.ticker);
+  const y = incomeRate(row);
+  const imp = impact(row) || buyStrength(row) || 0;
+  const incomeText = Number.isFinite(y) ? `${(y*100).toFixed(2)}% income rate` : 'income still being checked';
+  const base = {
+    RGL:'Brings explosive income potential and a strong scout score, but needs managing like a high-upside signing with risk attached.',
+    RKT:'Adds quality, resilience and brand strength. Lower drama profile, but improves the squad with defensive reliability.',
+    ULVR:'A steady senior pro. Not the flashiest signing, but adds quality, consistency and long-term balance to the team.',
+    TRIG:'Improves the income engine and gives the squad infrastructure depth. Useful when the gaffer wants dependable cash flow.',
+    GCP:'A specialist income option. Useful for set-piece-style dividends, but needs monitoring for risk and consistency.',
+    SBRY:'Domestic value pick with recovery potential. Could strengthen the bench if valuation and momentum improve.',
+    OMP:'Prospect profile. Needs more evidence before becoming a first-team signing, but worth keeping in the scouting book.',
+    IMB:'Experienced income option. Strong yield appeal, but best treated as a veteran signing rather than a growth player.',
+    FSFL:'Big income profile with renewable-sector exposure. Strong for yield, but rate sensitivity needs watching.',
+    UKW:'Renewable income runner with strong cash-flow appeal. Useful for diversification but not risk-free.'
+  };
+  return base[t] || `Improves the transfer pool with ${incomeText} and a scout impact around ${num(imp)}. Keep under review before committing the full fee.`;
+}
+function playerTags(row){
+  const y = incomeRate(row);
+  const imp = impact(row) || buyStrength(row) || 0;
+  const tags = [playerRole(row)];
+  if(Number.isFinite(y)) tags.push(`${(y*100).toFixed(1)}% income`);
+  if(imp >= 85) tags.push('First-team ready');
+  else if(imp >= 70) tags.push('Strong squad option');
+  else tags.push('Monitor');
+  tags.push(platformFor(row.ticker));
+  return tags.slice(0,4);
+}
+function renderCandidateReports(rows){
+  const box = $('candidateReports');
+  if(!box) return;
+  const list = (rows || []).slice(0,3);
+  box.innerHTML = list.length ? list.map((r,i)=>{
+    const y = incomeRate(r);
+    const imp = impact(r) || buyStrength(r);
+    return `<div class="scout-note-card">
+      <div class="scout-note-top">
+        <div><strong>${i+1}. ${displayTicker(r.ticker)} — ${displayName(r)}</strong><span>${playerRole(r)} • Impact ${num(imp)} • ${Number.isFinite(y)?(y*100).toFixed(2)+'% income':'income check'}</span></div>
+        <div class="score-pill">${num(imp)}</div>
+      </div>
+      <p>${playerReason(r)}</p>
+      <div class="scout-note-tags">${playerTags(r).map(tag=>`<span>${tag}</span>`).join('')}</div>
+    </div>`;
+  }).join('') : '<div class="loading">No scout notes available yet.</div>';
+}
+
 function renderScoutReport(top){
   if(!top){
     $('scoutReport').innerHTML = '<div class="loading">No scout report available.</div>';
@@ -2100,6 +2240,7 @@ function renderAll(){
 
   renderTransferTicker(targets, preferred, route);
   renderTargetList(targets);
+  renderCandidateReports(targets);
   renderScoutReport(top);
   renderPlatformList(route);
   renderTransferSlip(route);
