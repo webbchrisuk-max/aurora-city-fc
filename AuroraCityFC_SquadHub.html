@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#030712" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+
 <title>Aurora City FC — Squad Hub</title>
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
@@ -2531,8 +2539,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2615,18 +2621,14 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
   </section>
 
-  <!-- ===================== SECTION: CHEMISTRY + LEGENDS ===================== -->
+  <!-- ===================== SECTION: CHEMISTRY ===================== -->
   <section class="section">
     <div class="squad-grid">
-      <div class="squad-card w6">
+      <div class="squad-card w12">
         <div class="card-title"><h3>Dressing Room Chemistry</h3><span class="badge amber">Balance board</span></div>
         <div class="chemistry-board" id="chemistryBoard">
           <div class="loading">Loading chemistry board…</div>
         </div>
-      </div>
-      <div class="squad-card w6">
-        <div class="card-title"><h3>Club legends</h3><span class="badge amber">Hall of Fame</span></div>
-        <div class="legend-grid" id="legendGrid"><div class="loading">Loading legends…</div></div>
       </div>
     </div>
   </section>
@@ -2754,6 +2756,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </main>
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
+
+<!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
+<script src="AuroraFCData.js"></script>
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE = null;
@@ -2855,7 +2860,7 @@ async function loadData(){
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['firstTeamPitch','benchList','relegationWatch','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
@@ -3399,11 +3404,21 @@ function renderAll(){
   renderBackupTeam(rows,'relegationWatch');
   renderChemistry(rows);
   renderSquadDevelopment(rows, annualIncome);
-  renderLegends(rows);
   renderTrophies(annualIncome);
 }
 $('refreshBtn')?.addEventListener('click', loadData);
 loadData();
+</script>
+
+<!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => {
+      console.warn('Aurora City FC service worker registration failed:', err);
+    });
+  });
+}
 </script>
 </body>
 </html>
