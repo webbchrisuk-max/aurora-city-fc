@@ -1735,14 +1735,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 
 </style>
-<!-- ===================== SECTION: PWA APP INSTALL SUPPORT ===================== -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#020617">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Aurora City FC">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="assets/aurora-city-fc/icons/icon-192.png">
-
 </head>
 <body>
 <!-- ===================== SECTION: APP SHELL ===================== -->
@@ -1911,8 +1903,10 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </main>
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
+<!-- ===================== SECTION: AURORA FC SHARED DATA LINK ===================== -->
+<script src="AuroraFCData.js"></script>
 <script>
-const AURORA_MASTER_URL = "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
+const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
 let AURORA_MASTER_CACHE = null;
 let state = { holdings:[], watchlist:[], scout:[] };
 
@@ -2390,15 +2384,6 @@ setTimeout(()=>{
     </div>
   </div>
 </div>
-
-<!-- ===================== SECTION: PWA SERVICE WORKER REGISTER ===================== -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
-  });
-}
-</script>
 
 </body>
 </html>
