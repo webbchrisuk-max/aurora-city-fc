@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#030712" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+
 <title>Aurora City FC — Transfer Centre</title>
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
@@ -2098,7 +2106,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </main>
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
-<!-- ===================== SECTION: AURORA FC SHARED DATA LINK ===================== -->
+
+<!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
 <script src="AuroraFCData.js"></script>
 <script>
 const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
@@ -2114,7 +2123,6 @@ const PLATFORM_RULES = {
   "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
   "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212"
 };
-Object.assign(PLATFORM_RULES, window.AURORA_FC?.platformRules || {});
 
 const PLAYER_PORTRAITS = {
   RGL: "assets/aurora-city-fc/players/rgl_player.png",
@@ -2126,7 +2134,6 @@ const PLAYER_PORTRAITS = {
   OMP: "assets/aurora-city-fc/players/omp_player.png",
   IMB: "assets/aurora-city-fc/players/imb_player.png"
 };
-Object.assign(PLAYER_PORTRAITS, window.AURORA_FC?.assets?.playerPortraits || {});
 
 let state = { holdings:[], watchlist:[], scout:[] };
 
@@ -2732,6 +2739,17 @@ $('transferTacticSelect')?.addEventListener('change', e=>{
 
 setInterval(updateDeadlineCountdown, 1000);
 loadData();
+</script>
+
+<!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => {
+      console.warn('Aurora City FC service worker registration failed:', err);
+    });
+  });
+}
 </script>
 </body>
 </html>

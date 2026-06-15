@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#030712" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+
 <title>Aurora City FC — Squad Hub</title>
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
@@ -2752,7 +2760,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </main>
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
-<!-- ===================== SECTION: AURORA FC SHARED DATA LINK ===================== -->
+
+<!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
 <script src="AuroraFCData.js"></script>
 <script>
 const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
@@ -3404,6 +3413,17 @@ function renderAll(){
 }
 $('refreshBtn')?.addEventListener('click', loadData);
 loadData();
+</script>
+
+<!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => {
+      console.warn('Aurora City FC service worker registration failed:', err);
+    });
+  });
+}
 </script>
 </body>
 </html>
