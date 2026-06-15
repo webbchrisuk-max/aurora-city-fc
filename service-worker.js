@@ -1,4 +1,4 @@
-const CACHE_NAME = "aurora-city-fc-v2026-06-15-safe";
+const CACHE_NAME = 'aurora-city-fc-v2026-06-15-safe-2';";
 
 self.addEventListener("install", event => {
   self.skipWaiting();
