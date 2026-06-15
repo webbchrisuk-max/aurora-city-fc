@@ -2268,6 +2268,100 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 
 
+
+/* ===================== SECTION: CLUB LEGENDS PLAYER PORTRAITS ===================== */
+.legend-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+.legend-tile{
+  position:relative;
+  overflow:hidden;
+  min-height:250px;
+  border:1px solid rgba(251,191,36,.24);
+  background:
+    radial-gradient(circle at top right,rgba(251,191,36,.14),transparent 35%),
+    linear-gradient(180deg,rgba(15,23,42,.82),rgba(2,6,23,.94));
+  border-radius:20px;
+  padding:0;
+  box-shadow:0 14px 34px rgba(0,0,0,.22);
+}
+.legend-player-img{
+  position:relative;
+  height:150px;
+  border-bottom:1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(circle at 50% 20%,rgba(56,189,248,.16),transparent 45%),
+    linear-gradient(180deg,rgba(14,165,233,.10),rgba(15,23,42,.58));
+}
+.legend-player-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  display:block;
+}
+.legend-player-img:after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  height:48%;
+  background:linear-gradient(180deg,transparent,rgba(2,6,23,.88));
+  pointer-events:none;
+}
+.legend-shirt-fallback{display:none!important}
+.legend-player-body{
+  position:relative;
+  padding:12px;
+}
+.legend-role{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid rgba(251,191,36,.28);
+  background:rgba(251,191,36,.12);
+  color:#fde68a;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.legend-tile strong{
+  display:block;
+  font-size:18px;
+  margin-top:9px;
+}
+.legend-tile span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:6px;
+}
+.legend-income{
+  margin-top:10px;
+  border:1px solid rgba(52,211,153,.22);
+  background:rgba(22,101,52,.12);
+  color:#bbf7d0!important;
+  border-radius:14px;
+  padding:8px;
+  font-weight:900;
+}
+.legend-medal{display:none}
+@media(max-width:980px){
+  .legend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .legend-grid{grid-template-columns:1fr}
+  .legend-tile{min-height:auto}
+  .legend-player-img{height:190px}
+}
+
+
 </style>
 </head>
 <body>
@@ -2432,6 +2526,17 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
   </section>
 
+
+  <!-- ===================== SECTION: AURORA HALL OF FAME ===================== -->
+  <section class="section">
+    <div class="board-grid">
+      <div class="board-card w12">
+        <div class="card-title"><h3>Aurora Hall of Fame</h3><span class="badge amber">Club Legends</span></div>
+        <div class="legend-grid" id="hallOfFameGrid"><div class="loading">Loading Hall of Fame…</div></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== SECTION: FOOTER ===================== -->
   <footer class="footer">
     Aurora City FC • Boardroom • Sheet engine: AuroraData
@@ -2514,6 +2619,66 @@ function targetRows(){
     .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))
     .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0));
 }
+
+function legendImageForTicker(ticker){
+  const t = cleanTicker(ticker).replace('LON:','');
+  const map = {
+    LGEN:'assets/aurora-city-fc/players/lgen_legend.png',
+    MNG:'assets/aurora-city-fc/players/mng_legend.png',
+    SUPR:'assets/aurora-city-fc/players/supr_legend.png',
+    SDLF:'assets/aurora-city-fc/players/sdlf_legend.png',
+    STLF:'assets/aurora-city-fc/players/stlf_legend.png'
+  };
+  return map[t] || `assets/aurora-city-fc/players/${t.toLowerCase()}_legend.png`;
+}
+function legendRole(ticker){
+  const t = cleanTicker(ticker).replace('LON:','');
+  const map = {
+    LGEN:'Club Captain',
+    MNG:'Vice Captain',
+    SUPR:'Income Legend',
+    SDLF:'Midfield General',
+    STLF:'Midfield General'
+  };
+  return map[t] || 'Club Legend';
+}
+function chooseHallOfFameLegends(rows){
+  const sorted = [...rows].sort((a,b)=>(annualIncomeFromRow(b) || buyStrength(b) || impact(b) || 0) - (annualIncomeFromRow(a) || buyStrength(a) || impact(a) || 0));
+  const preferred = ['LGEN','MNG','SUPR','SDLF','STLF'];
+  const picked = [];
+  preferred.forEach(t=>{
+    const row = sorted.find(r=>cleanTicker(r.ticker).replace('LON:','') === t);
+    if(row && !picked.some(p=>cleanTicker(p.ticker) === cleanTicker(row.ticker))) picked.push(row);
+  });
+  sorted.forEach(row=>{
+    if(picked.length >= 4) return;
+    if(!picked.some(p=>cleanTicker(p.ticker) === cleanTicker(row.ticker))) picked.push(row);
+  });
+  return picked.slice(0,4);
+}
+function renderHallOfFame(rows){
+  const el = $('hallOfFameGrid');
+  if(!el) return;
+  const legends = chooseHallOfFameLegends(rows);
+  el.innerHTML = legends.length ? legends.map((r)=>{
+    const ticker = displayTicker(r.ticker);
+    const name = displayName(r);
+    const img = legendImageForTicker(r.ticker);
+    const role = legendRole(r.ticker);
+    return `<div class="legend-tile">
+      <div class="legend-player-img">
+        <img src="${img}" alt="${ticker} Hall of Fame portrait">
+      </div>
+      <div class="legend-player-body">
+        <div class="legend-role">${role}</div>
+        <strong>${ticker}</strong>
+        <span>${name}</span>
+        <span class="legend-income">Annual income ${money(annualIncomeFromRow(r))}</span>
+      </div>
+    </div>`;
+  }).join('') : '<div class="loading">No Hall of Fame legends found yet.</div>';
+}
+
 function currentReputation(annualIncome){
   const monthly = annualIncome / 12;
   const ladder = [
@@ -2553,7 +2718,7 @@ async function loadData(){
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['objectiveList','financeOversight','clubHealth','boardNews'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['objectiveList','financeOversight','clubHealth','boardNews','hallOfFameGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
@@ -2965,6 +3130,7 @@ function renderAll(){
     {icon:'🏆', title:'Season outlook', note:rep.next ? `Next reputation step: ${rep.next.label}` : 'Dynasty mode active', value:rep.next ? money(rep.next.monthly) + '/m' : 'Elite'}
   ]);
 
+  renderHallOfFame(uniqueByTicker(state.holdings));
   renderNews(boardScore, supporterScore, monthly, rep);
 }
 $('refreshBtn')?.addEventListener('click', loadData);
