@@ -3,14 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#030712" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
-
 <title>Aurora City FC — Transfer Centre</title>
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
@@ -1915,57 +1907,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
   }
 }
 
-
-
-/* ===================== SECTION: AURORA CITY FC LANDSCAPE HERO FINAL FIX ===================== */
-/* Final override: keeps the finished header artwork fully visible in Android/iPad landscape app mode. */
-.transfer-hero{
-  position:relative!important;
-  overflow:hidden!important;
-  border:1px solid rgba(96,165,250,.22)!important;
-  border-radius:28px!important;
-  background-image:url("assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png")!important;
-  background-size:100% 100%!important;
-  background-position:center center!important;
-  background-repeat:no-repeat!important;
-  background-color:#020617!important;
-  min-height:360px!important;
-  box-shadow:0 18px 60px rgba(0,0,0,.32)!important;
-}
-.transfer-hero:before,
-.transfer-hero:after{
-  content:none!important;
-  display:none!important;
-  opacity:0!important;
-  background:none!important;
-}
-.transfer-hero-content,
-.transfer-hero .transfer-hero-content,
-.transfer-hero .kicker,
-.transfer-hero .hero-title,
-.transfer-hero .hero-sub,
-.transfer-hero .hero-actions,
-.transfer-hero .pill,
-.transfer-hero h2,
-.transfer-hero p{
-  display:none!important;
-  visibility:hidden!important;
-}
-@media (orientation:landscape) and (max-height:520px){
-  .app{
-    padding-top:10px!important;
-  }
-  .transfer-hero{
-    min-height:calc(100vw * 0.42)!important;
-    max-height:420px!important;
-  }
-}
-@media (max-width:760px){
-  .transfer-hero{
-    min-height:330px!important;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -1984,6 +1925,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2157,17 +2100,14 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </main>
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
-
-<!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
-<script src="AuroraFCData.js"></script>
 <script>
-const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
+const AURORA_MASTER_URL = "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
 let AURORA_MASTER_CACHE = null;
 
-const INCOME_FOUR = window.AURORA_FC?.targets?.incomeFour || ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
-const UPGRADE_FOUR = window.AURORA_FC?.targets?.upgradeFour || ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
-const DEPLOYMENT_PER_PLAYER = window.AURORA_FC?.budget?.deploymentPerPlayerTransfer ?? 125;
-const IMPACT_INCOME_TRIGGER = window.AURORA_FC?.budget?.impactIncomeTrigger ?? 20;
+const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
+const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
+const DEPLOYMENT_PER_PLAYER = 125;
+const IMPACT_INCOME_TRIGGER = 20;
 let selectedTactic = 'recommended';
 
 const PLATFORM_RULES = {
@@ -2790,17 +2730,6 @@ $('transferTacticSelect')?.addEventListener('change', e=>{
 
 setInterval(updateDeadlineCountdown, 1000);
 loadData();
-</script>
-
-<!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(err => {
-      console.warn('Aurora City FC service worker registration failed:', err);
-    });
-  });
-}
 </script>
 </body>
 </html>
