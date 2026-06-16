@@ -2937,6 +2937,17 @@ function findTabRows(obj, tab){
     if(matchedRows.length) return matchedRows;
   }
 
+  if(wanted === 'auroratimes'){
+    const looseKey = Object.keys(obj).find(k => {
+      const nk = normaliseTabName(k);
+      return nk.includes('aurora') && nk.includes('times');
+    });
+    if(looseKey){
+      const looseRows = rowsFromPossibleTab(obj[looseKey]);
+      if(looseRows.length) return looseRows;
+    }
+  }
+
   for(const wrapper of ['data','tabs','sheets','feeds','tables','workbook']){
     const wrapped = obj[wrapper];
     if(wrapped && typeof wrapped === 'object'){
@@ -2962,14 +2973,15 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, newsA, newsB] = await Promise.all([
+    const [holdings, watchlist, scout, newsA, newsB, newsC] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
       fetchTab('AuroraScout').catch(()=>[]),
       fetchTab('AuroraTimes').catch(()=>[]),
-      fetchTab('Aurora Times').catch(()=>[])
+      fetchTab('Aurora Times').catch(()=>[]),
+      fetchTab('Aurora_Times').catch(()=>[])
     ]);
-    const news = newsA.length ? newsA : newsB;
+    const news = newsA.length ? newsA : (newsB.length ? newsB : newsC);
     state = { holdings, watchlist, scout, news };
     renderAll();
   }catch(err){
@@ -3287,11 +3299,11 @@ function isPublishedNews(row){
   return !status || status === 'published' || status === 'publish' || status === 'live';
 }
 function mediaMoraleImpact(){
-  return (state.news || [])
+  const rows = state.news || [];
+  return rows
     .filter(isPublishedNews)
     .reduce((sum,row)=>{
-      const n = parseNum(val(
-        row,
+      const wantedKeys = [
         'Morale_Impact',
         'morale_impact',
         'Morale Impact',
@@ -3299,7 +3311,20 @@ function mediaMoraleImpact(){
         'MoraleImpact',
         'moraleImpact',
         'MORALE_IMPACT'
-      ));
+      ];
+
+      let raw = val(row, ...wantedKeys);
+
+      if(raw === '' && row && typeof row === 'object'){
+        const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+        const hit = Object.keys(row).find(k => normalise(k) === 'moraleimpact');
+        if(hit) raw = row[hit];
+      }
+
+      const text = String(raw ?? '').trim();
+      const match = text.match(/[+-]?\d+(?:\.\d+)?/);
+      const n = match ? Number(match[0]) : parseNum(raw);
+
       return sum + (Number.isFinite(n) ? n : 0);
     },0);
 }
@@ -3349,6 +3374,7 @@ function renderMoraleCentre(rows, annualIncome){
   const low = rows.filter(r=>squadScore(r)<60).length;
   const baseMorale = moraleRating(avg, annualIncome, low);
   const mediaImpact = Math.round(mediaMoraleImpact());
+  console.info('Squad morale media rows:', state.news?.length || 0, 'impact:', mediaImpact, state.news || []);
   const finalScore = Math.max(0, Math.min(100, baseMorale.score + mediaImpact));
   const label = finalScore >= 82 ? 'Excellent' : finalScore >= 72 ? 'High' : finalScore >= 62 ? 'Stable' : 'Needs Lift';
   if($('moraleScore')) $('moraleScore').textContent = `${finalScore}`;
