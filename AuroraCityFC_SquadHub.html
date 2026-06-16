@@ -2975,7 +2975,7 @@ async function loadData(){
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trainingReportGrid','moraleLines','fatigueWatch'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
@@ -3129,99 +3129,6 @@ function renderLegends(rows){
     </div>`;
   }).join('') : '<div class="loading">No legends found yet.</div>';
 }
-function buildTrophies(annualIncome){
-  const base = "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/cups/";
-  return [
-    {
-      icon:'🏆',
-      title:'League One Promotion',
-      target:3000,
-      monthlyTarget:250,
-      image:base + 'league1.png',
-      detail:'First proper breakthrough. The club is officially moving.'
-    },
-    {
-      icon:'🏆',
-      title:'Championship Promotion',
-      target:6000,
-      monthlyTarget:500,
-      image:base + 'championship.png',
-      detail:'Serious progress. Aurora City becomes a proper force.'
-    },
-    {
-      icon:'👑',
-      title:'Premier League Champions',
-      target:12000,
-      monthlyTarget:1000,
-      image:base + 'premier_league.png',
-      detail:'Elite domestic level. The club has arrived.'
-    },
-    {
-      icon:'🏆',
-      title:'European Champions',
-      target:18000,
-      monthlyTarget:1500,
-      image:base + 'european.png',
-      detail:'Big club energy. European nights unlocked.'
-    },
-    {
-      icon:'🏆',
-      title:'Champions League Winners',
-      target:24000,
-      monthlyTarget:2000,
-      image:base + 'champions_league.png',
-      detail:'Final boss. The long-term Aurora dynasty mission.'
-    }
-  ];
-}
-function trophyStatus(progress, done){
-  if(done) return ['Unlocked','unlocked'];
-  if(progress >= 75) return ['In Reach','in-reach'];
-  if(progress >= 40) return ['Building','locked'];
-  return ['Locked Target','locked'];
-}
-function renderTrophies(annualIncome){
-  const trophies = buildTrophies(annualIncome);
-  const monthlyIncome = annualIncome / 12;
-  const unlocked = trophies.filter(t=>annualIncome >= t.target).length;
-  const next = trophies.find(t=>annualIncome < t.target);
-  const trophyCount = $('trophyCount');
-  const grid = $('trophyGrid');
-
-  if(trophyCount) trophyCount.textContent = `${unlocked}/${trophies.length} unlocked`;
-  if($('honoursMonthlyIncome')) $('honoursMonthlyIncome').textContent = money(monthlyIncome);
-  if($('honoursNextUnlock')) $('honoursNextUnlock').textContent = next ? next.title : 'Dynasty complete';
-  if($('honoursAmountLeft')) $('honoursAmountLeft').textContent = next ? `${money(Math.max(0,next.target-annualIncome))} annual` : 'All honours secured';
-
-  if(!grid) return;
-
-  grid.innerHTML = trophies.map(t=>{
-    const done = annualIncome >= t.target;
-    const progress = Math.min(100, Math.max(0, (annualIncome / t.target) * 100));
-    const gap = Math.max(0,t.target-annualIncome);
-    const [statusText,statusClass] = trophyStatus(progress, done);
-    const cardClass = done ? 'unlocked' : progress >= 75 ? 'in-reach' : 'locked';
-
-    return `<div class="honours-trophy ${cardClass}">
-      <div>
-        <div class="trophy-image-stage">
-          <img src="${t.image}" alt="${t.title} trophy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
-          <div class="trophy-placeholder">${done ? t.icon : '🔒'}</div>
-        </div>
-        <div class="honours-trophy-body">
-          <strong>${t.title}</strong>
-          <span>${t.detail}</span>
-          <div class="honours-target-row"><span>Target</span><b>${money(t.monthlyTarget)}/month</b></div>
-          <div class="honours-target-row"><span>Progress</span><b>${Math.round(progress)}%</b></div>
-          <div class="honours-progress"><span style="width:${progress}%"></span></div>
-          <span class="honours-status ${statusClass}">${statusText}</span>
-          <span>${done ? 'Honour secured.' : money(gap) + ' annual income to unlock.'}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
 function renderSelectionIntel(rows, backups){
   const el = $('selectionIntel');
   const advice = $('selectionAdvice');
@@ -3379,7 +3286,23 @@ function isPublishedNews(row){
   const status = String(val(row,'Status','status')).trim().toLowerCase();
   return !status || status === 'published' || status === 'publish' || status === 'live';
 }
-function mediaMoraleImpact()
+function mediaMoraleImpact(){
+  return (state.news || [])
+    .filter(isPublishedNews)
+    .reduce((sum,row)=>{
+      const n = parseNum(val(
+        row,
+        'Morale_Impact',
+        'morale_impact',
+        'Morale Impact',
+        'morale impact',
+        'MoraleImpact',
+        'moraleImpact',
+        'MORALE_IMPACT'
+      ));
+      return sum + (Number.isFinite(n) ? n : 0);
+    },0);
+}
 function mediaImpactLabel(n){
   if(n > 0) return `<strong class="morale-impact morale-impact-up">+${n} media boost</strong>`;
   if(n < 0) return `<strong class="morale-impact morale-impact-down">${n} media pressure</strong>`;
