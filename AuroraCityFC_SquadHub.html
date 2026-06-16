@@ -2572,6 +2572,34 @@ tr:hover td{background:rgba(96,165,250,.06)}
   }
 }
 
+
+/* ===================== SECTION: SQUAD MORALE MEDIA IMPACT BADGE ===================== */
+.morale-impact{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:12px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+.morale-impact-up{
+  color:#bbf7d0!important;
+  border:1px solid rgba(52,211,153,.34);
+  background:rgba(20,83,45,.24);
+}
+.morale-impact-down{
+  color:#fecdd3!important;
+  border:1px solid rgba(251,113,133,.34);
+  background:rgba(127,29,29,.24);
+}
+.morale-impact-flat{
+  color:#bfdbfe!important;
+  border:1px solid rgba(96,165,250,.30);
+  background:rgba(30,64,175,.22);
+}
+
 </style>
 </head>
 <body>
@@ -2780,7 +2808,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <script>
 const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
 let AURORA_MASTER_CACHE = null;
-let state = { holdings:[], watchlist:[], scout:[] };
+let state = { holdings:[], watchlist:[], scout:[], news:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2868,12 +2896,13 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout] = await Promise.all([
+    const [holdings, watchlist, scout, news] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[])
+      fetchTab('AuroraScout').catch(()=>[]),
+      fetchTab('AuroraTimes').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout };
+    state = { holdings, watchlist, scout, news };
     renderAll();
   }catch(err){
     console.error(err);
@@ -3272,6 +3301,29 @@ function moraleRating(avg, annualIncome, lowCount){
   let label = score >= 82 ? 'Excellent' : score >= 72 ? 'High' : score >= 62 ? 'Stable' : 'Needs Lift';
   return { score, label };
 }
+function val(row,...keys){
+  for(const k of keys){
+    if(row && row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return row[k];
+  }
+  return '';
+}
+function isPublishedNews(row){
+  const status = String(val(row,'Status','status')).trim().toLowerCase();
+  return !status || status === 'published';
+}
+function mediaMoraleImpact(){
+  return (state.news || [])
+    .filter(isPublishedNews)
+    .reduce((sum,row)=>{
+      const n = parseNum(val(row,'Morale_Impact','morale_impact','Morale Impact'));
+      return sum + (Number.isFinite(n) ? n : 0);
+    },0);
+}
+function mediaImpactLabel(n){
+  if(n > 0) return `<strong class="morale-impact morale-impact-up">+${n} media boost</strong>`;
+  if(n < 0) return `<strong class="morale-impact morale-impact-down">${n} media pressure</strong>`;
+  return `<strong class="morale-impact morale-impact-flat">0 media effect</strong>`;
+}
 function renderTrainingReport(rows, annualIncome){
   const el = $('trainingReportGrid');
   if(!el) return;
@@ -3311,15 +3363,20 @@ function renderTrainingReport(rows, annualIncome){
 function renderMoraleCentre(rows, annualIncome){
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
   const low = rows.filter(r=>squadScore(r)<60).length;
-  const morale = moraleRating(avg, annualIncome, low);
-  if($('moraleScore')) $('moraleScore').textContent = `${morale.score}`;
-  if($('moraleBadge')) $('moraleBadge').textContent = morale.label;
+  const baseMorale = moraleRating(avg, annualIncome, low);
+  const mediaImpact = Math.round(mediaMoraleImpact());
+  const finalScore = Math.max(0, Math.min(100, baseMorale.score + mediaImpact));
+  const label = finalScore >= 82 ? 'Excellent' : finalScore >= 72 ? 'High' : finalScore >= 62 ? 'Stable' : 'Needs Lift';
+  if($('moraleScore')) $('moraleScore').textContent = `${finalScore}`;
+  if($('moraleBadge')) $('moraleBadge').textContent = label;
   const pressure = low >= 4 ? 'High' : low >= 2 ? 'Medium' : 'Controlled';
-  const mood = morale.score >= 82 ? 'Buzzing' : morale.score >= 72 ? 'Confident' : morale.score >= 62 ? 'Calm' : 'Flat';
+  const mood = finalScore >= 82 ? 'Buzzing' : finalScore >= 72 ? 'Confident' : finalScore >= 62 ? 'Calm' : 'Flat';
   const leader = strongestRow(rows);
   if($('moraleLines')){
     $('moraleLines').innerHTML = `
       <div class="morale-line"><span>Dressing room mood</span><strong>${mood}</strong></div>
+      <div class="morale-line"><span>Media effect</span>${mediaImpactLabel(mediaImpact)}</div>
+      <div class="morale-line"><span>Base morale</span><strong>${baseMorale.score}</strong></div>
       <div class="morale-line"><span>Pressure level</span><strong>${pressure}</strong></div>
       <div class="morale-line"><span>Squad leader</span><strong>${leader ? displayTicker(leader.ticker) : '—'}</strong></div>`;
   }
