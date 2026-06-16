@@ -2618,6 +2618,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media Centre</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training Ground</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2890,13 +2892,29 @@ async function fetchTab(tab){
     if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
   }
-  const direct = AURORA_MASTER_CACHE?.[tab];
-  if(Array.isArray(direct)) return direct;
 
   const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
   const wanted = normalise(tab);
-  const foundKey = Object.keys(AURORA_MASTER_CACHE || {}).find(k => normalise(k) === wanted);
-  return foundKey && Array.isArray(AURORA_MASTER_CACHE[foundKey]) ? AURORA_MASTER_CACHE[foundKey] : [];
+
+  function findTab(obj){
+    if(!obj || typeof obj !== 'object') return [];
+    if(Array.isArray(obj[tab])) return obj[tab];
+
+    const key = Object.keys(obj).find(k => normalise(k) === wanted);
+    if(key && Array.isArray(obj[key])) return obj[key];
+
+    return [];
+  }
+
+  let rows = findTab(AURORA_MASTER_CACHE);
+  if(rows.length) return rows;
+
+  for(const wrapper of ['data','tabs','sheets','feeds']){
+    rows = findTab(AURORA_MASTER_CACHE?.[wrapper]);
+    if(rows.length) return rows;
+  }
+
+  return [];
 }
 async function loadData(){
   const btn = $('refreshBtn');
@@ -3319,23 +3337,7 @@ function isPublishedNews(row){
   const status = String(val(row,'Status','status')).trim().toLowerCase();
   return !status || status === 'published';
 }
-function mediaMoraleImpact(){
-  return (state.news || [])
-    .filter(isPublishedNews)
-    .reduce((sum,row)=>{
-      const n = parseNum(val(
-        row,
-        'Morale_Impact',
-        'morale_impact',
-        'Morale Impact',
-        'morale impact',
-        'MoraleImpact',
-        'moraleImpact',
-        'MORALE_IMPACT'
-      ));
-      return sum + (Number.isFinite(n) ? n : 0);
-    },0);
-}
+function mediaMoraleImpact()
 function mediaImpactLabel(n){
   if(n > 0) return `<strong class="morale-impact morale-impact-up">+${n} media boost</strong>`;
   if(n < 0) return `<strong class="morale-impact morale-impact-down">${n} media pressure</strong>`;
