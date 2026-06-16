@@ -1,0 +1,3540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#030712" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+
+<title>Aurora City FC — Squad Hub</title>
+
+<!-- ===================== SECTION: ROOT THEME ===================== -->
+<style>
+
+
+:root{
+  --bg:#030712;
+  --panel:#07111f;
+  --panel2:#0b1730;
+  --card:#0d1b34;
+  --card2:#102345;
+  --line:rgba(148,163,184,.18);
+  --line2:rgba(96,165,250,.26);
+  --txt:#e5eefc;
+  --muted:#93a4bd;
+  --soft:#cbd5e1;
+  --blue:#60a5fa;
+  --cyan:#22d3ee;
+  --green:#34d399;
+  --amber:#fbbf24;
+  --red:#fb7185;
+  --purple:#a78bfa;
+  --shadow:0 18px 55px rgba(0,0,0,.35);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.28) 0%,rgba(2,6,23,.70) 54%,rgba(2,6,23,.94) 100%),
+    radial-gradient(circle at top left,rgba(34,211,238,.22),transparent 34%),
+    radial-gradient(circle at top right,rgba(96,165,250,.20),transparent 36%),
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%201600%20900%27%20preserveAspectRatio%3D%27none%27%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%27light%27%20cx%3D%2750%25%27%20cy%3D%2745%25%27%20r%3D%2750%25%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%237dd3fc%27%20stop-opacity%3D%27.35%27/%3E%3Cstop%20offset%3D%27.45%27%20stop-color%3D%27%230ea5e9%27%20stop-opacity%3D%27.08%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23020617%27%20stop-opacity%3D%270%27/%3E%3C/radialGradient%3E%0A%3ClinearGradient%20id%3D%27pitch%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23031226%27%20stop-opacity%3D%270%27/%3E%3Cstop%20offset%3D%27.72%27%20stop-color%3D%27%23041525%27%20stop-opacity%3D%27.35%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23052e16%27%20stop-opacity%3D%27.52%27/%3E%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%271600%27%20height%3D%27900%27%20fill%3D%27%23020617%27/%3E%0A%3Cellipse%20cx%3D%27800%27%20cy%3D%27520%27%20rx%3D%27820%27%20ry%3D%27350%27%20fill%3D%27%23071b31%27%20opacity%3D%27.65%27/%3E%0A%3Cpath%20d%3D%27M0%20430%20Q800%20240%201600%20430%20L1600%20720%20Q800%20560%200%20720Z%27%20fill%3D%27%2305111f%27%20opacity%3D%27.74%27/%3E%0A%3Cpath%20d%3D%27M0%20680%20Q800%20520%201600%20680%20L1600%20900%20L0%20900Z%27%20fill%3D%27url%28%23pitch%29%27/%3E%0A%3Cg%20opacity%3D%27.32%27%20stroke%3D%27%2338bdf8%27%20stroke-width%3D%272%27%3E%0A%3Cpath%20d%3D%27M80%20635%20Q800%20510%201520%20635%27/%3E%0A%3Cpath%20d%3D%27M150%20705%20Q800%20590%201450%20705%27/%3E%0A%3Cpath%20d%3D%27M300%20780%20Q800%20700%201300%20780%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.2%27%20stroke%3D%27%23e0f2fe%27%3E%0A%3Cpath%20d%3D%27M250%20350%20L420%20120%20M1350%20350%20L1180%20120%20M520%20320%20L620%2080%20M1080%20320%20L980%2080%27/%3E%0A%3C/g%3E%0A%3Cg%3E%0A%3Ccircle%20cx%3D%27410%27%20cy%3D%27118%27%20r%3D%2795%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%27620%27%20cy%3D%2782%27%20r%3D%27110%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%27980%27%20cy%3D%2782%27%20r%3D%27110%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%271190%27%20cy%3D%27118%27%20r%3D%2795%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.65%27%20fill%3D%27%23e0f2fe%27%3E%0A%3Ccircle%20cx%3D%27410%27%20cy%3D%27120%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%27430%27%20cy%3D%27116%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27390%27%20cy%3D%27116%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%27620%27%20cy%3D%2784%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%27645%27%20cy%3D%2782%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27595%27%20cy%3D%2782%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%27980%27%20cy%3D%2784%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%271005%27%20cy%3D%2782%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27955%27%20cy%3D%2782%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%271190%27%20cy%3D%27120%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%271210%27%20cy%3D%27116%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%271170%27%20cy%3D%27116%27%20r%3D%274%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.18%27%20fill%3D%27%2393c5fd%27%3E%0A%3Crect%20x%3D%270%27%20y%3D%27360%27%20width%3D%271600%27%20height%3D%2770%27/%3E%0A%3Cpath%20d%3D%27M0%20362%20h1600%20v20%20h-1600z%27/%3E%0A%3C/g%3E%0A%3C/svg%3E") center top/cover fixed no-repeat,
+    linear-gradient(180deg,#020617 0%,#030712 48%,#020617 100%);
+  color:var(--txt);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+
+/* ===================== SECTION: PAGE SHELL ===================== */
+.app{
+  width:min(1540px,100%);
+  margin:0 auto;
+  padding:18px 14px 90px;
+}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  margin:-18px -14px 18px;
+  padding:12px 14px;
+  backdrop-filter:blur(18px);
+  background:rgba(3,7,18,.86);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  width:min(1540px,100%);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.crest{
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+  width:42px;height:42px;
+  border-radius:16px;
+  background:
+    linear-gradient(135deg,rgba(34,211,238,.95),rgba(96,165,250,.55)),
+    radial-gradient(circle at 35% 25%,#fff,transparent 23%);
+  display:grid;place-items:center;
+  box-shadow:0 0 28px rgba(34,211,238,.25);
+  font-weight:900;
+  letter-spacing:-.06em;
+  color:#03111f;
+}
+.brand h1{font-size:15px;margin:0;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand p{font-size:11px;color:var(--muted);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav{
+  display:flex;
+  gap:7px;
+  overflow:auto;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav a,.refresh-btn{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  color:var(--soft);
+  padding:8px 10px;
+  border-radius:999px;
+  font-size:12px;
+  white-space:nowrap;
+}
+.refresh-btn{cursor:pointer;color:var(--cyan)}
+
+/* ===================== SECTION: HERO ===================== */
+.hero{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line2);
+  background:
+    linear-gradient(135deg,rgba(8,47,73,.72),rgba(15,23,42,.92)),
+    radial-gradient(circle at 78% 18%,rgba(34,211,238,.20),transparent 36%),
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%201600%20900%27%20preserveAspectRatio%3D%27none%27%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%27light%27%20cx%3D%2750%25%27%20cy%3D%2745%25%27%20r%3D%2750%25%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%237dd3fc%27%20stop-opacity%3D%27.35%27/%3E%3Cstop%20offset%3D%27.45%27%20stop-color%3D%27%230ea5e9%27%20stop-opacity%3D%27.08%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23020617%27%20stop-opacity%3D%270%27/%3E%3C/radialGradient%3E%0A%3ClinearGradient%20id%3D%27pitch%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23031226%27%20stop-opacity%3D%270%27/%3E%3Cstop%20offset%3D%27.72%27%20stop-color%3D%27%23041525%27%20stop-opacity%3D%27.35%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23052e16%27%20stop-opacity%3D%27.52%27/%3E%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%271600%27%20height%3D%27900%27%20fill%3D%27%23020617%27/%3E%0A%3Cellipse%20cx%3D%27800%27%20cy%3D%27520%27%20rx%3D%27820%27%20ry%3D%27350%27%20fill%3D%27%23071b31%27%20opacity%3D%27.65%27/%3E%0A%3Cpath%20d%3D%27M0%20430%20Q800%20240%201600%20430%20L1600%20720%20Q800%20560%200%20720Z%27%20fill%3D%27%2305111f%27%20opacity%3D%27.74%27/%3E%0A%3Cpath%20d%3D%27M0%20680%20Q800%20520%201600%20680%20L1600%20900%20L0%20900Z%27%20fill%3D%27url%28%23pitch%29%27/%3E%0A%3Cg%20opacity%3D%27.32%27%20stroke%3D%27%2338bdf8%27%20stroke-width%3D%272%27%3E%0A%3Cpath%20d%3D%27M80%20635%20Q800%20510%201520%20635%27/%3E%0A%3Cpath%20d%3D%27M150%20705%20Q800%20590%201450%20705%27/%3E%0A%3Cpath%20d%3D%27M300%20780%20Q800%20700%201300%20780%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.2%27%20stroke%3D%27%23e0f2fe%27%3E%0A%3Cpath%20d%3D%27M250%20350%20L420%20120%20M1350%20350%20L1180%20120%20M520%20320%20L620%2080%20M1080%20320%20L980%2080%27/%3E%0A%3C/g%3E%0A%3Cg%3E%0A%3Ccircle%20cx%3D%27410%27%20cy%3D%27118%27%20r%3D%2795%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%27620%27%20cy%3D%2782%27%20r%3D%27110%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%27980%27%20cy%3D%2782%27%20r%3D%27110%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%271190%27%20cy%3D%27118%27%20r%3D%2795%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.65%27%20fill%3D%27%23e0f2fe%27%3E%0A%3Ccircle%20cx%3D%27410%27%20cy%3D%27120%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%27430%27%20cy%3D%27116%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27390%27%20cy%3D%27116%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%27620%27%20cy%3D%2784%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%27645%27%20cy%3D%2782%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27595%27%20cy%3D%2782%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%27980%27%20cy%3D%2784%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%271005%27%20cy%3D%2782%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27955%27%20cy%3D%2782%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%271190%27%20cy%3D%27120%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%271210%27%20cy%3D%27116%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%271170%27%20cy%3D%27116%27%20r%3D%274%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.18%27%20fill%3D%27%2393c5fd%27%3E%0A%3Crect%20x%3D%270%27%20y%3D%27360%27%20width%3D%271600%27%20height%3D%2770%27/%3E%0A%3Cpath%20d%3D%27M0%20362%20h1600%20v20%20h-1600z%27/%3E%0A%3C/g%3E%0A%3C/svg%3E") center 42%/cover no-repeat;
+  border-radius:calc(var(--radius) + 4px);
+  box-shadow:var(--shadow);
+  padding:20px;
+}
+.hero-card:after{
+  content:"AC";
+  position:absolute;
+  right:22px;
+  bottom:14px;
+  font-size:clamp(70px,10vw,150px);
+  font-weight:1000;
+  letter-spacing:-.08em;
+  color:rgba(226,232,240,.055);
+  pointer-events:none;
+}
+.hero-card:before{
+  content:"";
+  position:absolute;inset:auto -80px -115px auto;
+  width:260px;height:260px;border-radius:50%;
+  border:36px solid rgba(96,165,250,.08);
+}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;color:#bfdbfe;
+  border:1px solid rgba(191,219,254,.18);
+  background:rgba(15,23,42,.42);
+  border-radius:999px;
+  padding:6px 10px;
+}
+.kicker-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.hero-title{
+  font-size:clamp(31px,7vw,64px);
+  letter-spacing:-.06em;
+  line-height:.92;
+  margin:16px 0 10px;
+  max-width:780px;
+}
+.hero-sub{color:var(--muted);font-size:15px;line-height:1.45;margin:0;max-width:720px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.pill{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.5);
+  border-radius:999px;
+  padding:9px 12px;
+  font-size:12px;
+  color:var(--soft);
+}
+.scoreboard{
+  display:grid;
+  gap:12px;
+}
+.score-card{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(15,23,42,.9),rgba(7,17,31,.9));
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+.score-card small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.score-card strong{display:block;font-size:26px;line-height:1.05;letter-spacing:-.04em}
+.score-card span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+
+/* ===================== SECTION: CARDS / GRID ===================== */
+.section{margin-top:16px;scroll-margin-top:84px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:0 2px 10px}
+.section-head h2{margin:0;font-size:22px;letter-spacing:-.04em}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.card{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(13,27,52,.88),rgba(7,17,31,.94));
+  border-radius:var(--radius);
+  padding:15px;
+  box-shadow:0 12px 38px rgba(0,0,0,.22);
+  min-width:0;
+}
+.card.w4{grid-column:span 4}
+.card.w6{grid-column:span 6}
+.card.w8{grid-column:span 8}
+.card.w12{grid-column:span 12}
+.card-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.card-title h3{margin:0;font-size:16px;letter-spacing:-.03em}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  color:var(--soft);
+  white-space:nowrap;
+}
+.badge.green{color:#bbf7d0;border-color:rgba(52,211,153,.3);background:rgba(20,83,45,.22)}
+.badge.amber{color:#fde68a;border-color:rgba(251,191,36,.28);background:rgba(120,53,15,.22)}
+.badge.red{color:#fecdd3;border-color:rgba(251,113,133,.28);background:rgba(127,29,29,.22)}
+.badge.blue{color:#bfdbfe;border-color:rgba(96,165,250,.32);background:rgba(30,64,175,.22)}
+.badge.purple{color:#ddd6fe;border-color:rgba(167,139,250,.32);background:rgba(76,29,149,.22)}
+
+/* ===================== SECTION: RECOMMENDATION BOX ===================== */
+.reco{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+}
+.reco-main h2{margin:0 0 6px;font-size:24px;letter-spacing:-.04em}
+.reco-main p{margin:0;color:var(--muted);line-height:1.45;font-size:14px}
+.reco-four{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.reco-four .shirt{
+  min-width:58px;
+  text-align:center;
+  padding:9px 10px;
+  border-radius:16px;
+  border:1px solid rgba(96,165,250,.28);
+  background:linear-gradient(135deg,rgba(37,99,235,.4),rgba(8,47,73,.55));
+  font-weight:800;
+  font-size:12px;
+}
+.reco-side{
+  width:180px;
+  text-align:center;
+  padding:14px;
+  border-radius:20px;
+  border:1px solid rgba(52,211,153,.25);
+  background:rgba(6,78,59,.16);
+}
+.reco-side small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.reco-side strong{display:block;font-size:28px;margin-top:4px;color:#bbf7d0}
+
+/* ===================== SECTION: TABLES ===================== */
+.table-wrap{overflow:auto;-webkit-overflow-scrolling:touch;border-radius:18px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:840px;background:rgba(2,6,23,.2)}
+th,td{padding:10px 11px;text-align:left;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
+th{position:sticky;top:0;z-index:1;background:#0b1730;color:#bfdbfe;font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:rgba(96,165,250,.06)}
+.ticker{font-weight:800;color:#dbeafe;white-space:nowrap}
+.name{color:var(--soft)}
+.note{color:var(--muted);font-size:12px;line-height:1.35}
+
+/* ===================== SECTION: COMPARISON ===================== */
+.compare-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch}
+.squad-box{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.52);
+  border-radius:20px;
+  padding:14px;
+}
+.squad-box h3{margin:0 0 8px;font-size:16px}
+.squad-list{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 12px}
+.squad-list span{background:rgba(96,165,250,.13);border:1px solid rgba(96,165,250,.22);border-radius:999px;padding:6px 8px;font-size:12px;font-weight:700}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.metric{border:1px solid var(--line);border-radius:16px;padding:9px;background:rgba(2,6,23,.28)}
+.metric small{display:block;color:var(--muted);font-size:11px}
+.metric strong{display:block;font-size:18px;margin-top:3px}
+.vs{display:grid;place-items:center;color:var(--muted);font-weight:900;font-size:13px}
+
+
+
+/* ===================== SECTION: PLATFORM SPLIT ===================== */
+.platform-summary{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.platform-card{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.55);
+  border-radius:18px;
+  padding:12px;
+}
+.platform-card small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+.platform-card strong{
+  display:block;
+  font-size:24px;
+  margin-top:4px;
+  letter-spacing:-.04em;
+}
+.budget-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.budget-input{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.35);
+  border-radius:999px;
+  padding:7px 10px;
+}
+.budget-input span{color:var(--muted);font-size:12px}
+.budget-input input{
+  width:96px;
+  border:0;
+  outline:none;
+  color:var(--txt);
+  background:transparent;
+  font-weight:800;
+  font-size:14px;
+}
+
+.tactic-select{
+  border:0;
+  outline:none;
+  color:var(--txt);
+  background:transparent;
+  font-weight:800;
+  font-size:14px;
+  min-width:180px;
+}
+.tactic-select option{background:#07111f;color:var(--txt)}
+.platform-tag{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:800;
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
+.platform-tag.ig{color:#bfdbfe;background:rgba(30,64,175,.22);border-color:rgba(96,165,250,.32)}
+.platform-tag.t212{color:#bbf7d0;background:rgba(20,83,45,.22);border-color:rgba(52,211,153,.3)}
+.platform-tag.check{color:#fde68a;background:rgba(120,53,15,.22);border-color:rgba(251,191,36,.28)}
+.tactic-income-wrap{
+  margin-top:12px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.25);
+  border-radius:18px;
+  overflow:hidden;
+}
+.tactic-income-wrap .mini-title{
+  padding:10px 12px;
+  border-bottom:1px solid var(--line);
+  color:var(--soft);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+
+/* ===================== SECTION: PAYDAY CHECKLIST / TRANSFER SLIP ===================== */
+.check-list{display:grid;gap:8px}
+.check-item{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.25);
+  border-radius:14px;
+  padding:9px;
+}
+.check-icon{
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  flex:0 0 22px;
+  font-size:12px;
+  font-weight:900;
+}
+.check-icon.ok{background:rgba(20,83,45,.34);color:#bbf7d0;border:1px solid rgba(52,211,153,.28)}
+.check-icon.warn{background:rgba(120,53,15,.32);color:#fde68a;border:1px solid rgba(251,191,36,.28)}
+.slip-line{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom:1px solid var(--line);
+  padding:7px 0;
+}
+.slip-line:last-child{border-bottom:0}
+.slip-line strong{color:var(--txt)}
+
+
+
+/* ===================== SECTION: TROPHY CABINET ===================== */
+.trophy-cabinet{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:12px;
+  align-items:stretch;
+}
+.trophy-room{
+  border:1px solid rgba(251,191,36,.28);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(251,191,36,.13),transparent 34%),
+    radial-gradient(circle at 92% 10%,rgba(34,211,238,.10),transparent 32%),
+    rgba(15,23,42,.52);
+  border-radius:22px;
+  padding:15px;
+}
+.trophy-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.trophy{
+  min-height:128px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.30);
+  border-radius:18px;
+  padding:12px;
+  position:relative;
+  overflow:hidden;
+}
+.trophy:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 52%);
+  pointer-events:none;
+}
+.trophy.unlocked{
+  border-color:rgba(52,211,153,.35);
+  box-shadow:0 0 18px rgba(52,211,153,.08);
+}
+.trophy.locked{
+  opacity:.68;
+}
+.trophy-icon{
+  font-size:28px;
+  line-height:1;
+  margin-bottom:9px;
+}
+.trophy-title{
+  font-weight:900;
+  font-size:13px;
+  line-height:1.15;
+  position:relative;
+}
+.trophy-detail{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:7px;
+  position:relative;
+}
+.trophy-progress{
+  height:9px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+  margin-top:10px;
+}
+.trophy-progress span{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+}
+.season-ticket{
+  display:grid;
+  gap:10px;
+}
+.season-ticket .score-card{
+  box-shadow:none;
+}
+.manager-note{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(2,6,23,.25);
+  padding:12px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+@media(max-width:900px){
+  .trophy-cabinet{grid-template-columns:1fr}
+  .trophy-grid{grid-template-columns:1fr}
+}
+
+
+
+/* ===================== SECTION: FULL FOOTBALL MANAGER MODE ===================== */
+.fm-command-grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:12px;
+  align-items:stretch;
+}
+.manager-card{
+  border:1px solid rgba(34,211,238,.24);
+  background:
+    radial-gradient(circle at 10% 0%,rgba(34,211,238,.12),transparent 34%),
+    radial-gradient(circle at 90% 0%,rgba(52,211,153,.10),transparent 32%),
+    rgba(15,23,42,.54);
+  border-radius:22px;
+  padding:15px;
+}
+.manager-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.manager-id{display:flex;align-items:center;gap:12px;min-width:0}
+.manager-avatar{
+  width:58px;height:58px;border-radius:20px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(34,211,238,.92),rgba(52,211,153,.7));
+  color:#03111f;font-weight:1000;font-size:20px;
+  box-shadow:0 0 26px rgba(34,211,238,.18);
+}
+.manager-id h3{margin:0;font-size:22px;letter-spacing:-.04em}
+.manager-id p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.fm-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.fm-stat{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:16px;
+  padding:10px;
+}
+.fm-stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.fm-stat strong{display:block;font-size:18px;margin-top:4px;letter-spacing:-.03em}
+.confidence-card{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.52);
+  border-radius:22px;
+  padding:15px;
+}
+.confidence-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}
+.confidence-score{font-size:40px;font-weight:1000;letter-spacing:-.08em;color:#bbf7d0;line-height:.9}
+.confidence-row{display:grid;grid-template-columns:145px 1fr 42px;gap:9px;align-items:center;margin:9px 0}
+.confidence-row span{font-size:12px;color:var(--soft);font-weight:800}
+.confidence-bar{height:9px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.confidence-bar i{display:block;height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green))}
+.fm-news-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:12px}
+.news-feed{display:grid;gap:9px}
+.news-item{
+  display:grid;
+  grid-template-columns:34px 1fr auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.26);
+  border-radius:15px;
+  padding:10px;
+}
+.news-icon{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.22)}
+.news-item strong{display:block;font-size:13px}
+.news-item span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.news-date{color:var(--cyan);font-size:11px;font-weight:900;white-space:nowrap}
+.fm-side-stack{display:grid;gap:12px}
+.job-meter{
+  border:1px solid rgba(52,211,153,.28);
+  background:rgba(6,78,59,.14);
+  border-radius:20px;
+  padding:14px;
+}
+.job-status{font-size:26px;font-weight:1000;color:#bbf7d0;letter-spacing:-.05em;margin-top:4px}
+.reputation-track{display:grid;gap:8px;margin-top:10px}
+.rep-step{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);background:rgba(2,6,23,.23);border-radius:13px;padding:8px 10px;font-size:12px}
+.rep-step.active{border-color:rgba(52,211,153,.34);background:rgba(20,83,45,.18)}
+.hall-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.legend-card{
+  border:1px solid rgba(251,191,36,.24);
+  background:linear-gradient(180deg,rgba(120,53,15,.16),rgba(2,6,23,.28));
+  border-radius:18px;
+  padding:12px;
+  min-height:108px;
+}
+.legend-card .medal{font-size:24px;margin-bottom:8px}
+.legend-card strong{display:block;font-size:15px}
+.legend-card span{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}
+.stadium-card{
+  border:1px solid rgba(167,139,250,.28);
+  background:radial-gradient(circle at top right,rgba(167,139,250,.13),transparent 34%),rgba(15,23,42,.52);
+  border-radius:20px;
+  padding:14px;
+}
+@media(max-width:900px){
+  .fm-command-grid,.fm-news-grid{grid-template-columns:1fr}
+  .fm-stat-grid,.hall-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .confidence-row{grid-template-columns:115px 1fr 38px}
+}
+@media(max-width:560px){
+  .fm-stat-grid,.hall-grid{grid-template-columns:1fr}
+  .manager-header{align-items:flex-start;flex-direction:column}
+  .news-item{grid-template-columns:34px 1fr}
+  .news-date{grid-column:2}
+}
+
+
+
+/* ===================== SECTION: AURORA ARENA CENTREPIECE ===================== */
+.fm-news-grid{
+  grid-template-columns:minmax(360px,.72fr) minmax(620px,1.28fr);
+  align-items:start;
+}
+.club-showcase{
+  position:relative;
+  overflow:hidden;
+  min-height:560px;
+  border:1px solid rgba(34,211,238,.24);
+  border-radius:26px;
+  padding:18px;
+  box-shadow:0 18px 55px rgba(0,0,0,.32);
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.18),rgba(2,6,23,.78) 58%,rgba(2,6,23,.96)),
+    radial-gradient(circle at 52% 18%,rgba(34,211,238,.18),transparent 26%),
+    radial-gradient(circle at 80% 5%,rgba(96,165,250,.22),transparent 28%),
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%201600%20900%27%20preserveAspectRatio%3D%27none%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27g%27%20cx%3D%2750%25%27%20cy%3D%2735%25%27%20r%3D%2765%25%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27%20stop-opacity%3D%27.38%27/%3E%3Cstop%20offset%3D%27.42%27%20stop-color%3D%27%230f172a%27%20stop-opacity%3D%27.10%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23020617%27%20stop-opacity%3D%270%27/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%27p%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23020617%27/%3E%3Cstop%20offset%3D%27.65%27%20stop-color%3D%27%23071b31%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23052e16%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%271600%27%20height%3D%27900%27%20fill%3D%27url%28%23p%29%27/%3E%3Cellipse%20cx%3D%27800%27%20cy%3D%27480%27%20rx%3D%27880%27%20ry%3D%27300%27%20fill%3D%27%23020f24%27%20opacity%3D%27.80%27/%3E%3Cpath%20d%3D%27M0%20470%20Q800%20270%201600%20470%20L1600%20690%20Q800%20550%200%20690Z%27%20fill%3D%27%23030d1c%27%20opacity%3D%27.92%27/%3E%3Cpath%20d%3D%27M0%20690%20Q800%20545%201600%20690%20L1600%20900%20L0%20900Z%27%20fill%3D%27%23083d20%27%20opacity%3D%27.58%27/%3E%3Cg%20stroke%3D%27%2338bdf8%27%20stroke-width%3D%273%27%20opacity%3D%27.32%27%3E%3Cpath%20d%3D%27M70%20640%20Q800%20515%201530%20640%27/%3E%3Cpath%20d%3D%27M145%20712%20Q800%20592%201455%20712%27/%3E%3Cpath%20d%3D%27M300%20788%20Q800%20700%201300%20788%27/%3E%3C/g%3E%3Cg%20stroke%3D%27%23e0f2fe%27%20opacity%3D%27.18%27%3E%3Cpath%20d%3D%27M250%20355%20L420%20110M500%20320%20L610%2070M1100%20320%20L990%2070M1350%20355%20L1180%20110%27/%3E%3C/g%3E%3Cg%20fill%3D%27url%28%23g%29%27%3E%3Ccircle%20cx%3D%27420%27%20cy%3D%27115%27%20r%3D%27130%27/%3E%3Ccircle%20cx%3D%27610%27%20cy%3D%2775%27%20r%3D%27135%27/%3E%3Ccircle%20cx%3D%27990%27%20cy%3D%2775%27%20r%3D%27135%27/%3E%3Ccircle%20cx%3D%271180%27%20cy%3D%27115%27%20r%3D%27130%27/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat;
+}
+.club-showcase:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(135deg,rgba(34,211,238,.10),transparent 32%,rgba(52,211,153,.08));
+}
+.club-showcase > *{position:relative;z-index:1}
+.showcase-top{display:grid;grid-template-columns:1fr 270px;gap:14px;align-items:start}
+.club-identity{min-height:220px;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:20px 12px}
+.club-badge-xl{
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+  width:112px;height:112px;border-radius:32px;display:grid;place-items:center;margin-bottom:12px;
+  background:linear-gradient(135deg,rgba(34,211,238,.95),rgba(96,165,250,.50));
+  border:1px solid rgba(226,232,240,.28);box-shadow:0 0 40px rgba(34,211,238,.22);
+  color:#03111f;font-weight:1000;font-size:42px;letter-spacing:-.08em;
+}
+.club-identity h2{font-size:clamp(34px,4.8vw,66px);line-height:.86;letter-spacing:-.08em;margin:0;text-transform:uppercase}
+.club-identity h2 span{display:block;color:var(--cyan)}
+.club-identity p{margin-top:10px;color:#bfdbfe;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.club-status-card{border:1px solid var(--line);background:rgba(2,6,23,.58);border-radius:20px;padding:14px;backdrop-filter:blur(12px)}
+.status-line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}.status-line:last-child{border-bottom:0}.status-line strong{font-size:16px;color:#bbf7d0;text-align:right}
+.season-so-far{margin-top:12px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.season-tile{border:1px solid var(--line);background:rgba(2,6,23,.58);border-radius:18px;padding:13px;text-align:center;min-height:112px}.season-tile .icon{font-size:23px;margin-bottom:7px}.season-tile small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.season-tile strong{display:block;font-size:22px;margin-top:7px}.season-tile span{display:block;color:var(--green);font-size:11px;margin-top:5px;font-weight:900}
+.showcase-bottom{margin-top:12px;display:grid;grid-template-columns:1.1fr .9fr;gap:12px}.next-fixture{border:1px solid rgba(34,211,238,.24);background:rgba(2,6,23,.58);border-radius:20px;padding:15px;text-align:center}.fixture-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:16px 0}.fixture-team{display:grid;gap:7px;justify-items:center}.fixture-crest{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.26);font-weight:1000}.fixture-vs strong{font-size:28px;color:var(--soft)}.fixture-countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.fixture-countdown div{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:8px}.fixture-countdown strong{display:block;font-size:19px}.fixture-countdown small{font-size:9px;color:var(--muted);text-transform:uppercase}
+.showcase-news{border:1px solid var(--line);background:rgba(2,6,23,.58);border-radius:20px;padding:15px}.showcase-news .news-feed{max-height:250px;overflow:auto;padding-right:2px}
+@media(max-width:1100px){.fm-news-grid,.showcase-top,.showcase-bottom{grid-template-columns:1fr}.season-so-far{grid-template-columns:repeat(2,minmax(0,1fr))}.club-showcase{min-height:auto}}
+@media(max-width:560px){.season-so-far{grid-template-columns:1fr}.fixture-vs{grid-template-columns:1fr}.showcase-top{gap:8px}.club-identity h2{font-size:38px}.club-badge-xl{width:86px;height:86px;font-size:34px}}
+
+
+
+/* ===================== SECTION: TRANSFER CENTRE ===================== */
+.transfer-centre-grid{
+  display:grid;
+  grid-template-columns:minmax(360px,.9fr) minmax(560px,1.1fr);
+  gap:12px;
+  align-items:stretch;
+}
+.top-target-card{
+  position:relative;
+  overflow:hidden;
+  min-height:430px;
+  border:1px solid rgba(52,211,153,.32);
+  border-radius:26px;
+  padding:18px;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(52,211,153,.17),transparent 34%),
+    radial-gradient(circle at 92% 8%,rgba(34,211,238,.17),transparent 35%),
+    linear-gradient(145deg,rgba(6,78,59,.22),rgba(2,6,23,.82));
+  box-shadow:0 18px 55px rgba(0,0,0,.32);
+}
+.top-target-card:before{
+  content:"TRANSFER TARGET";
+  position:absolute;
+  right:-36px;
+  top:42px;
+  transform:rotate(36deg);
+  color:rgba(226,232,240,.055);
+  font-size:40px;
+  font-weight:1000;
+  letter-spacing:-.06em;
+  pointer-events:none;
+}
+.target-hero{position:relative;z-index:1;display:grid;gap:13px}
+.target-shirt{
+  width:110px;height:132px;border-radius:26px 26px 34px 34px;
+  display:grid;place-items:center;align-self:start;
+  background:linear-gradient(145deg,rgba(34,211,238,.95),rgba(96,165,250,.48));
+  border:1px solid rgba(226,232,240,.28);
+  box-shadow:0 0 34px rgba(34,211,238,.16);
+  color:#03111f;font-weight:1000;font-size:30px;letter-spacing:-.08em;
+}
+.target-name{font-size:clamp(38px,5vw,76px);line-height:.86;letter-spacing:-.09em;font-weight:1000;margin:0;color:#eaffff}
+.target-company{color:var(--muted);font-size:14px;line-height:1.45;max-width:520px}
+.target-meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+.target-metric{border:1px solid rgba(255,255,255,.08);background:rgba(2,6,23,.34);border-radius:16px;padding:10px}
+.target-metric small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.target-metric strong{display:block;font-size:20px;margin-top:5px;color:#bbf7d0}
+.scout-verdict-box{border:1px solid rgba(34,211,238,.20);background:rgba(2,6,23,.36);border-radius:18px;padding:12px;margin-top:8px;color:var(--soft);font-size:13px;line-height:1.45}
+.transfer-board{display:grid;gap:12px}
+.transfer-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.transfer-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:rgba(15,23,42,.72);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;color:var(--soft)}
+.shortlist-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.shortlist-card{position:relative;border:1px solid var(--line);background:rgba(2,6,23,.30);border-radius:18px;padding:12px;overflow:hidden;min-height:145px}
+.shortlist-card:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05),transparent 54%);pointer-events:none}
+.shortlist-top{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
+.shortlist-rank{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.24);font-weight:1000;color:#bfdbfe;flex:0 0 32px}
+.shortlist-name{min-width:0;flex:1}.shortlist-name strong{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shortlist-name span{display:block;color:var(--muted);font-size:12px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shortlist-stats{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+.shortlist-stat{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);border-radius:12px;padding:8px;text-align:center}.shortlist-stat small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase}.shortlist-stat strong{display:block;margin-top:3px;font-size:14px;color:#bbf7d0}
+.transfer-list-row{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);background:rgba(2,6,23,.24);border-radius:15px;padding:10px;margin-bottom:8px}
+.transfer-list-row strong{display:block;font-size:14px}.transfer-list-row span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.transfer-list-tag{font-size:11px;font-weight:900;color:#fecdd3;border:1px solid rgba(251,113,133,.28);background:rgba(127,29,29,.22);border-radius:999px;padding:5px 8px;white-space:nowrap}
+.rumour-feed{display:grid;gap:8px}.rumour{border:1px solid var(--line);background:rgba(2,6,23,.24);border-radius:15px;padding:10px;display:grid;grid-template-columns:28px 1fr;gap:9px;align-items:start}.rumour strong{display:block;font-size:13px}.rumour span{display:block;color:var(--muted);font-size:12px;margin-top:2px;line-height:1.35}
+@media(max-width:1100px){.transfer-centre-grid{grid-template-columns:1fr}.target-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shortlist-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.target-meta-grid{grid-template-columns:1fr}.target-shirt{width:86px;height:104px;font-size:24px}.transfer-list-row{grid-template-columns:34px 1fr}.transfer-list-tag{grid-column:2;justify-self:start}.shortlist-stats{grid-template-columns:1fr}}
+
+/* ===================== SECTION: LOADING / FOOTER ===================== */
+.loading{
+  padding:14px;
+  border:1px dashed rgba(96,165,250,.34);
+  color:var(--muted);
+  border-radius:16px;
+  background:rgba(15,23,42,.4);
+}
+.footer{margin-top:22px;color:var(--muted);font-size:12px;text-align:center}
+.error{border-color:rgba(251,113,133,.3);color:#fecdd3;background:rgba(127,29,29,.18)}
+
+/* ===================== SECTION: RESPONSIVE ===================== */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .platform-summary{grid-template-columns:1fr}
+  .card.w4,.card.w6,.card.w8{grid-column:span 12}
+  .compare-row{grid-template-columns:1fr}
+  .vs{padding:2px}
+  .reco{grid-template-columns:1fr}
+  .reco-side{width:100%;text-align:left}
+}
+@media(max-width:560px){
+  .app{padding-left:10px;padding-right:10px}
+  .hero-card{padding:16px}
+  .topbar{margin-left:-10px;margin-right:-10px;padding-left:10px;padding-right:10px}
+  .brand h1{font-size:13px}
+  .nav a,.refresh-btn{padding:7px 9px;font-size:11px}
+  .section-head{align-items:flex-start;flex-direction:column}
+  .hero-title{font-size:38px}
+}
+
+
+/* ===================== SECTION: HOME DASHBOARD SPLIT NAV ===================== */
+.department-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+.department-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(96,165,250,.24);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.12),transparent 34%),
+    linear-gradient(180deg,rgba(13,27,52,.86),rgba(7,17,31,.94));
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 12px 38px rgba(0,0,0,.22);
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.department-card:after{
+  content:"";
+  position:absolute;
+  right:-40px;
+  bottom:-40px;
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  border:24px solid rgba(96,165,250,.055);
+  pointer-events:none;
+}
+.department-card strong{
+  display:block;
+  font-size:22px;
+  letter-spacing:-.04em;
+  margin-top:10px;
+}
+.department-card p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.42;
+  margin:8px 0 14px;
+}
+.department-card span{
+  display:inline-flex;
+  width:max-content;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:12px;
+  color:var(--cyan);
+  font-weight:800;
+}
+
+.department-card-img{
+  width:100%;
+  height:auto;
+  aspect-ratio:4/3;
+  object-fit:contain;
+  display:block;
+  border-radius:16px;
+  border:1px solid rgba(96,165,250,.18);
+  margin-bottom:12px;
+  box-shadow:0 8px 26px rgba(0,0,0,.26);
+  background:rgba(2,6,23,.72);
+  padding:4px;
+}
+.department-card-content{
+  position:relative;
+  z-index:1;
+}
+@media(max-width:760px){
+  .department-card-img{
+    width:100%;
+    height:auto;
+    aspect-ratio:4/3;
+  }
+}
+.home-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.home-preview-list{
+  display:grid;
+  gap:8px;
+}
+.home-preview-row{
+  display:grid;
+  grid-template-columns:44px 1fr auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.24);
+  border-radius:15px;
+  padding:10px;
+}
+.home-rank{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:rgba(96,165,250,.14);
+  border:1px solid rgba(96,165,250,.24);
+  font-weight:1000;
+  color:#bfdbfe;
+}
+.home-preview-row strong{display:block;font-size:14px}
+.home-preview-row span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.home-preview-score{
+  color:#bbf7d0;
+  font-weight:1000;
+  white-space:nowrap;
+}
+@media(max-width:900px){
+  .department-grid{grid-template-columns:1fr}
+  .home-grid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  html,body{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:hidden!important;
+  }
+  body{padding:0!important}
+  .app,
+  .topbar-inner,
+  .hero,
+  .scoreboard,
+  .grid,
+  .home-grid,
+  .department-grid,
+  .club-showcase,
+  .showcase-top,
+  .showcase-bottom,
+  .season-so-far{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .hero,
+  .home-grid,
+  .department-grid,
+  .showcase-top,
+  .showcase-bottom,
+  .season-so-far{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+  .card,
+  .score-card,
+  .department-card,
+  .club-showcase,
+  .hero-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .nav{
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch;
+    white-space:nowrap!important;
+    max-width:100%!important;
+  }
+  .home-preview-row{
+    grid-template-columns:38px minmax(0,1fr)!important;
+  }
+  .home-preview-score{
+    grid-column:2;
+    justify-self:start;
+  }
+}
+
+
+/* ===================== SECTION: AURORA CITY FC CREST IMAGE ===================== */
+.crest,
+.club-badge-xl{
+  overflow:hidden;
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+}
+.crest img,
+.club-badge-xl img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.crest{
+  padding:0!important;
+}
+.club-badge-xl{
+  padding:0!important;
+}
+
+
+/* ===================== SECTION: TRUE ROUND CREST CLIP FIX ===================== */
+.crest,
+.club-badge-xl{
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+}
+.crest img,
+.club-badge-xl img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+
+/* ===================== SECTION: NEXT FIXTURE CREST IMAGE ===================== */
+.fixture-crest{
+  overflow:hidden!important;
+}
+.fixture-crest img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+
+
+/* ===================== SECTION: SQUAD HUB PAGE ===================== */
+.squad-hero{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(96,165,250,.22);
+  border-radius:28px;
+  min-height:360px;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.92),rgba(2,6,23,.70),rgba(2,6,23,.42)),
+    url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/Aurora_Squad2.png");
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 18px 60px rgba(0,0,0,.32);
+  display:flex;
+  align-items:flex-end;
+  padding:24px;
+}
+.squad-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 18% 22%,rgba(34,211,238,.18),transparent 30%),
+    radial-gradient(circle at 82% 82%,rgba(59,130,246,.18),transparent 34%);
+  pointer-events:none;
+}
+.squad-hero-content{
+  position:relative;
+  z-index:1;
+  max-width:760px;
+}
+.squad-hero-logo{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  overflow:hidden;
+  margin-bottom:14px;
+  box-shadow:0 0 0 1px rgba(96,165,250,.22),0 14px 34px rgba(0,0,0,.36);
+}
+.squad-hero-logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.squad-hero h2{
+  font-size:clamp(42px,8vw,92px);
+  line-height:.9;
+  letter-spacing:-.07em;
+  margin:0;
+  text-transform:uppercase;
+}
+.squad-hero h2 span{
+  display:block;
+  color:var(--cyan);
+  text-shadow:0 0 24px rgba(34,211,238,.24);
+}
+.squad-hero p{
+  color:var(--muted);
+  max-width:630px;
+  margin:14px 0 0;
+  line-height:1.5;
+}
+.squad-grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:12px;
+}
+.squad-card{
+  border:1px solid rgba(96,165,250,.20);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,rgba(13,27,52,.84),rgba(7,17,31,.94));
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 12px 38px rgba(0,0,0,.22);
+  overflow:hidden;
+}
+.squad-card.w3{grid-column:span 3}
+.squad-card.w4{grid-column:span 4}
+.squad-card.w5{grid-column:span 5}
+.squad-card.w6{grid-column:span 6}
+.squad-card.w7{grid-column:span 7}
+.squad-card.w8{grid-column:span 8}
+.squad-card.w12{grid-column:span 12}
+.squad-kpi{
+  display:grid;
+  gap:8px;
+  margin-top:12px;
+}
+.squad-kpi strong{
+  display:block;
+  font-size:34px;
+  letter-spacing:-.06em;
+}
+.squad-kpi span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+}
+.squad-list{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+}
+.squad-row{
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:16px;
+  padding:10px;
+}
+.squad-rank{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:rgba(96,165,250,.14);
+  border:1px solid rgba(96,165,250,.24);
+  font-weight:1000;
+  color:#bfdbfe;
+}
+.squad-row strong{
+  display:block;
+  font-size:14px;
+}
+.squad-row span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
+}
+.squad-pill{
+  border:1px solid rgba(74,222,128,.25);
+  background:rgba(22,101,52,.12);
+  color:#bbf7d0;
+  border-radius:999px;
+  padding:7px 10px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+.squad-pill.amber{
+  border-color:rgba(251,191,36,.28);
+  background:rgba(120,53,15,.18);
+  color:#fde68a;
+}
+.squad-pill.red{
+  border-color:rgba(251,113,133,.28);
+  background:rgba(127,29,29,.18);
+  color:#fecdd3;
+}
+
+.formation-wrap{display:grid;gap:12px;margin-top:12px}
+.formation-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.formation-toolbar p{margin:0;color:var(--muted);font-size:12px;line-height:1.5;max-width:620px}
+.formation-badges{display:flex;gap:8px;flex-wrap:wrap}
+.pitch-board{
+  position:relative;
+  min-height:760px;
+  overflow:hidden;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.12);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.05),transparent 28%),
+    repeating-linear-gradient(180deg,rgba(255,255,255,.045) 0 44px,rgba(255,255,255,.02) 44px 88px),
+    linear-gradient(180deg,#1b7d35 0%,#14692c 100%);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.04), inset 0 18px 40px rgba(0,0,0,.14);
+}
+.pitch-mark{position:absolute;pointer-events:none}
+.pitch-outline{inset:16px;border:2px solid rgba(255,255,255,.20);border-radius:20px}
+.pitch-half{top:16px;bottom:16px;left:50%;width:2px;transform:translateX(-50%);background:rgba(255,255,255,.20)}
+.pitch-centre-circle{width:150px;height:150px;border-radius:50%;border:2px solid rgba(255,255,255,.20);left:50%;top:50%;transform:translate(-50%,-50%)}
+.pitch-centre-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.85);left:50%;top:50%;transform:translate(-50%,-50%)}
+.pitch-box-top,.pitch-box-bottom{left:50%;width:38%;height:120px;transform:translateX(-50%);border:2px solid rgba(255,255,255,.20)}
+.pitch-box-top{top:16px;border-top:0;border-radius:0 0 16px 16px}
+.pitch-box-bottom{bottom:16px;border-bottom:0;border-radius:16px 16px 0 0}
+.pitch-six-top,.pitch-six-bottom{left:50%;width:20%;height:54px;transform:translateX(-50%);border:2px solid rgba(255,255,255,.20)}
+.pitch-six-top{top:16px;border-top:0;border-radius:0 0 12px 12px}
+.pitch-six-bottom{bottom:16px;border-bottom:0;border-radius:12px 12px 0 0}
+.pitch-player{position:absolute;transform:translate(-50%,-50%);width:128px;display:grid;justify-items:center;gap:7px;text-align:center}
+.pitch-player.empty{opacity:.88}
+.pitch-player-core{position:relative;width:96px;height:86px}
+.pitch-pos{position:absolute;top:-8px;left:-12px;z-index:3;padding:4px 8px;border-radius:999px;background:rgba(96,165,250,.16);border:1px solid rgba(96,165,250,.28);color:#dbeafe;font-size:10px;font-weight:900;letter-spacing:.10em;box-shadow:0 8px 16px rgba(0,0,0,.16)}
+.pitch-score{position:absolute;top:-9px;right:-10px;z-index:3;min-width:32px;height:32px;padding:0 8px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#38bdf8,#2563eb);border:2px solid rgba(255,255,255,.78);color:white;font-size:12px;font-weight:900;box-shadow:0 10px 18px rgba(0,0,0,.18)}
+.pitch-shirt{position:absolute;inset:6px 0 0;display:flex;align-items:center;justify-content:center;clip-path:polygon(23% 0%,37% 0%,43% 10%,57% 10%,63% 0%,77% 0%,97% 18%,87% 36%,86% 100%,14% 100%,13% 36%,3% 18%);background:linear-gradient(180deg,#102a57 0%,#0b1f43 100%);border:2px solid rgba(173,216,255,.28);box-shadow:0 14px 22px rgba(0,0,0,.22)}
+.pitch-shirt:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 22%,rgba(34,211,238,.26) 22% 28%,transparent 28% 72%,rgba(34,211,238,.26) 72% 78%,transparent 78% 100%);opacity:.95}
+.pitch-shirt:after{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:18px;height:10px;border-radius:0 0 12px 12px;border:2px solid rgba(255,255,255,.82);border-top:0}
+.pitch-shirt-badge{position:absolute;left:26px;top:22px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fef3c7,#f59e0b 70%,#92400e 100%);border:1px solid rgba(255,255,255,.62);box-shadow:0 0 0 2px rgba(15,23,42,.24)}
+.pitch-shirt-code{position:relative;z-index:2;color:#fff;font-size:18px;font-weight:1000;letter-spacing:-.04em;text-shadow:0 2px 8px rgba(0,0,0,.32)}
+.pitch-name{display:block;color:#e2e8f0;font-size:11px;line-height:1.2;max-width:118px}
+.pitch-meta{display:block;color:#bbf7d0;font-size:10px;font-weight:900;letter-spacing:.02em}
+.pitch-player.empty .pitch-shirt{background:linear-gradient(180deg,rgba(15,23,42,.68),rgba(15,23,42,.52));border-style:dashed;border-color:rgba(255,255,255,.22)}
+.pitch-player.empty .pitch-shirt:before,.pitch-player.empty .pitch-shirt:after,.pitch-player.empty .pitch-shirt-badge{display:none}
+.pitch-player.empty .pitch-shirt-code{font-size:14px;color:#cbd5e1}
+.pitch-player.empty .pitch-score{background:linear-gradient(180deg,#475569,#334155);color:#e2e8f0}
+.pitch-player.empty .pitch-name,.pitch-player.empty .pitch-meta{color:var(--muted)}
+.pitch-player.star-player .pitch-shirt{
+  background:linear-gradient(180deg,#7c3aed 0%,#1d4ed8 52%,#0b1f43 100%);
+  box-shadow:0 0 0 2px rgba(251,191,36,.34),0 18px 34px rgba(0,0,0,.26),0 0 26px rgba(251,191,36,.20);
+}
+.pitch-player.star-player .pitch-score{
+  background:linear-gradient(180deg,#fbbf24,#f97316);
+  color:#111827;
+  border-color:rgba(255,255,255,.9);
+}
+.pitch-player.star-player .pitch-pos{
+  background:rgba(251,191,36,.22);
+  border-color:rgba(251,191,36,.42);
+  color:#fde68a;
+}
+.pitch-stars{
+  display:block;
+  color:#fbbf24;
+  font-size:12px;
+  line-height:1;
+  letter-spacing:.04em;
+  text-shadow:0 1px 8px rgba(0,0,0,.36);
+}
+.pitch-player.empty .pitch-stars{color:var(--muted)}
+
+.bench-wrap{display:grid;gap:10px}
+.bench-header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.bench-header p{margin:0;color:var(--muted);font-size:12px}
+.bench-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.bench-card{border:1px solid var(--line);background:rgba(2,6,23,.24);border-radius:18px;padding:10px;display:grid;grid-template-columns:50px 1fr auto;gap:10px;align-items:center}
+.bench-shirt-mini{position:relative;width:44px;height:46px;display:flex;align-items:center;justify-content:center;clip-path:polygon(23% 0%,37% 0%,43% 10%,57% 10%,63% 0%,77% 0%,97% 18%,87% 36%,86% 100%,14% 100%,13% 36%,3% 18%);background:linear-gradient(180deg,#102a57 0%,#0b1f43 100%);border:2px solid rgba(173,216,255,.24)}
+.bench-shirt-mini:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 22%,rgba(34,211,238,.26) 22% 28%,transparent 28% 72%,rgba(34,211,238,.26) 72% 78%,transparent 78% 100%)}
+.bench-shirt-mini span{position:relative;z-index:1;font-size:12px;font-weight:1000;color:#fff}
+.bench-meta strong{display:block;font-size:13px}
+.bench-meta small{display:block;color:var(--muted);font-size:11px;line-height:1.3;margin-top:3px}
+.bench-score{border:1px solid rgba(56,189,248,.32);background:rgba(14,165,233,.16);color:#dbeafe;border-radius:999px;padding:7px 10px;font-weight:1000;white-space:nowrap}
+@media (max-width: 980px){
+  .pitch-board{min-height:680px}
+  .pitch-player{width:112px}
+  .pitch-player-core{width:86px;height:78px}
+  .pitch-shirt-code{font-size:16px}
+  .pitch-name{font-size:10px;max-width:106px}
+  .bench-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width: 640px){
+  .pitch-board{min-height:620px}
+  .pitch-centre-circle{width:108px;height:108px}
+  .pitch-box-top,.pitch-box-bottom{height:92px;width:46%}
+  .pitch-six-top,.pitch-six-bottom{height:44px;width:26%}
+  .pitch-player{width:86px;gap:5px}
+  .pitch-player-core{width:68px;height:62px}
+  .pitch-pos{top:-7px;left:-8px;font-size:8px;padding:3px 6px}
+  .pitch-score{top:-8px;right:-8px;min-width:26px;height:26px;font-size:10px;padding:0 6px}
+  .pitch-shirt-code{font-size:12px}
+  .pitch-shirt-badge{left:18px;top:17px;width:10px;height:10px}
+  .pitch-name,.pitch-meta{font-size:9px;max-width:84px}
+  .bench-list{grid-template-columns:1fr}
+  .bench-card{grid-template-columns:42px 1fr auto;padding:9px}
+}
+
+
+/* ===================== SECTION: CLUB LEGENDS PLAYER PORTRAITS ===================== */
+.legend-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+.legend-tile{
+  position:relative;
+  overflow:hidden;
+  min-height:250px;
+  border:1px solid rgba(251,191,36,.24);
+  background:
+    radial-gradient(circle at top right,rgba(251,191,36,.14),transparent 35%),
+    linear-gradient(180deg,rgba(15,23,42,.82),rgba(2,6,23,.94));
+  border-radius:20px;
+  padding:0;
+  box-shadow:0 14px 34px rgba(0,0,0,.22);
+}
+.legend-player-img{
+  position:relative;
+  height:150px;
+  border-bottom:1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(circle at 50% 20%,rgba(56,189,248,.16),transparent 45%),
+    linear-gradient(180deg,rgba(14,165,233,.10),rgba(15,23,42,.58));
+}
+.legend-player-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  display:block;
+}
+.legend-player-img:after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  height:48%;
+  background:linear-gradient(180deg,transparent,rgba(2,6,23,.88));
+  pointer-events:none;
+}
+.legend-shirt-fallback{display:none!important}
+.legend-player-body{
+  position:relative;
+  padding:12px;
+}
+.legend-role{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid rgba(251,191,36,.28);
+  background:rgba(251,191,36,.12);
+  color:#fde68a;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.legend-tile strong{
+  display:block;
+  font-size:18px;
+  margin-top:9px;
+}
+.legend-tile span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:6px;
+}
+.legend-income{
+  margin-top:10px;
+  border:1px solid rgba(52,211,153,.22);
+  background:rgba(22,101,52,.12);
+  color:#bbf7d0!important;
+  border-radius:14px;
+  padding:8px;
+  font-weight:900;
+}
+.legend-medal{display:none}
+@media(max-width:980px){
+  .legend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .legend-grid{grid-template-columns:1fr}
+  .legend-tile{min-height:auto}
+  .legend-player-img{height:190px}
+}
+
+.trophy-grid-mini{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.trophy-mini{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:18px;
+  padding:12px;
+  min-height:120px;
+}
+.trophy-mini.unlocked{
+  border-color:rgba(52,211,153,.32);
+}
+.trophy-mini .icon{
+  font-size:24px;
+  margin-bottom:8px;
+}
+.trophy-mini strong{
+  display:block;
+  font-size:14px;
+}
+.trophy-mini span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:6px;
+  line-height:1.35;
+}
+.chemistry-box{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+.chemistry-tile{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.26);
+  border-radius:18px;
+  padding:12px;
+}
+.chemistry-tile strong{
+  display:block;
+  font-size:17px;
+}
+.chemistry-tile span{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+  display:block;
+  margin-top:6px;
+}
+@media(max-width:900px){
+  .squad-card.w3,
+  .squad-card.w4,
+  .squad-card.w5,
+  .squad-card.w6,
+  .squad-card.w7,
+  .squad-card.w8,
+  .squad-card.w12{
+    grid-column:span 12;
+  }
+  .legend-grid,
+  .trophy-grid-mini,
+  .chemistry-box{
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:760px){
+  .squad-hero{
+    min-height:330px;
+    padding:18px;
+  }
+  .squad-row{
+    grid-template-columns:38px minmax(0,1fr);
+  }
+  .squad-pill{
+    grid-column:2;
+    justify-self:start;
+  }
+}
+
+
+/* ===================== SECTION: FINAL NEW BADGE WIRING ===================== */
+.crest img,
+.club-badge-xl img,
+.fixture-crest img,
+.transfer-hero-logo img,
+.board-hero-logo img,
+.squad-hero-logo img{
+  content:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png")!important;
+}
+
+
+/* ===================== SECTION: SHIELD BADGE NO CIRCLE FINAL OVERRIDE ===================== */
+.crest,
+.club-badge-xl,
+.fixture-crest,
+.transfer-hero-logo,
+.board-hero-logo,
+.squad-hero-logo{
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+
+.crest img,
+.club-badge-xl img,
+.fixture-crest img,
+.transfer-hero-logo img,
+.board-hero-logo img,
+.squad-hero-logo img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  border-radius:0!important;
+  background:transparent!important;
+  display:block!important;
+}
+
+
+/* ===================== SECTION: SQUAD HUB CLEAN STRETCH FIT HERO ===================== */
+/* Keeps the existing Squad Hub hero container size, removes the duplicated HTML text,
+   and stretches the finished artwork to the exact container so nothing is cropped. */
+.squad-hero{
+  background-image:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/4E299D2D-53AC-43F8-A84E-0FD90C2D39AC.png")!important;
+  background-size:100% 100%!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-color:#020617!important;
+}
+
+.squad-hero:before,
+.squad-hero:after{
+  content:none!important;
+  display:none!important;
+}
+
+.squad-hero .squad-hero-content,
+.squad-hero-content,
+.squad-hero .kicker,
+.squad-hero .hero-title,
+.squad-hero .hero-sub,
+.squad-hero .hero-actions,
+.squad-hero .pill{
+  display:none!important;
+  visibility:hidden!important;
+}
+
+
+/* ===================== SECTION: MOBILE SAFE SQUAD HUB PATCH ===================== */
+.pitch-scroll{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  border-radius:24px;
+  scrollbar-width:thin;
+}
+.pitch-scroll::-webkit-scrollbar{height:8px}
+.pitch-scroll::-webkit-scrollbar-track{background:rgba(15,23,42,.55);border-radius:999px}
+.pitch-scroll::-webkit-scrollbar-thumb{background:rgba(56,189,248,.45);border-radius:999px}
+
+@media (max-width: 760px){
+  .section{padding-left:12px;padding-right:12px}
+  .squad-card{padding:14px;border-radius:20px}
+  .formation-toolbar{align-items:flex-start}
+  .formation-badges{width:100%}
+  .formation-badges .badge{flex:1;justify-content:center;text-align:center}
+  .pitch-scroll{
+    margin-left:-4px;
+    margin-right:-4px;
+    padding:0 4px 8px;
+  }
+  .pitch-board{
+    min-width:720px;
+    min-height:660px;
+  }
+  .bench-header{
+    align-items:flex-start;
+  }
+  .bench-header p{
+    width:100%;
+  }
+  .bench-list{
+    grid-template-columns:1fr!important;
+  }
+  .bench-card{
+    grid-template-columns:44px minmax(0,1fr) auto;
+  }
+  .squad-row{
+    grid-template-columns:38px minmax(0,1fr) auto;
+    padding:9px;
+  }
+  .squad-rank{
+    width:30px;
+    height:30px;
+    border-radius:10px;
+  }
+  .squad-row strong{
+    font-size:13px;
+  }
+  .squad-row span{
+    font-size:11px;
+  }
+}
+
+@media (max-width: 420px){
+  .squad-card{padding:12px}
+  .card-title h3{font-size:15px}
+  .pitch-board{
+    min-width:700px;
+    min-height:640px;
+  }
+  .pitch-player{
+    width:82px;
+  }
+  .pitch-name{
+    max-width:82px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .pitch-stars{
+    font-size:11px;
+  }
+}
+
+
+/* ===================== SECTION: AURORA HONOURS CABINET UPGRADE ===================== */
+.honours-cabinet-shell{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(251,191,36,.24);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(251,191,36,.16),transparent 32%),
+    radial-gradient(circle at 92% 8%,rgba(34,211,238,.13),transparent 34%),
+    linear-gradient(180deg,rgba(13,27,52,.90),rgba(7,17,31,.96));
+  border-radius:26px;
+  padding:18px;
+  box-shadow:0 18px 55px rgba(0,0,0,.30);
+}
+.honours-cabinet-shell:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.045),transparent 24%,rgba(255,255,255,.035) 48%,transparent 74%,rgba(255,255,255,.035)),
+    radial-gradient(circle at 50% 0%,rgba(251,191,36,.08),transparent 34%);
+  pointer-events:none;
+}
+.honours-cabinet-shell > *{position:relative;z-index:1}
+.honours-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+.honours-header h3{
+  margin:0;
+  font-size:24px;
+  letter-spacing:-.05em;
+}
+.honours-header p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+.honours-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+.honours-summary-card{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.34);
+  border-radius:18px;
+  padding:11px;
+}
+.honours-summary-card small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.honours-summary-card strong{
+  display:block;
+  margin-top:5px;
+  font-size:20px;
+  letter-spacing:-.04em;
+}
+.honours-trophy-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+}
+.honours-trophy{
+  position:relative;
+  overflow:hidden;
+  min-height:310px;
+  border:1px solid rgba(148,163,184,.18);
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.22),rgba(2,6,23,.72)),
+    radial-gradient(circle at 50% 0%,rgba(255,255,255,.08),transparent 42%);
+  border-radius:22px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.honours-trophy:before{
+  content:"";
+  position:absolute;
+  inset:10px 10px auto;
+  height:132px;
+  border-radius:18px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.015)),
+    radial-gradient(circle at 50% 4%,rgba(251,191,36,.15),transparent 54%);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 0 24px rgba(255,255,255,.035);
+  pointer-events:none;
+}
+.honours-trophy.unlocked{
+  border-color:rgba(52,211,153,.42);
+  box-shadow:0 0 26px rgba(52,211,153,.10);
+}
+.honours-trophy.in-reach{
+  border-color:rgba(251,191,36,.46);
+  box-shadow:0 0 26px rgba(251,191,36,.10);
+}
+.honours-trophy.locked{opacity:.78}
+.trophy-image-stage{
+  position:relative;
+  z-index:1;
+  height:132px;
+  display:grid;
+  place-items:center;
+  margin-bottom:10px;
+}
+.trophy-image-stage img{
+  width:100%;
+  height:120px;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 14px 18px rgba(0,0,0,.38));
+}
+.trophy-placeholder{
+  width:88px;
+  height:108px;
+  display:none;
+  place-items:center;
+  font-size:54px;
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(255,255,255,.32),transparent 26%),
+    linear-gradient(180deg,rgba(251,191,36,.30),rgba(120,53,15,.08));
+  border:1px solid rgba(251,191,36,.30);
+  filter:drop-shadow(0 14px 18px rgba(0,0,0,.32));
+}
+.honours-trophy.locked .trophy-image-stage img{
+  filter:grayscale(.65) drop-shadow(0 10px 14px rgba(0,0,0,.28));
+  opacity:.72;
+}
+.honours-trophy-body{
+  position:relative;
+  z-index:1;
+}
+.honours-trophy-body strong{
+  display:block;
+  font-size:15px;
+  line-height:1.16;
+  letter-spacing:-.03em;
+}
+.honours-trophy-body span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:7px;
+}
+.honours-target-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:10px;
+  color:var(--soft);
+  font-size:12px;
+}
+.honours-target-row b{color:#fde68a}
+.honours-progress{
+  height:10px;
+  margin-top:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.07);
+  overflow:hidden;
+}
+.honours-progress span{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+}
+.honours-trophy.in-reach .honours-progress span{
+  background:linear-gradient(90deg,var(--amber),var(--cyan),var(--green));
+}
+.honours-status{
+  display:inline-flex!important;
+  width:max-content;
+  max-width:100%;
+  margin-top:10px!important;
+  border-radius:999px;
+  padding:6px 9px;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  color:var(--soft)!important;
+  font-size:11px!important;
+  font-weight:1000;
+}
+.honours-status.unlocked{
+  color:#bbf7d0!important;
+  border-color:rgba(52,211,153,.32);
+  background:rgba(20,83,45,.22);
+}
+.honours-status.in-reach{
+  color:#fde68a!important;
+  border-color:rgba(251,191,36,.30);
+  background:rgba(120,53,15,.22);
+}
+.honours-status.locked{color:#cbd5e1!important}
+@media(max-width:1180px){
+  .honours-trophy-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .honours-header{flex-direction:column}
+  .honours-summary{grid-template-columns:1fr}
+  .honours-trophy-grid{grid-template-columns:1fr}
+  .honours-trophy{min-height:auto}
+}
+
+
+
+/* ===================== SECTION: TROPHY CABINET LIGHTING UPGRADE ===================== */
+.honours-cabinet-shell{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(96,165,250,.10), transparent 32%),
+    linear-gradient(180deg, rgba(8,18,38,.94), rgba(4,10,24,.98));
+}
+.honours-trophy{
+  overflow:hidden;
+}
+.honours-trophy:before{
+  height:138px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02) 34%,rgba(0,0,0,.10) 100%),
+    radial-gradient(circle at 18% 0%,rgba(255,255,255,.18),transparent 18%),
+    radial-gradient(circle at 50% 0%,rgba(255,255,255,.16),transparent 20%),
+    radial-gradient(circle at 82% 0%,rgba(255,255,255,.18),transparent 18%),
+    linear-gradient(180deg,rgba(8,16,34,.78),rgba(5,12,26,.92));
+}
+.trophy-image-stage{
+  position:relative;
+  z-index:1;
+  height:132px;
+  display:grid;
+  place-items:center;
+  margin-bottom:10px;
+  border-radius:18px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,.12), transparent 20%),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.12), transparent 22%),
+    radial-gradient(circle at 80% 0%, rgba(255,255,255,.12), transparent 20%),
+    linear-gradient(180deg, rgba(5,12,24,.70) 0%, rgba(3,8,18,.92) 72%, rgba(2,6,14,.98) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 -24px 30px rgba(0,0,0,.34);
+}
+.trophy-image-stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 50% -8%, rgba(255,244,200,.26), transparent 38%),
+    radial-gradient(ellipse at 20% -8%, rgba(255,244,200,.18), transparent 24%),
+    radial-gradient(ellipse at 80% -8%, rgba(255,244,200,.18), transparent 24%),
+    linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.20) 65%, rgba(0,0,0,.34));
+  pointer-events:none;
+  z-index:1;
+}
+.trophy-image-stage::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+  pointer-events:none;
+  z-index:3;
+}
+.trophy-image-stage img{
+  position:relative;
+  z-index:2;
+  width:100%;
+  height:120px;
+  object-fit:contain;
+  display:block;
+  padding:12px 10px 6px;
+  filter:brightness(.84) contrast(1.10) saturate(.92) drop-shadow(0 14px 18px rgba(0,0,0,.40));
+  mix-blend-mode:multiply;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  filter:grayscale(.65) brightness(.74) contrast(1.05) drop-shadow(0 10px 14px rgba(0,0,0,.28));
+  mix-blend-mode:multiply;
+  opacity:.68;
+}
+.trophy-placeholder{
+  position:relative;
+  z-index:2;
+}
+
+/* ===================== SECTION: TROPHY IMAGE VISIBILITY / CABINET SPOTLIGHT FINAL ===================== */
+/* Keeps the white/checker trophy image background hidden inside a darker lit cabinet,
+   while bringing the actual silver/gold cups back up so they don't look buried. */
+.trophy-image-stage{
+  background:
+    radial-gradient(ellipse at 50% -12%,rgba(255,244,200,.32),transparent 38%),
+    radial-gradient(circle at 20% 0%,rgba(125,211,252,.10),transparent 22%),
+    radial-gradient(circle at 80% 0%,rgba(125,211,252,.10),transparent 22%),
+    linear-gradient(180deg,rgba(3,10,22,.92),rgba(2,6,18,.98) 74%,rgba(1,4,12,1) 100%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -34px 38px rgba(0,0,0,.52),
+    0 10px 28px rgba(0,0,0,.30)!important;
+}
+.trophy-image-stage::before{
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(255,247,215,.42),transparent 42%),
+    linear-gradient(180deg,rgba(0,0,0,.00),rgba(0,0,0,.16) 60%,rgba(0,0,0,.32))!important;
+  mix-blend-mode:screen;
+}
+.trophy-image-stage img{
+  opacity:.98!important;
+  mix-blend-mode:multiply!important;
+  filter:
+    brightness(1.85)
+    contrast(1.38)
+    saturate(.96)
+    drop-shadow(0 16px 18px rgba(0,0,0,.54))!important;
+  transform:scale(1.06);
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.58!important;
+  mix-blend-mode:multiply!important;
+  filter:
+    grayscale(.75)
+    brightness(1.38)
+    contrast(1.20)
+    drop-shadow(0 10px 14px rgba(0,0,0,.34))!important;
+}
+.honours-trophy.unlocked .trophy-image-stage,
+.honours-trophy.in-reach .trophy-image-stage{
+  border:1px solid rgba(251,191,36,.18);
+}
+
+
+
+/* ===================== SECTION: TROPHY BLACK DISPLAY CARD FINAL ===================== */
+/* Designed for the new trophy images on black/dark backgrounds.
+   The cup sits on its own black showcase card so any image border blends away,
+   while the cup itself stays bright and visible. */
+.trophy-image-stage{
+  position:relative!important;
+  isolation:isolate!important;
+  height:158px!important;
+  padding:8px!important;
+  border-radius:20px!important;
+  overflow:hidden!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.18),transparent 30%),
+    radial-gradient(ellipse at 50% 96%,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,#05080f 0%,#02040a 58%,#000 100%)!important;
+  border:1px solid rgba(148,163,184,.16)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    inset 0 -28px 34px rgba(0,0,0,.55),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.trophy-image-stage:before{
+  content:""!important;
+  position:absolute!important;
+  left:10%!important;
+  right:10%!important;
+  top:0!important;
+  height:44%!important;
+  border-radius:999px!important;
+  background:radial-gradient(ellipse at center,rgba(255,247,215,.25),transparent 66%)!important;
+  pointer-events:none!important;
+  z-index:2!important;
+  mix-blend-mode:screen!important;
+}
+.trophy-image-stage:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  border-radius:20px!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.03),transparent 34%,rgba(0,0,0,.18)),
+    linear-gradient(90deg,rgba(255,255,255,.035),transparent 22%,transparent 78%,rgba(255,255,255,.025))!important;
+  pointer-events:none!important;
+  z-index:3!important;
+}
+.trophy-image-stage img{
+  position:relative!important;
+  z-index:1!important;
+  width:100%!important;
+  height:142px!important;
+  object-fit:contain!important;
+  display:block!important;
+  padding:0!important;
+  margin:0!important;
+  opacity:1!important;
+  mix-blend-mode:normal!important;
+  transform:none!important;
+  filter:
+    brightness(1.08)
+    contrast(1.08)
+    saturate(1.04)
+    drop-shadow(0 14px 20px rgba(0,0,0,.60))!important;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.48!important;
+  mix-blend-mode:normal!important;
+  filter:
+    grayscale(.72)
+    brightness(.70)
+    contrast(1.02)
+    drop-shadow(0 10px 16px rgba(0,0,0,.42))!important;
+}
+.honours-trophy.unlocked .trophy-image-stage{
+  border-color:rgba(52,211,153,.28)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -28px 34px rgba(0,0,0,.50),
+    0 0 24px rgba(52,211,153,.10),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.honours-trophy.in-reach .trophy-image-stage{
+  border-color:rgba(251,191,36,.30)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -28px 34px rgba(0,0,0,.50),
+    0 0 24px rgba(251,191,36,.11),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.honours-trophy:before{
+  height:164px!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.01)),
+    radial-gradient(ellipse at 50% 0%,rgba(251,191,36,.10),transparent 46%),
+    linear-gradient(180deg,rgba(5,12,24,.62),rgba(2,6,16,.88))!important;
+}
+@media(max-width:760px){
+  .trophy-image-stage{height:190px!important}
+  .trophy-image-stage img{height:174px!important}
+  .honours-trophy:before{height:196px!important}
+}
+
+
+
+/* ===================== SECTION: TROPHY LOCKED VISIBILITY BOOST ===================== */
+/* Keeps locked trophies visually dimmed, but no longer so dark that the cup disappears. */
+.honours-trophy.locked{
+  opacity:.92!important;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.72!important;
+  filter:
+    grayscale(.48)
+    brightness(.92)
+    contrast(1.10)
+    saturate(.90)
+    drop-shadow(0 12px 18px rgba(0,0,0,.52))!important;
+}
+.honours-trophy.in-reach .trophy-image-stage img,
+.honours-trophy.unlocked .trophy-image-stage img{
+  opacity:1!important;
+  filter:
+    brightness(1.12)
+    contrast(1.10)
+    saturate(1.04)
+    drop-shadow(0 15px 20px rgba(0,0,0,.62))!important;
+}
+.trophy-image-stage img{
+  transform:scale(1.10)!important;
+}
+
+
+/* ===================== SECTION: SQUAD DEVELOPMENT UPGRADES ===================== */
+.squad-development-grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:12px;
+}
+.dev-card{
+  border:1px solid rgba(96,165,250,.20);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,rgba(13,27,52,.84),rgba(7,17,31,.94));
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 12px 38px rgba(0,0,0,.22);
+  overflow:hidden;
+  min-width:0;
+}
+.dev-card.w4{grid-column:span 4}
+.dev-card.w6{grid-column:span 6}
+.dev-card.w8{grid-column:span 8}
+.dev-card.w12{grid-column:span 12}
+.dev-card-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.dev-card-title h3{
+  margin:0;
+  font-size:16px;
+  letter-spacing:-.03em;
+}
+.training-report-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.training-tile{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:18px;
+  padding:12px;
+  min-height:128px;
+}
+.training-tile small{
+  display:inline-flex;
+  border:1px solid rgba(96,165,250,.22);
+  background:rgba(30,64,175,.18);
+  color:#bfdbfe;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  font-weight:1000;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.training-tile strong{
+  display:block;
+  margin-top:10px;
+  font-size:18px;
+  letter-spacing:-.04em;
+}
+.training-tile span{
+  display:block;
+  margin-top:6px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.38;
+}
+.morale-meter{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:14px;
+  align-items:center;
+}
+.morale-score{
+  width:104px;
+  height:104px;
+  border-radius:32px;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 35% 20%,rgba(255,255,255,.22),transparent 26%),
+    linear-gradient(135deg,rgba(34,211,238,.32),rgba(52,211,153,.18));
+  border:1px solid rgba(52,211,153,.28);
+  box-shadow:0 0 30px rgba(34,211,238,.08);
+}
+.morale-score strong{
+  font-size:32px;
+  letter-spacing:-.07em;
+  color:#bbf7d0;
+}
+.morale-lines{
+  display:grid;
+  gap:8px;
+}
+.morale-line{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.25);
+  border-radius:14px;
+  padding:8px 10px;
+  font-size:12px;
+}
+.morale-line span{color:var(--muted)}
+.morale-line strong{color:var(--soft);text-align:right}
+.captain-message{
+  position:relative;
+  border:1px solid rgba(251,191,36,.24);
+  background:
+    radial-gradient(circle at top left,rgba(251,191,36,.12),transparent 34%),
+    rgba(2,6,23,.26);
+  border-radius:18px;
+  padding:14px;
+  min-height:160px;
+}
+.captain-message:before{
+  content:"“";
+  position:absolute;
+  right:16px;
+  top:0;
+  font-size:84px;
+  line-height:1;
+  color:rgba(251,191,36,.08);
+  font-weight:1000;
+}
+.captain-message strong{
+  display:block;
+  font-size:20px;
+  letter-spacing:-.04em;
+}
+.captain-message p{
+  margin:10px 0 0;
+  color:var(--soft);
+  line-height:1.5;
+  font-size:13px;
+}
+.tactical-panel{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.tactic-box{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.26);
+  border-radius:18px;
+  padding:12px;
+}
+.tactic-box small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.tactic-box strong{
+  display:block;
+  margin-top:6px;
+  font-size:18px;
+  letter-spacing:-.04em;
+}
+.tactic-box span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:6px;
+}
+.fatigue-list{
+  display:grid;
+  gap:8px;
+}
+.fatigue-row{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.24);
+  border-radius:15px;
+  padding:9px;
+}
+.fatigue-icon{
+  width:32px;
+  height:32px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(180deg,rgba(127,29,29,.82),rgba(69,10,10,.92));
+  border:1px solid rgba(248,113,113,.46);
+  color:#fecaca;
+  font-size:16px;
+  font-weight:1000;
+  box-shadow:0 0 16px rgba(239,68,68,.18), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.fatigue-row strong{
+  display:block;
+  font-size:13px;
+}
+.fatigue-row span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:2px;
+}
+.focus-card{
+  border:1px solid rgba(34,211,238,.24);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.13),transparent 34%),
+    rgba(2,6,23,.26);
+  border-radius:18px;
+  padding:14px;
+}
+.focus-card strong{
+  display:block;
+  font-size:22px;
+  letter-spacing:-.05em;
+}
+.focus-card p{
+  margin:9px 0 0;
+  color:var(--muted);
+  line-height:1.45;
+  font-size:13px;
+}
+.focus-progress{
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.07);
+  overflow:hidden;
+  margin-top:12px;
+}
+.focus-progress span{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+}
+@media(max-width:1100px){
+  .training-report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dev-card.w4,.dev-card.w6,.dev-card.w8{grid-column:span 12}
+}
+@media(max-width:760px){
+  .training-report-grid,
+  .tactical-panel{
+    grid-template-columns:1fr;
+  }
+  .morale-meter{
+    grid-template-columns:1fr;
+  }
+  .morale-score{
+    width:100%;
+    height:auto;
+    min-height:92px;
+  }
+  .fatigue-row{
+    grid-template-columns:34px minmax(0,1fr);
+  }
+  .fatigue-row .badge{
+    grid-column:2;
+    justify-self:start;
+  }
+}
+
+
+
+/* ===================== SECTION: SELECTION ROOM + CHEMISTRY BOARD FINAL ===================== */
+.selection-room{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.selection-bench-list{
+  display:grid;
+  gap:8px;
+  max-height:248px;
+  overflow:auto;
+  padding-right:2px;
+}
+.selection-intel-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.selection-intel-card{
+  border:1px solid var(--line);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.10),transparent 32%),
+    rgba(2,6,23,.26);
+  border-radius:15px;
+  padding:10px;
+  min-height:92px;
+}
+.selection-intel-card small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:1000;
+}
+.selection-intel-card strong{
+  display:block;
+  margin-top:7px;
+  font-size:16px;
+  letter-spacing:-.04em;
+}
+.selection-intel-card span{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.35;
+}
+.selection-advice{
+  border:1px solid rgba(251,191,36,.24);
+  background:
+    radial-gradient(circle at top left,rgba(251,191,36,.12),transparent 36%),
+    rgba(2,6,23,.28);
+  border-radius:16px;
+  padding:11px;
+}
+.selection-advice strong{
+  display:block;
+  font-size:14px;
+}
+.selection-advice span{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+}
+.chemistry-board{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.chemistry-card{
+  border:1px solid var(--line);
+  background:
+    radial-gradient(circle at top right,rgba(52,211,153,.08),transparent 32%),
+    rgba(2,6,23,.24);
+  border-radius:17px;
+  padding:12px;
+  min-height:112px;
+}
+.chemistry-card small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:1000;
+}
+.chemistry-card strong{
+  display:block;
+  margin-top:8px;
+  font-size:18px;
+  letter-spacing:-.04em;
+}
+.chemistry-card span{
+  display:block;
+  color:var(--muted);
+  margin-top:6px;
+  font-size:12px;
+  line-height:1.38;
+}
+.chemistry-card.good{
+  border-color:rgba(52,211,153,.24);
+}
+.chemistry-card.watch{
+  border-color:rgba(251,191,36,.26);
+}
+.chemistry-card.risk{
+  border-color:rgba(251,113,133,.24);
+}
+@media(max-width:1180px){
+  .selection-intel-grid,
+  .chemistry-board{
+    grid-template-columns:1fr;
+  }
+  .selection-bench-list{
+    max-height:none;
+  }
+}
+@media(max-width:760px){
+  .selection-intel-grid,
+  .chemistry-board{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+/* ===================== SECTION: INJURY WATCH RED CROSS RESTORE ===================== */
+.fatigue-icon{
+  position:relative!important;
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  border-radius:12px!important;
+  display:grid!important;
+  place-items:center!important;
+  background:
+    radial-gradient(circle at 35% 20%,rgba(255,255,255,.14),transparent 28%),
+    linear-gradient(180deg,rgba(127,29,29,.94),rgba(69,10,10,.98))!important;
+  border:1px solid rgba(248,113,113,.62)!important;
+  box-shadow:0 0 18px rgba(239,68,68,.28), inset 0 1px 0 rgba(255,255,255,.12)!important;
+  color:transparent!important;
+  font-size:0!important;
+  overflow:hidden!important;
+}
+.fatigue-icon::before,
+.fatigue-icon::after{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  background:#fecaca!important;
+  border-radius:999px!important;
+  box-shadow:0 0 10px rgba(248,113,113,.75)!important;
+}
+.fatigue-icon::before{
+  width:19px!important;
+  height:6px!important;
+}
+.fatigue-icon::after{
+  width:6px!important;
+  height:19px!important;
+}
+.fatigue-row .badge.red{
+  color:#fecdd3!important;
+  border-color:rgba(251,113,133,.34)!important;
+  background:rgba(127,29,29,.24)!important;
+}
+
+
+
+
+/* ===================== SECTION: AURORA CITY FC LANDSCAPE HERO FINAL FIX ===================== */
+/* Final override: keeps the finished header artwork fully visible in Android/iPad landscape app mode. */
+.squad-hero{
+  position:relative!important;
+  overflow:hidden!important;
+  border:1px solid rgba(96,165,250,.22)!important;
+  border-radius:28px!important;
+  background-image:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/4E299D2D-53AC-43F8-A84E-0FD90C2D39AC.png")!important;
+  background-size:100% 100%!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-color:#020617!important;
+  min-height:360px!important;
+  box-shadow:0 18px 60px rgba(0,0,0,.32)!important;
+}
+.squad-hero:before,
+.squad-hero:after{
+  content:none!important;
+  display:none!important;
+  opacity:0!important;
+  background:none!important;
+}
+.squad-hero-content,
+.squad-hero .squad-hero-content,
+.squad-hero .kicker,
+.squad-hero .hero-title,
+.squad-hero .hero-sub,
+.squad-hero .hero-actions,
+.squad-hero .pill,
+.squad-hero h2,
+.squad-hero p{
+  display:none!important;
+  visibility:hidden!important;
+}
+@media (orientation:landscape) and (max-height:520px){
+  .app{
+    padding-top:10px!important;
+  }
+  .squad-hero{
+    min-height:calc(100vw * 0.42)!important;
+    max-height:420px!important;
+  }
+}
+@media (max-width:760px){
+  .squad-hero{
+    min-height:330px!important;
+  }
+}
+
+
+/* ===================== SECTION: SQUAD MORALE MEDIA IMPACT BADGE ===================== */
+.morale-impact{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:12px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+.morale-impact-up{
+  color:#bbf7d0!important;
+  border:1px solid rgba(52,211,153,.34);
+  background:rgba(20,83,45,.24);
+}
+.morale-impact-down{
+  color:#fecdd3!important;
+  border:1px solid rgba(251,113,133,.34);
+  background:rgba(127,29,29,.24);
+}
+.morale-impact-flat{
+  color:#bfdbfe!important;
+  border:1px solid rgba(96,165,250,.30);
+  background:rgba(30,64,175,.22);
+}
+
+</style>
+</head>
+<body>
+<!-- ===================== SECTION: APP SHELL ===================== -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
+      <div>
+        <h1>Aurora City FC</h1>
+        <p>Squad Hub • First Team</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="AuroraCityFC_ManagerDashboard.html">Home</a>
+      <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
+      <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
+      <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media Centre</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training Ground</a>
+      <button class="refresh-btn" id="refreshBtn">Refresh</button>
+    </div>
+  </div>
+</div>
+
+<main class="app">
+  <!-- ===================== SECTION: SQUAD HERO ===================== -->
+  <section class="squad-hero">
+    <div class="squad-hero-content">
+      <div class="squad-hero-logo"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
+      <div class="kicker"><span class="kicker-dot"></span> First-team department</div>
+      <h2>Squad <span>Hub</span></h2>
+      <p>Current holdings, squad form, buy strength, chemistry warnings, club legends and trophy cabinet progress.</p>
+      <div class="hero-actions">
+        <span class="pill" id="lastUpdated">Last updated: loading…</span>
+        <span class="pill">Squad Role: Income + Quality</span>
+        <span class="pill">Manager Rule: No hiding in the reserves</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: SQUAD KPI STRIP ===================== -->
+  <section class="section">
+    <div class="squad-grid">
+      <div class="squad-card w3">
+        <div class="card-title"><h3>Squad Size</h3><span class="badge blue">Holdings</span></div>
+        <div class="squad-kpi"><strong id="squadSize">—</strong><span>unique first-team players</span></div>
+      </div>
+      <div class="squad-card w3">
+        <div class="card-title"><h3>Squad Strength</h3><span class="badge green">Score</span></div>
+        <div class="squad-kpi"><strong id="squadStrength">—</strong><span id="squadStrengthLabel">Loading strength…</span></div>
+      </div>
+      <div class="squad-card w3">
+        <div class="card-title"><h3>Annual Income</h3><span class="badge amber">Cashflow</span></div>
+        <div class="squad-kpi"><strong id="annualIncome">—</strong><span id="monthlyIncome">monthly loading…</span></div>
+      </div>
+      <div class="squad-card w3">
+        <div class="card-title"><h3>Current Division</h3><span class="badge purple">Status</span></div>
+        <div class="squad-kpi"><strong id="currentDivision">—</strong><span id="divisionNote">Checking league table…</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: FIRST TEAM + RELEGATION WATCH ===================== -->
+  <section class="section">
+    <div class="squad-grid">
+      <div class="squad-card w8">
+        <div class="card-title"><h3>First-team formation</h3><span class="badge green">Matchday XI</span></div>
+        <div class="formation-wrap">
+          <div class="formation-toolbar">
+            <p>Real-pitch squad view with a proper football shape. Strongest holdings start in the XI, while the next best names drop into the bench and depth chart.</p>
+            <div class="formation-badges">
+              <span class="badge green">4-3-3 shape</span>
+              <span class="badge">Balanced setup</span>
+            </div>
+          </div>
+          <div class="pitch-scroll"><div class="pitch-board" id="firstTeamPitch"><div class="loading">Setting the team up on the pitch…</div></div></div>
+          <div class="bench-wrap">
+            <div class="bench-header">
+              <div class="card-title" style="margin:0;padding:0;background:none;border:none;box-shadow:none"><h3>Bench & depth chart</h3><span class="badge amber">Rotation options</span></div>
+              <p>Next names after the starting XI. No duplicates from the pitch.</p>
+            </div>
+            <div class="bench-list" id="benchList"><div class="loading">Loading bench…</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="squad-card w4">
+        <div class="card-title"><h3>Selection Room</h3><span class="badge blue">Bench intelligence</span></div>
+        <div class="selection-room">
+          <div class="selection-bench-list" id="relegationWatch"><div class="loading">Checking backup team…</div></div>
+          <div class="selection-intel-grid" id="selectionIntel">
+            <div class="loading">Loading selection intelligence…</div>
+          </div>
+          <div class="selection-advice" id="selectionAdvice">
+            <strong>Assistant Manager Advice</strong>
+            <span>Waiting for squad depth check…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: CHEMISTRY + LEGENDS ===================== -->
+  <section class="section">
+    <div class="squad-grid">
+      <div class="squad-card w6">
+        <div class="card-title"><h3>Dressing Room Chemistry</h3><span class="badge amber">Balance board</span></div>
+        <div class="chemistry-board" id="chemistryBoard">
+          <div class="loading">Loading chemistry board…</div>
+        </div>
+      </div>
+      <div class="squad-card w6">
+        <div class="card-title"><h3>Club legends</h3><span class="badge amber">Hall of Fame</span></div>
+        <div class="legend-grid" id="legendGrid"><div class="loading">Loading legends…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: SQUAD DEVELOPMENT CENTRE ===================== -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>Squad Development Centre</h2>
+        <p>Training, morale, leadership, tactics, fitness and monthly focus from the coaching staff.</p>
+      </div>
+      <span class="badge green">Coach Room</span>
+    </div>
+
+    <div class="squad-development-grid">
+      <div class="dev-card w12">
+        <div class="dev-card-title">
+          <h3>Coach’s Training Report</h3>
+          <span class="badge blue">Training Ground</span>
+        </div>
+        <div class="training-report-grid" id="trainingReportGrid">
+          <div class="loading">Loading training report…</div>
+        </div>
+      </div>
+
+      <div class="dev-card w4">
+        <div class="dev-card-title">
+          <h3>Squad Morale</h3>
+          <span class="badge green" id="moraleBadge">Loading…</span>
+        </div>
+        <div class="morale-meter">
+          <div class="morale-score"><strong id="moraleScore">—</strong></div>
+          <div class="morale-lines" id="moraleLines">
+            <div class="loading">Checking dressing room mood…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dev-card w4">
+        <div class="dev-card-title">
+          <h3>Captain’s Message</h3>
+          <span class="badge amber">Leadership</span>
+        </div>
+        <div class="captain-message" id="captainMessage">
+          <strong>Loading captain…</strong>
+          <p>Waiting for the dressing room update.</p>
+        </div>
+      </div>
+
+      <div class="dev-card w4">
+        <div class="dev-card-title">
+          <h3>Monthly Training Focus</h3>
+          <span class="badge purple">Next Target</span>
+        </div>
+        <div class="focus-card" id="monthlyFocus">
+          <strong>Loading focus…</strong>
+          <p>Checking next trophy target.</p>
+          <div class="focus-progress"><span></span></div>
+        </div>
+      </div>
+
+      <div class="dev-card w6">
+        <div class="dev-card-title">
+          <h3>Tactical Identity</h3>
+          <span class="badge blue">Style of Play</span>
+        </div>
+        <div class="tactical-panel" id="tacticalIdentity">
+          <div class="loading">Loading tactic board…</div>
+        </div>
+      </div>
+
+      <div class="dev-card w6">
+        <div class="dev-card-title">
+          <h3>Injury / Fatigue Watch</h3>
+          <span class="badge red">Medical Room</span>
+        </div>
+        <div class="fatigue-list" id="fatigueWatch">
+          <div class="loading">Checking tired legs…</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: FOOTER ===================== -->
+  <footer class="footer">
+    Aurora City FC • Squad Hub • Sheet engine: AuroraData
+  </footer>
+</main>
+
+<!-- ===================== SECTION: DATA + LOGIC ===================== -->
+
+<!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
+<script src="AuroraFCData.js"></script>
+<script>
+const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+let AURORA_MASTER_CACHE = null;
+let state = { holdings:[], watchlist:[], scout:[], news:[] };
+
+const $ = id => document.getElementById(id);
+const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
+const num = n => Number.isFinite(n) ? `${Math.round(n)}` : '—';
+
+function parseNum(v){
+  if(v === null || v === undefined) return NaN;
+  const s = String(v).replace(/£|,|%/g,'').trim();
+  if(!s) return NaN;
+  return Number(s);
+}
+function cleanTicker(t){ return String(t || '').trim().toUpperCase(); }
+function displayTicker(t){ return String(t || '').replace('LON:',''); }
+function displayName(row){
+  return row.name || row.company_name || row.company || row.Company || row.Name || row.security_name || row.stock_name || row["Company Name"] || row["Security Name"] || displayTicker(row.ticker) || '—';
+}
+function parseYield(row){
+  const direct = row.yield_pct ?? row.Yield ?? row.yield ?? '';
+  if(String(direct).includes('%')) return parseNum(direct) / 100;
+  const directNum = parseNum(direct);
+  if(Number.isFinite(directNum) && directNum > 0 && directNum < 1) return directNum;
+  if(Number.isFinite(directNum) && directNum >= 1) return directNum / 100;
+  const dps = parseNum(row.annual_dps);
+  const price = parseNum(row.live_price);
+  if(Number.isFinite(dps) && Number.isFinite(price) && price > 0) return dps / price;
+  return NaN;
+}
+function impact(row){ return parseNum(row.promotion_impact_score); }
+function buyStrength(row){ return parseNum(row.buy_strength ?? row.buy_strength_score ?? row.BuyStrength ?? row.score ?? row.buy_score); }
+function uniqueByTicker(rows){
+  const map = new Map();
+  rows.forEach(r=>{
+    const t = cleanTicker(r.ticker);
+    if(!t) return;
+    const existing = map.get(t);
+    if(!existing || squadScore(r) > squadScore(existing)) map.set(t,r);
+  });
+  return [...map.values()];
+}
+function annualIncomeFromRow(row){
+  const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
+  if(Number.isFinite(direct)) return direct;
+  const value = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  const y = parseYield(row);
+  if(Number.isFinite(value) && Number.isFinite(y)) return value * y;
+  const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
+  const dps = parseNum(row.annual_dps ?? row.dps ?? row.dividend_per_share);
+  if(Number.isFinite(shares) && Number.isFinite(dps)) return shares * dps;
+  return 0;
+}
+function portfolioAnnualIncome(){
+  return uniqueByTicker(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
+}
+function squadScore(row){
+  const bs = buyStrength(row);
+  const imp = impact(row);
+  if(Number.isFinite(bs) && Number.isFinite(imp)) return (bs * .65) + (imp * .35);
+  if(Number.isFinite(bs)) return bs;
+  if(Number.isFinite(imp)) return imp;
+  return 50;
+}
+function scoreLabel(score){
+  if(score >= 85) return 'Elite';
+  if(score >= 75) return 'Strong';
+  if(score >= 65) return 'Stable';
+  return 'Needs work';
+}
+function currentDivision(annualIncome){
+  if(annualIncome >= 24000) return ['Champions League royalty','£2,000/month mission complete'];
+  if(annualIncome >= 12000) return ['Premier League','£1,000/month income club'];
+  if(annualIncome >= 6000) return ['Championship','£500/month promotion target reached'];
+  if(annualIncome >= 3000) return ['League One','£250/month income base'];
+  if(annualIncome >= 1000) return ['League Two','first trophy banked'];
+  return ['National League project','academy stage'];
+}
+async function fetchTab(tab){
+  if(!AURORA_MASTER_CACHE){
+    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE = await res.json();
+  }
+
+  const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const wanted = normalise(tab);
+
+  function findTab(obj){
+    if(!obj || typeof obj !== 'object') return [];
+    if(Array.isArray(obj[tab])) return obj[tab];
+
+    const key = Object.keys(obj).find(k => normalise(k) === wanted);
+    if(key && Array.isArray(obj[key])) return obj[key];
+
+    return [];
+  }
+
+  let rows = findTab(AURORA_MASTER_CACHE);
+  if(rows.length) return rows;
+
+  for(const wrapper of ['data','tabs','sheets','feeds']){
+    rows = findTab(AURORA_MASTER_CACHE?.[wrapper]);
+    if(rows.length) return rows;
+  }
+
+  return [];
+}
+async function loadData(){
+  const btn = $('refreshBtn');
+  if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
+  try{
+    const [holdings, watchlist, scout, newsA, newsB] = await Promise.all([
+      fetchTab('Holdings'),
+      fetchTab('Watchlist'),
+      fetchTab('AuroraScout').catch(()=>[]),
+      fetchTab('AuroraTimes').catch(()=>[]),
+      fetchTab('Aurora Times').catch(()=>[])
+    ]);
+    const news = newsA.length ? newsA : newsB;
+    state = { holdings, watchlist, scout, news };
+    renderAll();
+  }catch(err){
+    console.error(err);
+    const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
+    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+  }finally{
+    if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
+  }
+}
+function renderRows(rows, target, mode){
+  const el = $(target);
+  if(!el) return;
+  el.innerHTML = rows.length ? rows.map((r,i)=>{
+    const score = squadScore(r);
+    const cls = score < 55 ? 'red' : score < 68 ? 'amber' : '';
+    return `<div class="squad-row">
+      <div class="squad-rank">${i+1}</div>
+      <div><strong>${displayTicker(r.ticker)}</strong><span>${displayName(r)} • income ${money(annualIncomeFromRow(r))}</span></div>
+      <div class="squad-pill ${cls}">${num(score)}</div>
+    </div>`;
+  }).join('') : '<div class="loading">No players found.</div>';
+}
+
+
+function squadStars(score){
+  if(!Number.isFinite(score)) return '';
+  const full = score >= 85 ? 5 : score >= 75 ? 4 : score >= 60 ? 3 : score >= 45 ? 2 : 1;
+  return '★★★★★'.slice(0, full);
+}
+
+function renderFormation(rows, target){
+  const el = $(target);
+  if(!el) return;
+
+  const formationSlots = [
+    { key:'ST', top:14, left:50 },
+    { key:'LW', top:28, left:18 },
+    { key:'RW', top:28, left:82 },
+    { key:'LCM', top:47, left:26 },
+    { key:'CM', top:51, left:50 },
+    { key:'RCM', top:47, left:74 },
+    { key:'LB', top:70, left:18 },
+    { key:'LCB', top:76, left:38 },
+    { key:'RCB', top:76, left:62 },
+    { key:'RB', top:70, left:82 },
+    { key:'GK', top:88, left:50 }
+  ];
+
+  const starters = [...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(0,11);
+  const topTicker = starters[0] ? cleanTicker(starters[0].ticker) : '';
+  const players = formationSlots.map((slot, i) => {
+    const row = starters[i];
+    if(row){
+      const score = Math.round(squadScore(row));
+      const name = displayName(row);
+      return `<div class="pitch-player ${cleanTicker(row.ticker) === topTicker ? 'star-player' : ''}" style="top:${slot.top}%;left:${slot.left}%" title="${displayTicker(row.ticker)} — ${name}">
+        <div class="pitch-player-core">
+          <div class="pitch-pos">${slot.key}</div>
+          <div class="pitch-score">${score}</div>
+          <div class="pitch-shirt">
+            <div class="pitch-shirt-badge"></div>
+            <div class="pitch-shirt-code">${displayTicker(row.ticker)}</div>
+          </div>
+        </div>
+        <span class="pitch-name">${name}</span>
+        <small class="pitch-stars" aria-label="${score} squad rating">${squadStars(score)}</small>
+      </div>`;
+    }
+    return `<div class="pitch-player empty" style="top:${slot.top}%;left:${slot.left}%">
+      <div class="pitch-player-core">
+        <div class="pitch-pos">${slot.key}</div>
+        <div class="pitch-score">--</div>
+        <div class="pitch-shirt"><div class="pitch-shirt-code">OPEN</div></div>
+      </div>
+      <span class="pitch-name">Scout slot</span>
+      <small class="pitch-meta">Future signing</small>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = [
+    '<div class="pitch-mark pitch-outline"></div>',
+    '<div class="pitch-mark pitch-half"></div>',
+    '<div class="pitch-mark pitch-centre-circle"></div>',
+    '<div class="pitch-mark pitch-centre-dot"></div>',
+    '<div class="pitch-mark pitch-box-top"></div>',
+    '<div class="pitch-mark pitch-box-bottom"></div>',
+    '<div class="pitch-mark pitch-six-top"></div>',
+    '<div class="pitch-mark pitch-six-bottom"></div>',
+    players
+  ].join('');
+}
+function renderBench(rows, target){
+  const el = $(target);
+  if(!el) return;
+  const bench = [...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(11,16);
+  el.innerHTML = bench.length ? bench.map(r=>`<div class="bench-card">
+    <div class="bench-shirt-mini"><span>${displayTicker(r.ticker)}</span></div>
+    <div class="bench-meta"><strong>${displayName(r)}</strong><small>${money(annualIncomeFromRow(r))} annual income</small></div>
+    <div class="bench-score">${num(squadScore(r))}</div>
+  </div>`).join('') : '<div class="loading">No bench players yet — once the XI is full, the next strongest holdings appear here.</div>';
+}
+
+function legendImageForTicker(ticker){
+  const t = cleanTicker(ticker).replace('LON:','');
+  const map = {
+    LGEN:'assets/aurora-city-fc/players/lgen_legend.png',
+    MNG:'assets/aurora-city-fc/players/mng_legend.png',
+    SUPR:'assets/aurora-city-fc/players/supr_legend.png',
+    SDLF:'assets/aurora-city-fc/players/sdlf_legend.png',
+    STLF:'assets/aurora-city-fc/players/stlf_legend.png'
+  };
+  return map[t] || `assets/aurora-city-fc/players/${t.toLowerCase()}_legend.png`;
+}
+function legendRole(ticker){
+  const t = cleanTicker(ticker).replace('LON:','');
+  const map = {
+    LGEN:'Club Captain',
+    MNG:'Vice Captain',
+    SUPR:'Income Legend',
+    SDLF:'Midfield General',
+    STLF:'Midfield General'
+  };
+  return map[t] || 'Club Legend';
+}
+function chooseLegends(rows){
+  const sorted = [...rows].sort((a,b)=>(annualIncomeFromRow(b) || squadScore(b)) - (annualIncomeFromRow(a) || squadScore(a)));
+  const preferred = ['LGEN','MNG','SUPR','SDLF','STLF'];
+  const picked = [];
+  preferred.forEach(t=>{
+    const row = sorted.find(r=>cleanTicker(r.ticker).replace('LON:','') === t);
+    if(row && !picked.some(p=>cleanTicker(p.ticker) === cleanTicker(row.ticker))) picked.push(row);
+  });
+  sorted.forEach(row=>{
+    if(picked.length >= 4) return;
+    if(!picked.some(p=>cleanTicker(p.ticker) === cleanTicker(row.ticker))) picked.push(row);
+  });
+  return picked.slice(0,4);
+}
+function renderLegends(rows){
+  const legends = chooseLegends(rows);
+  $('legendGrid').innerHTML = legends.length ? legends.map((r,i)=>{
+    const ticker = displayTicker(r.ticker);
+    const name = displayName(r);
+    const img = legendImageForTicker(r.ticker);
+    const role = legendRole(r.ticker);
+    return `<div class="legend-tile">
+      <div class="legend-player-img">
+        <img src="${img}" alt="${ticker} legend portrait">
+      </div>
+      <div class="legend-player-body">
+        <div class="legend-role">${role}</div>
+        <strong>${ticker}</strong>
+        <span>${name}</span>
+        <span class="legend-income">Annual income ${money(annualIncomeFromRow(r))}</span>
+      </div>
+    </div>`;
+  }).join('') : '<div class="loading">No legends found yet.</div>';
+}
+function buildTrophies(annualIncome){
+  const base = "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/cups/";
+  return [
+    {
+      icon:'🏆',
+      title:'League One Promotion',
+      target:3000,
+      monthlyTarget:250,
+      image:base + 'league1.png',
+      detail:'First proper breakthrough. The club is officially moving.'
+    },
+    {
+      icon:'🏆',
+      title:'Championship Promotion',
+      target:6000,
+      monthlyTarget:500,
+      image:base + 'championship.png',
+      detail:'Serious progress. Aurora City becomes a proper force.'
+    },
+    {
+      icon:'👑',
+      title:'Premier League Champions',
+      target:12000,
+      monthlyTarget:1000,
+      image:base + 'premier_league.png',
+      detail:'Elite domestic level. The club has arrived.'
+    },
+    {
+      icon:'🏆',
+      title:'European Champions',
+      target:18000,
+      monthlyTarget:1500,
+      image:base + 'european.png',
+      detail:'Big club energy. European nights unlocked.'
+    },
+    {
+      icon:'🏆',
+      title:'Champions League Winners',
+      target:24000,
+      monthlyTarget:2000,
+      image:base + 'champions_league.png',
+      detail:'Final boss. The long-term Aurora dynasty mission.'
+    }
+  ];
+}
+function trophyStatus(progress, done){
+  if(done) return ['Unlocked','unlocked'];
+  if(progress >= 75) return ['In Reach','in-reach'];
+  if(progress >= 40) return ['Building','locked'];
+  return ['Locked Target','locked'];
+}
+function renderTrophies(annualIncome){
+  const trophies = buildTrophies(annualIncome);
+  const monthlyIncome = annualIncome / 12;
+  const unlocked = trophies.filter(t=>annualIncome >= t.target).length;
+  const next = trophies.find(t=>annualIncome < t.target);
+  const trophyCount = $('trophyCount');
+  const grid = $('trophyGrid');
+
+  if(trophyCount) trophyCount.textContent = `${unlocked}/${trophies.length} unlocked`;
+  if($('honoursMonthlyIncome')) $('honoursMonthlyIncome').textContent = money(monthlyIncome);
+  if($('honoursNextUnlock')) $('honoursNextUnlock').textContent = next ? next.title : 'Dynasty complete';
+  if($('honoursAmountLeft')) $('honoursAmountLeft').textContent = next ? `${money(Math.max(0,next.target-annualIncome))} annual` : 'All honours secured';
+
+  if(!grid) return;
+
+  grid.innerHTML = trophies.map(t=>{
+    const done = annualIncome >= t.target;
+    const progress = Math.min(100, Math.max(0, (annualIncome / t.target) * 100));
+    const gap = Math.max(0,t.target-annualIncome);
+    const [statusText,statusClass] = trophyStatus(progress, done);
+    const cardClass = done ? 'unlocked' : progress >= 75 ? 'in-reach' : 'locked';
+
+    return `<div class="honours-trophy ${cardClass}">
+      <div>
+        <div class="trophy-image-stage">
+          <img src="${t.image}" alt="${t.title} trophy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+          <div class="trophy-placeholder">${done ? t.icon : '🔒'}</div>
+        </div>
+        <div class="honours-trophy-body">
+          <strong>${t.title}</strong>
+          <span>${t.detail}</span>
+          <div class="honours-target-row"><span>Target</span><b>${money(t.monthlyTarget)}/month</b></div>
+          <div class="honours-target-row"><span>Progress</span><b>${Math.round(progress)}%</b></div>
+          <div class="honours-progress"><span style="width:${progress}%"></span></div>
+          <span class="honours-status ${statusClass}">${statusText}</span>
+          <span>${done ? 'Honour secured.' : money(gap) + ' annual income to unlock.'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSelectionIntel(rows, backups){
+  const el = $('selectionIntel');
+  const advice = $('selectionAdvice');
+  if(!el) return;
+
+  const sorted = [...rows].sort((a,b)=>squadScore(b)-squadScore(a));
+  const starters = sorted.slice(0,11);
+  const bench = sorted.slice(11,16);
+  const weakestStarter = [...starters].sort((a,b)=>squadScore(a)-squadScore(b))[0];
+  const bestBackup = backups[0] || bench[0] || sorted[11] || null;
+  const benchIncome = [...bench, ...backups].filter(Boolean).sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a))[0] || null;
+  const pressure = bestBackup && weakestStarter ? Math.round(squadScore(bestBackup) - squadScore(weakestStarter)) : 0;
+  const depthAvg = backups.length ? backups.reduce((s,r)=>s+squadScore(r),0)/backups.length : 0;
+
+  el.innerHTML = `
+    <div class="selection-intel-card">
+      <small>Next to Start</small>
+      <strong>${bestBackup ? displayTicker(bestBackup.ticker) : '—'}</strong>
+      <span>${bestBackup ? `${displayName(bestBackup)} is closest to breaking into the matchday group.` : 'No backup pressure yet.'}</span>
+    </div>
+    <div class="selection-intel-card">
+      <small>Best Bench Income</small>
+      <strong>${benchIncome ? displayTicker(benchIncome.ticker) : '—'}</strong>
+      <span>${benchIncome ? `${money(annualIncomeFromRow(benchIncome))} annual income contribution from the wider squad.` : 'Income depth still building.'}</span>
+    </div>
+    <div class="selection-intel-card">
+      <small>Promotion Watch</small>
+      <strong>${bestBackup ? `${Math.round(squadScore(bestBackup))}/100` : '—'}</strong>
+      <span>${pressure > 0 ? 'Backup pressure is strong — review the weakest starter.' : 'Bench is applying pressure but not forcing a change yet.'}</span>
+    </div>
+    <div class="selection-intel-card">
+      <small>At Risk Starter</small>
+      <strong>${weakestStarter ? displayTicker(weakestStarter.ticker) : '—'}</strong>
+      <span>${weakestStarter ? `${displayName(weakestStarter)} is the lowest-rated starter today.` : 'Starting XI is stable.'}</span>
+    </div>`;
+
+  if(advice){
+    const depthText = depthAvg >= 70 ? 'Backup depth is strong. You can rotate without weakening the squad.' :
+      depthAvg >= 55 ? 'Backup depth is useful, but the First XI still carries the main quality.' :
+      'Backup depth is thin. Build the bench before making aggressive changes.';
+    advice.innerHTML = `<strong>Assistant Manager Advice</strong><span>${depthText} ${pressure > 0 ? 'One backup is pushing hard for promotion.' : 'No urgent selection chaos today.'}</span>`;
+  }
+}
+
+function renderBackupTeam(rows, target){
+  const el = $(target);
+  if(!el) return;
+  const backups = [...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(16,21);
+  if(!backups.length){
+    el.innerHTML = '<div class="loading">No backup team yet — current squad depth is already being used by the XI and bench.</div>';
+    renderSelectionIntel(rows, backups);
+    return;
+  }
+  renderRows(backups.slice(0,5), target, 'top');
+  renderSelectionIntel(rows, backups);
+}
+
+function renderChemistry(rows){
+  const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
+  const low = rows.filter(r=>squadScore(r)<60).length;
+  const sorted = [...rows].sort((a,b)=>squadScore(b)-squadScore(a));
+  const starters = sorted.slice(0,11);
+  const bench = sorted.slice(11,16);
+  const concentration = rows.filter(r=>String(`${r.chemistry_risk||''} ${r.sector||''} ${r.role||''}`).toLowerCase().includes('concentration')).length;
+  const leadership = starters.length ? starters.reduce((s,r)=>s+squadScore(r),0)/starters.length : avg;
+  const incomeTotal = rows.reduce((s,r)=>s+annualIncomeFromRow(r),0);
+  const incomeBalance = incomeTotal >= 6000 ? 'Strong' : incomeTotal >= 3000 ? 'Building' : 'Early Stage';
+  const sectors = {};
+  rows.forEach(r=>{
+    const key = String(r.sector || r.category || r.role || 'Mixed').trim() || 'Mixed';
+    sectors[key] = (sectors[key] || 0) + 1;
+  });
+  const largestSector = Object.entries(sectors).sort((a,b)=>b[1]-a[1])[0];
+  const sectorStatus = largestSector && largestSector[1] > Math.max(3, rows.length * .35) ? 'Watch' : 'Balanced';
+  const benchAvg = bench.length ? bench.reduce((s,r)=>s+squadScore(r),0)/bench.length : 0;
+  const benchPressure = benchAvg >= 72 ? 'High' : benchAvg >= 60 ? 'Medium' : 'Low';
+  const risk = low >= 4 ? 'High' : low >= 2 || concentration ? 'Medium' : 'Low';
+
+  const board = $('chemistryBoard');
+  if(board){
+    board.innerHTML = `
+      <div class="chemistry-card ${avg>=70?'good':'watch'}">
+        <small>Chemistry Score</small>
+        <strong>${Math.round(avg)}/100 • ${scoreLabel(avg)}</strong>
+        <span>${avg >= 75 ? 'The squad balance is strong. Keep improving quality without chasing chaos.' : 'Stable shape, but a few upgrades would improve the dressing room.'}</span>
+      </div>
+      <div class="chemistry-card ${leadership>=72?'good':'watch'}">
+        <small>Leadership Core</small>
+        <strong>${Math.round(leadership)}/100</strong>
+        <span>Starting XI leadership quality based on the strongest holdings.</span>
+      </div>
+      <div class="chemistry-card ${incomeTotal>=6000?'good':'watch'}">
+        <small>Income Balance</small>
+        <strong>${incomeBalance}</strong>
+        <span>${money(incomeTotal)} annual squad income across the wider group.</span>
+      </div>
+      <div class="chemistry-card ${sectorStatus==='Balanced'?'good':'watch'}">
+        <small>Sector Balance</small>
+        <strong>${sectorStatus}</strong>
+        <span>${largestSector ? `${largestSector[0]} is the biggest group with ${largestSector[1]} holding(s).` : 'No sector data found.'}</span>
+      </div>
+      <div class="chemistry-card ${benchPressure==='High'?'good':'watch'}">
+        <small>Bench Pressure</small>
+        <strong>${benchPressure}</strong>
+        <span>The bench average is ${Math.round(benchAvg || 0)}/100. ${benchPressure==='High'?'Selection pressure is healthy.':'First XI still controls the shirt.'}</span>
+      </div>
+      <div class="chemistry-card ${risk==='Low'?'good':risk==='Medium'?'watch':'risk'}">
+        <small>Dressing Room Risk</small>
+        <strong>${risk}</strong>
+        <span>${low ? `${low} holding(s) need review.` : 'No major form concerns.'} ${concentration ? `${concentration} concentration flag(s).` : 'No major concentration flags.'}</span>
+      </div>`;
+  }
+
+  if($('chemistryScore')) $('chemistryScore').textContent = `${Math.round(avg)}/100 • ${scoreLabel(avg)}`;
+  if($('chemistryNote')) $('chemistryNote').textContent = avg >= 75
+    ? 'The squad balance is strong. Keep improving quality without chasing chaos.'
+    : 'The squad is stable, but a few stronger signings would improve the team shape.';
+  if($('concentrationStatus')) $('concentrationStatus').textContent = concentration ? `${concentration} watch flags` : 'No major flags';
+  if($('concentrationNote')) $('concentrationNote').textContent = low
+    ? `${low} holding(s) need review. Check weak scores before adding fresh risk.`
+    : 'No major dressing-room issues. Squad is balanced enough to keep building.';
+}
+
+function nextTrophyInfo(annualIncome){
+  const targets = [
+    { title:'League One Promotion', annual:3000, monthly:250 },
+    { title:'Championship Promotion', annual:6000, monthly:500 },
+    { title:'Premier League Champions', annual:12000, monthly:1000 },
+    { title:'European Champions', annual:18000, monthly:1500 },
+    { title:'Champions League Winners', annual:24000, monthly:2000 }
+  ];
+  return targets.find(t=>annualIncome < t.annual) || { title:'Dynasty complete', annual:annualIncome, monthly:annualIncome/12 };
+}
+function strongestRow(rows){
+  return [...rows].sort((a,b)=>squadScore(b)-squadScore(a))[0] || null;
+}
+function weakestRow(rows){
+  return [...rows].sort((a,b)=>squadScore(a)-squadScore(b))[0] || null;
+}
+function bestIncomeRow(rows){
+  return [...rows].sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a))[0] || null;
+}
+function moraleRating(avg, annualIncome, lowCount){
+  let score = Math.round(Math.max(35, Math.min(99, (avg || 50) + Math.min(12, annualIncome / 2200) - (lowCount * 3))));
+  let label = score >= 82 ? 'Excellent' : score >= 72 ? 'High' : score >= 62 ? 'Stable' : 'Needs Lift';
+  return { score, label };
+}
+function val(row,...keys){
+  for(const k of keys){
+    if(row && row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return row[k];
+  }
+  return '';
+}
+function isPublishedNews(row){
+  const status = String(val(row,'Status','status')).trim().toLowerCase();
+  return !status || status === 'published';
+}
+function mediaMoraleImpact(){
+  const news = Array.isArray(state.news) ? state.news.filter(isPublishedNews).slice(0,8) : [];
+  if(!news.length) return 0;
+  return news.reduce((sum,row)=>{
+    const direct = parseNum(val(
+      row,
+      'Morale_Impact',
+      'morale_impact',
+      'Morale Impact',
+      'morale impact',
+      'Squad_Morale_Impact',
+      'squad_morale_impact'
+    ));
+    if(Number.isFinite(direct)) return sum + direct;
+
+    const text = String(`${val(row,'Sentiment','sentiment')} ${val(row,'Category','category')} ${val(row,'Headline','headline')} ${val(row,'Summary','summary')}`).toLowerCase();
+
+    if(/positive|upgrade|buyback|dividend|strong|boost|win|beat|higher|growth|excellent|good/.test(text)) return sum + 1;
+    if(/negative|cut|warning|drop|risk|weak|loss|fall|down|pressure|bad|poor/.test(text)) return sum - 1;
+
+    return sum;
+  },0);
+}
+function mediaImpactLabel(n){
+  if(n > 0) return `<strong class="morale-impact morale-impact-up">+${n} media boost</strong>`;
+  if(n < 0) return `<strong class="morale-impact morale-impact-down">${n} media pressure</strong>`;
+  return `<strong class="morale-impact morale-impact-flat">0 media effect</strong>`;
+}
+function renderTrainingReport(rows, annualIncome){
+  const el = $('trainingReportGrid');
+  if(!el) return;
+  if(!rows.length){
+    el.innerHTML = '<div class="loading">No squad data available for training report.</div>';
+    return;
+  }
+  const topTrainer = strongestRow(rows);
+  const incomeLeader = bestIncomeRow(rows);
+  const needsWork = weakestRow(rows);
+  const next = nextTrophyInfo(annualIncome);
+  const topScore = topTrainer ? Math.round(squadScore(topTrainer)) : 0;
+  const weakScore = needsWork ? Math.round(squadScore(needsWork)) : 0;
+
+  el.innerHTML = `
+    <div class="training-tile">
+      <small>Top Trainer</small>
+      <strong>${topTrainer ? displayTicker(topTrainer.ticker) : '—'}</strong>
+      <span>${topTrainer ? `${displayName(topTrainer)} is sharp in training with a ${topScore}/100 squad rating.` : 'No standout yet.'}</span>
+    </div>
+    <div class="training-tile">
+      <small>Income Leader</small>
+      <strong>${incomeLeader ? displayTicker(incomeLeader.ticker) : '—'}</strong>
+      <span>${incomeLeader ? `${money(annualIncomeFromRow(incomeLeader))} annual income. Reliable senior-pro cashflow.` : 'No income leader found.'}</span>
+    </div>
+    <div class="training-tile">
+      <small>Needs Extra Work</small>
+      <strong>${needsWork ? displayTicker(needsWork.ticker) : '—'}</strong>
+      <span>${needsWork ? `${displayName(needsWork)} is at ${weakScore}/100. Keep on review, not panic mode.` : 'No weak point found.'}</span>
+    </div>
+    <div class="training-tile">
+      <small>Coach Verdict</small>
+      <strong>${next.title}</strong>
+      <span>Training focus is closing the gap to ${money(next.monthly)}/month. Keep the starting XI disciplined.</span>
+    </div>`;
+}
+function renderMoraleCentre(rows, annualIncome){
+  const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
+  const low = rows.filter(r=>squadScore(r)<60).length;
+  const baseMorale = moraleRating(avg, annualIncome, low);
+  const mediaImpact = Math.round(mediaMoraleImpact());
+  const finalScore = Math.max(0, Math.min(100, baseMorale.score + mediaImpact));
+  const label = finalScore >= 82 ? 'Excellent' : finalScore >= 72 ? 'High' : finalScore >= 62 ? 'Stable' : 'Needs Lift';
+  if($('moraleScore')) $('moraleScore').textContent = `${finalScore}`;
+  if($('moraleBadge')) $('moraleBadge').textContent = label;
+  const pressure = low >= 4 ? 'High' : low >= 2 ? 'Medium' : 'Controlled';
+  const mood = finalScore >= 82 ? 'Buzzing' : finalScore >= 72 ? 'Confident' : finalScore >= 62 ? 'Calm' : 'Flat';
+  const leader = strongestRow(rows);
+  if($('moraleLines')){
+    $('moraleLines').innerHTML = `
+      <div class="morale-line"><span>Dressing room mood</span><strong>${mood}</strong></div>
+      <div class="morale-line"><span>Media effect</span>${mediaImpactLabel(mediaImpact)}</div>
+      <div class="morale-line"><span>Base morale</span><strong>${baseMorale.score}</strong></div>
+      <div class="morale-line"><span>Pressure level</span><strong>${pressure}</strong></div>
+      <div class="morale-line"><span>Squad leader</span><strong>${leader ? displayTicker(leader.ticker) : '—'}</strong></div>`;
+  }
+}
+function renderCaptainMessage(rows, annualIncome){
+  const captain = bestIncomeRow(rows) || strongestRow(rows);
+  const next = nextTrophyInfo(annualIncome);
+  const monthlyIncome = annualIncome / 12;
+  if(!$('captainMessage')) return;
+  $('captainMessage').innerHTML = `
+    <strong>${captain ? displayTicker(captain.ticker) : 'Captain'} speaks</strong>
+    <p>“We’re sitting at ${money(monthlyIncome)} a month. The next job is ${next.title}. Keep standards high, no passengers, and keep building toward ${money(next.monthly)}/month.”</p>`;
+}
+function renderMonthlyFocus(annualIncome){
+  const next = nextTrophyInfo(annualIncome);
+  const progress = next.annual ? Math.min(100, Math.max(0, (annualIncome / next.annual) * 100)) : 100;
+  if(!$('monthlyFocus')) return;
+  $('monthlyFocus').innerHTML = `
+    <strong>${next.title}</strong>
+    <p>This month’s focus is to improve recurring income and move closer to the ${money(next.monthly)}/month unlock.</p>
+    <div class="focus-progress"><span style="width:${progress}%"></span></div>
+    <p>${Math.round(progress)}% complete • ${money(Math.max(0,next.annual-annualIncome))} annual income still needed.</p>`;
+}
+function renderTacticalIdentity(rows, annualIncome){
+  const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
+  const monthly = annualIncome / 12;
+  const tactic = monthly >= 1000 ? 'European Income Press' : monthly >= 500 ? 'Promotion Push 4-3-3' : 'Dividend Press 4-3-3';
+  const style = avg >= 75 ? 'Controlled possession, strong senior core, income-first discipline.' : 'Balanced build-up, cautious risk, improve weak positions first.';
+  const weakness = rows.filter(r=>squadScore(r)<60).length ? 'A few players need form recovery.' : 'No major weak point screaming today.';
+  if(!$('tacticalIdentity')) return;
+  $('tacticalIdentity').innerHTML = `
+    <div class="tactic-box">
+      <small>Current tactic</small>
+      <strong>${tactic}</strong>
+      <span>${style}</span>
+    </div>
+    <div class="tactic-box">
+      <small>Team weakness</small>
+      <strong>${weakness.includes('few') ? 'Depth Watch' : 'Stable Shape'}</strong>
+      <span>${weakness}</span>
+    </div>
+    <div class="tactic-box">
+      <small>Attacking plan</small>
+      <strong>Grow Monthly Income</strong>
+      <span>Use new contributions to push the next honours unlock without wrecking the team balance.</span>
+    </div>
+    <div class="tactic-box">
+      <small>Defensive plan</small>
+      <strong>No Panic Transfers</strong>
+      <span>Review underperformers, but protect the long-term compounding structure.</span>
+    </div>`;
+}
+function renderFatigueWatch(rows){
+  const el = $('fatigueWatch');
+  if(!el) return;
+  const watch = [...rows].sort((a,b)=>squadScore(a)-squadScore(b)).slice(0,4);
+  if(!watch.length){
+    el.innerHTML = '<div class="loading">No fatigue watch today.</div>';
+    return;
+  }
+  el.innerHTML = watch.map(r=>{
+    const score = Math.round(squadScore(r));
+    const status = score < 55 ? 'Medical Review' : score < 65 ? 'Needs Rest' : 'Monitor';
+    const cls = score < 55 ? 'red' : score < 65 ? 'amber' : 'blue';
+    return `<div class="fatigue-row">
+      <div class="fatigue-icon" aria-label="medical red cross"></div>
+      <div><strong>${displayTicker(r.ticker)}</strong><span>${displayName(r)} • rating ${score}/100</span></div>
+      <span class="badge ${cls}">${status}</span>
+    </div>`;
+  }).join('');
+}
+function renderSquadDevelopment(rows, annualIncome){
+  renderTrainingReport(rows, annualIncome);
+  renderMoraleCentre(rows, annualIncome);
+  renderCaptainMessage(rows, annualIncome);
+  renderMonthlyFocus(annualIncome);
+  renderTacticalIdentity(rows, annualIncome);
+  renderFatigueWatch(rows);
+}
+
+function renderAll(){
+  if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
+
+  const rows = uniqueByTicker(state.holdings).sort((a,b)=>squadScore(b)-squadScore(a));
+  const annualIncome = portfolioAnnualIncome();
+  const monthly = annualIncome / 12;
+  const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
+  const [division, divisionNote] = currentDivision(annualIncome);
+
+  $('squadSize').textContent = rows.length;
+  $('squadStrength').textContent = `${Math.round(avg)}/100`;
+  $('squadStrengthLabel').textContent = scoreLabel(avg);
+  $('annualIncome').textContent = money(annualIncome);
+  $('monthlyIncome').textContent = `${money(monthly)} monthly`;
+  $('currentDivision').textContent = division;
+  $('divisionNote').textContent = divisionNote;
+
+  renderFormation(rows,'firstTeamPitch');
+  renderBench(rows,'benchList');
+  renderBackupTeam(rows,'relegationWatch');
+  renderChemistry(rows);
+  renderSquadDevelopment(rows, annualIncome);
+  renderLegends(rows);
+}
+$('refreshBtn')?.addEventListener('click', loadData);
+loadData();
+</script>
+
+<!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => {
+      console.warn('Aurora City FC service worker registration failed:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
