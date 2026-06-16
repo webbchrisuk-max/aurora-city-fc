@@ -1,0 +1,2737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Aurora City FC — Transfer Centre</title>
+
+<!-- ===================== SECTION: ROOT THEME ===================== -->
+<style>
+
+
+:root{
+  --bg:#030712;
+  --panel:#07111f;
+  --panel2:#0b1730;
+  --card:#0d1b34;
+  --card2:#102345;
+  --line:rgba(148,163,184,.18);
+  --line2:rgba(96,165,250,.26);
+  --txt:#e5eefc;
+  --muted:#93a4bd;
+  --soft:#cbd5e1;
+  --blue:#60a5fa;
+  --cyan:#22d3ee;
+  --green:#34d399;
+  --amber:#fbbf24;
+  --red:#fb7185;
+  --purple:#a78bfa;
+  --shadow:0 18px 55px rgba(0,0,0,.35);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.28) 0%,rgba(2,6,23,.70) 54%,rgba(2,6,23,.94) 100%),
+    radial-gradient(circle at top left,rgba(34,211,238,.22),transparent 34%),
+    radial-gradient(circle at top right,rgba(96,165,250,.20),transparent 36%),
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%201600%20900%27%20preserveAspectRatio%3D%27none%27%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%27light%27%20cx%3D%2750%25%27%20cy%3D%2745%25%27%20r%3D%2750%25%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%237dd3fc%27%20stop-opacity%3D%27.35%27/%3E%3Cstop%20offset%3D%27.45%27%20stop-color%3D%27%230ea5e9%27%20stop-opacity%3D%27.08%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23020617%27%20stop-opacity%3D%270%27/%3E%3C/radialGradient%3E%0A%3ClinearGradient%20id%3D%27pitch%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23031226%27%20stop-opacity%3D%270%27/%3E%3Cstop%20offset%3D%27.72%27%20stop-color%3D%27%23041525%27%20stop-opacity%3D%27.35%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23052e16%27%20stop-opacity%3D%27.52%27/%3E%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%271600%27%20height%3D%27900%27%20fill%3D%27%23020617%27/%3E%0A%3Cellipse%20cx%3D%27800%27%20cy%3D%27520%27%20rx%3D%27820%27%20ry%3D%27350%27%20fill%3D%27%23071b31%27%20opacity%3D%27.65%27/%3E%0A%3Cpath%20d%3D%27M0%20430%20Q800%20240%201600%20430%20L1600%20720%20Q800%20560%200%20720Z%27%20fill%3D%27%2305111f%27%20opacity%3D%27.74%27/%3E%0A%3Cpath%20d%3D%27M0%20680%20Q800%20520%201600%20680%20L1600%20900%20L0%20900Z%27%20fill%3D%27url%28%23pitch%29%27/%3E%0A%3Cg%20opacity%3D%27.32%27%20stroke%3D%27%2338bdf8%27%20stroke-width%3D%272%27%3E%0A%3Cpath%20d%3D%27M80%20635%20Q800%20510%201520%20635%27/%3E%0A%3Cpath%20d%3D%27M150%20705%20Q800%20590%201450%20705%27/%3E%0A%3Cpath%20d%3D%27M300%20780%20Q800%20700%201300%20780%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.2%27%20stroke%3D%27%23e0f2fe%27%3E%0A%3Cpath%20d%3D%27M250%20350%20L420%20120%20M1350%20350%20L1180%20120%20M520%20320%20L620%2080%20M1080%20320%20L980%2080%27/%3E%0A%3C/g%3E%0A%3Cg%3E%0A%3Ccircle%20cx%3D%27410%27%20cy%3D%27118%27%20r%3D%2795%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%27620%27%20cy%3D%2782%27%20r%3D%27110%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%27980%27%20cy%3D%2782%27%20r%3D%27110%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%271190%27%20cy%3D%27118%27%20r%3D%2795%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.65%27%20fill%3D%27%23e0f2fe%27%3E%0A%3Ccircle%20cx%3D%27410%27%20cy%3D%27120%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%27430%27%20cy%3D%27116%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27390%27%20cy%3D%27116%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%27620%27%20cy%3D%2784%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%27645%27%20cy%3D%2782%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27595%27%20cy%3D%2782%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%27980%27%20cy%3D%2784%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%271005%27%20cy%3D%2782%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27955%27%20cy%3D%2782%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%271190%27%20cy%3D%27120%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%271210%27%20cy%3D%27116%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%271170%27%20cy%3D%27116%27%20r%3D%274%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.18%27%20fill%3D%27%2393c5fd%27%3E%0A%3Crect%20x%3D%270%27%20y%3D%27360%27%20width%3D%271600%27%20height%3D%2770%27/%3E%0A%3Cpath%20d%3D%27M0%20362%20h1600%20v20%20h-1600z%27/%3E%0A%3C/g%3E%0A%3C/svg%3E") center top/cover fixed no-repeat,
+    linear-gradient(180deg,#020617 0%,#030712 48%,#020617 100%);
+  color:var(--txt);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+
+/* ===================== SECTION: PAGE SHELL ===================== */
+.app{
+  width:min(1540px,100%);
+  margin:0 auto;
+  padding:18px 14px 90px;
+}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  margin:-18px -14px 18px;
+  padding:12px 14px;
+  backdrop-filter:blur(18px);
+  background:rgba(3,7,18,.86);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  width:min(1540px,100%);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.crest{
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+  width:42px;height:42px;
+  border-radius:16px;
+  background:
+    linear-gradient(135deg,rgba(34,211,238,.95),rgba(96,165,250,.55)),
+    radial-gradient(circle at 35% 25%,#fff,transparent 23%);
+  display:grid;place-items:center;
+  box-shadow:0 0 28px rgba(34,211,238,.25);
+  font-weight:900;
+  letter-spacing:-.06em;
+  color:#03111f;
+}
+.brand h1{font-size:15px;margin:0;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand p{font-size:11px;color:var(--muted);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav{
+  display:flex;
+  gap:7px;
+  overflow:auto;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav a,.refresh-btn{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  color:var(--soft);
+  padding:8px 10px;
+  border-radius:999px;
+  font-size:12px;
+  white-space:nowrap;
+}
+.refresh-btn{cursor:pointer;color:var(--cyan)}
+
+/* ===================== SECTION: HERO ===================== */
+.hero{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line2);
+  background:
+    linear-gradient(135deg,rgba(8,47,73,.72),rgba(15,23,42,.92)),
+    radial-gradient(circle at 78% 18%,rgba(34,211,238,.20),transparent 36%),
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%201600%20900%27%20preserveAspectRatio%3D%27none%27%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%27light%27%20cx%3D%2750%25%27%20cy%3D%2745%25%27%20r%3D%2750%25%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%237dd3fc%27%20stop-opacity%3D%27.35%27/%3E%3Cstop%20offset%3D%27.45%27%20stop-color%3D%27%230ea5e9%27%20stop-opacity%3D%27.08%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23020617%27%20stop-opacity%3D%270%27/%3E%3C/radialGradient%3E%0A%3ClinearGradient%20id%3D%27pitch%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23031226%27%20stop-opacity%3D%270%27/%3E%3Cstop%20offset%3D%27.72%27%20stop-color%3D%27%23041525%27%20stop-opacity%3D%27.35%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23052e16%27%20stop-opacity%3D%27.52%27/%3E%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%271600%27%20height%3D%27900%27%20fill%3D%27%23020617%27/%3E%0A%3Cellipse%20cx%3D%27800%27%20cy%3D%27520%27%20rx%3D%27820%27%20ry%3D%27350%27%20fill%3D%27%23071b31%27%20opacity%3D%27.65%27/%3E%0A%3Cpath%20d%3D%27M0%20430%20Q800%20240%201600%20430%20L1600%20720%20Q800%20560%200%20720Z%27%20fill%3D%27%2305111f%27%20opacity%3D%27.74%27/%3E%0A%3Cpath%20d%3D%27M0%20680%20Q800%20520%201600%20680%20L1600%20900%20L0%20900Z%27%20fill%3D%27url%28%23pitch%29%27/%3E%0A%3Cg%20opacity%3D%27.32%27%20stroke%3D%27%2338bdf8%27%20stroke-width%3D%272%27%3E%0A%3Cpath%20d%3D%27M80%20635%20Q800%20510%201520%20635%27/%3E%0A%3Cpath%20d%3D%27M150%20705%20Q800%20590%201450%20705%27/%3E%0A%3Cpath%20d%3D%27M300%20780%20Q800%20700%201300%20780%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.2%27%20stroke%3D%27%23e0f2fe%27%3E%0A%3Cpath%20d%3D%27M250%20350%20L420%20120%20M1350%20350%20L1180%20120%20M520%20320%20L620%2080%20M1080%20320%20L980%2080%27/%3E%0A%3C/g%3E%0A%3Cg%3E%0A%3Ccircle%20cx%3D%27410%27%20cy%3D%27118%27%20r%3D%2795%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%27620%27%20cy%3D%2782%27%20r%3D%27110%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%27980%27%20cy%3D%2782%27%20r%3D%27110%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3Ccircle%20cx%3D%271190%27%20cy%3D%27118%27%20r%3D%2795%27%20fill%3D%27url%28%23light%29%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.65%27%20fill%3D%27%23e0f2fe%27%3E%0A%3Ccircle%20cx%3D%27410%27%20cy%3D%27120%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%27430%27%20cy%3D%27116%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27390%27%20cy%3D%27116%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%27620%27%20cy%3D%2784%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%27645%27%20cy%3D%2782%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27595%27%20cy%3D%2782%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%27980%27%20cy%3D%2784%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%271005%27%20cy%3D%2782%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%27955%27%20cy%3D%2782%27%20r%3D%274%27/%3E%0A%3Ccircle%20cx%3D%271190%27%20cy%3D%27120%27%20r%3D%275%27/%3E%3Ccircle%20cx%3D%271210%27%20cy%3D%27116%27%20r%3D%274%27/%3E%3Ccircle%20cx%3D%271170%27%20cy%3D%27116%27%20r%3D%274%27/%3E%0A%3C/g%3E%0A%3Cg%20opacity%3D%27.18%27%20fill%3D%27%2393c5fd%27%3E%0A%3Crect%20x%3D%270%27%20y%3D%27360%27%20width%3D%271600%27%20height%3D%2770%27/%3E%0A%3Cpath%20d%3D%27M0%20362%20h1600%20v20%20h-1600z%27/%3E%0A%3C/g%3E%0A%3C/svg%3E") center 42%/cover no-repeat;
+  border-radius:calc(var(--radius) + 4px);
+  box-shadow:var(--shadow);
+  padding:20px;
+}
+.hero-card:after{
+  content:"AC";
+  position:absolute;
+  right:22px;
+  bottom:14px;
+  font-size:clamp(70px,10vw,150px);
+  font-weight:1000;
+  letter-spacing:-.08em;
+  color:rgba(226,232,240,.055);
+  pointer-events:none;
+}
+.hero-card:before{
+  content:"";
+  position:absolute;inset:auto -80px -115px auto;
+  width:260px;height:260px;border-radius:50%;
+  border:36px solid rgba(96,165,250,.08);
+}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;color:#bfdbfe;
+  border:1px solid rgba(191,219,254,.18);
+  background:rgba(15,23,42,.42);
+  border-radius:999px;
+  padding:6px 10px;
+}
+.kicker-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.hero-title{
+  font-size:clamp(31px,7vw,64px);
+  letter-spacing:-.06em;
+  line-height:.92;
+  margin:16px 0 10px;
+  max-width:780px;
+}
+.hero-sub{color:var(--muted);font-size:15px;line-height:1.45;margin:0;max-width:720px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.pill{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.5);
+  border-radius:999px;
+  padding:9px 12px;
+  font-size:12px;
+  color:var(--soft);
+}
+.scoreboard{
+  display:grid;
+  gap:12px;
+}
+.score-card{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(15,23,42,.9),rgba(7,17,31,.9));
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+.score-card small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.score-card strong{display:block;font-size:26px;line-height:1.05;letter-spacing:-.04em}
+.score-card span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+
+/* ===================== SECTION: CARDS / GRID ===================== */
+.section{margin-top:16px;scroll-margin-top:84px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:0 2px 10px}
+.section-head h2{margin:0;font-size:22px;letter-spacing:-.04em}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.card{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(13,27,52,.88),rgba(7,17,31,.94));
+  border-radius:var(--radius);
+  padding:15px;
+  box-shadow:0 12px 38px rgba(0,0,0,.22);
+  min-width:0;
+}
+.card.w4{grid-column:span 4}
+.card.w6{grid-column:span 6}
+.card.w8{grid-column:span 8}
+.card.w12{grid-column:span 12}
+.card-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.card-title h3{margin:0;font-size:16px;letter-spacing:-.03em}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  color:var(--soft);
+  white-space:nowrap;
+}
+.badge.green{color:#bbf7d0;border-color:rgba(52,211,153,.3);background:rgba(20,83,45,.22)}
+.badge.amber{color:#fde68a;border-color:rgba(251,191,36,.28);background:rgba(120,53,15,.22)}
+.badge.red{color:#fecdd3;border-color:rgba(251,113,133,.28);background:rgba(127,29,29,.22)}
+.badge.blue{color:#bfdbfe;border-color:rgba(96,165,250,.32);background:rgba(30,64,175,.22)}
+.badge.purple{color:#ddd6fe;border-color:rgba(167,139,250,.32);background:rgba(76,29,149,.22)}
+
+/* ===================== SECTION: RECOMMENDATION BOX ===================== */
+.reco{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+}
+.reco-main h2{margin:0 0 6px;font-size:24px;letter-spacing:-.04em}
+.reco-main p{margin:0;color:var(--muted);line-height:1.45;font-size:14px}
+.reco-four{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.reco-four .shirt{
+  min-width:58px;
+  text-align:center;
+  padding:9px 10px;
+  border-radius:16px;
+  border:1px solid rgba(96,165,250,.28);
+  background:linear-gradient(135deg,rgba(37,99,235,.4),rgba(8,47,73,.55));
+  font-weight:800;
+  font-size:12px;
+}
+.reco-side{
+  width:180px;
+  text-align:center;
+  padding:14px;
+  border-radius:20px;
+  border:1px solid rgba(52,211,153,.25);
+  background:rgba(6,78,59,.16);
+}
+.reco-side small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.reco-side strong{display:block;font-size:28px;margin-top:4px;color:#bbf7d0}
+
+/* ===================== SECTION: TABLES ===================== */
+.table-wrap{overflow:auto;-webkit-overflow-scrolling:touch;border-radius:18px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:840px;background:rgba(2,6,23,.2)}
+th,td{padding:10px 11px;text-align:left;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
+th{position:sticky;top:0;z-index:1;background:#0b1730;color:#bfdbfe;font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:rgba(96,165,250,.06)}
+.ticker{font-weight:800;color:#dbeafe;white-space:nowrap}
+.name{color:var(--soft)}
+.note{color:var(--muted);font-size:12px;line-height:1.35}
+
+/* ===================== SECTION: COMPARISON ===================== */
+.compare-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch}
+.squad-box{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.52);
+  border-radius:20px;
+  padding:14px;
+}
+.squad-box h3{margin:0 0 8px;font-size:16px}
+.squad-list{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 12px}
+.squad-list span{background:rgba(96,165,250,.13);border:1px solid rgba(96,165,250,.22);border-radius:999px;padding:6px 8px;font-size:12px;font-weight:700}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.metric{border:1px solid var(--line);border-radius:16px;padding:9px;background:rgba(2,6,23,.28)}
+.metric small{display:block;color:var(--muted);font-size:11px}
+.metric strong{display:block;font-size:18px;margin-top:3px}
+.vs{display:grid;place-items:center;color:var(--muted);font-weight:900;font-size:13px}
+
+
+
+/* ===================== SECTION: PLATFORM SPLIT ===================== */
+.platform-summary{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.platform-card{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.55);
+  border-radius:18px;
+  padding:12px;
+}
+.platform-card small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+.platform-card strong{
+  display:block;
+  font-size:24px;
+  margin-top:4px;
+  letter-spacing:-.04em;
+}
+.budget-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.budget-input{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.35);
+  border-radius:999px;
+  padding:7px 10px;
+}
+.budget-input span{color:var(--muted);font-size:12px}
+.budget-input input{
+  width:96px;
+  border:0;
+  outline:none;
+  color:var(--txt);
+  background:transparent;
+  font-weight:800;
+  font-size:14px;
+}
+
+.tactic-select{
+  border:0;
+  outline:none;
+  color:var(--txt);
+  background:transparent;
+  font-weight:800;
+  font-size:14px;
+  min-width:180px;
+}
+.tactic-select option{background:#07111f;color:var(--txt)}
+.platform-tag{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:800;
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
+.platform-tag.ig{color:#bfdbfe;background:rgba(30,64,175,.22);border-color:rgba(96,165,250,.32)}
+.platform-tag.t212{color:#bbf7d0;background:rgba(20,83,45,.22);border-color:rgba(52,211,153,.3)}
+.platform-tag.check{color:#fde68a;background:rgba(120,53,15,.22);border-color:rgba(251,191,36,.28)}
+.tactic-income-wrap{
+  margin-top:12px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.25);
+  border-radius:18px;
+  overflow:hidden;
+}
+.tactic-income-wrap .mini-title{
+  padding:10px 12px;
+  border-bottom:1px solid var(--line);
+  color:var(--soft);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+
+/* ===================== SECTION: PAYDAY CHECKLIST / TRANSFER SLIP ===================== */
+.check-list{display:grid;gap:8px}
+.check-item{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.25);
+  border-radius:14px;
+  padding:9px;
+}
+.check-icon{
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  flex:0 0 22px;
+  font-size:12px;
+  font-weight:900;
+}
+.check-icon.ok{background:rgba(20,83,45,.34);color:#bbf7d0;border:1px solid rgba(52,211,153,.28)}
+.check-icon.warn{background:rgba(120,53,15,.32);color:#fde68a;border:1px solid rgba(251,191,36,.28)}
+.slip-line{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom:1px solid var(--line);
+  padding:7px 0;
+}
+.slip-line:last-child{border-bottom:0}
+.slip-line strong{color:var(--txt)}
+
+
+
+/* ===================== SECTION: TROPHY CABINET ===================== */
+.trophy-cabinet{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:12px;
+  align-items:stretch;
+}
+.trophy-room{
+  border:1px solid rgba(251,191,36,.28);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(251,191,36,.13),transparent 34%),
+    radial-gradient(circle at 92% 10%,rgba(34,211,238,.10),transparent 32%),
+    rgba(15,23,42,.52);
+  border-radius:22px;
+  padding:15px;
+}
+.trophy-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.trophy{
+  min-height:128px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.30);
+  border-radius:18px;
+  padding:12px;
+  position:relative;
+  overflow:hidden;
+}
+.trophy:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 52%);
+  pointer-events:none;
+}
+.trophy.unlocked{
+  border-color:rgba(52,211,153,.35);
+  box-shadow:0 0 18px rgba(52,211,153,.08);
+}
+.trophy.locked{
+  opacity:.68;
+}
+.trophy-icon{
+  font-size:28px;
+  line-height:1;
+  margin-bottom:9px;
+}
+.trophy-title{
+  font-weight:900;
+  font-size:13px;
+  line-height:1.15;
+  position:relative;
+}
+.trophy-detail{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:7px;
+  position:relative;
+}
+.trophy-progress{
+  height:9px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+  margin-top:10px;
+}
+.trophy-progress span{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+}
+.season-ticket{
+  display:grid;
+  gap:10px;
+}
+.season-ticket .score-card{
+  box-shadow:none;
+}
+.manager-note{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(2,6,23,.25);
+  padding:12px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+@media(max-width:900px){
+  .trophy-cabinet{grid-template-columns:1fr}
+  .trophy-grid{grid-template-columns:1fr}
+}
+
+
+
+/* ===================== SECTION: FULL FOOTBALL MANAGER MODE ===================== */
+.fm-command-grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:12px;
+  align-items:stretch;
+}
+.manager-card{
+  border:1px solid rgba(34,211,238,.24);
+  background:
+    radial-gradient(circle at 10% 0%,rgba(34,211,238,.12),transparent 34%),
+    radial-gradient(circle at 90% 0%,rgba(52,211,153,.10),transparent 32%),
+    rgba(15,23,42,.54);
+  border-radius:22px;
+  padding:15px;
+}
+.manager-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.manager-id{display:flex;align-items:center;gap:12px;min-width:0}
+.manager-avatar{
+  width:58px;height:58px;border-radius:20px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(34,211,238,.92),rgba(52,211,153,.7));
+  color:#03111f;font-weight:1000;font-size:20px;
+  box-shadow:0 0 26px rgba(34,211,238,.18);
+}
+.manager-id h3{margin:0;font-size:22px;letter-spacing:-.04em}
+.manager-id p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.fm-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.fm-stat{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:16px;
+  padding:10px;
+}
+.fm-stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.fm-stat strong{display:block;font-size:18px;margin-top:4px;letter-spacing:-.03em}
+.confidence-card{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.52);
+  border-radius:22px;
+  padding:15px;
+}
+.confidence-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}
+.confidence-score{font-size:40px;font-weight:1000;letter-spacing:-.08em;color:#bbf7d0;line-height:.9}
+.confidence-row{display:grid;grid-template-columns:145px 1fr 42px;gap:9px;align-items:center;margin:9px 0}
+.confidence-row span{font-size:12px;color:var(--soft);font-weight:800}
+.confidence-bar{height:9px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.confidence-bar i{display:block;height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green))}
+.fm-news-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:12px}
+.news-feed{display:grid;gap:9px}
+.news-item{
+  display:grid;
+  grid-template-columns:34px 1fr auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.26);
+  border-radius:15px;
+  padding:10px;
+}
+.news-icon{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.22)}
+.news-item strong{display:block;font-size:13px}
+.news-item span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.news-date{color:var(--cyan);font-size:11px;font-weight:900;white-space:nowrap}
+.fm-side-stack{display:grid;gap:12px}
+.job-meter{
+  border:1px solid rgba(52,211,153,.28);
+  background:rgba(6,78,59,.14);
+  border-radius:20px;
+  padding:14px;
+}
+.job-status{font-size:26px;font-weight:1000;color:#bbf7d0;letter-spacing:-.05em;margin-top:4px}
+.reputation-track{display:grid;gap:8px;margin-top:10px}
+.rep-step{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);background:rgba(2,6,23,.23);border-radius:13px;padding:8px 10px;font-size:12px}
+.rep-step.active{border-color:rgba(52,211,153,.34);background:rgba(20,83,45,.18)}
+.hall-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.legend-card{
+  border:1px solid rgba(251,191,36,.24);
+  background:linear-gradient(180deg,rgba(120,53,15,.16),rgba(2,6,23,.28));
+  border-radius:18px;
+  padding:12px;
+  min-height:108px;
+}
+.legend-card .medal{font-size:24px;margin-bottom:8px}
+.legend-card strong{display:block;font-size:15px}
+.legend-card span{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}
+.stadium-card{
+  border:1px solid rgba(167,139,250,.28);
+  background:radial-gradient(circle at top right,rgba(167,139,250,.13),transparent 34%),rgba(15,23,42,.52);
+  border-radius:20px;
+  padding:14px;
+}
+@media(max-width:900px){
+  .fm-command-grid,.fm-news-grid{grid-template-columns:1fr}
+  .fm-stat-grid,.hall-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .confidence-row{grid-template-columns:115px 1fr 38px}
+}
+@media(max-width:560px){
+  .fm-stat-grid,.hall-grid{grid-template-columns:1fr}
+  .manager-header{align-items:flex-start;flex-direction:column}
+  .news-item{grid-template-columns:34px 1fr}
+  .news-date{grid-column:2}
+}
+
+
+
+/* ===================== SECTION: AURORA ARENA CENTREPIECE ===================== */
+.fm-news-grid{
+  grid-template-columns:minmax(360px,.72fr) minmax(620px,1.28fr);
+  align-items:start;
+}
+.club-showcase{
+  position:relative;
+  overflow:hidden;
+  min-height:560px;
+  border:1px solid rgba(34,211,238,.24);
+  border-radius:26px;
+  padding:18px;
+  box-shadow:0 18px 55px rgba(0,0,0,.32);
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.18),rgba(2,6,23,.78) 58%,rgba(2,6,23,.96)),
+    radial-gradient(circle at 52% 18%,rgba(34,211,238,.18),transparent 26%),
+    radial-gradient(circle at 80% 5%,rgba(96,165,250,.22),transparent 28%),
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%201600%20900%27%20preserveAspectRatio%3D%27none%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27g%27%20cx%3D%2750%25%27%20cy%3D%2735%25%27%20r%3D%2765%25%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27%20stop-opacity%3D%27.38%27/%3E%3Cstop%20offset%3D%27.42%27%20stop-color%3D%27%230f172a%27%20stop-opacity%3D%27.10%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23020617%27%20stop-opacity%3D%270%27/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%27p%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23020617%27/%3E%3Cstop%20offset%3D%27.65%27%20stop-color%3D%27%23071b31%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23052e16%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%271600%27%20height%3D%27900%27%20fill%3D%27url%28%23p%29%27/%3E%3Cellipse%20cx%3D%27800%27%20cy%3D%27480%27%20rx%3D%27880%27%20ry%3D%27300%27%20fill%3D%27%23020f24%27%20opacity%3D%27.80%27/%3E%3Cpath%20d%3D%27M0%20470%20Q800%20270%201600%20470%20L1600%20690%20Q800%20550%200%20690Z%27%20fill%3D%27%23030d1c%27%20opacity%3D%27.92%27/%3E%3Cpath%20d%3D%27M0%20690%20Q800%20545%201600%20690%20L1600%20900%20L0%20900Z%27%20fill%3D%27%23083d20%27%20opacity%3D%27.58%27/%3E%3Cg%20stroke%3D%27%2338bdf8%27%20stroke-width%3D%273%27%20opacity%3D%27.32%27%3E%3Cpath%20d%3D%27M70%20640%20Q800%20515%201530%20640%27/%3E%3Cpath%20d%3D%27M145%20712%20Q800%20592%201455%20712%27/%3E%3Cpath%20d%3D%27M300%20788%20Q800%20700%201300%20788%27/%3E%3C/g%3E%3Cg%20stroke%3D%27%23e0f2fe%27%20opacity%3D%27.18%27%3E%3Cpath%20d%3D%27M250%20355%20L420%20110M500%20320%20L610%2070M1100%20320%20L990%2070M1350%20355%20L1180%20110%27/%3E%3C/g%3E%3Cg%20fill%3D%27url%28%23g%29%27%3E%3Ccircle%20cx%3D%27420%27%20cy%3D%27115%27%20r%3D%27130%27/%3E%3Ccircle%20cx%3D%27610%27%20cy%3D%2775%27%20r%3D%27135%27/%3E%3Ccircle%20cx%3D%27990%27%20cy%3D%2775%27%20r%3D%27135%27/%3E%3Ccircle%20cx%3D%271180%27%20cy%3D%27115%27%20r%3D%27130%27/%3E%3C/g%3E%3C/svg%3E") center/cover no-repeat;
+}
+.club-showcase:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(135deg,rgba(34,211,238,.10),transparent 32%,rgba(52,211,153,.08));
+}
+.club-showcase > *{position:relative;z-index:1}
+.showcase-top{display:grid;grid-template-columns:1fr 270px;gap:14px;align-items:start}
+.club-identity{min-height:220px;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:20px 12px}
+.club-badge-xl{
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+  width:112px;height:112px;border-radius:32px;display:grid;place-items:center;margin-bottom:12px;
+  background:linear-gradient(135deg,rgba(34,211,238,.95),rgba(96,165,250,.50));
+  border:1px solid rgba(226,232,240,.28);box-shadow:0 0 40px rgba(34,211,238,.22);
+  color:#03111f;font-weight:1000;font-size:42px;letter-spacing:-.08em;
+}
+.club-identity h2{font-size:clamp(34px,4.8vw,66px);line-height:.86;letter-spacing:-.08em;margin:0;text-transform:uppercase}
+.club-identity h2 span{display:block;color:var(--cyan)}
+.club-identity p{margin-top:10px;color:#bfdbfe;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.club-status-card{border:1px solid var(--line);background:rgba(2,6,23,.58);border-radius:20px;padding:14px;backdrop-filter:blur(12px)}
+.status-line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}.status-line:last-child{border-bottom:0}.status-line strong{font-size:16px;color:#bbf7d0;text-align:right}
+.season-so-far{margin-top:12px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.season-tile{border:1px solid var(--line);background:rgba(2,6,23,.58);border-radius:18px;padding:13px;text-align:center;min-height:112px}.season-tile .icon{font-size:23px;margin-bottom:7px}.season-tile small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.season-tile strong{display:block;font-size:22px;margin-top:7px}.season-tile span{display:block;color:var(--green);font-size:11px;margin-top:5px;font-weight:900}
+.showcase-bottom{margin-top:12px;display:grid;grid-template-columns:1.1fr .9fr;gap:12px}.next-fixture{border:1px solid rgba(34,211,238,.24);background:rgba(2,6,23,.58);border-radius:20px;padding:15px;text-align:center}.fixture-vs{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:16px 0}.fixture-team{display:grid;gap:7px;justify-items:center}.fixture-crest{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.26);font-weight:1000}.fixture-vs strong{font-size:28px;color:var(--soft)}.fixture-countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.fixture-countdown div{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:12px;padding:8px}.fixture-countdown strong{display:block;font-size:19px}.fixture-countdown small{font-size:9px;color:var(--muted);text-transform:uppercase}
+.showcase-news{border:1px solid var(--line);background:rgba(2,6,23,.58);border-radius:20px;padding:15px}.showcase-news .news-feed{max-height:250px;overflow:auto;padding-right:2px}
+@media(max-width:1100px){.fm-news-grid,.showcase-top,.showcase-bottom{grid-template-columns:1fr}.season-so-far{grid-template-columns:repeat(2,minmax(0,1fr))}.club-showcase{min-height:auto}}
+@media(max-width:560px){.season-so-far{grid-template-columns:1fr}.fixture-vs{grid-template-columns:1fr}.showcase-top{gap:8px}.club-identity h2{font-size:38px}.club-badge-xl{width:86px;height:86px;font-size:34px}}
+
+
+
+/* ===================== SECTION: TRANSFER CENTRE ===================== */
+.transfer-centre-grid{
+  display:grid;
+  grid-template-columns:minmax(360px,.9fr) minmax(560px,1.1fr);
+  gap:12px;
+  align-items:stretch;
+}
+.top-target-card{
+  position:relative;
+  overflow:hidden;
+  min-height:430px;
+  border:1px solid rgba(52,211,153,.32);
+  border-radius:26px;
+  padding:18px;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(52,211,153,.17),transparent 34%),
+    radial-gradient(circle at 92% 8%,rgba(34,211,238,.17),transparent 35%),
+    linear-gradient(145deg,rgba(6,78,59,.22),rgba(2,6,23,.82));
+  box-shadow:0 18px 55px rgba(0,0,0,.32);
+}
+.top-target-card:before{
+  content:"TRANSFER TARGET";
+  position:absolute;
+  right:-36px;
+  top:42px;
+  transform:rotate(36deg);
+  color:rgba(226,232,240,.055);
+  font-size:40px;
+  font-weight:1000;
+  letter-spacing:-.06em;
+  pointer-events:none;
+}
+.target-hero{position:relative;z-index:1;display:grid;gap:13px}
+.target-shirt{
+  width:110px;height:132px;border-radius:26px 26px 34px 34px;
+  display:grid;place-items:center;align-self:start;
+  background:linear-gradient(145deg,rgba(34,211,238,.95),rgba(96,165,250,.48));
+  border:1px solid rgba(226,232,240,.28);
+  box-shadow:0 0 34px rgba(34,211,238,.16);
+  color:#03111f;font-weight:1000;font-size:30px;letter-spacing:-.08em;
+}
+.target-name{font-size:clamp(38px,5vw,76px);line-height:.86;letter-spacing:-.09em;font-weight:1000;margin:0;color:#eaffff}
+.target-company{color:var(--muted);font-size:14px;line-height:1.45;max-width:520px}
+.target-meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+.target-metric{border:1px solid rgba(255,255,255,.08);background:rgba(2,6,23,.34);border-radius:16px;padding:10px}
+.target-metric small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.target-metric strong{display:block;font-size:20px;margin-top:5px;color:#bbf7d0}
+.scout-verdict-box{border:1px solid rgba(34,211,238,.20);background:rgba(2,6,23,.36);border-radius:18px;padding:12px;margin-top:8px;color:var(--soft);font-size:13px;line-height:1.45}
+.transfer-board{display:grid;gap:12px}
+.transfer-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.transfer-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:rgba(15,23,42,.72);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;color:var(--soft)}
+.shortlist-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.shortlist-card{position:relative;border:1px solid var(--line);background:rgba(2,6,23,.30);border-radius:18px;padding:12px;overflow:hidden;min-height:145px}
+.shortlist-card:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05),transparent 54%);pointer-events:none}
+.shortlist-top{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
+.shortlist-rank{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.24);font-weight:1000;color:#bfdbfe;flex:0 0 32px}
+.shortlist-name{min-width:0;flex:1}.shortlist-name strong{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shortlist-name span{display:block;color:var(--muted);font-size:12px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shortlist-stats{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+.shortlist-stat{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);border-radius:12px;padding:8px;text-align:center}.shortlist-stat small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase}.shortlist-stat strong{display:block;margin-top:3px;font-size:14px;color:#bbf7d0}
+.transfer-list-row{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);background:rgba(2,6,23,.24);border-radius:15px;padding:10px;margin-bottom:8px}
+.transfer-list-row strong{display:block;font-size:14px}.transfer-list-row span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.transfer-list-tag{font-size:11px;font-weight:900;color:#fecdd3;border:1px solid rgba(251,113,133,.28);background:rgba(127,29,29,.22);border-radius:999px;padding:5px 8px;white-space:nowrap}
+.rumour-feed{display:grid;gap:8px}.rumour{border:1px solid var(--line);background:rgba(2,6,23,.24);border-radius:15px;padding:10px;display:grid;grid-template-columns:28px 1fr;gap:9px;align-items:start}.rumour strong{display:block;font-size:13px}.rumour span{display:block;color:var(--muted);font-size:12px;margin-top:2px;line-height:1.35}
+@media(max-width:1100px){.transfer-centre-grid{grid-template-columns:1fr}.target-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shortlist-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.target-meta-grid{grid-template-columns:1fr}.target-shirt{width:86px;height:104px;font-size:24px}.transfer-list-row{grid-template-columns:34px 1fr}.transfer-list-tag{grid-column:2;justify-self:start}.shortlist-stats{grid-template-columns:1fr}}
+
+/* ===================== SECTION: LOADING / FOOTER ===================== */
+.loading{
+  padding:14px;
+  border:1px dashed rgba(96,165,250,.34);
+  color:var(--muted);
+  border-radius:16px;
+  background:rgba(15,23,42,.4);
+}
+.footer{margin-top:22px;color:var(--muted);font-size:12px;text-align:center}
+.error{border-color:rgba(251,113,133,.3);color:#fecdd3;background:rgba(127,29,29,.18)}
+
+/* ===================== SECTION: RESPONSIVE ===================== */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .platform-summary{grid-template-columns:1fr}
+  .card.w4,.card.w6,.card.w8{grid-column:span 12}
+  .compare-row{grid-template-columns:1fr}
+  .vs{padding:2px}
+  .reco{grid-template-columns:1fr}
+  .reco-side{width:100%;text-align:left}
+}
+@media(max-width:560px){
+  .app{padding-left:10px;padding-right:10px}
+  .hero-card{padding:16px}
+  .topbar{margin-left:-10px;margin-right:-10px;padding-left:10px;padding-right:10px}
+  .brand h1{font-size:13px}
+  .nav a,.refresh-btn{padding:7px 9px;font-size:11px}
+  .section-head{align-items:flex-start;flex-direction:column}
+  .hero-title{font-size:38px}
+}
+
+
+/* ===================== SECTION: HOME DASHBOARD SPLIT NAV ===================== */
+.department-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+.department-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(96,165,250,.24);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.12),transparent 34%),
+    linear-gradient(180deg,rgba(13,27,52,.86),rgba(7,17,31,.94));
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 12px 38px rgba(0,0,0,.22);
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.department-card:after{
+  content:"";
+  position:absolute;
+  right:-40px;
+  bottom:-40px;
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  border:24px solid rgba(96,165,250,.055);
+  pointer-events:none;
+}
+.department-card strong{
+  display:block;
+  font-size:22px;
+  letter-spacing:-.04em;
+  margin-top:10px;
+}
+.department-card p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.42;
+  margin:8px 0 14px;
+}
+.department-card span{
+  display:inline-flex;
+  width:max-content;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:12px;
+  color:var(--cyan);
+  font-weight:800;
+}
+
+.department-card-img{
+  width:100%;
+  height:auto;
+  aspect-ratio:4/3;
+  object-fit:contain;
+  display:block;
+  border-radius:16px;
+  border:1px solid rgba(96,165,250,.18);
+  margin-bottom:12px;
+  box-shadow:0 8px 26px rgba(0,0,0,.26);
+  background:rgba(2,6,23,.72);
+  padding:4px;
+}
+.department-card-content{
+  position:relative;
+  z-index:1;
+}
+@media(max-width:760px){
+  .department-card-img{
+    width:100%;
+    height:auto;
+    aspect-ratio:4/3;
+  }
+}
+.home-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.home-preview-list{
+  display:grid;
+  gap:8px;
+}
+.home-preview-row{
+  display:grid;
+  grid-template-columns:44px 1fr auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.24);
+  border-radius:15px;
+  padding:10px;
+}
+.home-rank{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:rgba(96,165,250,.14);
+  border:1px solid rgba(96,165,250,.24);
+  font-weight:1000;
+  color:#bfdbfe;
+}
+.home-preview-row strong{display:block;font-size:14px}
+.home-preview-row span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.home-preview-score{
+  color:#bbf7d0;
+  font-weight:1000;
+  white-space:nowrap;
+}
+@media(max-width:900px){
+  .department-grid{grid-template-columns:1fr}
+  .home-grid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  html,body{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:hidden!important;
+  }
+  body{padding:0!important}
+  .app,
+  .topbar-inner,
+  .hero,
+  .scoreboard,
+  .grid,
+  .home-grid,
+  .department-grid,
+  .club-showcase,
+  .showcase-top,
+  .showcase-bottom,
+  .season-so-far{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .hero,
+  .home-grid,
+  .department-grid,
+  .showcase-top,
+  .showcase-bottom,
+  .season-so-far{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+  .card,
+  .score-card,
+  .department-card,
+  .club-showcase,
+  .hero-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .nav{
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch;
+    white-space:nowrap!important;
+    max-width:100%!important;
+  }
+  .home-preview-row{
+    grid-template-columns:38px minmax(0,1fr)!important;
+  }
+  .home-preview-score{
+    grid-column:2;
+    justify-self:start;
+  }
+}
+
+
+/* ===================== SECTION: AURORA CITY FC CREST IMAGE ===================== */
+.crest,
+.club-badge-xl{
+  overflow:hidden;
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+}
+.crest img,
+.club-badge-xl img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.crest{
+  padding:0!important;
+}
+.club-badge-xl{
+  padding:0!important;
+}
+
+
+/* ===================== SECTION: TRUE ROUND CREST CLIP FIX ===================== */
+.crest,
+.club-badge-xl{
+  border-radius:50%!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+}
+.crest img,
+.club-badge-xl img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+
+/* ===================== SECTION: NEXT FIXTURE CREST IMAGE ===================== */
+.fixture-crest{
+  overflow:hidden!important;
+}
+.fixture-crest img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  border-radius:50%!important;
+  display:block!important;
+}
+
+
+
+/* ===================== SECTION: TRANSFER CENTRE PAGE ===================== */
+.transfer-hero{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(96,165,250,.22);
+  border-radius:28px;
+  min-height:360px;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.92),rgba(2,6,23,.70),rgba(2,6,23,.44)),
+    url("assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png");
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 18px 60px rgba(0,0,0,.32);
+  display:flex;
+  align-items:flex-end;
+  padding:24px;
+}
+.transfer-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 15% 20%,rgba(34,211,238,.18),transparent 30%),
+    radial-gradient(circle at 80% 80%,rgba(59,130,246,.18),transparent 34%);
+  pointer-events:none;
+}
+.transfer-hero-content{
+  position:relative;
+  z-index:1;
+  max-width:760px;
+}
+.transfer-hero-logo{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  overflow:hidden;
+  margin-bottom:14px;
+  box-shadow:0 0 0 1px rgba(96,165,250,.22),0 14px 34px rgba(0,0,0,.36);
+}
+.transfer-hero-logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.transfer-hero h2{
+  font-size:clamp(38px,7vw,86px);
+  line-height:.9;
+  letter-spacing:-.07em;
+  margin:0;
+  text-transform:uppercase;
+}
+.transfer-hero h2 span{
+  display:block;
+  color:var(--cyan);
+  text-shadow:0 0 24px rgba(34,211,238,.24);
+}
+.transfer-hero p{
+  color:var(--muted);
+  max-width:620px;
+  margin:14px 0 0;
+  line-height:1.5;
+}
+.transfer-grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:12px;
+}
+.transfer-card{
+  border:1px solid rgba(96,165,250,.20);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,rgba(13,27,52,.84),rgba(7,17,31,.94));
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 12px 38px rgba(0,0,0,.22);
+  overflow:hidden;
+}
+.transfer-card.w3{grid-column:span 3}
+.transfer-card.w4{grid-column:span 4}
+.transfer-card.w5{grid-column:span 5}
+.transfer-card.w6{grid-column:span 6}
+.transfer-card.w7{grid-column:span 7}
+.transfer-card.w8{grid-column:span 8}
+.transfer-card.w12{grid-column:span 12}
+.transfer-card h3{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-.03em;
+}
+.transfer-kpi{
+  display:grid;
+  gap:8px;
+  margin-top:12px;
+}
+.transfer-kpi strong{
+  display:block;
+  font-size:34px;
+  letter-spacing:-.06em;
+}
+.transfer-kpi span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+}
+.target-list,
+.scout-list,
+.platform-list{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+}
+.target-row,
+.scout-row,
+.platform-row{
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:16px;
+  padding:10px;
+}
+.rank-badge{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:rgba(96,165,250,.14);
+  border:1px solid rgba(96,165,250,.24);
+  font-weight:1000;
+  color:#bfdbfe;
+}
+.target-row strong,
+.scout-row strong,
+.platform-row strong{
+  display:block;
+  font-size:14px;
+}
+.target-row span,
+.scout-row span,
+.platform-row span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
+}
+.score-pill{
+  border:1px solid rgba(74,222,128,.25);
+  background:rgba(22,101,52,.12);
+  color:#bbf7d0;
+  border-radius:999px;
+  padding:7px 10px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+.transfer-slip{
+  display:grid;
+  gap:10px;
+  margin-top:12px;
+}
+.slip-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  border-bottom:1px solid rgba(148,163,184,.12);
+  padding:9px 0;
+}
+.slip-row:last-child{border-bottom:none}
+.slip-row strong{font-size:14px}
+.slip-row span{color:var(--muted);font-size:12px;display:block;margin-top:3px}
+.big-verdict{
+  font-size:clamp(24px,4vw,46px);
+  letter-spacing:-.06em;
+  line-height:1;
+  margin:10px 0 8px;
+}
+.route-tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.route-tabs button{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.65);
+  color:var(--text);
+  border-radius:999px;
+  padding:9px 12px;
+  font-weight:900;
+}
+.route-tabs button.active{
+  color:#00131a;
+  background:linear-gradient(135deg,var(--cyan),#60a5fa);
+}
+@media(max-width:900px){
+  .transfer-card.w3,
+  .transfer-card.w4,
+  .transfer-card.w5,
+  .transfer-card.w6,
+  .transfer-card.w7,
+  .transfer-card.w8,
+  .transfer-card.w12{
+    grid-column:span 12;
+  }
+}
+@media(max-width:760px){
+  .transfer-hero{
+    min-height:330px;
+    padding:18px;
+  }
+  .target-row,
+  .scout-row,
+  .platform-row{
+    grid-template-columns:38px minmax(0,1fr);
+  }
+  .score-pill{
+    grid-column:2;
+    justify-self:start;
+  }
+}
+
+
+/* ===================== SECTION: CLEAN TRANSFER HERO FINAL OVERRIDE ===================== */
+.transfer-hero{
+  position:relative!important;
+  overflow:hidden!important;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.50),rgba(2,6,23,.30),rgba(2,6,23,.14)),
+    url("assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png") center center / cover no-repeat!important;
+}
+
+.transfer-hero:before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  background:
+    radial-gradient(circle at 18% 28%,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,rgba(2,6,23,.06),rgba(2,6,23,.18))!important;
+  pointer-events:none!important;
+  z-index:0!important;
+}
+
+.transfer-hero:after{
+  display:none!important;
+  content:none!important;
+}
+
+.transfer-hero > *{
+  position:relative!important;
+  z-index:2!important;
+}
+
+.transfer-hero h2,
+.transfer-hero p,
+.transfer-hero .pill,
+.transfer-hero .kicker{
+  text-shadow:0 2px 14px rgba(0,0,0,.72)!important;
+}
+
+
+/* ===================== SECTION: FINAL EXACT TRANSFER CENTRE HEADER IMAGE ===================== */
+.transfer-hero{
+  position:relative!important;
+  overflow:hidden!important;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.50),rgba(2,6,23,.30),rgba(2,6,23,.12)),
+    url("assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png") center center / cover no-repeat!important;
+}
+
+.transfer-hero:before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  background:
+    radial-gradient(circle at 18% 28%,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,rgba(2,6,23,.04),rgba(2,6,23,.16))!important;
+  pointer-events:none!important;
+  z-index:0!important;
+  opacity:1!important;
+}
+
+.transfer-hero:after{
+  display:none!important;
+  content:none!important;
+}
+
+.transfer-hero > *{
+  position:relative!important;
+  z-index:2!important;
+}
+
+.transfer-hero h2,
+.transfer-hero p,
+.transfer-hero .pill,
+.transfer-hero .kicker{
+  text-shadow:0 2px 14px rgba(0,0,0,.72)!important;
+}
+
+.crest img,
+.transfer-hero-logo img{
+  content:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png")!important;
+}
+
+
+/* ===================== SECTION: TRANSFER HERO TEXT CLEANUP ===================== */
+.transfer-hero{
+  min-height:430px!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  padding:24px!important;
+}
+
+.transfer-hero-content{
+  width:min(420px,100%)!important;
+  max-width:420px!important;
+  margin-left:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  text-align:right!important;
+}
+
+.transfer-hero-logo,
+.transfer-hero .kicker,
+.transfer-hero h2,
+.transfer-hero p{
+  display:none!important;
+}
+
+.transfer-hero .hero-actions{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  margin-top:0!important;
+}
+
+.transfer-hero .pill{
+  background:rgba(2,6,23,.64)!important;
+  border:1px solid rgba(148,163,184,.24)!important;
+  backdrop-filter:blur(10px)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.20)!important;
+  text-align:right!important;
+  width:max-content!important;
+  max-width:100%!important;
+}
+
+@media(max-width:760px){
+  .transfer-hero{
+    min-height:360px!important;
+    padding:16px!important;
+    align-items:flex-end!important;
+    justify-content:flex-end!important;
+  }
+  .transfer-hero-content{
+    width:100%!important;
+    max-width:100%!important;
+  }
+  .transfer-hero .hero-actions{
+    align-items:flex-end!important;
+  }
+}
+
+
+/* ===================== SECTION: TRANSFER HERO CLEAR COVER FINAL ===================== */
+.transfer-hero{
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:430px!important;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.38),rgba(2,6,23,.20),rgba(2,6,23,.08)),
+    url("assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png") center center / cover no-repeat!important;
+  background-color:#020617!important;
+}
+
+.transfer-hero:before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  background:
+    radial-gradient(circle at 18% 28%,rgba(34,211,238,.08),transparent 34%),
+    linear-gradient(180deg,rgba(2,6,23,.02),rgba(2,6,23,.12))!important;
+  pointer-events:none!important;
+  z-index:0!important;
+  opacity:1!important;
+}
+
+.transfer-hero:after{
+  display:none!important;
+  content:none!important;
+}
+
+.transfer-hero > *{
+  position:relative!important;
+  z-index:2!important;
+}
+
+.transfer-hero-content{
+  z-index:4!important;
+}
+
+@media(max-width:760px){
+  .transfer-hero{
+    background-size:cover!important;
+    background-position:center center!important;
+    min-height:360px!important;
+  }
+}
+
+
+/* ===================== SECTION: CONFIRMED AURORA CITY FC BADGE WIRING ===================== */
+.crest img,
+.club-badge-xl img,
+.fixture-crest img,
+.transfer-hero-logo img,
+.board-hero-logo img,
+.squad-hero-logo img{
+  content:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png")!important;
+}
+
+
+
+/* ===================== SECTION: TRANSFER CENTRE BRIGHT HERO FIX ===================== */
+/* Removes the dark HTML overlay that was dulling/cropping the GitHub header artwork. */
+.transfer-hero{
+  background-image:url("assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png")!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-color:#020617!important;
+  min-height:360px!important;
+}
+
+.transfer-hero:before,
+.transfer-hero:after{
+  content:none!important;
+  display:none!important;
+  opacity:0!important;
+  background:none!important;
+}
+
+.transfer-hero .transfer-hero-content,
+.transfer-hero-content,
+.transfer-hero .kicker,
+.transfer-hero .hero-title,
+.transfer-hero .hero-sub,
+.transfer-hero .hero-actions,
+.transfer-hero .pill{
+  display:none!important;
+  visibility:hidden!important;
+}
+
+
+/* ===================== SECTION: PAYDAY TRANSFER SLIP OPTIMISER ===================== */
+.optimiser-panel{display:grid;gap:12px;margin-top:12px}
+.optimiser-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border:1px solid var(--line);background:rgba(2,6,23,.28);border-radius:18px;padding:10px}
+.optimiser-control{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(15,23,42,.62);border-radius:999px;padding:7px 10px}
+.optimiser-control span{color:var(--muted);font-size:12px;white-space:nowrap}
+.optimiser-control input,.optimiser-control select{border:0;outline:0;background:transparent;color:var(--txt);font-weight:900;font-size:13px}
+.optimiser-control input{width:82px}
+.optimiser-control select option{background:#07111f;color:var(--txt)}
+.optimiser-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.optimiser-stat{border:1px solid var(--line);background:rgba(2,6,23,.28);border-radius:16px;padding:10px}
+.optimiser-stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.optimiser-stat strong{display:block;font-size:18px;margin-top:4px;color:#bbf7d0}
+.optimiser-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.optimiser-option{cursor:pointer;border:1px solid var(--line);background:rgba(15,23,42,.52);border-radius:18px;padding:11px;min-height:112px;text-align:left;color:var(--txt)}
+.optimiser-option.active{border-color:rgba(34,211,238,.48);background:radial-gradient(circle at top right,rgba(34,211,238,.14),transparent 34%),rgba(8,47,73,.28);box-shadow:0 0 24px rgba(34,211,238,.08)}
+.optimiser-option strong{display:block;font-size:14px}
+.optimiser-option span{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}
+.optimiser-option b{display:block;color:#bbf7d0;margin-top:8px;font-size:13px}
+.optimiser-slip{display:grid;gap:8px}
+.optimiser-slip-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);background:rgba(2,6,23,.24);border-radius:15px;padding:10px}
+.optimiser-slip-row strong{display:block;font-size:14px}
+.optimiser-slip-row span{display:block;color:var(--muted);font-size:12px;margin-top:2px;line-height:1.35}
+.optimiser-amount{text-align:right;white-space:nowrap}
+.optimiser-amount strong{font-size:16px;color:var(--txt)}
+.optimiser-amount span{color:#bbf7d0}
+.optimiser-verdict{border:1px solid rgba(52,211,153,.28);background:rgba(6,78,59,.14);border-radius:18px;padding:12px;color:var(--soft);font-size:13px;line-height:1.45}
+@media(max-width:900px){.optimiser-summary,.optimiser-options{grid-template-columns:1fr}.optimiser-slip-row{grid-template-columns:1fr}.optimiser-amount{text-align:left}}
+
+
+/* ===================== SECTION: TRANSFER NEWS TICKER ===================== */
+.transfer-ticker{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(34,211,238,.24);
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.92),rgba(8,47,73,.58),rgba(2,6,23,.92));
+  border-radius:18px;
+  margin:0 0 14px;
+  box-shadow:0 10px 34px rgba(0,0,0,.24);
+}
+.transfer-ticker:before,
+.transfer-ticker:after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:46px;
+  z-index:2;
+  pointer-events:none;
+}
+.transfer-ticker:before{
+  left:0;
+  background:linear-gradient(90deg,#030712,transparent);
+}
+.transfer-ticker:after{
+  right:0;
+  background:linear-gradient(270deg,#030712,transparent);
+}
+.transfer-ticker-track{
+  display:flex;
+  width:max-content;
+  animation:transferTickerScroll 34s linear infinite;
+}
+.transfer-ticker:hover .transfer-ticker-track{
+  animation-play-state:paused;
+}
+.transfer-ticker-content{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:10px 14px;
+  white-space:nowrap;
+}
+.transfer-ticker-item{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:var(--soft);
+  font-size:12px;
+  font-weight:800;
+}
+.transfer-ticker-item b{
+  color:#bfdbfe;
+  font-weight:1000;
+}
+.transfer-ticker-item strong{
+  color:#bbf7d0;
+  font-weight:1000;
+}
+.transfer-ticker-dot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:var(--cyan);
+  box-shadow:0 0 12px rgba(34,211,238,.8);
+  flex:0 0 7px;
+}
+.transfer-ticker-tag{
+  display:inline-flex;
+  align-items:center;
+  border:1px solid rgba(34,211,238,.28);
+  background:rgba(14,165,233,.14);
+  color:#cffafe;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:1000;
+}
+@keyframes transferTickerScroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+@media(max-width:760px){
+  .transfer-ticker-content{gap:10px;padding:9px 12px}
+  .transfer-ticker-item{font-size:11px}
+}
+
+
+/* ===================== SECTION: SCOUTING SHORTLIST NOTES ===================== */
+.scout-notes-panel{
+  margin-top:12px;
+  border-top:1px solid rgba(148,163,184,.14);
+  padding-top:12px;
+}
+.scout-notes-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:10px;
+}
+.scout-notes-title h4{
+  margin:0;
+  font-size:14px;
+  letter-spacing:-.02em;
+}
+.scout-notes-grid{
+  display:grid;
+  gap:8px;
+}
+.scout-note-card{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.24);
+  border-radius:16px;
+  padding:10px;
+}
+.scout-note-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.scout-note-top strong{
+  display:block;
+  font-size:14px;
+}
+.scout-note-top span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
+}
+.scout-note-card p{
+  margin:8px 0 0;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.42;
+}
+.scout-note-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:9px;
+}
+.scout-note-tags span{
+  border:1px solid rgba(96,165,250,.22);
+  background:rgba(96,165,250,.10);
+  color:#bfdbfe;
+  border-radius:999px;
+  padding:5px 7px;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+
+/* ===================== SECTION: INTERACTIVE REGISTRATION DESK ===================== */
+.platform-row.registration-row{
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.platform-row.registration-row:hover{
+  transform:translateY(-1px);
+  border-color:rgba(34,211,238,.34);
+  background:rgba(8,47,73,.28);
+}
+.registration-panel{
+  display:none;
+  margin:-2px 0 8px 54px;
+  border:1px solid rgba(34,211,238,.24);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.10),transparent 34%),
+    rgba(2,6,23,.30);
+  border-radius:16px;
+  padding:11px;
+}
+.registration-panel.open{
+  display:block;
+}
+.registration-panel-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.registration-stat{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.50);
+  border-radius:13px;
+  padding:8px;
+}
+.registration-stat small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.registration-stat strong{
+  display:block;
+  color:#bbf7d0;
+  font-size:13px;
+  margin-top:4px;
+}
+.registration-note{
+  margin-top:9px;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.42;
+}
+.registration-action{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:9px;
+}
+.registration-action span{
+  border:1px solid rgba(96,165,250,.24);
+  background:rgba(96,165,250,.10);
+  color:#bfdbfe;
+  border-radius:999px;
+  padding:5px 7px;
+  font-size:10px;
+  font-weight:900;
+}
+@media(max-width:760px){
+  .registration-panel{
+    margin-left:0;
+  }
+  .registration-panel-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* ===================== SECTION: DEADLINE DAY COUNTDOWN ===================== */
+.deadline-day-box{
+  margin-top:12px;
+  border:1px solid rgba(251,191,36,.28);
+  background:
+    radial-gradient(circle at top right,rgba(251,191,36,.12),transparent 34%),
+    radial-gradient(circle at bottom left,rgba(34,211,238,.10),transparent 32%),
+    rgba(2,6,23,.30);
+  border-radius:18px;
+  padding:12px;
+  overflow:hidden;
+}
+.deadline-day-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.deadline-day-head h4{
+  margin:0;
+  font-size:15px;
+  letter-spacing:-.02em;
+}
+.deadline-day-head p{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+.deadline-countdown{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+.deadline-unit{
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.52);
+  border-radius:14px;
+  padding:9px 7px;
+  text-align:center;
+}
+.deadline-unit strong{
+  display:block;
+  color:#fde68a;
+  font-size:22px;
+  line-height:1;
+  letter-spacing:-.04em;
+}
+.deadline-unit span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.deadline-wire{
+  margin-top:10px;
+  border:1px solid rgba(34,211,238,.20);
+  background:rgba(8,47,73,.18);
+  border-radius:14px;
+  overflow:hidden;
+}
+.deadline-wire-track{
+  display:flex;
+  width:max-content;
+  animation:deadlineWireScroll 26s linear infinite;
+}
+.deadline-wire:hover .deadline-wire-track{
+  animation-play-state:paused;
+}
+.deadline-wire-content{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  white-space:nowrap;
+  padding:8px 10px;
+  color:var(--soft);
+  font-size:11px;
+  font-weight:850;
+}
+.deadline-wire-dot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:var(--amber);
+  box-shadow:0 0 12px rgba(251,191,36,.8);
+  flex:0 0 7px;
+}
+.deadline-wire-content b{
+  color:#fde68a;
+  font-weight:1000;
+}
+.deadline-note{
+  margin-top:9px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.42;
+}
+@keyframes deadlineWireScroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+@media(max-width:760px){
+  .deadline-countdown{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+
+/* ===================== SECTION: DEADLINE DAY COMMAND BRIEF ===================== */
+.command-brief{
+  margin-top:10px;
+  border:1px solid rgba(52,211,153,.24);
+  background:
+    radial-gradient(circle at top left,rgba(52,211,153,.10),transparent 34%),
+    rgba(15,23,42,.42);
+  border-radius:16px;
+  padding:11px;
+}
+.command-brief-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:9px;
+}
+.command-brief-title h4{
+  margin:0;
+  font-size:14px;
+  letter-spacing:-.02em;
+}
+.command-brief-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.command-brief-item{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:13px;
+  padding:8px;
+}
+.command-brief-item small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.command-brief-item strong{
+  display:block;
+  color:#bbf7d0;
+  font-size:13px;
+  margin-top:4px;
+}
+.command-brief-instruction{
+  margin-top:9px;
+  border:1px solid rgba(251,191,36,.22);
+  background:rgba(120,53,15,.13);
+  border-radius:13px;
+  padding:9px;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.42;
+}
+@media(max-width:760px){
+  .command-brief-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+</style>
+</head>
+<body>
+<!-- ===================== SECTION: APP SHELL ===================== -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="crest"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC Badge"></div>
+      <div>
+        <h1>Aurora City FC</h1>
+        <p>Transfer Centre • Recruitment HQ</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="AuroraCityFC_ManagerDashboard.html">Home</a>
+      <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
+      <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
+      <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training</a>
+      <button class="refresh-btn" id="refreshBtn">Refresh</button>
+    </div>
+  </div>
+</div>
+
+<main class="app">
+
+  <!-- ===================== SECTION: TRANSFER NEWS TICKER ===================== -->
+  <section class="transfer-ticker" aria-label="Transfer news ticker">
+    <div class="transfer-ticker-track" id="transferTicker">
+      <div class="transfer-ticker-content">
+        <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora scouting updates…</span>
+      </div>
+      <div class="transfer-ticker-content" aria-hidden="true">
+        <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora scouting updates…</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: TRANSFER HERO ===================== -->
+  <section class="transfer-hero">
+    <div class="transfer-hero-content">
+      <div class="transfer-hero-logo"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
+      <div class="kicker"><span class="kicker-dot"></span> Recruitment department</div>
+      <h2>Transfer <span>Centre</span></h2>
+      <p>Find the right targets, compare income routes, check platform fit and build the next Aurora City FC promotion push.</p>
+      <div class="hero-actions">
+        <span class="pill" id="lastUpdated">Last updated: loading…</span>
+        <span class="pill">Transfer Budget: £500</span>
+        <span class="pill">Scout Focus: Impact + Income</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: TRANSFER KPI STRIP ===================== -->
+  <section class="section">
+    <div class="transfer-grid">
+      <div class="transfer-card w3">
+        <div class="card-title"><h3>No.1 Target</h3><span class="badge green">Live</span></div>
+        <div class="transfer-kpi"><strong id="topTargetTicker">—</strong><span id="topTargetName">Loading target…</span></div>
+      </div>
+      <div class="transfer-card w3">
+        <div class="card-title"><h3>Squad Impact</h3><span class="badge blue">Scout</span></div>
+        <div class="transfer-kpi"><strong id="topTargetImpact">—</strong><span>promotion impact</span></div>
+      </div>
+      <div class="transfer-card w3">
+        <div class="card-title"><h3>Best Transfer Strategy</h3><span class="badge amber">Decision</span></div>
+        <div class="transfer-kpi"><strong id="bestRoute">—</strong><span id="bestRouteNote">Checking route…</span></div>
+      </div>
+      <div class="transfer-card w3">
+        <div class="card-title"><h3>Deal Readiness</h3><span class="badge purple">£500</span></div>
+        <div class="transfer-kpi"><strong id="readiness">—</strong><span>transfer committee status</span></div>
+      </div>
+    </div>
+  </section>
+<!-- ===================== SECTION: MANAGER VERDICT ===================== -->
+  <section class="section">
+    <div class="transfer-card w12">
+      <div class="card-title"><h3>Gaffer’s Final Call</h3><span class="badge green">Final call</span></div>
+      <div class="big-verdict" id="managerVerdict">Loading the gaffer’s notebook…</div>
+      <p class="note" id="managerVerdictText">The spreadsheet goblins are comparing impact, income and squad balance.</p>
+      <div class="route-tabs">
+        <button id="incomeRouteBtn">Club-Recommended Four</button>
+        <button id="upgradeRouteBtn">Highest Squad-Upgrade Four</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: TARGETS + SCOUT REPORT ===================== -->
+  <section class="section">
+    <div class="transfer-grid">
+      <div class="transfer-card w7">
+        <div class="card-title"><h3>Scouting Shortlist</h3><span class="badge blue">Top candidates</span></div>
+        <div class="target-list" id="targetList"><div class="loading">Loading shortlist…</div></div>
+        <div class="scout-notes-panel">
+          <div class="scout-notes-title">
+            <h4>Scout Notes</h4>
+            <span class="badge blue">Top 3 only</span>
+          </div>
+          <div class="scout-notes-grid" id="candidateReports"><div class="loading">Building player reports…</div></div>
+        </div>
+      </div>
+      <div class="transfer-card w5">
+        <div class="card-title"><h3>Chief Scout Player Report</h3><span class="badge green">Recommendation</span></div>
+        <div class="scout-list" id="scoutReport"><div class="loading">Loading scout report…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: PLATFORM + PAYDAY SLIP ===================== -->
+  <section class="section">
+    <div class="transfer-grid">
+      <div class="transfer-card w6">
+        <div class="card-title"><h3>Registration Desk</h3><span class="badge purple">IG / Trade212</span></div>
+        <div class="platform-list" id="platformList"><div class="loading">Loading platform split…</div></div>
+        <div class="deadline-day-box">
+          <div class="deadline-day-head">
+            <div>
+              <h4>Deadline Day Countdown</h4>
+              <p>Payday acts as the transfer window deadline for this squad upgrade.</p>
+            </div>
+            <span class="badge amber" id="deadlineStatus">Live clock</span>
+          </div>
+          <div class="deadline-countdown">
+            <div class="deadline-unit"><strong id="deadlineDays">—</strong><span>Days</span></div>
+            <div class="deadline-unit"><strong id="deadlineHours">—</strong><span>Hours</span></div>
+            <div class="deadline-unit"><strong id="deadlineMinutes">—</strong><span>Mins</span></div>
+            <div class="deadline-unit"><strong id="deadlineSeconds">—</strong><span>Secs</span></div>
+          </div>
+          <div class="deadline-wire" aria-label="Deadline day ticker">
+            <div class="deadline-wire-track" id="deadlineWire">
+              <div class="deadline-wire-content">
+                <span><span class="deadline-wire-dot"></span> Loading deadline-day instruction…</span>
+              </div>
+              <div class="deadline-wire-content" aria-hidden="true">
+                <span><span class="deadline-wire-dot"></span> Loading deadline-day instruction…</span>
+              </div>
+            </div>
+          </div>
+          <div class="deadline-note" id="deadlineNote">The recruitment room is syncing the payday deadline.</div>
+
+          <div class="command-brief">
+            <div class="command-brief-title">
+              <h4>Deadline Day Command Brief</h4>
+              <span class="badge green">Final instruction</span>
+            </div>
+            <div class="command-brief-grid">
+              <div class="command-brief-item"><small>Current Plan</small><strong id="briefCurrentPlan">—</strong></div>
+              <div class="command-brief-item"><small>Lead Signing</small><strong id="briefLeadSigning">—</strong></div>
+              <div class="command-brief-item"><small>Budget</small><strong id="briefBudget">—</strong></div>
+              <div class="command-brief-item"><small>Registration Status</small><strong id="briefRegistration">—</strong></div>
+            </div>
+            <div class="command-brief-instruction" id="briefInstruction">Final command brief loading…</div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="transfer-card w6">
+        <div class="card-title"><h3>Transfer Budget Optimiser</h3><span class="badge amber">£500 window</span></div>
+        <div class="optimiser-panel">
+          <div class="optimiser-controls">
+            <label class="optimiser-control"><span>Transfer Fee</span><input id="transferBudgetInput" type="number" min="0" step="25" value="500"></label>
+            <label class="optimiser-control"><span>Tactic</span><select id="transferTacticSelect">
+              <option value="recommended">Club Recommended</option>
+              <option value="balanced">Balanced Split</option>
+              <option value="income">Best Income Return</option>
+              <option value="upgrade">Best Squad Upgrade</option>
+            </select></label>
+          </div>
+          <div class="optimiser-summary">
+            <div class="optimiser-stat"><small>Selected Route</small><strong id="optimiserRouteName">—</strong></div>
+            <div class="optimiser-stat"><small>Estimated Income</small><strong id="optimiserIncome">—</strong></div>
+            <div class="optimiser-stat"><small>Avg Impact</small><strong id="optimiserImpact">—</strong></div>
+            <div class="optimiser-stat"><small>Verdict</small><strong id="optimiserVerdictShort">—</strong></div>
+          </div>
+          <div class="optimiser-options" id="optimiserOptions"><div class="loading">Building tactical options…</div></div>
+          <div class="optimiser-slip" id="transferSlip"><div class="loading">Building transfer slip…</div></div>
+          <div class="optimiser-verdict" id="optimiserVerdict">The transfer committee is calculating the best use of the fee.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: FOOTER ===================== -->
+  <footer class="footer">
+    Aurora City FC • Transfer Centre • Sheet engine: AuroraData
+  </footer>
+</main>
+
+<!-- ===================== SECTION: DATA + LOGIC ===================== -->
+<script>
+const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+let AURORA_MASTER_CACHE = null;
+
+const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
+const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
+const DEPLOYMENT_PER_PLAYER = 125;
+const IMPACT_INCOME_TRIGGER = 20;
+let selectedTactic = 'recommended';
+
+const PLATFORM_RULES = {
+  "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
+  "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212",
+  "ARCC":"Trade212 / Check"
+};
+
+const PLAYER_PORTRAITS = {
+  RGL: "assets/aurora-city-fc/players/rgl_player.png",
+  RKT: "assets/aurora-city-fc/players/rkt_player.png",
+  ULVR: "assets/aurora-city-fc/players/ulvr_player.png",
+  TRIG: "assets/aurora-city-fc/players/trig_player.png",
+  GCP: "assets/aurora-city-fc/players/gcp_player.png",
+  SBRY: "assets/aurora-city-fc/players/sbry_player.png",
+  OMP: "assets/aurora-city-fc/players/omp_player.png",
+  IMB: "assets/aurora-city-fc/players/imb_player.png"
+};
+
+let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[] };
+
+const $ = id => document.getElementById(id);
+const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
+const num = n => Number.isFinite(n) ? `${Math.round(n)}` : '—';
+function parseNum(v){
+  if(v === null || v === undefined) return NaN;
+  const s = String(v).replace(/£|,|%/g,'').trim();
+  if(!s) return NaN;
+  return Number(s);
+}
+function cleanTicker(t){ return String(t || '').trim().toUpperCase(); }
+function displayTicker(t){ return String(t || '').replace('LON:',''); }
+function shortTicker(t){ return displayTicker(t).replace('.GB','').replace('.L',''); }
+function displayName(row){
+  return row.name || row.company_name || row.company || row.Company || row.Name || row.security_name || row.stock_name || row["Company Name"] || row["Security Name"] || displayTicker(row.ticker) || '—';
+}
+function parseYield(row){
+  const direct = row.dividend_yield ?? row.div_yield ?? row.yield_pct ?? row.Yield ?? row.yield ?? '';
+  if(String(direct).includes('%')) return parseNum(direct) / 100;
+  const directNum = parseNum(direct);
+  if(Number.isFinite(directNum) && directNum > 0 && directNum < 1) return directNum;
+  if(Number.isFinite(directNum) && directNum >= 1 && directNum <= 15) return directNum / 100;
+  const dps = parseNum(row.annual_dps);
+  const price = parseNum(row.live_price);
+  if(Number.isFinite(dps) && Number.isFinite(price) && price > 0) return dps / price;
+  return NaN;
+}
+function scoutIncomeFrom500(row){
+  const priorityKeys = [
+    'return_from_500','income_from_500','annual_return_from_500','annual_income_from_500',
+    'return_500','income_500','income_on_500','return_on_500',
+    '£500_return','£500_income','500_return','500_income',
+    'Return From £500','Income From £500','Annual Return From £500','Annual Income From £500',
+    'Return from £500','Income from £500','Projected Income From £500','Projected Return From £500'
+  ];
+  for(const key of priorityKeys){
+    if(row[key] !== undefined){
+      const v = parseNum(row[key]);
+      if(Number.isFinite(v) && v >= 0) return v;
+    }
+  }
+  for(const key of Object.keys(row || {})){
+    const k = String(key).toLowerCase();
+    const looksLike500Income =
+      k.includes('500') &&
+      (k.includes('income') || k.includes('return') || k.includes('dividend')) &&
+      !k.includes('yield') &&
+      !k.includes('score') &&
+      !k.includes('%');
+    if(looksLike500Income){
+      const v = parseNum(row[key]);
+      if(Number.isFinite(v) && v >= 0 && v < 150) return v;
+    }
+  }
+  return NaN;
+}
+function incomeRate(row){
+  const from500 = scoutIncomeFrom500(row);
+  if(Number.isFinite(from500)) return from500 / 500;
+  const y = parseYield(row);
+  if(Number.isFinite(y)) return y;
+  return NaN;
+}
+function annualIncomeForAmount(row, amount){
+  const rate = incomeRate(row);
+  return Number.isFinite(rate) ? amount * rate : 0;
+}
+function impact(row){ return parseNum(row.promotion_impact_score); }
+function buyStrength(row){ return parseNum(row.buy_strength ?? row.buy_strength_score ?? row.BuyStrength ?? row.score ?? row.buy_score); }
+function uniqueByTicker(rows){
+  const map = new Map();
+  rows.forEach(r=>{
+    const t = cleanTicker(r.ticker);
+    if(!t) return;
+    const existing = map.get(t);
+    if(!existing || (impact(r)||0) > (impact(existing)||0)) map.set(t,r);
+  });
+  return [...map.values()];
+}
+function findSecurity(ticker){
+  const t = cleanTicker(ticker);
+  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || state.globalWatchlist.find(r=>cleanTicker(r.ticker)===t) || null;
+}
+function routeStats(tickers){
+  const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
+  const totalIncome = rows.reduce((sum,r)=>{
+    const y = parseYield(r);
+    return sum + (Number.isFinite(y) ? DEPLOYMENT_PER_PLAYER * y : 0);
+  },0);
+  const avgImpact = rows.length ? rows.reduce((s,r)=>s+(impact(r)||0),0) / rows.length : NaN;
+  return { rows, totalIncome, avgImpact };
+}
+function platformFor(ticker){
+  const s = shortTicker(ticker);
+  return PLATFORM_RULES[s] || "Check platform";
+}
+function portraitFor(ticker){
+  const s = shortTicker(ticker);
+  return PLAYER_PORTRAITS[s] || "";
+}
+async function fetchTab(tab){
+  if(!AURORA_MASTER_CACHE){
+    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE = await res.json();
+  }
+  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
+}
+async function loadData(){
+  const btn = $('refreshBtn');
+  if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
+  try{
+    const [holdings, watchlist, scout, globalWatchlist] = await Promise.all([
+      fetchTab('Holdings'),
+      fetchTab('Watchlist'),
+      fetchTab('AuroraScout').catch(()=>[]),
+      fetchTab('Global Watchlist').catch(()=>[])
+    ]);
+    state = { holdings, watchlist, scout, globalWatchlist };
+    renderAll();
+  }catch(err){
+    console.error(err);
+    const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
+    ['targetList','scoutReport','platformList','transferSlip'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+  }finally{
+    if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
+  }
+}
+function targetRows(){
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[])])
+    .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))
+    .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
+    .slice(0,8);
+}
+
+
+/* ===================== SECTION: TRANSFER TICKER DUPLICATE TARGET FIX ===================== */
+function uniqueRouteWithoutTopTarget(route, topTicker){
+  const top = cleanTicker(topTicker);
+  const seen = new Set([top]);
+  return (route || []).filter(t=>{
+    const key = cleanTicker(t);
+    if(!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function renderTransferTicker(targets, preferred, route){
+  const ticker = $('transferTicker');
+  if(!ticker) return;
+
+  const top = targets?.[0] || null;
+  const topTicker = top ? displayTicker(top.ticker) : '—';
+  const topScore = top ? num(buyStrength(top) || impact(top)) : '—';
+
+  const cleanRoute = uniqueRouteWithoutTopTarget(route, topTicker);
+  const routeItems = cleanRoute.slice(0,3).map((t,i)=>{
+    const row = findSecurity(t);
+    const score = row ? num(buyStrength(row) || impact(row)) : '—';
+    return `<span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Target ${i+2}: <b>${displayTicker(t)}</b> <strong>${score}</strong></span>`;
+  }).join('');
+
+  const content = `
+    <div class="transfer-ticker-content">
+      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>No.1 Target: <b>${topTicker}</b></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Strategy: <strong>${preferred || 'Optimiser Route'}</strong></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Top Score: <strong>${topScore}</strong></span>
+      ${routeItems}
+    </div>
+    <div class="transfer-ticker-content" aria-hidden="true">
+      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>No.1 Target: <b>${topTicker}</b></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Strategy: <strong>${preferred || 'Optimiser Route'}</strong></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Top Score: <strong>${topScore}</strong></span>
+      ${routeItems}
+    </div>
+  `;
+
+  ticker.innerHTML = content;
+}
+
+function renderTargetList(rows){
+  $('targetList').innerHTML = rows.length ? rows.map((r,i)=>`
+    <div class="target-row">
+      <div class="rank-badge">${i+1}</div>
+      <div><strong>${displayTicker(r.ticker)}</strong><span>${displayName(r)}</span></div>
+      <div class="score-pill">${num(impact(r) || buyStrength(r))}</div>
+    </div>`).join('') : '<div class="loading">No transfer targets found.</div>';
+}
+
+function playerRole(row){
+  const t = shortTicker(row.ticker);
+  const roles = {
+    RGL:'High-risk bargain striker',
+    RKT:'Elite defensive forward',
+    ULVR:'Veteran leader',
+    TRIG:'Engine-room income runner',
+    GCP:'Set-piece income specialist',
+    SBRY:'Domestic value winger',
+    OMP:'Watchlist prospect',
+    IMB:'Veteran income finisher',
+    FSFL:'Solar-powered income engine',
+    UKW:'Wind-powered midfield runner'
+  };
+  return roles[t] || 'Squad improvement candidate';
+}
+function playerReason(row){
+  const t = shortTicker(row.ticker);
+  const y = incomeRate(row);
+  const imp = impact(row) || buyStrength(row) || 0;
+  const incomeText = Number.isFinite(y) ? `${(y*100).toFixed(2)}% income rate` : 'income still being checked';
+  const base = {
+    RGL:'Brings explosive income potential and a strong scout score, but needs managing like a high-upside signing with risk attached.',
+    RKT:'Adds quality, resilience and brand strength. Lower drama profile, but improves the squad with defensive reliability.',
+    ULVR:'A steady senior pro. Not the flashiest signing, but adds quality, consistency and long-term balance to the team.',
+    TRIG:'Improves the income engine and gives the squad infrastructure depth. Useful when the gaffer wants dependable cash flow.',
+    GCP:'A specialist income option. Useful for set-piece-style dividends, but needs monitoring for risk and consistency.',
+    SBRY:'Domestic value pick with recovery potential. Could strengthen the bench if valuation and momentum improve.',
+    OMP:'Prospect profile. Needs more evidence before becoming a first-team signing, but worth keeping in the scouting book.',
+    IMB:'Experienced income option. Strong yield appeal, but best treated as a veteran signing rather than a growth player.',
+    FSFL:'Big income profile with renewable-sector exposure. Strong for yield, but rate sensitivity needs watching.',
+    UKW:'Renewable income runner with strong cash-flow appeal. Useful for diversification but not risk-free.'
+  };
+  return base[t] || `Improves the transfer pool with ${incomeText} and a scout impact around ${num(imp)}. Keep under review before committing the full fee.`;
+}
+function playerTags(row){
+  const y = incomeRate(row);
+  const imp = impact(row) || buyStrength(row) || 0;
+  const tags = [playerRole(row)];
+  if(Number.isFinite(y)) tags.push(`${(y*100).toFixed(1)}% income`);
+  if(imp >= 85) tags.push('First-team ready');
+  else if(imp >= 70) tags.push('Strong squad option');
+  else tags.push('Monitor');
+  tags.push(platformFor(row.ticker));
+  return tags.slice(0,4);
+}
+function renderCandidateReports(rows){
+  const box = $('candidateReports');
+  if(!box) return;
+  const list = (rows || []).slice(0,3);
+  box.innerHTML = list.length ? list.map((r,i)=>{
+    const y = incomeRate(r);
+    const imp = impact(r) || buyStrength(r);
+    return `<div class="scout-note-card">
+      <div class="scout-note-top">
+        <div><strong>${i+1}. ${displayTicker(r.ticker)} — ${displayName(r)}</strong><span>${playerRole(r)} • Impact ${num(imp)} • ${Number.isFinite(y)?(y*100).toFixed(2)+'% income':'income check'}</span></div>
+        <div class="score-pill">${num(imp)}</div>
+      </div>
+      <p>${playerReason(r)}</p>
+      <div class="scout-note-tags">${playerTags(r).map(tag=>`<span>${tag}</span>`).join('')}</div>
+    </div>`;
+  }).join('') : '<div class="loading">No scout notes available yet.</div>';
+}
+
+function renderScoutReport(top){
+  if(!top){
+    $('scoutReport').innerHTML = '<div class="loading">No scout report available.</div>';
+    return;
+  }
+  const y = parseYield(top);
+  const ticker = displayTicker(top.ticker);
+  const portrait = portraitFor(top.ticker);
+  const rows = [
+    ['Player', ticker, displayName(top)],
+    ['Impact', num(impact(top) || buyStrength(top)), 'Promotion improvement score'],
+    ['Yield', Number.isFinite(y) ? `${(y*100).toFixed(2)}%` : '—', 'Income profile'],
+    ['Platform', platformFor(top.ticker), 'Likely trading venue'],
+    ['Verdict', (impact(top)||0) >= 85 ? 'Ready to sign' : 'Watchlist', 'Scout committee call']
+  ];
+
+  const portraitCard = portrait ? `
+    <div class="scout-row" style="grid-template-columns:1fr;padding:0;overflow:hidden;">
+      <div style="width:100%;height:640px;overflow:hidden;background:rgba(2,6,23,.28);">
+        <img src="${portrait}" alt="${ticker} player portrait" style="width:100%;height:100%;display:block;object-fit:cover;object-position:top center;">
+      </div>
+    </div>` : '';
+
+  $('scoutReport').innerHTML = portraitCard + rows.map((r,i)=>`
+    <div class="scout-row">
+      <div class="rank-badge">${i+1}</div>
+      <div><strong>${r[0]}</strong><span>${r[2]}</span></div>
+      <div class="score-pill">${r[1]}</div>
+    </div>`).join('');
+}
+
+
+function candidatePool(){
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[]), ...(state.holdings||[])])
+    .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
+}
+function bestIncomeCandidates(){
+  return candidatePool().filter(r=>Number.isFinite(incomeRate(r))).sort((a,b)=>incomeRate(b)-incomeRate(a)).slice(0,4).map(r=>cleanTicker(r.ticker));
+}
+function bestUpgradeCandidates(){
+  return candidatePool().sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0)).slice(0,4).map(r=>cleanTicker(r.ticker));
+}
+function buildRoutePlan(routeName,tickers,budget,weights){
+  const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
+  const usableWeights = rows.map((_,i)=>weights?.[i] ?? 1);
+  const totalWeight = usableWeights.reduce((s,w)=>s+w,0) || rows.length || 1;
+  const allocations = rows.map((r,i)=>{
+    const amount = budget * (usableWeights[i] / totalWeight);
+    const y = incomeRate(r);
+    const estIncome = annualIncomeForAmount(r, amount);
+    const imp = impact(r) || buyStrength(r) || 0;
+    return {row:r,amount,estIncome,impact:imp,yield:y,platform:platformFor(r.ticker)};
+  });
+  const totalIncome = allocations.reduce((s,a)=>s+a.estIncome,0);
+  const avgImpact = allocations.length ? allocations.reduce((s,a)=>s+a.impact,0)/allocations.length : NaN;
+  const avgYield = budget > 0 ? totalIncome / budget : NaN;
+  return {routeName,allocations,totalIncome,avgImpact,avgYield,budget};
+}
+function buildOptimiserPlans(){
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const incomeTickers = bestIncomeCandidates();
+  const upgradeTickers = bestUpgradeCandidates();
+  const balancedBase = UPGRADE_FOUR.map(t=>findSecurity(t)).filter(Boolean).length >= 4 ? UPGRADE_FOUR : upgradeTickers;
+  const incomeBase = incomeTickers.length >= 4 ? incomeTickers : INCOME_FOUR;
+  const upgradeBase = upgradeTickers.length >= 4 ? upgradeTickers : UPGRADE_FOUR;
+  const balanced = buildRoutePlan('Balanced Split', balancedBase, budget, [1,1,1,1]);
+  const income = buildRoutePlan('Best Income Return', incomeBase, budget, [4,3,2,1]);
+  const upgrade = buildRoutePlan('Best Squad Upgrade', upgradeBase, budget, [4,3,2,1]);
+  const plans = [
+    {...balanced,key:'balanced',score:balanced.totalIncome*1.1+(balanced.avgImpact||0)*0.65,note:'Equal split. Safe, simple, diversified.'},
+    {...income,key:'income',score:income.totalIncome*1.8+(income.avgImpact||0)*0.45,note:'Weighted toward the highest income return for the fee.'},
+    {...upgrade,key:'upgrade',score:upgrade.totalIncome*0.8+(upgrade.avgImpact||0)*0.85,note:'Weighted toward highest promotion impact and squad quality.'}
+  ];
+  const recommended = [...plans].sort((a,b)=>b.score-a.score)[0] || plans[0];
+  return {budget,plans,recommended};
+}
+function getSelectedPlan(){
+  const {plans,recommended} = buildOptimiserPlans();
+  if(selectedTactic === 'recommended') return recommended;
+  return plans.find(p=>p.key === selectedTactic) || recommended;
+}
+
+/* ===================== SECTION: OPTIMISER-LED HEADLINE STRATEGY ===================== */
+function headlinePlanFromOptimiser(){
+  const {recommended} = buildOptimiserPlans();
+  return recommended;
+}
+function routeFromPlan(plan){
+  return (plan?.allocations || []).map(a=>cleanTicker(a.row.ticker)).filter(Boolean);
+}
+function optimiserStrategyText(plan){
+  if(!plan) return 'Waiting for optimiser data.';
+  if(plan.key === 'income') return 'The optimiser is prioritising income return for this transfer fee. Use this as the board-approved deal sheet, then check sizing before submitting.';
+  if(plan.key === 'upgrade') return 'The optimiser is prioritising squad quality and promotion impact. Income is still considered, but the gaffer is backing better players over forced yield.';
+  if(plan.key === 'balanced') return 'The optimiser is spreading the transfer fee across a balanced route. Sensible, diversified, and less likely to turn into payday chaos.';
+  return 'The optimiser has selected the strongest tactical route from the live candidates.';
+}
+
+function renderOptimiser(){
+  const {plans,recommended} = buildOptimiserPlans();
+  const selected = getSelectedPlan();
+  if($('optimiserRouteName')) $('optimiserRouteName').textContent = selected.routeName;
+  if($('optimiserIncome')) $('optimiserIncome').textContent = `${money(selected.totalIncome)}/yr`;
+  if($('optimiserImpact')) $('optimiserImpact').textContent = Number.isFinite(selected.avgImpact) ? `${Math.round(selected.avgImpact)}/100` : '—';
+  if($('optimiserVerdictShort')) $('optimiserVerdictShort').textContent = selected.key === recommended.key ? 'Recommended' : 'Manual';
+  const options = $('optimiserOptions');
+  if(options){
+    options.innerHTML = plans.map(plan=>`<button class="optimiser-option ${plan.key===selected.key?'active':''}" data-tactic="${plan.key}">
+      <strong>${plan.routeName}</strong><span>${plan.note}</span><b>${money(plan.totalIncome)}/yr • ${Number.isFinite(plan.avgImpact)?Math.round(plan.avgImpact)+'/100 impact':'impact —'}</b>
+    </button>`).join('');
+    options.querySelectorAll('[data-tactic]').forEach(btn=>btn.addEventListener('click',()=>{selectedTactic=btn.dataset.tactic;if($('transferTacticSelect')) $('transferTacticSelect').value=selectedTactic;renderOptimiser();}));
+  }
+  const slip = $('transferSlip');
+  if(slip){
+    slip.innerHTML = selected.allocations.length ? selected.allocations.map(a=>`<div class="optimiser-slip-row">
+      <div><strong>${displayTicker(a.row.ticker)} — ${displayName(a.row)}</strong><span>${a.platform} • ${Number.isFinite(a.yield)?(a.yield*100).toFixed(2)+'% income rate':'income unknown'} • impact ${num(a.impact)}</span></div>
+      <div class="optimiser-amount"><strong>${money(a.amount)}</strong><span>${money(a.estIncome)}/yr est.</span></div>
+    </div>`).join('') : '<div class="loading">No transfer route selected.</div>';
+  }
+  if($('optimiserVerdict')){
+    const monthly = selected.totalIncome / 12;
+    const top = selected.allocations[0];
+    $('optimiserVerdict').textContent = top ? `Recommended call: ${selected.routeName}. Lead signing is ${displayTicker(top.row.ticker)} at ${money(top.amount)}. Estimated return from this ${money(selected.budget)} transfer fee is ${money(selected.totalIncome)} yearly, around ${money(monthly)} monthly, using Aurora Scout income-from-£500 data where available.` : 'No available candidates found for this transfer slip.';
+  }
+}
+
+
+function renderTransferWindowStatus(targets, preferred){
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const top = targets?.[0] || null;
+  const dealsReady = (targets || []).filter(r => (impact(r) || buyStrength(r) || 0) >= 70).length;
+  const topScore = top ? (impact(top) || buyStrength(top) || 0) : 0;
+  const confidence = topScore >= 85 && dealsReady >= 4 ? 'High' : topScore >= 70 && dealsReady >= 3 ? 'Good' : 'Building';
+
+  if($('windowBudget')) $('windowBudget').textContent = money(budget);
+  if($('windowTactic')) $('windowTactic').textContent = preferred || '—';
+  if($('windowTopTarget')) $('windowTopTarget').textContent = top ? displayTicker(top.ticker) : '—';
+  if($('windowDealsReady')) $('windowDealsReady').textContent = `${dealsReady}`;
+  if($('windowConfidence')) $('windowConfidence').textContent = confidence;
+}
+
+
+
+const PAYDAY_BASE_ISO = "2026-06-19T00:00:00+01:00";
+const PAYDAY_CYCLE_DAYS = 28;
+
+function nextPaydayDate(){
+  const base = new Date(PAYDAY_BASE_ISO);
+  const now = new Date();
+  const cycleMs = PAYDAY_CYCLE_DAYS * 24 * 60 * 60 * 1000;
+  if(now <= base) return base;
+  const cycles = Math.ceil((now - base) / cycleMs);
+  return new Date(base.getTime() + cycles * cycleMs);
+}
+function renderDeadlineWire(deadline, diffMs){
+  const wire = $('deadlineWire');
+  if(!wire) return;
+  const targets = targetRows();
+  const top = targets[0];
+  const topText = top ? `${displayTicker(top.ticker)} leads the window` : 'Top target loading';
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const days = Math.max(0, Math.floor(diffMs / (24*60*60*1000)));
+  const deadlineText = deadline.toLocaleDateString('en-GB', { weekday:'short', day:'2-digit', month:'short' });
+
+  const content = `
+    <div class="deadline-wire-content">
+      <span><span class="deadline-wire-dot"></span><b>DEADLINE DAY</b> ${deadlineText}</span>
+      <span><span class="deadline-wire-dot"></span><b>TOP TRANSFER</b> ${topText}</span>
+      <span><span class="deadline-wire-dot"></span><b>DEAL SHEET</b> ${money(budget)} budget waiting for approval</span>
+      <span><span class="deadline-wire-dot"></span><b>REGISTRATION DESK</b> Platform paperwork active</span>
+      <span><span class="deadline-wire-dot"></span><b>WINDOW STATUS</b> ${days <= 1 ? 'Final checks in progress' : 'Scouting room open'}</span>
+      <span><span class="deadline-wire-dot"></span><b>SCOUT ROOM</b> Top three reports under review</span>
+      <span><span class="deadline-wire-dot"></span><b>BOARDROOM</b> Budget release pending payday</span>
+      <span><span class="deadline-wire-dot"></span><b>MANAGER INSTRUCTION</b> Run optimiser before submitting deal sheet</span>
+    </div>`;
+  wire.innerHTML = content + content.replace('<div class="deadline-wire-content">','<div class="deadline-wire-content" aria-hidden="true">');
+}
+
+function updateDeadlineCommandBrief(){
+  const targets = targetRows();
+  const top = targets[0] || null;
+  const preferred = $('managerVerdict')?.textContent || '—';
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
+  const topPlatform = top ? platformFor(top.ticker) : '—';
+  const registration = top ? (topPlatform.includes('Check') ? 'Check platform first' : 'Cleared to register') : 'Awaiting scout data';
+
+  if($('briefCurrentPlan')) $('briefCurrentPlan').textContent = preferred;
+  if($('briefLeadSigning')) $('briefLeadSigning').textContent = top ? displayTicker(top.ticker) : '—';
+  if($('briefBudget')) $('briefBudget').textContent = money(budget);
+  if($('briefRegistration')) $('briefRegistration').textContent = registration;
+
+  if($('briefInstruction')){
+    const lead = top ? displayTicker(top.ticker) : 'the lead target';
+    const platformLine = top ? `${lead} route: ${topPlatform}. ` : '';
+    $('briefInstruction').textContent = `${platformLine}Final instruction: check the Registration Desk, confirm the optimiser route, then submit the payday deal sheet before the deadline clock hits zero.`;
+  }
+}
+
+function updateDeadlineCountdown(){
+  const deadline = nextPaydayDate();
+  const now = new Date();
+  const diffMs = Math.max(0, deadline - now);
+  const dayMs = 24*60*60*1000;
+  const hourMs = 60*60*1000;
+  const minMs = 60*1000;
+
+  const days = Math.floor(diffMs / dayMs);
+  const hours = Math.floor((diffMs % dayMs) / hourMs);
+  const mins = Math.floor((diffMs % hourMs) / minMs);
+  const secs = Math.floor((diffMs % minMs) / 1000);
+
+  if($('deadlineDays')) $('deadlineDays').textContent = String(days);
+  if($('deadlineHours')) $('deadlineHours').textContent = String(hours).padStart(2,'0');
+  if($('deadlineMinutes')) $('deadlineMinutes').textContent = String(mins).padStart(2,'0');
+  if($('deadlineSeconds')) $('deadlineSeconds').textContent = String(secs).padStart(2,'0');
+
+  const deadlineLabel = deadline.toLocaleDateString('en-GB', { weekday:'long', day:'2-digit', month:'long' });
+  if($('deadlineStatus')) $('deadlineStatus').textContent = days <= 1 ? 'Final day' : 'Live clock';
+  if($('deadlineNote')) $('deadlineNote').textContent = `Transfer window closes on payday: ${deadlineLabel}. Use the Registration Desk and Transfer Budget Optimiser before the deal sheet goes in.`;
+
+  renderDeadlineWire(deadline, diffMs);
+  updateDeadlineCommandBrief();
+}
+
+function registrationStatus(row){
+  const p = platformFor(row.ticker);
+  if(p.includes('Check')) return 'Paperwork check';
+  return 'Cleared to register';
+}
+function registrationReason(row){
+  const t = shortTicker(row.ticker);
+  const p = platformFor(row.ticker);
+  const imp = impact(row) || buyStrength(row) || 0;
+  const y = incomeRate(row);
+  const incomeText = Number.isFinite(y) ? `${(y*100).toFixed(2)}% income profile` : 'income profile still being checked';
+
+  if(p.includes('Check')){
+    return `${displayTicker(row.ticker)} has a strong scout case with impact ${num(imp)} and ${incomeText}, but the desk should confirm platform availability before the fee is committed.`;
+  }
+  if(p.includes('IG')){
+    return `${displayTicker(row.ticker)} is suited to the IG ISA route. Good for main-squad registration where quality, control and long-term holding discipline matter.`;
+  }
+  if(p.includes('Trade212')){
+    return `${displayTicker(row.ticker)} fits the Trade212 route. Useful for tactical income deployment and keeping the transfer fee flexible.`;
+  }
+  return `${displayTicker(row.ticker)} needs a platform check before registration is approved.`;
+}
+function registrationTags(row){
+  const p = platformFor(row.ticker);
+  const tags = [];
+  if(p.includes('Check')) tags.push('Check before signing');
+  else tags.push('Ready for paperwork');
+  tags.push(p);
+  const imp = impact(row) || buyStrength(row) || 0;
+  if(imp >= 85) tags.push('Priority file');
+  else if(imp >= 70) tags.push('Squad option');
+  else tags.push('Monitor');
+  return tags;
+}
+function renderRegistrationPanel(row, i){
+  const y = incomeRate(row);
+  const fee = DEPLOYMENT_PER_PLAYER;
+  const estIncome = annualIncomeForAmount(row, fee);
+  return `<div class="registration-panel" id="registrationPanel${i}">
+    <div class="registration-panel-grid">
+      <div class="registration-stat"><small>Registration Status</small><strong>${registrationStatus(row)}</strong></div>
+      <div class="registration-stat"><small>Platform Licence</small><strong>${platformFor(row.ticker)}</strong></div>
+      <div class="registration-stat"><small>£125 Est. Income</small><strong>${money(estIncome)}/yr</strong></div>
+    </div>
+    <div class="registration-note">${registrationReason(row)}</div>
+    <div class="registration-action">${registrationTags(row).map(tag=>`<span>${tag}</span>`).join('')}</div>
+  </div>`;
+}
+function toggleRegistrationPanel(i){
+  const panel = $(`registrationPanel${i}`);
+  if(!panel) return;
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.registration-panel.open').forEach(el=>el.classList.remove('open'));
+  if(!isOpen) panel.classList.add('open');
+}
+
+function renderPlatformList(route){
+  const rows = route.map(t=>findSecurity(t)).filter(Boolean);
+  $('platformList').innerHTML = rows.length ? rows.map((r,i)=>`
+    <div class="platform-row registration-row" role="button" tabindex="0" onclick="toggleRegistrationPanel(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleRegistrationPanel(${i});}">
+      <div class="rank-badge">${i+1}</div>
+      <div><strong>${displayTicker(r.ticker)}</strong><span>${displayName(r)}</span></div>
+      <div class="score-pill">${platformFor(r.ticker)}</div>
+    </div>
+    ${renderRegistrationPanel(r,i)}`).join('') : '<div class="loading">No platform data found.</div>';
+}
+
+function renderTransferSlip(route){
+  renderOptimiser();
+}
+function renderAll(){
+  if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
+
+  const targets = targetRows();
+  const top = targets[0];
+
+  if(top){
+    $('topTargetTicker').textContent = displayTicker(top.ticker);
+    $('topTargetName').textContent = displayName(top);
+    $('topTargetImpact').textContent = num(impact(top) || buyStrength(top));
+  }
+
+  const optimiserPlan = headlinePlanFromOptimiser();
+  const preferred = optimiserPlan?.routeName || 'Optimiser Route';
+  const route = routeFromPlan(optimiserPlan);
+
+  $('bestRoute').textContent = preferred;
+  $('bestRouteNote').textContent = optimiserPlan
+    ? `${money(optimiserPlan.totalIncome)} est. annual income • ${Number.isFinite(optimiserPlan.avgImpact) ? Math.round(optimiserPlan.avgImpact) + '/100 avg impact' : 'impact —'}`
+    : 'Optimiser route loading';
+  $('readiness').textContent = route.length >= 4 ? 'Ready' : 'Scout';
+
+  $('managerVerdict').textContent = preferred;
+  $('managerVerdictText').textContent = optimiserStrategyText(optimiserPlan);
+
+  if($('incomeRouteBtn')) $('incomeRouteBtn').textContent = optimiserPlan?.key === 'income' ? 'Optimiser Pick: Income' : 'Income Route';
+  if($('upgradeRouteBtn')) $('upgradeRouteBtn').textContent = optimiserPlan?.key === 'upgrade' ? 'Optimiser Pick: Upgrade' : 'Upgrade Route';
+  $('incomeRouteBtn')?.classList.toggle('active', optimiserPlan?.key === 'income' || optimiserPlan?.key === 'balanced');
+  $('upgradeRouteBtn')?.classList.toggle('active', optimiserPlan?.key === 'upgrade');
+
+  renderTransferTicker(targets, preferred, route);
+  renderTargetList(targets);
+  renderCandidateReports(targets);
+  renderScoutReport(top);
+  renderPlatformList(route);
+  renderTransferSlip(route);
+  updateDeadlineCountdown();
+}
+$('refreshBtn')?.addEventListener('click', loadData);
+$('transferBudgetInput')?.addEventListener('input', ()=>{ renderOptimiser(); const targets = targetRows(); const plan = headlinePlanFromOptimiser(); const preferred = plan?.routeName || $('managerVerdict')?.textContent || '—'; const route = routeFromPlan(plan); renderTransferTicker(targets, preferred, route); renderPlatformList(route); updateDeadlineCountdown(); });
+$('transferTacticSelect')?.addEventListener('change', e=>{
+  selectedTactic = e.target.value;
+  renderOptimiser();
+  const targets = targetRows();
+  const plan = headlinePlanFromOptimiser();
+  const preferred = plan?.routeName || $('managerVerdict')?.textContent || '—';
+  const route = routeFromPlan(plan);
+  renderTransferTicker(targets, preferred, route);
+  renderPlatformList(route);
+});
+
+setInterval(updateDeadlineCountdown, 1000);
+loadData();
+</script>
+</body>
+</html>
