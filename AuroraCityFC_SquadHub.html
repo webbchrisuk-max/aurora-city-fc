@@ -2806,7 +2806,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
 <script src="AuroraFCData.js"></script>
 <script>
-const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
+const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE = null;
 let state = { holdings:[], watchlist:[], scout:[], news:[] };
 
@@ -2890,18 +2890,26 @@ async function fetchTab(tab){
     if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
   }
-  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
+  const direct = AURORA_MASTER_CACHE?.[tab];
+  if(Array.isArray(direct)) return direct;
+
+  const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const wanted = normalise(tab);
+  const foundKey = Object.keys(AURORA_MASTER_CACHE || {}).find(k => normalise(k) === wanted);
+  return foundKey && Array.isArray(AURORA_MASTER_CACHE[foundKey]) ? AURORA_MASTER_CACHE[foundKey] : [];
 }
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, news] = await Promise.all([
+    const [holdings, watchlist, scout, newsA, newsB] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
       fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('AuroraTimes').catch(()=>[])
+      fetchTab('AuroraTimes').catch(()=>[]),
+      fetchTab('Aurora Times').catch(()=>[])
     ]);
+    const news = newsA.length ? newsA : newsB;
     state = { holdings, watchlist, scout, news };
     renderAll();
   }catch(err){
@@ -3315,7 +3323,16 @@ function mediaMoraleImpact(){
   return (state.news || [])
     .filter(isPublishedNews)
     .reduce((sum,row)=>{
-      const n = parseNum(val(row,'Morale_Impact','morale_impact','Morale Impact'));
+      const n = parseNum(val(
+        row,
+        'Morale_Impact',
+        'morale_impact',
+        'Morale Impact',
+        'morale impact',
+        'MoraleImpact',
+        'moraleImpact',
+        'MORALE_IMPACT'
+      ));
       return sum + (Number.isFinite(n) ? n : 0);
     },0);
 }
