@@ -1907,101 +1907,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
   }
 }
 
-
-/* ===================== SECTION: AURORA CLUB BRAIN JSON HOOKS ===================== */
-.aurora-brain-section{
-  margin-top:16px;
-}
-.aurora-brain-grid{
-  display:grid;
-  grid-template-columns:repeat(12,minmax(0,1fr));
-  gap:12px;
-}
-.aurora-brain-card{
-  grid-column:span 4;
-  min-width:0;
-}
-.aurora-brain-card.wide{
-  grid-column:span 6;
-}
-.aurora-brain-list{
-  display:grid;
-  gap:10px;
-  margin-top:10px;
-}
-.aurora-brain-item{
-  display:grid;
-  grid-template-columns:34px minmax(0,1fr) auto;
-  gap:10px;
-  align-items:center;
-  border:1px solid var(--line);
-  background:rgba(2,6,23,.28);
-  border-radius:16px;
-  padding:10px;
-}
-.aurora-brain-icon{
-  width:34px;
-  height:34px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  background:rgba(96,165,250,.14);
-  border:1px solid rgba(96,165,250,.24);
-  font-weight:1000;
-  color:#bfdbfe;
-}
-.aurora-brain-item strong{
-  display:block;
-  font-size:14px;
-  line-height:1.25;
-}
-.aurora-brain-item span{
-  display:block;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.35;
-  margin-top:2px;
-}
-.aurora-brain-pill{
-  border:1px solid rgba(96,165,250,.28);
-  background:rgba(30,64,175,.18);
-  color:#bfdbfe;
-  border-radius:999px;
-  padding:7px 10px;
-  font-size:11px;
-  font-weight:1000;
-  white-space:nowrap;
-}
-.aurora-brain-pill.good{
-  border-color:rgba(52,211,153,.30);
-  background:rgba(20,83,45,.22);
-  color:#bbf7d0;
-}
-.aurora-brain-pill.warn{
-  border-color:rgba(251,191,36,.30);
-  background:rgba(120,53,15,.22);
-  color:#fde68a;
-}
-.aurora-brain-pill.bad{
-  border-color:rgba(251,113,133,.30);
-  background:rgba(127,29,29,.22);
-  color:#fecdd3;
-}
-.aurora-brain-empty{
-  padding:14px;
-  border:1px dashed rgba(96,165,250,.34);
-  color:var(--muted);
-  border-radius:16px;
-  background:rgba(15,23,42,.4);
-}
-@media(max-width:1000px){
-  .aurora-brain-card,.aurora-brain-card.wide{grid-column:span 12}
-}
-@media(max-width:760px){
-  .aurora-brain-item{grid-template-columns:34px minmax(0,1fr)}
-  .aurora-brain-pill{grid-column:2;justify-self:start}
-}
-
 </style>
 </head>
 <body>
@@ -2196,7 +2101,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
 <script>
-const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE = null;
 
 const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
@@ -2207,7 +2112,8 @@ let selectedTactic = 'recommended';
 
 const PLATFORM_RULES = {
   "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
-  "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212"
+  "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212",
+  "ARCC":"Trade212 / Check"
 };
 
 const PLAYER_PORTRAITS = {
@@ -2221,7 +2127,7 @@ const PLAYER_PORTRAITS = {
   IMB: "assets/aurora-city-fc/players/imb_player.png"
 };
 
-let state = { holdings:[], watchlist:[], scout:[] };
+let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2303,7 +2209,7 @@ function uniqueByTicker(rows){
 }
 function findSecurity(ticker){
   const t = cleanTicker(ticker);
-  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
+  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || state.globalWatchlist.find(r=>cleanTicker(r.ticker)===t) || null;
 }
 function routeStats(tickers){
   const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
@@ -2334,12 +2240,13 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout] = await Promise.all([
+    const [holdings, watchlist, scout, globalWatchlist] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[])
+      fetchTab('AuroraScout').catch(()=>[]),
+      fetchTab('Global Watchlist').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout };
+    state = { holdings, watchlist, scout, globalWatchlist };
     renderAll();
   }catch(err){
     console.error(err);
@@ -2350,7 +2257,7 @@ async function loadData(){
   }
 }
 function targetRows(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[])])
     .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))
     .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
     .slice(0,8);
@@ -2510,7 +2417,7 @@ function renderScoutReport(top){
 
 
 function candidatePool(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.holdings||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[]), ...(state.holdings||[])])
     .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
 }
 function bestIncomeCandidates(){
@@ -2826,174 +2733,5 @@ $('transferTacticSelect')?.addEventListener('change', e=>{
 setInterval(updateDeadlineCountdown, 1000);
 loadData();
 </script>
-
-<!-- ===================== SECTION: AURORA CLUB BRAIN JSON HOOKS ===================== -->
-<script>
-(function(){
-  const CONFIG = {"heading": "Recruitment intelligence feed", "sub": "Scout stories, recruitment inbox items and transfer-related news from AuroraMaster.json.", "cards": [{"title": "Scout wires", "badge": "Scout", "tab": "AuroraTimes", "limit": 5, "filter": "transfer", "empty": "No scout or transfer news found yet."}, {"title": "Recruitment inbox", "badge": "Inbox", "tab": "ManagerInbox", "limit": 5, "filter": "transfer", "empty": "No recruitment inbox messages yet."}, {"title": "Transfer fixtures", "badge": "Window", "tab": "AuroraFixtures", "limit": 4, "filter": "transfer", "empty": "No transfer fixture rows yet."}]};
-  const DEFAULT_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
-  const MASTER_URL = window.AURORA_FC?.dataUrl || (typeof AURORA_MASTER_URL !== "undefined" ? AURORA_MASTER_URL : DEFAULT_MASTER_URL);
-
-  const esc = value => String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#39;");
-
-  const pick = (row, names) => {
-    for(const name of names){
-      if(row && row[name] !== undefined && row[name] !== null && String(row[name]).trim() !== "") return row[name];
-    }
-    return "";
-  };
-
-  const num = value => {
-    const n = Number(String(value ?? "").replace(/£|,|%/g,"").trim());
-    return Number.isFinite(n) ? n : 0;
-  };
-
-  const asRows = (data, tab) => {
-    const direct = data && Array.isArray(data[tab]) ? data[tab] : null;
-    const nested = data && data.data && Array.isArray(data.data[tab]) ? data.data[tab] : null;
-    return (direct || nested || []).filter(row => row && typeof row === "object");
-  };
-
-  const activeRows = rows => rows.filter(row => {
-    const status = String(pick(row,["Status","status","Display_Status"])).toLowerCase();
-    return !["hidden","hide","no","archived","deleted"].includes(status);
-  });
-
-  const dateValue = row => {
-    const raw = pick(row,["Date","date","Award_Date","Due_Date","Review_Date","Target_Date","Achieved_Date"]);
-    const time = pick(row,["Time","time"]);
-    const dt = raw ? new Date(`${raw} ${time || ""}`.trim()).getTime() : 0;
-    return Number.isFinite(dt) ? dt : 0;
-  };
-
-  const keepByFilter = (row, filter) => {
-    if(!filter) return true;
-    const category = String(pick(row,["Category","Department","Type","Rule_Type","Training_Focus"])).toLowerCase();
-    const page = String(pick(row,["Related_Page","Linked_Sheet","Affected_Area","Area","Focus"])).toLowerCase();
-    const displayHome = String(pick(row,["Display_On_Home","display_on_home"])).toLowerCase();
-    const displayMedia = String(pick(row,["Display_In_Media","display_in_media"])).toLowerCase();
-    const morale = num(pick(row,["Morale_Impact","morale_impact","Supporter_Impact","Board_Impact"]));
-    if(filter === "home") return displayHome !== "no";
-    if(filter === "media") return displayMedia !== "no";
-    if(filter === "morale") return morale !== 0 || page.includes("squad") || page.includes("morale");
-    if(filter === "transfer") return category.includes("scout") || category.includes("transfer") || category.includes("recruit") || page.includes("transfer") || page.includes("scout");
-    if(filter === "training") return category.includes("training") || page.includes("training") || page.includes("coach");
-    return true;
-  };
-
-  const titleFor = row => {
-    const base = pick(row,["Headline","Subject","Fixture","Award","Target","Event","Trigger","Training_Focus","Board_Message","Category"]);
-    const ticker = pick(row,["Ticker","Related_Ticker","ticker"]);
-    return ticker && base && !String(base).includes(ticker) ? `${ticker} — ${base}` : (base || ticker || "Club update");
-  };
-
-  const noteFor = row => pick(row,[
-    "Summary","Message","Reason","Action","Coach_Note","Board_Message","Notes","Issue","Focus","Opponent"
-  ]) || "Awaiting full staff note.";
-
-  const valueFor = row => {
-    const impact = pick(row,["Morale_Impact","Board_Impact","Supporter_Impact"]);
-    if(String(impact).trim() !== "") return `${Number(impact) > 0 ? "+" : ""}${impact}`;
-    return pick(row,["Importance","Priority","Status","Score","Movement","Value","Income_Target_Monthly","Badge"]) || "Live";
-  };
-
-  const iconFor = (tab, row) => {
-    const category = String(pick(row,["Category","Department","Type","Training_Focus","Award"])).toLowerCase();
-    if(tab === "Awards") return "🏆";
-    if(tab === "Milestones") return "⭐";
-    if(tab === "BoardConfidence") return "👔";
-    if(tab === "TrainingLog") return "🏃";
-    if(tab === "ManagerInbox") return "📩";
-    if(tab === "AuroraFixtures") return "📅";
-    if(tab === "MoraleLog") return "💬";
-    if(category.includes("dividend")) return "💷";
-    if(category.includes("buyback")) return "🔁";
-    if(category.includes("inflation") || category.includes("rates")) return "📉";
-    if(category.includes("scout") || category.includes("transfer")) return "🔎";
-    return "📰";
-  };
-
-  const pillClass = row => {
-    const value = num(pick(row,["Morale_Impact","Board_Impact","Supporter_Impact","Score","Movement"]));
-    const importance = String(pick(row,["Importance","Priority","Status"])).toLowerCase();
-    if(value < 0 || importance.includes("urgent") || importance.includes("risk")) return "bad";
-    if(value > 0 || importance.includes("published") || importance.includes("active")) return "good";
-    if(importance.includes("high") || importance.includes("watch") || importance.includes("pending")) return "warn";
-    return "";
-  };
-
-  const itemHtml = (tab, row) => `
-    <div class="aurora-brain-item">
-      <div class="aurora-brain-icon">${iconFor(tab,row)}</div>
-      <div>
-        <strong>${esc(titleFor(row))}</strong>
-        <span>${esc(noteFor(row))}</span>
-      </div>
-      <div class="aurora-brain-pill ${pillClass(row)}">${esc(valueFor(row))}</div>
-    </div>`;
-
-  const cardHtml = (data, card) => {
-    const rows = activeRows(asRows(data, card.tab))
-      .filter(row => keepByFilter(row, card.filter))
-      .sort((a,b)=>dateValue(b)-dateValue(a))
-      .slice(0, card.limit || 5);
-
-    const body = rows.length
-      ? rows.map(row => itemHtml(card.tab,row)).join("")
-      : `<div class="aurora-brain-empty">${esc(card.empty || "Waiting for sheet rows.")}</div>`;
-
-    return `<div class="card aurora-brain-card ${card.wide ? "wide" : ""}">
-      <div class="card-title">
-        <h3>${esc(card.title)}</h3>
-        <span class="badge blue">${esc(card.badge || card.tab)}</span>
-      </div>
-      <div class="aurora-brain-list">${body}</div>
-    </div>`;
-  };
-
-  function inject(data){
-    if(document.getElementById("auroraClubBrain")) return;
-    const main = document.querySelector("main.app") || document.body;
-    const section = document.createElement("section");
-    section.className = "section aurora-brain-section";
-    section.id = "auroraClubBrain";
-    section.innerHTML = `
-      <div class="section-head">
-        <div>
-          <h2>${esc(CONFIG.heading)}</h2>
-          <p>${esc(CONFIG.sub)}</p>
-        </div>
-        <span class="badge green">JSON live</span>
-      </div>
-      <div class="aurora-brain-grid">
-        ${(CONFIG.cards || []).map(card => cardHtml(data,card)).join("")}
-      </div>`;
-    const footer = main.querySelector("footer.footer");
-    if(footer) main.insertBefore(section, footer);
-    else main.appendChild(section);
-  }
-
-  async function boot(){
-    try{
-      const data = (typeof AURORA_MASTER_CACHE !== "undefined" && AURORA_MASTER_CACHE) ? AURORA_MASTER_CACHE : await fetch(MASTER_URL, {cache:"no-store"}).then(res => {
-        if(!res.ok) throw new Error(`AuroraMaster failed: ${res.status}`);
-        return res.json();
-      });
-      inject(data);
-    }catch(err){
-      console.warn("Aurora Club Brain feed failed:", err);
-    }
-  }
-
-  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
-})();
-</script>
-
 </body>
 </html>
