@@ -2809,6 +2809,10 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <script src="AuroraFCData.js"></script>
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const AURORA_MASTER_FALLBACK_URLS = [
+  "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/AuroraMaster.json",
+  "AuroraMaster.json"
+];
 let AURORA_MASTER_CACHE = null;
 let state = { holdings:[], watchlist:[], scout:[], news:[] };
 
@@ -2886,35 +2890,73 @@ function currentDivision(annualIncome){
   if(annualIncome >= 1000) return ['League Two','first trophy banked'];
   return ['National League project','academy stage'];
 }
-async function fetchTab(tab){
-  if(!AURORA_MASTER_CACHE){
-    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
-    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
-    AURORA_MASTER_CACHE = await res.json();
+async function fetchAuroraMaster(){
+  const urls = [AURORA_MASTER_URL, ...(typeof AURORA_MASTER_FALLBACK_URLS !== 'undefined' ? AURORA_MASTER_FALLBACK_URLS : [])];
+
+  let lastError = null;
+  for(const url of urls){
+    try{
+      const res = await fetch(url, { cache:'no-store' });
+      if(!res.ok) throw new Error(`${url} failed: ${res.status}`);
+      const data = await res.json();
+      if(data && typeof data === 'object') return data;
+    }catch(err){
+      lastError = err;
+      console.warn('AuroraMaster source failed:', url, err);
+    }
   }
 
-  const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
-  const wanted = normalise(tab);
+  throw lastError || new Error('Unable to load AuroraMaster.json');
+}
 
-  function findTab(obj){
-    if(!obj || typeof obj !== 'object') return [];
-    if(Array.isArray(obj[tab])) return obj[tab];
+function normaliseTabName(s){
+  return String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+}
 
-    const key = Object.keys(obj).find(k => normalise(k) === wanted);
-    if(key && Array.isArray(obj[key])) return obj[key];
+function rowsFromPossibleTab(value){
+  if(Array.isArray(value)) return value;
+  if(value && typeof value === 'object'){
+    for(const key of ['rows','data','values','items','records']){
+      if(Array.isArray(value[key])) return value[key];
+    }
+  }
+  return [];
+}
 
-    return [];
+function findTabRows(obj, tab){
+  if(!obj || typeof obj !== 'object') return [];
+
+  const wanted = normaliseTabName(tab);
+
+  const directRows = rowsFromPossibleTab(obj[tab]);
+  if(directRows.length) return directRows;
+
+  const matchedKey = Object.keys(obj).find(k => normaliseTabName(k) === wanted);
+  if(matchedKey){
+    const matchedRows = rowsFromPossibleTab(obj[matchedKey]);
+    if(matchedRows.length) return matchedRows;
   }
 
-  let rows = findTab(AURORA_MASTER_CACHE);
-  if(rows.length) return rows;
-
-  for(const wrapper of ['data','tabs','sheets','feeds']){
-    rows = findTab(AURORA_MASTER_CACHE?.[wrapper]);
-    if(rows.length) return rows;
+  for(const wrapper of ['data','tabs','sheets','feeds','tables','workbook']){
+    const wrapped = obj[wrapper];
+    if(wrapped && typeof wrapped === 'object'){
+      const rows = findTabRows(wrapped, tab);
+      if(rows.length) return rows;
+    }
   }
 
   return [];
+}
+
+async function fetchTab(tab){
+  if(!AURORA_MASTER_CACHE){
+    AURORA_MASTER_CACHE = await fetchAuroraMaster();
+    console.info('AuroraMaster loaded. Top-level keys:', Object.keys(AURORA_MASTER_CACHE || {}));
+  }
+
+  const rows = findTabRows(AURORA_MASTER_CACHE, tab);
+  console.info(`Aurora tab ${tab}:`, rows.length, 'rows');
+  return rows;
 }
 async function loadData(){
   const btn = $('refreshBtn');
@@ -3335,7 +3377,7 @@ function val(row,...keys){
 }
 function isPublishedNews(row){
   const status = String(val(row,'Status','status')).trim().toLowerCase();
-  return !status || status === 'published';
+  return !status || status === 'published' || status === 'publish' || status === 'live';
 }
 function mediaMoraleImpact()
 function mediaImpactLabel(n){
