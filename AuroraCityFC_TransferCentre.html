@@ -2112,7 +2112,8 @@ let selectedTactic = 'recommended';
 
 const PLATFORM_RULES = {
   "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
-  "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212"
+  "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212",
+  "ARCC":"Trade212 / Check"
 };
 
 const PLAYER_PORTRAITS = {
@@ -2126,7 +2127,7 @@ const PLAYER_PORTRAITS = {
   IMB: "assets/aurora-city-fc/players/imb_player.png"
 };
 
-let state = { holdings:[], watchlist:[], scout:[] };
+let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2208,7 +2209,7 @@ function uniqueByTicker(rows){
 }
 function findSecurity(ticker){
   const t = cleanTicker(ticker);
-  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
+  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || state.globalWatchlist.find(r=>cleanTicker(r.ticker)===t) || null;
 }
 function routeStats(tickers){
   const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
@@ -2239,12 +2240,13 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout] = await Promise.all([
+    const [holdings, watchlist, scout, globalWatchlist] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[])
+      fetchTab('AuroraScout').catch(()=>[]),
+      fetchTab('Global Watchlist').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout };
+    state = { holdings, watchlist, scout, globalWatchlist };
     renderAll();
   }catch(err){
     console.error(err);
@@ -2255,7 +2257,7 @@ async function loadData(){
   }
 }
 function targetRows(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[])])
     .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))
     .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
     .slice(0,8);
@@ -2415,7 +2417,7 @@ function renderScoutReport(top){
 
 
 function candidatePool(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.holdings||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[]), ...(state.holdings||[])])
     .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
 }
 function bestIncomeCandidates(){
