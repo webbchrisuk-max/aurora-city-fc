@@ -2523,35 +2523,53 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 
 
-/* ===================== SECTION: AURORA TIMES MORALE IMPACT ===================== */
-.morale-delta{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  width:max-content;
-  border-radius:999px;
-  padding:6px 10px;
-  font-size:12px;
-  font-weight:1000;
-  border:1px solid var(--line);
-  background:rgba(15,23,42,.72);
-  color:var(--soft);
+/* ===================== SECTION: AURORA CITY FC LANDSCAPE HERO FINAL FIX ===================== */
+/* Final override: keeps the finished header artwork fully visible in Android/iPad landscape app mode. */
+.squad-hero{
+  position:relative!important;
+  overflow:hidden!important;
+  border:1px solid rgba(96,165,250,.22)!important;
+  border-radius:28px!important;
+  background-image:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/4E299D2D-53AC-43F8-A84E-0FD90C2D39AC.png")!important;
+  background-size:100% 100%!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-color:#020617!important;
+  min-height:360px!important;
+  box-shadow:0 18px 60px rgba(0,0,0,.32)!important;
 }
-.morale-delta.up{
-  color:#bbf7d0;
-  border-color:rgba(52,211,153,.34);
-  background:rgba(20,83,45,.24);
+.squad-hero:before,
+.squad-hero:after{
+  content:none!important;
+  display:none!important;
+  opacity:0!important;
+  background:none!important;
 }
-.morale-delta.down{
-  color:#fecdd3;
-  border-color:rgba(251,113,133,.34);
-  background:rgba(127,29,29,.24);
+.squad-hero-content,
+.squad-hero .squad-hero-content,
+.squad-hero .kicker,
+.squad-hero .hero-title,
+.squad-hero .hero-sub,
+.squad-hero .hero-actions,
+.squad-hero .pill,
+.squad-hero h2,
+.squad-hero p{
+  display:none!important;
+  visibility:hidden!important;
 }
-.morale-delta.flat{
-  color:#bfdbfe;
-  border-color:rgba(96,165,250,.30);
-  background:rgba(30,64,175,.18);
+@media (orientation:landscape) and (max-height:520px){
+  .app{
+    padding-top:10px!important;
+  }
+  .squad-hero{
+    min-height:calc(100vw * 0.42)!important;
+    max-height:420px!important;
+  }
+}
+@media (max-width:760px){
+  .squad-hero{
+    min-height:330px!important;
+  }
 }
 
 </style>
@@ -2572,8 +2590,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2656,14 +2672,18 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
   </section>
 
-  <!-- ===================== SECTION: CHEMISTRY ===================== -->
+  <!-- ===================== SECTION: CHEMISTRY + LEGENDS ===================== -->
   <section class="section">
     <div class="squad-grid">
-      <div class="squad-card w12">
+      <div class="squad-card w6">
         <div class="card-title"><h3>Dressing Room Chemistry</h3><span class="badge amber">Balance board</span></div>
         <div class="chemistry-board" id="chemistryBoard">
           <div class="loading">Loading chemistry board…</div>
         </div>
+      </div>
+      <div class="squad-card w6">
+        <div class="card-title"><h3>Club legends</h3><span class="badge amber">Hall of Fame</span></div>
+        <div class="legend-grid" id="legendGrid"><div class="loading">Loading legends…</div></div>
       </div>
     </div>
   </section>
@@ -2747,43 +2767,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
   </section>
 
-  <!-- ===================== SECTION: AURORA HONOURS CABINET ===================== -->
-  <section class="section">
-    <div class="squad-grid">
-      <div class="squad-card w12">
-        <div class="honours-cabinet-shell">
-          <div class="honours-header">
-            <div>
-              <p class="kicker"><span class="kicker-dot"></span> Club legacy path</p>
-              <h3>Aurora Honours Cabinet</h3>
-              <p>Track the road from League One breakthrough to Champions League immortality.</p>
-            </div>
-            <span class="badge green" id="trophyCount">Loading…</span>
-          </div>
-
-          <div class="honours-summary">
-            <div class="honours-summary-card">
-              <small>Current monthly income</small>
-              <strong id="honoursMonthlyIncome">—</strong>
-            </div>
-            <div class="honours-summary-card">
-              <small>Next unlock</small>
-              <strong id="honoursNextUnlock">—</strong>
-            </div>
-            <div class="honours-summary-card">
-              <small>Amount to next trophy</small>
-              <strong id="honoursAmountLeft">—</strong>
-            </div>
-          </div>
-
-          <div class="honours-trophy-grid" id="trophyGrid">
-            <div class="loading">Loading honours cabinet…</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ===================== SECTION: FOOTER ===================== -->
   <footer class="footer">
     Aurora City FC • Squad Hub • Sheet engine: AuroraData
@@ -2795,9 +2778,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
 <script src="AuroraFCData.js"></script>
 <script>
-const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
 let AURORA_MASTER_CACHE = null;
-let state = { holdings:[], watchlist:[], scout:[], auroraTimes:[] };
+let state = { holdings:[], watchlist:[], scout:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2885,18 +2868,17 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, auroraTimes] = await Promise.all([
+    const [holdings, watchlist, scout] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('AuroraTimes').catch(()=>[])
+      fetchTab('AuroraScout').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout, auroraTimes };
+    state = { holdings, watchlist, scout };
     renderAll();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['firstTeamPitch','benchList','relegationWatch','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
@@ -3285,35 +3267,6 @@ function weakestRow(rows){
 function bestIncomeRow(rows){
   return [...rows].sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a))[0] || null;
 }
-
-function normaliseFlag(v){
-  return String(v ?? '').trim().toLowerCase();
-}
-function isPublishedNews(row){
-  const status = normaliseFlag(row.Status ?? row.status);
-  return !status || status === 'published' || status === 'live' || status === 'active';
-}
-function mediaVisible(row){
-  const media = normaliseFlag(row.Display_In_Media ?? row.display_in_media);
-  return !media || media === 'yes' || media === 'y' || media === 'true' || media === '1';
-}
-function moraleImpactFromNews(){
-  return (state.auroraTimes || [])
-    .filter(row => isPublishedNews(row) && mediaVisible(row))
-    .reduce((sum,row) => {
-      const v = parseNum(row.Morale_Impact ?? row.morale_impact ?? row.MoraleImpact ?? row['Morale Impact']);
-      return sum + (Number.isFinite(v) ? v : 0);
-    }, 0);
-}
-function clampScore(v){
-  return Math.max(0, Math.min(100, Math.round(v)));
-}
-function moraleDeltaBadge(delta){
-  if(delta > 0) return `<span class="morale-delta up">▲ +${Math.round(delta)} media boost</span>`;
-  if(delta < 0) return `<span class="morale-delta down">▼ ${Math.round(delta)} media pressure</span>`;
-  return `<span class="morale-delta flat">◆ 0 media effect</span>`;
-}
-
 function moraleRating(avg, annualIncome, lowCount){
   let score = Math.round(Math.max(35, Math.min(99, (avg || 50) + Math.min(12, annualIncome / 2200) - (lowCount * 3))));
   let label = score >= 82 ? 'Excellent' : score >= 72 ? 'High' : score >= 62 ? 'Stable' : 'Needs Lift';
@@ -3358,23 +3311,15 @@ function renderTrainingReport(rows, annualIncome){
 function renderMoraleCentre(rows, annualIncome){
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
   const low = rows.filter(r=>squadScore(r)<60).length;
-  const baseMorale = moraleRating(avg, annualIncome, low);
-  const mediaDelta = moraleImpactFromNews();
-  const finalMoraleScore = clampScore(baseMorale.score + mediaDelta);
-  const morale = { score: finalMoraleScore, label: finalMoraleScore >= 82 ? 'Excellent' : finalMoraleScore >= 72 ? 'High' : finalMoraleScore >= 62 ? 'Stable' : 'Needs Lift' };
+  const morale = moraleRating(avg, annualIncome, low);
   if($('moraleScore')) $('moraleScore').textContent = `${morale.score}`;
-  if($('moraleBadge')){
-    $('moraleBadge').textContent = morale.label;
-    $('moraleBadge').className = `badge ${mediaDelta < 0 ? 'red' : mediaDelta > 0 ? 'green' : 'blue'}`;
-  }
+  if($('moraleBadge')) $('moraleBadge').textContent = morale.label;
   const pressure = low >= 4 ? 'High' : low >= 2 ? 'Medium' : 'Controlled';
   const mood = morale.score >= 82 ? 'Buzzing' : morale.score >= 72 ? 'Confident' : morale.score >= 62 ? 'Calm' : 'Flat';
   const leader = strongestRow(rows);
   if($('moraleLines')){
     $('moraleLines').innerHTML = `
       <div class="morale-line"><span>Dressing room mood</span><strong>${mood}</strong></div>
-      <div class="morale-line"><span>Media effect</span><strong>${moraleDeltaBadge(mediaDelta)}</strong></div>
-      <div class="morale-line"><span>Base morale</span><strong>${baseMorale.score}/100</strong></div>
       <div class="morale-line"><span>Pressure level</span><strong>${pressure}</strong></div>
       <div class="morale-line"><span>Squad leader</span><strong>${leader ? displayTicker(leader.ticker) : '—'}</strong></div>`;
   }
@@ -3477,7 +3422,7 @@ function renderAll(){
   renderBackupTeam(rows,'relegationWatch');
   renderChemistry(rows);
   renderSquadDevelopment(rows, annualIncome);
-  renderTrophies(annualIncome);
+  renderLegends(rows);
 }
 $('refreshBtn')?.addEventListener('click', loadData);
 loadData();
