@@ -2618,8 +2618,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media Centre</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training Ground</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2809,10 +2809,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <script src="AuroraFCData.js"></script>
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
-const AURORA_MASTER_FALLBACK_URLS = [
-  "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/AuroraMaster.json",
-  "AuroraMaster.json"
-];
 let AURORA_MASTER_CACHE = null;
 let state = { holdings:[], watchlist:[], scout:[], news:[] };
 
@@ -2890,104 +2886,54 @@ function currentDivision(annualIncome){
   if(annualIncome >= 1000) return ['League Two','first trophy banked'];
   return ['National League project','academy stage'];
 }
-async function fetchAuroraMaster(){
-  const urls = [AURORA_MASTER_URL, ...(typeof AURORA_MASTER_FALLBACK_URLS !== 'undefined' ? AURORA_MASTER_FALLBACK_URLS : [])];
-
-  let lastError = null;
-  for(const url of urls){
-    try{
-      const res = await fetch(url, { cache:'no-store' });
-      if(!res.ok) throw new Error(`${url} failed: ${res.status}`);
-      const data = await res.json();
-      if(data && typeof data === 'object') return data;
-    }catch(err){
-      lastError = err;
-      console.warn('AuroraMaster source failed:', url, err);
-    }
-  }
-
-  throw lastError || new Error('Unable to load AuroraMaster.json');
-}
-
-function normaliseTabName(s){
-  return String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
-}
-
-function rowsFromPossibleTab(value){
-  if(Array.isArray(value)) return value;
-  if(value && typeof value === 'object'){
-    for(const key of ['rows','data','values','items','records']){
-      if(Array.isArray(value[key])) return value[key];
-    }
-  }
-  return [];
-}
-
-function findTabRows(obj, tab){
-  if(!obj || typeof obj !== 'object') return [];
-
-  const wanted = normaliseTabName(tab);
-
-  const directRows = rowsFromPossibleTab(obj[tab]);
-  if(directRows.length) return directRows;
-
-  const matchedKey = Object.keys(obj).find(k => normaliseTabName(k) === wanted);
-  if(matchedKey){
-    const matchedRows = rowsFromPossibleTab(obj[matchedKey]);
-    if(matchedRows.length) return matchedRows;
-  }
-
-  if(wanted === 'auroratimes'){
-    const looseKey = Object.keys(obj).find(k => {
-      const nk = normaliseTabName(k);
-      return nk.includes('aurora') && nk.includes('times');
-    });
-    if(looseKey){
-      const looseRows = rowsFromPossibleTab(obj[looseKey]);
-      if(looseRows.length) return looseRows;
-    }
-  }
-
-  for(const wrapper of ['data','tabs','sheets','feeds','tables','workbook']){
-    const wrapped = obj[wrapper];
-    if(wrapped && typeof wrapped === 'object'){
-      const rows = findTabRows(wrapped, tab);
-      if(rows.length) return rows;
-    }
-  }
-
-  return [];
-}
-
 async function fetchTab(tab){
   if(!AURORA_MASTER_CACHE){
-    AURORA_MASTER_CACHE = await fetchAuroraMaster();
-    console.info('AuroraMaster loaded. Top-level keys:', Object.keys(AURORA_MASTER_CACHE || {}));
+    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE = await res.json();
   }
 
-  const rows = findTabRows(AURORA_MASTER_CACHE, tab);
-  console.info(`Aurora tab ${tab}:`, rows.length, 'rows');
-  return rows;
+  const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const wanted = normalise(tab);
+
+  function findTab(obj){
+    if(!obj || typeof obj !== 'object') return [];
+    if(Array.isArray(obj[tab])) return obj[tab];
+
+    const key = Object.keys(obj).find(k => normalise(k) === wanted);
+    if(key && Array.isArray(obj[key])) return obj[key];
+
+    return [];
+  }
+
+  let rows = findTab(AURORA_MASTER_CACHE);
+  if(rows.length) return rows;
+
+  for(const wrapper of ['data','tabs','sheets','feeds']){
+    rows = findTab(AURORA_MASTER_CACHE?.[wrapper]);
+    if(rows.length) return rows;
+  }
+
+  return [];
 }
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, newsA, newsB, newsC] = await Promise.all([
+    const [holdings, watchlist, scout, newsA, newsB] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
       fetchTab('AuroraScout').catch(()=>[]),
       fetchTab('AuroraTimes').catch(()=>[]),
-      fetchTab('Aurora Times').catch(()=>[]),
-      fetchTab('Aurora_Times').catch(()=>[])
+      fetchTab('Aurora Times').catch(()=>[])
     ]);
-    const news = newsA.length ? newsA : (newsB.length ? newsB : newsC);
+    const news = newsA.length ? newsA : newsB;
     state = { holdings, watchlist, scout, news };
     renderAll();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trainingReportGrid','moraleLines','fatigueWatch'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
@@ -3141,6 +3087,99 @@ function renderLegends(rows){
     </div>`;
   }).join('') : '<div class="loading">No legends found yet.</div>';
 }
+function buildTrophies(annualIncome){
+  const base = "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/cups/";
+  return [
+    {
+      icon:'🏆',
+      title:'League One Promotion',
+      target:3000,
+      monthlyTarget:250,
+      image:base + 'league1.png',
+      detail:'First proper breakthrough. The club is officially moving.'
+    },
+    {
+      icon:'🏆',
+      title:'Championship Promotion',
+      target:6000,
+      monthlyTarget:500,
+      image:base + 'championship.png',
+      detail:'Serious progress. Aurora City becomes a proper force.'
+    },
+    {
+      icon:'👑',
+      title:'Premier League Champions',
+      target:12000,
+      monthlyTarget:1000,
+      image:base + 'premier_league.png',
+      detail:'Elite domestic level. The club has arrived.'
+    },
+    {
+      icon:'🏆',
+      title:'European Champions',
+      target:18000,
+      monthlyTarget:1500,
+      image:base + 'european.png',
+      detail:'Big club energy. European nights unlocked.'
+    },
+    {
+      icon:'🏆',
+      title:'Champions League Winners',
+      target:24000,
+      monthlyTarget:2000,
+      image:base + 'champions_league.png',
+      detail:'Final boss. The long-term Aurora dynasty mission.'
+    }
+  ];
+}
+function trophyStatus(progress, done){
+  if(done) return ['Unlocked','unlocked'];
+  if(progress >= 75) return ['In Reach','in-reach'];
+  if(progress >= 40) return ['Building','locked'];
+  return ['Locked Target','locked'];
+}
+function renderTrophies(annualIncome){
+  const trophies = buildTrophies(annualIncome);
+  const monthlyIncome = annualIncome / 12;
+  const unlocked = trophies.filter(t=>annualIncome >= t.target).length;
+  const next = trophies.find(t=>annualIncome < t.target);
+  const trophyCount = $('trophyCount');
+  const grid = $('trophyGrid');
+
+  if(trophyCount) trophyCount.textContent = `${unlocked}/${trophies.length} unlocked`;
+  if($('honoursMonthlyIncome')) $('honoursMonthlyIncome').textContent = money(monthlyIncome);
+  if($('honoursNextUnlock')) $('honoursNextUnlock').textContent = next ? next.title : 'Dynasty complete';
+  if($('honoursAmountLeft')) $('honoursAmountLeft').textContent = next ? `${money(Math.max(0,next.target-annualIncome))} annual` : 'All honours secured';
+
+  if(!grid) return;
+
+  grid.innerHTML = trophies.map(t=>{
+    const done = annualIncome >= t.target;
+    const progress = Math.min(100, Math.max(0, (annualIncome / t.target) * 100));
+    const gap = Math.max(0,t.target-annualIncome);
+    const [statusText,statusClass] = trophyStatus(progress, done);
+    const cardClass = done ? 'unlocked' : progress >= 75 ? 'in-reach' : 'locked';
+
+    return `<div class="honours-trophy ${cardClass}">
+      <div>
+        <div class="trophy-image-stage">
+          <img src="${t.image}" alt="${t.title} trophy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+          <div class="trophy-placeholder">${done ? t.icon : '🔒'}</div>
+        </div>
+        <div class="honours-trophy-body">
+          <strong>${t.title}</strong>
+          <span>${t.detail}</span>
+          <div class="honours-target-row"><span>Target</span><b>${money(t.monthlyTarget)}/month</b></div>
+          <div class="honours-target-row"><span>Progress</span><b>${Math.round(progress)}%</b></div>
+          <div class="honours-progress"><span style="width:${progress}%"></span></div>
+          <span class="honours-status ${statusClass}">${statusText}</span>
+          <span>${done ? 'Honour secured.' : money(gap) + ' annual income to unlock.'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function renderSelectionIntel(rows, backups){
   const el = $('selectionIntel');
   const advice = $('selectionAdvice');
@@ -3296,38 +3335,9 @@ function val(row,...keys){
 }
 function isPublishedNews(row){
   const status = String(val(row,'Status','status')).trim().toLowerCase();
-  return !status || status === 'published' || status === 'publish' || status === 'live';
+  return !status || status === 'published';
 }
-function mediaMoraleImpact(){
-  const rows = state.news || [];
-  return rows
-    .filter(isPublishedNews)
-    .reduce((sum,row)=>{
-      const wantedKeys = [
-        'Morale_Impact',
-        'morale_impact',
-        'Morale Impact',
-        'morale impact',
-        'MoraleImpact',
-        'moraleImpact',
-        'MORALE_IMPACT'
-      ];
-
-      let raw = val(row, ...wantedKeys);
-
-      if(raw === '' && row && typeof row === 'object'){
-        const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
-        const hit = Object.keys(row).find(k => normalise(k) === 'moraleimpact');
-        if(hit) raw = row[hit];
-      }
-
-      const text = String(raw ?? '').trim();
-      const match = text.match(/[+-]?\d+(?:\.\d+)?/);
-      const n = match ? Number(match[0]) : parseNum(raw);
-
-      return sum + (Number.isFinite(n) ? n : 0);
-    },0);
-}
+function mediaMoraleImpact()
 function mediaImpactLabel(n){
   if(n > 0) return `<strong class="morale-impact morale-impact-up">+${n} media boost</strong>`;
   if(n < 0) return `<strong class="morale-impact morale-impact-down">${n} media pressure</strong>`;
@@ -3374,7 +3384,6 @@ function renderMoraleCentre(rows, annualIncome){
   const low = rows.filter(r=>squadScore(r)<60).length;
   const baseMorale = moraleRating(avg, annualIncome, low);
   const mediaImpact = Math.round(mediaMoraleImpact());
-  console.info('Squad morale media rows:', state.news?.length || 0, 'impact:', mediaImpact, state.news || []);
   const finalScore = Math.max(0, Math.min(100, baseMorale.score + mediaImpact));
   const label = finalScore >= 82 ? 'Excellent' : finalScore >= 72 ? 'High' : finalScore >= 62 ? 'Stable' : 'Needs Lift';
   if($('moraleScore')) $('moraleScore').textContent = `${finalScore}`;
