@@ -3,14 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#030712" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
-
 <title>Aurora City FC — Squad Hub</title>
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
@@ -2522,82 +2514,98 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 
 
-
-/* ===================== SECTION: AURORA CITY FC LANDSCAPE HERO FINAL FIX ===================== */
-/* Final override: keeps the finished header artwork fully visible in Android/iPad landscape app mode. */
-.squad-hero{
-  position:relative!important;
-  overflow:hidden!important;
-  border:1px solid rgba(96,165,250,.22)!important;
-  border-radius:28px!important;
-  background-image:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/4E299D2D-53AC-43F8-A84E-0FD90C2D39AC.png")!important;
-  background-size:100% 100%!important;
-  background-position:center center!important;
-  background-repeat:no-repeat!important;
-  background-color:#020617!important;
-  min-height:360px!important;
-  box-shadow:0 18px 60px rgba(0,0,0,.32)!important;
+/* ===================== SECTION: AURORA CLUB BRAIN JSON HOOKS ===================== */
+.aurora-brain-section{
+  margin-top:16px;
 }
-.squad-hero:before,
-.squad-hero:after{
-  content:none!important;
-  display:none!important;
-  opacity:0!important;
-  background:none!important;
+.aurora-brain-grid{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:12px;
 }
-.squad-hero-content,
-.squad-hero .squad-hero-content,
-.squad-hero .kicker,
-.squad-hero .hero-title,
-.squad-hero .hero-sub,
-.squad-hero .hero-actions,
-.squad-hero .pill,
-.squad-hero h2,
-.squad-hero p{
-  display:none!important;
-  visibility:hidden!important;
+.aurora-brain-card{
+  grid-column:span 4;
+  min-width:0;
 }
-@media (orientation:landscape) and (max-height:520px){
-  .app{
-    padding-top:10px!important;
-  }
-  .squad-hero{
-    min-height:calc(100vw * 0.42)!important;
-    max-height:420px!important;
-  }
+.aurora-brain-card.wide{
+  grid-column:span 6;
 }
-@media (max-width:760px){
-  .squad-hero{
-    min-height:330px!important;
-  }
+.aurora-brain-list{
+  display:grid;
+  gap:10px;
+  margin-top:10px;
 }
-
-
-/* ===================== SECTION: SQUAD MORALE MEDIA IMPACT BADGE ===================== */
-.morale-impact{
-  display:inline-flex;
-  justify-content:center;
+.aurora-brain-item{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:10px;
   align-items:center;
-  border-radius:999px;
-  padding:5px 9px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:16px;
+  padding:10px;
+}
+.aurora-brain-icon{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:rgba(96,165,250,.14);
+  border:1px solid rgba(96,165,250,.24);
+  font-weight:1000;
+  color:#bfdbfe;
+}
+.aurora-brain-item strong{
+  display:block;
+  font-size:14px;
+  line-height:1.25;
+}
+.aurora-brain-item span{
+  display:block;
+  color:var(--muted);
   font-size:12px;
+  line-height:1.35;
+  margin-top:2px;
+}
+.aurora-brain-pill{
+  border:1px solid rgba(96,165,250,.28);
+  background:rgba(30,64,175,.18);
+  color:#bfdbfe;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:11px;
   font-weight:1000;
   white-space:nowrap;
 }
-.morale-impact-up{
-  color:#bbf7d0!important;
-  border:1px solid rgba(52,211,153,.34);
-  background:rgba(20,83,45,.24);
+.aurora-brain-pill.good{
+  border-color:rgba(52,211,153,.30);
+  background:rgba(20,83,45,.22);
+  color:#bbf7d0;
 }
-.morale-impact-down{
-  color:#fecdd3!important;
-  border:1px solid rgba(251,113,133,.34);
-  background:rgba(127,29,29,.24);
+.aurora-brain-pill.warn{
+  border-color:rgba(251,191,36,.30);
+  background:rgba(120,53,15,.22);
+  color:#fde68a;
 }
-.morale-impact-flat{
-  color:#bfdbfe!important;
-  border:1px solid rgba(96,165,250,.30);
-  background:rgba(30,64,175,.22);
+.aurora-brain-pill.bad{
+  border-color:rgba(251,113,133,.30);
+  background:rgba(127,29,29,.22);
+  color:#fecdd3;
+}
+.aurora-brain-empty{
+  padding:14px;
+  border:1px dashed rgba(96,165,250,.34);
+  color:var(--muted);
+  border-radius:16px;
+  background:rgba(15,23,42,.4);
+}
+@media(max-width:1000px){
+  .aurora-brain-card,.aurora-brain-card.wide{grid-column:span 12}
+}
+@media(max-width:760px){
+  .aurora-brain-item{grid-template-columns:34px minmax(0,1fr)}
+  .aurora-brain-pill{grid-column:2;justify-self:start}
 }
 
 </style>
@@ -2618,8 +2626,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media Centre</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training Ground</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2797,6 +2805,43 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
   </section>
 
+  <!-- ===================== SECTION: AURORA HONOURS CABINET ===================== -->
+  <section class="section">
+    <div class="squad-grid">
+      <div class="squad-card w12">
+        <div class="honours-cabinet-shell">
+          <div class="honours-header">
+            <div>
+              <p class="kicker"><span class="kicker-dot"></span> Club legacy path</p>
+              <h3>Aurora Honours Cabinet</h3>
+              <p>Track the road from League One breakthrough to Champions League immortality.</p>
+            </div>
+            <span class="badge green" id="trophyCount">Loading…</span>
+          </div>
+
+          <div class="honours-summary">
+            <div class="honours-summary-card">
+              <small>Current monthly income</small>
+              <strong id="honoursMonthlyIncome">—</strong>
+            </div>
+            <div class="honours-summary-card">
+              <small>Next unlock</small>
+              <strong id="honoursNextUnlock">—</strong>
+            </div>
+            <div class="honours-summary-card">
+              <small>Amount to next trophy</small>
+              <strong id="honoursAmountLeft">—</strong>
+            </div>
+          </div>
+
+          <div class="honours-trophy-grid" id="trophyGrid">
+            <div class="loading">Loading honours cabinet…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== SECTION: FOOTER ===================== -->
   <footer class="footer">
     Aurora City FC • Squad Hub • Sheet engine: AuroraData
@@ -2804,17 +2849,10 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </main>
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
-
-<!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
-<script src="AuroraFCData.js"></script>
 <script>
-const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
-const AURORA_MASTER_FALLBACK_URLS = [
-  "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/AuroraMaster.json",
-  "AuroraMaster.json"
-];
+const AURORA_MASTER_URL = window.AURORA_FC?.dataUrl || "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE = null;
-let state = { holdings:[], watchlist:[], scout:[], news:[] };
+let state = { holdings:[], watchlist:[], scout:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2890,104 +2928,29 @@ function currentDivision(annualIncome){
   if(annualIncome >= 1000) return ['League Two','first trophy banked'];
   return ['National League project','academy stage'];
 }
-async function fetchAuroraMaster(){
-  const urls = [AURORA_MASTER_URL, ...(typeof AURORA_MASTER_FALLBACK_URLS !== 'undefined' ? AURORA_MASTER_FALLBACK_URLS : [])];
-
-  let lastError = null;
-  for(const url of urls){
-    try{
-      const res = await fetch(url, { cache:'no-store' });
-      if(!res.ok) throw new Error(`${url} failed: ${res.status}`);
-      const data = await res.json();
-      if(data && typeof data === 'object') return data;
-    }catch(err){
-      lastError = err;
-      console.warn('AuroraMaster source failed:', url, err);
-    }
-  }
-
-  throw lastError || new Error('Unable to load AuroraMaster.json');
-}
-
-function normaliseTabName(s){
-  return String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
-}
-
-function rowsFromPossibleTab(value){
-  if(Array.isArray(value)) return value;
-  if(value && typeof value === 'object'){
-    for(const key of ['rows','data','values','items','records']){
-      if(Array.isArray(value[key])) return value[key];
-    }
-  }
-  return [];
-}
-
-function findTabRows(obj, tab){
-  if(!obj || typeof obj !== 'object') return [];
-
-  const wanted = normaliseTabName(tab);
-
-  const directRows = rowsFromPossibleTab(obj[tab]);
-  if(directRows.length) return directRows;
-
-  const matchedKey = Object.keys(obj).find(k => normaliseTabName(k) === wanted);
-  if(matchedKey){
-    const matchedRows = rowsFromPossibleTab(obj[matchedKey]);
-    if(matchedRows.length) return matchedRows;
-  }
-
-  if(wanted === 'auroratimes'){
-    const looseKey = Object.keys(obj).find(k => {
-      const nk = normaliseTabName(k);
-      return nk.includes('aurora') && nk.includes('times');
-    });
-    if(looseKey){
-      const looseRows = rowsFromPossibleTab(obj[looseKey]);
-      if(looseRows.length) return looseRows;
-    }
-  }
-
-  for(const wrapper of ['data','tabs','sheets','feeds','tables','workbook']){
-    const wrapped = obj[wrapper];
-    if(wrapped && typeof wrapped === 'object'){
-      const rows = findTabRows(wrapped, tab);
-      if(rows.length) return rows;
-    }
-  }
-
-  return [];
-}
-
 async function fetchTab(tab){
   if(!AURORA_MASTER_CACHE){
-    AURORA_MASTER_CACHE = await fetchAuroraMaster();
-    console.info('AuroraMaster loaded. Top-level keys:', Object.keys(AURORA_MASTER_CACHE || {}));
+    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE = await res.json();
   }
-
-  const rows = findTabRows(AURORA_MASTER_CACHE, tab);
-  console.info(`Aurora tab ${tab}:`, rows.length, 'rows');
-  return rows;
+  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
 }
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, newsA, newsB, newsC] = await Promise.all([
+    const [holdings, watchlist, scout] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('AuroraTimes').catch(()=>[]),
-      fetchTab('Aurora Times').catch(()=>[]),
-      fetchTab('Aurora_Times').catch(()=>[])
+      fetchTab('AuroraScout').catch(()=>[])
     ]);
-    const news = newsA.length ? newsA : (newsB.length ? newsB : newsC);
-    state = { holdings, watchlist, scout, news };
+    state = { holdings, watchlist, scout };
     renderAll();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trainingReportGrid','moraleLines','fatigueWatch'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
@@ -3141,6 +3104,99 @@ function renderLegends(rows){
     </div>`;
   }).join('') : '<div class="loading">No legends found yet.</div>';
 }
+function buildTrophies(annualIncome){
+  const base = "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/cups/";
+  return [
+    {
+      icon:'🏆',
+      title:'League One Promotion',
+      target:3000,
+      monthlyTarget:250,
+      image:base + 'league1.png',
+      detail:'First proper breakthrough. The club is officially moving.'
+    },
+    {
+      icon:'🏆',
+      title:'Championship Promotion',
+      target:6000,
+      monthlyTarget:500,
+      image:base + 'championship.png',
+      detail:'Serious progress. Aurora City becomes a proper force.'
+    },
+    {
+      icon:'👑',
+      title:'Premier League Champions',
+      target:12000,
+      monthlyTarget:1000,
+      image:base + 'premier_league.png',
+      detail:'Elite domestic level. The club has arrived.'
+    },
+    {
+      icon:'🏆',
+      title:'European Champions',
+      target:18000,
+      monthlyTarget:1500,
+      image:base + 'european.png',
+      detail:'Big club energy. European nights unlocked.'
+    },
+    {
+      icon:'🏆',
+      title:'Champions League Winners',
+      target:24000,
+      monthlyTarget:2000,
+      image:base + 'champions_league.png',
+      detail:'Final boss. The long-term Aurora dynasty mission.'
+    }
+  ];
+}
+function trophyStatus(progress, done){
+  if(done) return ['Unlocked','unlocked'];
+  if(progress >= 75) return ['In Reach','in-reach'];
+  if(progress >= 40) return ['Building','locked'];
+  return ['Locked Target','locked'];
+}
+function renderTrophies(annualIncome){
+  const trophies = buildTrophies(annualIncome);
+  const monthlyIncome = annualIncome / 12;
+  const unlocked = trophies.filter(t=>annualIncome >= t.target).length;
+  const next = trophies.find(t=>annualIncome < t.target);
+  const trophyCount = $('trophyCount');
+  const grid = $('trophyGrid');
+
+  if(trophyCount) trophyCount.textContent = `${unlocked}/${trophies.length} unlocked`;
+  if($('honoursMonthlyIncome')) $('honoursMonthlyIncome').textContent = money(monthlyIncome);
+  if($('honoursNextUnlock')) $('honoursNextUnlock').textContent = next ? next.title : 'Dynasty complete';
+  if($('honoursAmountLeft')) $('honoursAmountLeft').textContent = next ? `${money(Math.max(0,next.target-annualIncome))} annual` : 'All honours secured';
+
+  if(!grid) return;
+
+  grid.innerHTML = trophies.map(t=>{
+    const done = annualIncome >= t.target;
+    const progress = Math.min(100, Math.max(0, (annualIncome / t.target) * 100));
+    const gap = Math.max(0,t.target-annualIncome);
+    const [statusText,statusClass] = trophyStatus(progress, done);
+    const cardClass = done ? 'unlocked' : progress >= 75 ? 'in-reach' : 'locked';
+
+    return `<div class="honours-trophy ${cardClass}">
+      <div>
+        <div class="trophy-image-stage">
+          <img src="${t.image}" alt="${t.title} trophy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+          <div class="trophy-placeholder">${done ? t.icon : '🔒'}</div>
+        </div>
+        <div class="honours-trophy-body">
+          <strong>${t.title}</strong>
+          <span>${t.detail}</span>
+          <div class="honours-target-row"><span>Target</span><b>${money(t.monthlyTarget)}/month</b></div>
+          <div class="honours-target-row"><span>Progress</span><b>${Math.round(progress)}%</b></div>
+          <div class="honours-progress"><span style="width:${progress}%"></span></div>
+          <span class="honours-status ${statusClass}">${statusText}</span>
+          <span>${done ? 'Honour secured.' : money(gap) + ' annual income to unlock.'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function renderSelectionIntel(rows, backups){
   const el = $('selectionIntel');
   const advice = $('selectionAdvice');
@@ -3288,51 +3344,6 @@ function moraleRating(avg, annualIncome, lowCount){
   let label = score >= 82 ? 'Excellent' : score >= 72 ? 'High' : score >= 62 ? 'Stable' : 'Needs Lift';
   return { score, label };
 }
-function val(row,...keys){
-  for(const k of keys){
-    if(row && row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return row[k];
-  }
-  return '';
-}
-function isPublishedNews(row){
-  const status = String(val(row,'Status','status')).trim().toLowerCase();
-  return !status || status === 'published' || status === 'publish' || status === 'live';
-}
-function mediaMoraleImpact(){
-  const rows = state.news || [];
-  return rows
-    .filter(isPublishedNews)
-    .reduce((sum,row)=>{
-      const wantedKeys = [
-        'Morale_Impact',
-        'morale_impact',
-        'Morale Impact',
-        'morale impact',
-        'MoraleImpact',
-        'moraleImpact',
-        'MORALE_IMPACT'
-      ];
-
-      let raw = val(row, ...wantedKeys);
-
-      if(raw === '' && row && typeof row === 'object'){
-        const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
-        const hit = Object.keys(row).find(k => normalise(k) === 'moraleimpact');
-        if(hit) raw = row[hit];
-      }
-
-      const text = String(raw ?? '').trim();
-      const match = text.match(/[+-]?\d+(?:\.\d+)?/);
-      const n = match ? Number(match[0]) : parseNum(raw);
-
-      return sum + (Number.isFinite(n) ? n : 0);
-    },0);
-}
-function mediaImpactLabel(n){
-  if(n > 0) return `<strong class="morale-impact morale-impact-up">+${n} media boost</strong>`;
-  if(n < 0) return `<strong class="morale-impact morale-impact-down">${n} media pressure</strong>`;
-  return `<strong class="morale-impact morale-impact-flat">0 media effect</strong>`;
-}
 function renderTrainingReport(rows, annualIncome){
   const el = $('trainingReportGrid');
   if(!el) return;
@@ -3372,21 +3383,15 @@ function renderTrainingReport(rows, annualIncome){
 function renderMoraleCentre(rows, annualIncome){
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
   const low = rows.filter(r=>squadScore(r)<60).length;
-  const baseMorale = moraleRating(avg, annualIncome, low);
-  const mediaImpact = Math.round(mediaMoraleImpact());
-  console.info('Squad morale media rows:', state.news?.length || 0, 'impact:', mediaImpact, state.news || []);
-  const finalScore = Math.max(0, Math.min(100, baseMorale.score + mediaImpact));
-  const label = finalScore >= 82 ? 'Excellent' : finalScore >= 72 ? 'High' : finalScore >= 62 ? 'Stable' : 'Needs Lift';
-  if($('moraleScore')) $('moraleScore').textContent = `${finalScore}`;
-  if($('moraleBadge')) $('moraleBadge').textContent = label;
+  const morale = moraleRating(avg, annualIncome, low);
+  if($('moraleScore')) $('moraleScore').textContent = `${morale.score}`;
+  if($('moraleBadge')) $('moraleBadge').textContent = morale.label;
   const pressure = low >= 4 ? 'High' : low >= 2 ? 'Medium' : 'Controlled';
-  const mood = finalScore >= 82 ? 'Buzzing' : finalScore >= 72 ? 'Confident' : finalScore >= 62 ? 'Calm' : 'Flat';
+  const mood = morale.score >= 82 ? 'Buzzing' : morale.score >= 72 ? 'Confident' : morale.score >= 62 ? 'Calm' : 'Flat';
   const leader = strongestRow(rows);
   if($('moraleLines')){
     $('moraleLines').innerHTML = `
       <div class="morale-line"><span>Dressing room mood</span><strong>${mood}</strong></div>
-      <div class="morale-line"><span>Media effect</span>${mediaImpactLabel(mediaImpact)}</div>
-      <div class="morale-line"><span>Base morale</span><strong>${baseMorale.score}</strong></div>
       <div class="morale-line"><span>Pressure level</span><strong>${pressure}</strong></div>
       <div class="morale-line"><span>Squad leader</span><strong>${leader ? displayTicker(leader.ticker) : '—'}</strong></div>`;
   }
@@ -3490,20 +3495,179 @@ function renderAll(){
   renderChemistry(rows);
   renderSquadDevelopment(rows, annualIncome);
   renderLegends(rows);
+  renderTrophies(annualIncome);
 }
 $('refreshBtn')?.addEventListener('click', loadData);
 loadData();
 </script>
 
-<!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
+<!-- ===================== SECTION: AURORA CLUB BRAIN JSON HOOKS ===================== -->
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(err => {
-      console.warn('Aurora City FC service worker registration failed:', err);
-    });
+(function(){
+  const CONFIG = {"heading": "Dressing room intelligence", "sub": "Morale, supporter mood and squad-impact news now read from the live sheets.", "cards": [{"title": "Morale log", "badge": "Squad mood", "tab": "MoraleLog", "limit": 6, "empty": "No morale events yet."}, {"title": "Squad-impact news", "badge": "News", "tab": "AuroraTimes", "limit": 5, "filter": "morale", "empty": "No squad-impact headlines yet."}, {"title": "Training notes", "badge": "Coach", "tab": "TrainingLog", "limit": 5, "empty": "No training log rows yet."}]};
+  const DEFAULT_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+  const MASTER_URL = window.AURORA_FC?.dataUrl || (typeof AURORA_MASTER_URL !== "undefined" ? AURORA_MASTER_URL : DEFAULT_MASTER_URL);
+
+  const esc = value => String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#39;");
+
+  const pick = (row, names) => {
+    for(const name of names){
+      if(row && row[name] !== undefined && row[name] !== null && String(row[name]).trim() !== "") return row[name];
+    }
+    return "";
+  };
+
+  const num = value => {
+    const n = Number(String(value ?? "").replace(/£|,|%/g,"").trim());
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const asRows = (data, tab) => {
+    const direct = data && Array.isArray(data[tab]) ? data[tab] : null;
+    const nested = data && data.data && Array.isArray(data.data[tab]) ? data.data[tab] : null;
+    return (direct || nested || []).filter(row => row && typeof row === "object");
+  };
+
+  const activeRows = rows => rows.filter(row => {
+    const status = String(pick(row,["Status","status","Display_Status"])).toLowerCase();
+    return !["hidden","hide","no","archived","deleted"].includes(status);
   });
-}
+
+  const dateValue = row => {
+    const raw = pick(row,["Date","date","Award_Date","Due_Date","Review_Date","Target_Date","Achieved_Date"]);
+    const time = pick(row,["Time","time"]);
+    const dt = raw ? new Date(`${raw} ${time || ""}`.trim()).getTime() : 0;
+    return Number.isFinite(dt) ? dt : 0;
+  };
+
+  const keepByFilter = (row, filter) => {
+    if(!filter) return true;
+    const category = String(pick(row,["Category","Department","Type","Rule_Type","Training_Focus"])).toLowerCase();
+    const page = String(pick(row,["Related_Page","Linked_Sheet","Affected_Area","Area","Focus"])).toLowerCase();
+    const displayHome = String(pick(row,["Display_On_Home","display_on_home"])).toLowerCase();
+    const displayMedia = String(pick(row,["Display_In_Media","display_in_media"])).toLowerCase();
+    const morale = num(pick(row,["Morale_Impact","morale_impact","Supporter_Impact","Board_Impact"]));
+    if(filter === "home") return displayHome !== "no";
+    if(filter === "media") return displayMedia !== "no";
+    if(filter === "morale") return morale !== 0 || page.includes("squad") || page.includes("morale");
+    if(filter === "transfer") return category.includes("scout") || category.includes("transfer") || category.includes("recruit") || page.includes("transfer") || page.includes("scout");
+    if(filter === "training") return category.includes("training") || page.includes("training") || page.includes("coach");
+    return true;
+  };
+
+  const titleFor = row => {
+    const base = pick(row,["Headline","Subject","Fixture","Award","Target","Event","Trigger","Training_Focus","Board_Message","Category"]);
+    const ticker = pick(row,["Ticker","Related_Ticker","ticker"]);
+    return ticker && base && !String(base).includes(ticker) ? `${ticker} — ${base}` : (base || ticker || "Club update");
+  };
+
+  const noteFor = row => pick(row,[
+    "Summary","Message","Reason","Action","Coach_Note","Board_Message","Notes","Issue","Focus","Opponent"
+  ]) || "Awaiting full staff note.";
+
+  const valueFor = row => {
+    const impact = pick(row,["Morale_Impact","Board_Impact","Supporter_Impact"]);
+    if(String(impact).trim() !== "") return `${Number(impact) > 0 ? "+" : ""}${impact}`;
+    return pick(row,["Importance","Priority","Status","Score","Movement","Value","Income_Target_Monthly","Badge"]) || "Live";
+  };
+
+  const iconFor = (tab, row) => {
+    const category = String(pick(row,["Category","Department","Type","Training_Focus","Award"])).toLowerCase();
+    if(tab === "Awards") return "🏆";
+    if(tab === "Milestones") return "⭐";
+    if(tab === "BoardConfidence") return "👔";
+    if(tab === "TrainingLog") return "🏃";
+    if(tab === "ManagerInbox") return "📩";
+    if(tab === "AuroraFixtures") return "📅";
+    if(tab === "MoraleLog") return "💬";
+    if(category.includes("dividend")) return "💷";
+    if(category.includes("buyback")) return "🔁";
+    if(category.includes("inflation") || category.includes("rates")) return "📉";
+    if(category.includes("scout") || category.includes("transfer")) return "🔎";
+    return "📰";
+  };
+
+  const pillClass = row => {
+    const value = num(pick(row,["Morale_Impact","Board_Impact","Supporter_Impact","Score","Movement"]));
+    const importance = String(pick(row,["Importance","Priority","Status"])).toLowerCase();
+    if(value < 0 || importance.includes("urgent") || importance.includes("risk")) return "bad";
+    if(value > 0 || importance.includes("published") || importance.includes("active")) return "good";
+    if(importance.includes("high") || importance.includes("watch") || importance.includes("pending")) return "warn";
+    return "";
+  };
+
+  const itemHtml = (tab, row) => `
+    <div class="aurora-brain-item">
+      <div class="aurora-brain-icon">${iconFor(tab,row)}</div>
+      <div>
+        <strong>${esc(titleFor(row))}</strong>
+        <span>${esc(noteFor(row))}</span>
+      </div>
+      <div class="aurora-brain-pill ${pillClass(row)}">${esc(valueFor(row))}</div>
+    </div>`;
+
+  const cardHtml = (data, card) => {
+    const rows = activeRows(asRows(data, card.tab))
+      .filter(row => keepByFilter(row, card.filter))
+      .sort((a,b)=>dateValue(b)-dateValue(a))
+      .slice(0, card.limit || 5);
+
+    const body = rows.length
+      ? rows.map(row => itemHtml(card.tab,row)).join("")
+      : `<div class="aurora-brain-empty">${esc(card.empty || "Waiting for sheet rows.")}</div>`;
+
+    return `<div class="card aurora-brain-card ${card.wide ? "wide" : ""}">
+      <div class="card-title">
+        <h3>${esc(card.title)}</h3>
+        <span class="badge blue">${esc(card.badge || card.tab)}</span>
+      </div>
+      <div class="aurora-brain-list">${body}</div>
+    </div>`;
+  };
+
+  function inject(data){
+    if(document.getElementById("auroraClubBrain")) return;
+    const main = document.querySelector("main.app") || document.body;
+    const section = document.createElement("section");
+    section.className = "section aurora-brain-section";
+    section.id = "auroraClubBrain";
+    section.innerHTML = `
+      <div class="section-head">
+        <div>
+          <h2>${esc(CONFIG.heading)}</h2>
+          <p>${esc(CONFIG.sub)}</p>
+        </div>
+        <span class="badge green">JSON live</span>
+      </div>
+      <div class="aurora-brain-grid">
+        ${(CONFIG.cards || []).map(card => cardHtml(data,card)).join("")}
+      </div>`;
+    const footer = main.querySelector("footer.footer");
+    if(footer) main.insertBefore(section, footer);
+    else main.appendChild(section);
+  }
+
+  async function boot(){
+    try{
+      const data = (typeof AURORA_MASTER_CACHE !== "undefined" && AURORA_MASTER_CACHE) ? AURORA_MASTER_CACHE : await fetch(MASTER_URL, {cache:"no-store"}).then(res => {
+        if(!res.ok) throw new Error(`AuroraMaster failed: ${res.status}`);
+        return res.json();
+      });
+      inject(data);
+    }catch(err){
+      console.warn("Aurora Club Brain feed failed:", err);
+    }
+  }
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
 </script>
+
 </body>
 </html>
