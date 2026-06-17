@@ -2104,6 +2104,29 @@ tr:hover td{background:rgba(96,165,250,.06)}
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE = null;
 
+
+const AURORA_MASTER_TABS = [
+  "Holdings",
+  "Dividends",
+  "Watchlist",
+  "Global Watchlist",
+  "AuroraScout",
+  "DailyPriceSummary",
+  "LivePrices",
+  "PriceLog",
+  "IncomeLog",
+  "FXRates",
+  "PreSeasonReport",
+  "AuroraTimes",
+  "MoraleLog",
+  "ManagerInbox",
+  "TrainingLog",
+  "BoardConfidence",
+  "Awards",
+  "AuroraFixtures",
+  "Milestones",
+  "AuroraRules"
+];
 const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
 const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
 const DEPLOYMENT_PER_PLAYER = 125;
@@ -2228,34 +2251,82 @@ function portraitFor(ticker){
   const s = shortTicker(ticker);
   return PLAYER_PORTRAITS[s] || "";
 }
-async function fetchTab(tab){
+async function fetchMaster(){
   if(!AURORA_MASTER_CACHE){
-    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
-    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
-    AURORA_MASTER_CACHE = await res.json();
+    const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});
+    if(!res.ok)throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE=await res.json();
   }
-  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
+  return AURORA_MASTER_CACHE;
+}
+function normaliseAuroraTabName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
+function readAuroraTab(master,tab){
+  const wanted=normaliseAuroraTabName(tab);
+  function pick(obj){
+    if(!obj||typeof obj!=='object')return [];
+    if(Array.isArray(obj[tab]))return obj[tab];
+    const key=Object.keys(obj).find(k=>normaliseAuroraTabName(k)===wanted);
+    return key&&Array.isArray(obj[key])?obj[key]:[];
+  }
+  let rows=pick(master);
+  if(rows.length)return rows;
+  for(const wrapper of ['data','tabs','sheets','feeds']){
+    rows=pick(master?.[wrapper]);
+    if(rows.length)return rows;
+  }
+  return [];
+}
+async function fetchTab(tab){
+  const master=await fetchMaster();
+  return readAuroraTab(master,tab);
+}
+async function fetchAllAuroraTabs(){
+  const master=await fetchMaster();
+  const tabs={};
+  AURORA_MASTER_TABS.forEach(tab=>{tabs[tab]=readAuroraTab(master,tab)});
+  return tabs;
+}
+function buildAuroraState(tabs){
+  return {
+    ...tabs,
+    holdings:tabs.Holdings||[],
+    dividends:tabs.Dividends||[],
+    watchlist:tabs.Watchlist||[],
+    globalWatchlist:tabs['Global Watchlist']||[],
+    scout:tabs.AuroraScout||[],
+    dailyPriceSummary:tabs.DailyPriceSummary||[],
+    livePrices:tabs.LivePrices||[],
+    priceLog:tabs.PriceLog||[],
+    income:tabs.IncomeLog||[],
+    fxRates:tabs.FXRates||[],
+    preSeasonReport:tabs.PreSeasonReport||[],
+    news:tabs.AuroraTimes||[],
+    moraleLog:tabs.MoraleLog||[],
+    managerInbox:tabs.ManagerInbox||[],
+    trainingLog:tabs.TrainingLog||[],
+    boardConfidence:tabs.BoardConfidence||[],
+    awards:tabs.Awards||[],
+    fixtures:tabs.AuroraFixtures||[],
+    milestones:tabs.Milestones||[],
+    rules:tabs.AuroraRules||[]
+  };
 }
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, globalWatchlist] = await Promise.all([
-      fetchTab('Holdings'),
-      fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('Global Watchlist').catch(()=>[])
-    ]);
-    state = { holdings, watchlist, scout, globalWatchlist };
+    const tabs = await fetchAllAuroraTabs();
+    state = buildAuroraState(tabs);
     renderAll();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['targetList','scoutReport','platformList','transferSlip'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ["targetList","scoutReport","platformList","transferSlip"].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
 }
+
 function targetRows(){
   return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[])])
     .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))

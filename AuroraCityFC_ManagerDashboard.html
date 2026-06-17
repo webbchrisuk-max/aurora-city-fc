@@ -1198,8 +1198,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 
 .crest img,
-.club-badge-xl img{
-  content:url("assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png")!important;
+.club-badge-xl img,
+.fixture-crest img{
+  content:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png")!important;
 }
 
 </style>
@@ -1210,7 +1211,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <div class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <div class="crest"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
+      <div class="crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div>
       <div>
         <h1>Aurora City FC</h1>
         <p>Manager Dashboard • Home</p>
@@ -1221,8 +1222,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -1265,7 +1264,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
     <div class="club-showcase">
       <div class="showcase-top">
         <div class="club-identity">
-          <div class="club-badge-xl"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
+          <div class="club-badge-xl"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div>
           <h2>Aurora <span>City FC</span></h2>
           <p>Manager Dashboard</p>
         </div>
@@ -1295,9 +1294,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
         <div class="next-fixture">
           <div class="card-title"><h3>Next Fixture</h3><span class="badge amber">Payday Window</span></div>
           <div class="fixture-vs">
-            <div class="fixture-team"><div class="fixture-crest"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div><strong>Aurora City</strong><span class="note">Home</span></div>
+            <div class="fixture-team"><div class="fixture-crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div><strong>Aurora City</strong><span class="note">Home</span></div>
             <strong>VS</strong>
-            <div class="fixture-team"><div class="fixture-crest"><img id="fixtureOpponentBadge" src="assets/aurora-city-fc/fixture/payday.png" alt="Payday Window badge"></div><strong id="fixtureOpponentName">Transfer Window</strong><span class="note" id="fixtureOpponentNote">Next Friday</span></div>
+            <div class="fixture-team"><div class="fixture-crest">💼</div><strong>Transfer Window</strong><span class="note">Next Friday</span></div>
           </div>
           <div class="fixture-countdown">
             <div><strong id="countDays">—</strong><small>days</small></div>
@@ -1373,10 +1372,10 @@ tr:hover td{background:rgba(96,165,250,.06)}
       </a>
       <a class="department-card" href="AuroraCityFC_SquadHub.html">
         <div class="department-card-content">
-          <img class="department-card-img" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/D8D0378B-F3D2-4B10-8139-361CBD885284.png" alt="Squad Hub preview">
+          <img class="department-card-img" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/4E299D2D-53AC-43F8-A84E-0FD90C2D39AC.png" alt="Squad Hub preview">
           <span>First Team</span>
           <strong>Squad Hub</strong>
-          <p>Holdings, chemistry, first-team form, relegation watch and promotion form.</p>
+          <p>Holdings, chemistry, trophy cabinet, legends, relegation watch and promotion form.</p>
         </div>
         <span>Open Squad Hub →</span>
       </a>
@@ -1393,25 +1392,33 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE = null;
+
+const AURORA_MASTER_TABS = [
+  "Holdings",
+  "Dividends",
+  "Watchlist",
+  "Global Watchlist",
+  "AuroraScout",
+  "DailyPriceSummary",
+  "LivePrices",
+  "PriceLog",
+  "IncomeLog",
+  "FXRates",
+  "PreSeasonReport",
+  "AuroraTimes",
+  "MoraleLog",
+  "ManagerInbox",
+  "TrainingLog",
+  "BoardConfidence",
+  "Awards",
+  "AuroraFixtures",
+  "Milestones",
+  "AuroraRules"
+];
 const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
 const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
 const DEPLOYMENT_PER_PLAYER = 112.5;
 const IMPACT_INCOME_TRIGGER = 20;
-
-/* ===================== SECTION: FIXTURE BADGE SCHEDULE ===================== */
-const FIXTURE_BADGES = {
-  payday: { label:'Transfer Window', note:'Next Friday', badge:'assets/aurora-city-fc/fixture/payday.png' },
-  boardroom: { label:'Boardroom Review', note:'Club control', badge:'assets/aurora-city-fc/fixture/boardroom.png' },
-  cup_draw: { label:'Cup Draw', note:'Knockout route', badge:'assets/aurora-city-fc/fixture/cup_draw.png' },
-  derby_day: { label:'Derby Day', note:'Rival clash', badge:'assets/aurora-city-fc/fixture/derby_day.png' },
-  opening_day: { label:'Opening Day', note:'Season opener', badge:'assets/aurora-city-fc/fixture/opening_day.png' },
-  press_day: { label:'Press Day', note:'Media briefing', badge:'assets/aurora-city-fc/fixture/press_day.png' },
-  scout_mission: { label:'Scout Mission', note:'Target search', badge:'assets/aurora-city-fc/fixture/scout_mission.png' },
-  training: { label:'Training Ground', note:'Player development', badge:'assets/aurora-city-fc/fixture/training.png' },
-  default: { label:'Fixture', note:'Club schedule', badge:'assets/aurora-city-fc/fixture/default.png' }
-};
-const CURRENT_FIXTURE_TYPE = 'payday';
-
 let state = { holdings:[], watchlist:[], scout:[] };
 
 const $ = id => document.getElementById(id);
@@ -1511,24 +1518,72 @@ function scoreFromIncome(annualIncome){
   if(annualIncome >= 1000) return 78;
   return 70;
 }
-async function fetchTab(tab){
+async function fetchMaster(){
   if(!AURORA_MASTER_CACHE){
-    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
-    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
-    AURORA_MASTER_CACHE = await res.json();
+    const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});
+    if(!res.ok)throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE=await res.json();
   }
-  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
+  return AURORA_MASTER_CACHE;
+}
+function normaliseAuroraTabName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
+function readAuroraTab(master,tab){
+  const wanted=normaliseAuroraTabName(tab);
+  function pick(obj){
+    if(!obj||typeof obj!=='object')return [];
+    if(Array.isArray(obj[tab]))return obj[tab];
+    const key=Object.keys(obj).find(k=>normaliseAuroraTabName(k)===wanted);
+    return key&&Array.isArray(obj[key])?obj[key]:[];
+  }
+  let rows=pick(master);
+  if(rows.length)return rows;
+  for(const wrapper of ['data','tabs','sheets','feeds']){
+    rows=pick(master?.[wrapper]);
+    if(rows.length)return rows;
+  }
+  return [];
+}
+async function fetchTab(tab){
+  const master=await fetchMaster();
+  return readAuroraTab(master,tab);
+}
+async function fetchAllAuroraTabs(){
+  const master=await fetchMaster();
+  const tabs={};
+  AURORA_MASTER_TABS.forEach(tab=>{tabs[tab]=readAuroraTab(master,tab)});
+  return tabs;
+}
+function buildAuroraState(tabs){
+  return {
+    ...tabs,
+    holdings:tabs.Holdings||[],
+    dividends:tabs.Dividends||[],
+    watchlist:tabs.Watchlist||[],
+    globalWatchlist:tabs['Global Watchlist']||[],
+    scout:tabs.AuroraScout||[],
+    dailyPriceSummary:tabs.DailyPriceSummary||[],
+    livePrices:tabs.LivePrices||[],
+    priceLog:tabs.PriceLog||[],
+    income:tabs.IncomeLog||[],
+    fxRates:tabs.FXRates||[],
+    preSeasonReport:tabs.PreSeasonReport||[],
+    news:tabs.AuroraTimes||[],
+    moraleLog:tabs.MoraleLog||[],
+    managerInbox:tabs.ManagerInbox||[],
+    trainingLog:tabs.TrainingLog||[],
+    boardConfidence:tabs.BoardConfidence||[],
+    awards:tabs.Awards||[],
+    fixtures:tabs.AuroraFixtures||[],
+    milestones:tabs.Milestones||[],
+    rules:tabs.AuroraRules||[]
+  };
 }
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout] = await Promise.all([
-      fetchTab('Holdings'),
-      fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[])
-    ]);
-    state = { holdings, watchlist, scout };
+    const tabs = await fetchAllAuroraTabs();
+    state = buildAuroraState(tabs);
     renderAll();
   }catch(err){
     console.error(err);
@@ -1536,16 +1591,6 @@ async function loadData(){
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
-}
-function renderFixtureBadge(){
-  const fixture = FIXTURE_BADGES[CURRENT_FIXTURE_TYPE] || FIXTURE_BADGES.default;
-  const img = $('fixtureOpponentBadge');
-  if(img){
-    img.src = fixture.badge;
-    img.alt = `${fixture.label} badge`;
-  }
-  if($('fixtureOpponentName')) $('fixtureOpponentName').textContent = fixture.label;
-  if($('fixtureOpponentNote')) $('fixtureOpponentNote').textContent = fixture.note;
 }
 
 function renderCountdown(){
@@ -1633,7 +1678,6 @@ function renderAll(){
       <div class="news-date">${n.date}</div>
     </div>`).join('');
 
-  renderFixtureBadge();
   renderCountdown();
 }
 $('refreshBtn')?.addEventListener('click', loadData);
