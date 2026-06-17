@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#030712" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+
 <title>Aurora City FC — Squad Hub</title>
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
@@ -413,6 +421,106 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 .slip-line:last-child{border-bottom:0}
 .slip-line strong{color:var(--txt)}
+
+
+
+/* ===================== SECTION: TROPHY CABINET ===================== */
+.trophy-cabinet{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:12px;
+  align-items:stretch;
+}
+.trophy-room{
+  border:1px solid rgba(251,191,36,.28);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(251,191,36,.13),transparent 34%),
+    radial-gradient(circle at 92% 10%,rgba(34,211,238,.10),transparent 32%),
+    rgba(15,23,42,.52);
+  border-radius:22px;
+  padding:15px;
+}
+.trophy-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.trophy{
+  min-height:128px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.30);
+  border-radius:18px;
+  padding:12px;
+  position:relative;
+  overflow:hidden;
+}
+.trophy:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 52%);
+  pointer-events:none;
+}
+.trophy.unlocked{
+  border-color:rgba(52,211,153,.35);
+  box-shadow:0 0 18px rgba(52,211,153,.08);
+}
+.trophy.locked{
+  opacity:.68;
+}
+.trophy-icon{
+  font-size:28px;
+  line-height:1;
+  margin-bottom:9px;
+}
+.trophy-title{
+  font-weight:900;
+  font-size:13px;
+  line-height:1.15;
+  position:relative;
+}
+.trophy-detail{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:7px;
+  position:relative;
+}
+.trophy-progress{
+  height:9px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+  margin-top:10px;
+}
+.trophy-progress span{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+}
+.season-ticket{
+  display:grid;
+  gap:10px;
+}
+.season-ticket .score-card{
+  box-shadow:none;
+}
+.manager-note{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(2,6,23,.25);
+  padding:12px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+@media(max-width:900px){
+  .trophy-cabinet{grid-template-columns:1fr}
+  .trophy-grid{grid-template-columns:1fr}
+}
 
 
 
@@ -1263,6 +1371,37 @@ tr:hover td{background:rgba(96,165,250,.06)}
   .legend-player-img{height:190px}
 }
 
+.trophy-grid-mini{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.trophy-mini{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.28);
+  border-radius:18px;
+  padding:12px;
+  min-height:120px;
+}
+.trophy-mini.unlocked{
+  border-color:rgba(52,211,153,.32);
+}
+.trophy-mini .icon{
+  font-size:24px;
+  margin-bottom:8px;
+}
+.trophy-mini strong{
+  display:block;
+  font-size:14px;
+}
+.trophy-mini span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:6px;
+  line-height:1.35;
+}
 .chemistry-box{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -1297,6 +1436,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
     grid-column:span 12;
   }
   .legend-grid,
+  .trophy-grid-mini,
   .chemistry-box{
     grid-template-columns:1fr;
   }
@@ -1462,6 +1602,479 @@ tr:hover td{background:rgba(96,165,250,.06)}
   .pitch-stars{
     font-size:11px;
   }
+}
+
+
+/* ===================== SECTION: AURORA HONOURS CABINET UPGRADE ===================== */
+.honours-cabinet-shell{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(251,191,36,.24);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(251,191,36,.16),transparent 32%),
+    radial-gradient(circle at 92% 8%,rgba(34,211,238,.13),transparent 34%),
+    linear-gradient(180deg,rgba(13,27,52,.90),rgba(7,17,31,.96));
+  border-radius:26px;
+  padding:18px;
+  box-shadow:0 18px 55px rgba(0,0,0,.30);
+}
+.honours-cabinet-shell:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.045),transparent 24%,rgba(255,255,255,.035) 48%,transparent 74%,rgba(255,255,255,.035)),
+    radial-gradient(circle at 50% 0%,rgba(251,191,36,.08),transparent 34%);
+  pointer-events:none;
+}
+.honours-cabinet-shell > *{position:relative;z-index:1}
+.honours-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+.honours-header h3{
+  margin:0;
+  font-size:24px;
+  letter-spacing:-.05em;
+}
+.honours-header p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+.honours-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+.honours-summary-card{
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.34);
+  border-radius:18px;
+  padding:11px;
+}
+.honours-summary-card small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.honours-summary-card strong{
+  display:block;
+  margin-top:5px;
+  font-size:20px;
+  letter-spacing:-.04em;
+}
+.honours-trophy-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+}
+.honours-trophy{
+  position:relative;
+  overflow:hidden;
+  min-height:310px;
+  border:1px solid rgba(148,163,184,.18);
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.22),rgba(2,6,23,.72)),
+    radial-gradient(circle at 50% 0%,rgba(255,255,255,.08),transparent 42%);
+  border-radius:22px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.honours-trophy:before{
+  content:"";
+  position:absolute;
+  inset:10px 10px auto;
+  height:132px;
+  border-radius:18px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.015)),
+    radial-gradient(circle at 50% 4%,rgba(251,191,36,.15),transparent 54%);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 0 24px rgba(255,255,255,.035);
+  pointer-events:none;
+}
+.honours-trophy.unlocked{
+  border-color:rgba(52,211,153,.42);
+  box-shadow:0 0 26px rgba(52,211,153,.10);
+}
+.honours-trophy.in-reach{
+  border-color:rgba(251,191,36,.46);
+  box-shadow:0 0 26px rgba(251,191,36,.10);
+}
+.honours-trophy.locked{opacity:.78}
+.trophy-image-stage{
+  position:relative;
+  z-index:1;
+  height:132px;
+  display:grid;
+  place-items:center;
+  margin-bottom:10px;
+}
+.trophy-image-stage img{
+  width:100%;
+  height:120px;
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 14px 18px rgba(0,0,0,.38));
+}
+.trophy-placeholder{
+  width:88px;
+  height:108px;
+  display:none;
+  place-items:center;
+  font-size:54px;
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(255,255,255,.32),transparent 26%),
+    linear-gradient(180deg,rgba(251,191,36,.30),rgba(120,53,15,.08));
+  border:1px solid rgba(251,191,36,.30);
+  filter:drop-shadow(0 14px 18px rgba(0,0,0,.32));
+}
+.honours-trophy.locked .trophy-image-stage img{
+  filter:grayscale(.65) drop-shadow(0 10px 14px rgba(0,0,0,.28));
+  opacity:.72;
+}
+.honours-trophy-body{
+  position:relative;
+  z-index:1;
+}
+.honours-trophy-body strong{
+  display:block;
+  font-size:15px;
+  line-height:1.16;
+  letter-spacing:-.03em;
+}
+.honours-trophy-body span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:7px;
+}
+.honours-target-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:10px;
+  color:var(--soft);
+  font-size:12px;
+}
+.honours-target-row b{color:#fde68a}
+.honours-progress{
+  height:10px;
+  margin-top:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.07);
+  overflow:hidden;
+}
+.honours-progress span{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+}
+.honours-trophy.in-reach .honours-progress span{
+  background:linear-gradient(90deg,var(--amber),var(--cyan),var(--green));
+}
+.honours-status{
+  display:inline-flex!important;
+  width:max-content;
+  max-width:100%;
+  margin-top:10px!important;
+  border-radius:999px;
+  padding:6px 9px;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  color:var(--soft)!important;
+  font-size:11px!important;
+  font-weight:1000;
+}
+.honours-status.unlocked{
+  color:#bbf7d0!important;
+  border-color:rgba(52,211,153,.32);
+  background:rgba(20,83,45,.22);
+}
+.honours-status.in-reach{
+  color:#fde68a!important;
+  border-color:rgba(251,191,36,.30);
+  background:rgba(120,53,15,.22);
+}
+.honours-status.locked{color:#cbd5e1!important}
+@media(max-width:1180px){
+  .honours-trophy-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .honours-header{flex-direction:column}
+  .honours-summary{grid-template-columns:1fr}
+  .honours-trophy-grid{grid-template-columns:1fr}
+  .honours-trophy{min-height:auto}
+}
+
+
+
+/* ===================== SECTION: TROPHY CABINET LIGHTING UPGRADE ===================== */
+.honours-cabinet-shell{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(96,165,250,.10), transparent 32%),
+    linear-gradient(180deg, rgba(8,18,38,.94), rgba(4,10,24,.98));
+}
+.honours-trophy{
+  overflow:hidden;
+}
+.honours-trophy:before{
+  height:138px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02) 34%,rgba(0,0,0,.10) 100%),
+    radial-gradient(circle at 18% 0%,rgba(255,255,255,.18),transparent 18%),
+    radial-gradient(circle at 50% 0%,rgba(255,255,255,.16),transparent 20%),
+    radial-gradient(circle at 82% 0%,rgba(255,255,255,.18),transparent 18%),
+    linear-gradient(180deg,rgba(8,16,34,.78),rgba(5,12,26,.92));
+}
+.trophy-image-stage{
+  position:relative;
+  z-index:1;
+  height:132px;
+  display:grid;
+  place-items:center;
+  margin-bottom:10px;
+  border-radius:18px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,.12), transparent 20%),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.12), transparent 22%),
+    radial-gradient(circle at 80% 0%, rgba(255,255,255,.12), transparent 20%),
+    linear-gradient(180deg, rgba(5,12,24,.70) 0%, rgba(3,8,18,.92) 72%, rgba(2,6,14,.98) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 -24px 30px rgba(0,0,0,.34);
+}
+.trophy-image-stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 50% -8%, rgba(255,244,200,.26), transparent 38%),
+    radial-gradient(ellipse at 20% -8%, rgba(255,244,200,.18), transparent 24%),
+    radial-gradient(ellipse at 80% -8%, rgba(255,244,200,.18), transparent 24%),
+    linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.20) 65%, rgba(0,0,0,.34));
+  pointer-events:none;
+  z-index:1;
+}
+.trophy-image-stage::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+  pointer-events:none;
+  z-index:3;
+}
+.trophy-image-stage img{
+  position:relative;
+  z-index:2;
+  width:100%;
+  height:120px;
+  object-fit:contain;
+  display:block;
+  padding:12px 10px 6px;
+  filter:brightness(.84) contrast(1.10) saturate(.92) drop-shadow(0 14px 18px rgba(0,0,0,.40));
+  mix-blend-mode:multiply;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  filter:grayscale(.65) brightness(.74) contrast(1.05) drop-shadow(0 10px 14px rgba(0,0,0,.28));
+  mix-blend-mode:multiply;
+  opacity:.68;
+}
+.trophy-placeholder{
+  position:relative;
+  z-index:2;
+}
+
+/* ===================== SECTION: TROPHY IMAGE VISIBILITY / CABINET SPOTLIGHT FINAL ===================== */
+/* Keeps the white/checker trophy image background hidden inside a darker lit cabinet,
+   while bringing the actual silver/gold cups back up so they don't look buried. */
+.trophy-image-stage{
+  background:
+    radial-gradient(ellipse at 50% -12%,rgba(255,244,200,.32),transparent 38%),
+    radial-gradient(circle at 20% 0%,rgba(125,211,252,.10),transparent 22%),
+    radial-gradient(circle at 80% 0%,rgba(125,211,252,.10),transparent 22%),
+    linear-gradient(180deg,rgba(3,10,22,.92),rgba(2,6,18,.98) 74%,rgba(1,4,12,1) 100%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -34px 38px rgba(0,0,0,.52),
+    0 10px 28px rgba(0,0,0,.30)!important;
+}
+.trophy-image-stage::before{
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(255,247,215,.42),transparent 42%),
+    linear-gradient(180deg,rgba(0,0,0,.00),rgba(0,0,0,.16) 60%,rgba(0,0,0,.32))!important;
+  mix-blend-mode:screen;
+}
+.trophy-image-stage img{
+  opacity:.98!important;
+  mix-blend-mode:multiply!important;
+  filter:
+    brightness(1.85)
+    contrast(1.38)
+    saturate(.96)
+    drop-shadow(0 16px 18px rgba(0,0,0,.54))!important;
+  transform:scale(1.06);
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.58!important;
+  mix-blend-mode:multiply!important;
+  filter:
+    grayscale(.75)
+    brightness(1.38)
+    contrast(1.20)
+    drop-shadow(0 10px 14px rgba(0,0,0,.34))!important;
+}
+.honours-trophy.unlocked .trophy-image-stage,
+.honours-trophy.in-reach .trophy-image-stage{
+  border:1px solid rgba(251,191,36,.18);
+}
+
+
+
+/* ===================== SECTION: TROPHY BLACK DISPLAY CARD FINAL ===================== */
+/* Designed for the new trophy images on black/dark backgrounds.
+   The cup sits on its own black showcase card so any image border blends away,
+   while the cup itself stays bright and visible. */
+.trophy-image-stage{
+  position:relative!important;
+  isolation:isolate!important;
+  height:158px!important;
+  padding:8px!important;
+  border-radius:20px!important;
+  overflow:hidden!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.18),transparent 30%),
+    radial-gradient(ellipse at 50% 96%,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,#05080f 0%,#02040a 58%,#000 100%)!important;
+  border:1px solid rgba(148,163,184,.16)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    inset 0 -28px 34px rgba(0,0,0,.55),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.trophy-image-stage:before{
+  content:""!important;
+  position:absolute!important;
+  left:10%!important;
+  right:10%!important;
+  top:0!important;
+  height:44%!important;
+  border-radius:999px!important;
+  background:radial-gradient(ellipse at center,rgba(255,247,215,.25),transparent 66%)!important;
+  pointer-events:none!important;
+  z-index:2!important;
+  mix-blend-mode:screen!important;
+}
+.trophy-image-stage:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  border-radius:20px!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.03),transparent 34%,rgba(0,0,0,.18)),
+    linear-gradient(90deg,rgba(255,255,255,.035),transparent 22%,transparent 78%,rgba(255,255,255,.025))!important;
+  pointer-events:none!important;
+  z-index:3!important;
+}
+.trophy-image-stage img{
+  position:relative!important;
+  z-index:1!important;
+  width:100%!important;
+  height:142px!important;
+  object-fit:contain!important;
+  display:block!important;
+  padding:0!important;
+  margin:0!important;
+  opacity:1!important;
+  mix-blend-mode:normal!important;
+  transform:none!important;
+  filter:
+    brightness(1.08)
+    contrast(1.08)
+    saturate(1.04)
+    drop-shadow(0 14px 20px rgba(0,0,0,.60))!important;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.48!important;
+  mix-blend-mode:normal!important;
+  filter:
+    grayscale(.72)
+    brightness(.70)
+    contrast(1.02)
+    drop-shadow(0 10px 16px rgba(0,0,0,.42))!important;
+}
+.honours-trophy.unlocked .trophy-image-stage{
+  border-color:rgba(52,211,153,.28)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -28px 34px rgba(0,0,0,.50),
+    0 0 24px rgba(52,211,153,.10),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.honours-trophy.in-reach .trophy-image-stage{
+  border-color:rgba(251,191,36,.30)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -28px 34px rgba(0,0,0,.50),
+    0 0 24px rgba(251,191,36,.11),
+    0 12px 28px rgba(0,0,0,.38)!important;
+}
+.honours-trophy:before{
+  height:164px!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.01)),
+    radial-gradient(ellipse at 50% 0%,rgba(251,191,36,.10),transparent 46%),
+    linear-gradient(180deg,rgba(5,12,24,.62),rgba(2,6,16,.88))!important;
+}
+@media(max-width:760px){
+  .trophy-image-stage{height:190px!important}
+  .trophy-image-stage img{height:174px!important}
+  .honours-trophy:before{height:196px!important}
+}
+
+
+
+/* ===================== SECTION: TROPHY LOCKED VISIBILITY BOOST ===================== */
+/* Keeps locked trophies visually dimmed, but no longer so dark that the cup disappears. */
+.honours-trophy.locked{
+  opacity:.92!important;
+}
+.honours-trophy.locked .trophy-image-stage img{
+  opacity:.72!important;
+  filter:
+    grayscale(.48)
+    brightness(.92)
+    contrast(1.10)
+    saturate(.90)
+    drop-shadow(0 12px 18px rgba(0,0,0,.52))!important;
+}
+.honours-trophy.in-reach .trophy-image-stage img,
+.honours-trophy.unlocked .trophy-image-stage img{
+  opacity:1!important;
+  filter:
+    brightness(1.12)
+    contrast(1.10)
+    saturate(1.04)
+    drop-shadow(0 15px 20px rgba(0,0,0,.62))!important;
+}
+.trophy-image-stage img{
+  transform:scale(1.10)!important;
 }
 
 
@@ -1909,6 +2522,57 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 
 
+
+/* ===================== SECTION: AURORA CITY FC LANDSCAPE HERO FINAL FIX ===================== */
+/* Final override: keeps the finished header artwork fully visible in Android/iPad landscape app mode. */
+.squad-hero{
+  position:relative!important;
+  overflow:hidden!important;
+  border:1px solid rgba(96,165,250,.22)!important;
+  border-radius:28px!important;
+  background-image:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/4E299D2D-53AC-43F8-A84E-0FD90C2D39AC.png")!important;
+  background-size:100% 100%!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-color:#020617!important;
+  min-height:360px!important;
+  box-shadow:0 18px 60px rgba(0,0,0,.32)!important;
+}
+.squad-hero:before,
+.squad-hero:after{
+  content:none!important;
+  display:none!important;
+  opacity:0!important;
+  background:none!important;
+}
+.squad-hero-content,
+.squad-hero .squad-hero-content,
+.squad-hero .kicker,
+.squad-hero .hero-title,
+.squad-hero .hero-sub,
+.squad-hero .hero-actions,
+.squad-hero .pill,
+.squad-hero h2,
+.squad-hero p{
+  display:none!important;
+  visibility:hidden!important;
+}
+@media (orientation:landscape) and (max-height:520px){
+  .app{
+    padding-top:10px!important;
+  }
+  .squad-hero{
+    min-height:calc(100vw * 0.42)!important;
+    max-height:420px!important;
+  }
+}
+@media (max-width:760px){
+  .squad-hero{
+    min-height:330px!important;
+  }
+}
+
+
 /* ===================== SECTION: SQUAD MORALE MEDIA IMPACT BADGE ===================== */
 .morale-impact{
   display:inline-flex;
@@ -1954,6 +2618,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media Centre</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training Ground</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -1966,7 +2632,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <div class="squad-hero-logo"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
       <div class="kicker"><span class="kicker-dot"></span> First-team department</div>
       <h2>Squad <span>Hub</span></h2>
-      <p>Current holdings, squad form, buy strength, chemistry warnings, club legends and squad development progress.</p>
+      <p>Current holdings, squad form, buy strength, chemistry warnings, club legends and trophy cabinet progress.</p>
       <div class="hero-actions">
         <span class="pill" id="lastUpdated">Last updated: loading…</span>
         <span class="pill">Squad Role: Income + Quality</span>
@@ -2104,7 +2770,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
         </div>
         <div class="focus-card" id="monthlyFocus">
           <strong>Loading focus…</strong>
-          <p>Checking next development target.</p>
+          <p>Checking next trophy target.</p>
           <div class="focus-progress"><span></span></div>
         </div>
       </div>
@@ -2138,33 +2804,13 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </main>
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
+
+<!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
+<script src="AuroraFCData.js"></script>
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE = null;
-
-const AURORA_MASTER_TABS = [
-  "Holdings",
-  "Dividends",
-  "Watchlist",
-  "Global Watchlist",
-  "AuroraScout",
-  "DailyPriceSummary",
-  "LivePrices",
-  "PriceLog",
-  "IncomeLog",
-  "FXRates",
-  "PreSeasonReport",
-  "AuroraTimes",
-  "MoraleLog",
-  "ManagerInbox",
-  "TrainingLog",
-  "BoardConfidence",
-  "Awards",
-  "AuroraFixtures",
-  "Milestones",
-  "AuroraRules"
-];
-let state = { holdings:[], watchlist:[], scout:[] };
+let state = { holdings:[], watchlist:[], scout:[], news:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2237,85 +2883,61 @@ function currentDivision(annualIncome){
   if(annualIncome >= 12000) return ['Premier League','£1,000/month income club'];
   if(annualIncome >= 6000) return ['Championship','£500/month promotion target reached'];
   if(annualIncome >= 3000) return ['League One','£250/month income base'];
-  if(annualIncome >= 1000) return ['League Two','first income milestone banked'];
+  if(annualIncome >= 1000) return ['League Two','first trophy banked'];
   return ['National League project','academy stage'];
 }
-async function fetchMaster(){
-  if(!AURORA_MASTER_CACHE){
-    const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});
-    if(!res.ok)throw new Error(`AuroraData failed: ${res.status}`);
-    AURORA_MASTER_CACHE=await res.json();
-  }
-  return AURORA_MASTER_CACHE;
-}
-function normaliseAuroraTabName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
-function readAuroraTab(master,tab){
-  const wanted=normaliseAuroraTabName(tab);
-  function pick(obj){
-    if(!obj||typeof obj!=='object')return [];
-    if(Array.isArray(obj[tab]))return obj[tab];
-    const key=Object.keys(obj).find(k=>normaliseAuroraTabName(k)===wanted);
-    return key&&Array.isArray(obj[key])?obj[key]:[];
-  }
-  let rows=pick(master);
-  if(rows.length)return rows;
-  for(const wrapper of ['data','tabs','sheets','feeds']){
-    rows=pick(master?.[wrapper]);
-    if(rows.length)return rows;
-  }
-  return [];
-}
 async function fetchTab(tab){
-  const master=await fetchMaster();
-  return readAuroraTab(master,tab);
-}
-async function fetchAllAuroraTabs(){
-  const master=await fetchMaster();
-  const tabs={};
-  AURORA_MASTER_TABS.forEach(tab=>{tabs[tab]=readAuroraTab(master,tab)});
-  return tabs;
-}
-function buildAuroraState(tabs){
-  return {
-    ...tabs,
-    holdings:tabs.Holdings||[],
-    dividends:tabs.Dividends||[],
-    watchlist:tabs.Watchlist||[],
-    globalWatchlist:tabs['Global Watchlist']||[],
-    scout:tabs.AuroraScout||[],
-    dailyPriceSummary:tabs.DailyPriceSummary||[],
-    livePrices:tabs.LivePrices||[],
-    priceLog:tabs.PriceLog||[],
-    income:tabs.IncomeLog||[],
-    fxRates:tabs.FXRates||[],
-    preSeasonReport:tabs.PreSeasonReport||[],
-    news:tabs.AuroraTimes||[],
-    moraleLog:tabs.MoraleLog||[],
-    managerInbox:tabs.ManagerInbox||[],
-    trainingLog:tabs.TrainingLog||[],
-    boardConfidence:tabs.BoardConfidence||[],
-    awards:tabs.Awards||[],
-    fixtures:tabs.AuroraFixtures||[],
-    milestones:tabs.Milestones||[],
-    rules:tabs.AuroraRules||[]
-  };
+  if(!AURORA_MASTER_CACHE){
+    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE = await res.json();
+  }
+
+  const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const wanted = normalise(tab);
+
+  function findTab(obj){
+    if(!obj || typeof obj !== 'object') return [];
+    if(Array.isArray(obj[tab])) return obj[tab];
+
+    const key = Object.keys(obj).find(k => normalise(k) === wanted);
+    if(key && Array.isArray(obj[key])) return obj[key];
+
+    return [];
+  }
+
+  let rows = findTab(AURORA_MASTER_CACHE);
+  if(rows.length) return rows;
+
+  for(const wrapper of ['data','tabs','sheets','feeds']){
+    rows = findTab(AURORA_MASTER_CACHE?.[wrapper]);
+    if(rows.length) return rows;
+  }
+
+  return [];
 }
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const tabs = await fetchAllAuroraTabs();
-    state = buildAuroraState(tabs);
+    const [holdings, watchlist, scout, newsA, newsB] = await Promise.all([
+      fetchTab('Holdings'),
+      fetchTab('Watchlist'),
+      fetchTab('AuroraScout').catch(()=>[]),
+      fetchTab('AuroraTimes').catch(()=>[]),
+      fetchTab('Aurora Times').catch(()=>[])
+    ]);
+    const news = newsA.length ? newsA : newsB;
+    state = { holdings, watchlist, scout, news };
     renderAll();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ["firstTeamPitch","benchList","relegationWatch","legendGrid"].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['firstTeamPitch','benchList','relegationWatch','legendGrid','trophyGrid'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
 }
-
 function renderRows(rows, target, mode){
   const el = $(target);
   if(!el) return;
@@ -2465,6 +3087,99 @@ function renderLegends(rows){
     </div>`;
   }).join('') : '<div class="loading">No legends found yet.</div>';
 }
+function buildTrophies(annualIncome){
+  const base = "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/cups/";
+  return [
+    {
+      icon:'🏆',
+      title:'League One Promotion',
+      target:3000,
+      monthlyTarget:250,
+      image:base + 'league1.png',
+      detail:'First proper breakthrough. The club is officially moving.'
+    },
+    {
+      icon:'🏆',
+      title:'Championship Promotion',
+      target:6000,
+      monthlyTarget:500,
+      image:base + 'championship.png',
+      detail:'Serious progress. Aurora City becomes a proper force.'
+    },
+    {
+      icon:'👑',
+      title:'Premier League Champions',
+      target:12000,
+      monthlyTarget:1000,
+      image:base + 'premier_league.png',
+      detail:'Elite domestic level. The club has arrived.'
+    },
+    {
+      icon:'🏆',
+      title:'European Champions',
+      target:18000,
+      monthlyTarget:1500,
+      image:base + 'european.png',
+      detail:'Big club energy. European nights unlocked.'
+    },
+    {
+      icon:'🏆',
+      title:'Champions League Winners',
+      target:24000,
+      monthlyTarget:2000,
+      image:base + 'champions_league.png',
+      detail:'Final boss. The long-term Aurora dynasty mission.'
+    }
+  ];
+}
+function trophyStatus(progress, done){
+  if(done) return ['Unlocked','unlocked'];
+  if(progress >= 75) return ['In Reach','in-reach'];
+  if(progress >= 40) return ['Building','locked'];
+  return ['Locked Target','locked'];
+}
+function renderTrophies(annualIncome){
+  const trophies = buildTrophies(annualIncome);
+  const monthlyIncome = annualIncome / 12;
+  const unlocked = trophies.filter(t=>annualIncome >= t.target).length;
+  const next = trophies.find(t=>annualIncome < t.target);
+  const trophyCount = $('trophyCount');
+  const grid = $('trophyGrid');
+
+  if(trophyCount) trophyCount.textContent = `${unlocked}/${trophies.length} unlocked`;
+  if($('honoursMonthlyIncome')) $('honoursMonthlyIncome').textContent = money(monthlyIncome);
+  if($('honoursNextUnlock')) $('honoursNextUnlock').textContent = next ? next.title : 'Dynasty complete';
+  if($('honoursAmountLeft')) $('honoursAmountLeft').textContent = next ? `${money(Math.max(0,next.target-annualIncome))} annual` : 'All honours secured';
+
+  if(!grid) return;
+
+  grid.innerHTML = trophies.map(t=>{
+    const done = annualIncome >= t.target;
+    const progress = Math.min(100, Math.max(0, (annualIncome / t.target) * 100));
+    const gap = Math.max(0,t.target-annualIncome);
+    const [statusText,statusClass] = trophyStatus(progress, done);
+    const cardClass = done ? 'unlocked' : progress >= 75 ? 'in-reach' : 'locked';
+
+    return `<div class="honours-trophy ${cardClass}">
+      <div>
+        <div class="trophy-image-stage">
+          <img src="${t.image}" alt="${t.title} trophy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+          <div class="trophy-placeholder">${done ? t.icon : '🔒'}</div>
+        </div>
+        <div class="honours-trophy-body">
+          <strong>${t.title}</strong>
+          <span>${t.detail}</span>
+          <div class="honours-target-row"><span>Target</span><b>${money(t.monthlyTarget)}/month</b></div>
+          <div class="honours-target-row"><span>Progress</span><b>${Math.round(progress)}%</b></div>
+          <div class="honours-progress"><span style="width:${progress}%"></span></div>
+          <span class="honours-status ${statusClass}">${statusText}</span>
+          <span>${done ? 'Honour secured.' : money(gap) + ' annual income to unlock.'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function renderSelectionIntel(rows, backups){
   const el = $('selectionIntel');
   const advice = $('selectionAdvice');
@@ -2588,7 +3303,7 @@ function renderChemistry(rows){
     : 'No major dressing-room issues. Squad is balanced enough to keep building.';
 }
 
-function nextMilestoneInfo(annualIncome){
+function nextTrophyInfo(annualIncome){
   const targets = [
     { title:'League One Promotion', annual:3000, monthly:250 },
     { title:'Championship Promotion', annual:6000, monthly:500 },
@@ -2650,7 +3365,6 @@ function mediaImpactLabel(n){
   if(n < 0) return `<strong class="morale-impact morale-impact-down">${n} media pressure</strong>`;
   return `<strong class="morale-impact morale-impact-flat">0 media effect</strong>`;
 }
-
 function renderTrainingReport(rows, annualIncome){
   const el = $('trainingReportGrid');
   if(!el) return;
@@ -2661,7 +3375,7 @@ function renderTrainingReport(rows, annualIncome){
   const topTrainer = strongestRow(rows);
   const incomeLeader = bestIncomeRow(rows);
   const needsWork = weakestRow(rows);
-  const next = nextMilestoneInfo(annualIncome);
+  const next = nextTrophyInfo(annualIncome);
   const topScore = topTrainer ? Math.round(squadScore(topTrainer)) : 0;
   const weakScore = needsWork ? Math.round(squadScore(needsWork)) : 0;
 
@@ -2710,7 +3424,7 @@ function renderMoraleCentre(rows, annualIncome){
 }
 function renderCaptainMessage(rows, annualIncome){
   const captain = bestIncomeRow(rows) || strongestRow(rows);
-  const next = nextMilestoneInfo(annualIncome);
+  const next = nextTrophyInfo(annualIncome);
   const monthlyIncome = annualIncome / 12;
   if(!$('captainMessage')) return;
   $('captainMessage').innerHTML = `
@@ -2718,7 +3432,7 @@ function renderCaptainMessage(rows, annualIncome){
     <p>“We’re sitting at ${money(monthlyIncome)} a month. The next job is ${next.title}. Keep standards high, no passengers, and keep building toward ${money(next.monthly)}/month.”</p>`;
 }
 function renderMonthlyFocus(annualIncome){
-  const next = nextMilestoneInfo(annualIncome);
+  const next = nextTrophyInfo(annualIncome);
   const progress = next.annual ? Math.min(100, Math.max(0, (annualIncome / next.annual) * 100)) : 100;
   if(!$('monthlyFocus')) return;
   $('monthlyFocus').innerHTML = `
@@ -2748,7 +3462,7 @@ function renderTacticalIdentity(rows, annualIncome){
     <div class="tactic-box">
       <small>Attacking plan</small>
       <strong>Grow Monthly Income</strong>
-      <span>Use new contributions to push the next milestone unlock without wrecking the team balance.</span>
+      <span>Use new contributions to push the next honours unlock without wrecking the team balance.</span>
     </div>
     <div class="tactic-box">
       <small>Defensive plan</small>
@@ -2810,6 +3524,17 @@ function renderAll(){
 }
 $('refreshBtn')?.addEventListener('click', loadData);
 loadData();
+</script>
+
+<!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => {
+      console.warn('Aurora City FC service worker registration failed:', err);
+    });
+  });
+}
 </script>
 </body>
 </html>
