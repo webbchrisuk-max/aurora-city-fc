@@ -1198,9 +1198,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 
 .crest img,
-.club-badge-xl img,
-.fixture-crest img{
-  content:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png")!important;
+.club-badge-xl img{
+  content:url("assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png")!important;
 }
 
 </style>
@@ -1211,7 +1210,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <div class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <div class="crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div>
+      <div class="crest"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
       <div>
         <h1>Aurora City FC</h1>
         <p>Manager Dashboard • Home</p>
@@ -1266,7 +1265,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
     <div class="club-showcase">
       <div class="showcase-top">
         <div class="club-identity">
-          <div class="club-badge-xl"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div>
+          <div class="club-badge-xl"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
           <h2>Aurora <span>City FC</span></h2>
           <p>Manager Dashboard</p>
         </div>
@@ -1296,9 +1295,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
         <div class="next-fixture">
           <div class="card-title"><h3>Next Fixture</h3><span class="badge amber">Payday Window</span></div>
           <div class="fixture-vs">
-            <div class="fixture-team"><div class="fixture-crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div><strong>Aurora City</strong><span class="note">Home</span></div>
+            <div class="fixture-team"><div class="fixture-crest"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div><strong>Aurora City</strong><span class="note">Home</span></div>
             <strong>VS</strong>
-            <div class="fixture-team"><div class="fixture-crest">💼</div><strong>Transfer Window</strong><span class="note">Next Friday</span></div>
+            <div class="fixture-team"><div class="fixture-crest"><img id="fixtureOpponentBadge" src="assets/aurora-city-fc/fixture/payday.png" alt="Payday Window badge"></div><strong id="fixtureOpponentName">Transfer Window</strong><span class="note" id="fixtureOpponentNote">Next Friday</span></div>
           </div>
           <div class="fixture-countdown">
             <div><strong id="countDays">—</strong><small>days</small></div>
@@ -1374,10 +1373,10 @@ tr:hover td{background:rgba(96,165,250,.06)}
       </a>
       <a class="department-card" href="AuroraCityFC_SquadHub.html">
         <div class="department-card-content">
-          <img class="department-card-img" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/4E299D2D-53AC-43F8-A84E-0FD90C2D39AC.png" alt="Squad Hub preview">
+          <img class="department-card-img" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/D8D0378B-F3D2-4B10-8139-361CBD885284.png" alt="Squad Hub preview">
           <span>First Team</span>
           <strong>Squad Hub</strong>
-          <p>Holdings, chemistry, trophy cabinet, legends, relegation watch and promotion form.</p>
+          <p>Holdings, chemistry, first-team form, relegation watch and promotion form.</p>
         </div>
         <span>Open Squad Hub →</span>
       </a>
@@ -1398,7 +1397,22 @@ const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
 const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
 const DEPLOYMENT_PER_PLAYER = 112.5;
 const IMPACT_INCOME_TRIGGER = 20;
-let state = { holdings:[], dividends:[], watchlist:[], globalWatchlist:[], scout:[], dailyPriceSummary:[], livePrices:[], priceLog:[], incomeLog:[], preSeasonReport:[], auroraTimes:[], moraleLog:[], managerInbox:[], trainingLog:[], boardConfidence:[], awards:[], auroraFixtures:[], milestones:[], auroraRules:[] };
+
+/* ===================== SECTION: FIXTURE BADGE SCHEDULE ===================== */
+const FIXTURE_BADGES = {
+  payday: { label:'Transfer Window', note:'Next Friday', badge:'assets/aurora-city-fc/fixture/payday.png' },
+  boardroom: { label:'Boardroom Review', note:'Club control', badge:'assets/aurora-city-fc/fixture/boardroom.png' },
+  cup_draw: { label:'Cup Draw', note:'Knockout route', badge:'assets/aurora-city-fc/fixture/cup_draw.png' },
+  derby_day: { label:'Derby Day', note:'Rival clash', badge:'assets/aurora-city-fc/fixture/derby_day.png' },
+  opening_day: { label:'Opening Day', note:'Season opener', badge:'assets/aurora-city-fc/fixture/opening_day.png' },
+  press_day: { label:'Press Day', note:'Media briefing', badge:'assets/aurora-city-fc/fixture/press_day.png' },
+  scout_mission: { label:'Scout Mission', note:'Target search', badge:'assets/aurora-city-fc/fixture/scout_mission.png' },
+  training: { label:'Training Ground', note:'Player development', badge:'assets/aurora-city-fc/fixture/training.png' },
+  default: { label:'Fixture', note:'Club schedule', badge:'assets/aurora-city-fc/fixture/default.png' }
+};
+const CURRENT_FIXTURE_TYPE = 'payday';
+
+let state = { holdings:[], watchlist:[], scout:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -1441,7 +1455,7 @@ function uniqueByTicker(rows){
 }
 function findSecurity(ticker){
   const t = cleanTicker(ticker);
-  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || state.globalWatchlist.find(r=>cleanTicker(r.ticker)===t) || null;
+  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
 }
 function annualIncomeFromRow(row){
   const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
@@ -1500,142 +1514,40 @@ function scoreFromIncome(annualIncome){
 async function fetchTab(tab){
   if(!AURORA_MASTER_CACHE){
     const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
-    if(!res.ok) throw new Error(`AuroraMaster failed: ${res.status}`);
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
   }
-
-  const normalise = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g,'');
-  const wanted = normalise(tab);
-
-  function findTab(obj){
-    if(!obj || typeof obj !== 'object') return [];
-    if(Array.isArray(obj[tab])) return obj[tab];
-
-    const key = Object.keys(obj).find(k => normalise(k) === wanted);
-    if(key && Array.isArray(obj[key])) return obj[key];
-
-    return [];
-  }
-
-  let rows = findTab(AURORA_MASTER_CACHE);
-  if(rows.length) return rows;
-
-  for(const wrapper of ['data','tabs','sheets','feeds']){
-    rows = findTab(AURORA_MASTER_CACHE?.[wrapper]);
-    if(rows.length) return rows;
-  }
-
-  return [];
-}
-function val(row,...keys){
-  for(const k of keys){
-    if(row && row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return row[k];
-  }
-  return '';
-}
-function yes(v){
-  return ['yes','y','true','1','published','show'].includes(String(v || '').trim().toLowerCase());
-}
-function isPublishedNews(row){
-  const status = String(val(row,'Status','status')).trim().toLowerCase();
-  return !status || status === 'published';
-}
-function homeNewsRows(){
-  return (state.auroraTimes || [])
-    .filter(isPublishedNews)
-    .filter(row => {
-      const show = val(row,'Display_On_Home','display_on_home','Display On Home');
-      return String(show).trim() === '' || yes(show);
-    })
-    .sort((a,b)=>{
-      const ad = new Date(`${val(a,'Date','date')} ${val(a,'Time','time') || '00:00'}`).getTime();
-      const bd = new Date(`${val(b,'Date','date')} ${val(b,'Time','time') || '00:00'}`).getTime();
-      return (Number.isFinite(bd) ? bd : 0) - (Number.isFinite(ad) ? ad : 0);
-    });
-}
-function newsIcon(row){
-  const cat = String(val(row,'Category','category')).toLowerCase();
-  if(cat.includes('buyback')) return '🔁';
-  if(cat.includes('dividend')) return '💷';
-  if(cat.includes('rate') || cat.includes('economy') || cat.includes('inflation')) return '📊';
-  if(cat.includes('transfer') || cat.includes('scout')) return '🔎';
-  if(cat.includes('board')) return '🏛️';
-  return '📰';
+  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
 }
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [
-      holdings,
-      dividends,
-      watchlist,
-      globalWatchlist,
-      scout,
-      dailyPriceSummary,
-      livePrices,
-      priceLog,
-      incomeLog,
-      preSeasonReport,
-      auroraTimes,
-      moraleLog,
-      managerInbox,
-      trainingLog,
-      boardConfidence,
-      awards,
-      auroraFixtures,
-      milestones,
-      auroraRules
-    ] = await Promise.all([
+    const [holdings, watchlist, scout] = await Promise.all([
       fetchTab('Holdings'),
-      fetchTab('Dividends').catch(()=>[]),
       fetchTab('Watchlist'),
-      fetchTab('Global Watchlist').catch(()=>[]),
-      fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('DailyPriceSummary').catch(()=>[]),
-      fetchTab('LivePrices').catch(()=>[]),
-      fetchTab('PriceLog').catch(()=>[]),
-      fetchTab('IncomeLog').catch(()=>[]),
-      fetchTab('PreSeasonReport').catch(()=>[]),
-      fetchTab('AuroraTimes').catch(()=>[]),
-      fetchTab('MoraleLog').catch(()=>[]),
-      fetchTab('ManagerInbox').catch(()=>[]),
-      fetchTab('TrainingLog').catch(()=>[]),
-      fetchTab('BoardConfidence').catch(()=>[]),
-      fetchTab('Awards').catch(()=>[]),
-      fetchTab('AuroraFixtures').catch(()=>[]),
-      fetchTab('Milestones').catch(()=>[]),
-      fetchTab('AuroraRules').catch(()=>[])
+      fetchTab('AuroraScout').catch(()=>[])
     ]);
-    state = {
-      holdings,
-      dividends,
-      watchlist,
-      globalWatchlist,
-      scout,
-      dailyPriceSummary,
-      livePrices,
-      priceLog,
-      incomeLog,
-      preSeasonReport,
-      auroraTimes,
-      moraleLog,
-      managerInbox,
-      trainingLog,
-      boardConfidence,
-      awards,
-      auroraFixtures,
-      milestones,
-      auroraRules
-    };
+    state = { holdings, watchlist, scout };
     renderAll();
   }catch(err){
     console.error(err);
-    if($('clubNewsFeed')) $('clubNewsFeed').innerHTML = `<div class="loading error">${err.message || 'Unable to load AuroraMaster'}</div>`;
+    if($('clubNewsFeed')) $('clubNewsFeed').innerHTML = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
 }
+function renderFixtureBadge(){
+  const fixture = FIXTURE_BADGES[CURRENT_FIXTURE_TYPE] || FIXTURE_BADGES.default;
+  const img = $('fixtureOpponentBadge');
+  if(img){
+    img.src = fixture.badge;
+    img.alt = `${fixture.label} badge`;
+  }
+  if($('fixtureOpponentName')) $('fixtureOpponentName').textContent = fixture.label;
+  if($('fixtureOpponentNote')) $('fixtureOpponentNote').textContent = fixture.note;
+}
+
 function renderCountdown(){
   const now = new Date();
   const payday = new Date(now);
@@ -1697,24 +1609,18 @@ function renderAll(){
   if($('paydayReadiness')) $('paydayReadiness').textContent = preferred === 'Club-Recommended Four' ? 'Check size' : 'Monitor';
   if($('recoFour')) $('recoFour').innerHTML = recommended.map(t=>`<span class="shirt">${displayTicker(t)}</span>`).join('');
 
-  const targets = uniqueByTicker([...(state.watchlist||[]), ...(state.globalWatchlist||[]), ...(state.scout||[])])
-    .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
+  const targets = uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])])
+    .sort((a,b)=>(impact(b)||0)-(impact(a)||0))
     .slice(0,4);
   const squad = uniqueByTicker(state.holdings)
-    .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
+    .sort((a,b)=>(impact(b)||0)-(impact(a)||0))
     .slice(0,4);
   if($('topTargetStatus')) $('topTargetStatus').textContent = targets[0] ? `${displayTicker(targets[0].ticker)} leads` : 'No target';
   if($('squadCount')) $('squadCount').textContent = `${uniqueByTicker(state.holdings).length} holdings`;
   renderPreviewRows(targets, 'topTransferPreview', 'impact');
   renderPreviewRows(squad, 'squadPreview', 'impact');
 
-  const homeNews = homeNewsRows().slice(0,4);
-  const news = homeNews.length ? homeNews.map(row=>({
-    icon: newsIcon(row),
-    title: String(val(row,'Headline','headline') || 'Aurora Times update').toUpperCase(),
-    text: String(val(row,'Summary','summary') || val(row,'Category','category') || 'Live newsroom update.'),
-    date: String(val(row,'Date','date') || val(row,'Category','category') || 'News')
-  })) : [
+  const news = [
     {icon:'💼', title:'TRANSFER COMMITTEE READY', text:`Recommended route: ${preferred}.`, date:'Today'},
     {icon:'📈', title:`${rep.current.label.toUpperCase()} STATUS`, text:`Aurora City FC currently tracks ${money(monthlyIncome)} monthly income.`, date:'Board'},
     {icon:'🏟️', title:'DEPARTMENT SPLIT APPROVED', text:'Transfers, boardroom and squad hub now get their own specialist pages.', date:'Club'},
@@ -1727,6 +1633,7 @@ function renderAll(){
       <div class="news-date">${n.date}</div>
     </div>`).join('');
 
+  renderFixtureBadge();
   renderCountdown();
 }
 $('refreshBtn')?.addEventListener('click', loadData);

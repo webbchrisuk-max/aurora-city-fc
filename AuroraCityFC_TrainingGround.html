@@ -55,58 +55,11 @@ center center/cover no-repeat!important;
 <script src="AuroraFCData.js"></script>
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
-const AURORA_TAB_NAMES = [
-  "Holdings",
-  "Dividends",
-  "Watchlist",
-  "Global Watchlist",
-  "AuroraScout",
-  "DailyPriceSummary",
-  "LivePrices",
-  "PriceLog",
-  "IncomeLog",
-  "PreSeasonReport",
-  "AuroraTimes",
-  "MoraleLog",
-  "ManagerInbox",
-  "TrainingLog",
-  "BoardConfidence",
-  "Awards",
-  "AuroraFixtures",
-  "Milestones",
-  "AuroraRules"
-];
-let AURORA_MASTER_CACHE = null;
-let state = {
-  master:null,
-  tabs:{},
-  holdings:[],
-  dividends:[],
-  watchlist:[],
-  globalWatchlist:[],
-  scout:[],
-  dailyPriceSummary:[],
-  livePrices:[],
-  priceLog:[],
-  income:[],
-  preSeasonReport:[],
-  auroraTimes:[],
-  moraleLog:[],
-  managerInbox:[],
-  trainingLog:[],
-  boardConfidence:[],
-  awards:[],
-  auroraFixtures:[],
-  milestones:[],
-  auroraRules:[]
-};
+let AURORA_MASTER_CACHE=null,state={holdings:[],watchlist:[],scout:[],dividends:[],income:[]};
 const $=id=>document.getElementById(id);const money=n=>Number.isFinite(n)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n):'—';
 function parseNum(v){if(v===null||v===undefined)return NaN;const s=String(v).replace(/£|,|%/g,'').trim();return s?Number(s):NaN}function cleanTicker(t){return String(t||'').trim().toUpperCase()}function displayTicker(t){return String(t||'').replace('LON:','')}function displayName(r){return r.name||r.company_name||r.company||r.Company||r.Name||displayTicker(r.ticker)||'—'}function impact(r){return parseNum(r.impact??r.impact_score??r.promotion_impact_score??r['Impact Score'])}function buyStrength(r){return parseNum(r.buy_strength??r.buy_strength_score??r.score??r.buy_score)}function yieldPct(r){const n=parseNum(r.yield_pct??r.Yield??r.yield??r.dividend_yield);return Number.isFinite(n)?(n>1?n:n*100):NaN}function annualIncomeFromRow(r){const d=parseNum(r.annual_income??r.income_annual??r.dividend_income??r['Annual Income']);if(Number.isFinite(d))return d;const v=parseNum(r.value??r.market_value??r.current_value??r.holding_value??r['Market Value']);const y=yieldPct(r);return Number.isFinite(v)&&Number.isFinite(y)?v*(y/100):0}function uniqueByTicker(rows){const m=new Map();rows.forEach(r=>{const t=cleanTicker(r.ticker);if(!t)return;const e=m.get(t);if(!e||(impact(r)||buyStrength(r)||0)>(impact(e)||buyStrength(e)||0))m.set(t,r)});return[...m.values()]}
-function normaliseTabName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
 async function fetchMaster(){if(!AURORA_MASTER_CACHE){const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});if(!res.ok)throw new Error(`AuroraData failed: ${res.status}`);AURORA_MASTER_CACHE=await res.json()}return AURORA_MASTER_CACHE}
-function getMasterTab(master,tab){if(Array.isArray(master?.[tab]))return master[tab];const wanted=normaliseTabName(tab);const key=Object.keys(master||{}).find(k=>normaliseTabName(k)===wanted);return key&&Array.isArray(master[key])?master[key]:[]}
-async function fetchTab(tab){const master=await fetchMaster();return getMasterTab(master,tab)}
-async function loadAuroraData(){const b=$('refreshBtn');if(b){b.textContent='Loading…';b.disabled=true}try{const data=await fetchMaster();const tabs={};AURORA_TAB_NAMES.forEach(name=>{tabs[name]=getMasterTab(data,name)});state={master:data,tabs,holdings:tabs.Holdings||[],dividends:tabs.Dividends||[],watchlist:tabs.Watchlist||[],globalWatchlist:tabs["Global Watchlist"]||[],scout:tabs.AuroraScout||[],dailyPriceSummary:tabs.DailyPriceSummary||[],livePrices:tabs.LivePrices||[],priceLog:tabs.PriceLog||[],income:tabs.IncomeLog||[],preSeasonReport:tabs.PreSeasonReport||[],auroraTimes:tabs.AuroraTimes||[],moraleLog:tabs.MoraleLog||[],managerInbox:tabs.ManagerInbox||[],trainingLog:tabs.TrainingLog||[],boardConfidence:tabs.BoardConfidence||[],awards:tabs.Awards||[],auroraFixtures:tabs.AuroraFixtures||[],milestones:tabs.Milestones||[],auroraRules:tabs.AuroraRules||[]};renderAll()}catch(e){document.querySelectorAll('[data-loading-target]').forEach(el=>el.innerHTML=`<div class="loading error">${e.message||'Unable to load AuroraData'}</div>`)}finally{if(b){b.textContent='Refresh';b.disabled=false}}}
+async function loadAuroraData(){const b=$('refreshBtn');if(b){b.textContent='Loading…';b.disabled=true}try{const data=await fetchMaster();state={holdings:Array.isArray(data.Holdings)?data.Holdings:[],watchlist:Array.isArray(data.Watchlist)?data.Watchlist:[],scout:Array.isArray(data.AuroraScout)?data.AuroraScout:[],dividends:Array.isArray(data.Dividends)?data.Dividends:[],income:Array.isArray(data.IncomeLog)?data.IncomeLog:[]};renderAll()}catch(e){document.querySelectorAll('[data-loading-target]').forEach(el=>el.innerHTML=`<div class="loading error">${e.message||'Unable to load AuroraData'}</div>`)}finally{if(b){b.textContent='Refresh';b.disabled=false}}}
 
 function players(){
   const scoreRows = uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])]);
