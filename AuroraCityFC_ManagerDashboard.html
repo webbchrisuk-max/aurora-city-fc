@@ -415,6 +415,106 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 
 
+/* ===================== SECTION: TROPHY CABINET ===================== */
+.trophy-cabinet{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:12px;
+  align-items:stretch;
+}
+.trophy-room{
+  border:1px solid rgba(251,191,36,.28);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(251,191,36,.13),transparent 34%),
+    radial-gradient(circle at 92% 10%,rgba(34,211,238,.10),transparent 32%),
+    rgba(15,23,42,.52);
+  border-radius:22px;
+  padding:15px;
+}
+.trophy-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.trophy{
+  min-height:128px;
+  border:1px solid var(--line);
+  background:rgba(2,6,23,.30);
+  border-radius:18px;
+  padding:12px;
+  position:relative;
+  overflow:hidden;
+}
+.trophy:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 52%);
+  pointer-events:none;
+}
+.trophy.unlocked{
+  border-color:rgba(52,211,153,.35);
+  box-shadow:0 0 18px rgba(52,211,153,.08);
+}
+.trophy.locked{
+  opacity:.68;
+}
+.trophy-icon{
+  font-size:28px;
+  line-height:1;
+  margin-bottom:9px;
+}
+.trophy-title{
+  font-weight:900;
+  font-size:13px;
+  line-height:1.15;
+  position:relative;
+}
+.trophy-detail{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+  margin-top:7px;
+  position:relative;
+}
+.trophy-progress{
+  height:9px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+  margin-top:10px;
+}
+.trophy-progress span{
+  display:block;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+}
+.season-ticket{
+  display:grid;
+  gap:10px;
+}
+.season-ticket .score-card{
+  box-shadow:none;
+}
+.manager-note{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(2,6,23,.25);
+  padding:12px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+@media(max-width:900px){
+  .trophy-cabinet{grid-template-columns:1fr}
+  .trophy-grid{grid-template-columns:1fr}
+}
+
+
+
 /* ===================== SECTION: FULL FOOTBALL MANAGER MODE ===================== */
 .fm-command-grid{
   display:grid;
@@ -1098,9 +1198,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 
 .crest img,
-.club-badge-xl img,
-.fixture-crest img{
-  content:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png")!important;
+.club-badge-xl img{
+  content:url("https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png")!important;
 }
 
 </style>
@@ -1111,7 +1210,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 <div class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <div class="crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div>
+      <div class="crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
       <div>
         <h1>Aurora City FC</h1>
         <p>Manager Dashboard • Home</p>
@@ -1122,6 +1221,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -1164,7 +1265,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
     <div class="club-showcase">
       <div class="showcase-top">
         <div class="club-identity">
-          <div class="club-badge-xl"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div>
+          <div class="club-badge-xl"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
           <h2>Aurora <span>City FC</span></h2>
           <p>Manager Dashboard</p>
         </div>
@@ -1194,9 +1295,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
         <div class="next-fixture">
           <div class="card-title"><h3>Next Fixture</h3><span class="badge amber">Payday Window</span></div>
           <div class="fixture-vs">
-            <div class="fixture-team"><div class="fixture-crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/2A2B64B2-F8C9-4844-A49E-82AF8F0E56AE.png" alt="Aurora City FC crest"></div><strong>Aurora City</strong><span class="note">Home</span></div>
+            <div class="fixture-team"><div class="fixture-crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div><strong>Aurora City</strong><span class="note">Home</span></div>
             <strong>VS</strong>
-            <div class="fixture-team"><div class="fixture-crest">💼</div><strong>Transfer Window</strong><span class="note">Next Friday</span></div>
+            <div class="fixture-team"><div class="fixture-crest"><img id="fixtureOpponentBadge" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/fixture/payday.png" alt="Payday Window badge"></div><strong id="fixtureOpponentName">Transfer Window</strong><span class="note" id="fixtureOpponentNote">Next Friday</span></div>
           </div>
           <div class="fixture-countdown">
             <div><strong id="countDays">—</strong><small>days</small></div>
@@ -1272,10 +1373,10 @@ tr:hover td{background:rgba(96,165,250,.06)}
       </a>
       <a class="department-card" href="AuroraCityFC_SquadHub.html">
         <div class="department-card-content">
-          <img class="department-card-img" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/4E299D2D-53AC-43F8-A84E-0FD90C2D39AC.png" alt="Squad Hub preview">
+          <img class="department-card-img" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/D8D0378B-F3D2-4B10-8139-361CBD885284.png" alt="Squad Hub preview">
           <span>First Team</span>
           <strong>Squad Hub</strong>
-          <p>Holdings, chemistry, first-team form, relegation watch and promotion form.</p>
+          <p>Holdings, chemistry, squad depth, relegation watch and promotion form.</p>
         </div>
         <span>Open Squad Hub →</span>
       </a>
@@ -1296,6 +1397,54 @@ const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
 const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
 const DEPLOYMENT_PER_PLAYER = 112.5;
 const IMPACT_INCOME_TRIGGER = 20;
+
+/* ===================== SECTION: FIXTURE BADGE SCHEDULE ===================== */
+const FIXTURE_BADGE_BASE = "https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/fixture/";
+const FIXTURE_BADGES = {
+  payday: { label:'Transfer Window', note:'Next Friday', badge:FIXTURE_BADGE_BASE + 'payday.png' },
+  boardroom: { label:'Boardroom Review', note:'Club control', badge:FIXTURE_BADGE_BASE + 'boardroom.png' },
+  cup_draw: { label:'Cup Draw', note:'Knockout route', badge:FIXTURE_BADGE_BASE + 'cup_draw.png' },
+  derby_day: { label:'Derby Day', note:'Rival clash', badge:FIXTURE_BADGE_BASE + 'derby_day.png' },
+  opening_day: { label:'Opening Day', note:'Season opener', badge:FIXTURE_BADGE_BASE + 'opening_day.png' },
+  press_day: { label:'Press Day', note:'Media briefing', badge:FIXTURE_BADGE_BASE + 'press_day.png' },
+  scout_mission: { label:'Scout Mission', note:'Target search', badge:FIXTURE_BADGE_BASE + 'scout_mission.png' },
+  training: { label:'Training Ground', note:'Player development', badge:FIXTURE_BADGE_BASE + 'training.png' },
+  default: { label:'Transfer Window', note:'Next Friday', badge:FIXTURE_BADGE_BASE + 'payday.png' }
+};
+const CURRENT_FIXTURE_TYPE = 'payday';
+function normaliseFixtureType(value){
+  return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'payday';
+}
+function currentFixtureRow(){
+  const rows = Array.isArray(state.fixtures) ? state.fixtures : [];
+  return rows.find(r => String(r.status || r.Status || '').toLowerCase() !== 'hidden') || null;
+}
+function resolveFixtureBadge(){
+  const row = currentFixtureRow();
+  const rawType = row ? (row.fixture_type || row.Fixture_Type || row.type || row.Type || row.badge_type || row.Badge_Type) : CURRENT_FIXTURE_TYPE;
+  const key = normaliseFixtureType(rawType);
+  const fallback = FIXTURE_BADGES[key] || FIXTURE_BADGES.default;
+  const rawBadge = row ? (row.badge || row.Badge || row.badge_file || row.Badge_File || '') : '';
+  const badge = rawBadge
+    ? (/^https?:\/\//i.test(String(rawBadge)) ? String(rawBadge) : FIXTURE_BADGE_BASE + String(rawBadge).replace(/^.*\//,''))
+    : fallback.badge;
+  return {
+    label: row ? (row.opponent || row.Opponent || row.fixture || row.Fixture || row.name || row.Name || fallback.label) : fallback.label,
+    note: row ? (row.note || row.Note || row.date_label || row.Date_Label || row.Date || fallback.note) : fallback.note,
+    badge
+  };
+}
+function renderFixtureBadge(){
+  const fixture = resolveFixtureBadge();
+  const img = $('fixtureOpponentBadge');
+  if(img){
+    img.src = fixture.badge;
+    img.alt = `${fixture.label} badge`;
+  }
+  if($('fixtureOpponentName')) $('fixtureOpponentName').textContent = fixture.label;
+  if($('fixtureOpponentNote')) $('fixtureOpponentNote').textContent = fixture.note;
+}
+
 let state = { holdings:[], watchlist:[], scout:[], dividends:[], income:[], news:[], moraleLog:[], managerInbox:[], trainingLog:[], boardConfidence:[], awards:[], fixtures:[], milestones:[], rules:[] };
 
 const $ = id => document.getElementById(id);
@@ -1579,6 +1728,7 @@ function renderAll(){
       <div class="news-date">${n.date}</div>
     </div>`).join('');
 
+  renderFixtureBadge();
   renderCountdown();
 }
 $('refreshBtn')?.addEventListener('click', loadData);
