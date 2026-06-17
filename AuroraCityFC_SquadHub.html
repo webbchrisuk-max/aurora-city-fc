@@ -1926,6 +1926,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2126,6 +2128,72 @@ function parseNum(v){
   if(!s) return NaN;
   return Number(s);
 }
+function val(row,...keys){
+  for(const k of keys){
+    if(row && row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return row[k];
+  }
+  return '';
+}
+function yes(v){
+  return ['yes','y','true','1','published','show'].includes(String(v||'').trim().toLowerCase());
+}
+function clampScore(n){
+  return Math.max(0, Math.min(100, Math.round(Number.isFinite(n) ? n : 0)));
+}
+function signedImpact(n){
+  const value = Number(n) || 0;
+  if(!value) return '';
+  return value > 0 ? ` • News +${value}` : ` • News ${value}`;
+}
+function signedNumber(n){
+  const value = Number(n) || 0;
+  return value > 0 ? `+${value}` : `${value}`;
+}
+function isPublishedNews(row){
+  const status = String(val(row,'Status','status')).trim().toLowerCase();
+  return !status || status === 'published';
+}
+function newsDate(row){
+  const d = val(row,'Date','date');
+  const t = val(row,'Time','time') || '00:00';
+  const parsed = new Date(`${d} ${t}`);
+  return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+}
+function squadNewsRows(){
+  return (state.news || [])
+    .filter(isPublishedNews)
+    .filter(row => {
+      const media = val(row,'Display_In_Media','display_in_media','Display In Media');
+      const home = val(row,'Display_On_Home','display_on_home','Display On Home');
+      return !media && !home ? true : yes(media) || yes(home);
+    })
+    .sort((a,b)=>newsDate(b)-newsDate(a));
+}
+function summedSquadMoraleImpact(){
+  const newsImpact = squadNewsRows().reduce((sum,row)=>{
+    const raw = val(row,'Morale_Impact','Morale Impact','morale_impact','Squad_Morale_Impact','Squad Morale Impact','squad_morale_impact');
+    const n = parseNum(raw);
+    return sum + (Number.isFinite(n) ? n : 0);
+  },0);
+  const logImpact = (state.moraleLog || []).reduce((sum,row)=>{
+    const raw = val(row,'Morale_Impact','Morale Impact','morale_impact','Squad_Morale_Impact','Squad Morale Impact','squad_morale_impact','Impact');
+    const n = parseNum(raw);
+    return sum + (Number.isFinite(n) ? n : 0);
+  },0);
+  return newsImpact + logImpact;
+}
+function latestMoraleOverride(){
+  const rows = Array.isArray(state.moraleLog) ? state.moraleLog : [];
+  for(const row of rows.slice().reverse()){
+    const n = parseNum(val(row,'Squad_Morale','Squad Morale','Morale','Score','morale_score','squad_morale'));
+    if(Number.isFinite(n)) return n;
+  }
+  return NaN;
+}
+function moraleLabel(score){
+  return score >= 82 ? 'Excellent' : score >= 72 ? 'High' : score >= 62 ? 'Stable' : 'Needs Lift';
+}
+
 function cleanTicker(t){ return String(t || '').trim().toUpperCase(); }
 function displayTicker(t){ return String(t || '').replace('LON:',''); }
 function displayName(row){
@@ -2586,9 +2654,8 @@ function bestIncomeRow(rows){
   return [...rows].sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a))[0] || null;
 }
 function moraleRating(avg, annualIncome, lowCount){
-  let score = Math.round(Math.max(35, Math.min(99, (avg || 50) + Math.min(12, annualIncome / 2200) - (lowCount * 3))));
-  let label = score >= 82 ? 'Excellent' : score >= 72 ? 'High' : score >= 62 ? 'Stable' : 'Needs Lift';
-  return { score, label };
+  const score = clampScore(Math.max(35, Math.min(99, (avg || 50) + Math.min(12, annualIncome / 2200) - (lowCount * 3))));
+  return { score, label: moraleLabel(score) };
 }
 function renderTrainingReport(rows, annualIncome){
   const el = $('trainingReportGrid');
@@ -2629,16 +2696,25 @@ function renderTrainingReport(rows, annualIncome){
 function renderMoraleCentre(rows, annualIncome){
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
   const low = rows.filter(r=>squadScore(r)<60).length;
-  const morale = moraleRating(avg, annualIncome, low);
+  const baseMorale = moraleRating(avg, annualIncome, low);
+  const moraleOverride = latestMoraleOverride();
+  const moraleImpact = summedSquadMoraleImpact();
+  const baseScore = Number.isFinite(moraleOverride) ? moraleOverride : baseMorale.score;
+  const moraleScore = clampScore(baseScore + moraleImpact);
+  const morale = { score: moraleScore, label: moraleLabel(moraleScore) };
   if($('moraleScore')) $('moraleScore').textContent = `${morale.score}`;
-  if($('moraleBadge')) $('moraleBadge').textContent = morale.label;
+  if($('moraleBadge')) $('moraleBadge').textContent = `${morale.label}${signedImpact(moraleImpact)}`;
   const pressure = low >= 4 ? 'High' : low >= 2 ? 'Medium' : 'Controlled';
   const mood = morale.score >= 82 ? 'Buzzing' : morale.score >= 72 ? 'Confident' : morale.score >= 62 ? 'Calm' : 'Flat';
   const leader = strongestRow(rows);
+  const moraleImpactLine = moraleImpact
+    ? `<div class="morale-line"><span>Aurora Times impact</span><strong>${signedNumber(moraleImpact)}</strong></div>`
+    : `<div class="morale-line"><span>Aurora Times impact</span><strong>No swing</strong></div>`;
   if($('moraleLines')){
     $('moraleLines').innerHTML = `
       <div class="morale-line"><span>Dressing room mood</span><strong>${mood}</strong></div>
       <div class="morale-line"><span>Pressure level</span><strong>${pressure}</strong></div>
+      ${moraleImpactLine}
       <div class="morale-line"><span>Squad leader</span><strong>${leader ? displayTicker(leader.ticker) : '—'}</strong></div>`;
   }
 }
