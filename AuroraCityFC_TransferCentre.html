@@ -2127,7 +2127,29 @@ const PLAYER_PORTRAITS = {
   IMB: "assets/aurora-city-fc/players/imb_player.png"
 };
 
-let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[] };
+const AURORA_TAB_MAP = {
+  holdings:'Holdings',
+  dividends:'Dividends',
+  watchlist:'Watchlist',
+  globalWatchlist:'Global Watchlist',
+  scout:'AuroraScout',
+  dailyPriceSummary:'DailyPriceSummary',
+  livePrices:'LivePrices',
+  priceLog:'PriceLog',
+  incomeLog:'IncomeLog',
+  preSeasonReport:'PreSeasonReport',
+  auroraTimes:'AuroraTimes',
+  moraleLog:'MoraleLog',
+  managerInbox:'ManagerInbox',
+  trainingLog:'TrainingLog',
+  boardConfidence:'BoardConfidence',
+  awards:'Awards',
+  auroraFixtures:'AuroraFixtures',
+  milestones:'Milestones',
+  auroraRules:'AuroraRules'
+};
+
+let state = Object.fromEntries(Object.keys(AURORA_TAB_MAP).map(key => [key, []]));
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2228,29 +2250,50 @@ function portraitFor(ticker){
   const s = shortTicker(ticker);
   return PLAYER_PORTRAITS[s] || "";
 }
-async function fetchTab(tab){
+/* ===================== SECTION: AURORA MASTER JSON TAB ENGINE ===================== */
+function normaliseTabName(name){
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+
+async function fetchMaster(){
   if(!AURORA_MASTER_CACHE){
     const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
-    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    if(!res.ok) throw new Error(`AuroraMaster failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
   }
-  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
+  return AURORA_MASTER_CACHE;
 }
+
+async function fetchTab(tab){
+  const master = await fetchMaster();
+  if(Array.isArray(master?.[tab])) return master[tab];
+
+  const wanted = normaliseTabName(tab);
+  const key = Object.keys(master || {}).find(k => normaliseTabName(k) === wanted);
+  return key && Array.isArray(master[key]) ? master[key] : [];
+}
+
+async function fetchAllTabs(){
+  const entries = await Promise.all(Object.entries(AURORA_TAB_MAP).map(async ([stateKey, tabName]) => {
+    try{
+      return [stateKey, await fetchTab(tabName)];
+    }catch(err){
+      console.warn(`AuroraMaster tab failed: ${tabName}`, err);
+      return [stateKey, []];
+    }
+  }));
+  return Object.fromEntries(entries);
+}
+
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, globalWatchlist] = await Promise.all([
-      fetchTab('Holdings'),
-      fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('Global Watchlist').catch(()=>[])
-    ]);
-    state = { holdings, watchlist, scout, globalWatchlist };
+    state = await fetchAllTabs();
     renderAll();
   }catch(err){
     console.error(err);
-    const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
+    const fail = `<div class="loading error">${err.message || 'Unable to load AuroraMaster'}</div>`;
     ['targetList','scoutReport','platformList','transferSlip'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
