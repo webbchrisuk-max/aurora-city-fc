@@ -2124,7 +2124,7 @@ const PLAYER_PORTRAITS = {
   IMB: "assets/aurora-city-fc/players/imb_player.png"
 };
 
-let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[], auroraTimes:[], auroraRules:[] };
+let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[], auroraTimes:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2206,7 +2206,7 @@ function uniqueByTicker(rows){
 }
 function findSecurity(ticker){
   const t = cleanTicker(ticker);
-  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
+  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || state.globalWatchlist.find(r=>cleanTicker(r.ticker)===t) || null;
 }
 function routeStats(tickers){
   const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
@@ -2237,15 +2237,14 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, globalWatchlist, auroraTimes, auroraRules] = await Promise.all([
+    const [holdings, watchlist, scout, globalWatchlist, auroraTimes] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
       fetchTab('AuroraScout').catch(()=>[]),
       fetchTab('Global Watchlist').catch(()=>[]),
-      fetchTab('AuroraTimes').catch(()=>[]),
-      fetchTab('AuroraRules').catch(()=>[])
+      fetchTab('AuroraTimes').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout, globalWatchlist, auroraTimes, auroraRules };
+    state = { holdings, watchlist, scout, globalWatchlist, auroraTimes };
     renderAll();
   }catch(err){
     console.error(err);
@@ -2256,7 +2255,7 @@ async function loadData(){
   }
 }
 function targetRows(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[])])
     .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))
     .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
     .slice(0,8);
@@ -2416,7 +2415,7 @@ function renderScoutReport(top){
 
 
 function candidatePool(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.holdings||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[]), ...(state.holdings||[])])
     .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
 }
 function bestIncomeCandidates(){
@@ -2426,13 +2425,12 @@ function bestUpgradeCandidates(){
   return candidatePool().sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0)).slice(0,4).map(r=>cleanTicker(r.ticker));
 }
 
-
 /* ===================== SECTION: MARKET REGIME DECISION ENGINE ===================== */
 function latestMacroText(){
   const rows = Array.isArray(state.auroraTimes) ? state.auroraTimes : [];
   return rows
     .filter(r => String(r.ticker || r.Ticker || '').toUpperCase().includes('MACRO') || String(r.category || r.Category || '').toLowerCase().includes('macro'))
-    .slice(-6)
+    .slice(-8)
     .map(r => [r.headline, r.Headline, r.category, r.Category, r.summary, r.Summary, r.notes, r.Notes, r.sentiment, r.Sentiment].filter(Boolean).join(' '))
     .join(' ')
     .toLowerCase();
@@ -2452,7 +2450,7 @@ function inferMarketRegime(){
 
   const text = latestMacroText();
   const hasVolatility = /volatile|volatility|selloff|sell-off|panic|crash|sharp fall|risk-off|risk off/.test(text);
-  const hasRateHold = /rate.*hold|hold.*rate|unchanged|steady|kept.*rate|holds interest/.test(text);
+  const hasRateHold = /rate.*hold|hold.*rate|unchanged|steady|kept.*rate|holds interest|rates stayed|interest rates steady/.test(text);
   const hasRateCut = /rate cut|cut rates|lower rates|rates falling|falling rates|easing/.test(text);
   const hasRateHike = /rate hike|raise rates|higher rates|tightening/.test(text);
   const inflationFalling = /inflation.*fall|falling.*inflation|below.*forecast|cooling inflation|inflation.*below/.test(text);
