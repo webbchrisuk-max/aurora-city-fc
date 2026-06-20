@@ -1925,8 +1925,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2101,32 +2099,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
 <script>
-const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const AURORA_MASTER_URL = "https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec";
 let AURORA_MASTER_CACHE = null;
 
-
-const AURORA_MASTER_TABS = [
-  "Holdings",
-  "Dividends",
-  "Watchlist",
-  "Global Watchlist",
-  "AuroraScout",
-  "DailyPriceSummary",
-  "LivePrices",
-  "PriceLog",
-  "IncomeLog",
-  "FXRates",
-  "PreSeasonReport",
-  "AuroraTimes",
-  "MoraleLog",
-  "ManagerInbox",
-  "TrainingLog",
-  "BoardConfidence",
-  "Awards",
-  "AuroraFixtures",
-  "Milestones",
-  "AuroraRules"
-];
 const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
 const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
 const DEPLOYMENT_PER_PLAYER = 125;
@@ -2135,8 +2110,7 @@ let selectedTactic = 'recommended';
 
 const PLATFORM_RULES = {
   "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
-  "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212",
-  "ARCC":"Trade212 / Check"
+  "FSFL":"Trade212","UKW":"Trade212","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212"
 };
 
 const PLAYER_PORTRAITS = {
@@ -2150,7 +2124,7 @@ const PLAYER_PORTRAITS = {
   IMB: "assets/aurora-city-fc/players/imb_player.png"
 };
 
-let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[] };
+let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[], auroraTimes:[], auroraRules:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2232,7 +2206,7 @@ function uniqueByTicker(rows){
 }
 function findSecurity(ticker){
   const t = cleanTicker(ticker);
-  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || state.globalWatchlist.find(r=>cleanTicker(r.ticker)===t) || null;
+  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
 }
 function routeStats(tickers){
   const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
@@ -2251,84 +2225,38 @@ function portraitFor(ticker){
   const s = shortTicker(ticker);
   return PLAYER_PORTRAITS[s] || "";
 }
-async function fetchMaster(){
-  if(!AURORA_MASTER_CACHE){
-    const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});
-    if(!res.ok)throw new Error(`AuroraData failed: ${res.status}`);
-    AURORA_MASTER_CACHE=await res.json();
-  }
-  return AURORA_MASTER_CACHE;
-}
-function normaliseAuroraTabName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'')}
-function readAuroraTab(master,tab){
-  const wanted=normaliseAuroraTabName(tab);
-  function pick(obj){
-    if(!obj||typeof obj!=='object')return [];
-    if(Array.isArray(obj[tab]))return obj[tab];
-    const key=Object.keys(obj).find(k=>normaliseAuroraTabName(k)===wanted);
-    return key&&Array.isArray(obj[key])?obj[key]:[];
-  }
-  let rows=pick(master);
-  if(rows.length)return rows;
-  for(const wrapper of ['data','tabs','sheets','feeds']){
-    rows=pick(master?.[wrapper]);
-    if(rows.length)return rows;
-  }
-  return [];
-}
 async function fetchTab(tab){
-  const master=await fetchMaster();
-  return readAuroraTab(master,tab);
-}
-async function fetchAllAuroraTabs(){
-  const master=await fetchMaster();
-  const tabs={};
-  AURORA_MASTER_TABS.forEach(tab=>{tabs[tab]=readAuroraTab(master,tab)});
-  return tabs;
-}
-function buildAuroraState(tabs){
-  return {
-    ...tabs,
-    holdings:tabs.Holdings||[],
-    dividends:tabs.Dividends||[],
-    watchlist:tabs.Watchlist||[],
-    globalWatchlist:tabs['Global Watchlist']||[],
-    scout:tabs.AuroraScout||[],
-    dailyPriceSummary:tabs.DailyPriceSummary||[],
-    livePrices:tabs.LivePrices||[],
-    priceLog:tabs.PriceLog||[],
-    income:tabs.IncomeLog||[],
-    fxRates:tabs.FXRates||[],
-    preSeasonReport:tabs.PreSeasonReport||[],
-    news:tabs.AuroraTimes||[],
-    moraleLog:tabs.MoraleLog||[],
-    managerInbox:tabs.ManagerInbox||[],
-    trainingLog:tabs.TrainingLog||[],
-    boardConfidence:tabs.BoardConfidence||[],
-    awards:tabs.Awards||[],
-    fixtures:tabs.AuroraFixtures||[],
-    milestones:tabs.Milestones||[],
-    rules:tabs.AuroraRules||[]
-  };
+  if(!AURORA_MASTER_CACHE){
+    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE = await res.json();
+  }
+  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
 }
 async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const tabs = await fetchAllAuroraTabs();
-    state = buildAuroraState(tabs);
+    const [holdings, watchlist, scout, globalWatchlist, auroraTimes, auroraRules] = await Promise.all([
+      fetchTab('Holdings'),
+      fetchTab('Watchlist'),
+      fetchTab('AuroraScout').catch(()=>[]),
+      fetchTab('Global Watchlist').catch(()=>[]),
+      fetchTab('AuroraTimes').catch(()=>[]),
+      fetchTab('AuroraRules').catch(()=>[])
+    ]);
+    state = { holdings, watchlist, scout, globalWatchlist, auroraTimes, auroraRules };
     renderAll();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ["targetList","scoutReport","platformList","transferSlip"].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['targetList','scoutReport','platformList','transferSlip'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
 }
-
 function targetRows(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])])
     .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))
     .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
     .slice(0,8);
@@ -2488,7 +2416,7 @@ function renderScoutReport(top){
 
 
 function candidatePool(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[]), ...(state.holdings||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.holdings||[])])
     .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
 }
 function bestIncomeCandidates(){
@@ -2497,7 +2425,154 @@ function bestIncomeCandidates(){
 function bestUpgradeCandidates(){
   return candidatePool().sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0)).slice(0,4).map(r=>cleanTicker(r.ticker));
 }
+
+
+/* ===================== SECTION: MARKET REGIME DECISION ENGINE ===================== */
+function latestMacroText(){
+  const rows = Array.isArray(state.auroraTimes) ? state.auroraTimes : [];
+  return rows
+    .filter(r => String(r.ticker || r.Ticker || '').toUpperCase().includes('MACRO') || String(r.category || r.Category || '').toLowerCase().includes('macro'))
+    .slice(-6)
+    .map(r => [r.headline, r.Headline, r.category, r.Category, r.summary, r.Summary, r.notes, r.Notes, r.sentiment, r.Sentiment].filter(Boolean).join(' '))
+    .join(' ')
+    .toLowerCase();
+}
+function inferMarketRegime(){
+  const manual = AURORA_MASTER_CACHE?.market_regime || AURORA_MASTER_CACHE?.MarketRegime || AURORA_MASTER_CACHE?.Market_Regime;
+  if(manual && typeof manual === 'object'){
+    return {
+      condition: manual.condition || 'normal',
+      rateEnvironment: manual.rate_environment || manual.rateEnvironment || 'unknown',
+      inflationPressure: manual.inflation_pressure || manual.inflationPressure || 'unknown',
+      buyMode: manual.buy_mode || manual.buyMode || 'balanced',
+      label: manual.label || manual.condition || 'Manual market regime',
+      explanation: manual.explanation || manual.notes || 'Using the market regime supplied by AuroraMaster.'
+    };
+  }
+
+  const text = latestMacroText();
+  const hasVolatility = /volatile|volatility|selloff|sell-off|panic|crash|sharp fall|risk-off|risk off/.test(text);
+  const hasRateHold = /rate.*hold|hold.*rate|unchanged|steady|kept.*rate|holds interest/.test(text);
+  const hasRateCut = /rate cut|cut rates|lower rates|rates falling|falling rates|easing/.test(text);
+  const hasRateHike = /rate hike|raise rates|higher rates|tightening/.test(text);
+  const inflationFalling = /inflation.*fall|falling.*inflation|below.*forecast|cooling inflation|inflation.*below/.test(text);
+  const recessionRisk = /recession|slowdown|weak growth|unemployment|consumer pressure/.test(text);
+
+  if(hasVolatility){
+    return {
+      condition:'volatile',
+      rateEnvironment: hasRateHold ? 'high_but_stable' : hasRateCut ? 'falling' : 'uncertain',
+      inflationPressure: inflationFalling ? 'falling' : 'uncertain',
+      buyMode:'cautious',
+      label:'Volatile market',
+      explanation:'Market stress detected, so Aurora favours quality, defensive income and stronger payout cover over raw yield.'
+    };
+  }
+  if(recessionRisk){
+    return {
+      condition:'recession_risk',
+      rateEnvironment: hasRateCut ? 'falling' : hasRateHold ? 'high_but_stable' : 'uncertain',
+      inflationPressure: inflationFalling ? 'falling' : 'uncertain',
+      buyMode:'defensive',
+      label:'Recession-risk market',
+      explanation:'Aurora should prioritise defensive income, balance-sheet quality and lower cyclicality.'
+    };
+  }
+  if(hasRateCut){
+    return {
+      condition:'falling_rates',
+      rateEnvironment:'falling',
+      inflationPressure: inflationFalling ? 'falling' : 'easing',
+      buyMode:'income_opportunity',
+      label:'Falling-rate income market',
+      explanation:'Rate cuts or easing signals favour selected REITs and infrastructure, but concentration still matters.'
+    };
+  }
+  if(hasRateHike){
+    return {
+      condition:'higher_rates',
+      rateEnvironment:'rising',
+      inflationPressure:'high',
+      buyMode:'strict',
+      label:'Higher-rate pressure market',
+      explanation:'Aurora should be stricter with debt-heavy REITs, weak cover and speculative recovery names.'
+    };
+  }
+  if(hasRateHold || inflationFalling){
+    return {
+      condition:'stable_rates',
+      rateEnvironment: hasRateHold ? 'high_but_stable' : 'stable',
+      inflationPressure: inflationFalling ? 'falling' : 'stable',
+      buyMode:'balanced',
+      label:'Stable-rate income market',
+      explanation:'Rates are not getting worse, so income buys are allowed, but Aurora should still avoid chasing yield blindly.'
+    };
+  }
+  return {
+    condition:'normal',
+    rateEnvironment:'unknown',
+    inflationPressure:'unknown',
+    buyMode:'balanced',
+    label:'Normal market',
+    explanation:'No strong macro warning detected. Aurora uses its normal blend of income, valuation, impact and squad fit.'
+  };
+}
+function sectorText(row){
+  return [row.sector, row.role, row.chemistry_role, row.chemistry_risk, row.squad_role, row.payout_risk, row.name, row.ticker]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+}
+function marketFitScore(row, regime = inferMarketRegime()){
+  const t = shortTicker(row.ticker);
+  const s = sectorText(row);
+  const y = incomeRate(row);
+  const payoutRisk = String(row.payout_risk || '').toLowerCase();
+  let score = 70;
+
+  if(s.includes('defensive') || s.includes('consumer') || ['TSCO','ULVR','RKT'].includes(t)) score += 14;
+  if(s.includes('infrastructure') || s.includes('renewable') || ['FSFL','UKW','FGEN','TRIG'].includes(t)) score += 8;
+  if(s.includes('reit') || ['SUPR','PHP','RGL'].includes(t)) score += 2;
+  if(s.includes('credit') || s.includes('bdc') || t === 'ARCC') score -= 2;
+  if(payoutRisk.includes('very high')) score -= 14;
+  if(payoutRisk.includes('check')) score -= 5;
+  if(Number.isFinite(y) && y >= 0.10) score += 4;
+
+  if(regime.condition === 'volatile' || regime.condition === 'recession_risk'){
+    if(['TSCO','ULVR','RKT','PHP','SUPR','LGEN','SDLF'].includes(t)) score += 12;
+    if(['RGL','ARCC','TW'].includes(t)) score -= 14;
+    if(s.includes('defensive')) score += 8;
+    if(s.includes('high-yield') || s.includes('recovery')) score -= 8;
+  }
+  if(regime.condition === 'falling_rates'){
+    if(['SUPR','PHP','FSFL','UKW','FGEN','TRIG','RGL'].includes(t)) score += 12;
+    if(t === 'RGL') score -= 4;
+  }
+  if(regime.condition === 'higher_rates'){
+    if(['RGL','SUPR','PHP','FSFL','UKW','FGEN','TRIG'].includes(t)) score -= 8;
+    if(['TSCO','ULVR','RKT','LGEN','SDLF'].includes(t)) score += 8;
+  }
+  if(regime.condition === 'stable_rates' || regime.condition === 'normal'){
+    if(['FSFL','UKW','SUPR','PHP','LGEN','SDLF'].includes(t)) score += 6;
+    if(['RGL','ARCC'].includes(t)) score -= 2;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+function marketPlanBias(key, regime){
+  if(regime.condition === 'volatile') return key === 'income' ? -10 : key === 'balanced' ? 10 : 6;
+  if(regime.condition === 'recession_risk') return key === 'income' ? -8 : key === 'balanced' ? 12 : 4;
+  if(regime.condition === 'falling_rates') return key === 'income' ? 8 : key === 'balanced' ? 4 : 2;
+  if(regime.condition === 'higher_rates') return key === 'income' ? -8 : key === 'balanced' ? 8 : 4;
+  return key === 'balanced' ? 3 : 0;
+}
+function marketRegimeSummary(){
+  const regime = inferMarketRegime();
+  return `${regime.label}: ${regime.explanation}`;
+}
+
 function buildRoutePlan(routeName,tickers,budget,weights){
+  const regime = inferMarketRegime();
   const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
   const usableWeights = rows.map((_,i)=>weights?.[i] ?? 1);
   const totalWeight = usableWeights.reduce((s,w)=>s+w,0) || rows.length || 1;
@@ -2506,12 +2581,14 @@ function buildRoutePlan(routeName,tickers,budget,weights){
     const y = incomeRate(r);
     const estIncome = annualIncomeForAmount(r, amount);
     const imp = impact(r) || buyStrength(r) || 0;
-    return {row:r,amount,estIncome,impact:imp,yield:y,platform:platformFor(r.ticker)};
+    const marketFit = marketFitScore(r, regime);
+    return {row:r,amount,estIncome,impact:imp,yield:y,platform:platformFor(r.ticker),marketFit};
   });
   const totalIncome = allocations.reduce((s,a)=>s+a.estIncome,0);
   const avgImpact = allocations.length ? allocations.reduce((s,a)=>s+a.impact,0)/allocations.length : NaN;
   const avgYield = budget > 0 ? totalIncome / budget : NaN;
-  return {routeName,allocations,totalIncome,avgImpact,avgYield,budget};
+  const avgMarketFit = allocations.length ? allocations.reduce((s,a)=>s+a.marketFit,0)/allocations.length : NaN;
+  return {routeName,allocations,totalIncome,avgImpact,avgYield,avgMarketFit,budget,regime};
 }
 function buildOptimiserPlans(){
   const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
@@ -2523,10 +2600,11 @@ function buildOptimiserPlans(){
   const balanced = buildRoutePlan('Balanced Split', balancedBase, budget, [1,1,1,1]);
   const income = buildRoutePlan('Best Income Return', incomeBase, budget, [4,3,2,1]);
   const upgrade = buildRoutePlan('Best Squad Upgrade', upgradeBase, budget, [4,3,2,1]);
+  const regime = inferMarketRegime();
   const plans = [
-    {...balanced,key:'balanced',score:balanced.totalIncome*1.1+(balanced.avgImpact||0)*0.65,note:'Equal split. Safe, simple, diversified.'},
-    {...income,key:'income',score:income.totalIncome*1.8+(income.avgImpact||0)*0.45,note:'Weighted toward the highest income return for the fee.'},
-    {...upgrade,key:'upgrade',score:upgrade.totalIncome*0.8+(upgrade.avgImpact||0)*0.85,note:'Weighted toward highest promotion impact and squad quality.'}
+    {...balanced,key:'balanced',score:balanced.totalIncome*1.1+(balanced.avgImpact||0)*0.60+(balanced.avgMarketFit||0)*0.45+marketPlanBias('balanced',regime),note:'Equal split. Safe, simple, diversified.'},
+    {...income,key:'income',score:income.totalIncome*1.8+(income.avgImpact||0)*0.40+(income.avgMarketFit||0)*0.35+marketPlanBias('income',regime),note:'Weighted toward the highest income return for the fee.'},
+    {...upgrade,key:'upgrade',score:upgrade.totalIncome*0.8+(upgrade.avgImpact||0)*0.80+(upgrade.avgMarketFit||0)*0.45+marketPlanBias('upgrade',regime),note:'Weighted toward highest promotion impact and squad quality.'}
   ];
   const recommended = [...plans].sort((a,b)=>b.score-a.score)[0] || plans[0];
   return {budget,plans,recommended};
@@ -2547,10 +2625,11 @@ function routeFromPlan(plan){
 }
 function optimiserStrategyText(plan){
   if(!plan) return 'Waiting for optimiser data.';
-  if(plan.key === 'income') return 'The optimiser is prioritising income return for this transfer fee. Use this as the board-approved deal sheet, then check sizing before submitting.';
-  if(plan.key === 'upgrade') return 'The optimiser is prioritising squad quality and promotion impact. Income is still considered, but the gaffer is backing better players over forced yield.';
-  if(plan.key === 'balanced') return 'The optimiser is spreading the transfer fee across a balanced route. Sensible, diversified, and less likely to turn into payday chaos.';
-  return 'The optimiser has selected the strongest tactical route from the live candidates.';
+  const regimeLine = ` Market condition: ${marketRegimeSummary()}`;
+  if(plan.key === 'income') return 'The optimiser is prioritising income return for this transfer fee, but only after applying the market-regime filter.' + regimeLine;
+  if(plan.key === 'upgrade') return 'The optimiser is prioritising squad quality, promotion impact and market fit. Income is still considered, but the gaffer is backing the right players for the current pitch.' + regimeLine;
+  if(plan.key === 'balanced') return 'The optimiser is spreading the transfer fee across a balanced route because the market-regime filter prefers sensible diversification over chasing yield.' + regimeLine;
+  return 'The optimiser has selected the strongest tactical route from the live candidates.' + regimeLine;
 }
 
 function renderOptimiser(){
@@ -2570,14 +2649,14 @@ function renderOptimiser(){
   const slip = $('transferSlip');
   if(slip){
     slip.innerHTML = selected.allocations.length ? selected.allocations.map(a=>`<div class="optimiser-slip-row">
-      <div><strong>${displayTicker(a.row.ticker)} — ${displayName(a.row)}</strong><span>${a.platform} • ${Number.isFinite(a.yield)?(a.yield*100).toFixed(2)+'% income rate':'income unknown'} • impact ${num(a.impact)}</span></div>
+      <div><strong>${displayTicker(a.row.ticker)} — ${displayName(a.row)}</strong><span>${a.platform} • ${Number.isFinite(a.yield)?(a.yield*100).toFixed(2)+'% income rate':'income unknown'} • impact ${num(a.impact)} • market fit ${num(a.marketFit)}</span></div>
       <div class="optimiser-amount"><strong>${money(a.amount)}</strong><span>${money(a.estIncome)}/yr est.</span></div>
     </div>`).join('') : '<div class="loading">No transfer route selected.</div>';
   }
   if($('optimiserVerdict')){
     const monthly = selected.totalIncome / 12;
     const top = selected.allocations[0];
-    $('optimiserVerdict').textContent = top ? `Recommended call: ${selected.routeName}. Lead signing is ${displayTicker(top.row.ticker)} at ${money(top.amount)}. Estimated return from this ${money(selected.budget)} transfer fee is ${money(selected.totalIncome)} yearly, around ${money(monthly)} monthly, using Aurora Scout income-from-£500 data where available.` : 'No available candidates found for this transfer slip.';
+    $('optimiserVerdict').textContent = top ? `Recommended call: ${selected.routeName}. Lead signing is ${displayTicker(top.row.ticker)} at ${money(top.amount)}. Estimated return from this ${money(selected.budget)} transfer fee is ${money(selected.totalIncome)} yearly, around ${money(monthly)} monthly. Market filter: ${marketRegimeSummary()}` : 'No available candidates found for this transfer slip.';
   }
 }
 
