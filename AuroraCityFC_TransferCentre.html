@@ -1508,6 +1508,94 @@ tr:hover td{background:rgba(96,165,250,.06)}
 @media(max-width:900px){.optimiser-summary,.optimiser-options{grid-template-columns:1fr}.optimiser-slip-row{grid-template-columns:1fr}.optimiser-amount{text-align:left}}
 
 
+/* ===================== SECTION: FINAL DISCIPLINED DEAL SHEET ===================== */
+.final-decision-panel{
+  margin-top:12px;
+  border:1px solid rgba(34,211,238,.26);
+  background:
+    radial-gradient(circle at top left,rgba(34,211,238,.12),transparent 34%),
+    rgba(2,6,23,.34);
+  border-radius:18px;
+  padding:12px;
+  display:grid;
+  gap:10px;
+}
+.final-decision-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.final-decision-head h4{
+  margin:0;
+  font-size:14px;
+  letter-spacing:-.02em;
+}
+.final-decision-head p{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+.final-decision-action{
+  border:1px solid rgba(52,211,153,.24);
+  background:rgba(6,78,59,.14);
+  border-radius:14px;
+  padding:10px;
+}
+.final-decision-action small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.final-decision-action strong{
+  display:block;
+  color:#bbf7d0;
+  font-size:18px;
+  margin-top:4px;
+  line-height:1.15;
+}
+.final-decision-action span{
+  display:block;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.4;
+  margin-top:6px;
+}
+.final-decision-slip{display:grid;gap:8px}
+.final-decision-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.48);
+  border-radius:14px;
+  padding:9px;
+}
+.final-decision-row strong{display:block;font-size:13px}
+.final-decision-row span{display:block;color:var(--muted);font-size:12px;margin-top:2px;line-height:1.35}
+.final-decision-amount{text-align:right;white-space:nowrap}
+.final-decision-amount strong{font-size:15px;color:var(--txt)}
+.final-decision-amount span{color:#bbf7d0}
+.final-decision-holdback{
+  border:1px solid rgba(251,191,36,.20);
+  background:rgba(120,53,15,.12);
+  border-radius:13px;
+  padding:9px;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.42;
+}
+@media(max-width:900px){
+  .final-decision-row{grid-template-columns:1fr}
+  .final-decision-amount{text-align:left}
+}
+
+
 /* ===================== SECTION: TRANSFER NEWS TICKER ===================== */
 .transfer-ticker{
   position:relative;
@@ -1916,6 +2004,33 @@ tr:hover td{background:rgba(96,165,250,.06)}
   }
 }
 
+
+
+/* ===================== SECTION: TOP NAV RESTORE SAFETY FIX ===================== */
+.topbar .nav{
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+.topbar .nav a,
+.topbar .nav button{
+  display:inline-flex!important;
+  align-items:center!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+
+
+
+/* ===================== SECTION: FINAL DEAL SHEET VISIBILITY BOOST ===================== */
+.final-decision-panel{
+  border-color:rgba(34,211,238,.42)!important;
+  box-shadow:0 0 28px rgba(34,211,238,.08)!important;
+}
+.final-decision-action strong{
+  color:#e0ffff!important;
+}
+
 </style>
 </head>
 <body>
@@ -1934,6 +2049,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2031,6 +2148,25 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <div class="transfer-card w6">
         <div class="card-title"><h3>Registration Desk</h3><span class="badge purple">IG / Trade212</span></div>
         <div class="platform-list" id="platformList"><div class="loading">Loading platform split…</div></div>
+
+          <!-- ===================== SECTION: FINAL DISCIPLINED DEAL SHEET ===================== -->
+          <div class="final-decision-panel" id="finalDecisionPanel">
+            <div class="final-decision-head">
+              <div>
+                <h4>Final Purchase Decision</h4>
+                <p>Clear final buy list after market, risk and concentration checks.</p>
+              </div>
+              <span class="badge amber" id="finalDecisionBadge">Syncing</span>
+            </div>
+            <div class="final-decision-action">
+              <small>Final Decision</small>
+              <strong id="finalDecisionAction">Checking clean passes…</strong>
+              <span id="finalDecisionReason">Waiting for the discipline engine.</span>
+            </div>
+            <div class="final-decision-slip" id="finalDecisionSlip"><div class="loading">Building final purchase split…</div></div>
+            <div class="final-decision-holdback" id="finalDecisionHoldback">Holdback rule loading…</div>
+          </div>
+
         <div class="deadline-day-box">
           <div class="deadline-day-head">
             <div>
@@ -2070,6 +2206,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
             </div>
             <div class="command-brief-instruction" id="briefInstruction">Final command brief loading…</div>
           </div>
+
+
+
 
         </div>
 
@@ -2829,6 +2968,86 @@ function renderDecisionDiscipline(plan){
   }
 }
 
+
+
+/* ===================== SECTION: FINAL DISCIPLINED DEAL SHEET LOGIC ===================== */
+function finalDecisionForPlan(plan){
+  const discipline = planDiscipline(plan);
+  const budget = Math.max(0, plan?.budget || parseNum($('transferBudgetInput')?.value) || 500);
+  const passGates = discipline.gates.filter(item => item.gate.status === 'pass');
+  const cautionGates = discipline.gates.filter(item => item.gate.status === 'caution');
+  const blockGates = discipline.gates.filter(item => item.gate.status === 'block');
+  let badge = 'Clean buy';
+  let badgeClass = 'green';
+  let action = 'Split between clean passes';
+  let reason = 'Only the names that passed the discipline gate are used for the final purchase list.';
+  let buys = [];
+  let holdback = 0;
+
+  if(passGates.length){
+    const splitAmount = budget / passGates.length;
+    buys = passGates.map(item => ({
+      row:item.allocation.row,
+      amount:splitAmount,
+      sourceStatus:'Clean pass',
+      sourceNote:'Passed market fit, valuation and concentration checks.'
+    }));
+    action = passGates.length === 1
+      ? `Buy ${displayTicker(passGates[0].allocation.row.ticker)} only`
+      : `Split ${money(budget)} between ${passGates.length} clean passes`;
+    reason = `${passGates.length} candidate${passGates.length === 1 ? '' : 's'} passed the final gate. Caution names stay controlled/watch unless the manager manually overrides.`;
+  }else if(cautionGates.length && !blockGates.length){
+    badge = 'Controlled buy';
+    badgeClass = 'amber';
+    const controlledAmount = Math.min(125, budget / cautionGates.length);
+    buys = cautionGates.map(item => ({
+      row:item.allocation.row,
+      amount:controlledAmount,
+      sourceStatus:'Controlled buy',
+      sourceNote:item.gate.reasons[0] || 'Allowed only with controlled sizing.'
+    }));
+    const deployed = buys.reduce((sum,item)=>sum + item.amount,0);
+    holdback = Math.max(0, budget - deployed);
+    action = `Controlled sizing only`;
+    reason = 'No clean passes found. Aurora allows small controlled buys only instead of forcing the whole budget into riskier names.';
+  }else{
+    badge = 'No buy';
+    badgeClass = 'red';
+    holdback = budget;
+    action = 'Hold cash / no automatic buy';
+    reason = blockGates.length ? 'At least one candidate was blocked by the final gate, so the deal sheet needs manual override.' : 'No eligible candidates passed the final gate.';
+  }
+
+  return {discipline,badge,badgeClass,action,reason,buys,holdback,budget};
+}
+function renderFinalDecision(plan){
+  const panel = $('finalDecisionPanel');
+  if(!panel) return;
+  const decision = finalDecisionForPlan(plan);
+  const badge = $('finalDecisionBadge');
+  if(badge){
+    badge.className = `badge ${decision.badgeClass}`;
+    badge.textContent = decision.badge;
+  }
+  if($('finalDecisionAction')) $('finalDecisionAction').textContent = decision.action;
+  if($('finalDecisionReason')) $('finalDecisionReason').textContent = decision.reason;
+  const slip = $('finalDecisionSlip');
+  if(slip){
+    slip.innerHTML = decision.buys.length ? decision.buys.map(item => {
+      const estimatedIncome = annualIncomeForAmount(item.row, item.amount);
+      return `<div class="final-decision-row">
+        <div><strong>${displayTicker(item.row.ticker)} — ${displayName(item.row)}</strong><span>${item.sourceStatus} • ${platformFor(item.row.ticker)} • ${item.sourceNote}</span></div>
+        <div class="final-decision-amount"><strong>${money(item.amount)}</strong><span>${money(estimatedIncome)}/yr est.</span></div>
+      </div>`;
+    }).join('') : '<div class="loading">No final buy list approved.</div>';
+  }
+  if($('finalDecisionHoldback')){
+    $('finalDecisionHoldback').textContent = decision.holdback > 0
+      ? `Holdback: ${money(decision.holdback)} stays unspent until a cleaner pass appears or the manager overrides the gate.`
+      : 'No holdback required. The full transfer fee is assigned to clean-pass candidates.';
+  }
+}
+
 function renderOptimiser(){
   const {plans,recommended} = buildOptimiserPlans();
   const selected = getSelectedPlan();
@@ -2856,6 +3075,7 @@ function renderOptimiser(){
     $('optimiserVerdict').textContent = top ? `Recommended call: ${selected.routeName}. Lead signing is ${displayTicker(top.row.ticker)} at ${money(top.amount)}. Estimated return from this ${money(selected.budget)} transfer fee is ${money(selected.totalIncome)} yearly, around ${money(monthly)} monthly. Market filter: ${marketRegimeSummary()}` : 'No available candidates found for this transfer slip.';
   }
   renderDecisionDiscipline(selected);
+  renderFinalDecision(selected);
 }
 
 
