@@ -1925,6 +1925,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+      <a href="AuroraCityFC_MediaCentre.html">Media</a>
+      <a href="AuroraCityFC_TrainingGround.html">Training</a>
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div>
   </div>
@@ -2124,7 +2126,7 @@ const PLAYER_PORTRAITS = {
   IMB: "assets/aurora-city-fc/players/imb_player.png"
 };
 
-let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[], auroraTimes:[] };
+let state = { holdings:[], watchlist:[], scout:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -2206,7 +2208,7 @@ function uniqueByTicker(rows){
 }
 function findSecurity(ticker){
   const t = cleanTicker(ticker);
-  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || state.globalWatchlist.find(r=>cleanTicker(r.ticker)===t) || null;
+  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
 }
 function routeStats(tickers){
   const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
@@ -2237,14 +2239,12 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, globalWatchlist, auroraTimes] = await Promise.all([
+    const [holdings, watchlist, scout] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
-      fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('Global Watchlist').catch(()=>[]),
-      fetchTab('AuroraTimes').catch(()=>[])
+      fetchTab('AuroraScout').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout, globalWatchlist, auroraTimes };
+    state = { holdings, watchlist, scout };
     renderAll();
   }catch(err){
     console.error(err);
@@ -2255,7 +2255,7 @@ async function loadData(){
   }
 }
 function targetRows(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.globalWatchlist||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])])
     .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))
     .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
     .slice(0,8);
