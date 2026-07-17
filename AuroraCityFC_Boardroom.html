@@ -2587,8 +2587,30 @@ function uniqueByTicker(rows){
   });
   return [...map.values()];
 }
+function isActiveHolding(row){
+  const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
+  const currentValue = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  const status = String(row.status ?? row.Status ?? '').trim().toLowerCase();
+  const role = String(row.role ?? row.Role ?? '').trim().toLowerCase();
+  const exited = status.includes('sold') || status.includes('exited') || role.includes('exited');
+  return !exited && ((Number.isFinite(shares) && shares > 0) || (Number.isFinite(currentValue) && currentValue > 0));
+}
+function activeHoldingRows(rows){
+  return (rows || []).filter(isActiveHolding);
+}
 function annualIncomeFromRow(row){
-  const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
+  // Prefer the sheet's already-calculated annual_dps_total.
+  // This keeps dual-account holdings like PHP IG ISA + PHP Trade 212 counted correctly.
+  const direct = parseNum(
+    row.annual_dps_total ??
+    row.Annual_DPS_Total ??
+    row["Annual DPS Total"] ??
+    row.annual_income ??
+    row.income_annual ??
+    row.dividend_income ??
+    row.AnnualIncome ??
+    row["Annual Income"]
+  );
   if(Number.isFinite(direct)) return direct;
   const value = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
   const y = parseYield(row);
@@ -2599,16 +2621,16 @@ function annualIncomeFromRow(row){
   return 0;
 }
 function portfolioAnnualIncome(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
+  return activeHoldingRows(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
 }
 function portfolioValue(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>{
+  return activeHoldingRows(state.holdings).reduce((sum,row)=>{
     const v = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
     return sum + (Number.isFinite(v) ? v : 0);
   },0);
 }
 function avgBuyStrength(){
-  const rows = uniqueByTicker(state.holdings);
+  const rows = uniqueByTicker(activeHoldingRows(state.holdings));
   const vals = rows.map(buyStrength).filter(Number.isFinite);
   return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 70;
 }

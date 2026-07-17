@@ -2309,6 +2309,9 @@ function parseYield(row){
   const directNum = parseNum(direct);
   if(Number.isFinite(directNum) && directNum > 0 && directNum < 1) return directNum;
   if(Number.isFinite(directNum) && directNum >= 1 && directNum <= 15) return directNum / 100;
+  const annualTotal = parseNum(row.annual_dps_total ?? row.Annual_DPS_Total ?? row["Annual DPS Total"]);
+  const value = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  if(Number.isFinite(annualTotal) && Number.isFinite(value) && value > 0) return annualTotal / value;
   const dps = parseNum(row.annual_dps);
   const price = parseNum(row.live_price);
   if(Number.isFinite(dps) && Number.isFinite(price) && price > 0) return dps / price;
@@ -2366,9 +2369,20 @@ function uniqueByTicker(rows){
   });
   return [...map.values()];
 }
+function isActiveHolding(row){
+  const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
+  const currentValue = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  const status = String(row.status ?? row.Status ?? '').trim().toLowerCase();
+  const role = String(row.role ?? row.Role ?? '').trim().toLowerCase();
+  const exited = status.includes('sold') || status.includes('exited') || role.includes('exited');
+  return !exited && ((Number.isFinite(shares) && shares > 0) || (Number.isFinite(currentValue) && currentValue > 0));
+}
+function activeHoldingRows(rows){
+  return (rows || []).filter(isActiveHolding);
+}
 function findSecurity(ticker){
   const t = cleanTicker(ticker);
-  return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
+  return activeHoldingRows(state.holdings).find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
 }
 function routeStats(tickers){
   const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
@@ -2578,7 +2592,7 @@ function renderScoutReport(top){
 
 
 function candidatePool(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...(state.holdings||[])])
+  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...activeHoldingRows(state.holdings)])
     .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
 }
 function bestIncomeCandidates(){
@@ -2804,7 +2818,7 @@ const MARKET_DISCIPLINE_LIMITS = {
   single_holding: 0.22
 };
 function holdingValue(row){
-  const direct = parseNum(row.current_value);
+  const direct = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
   if(Number.isFinite(direct) && direct > 0) return direct;
   const shares = parseNum(row.shares);
   const price = parseNum(row.live_price);
@@ -2828,7 +2842,7 @@ function isHighYieldForward(row){
   return ['RGL','ARCC'].includes(t) || s.includes('high-yield') || (Number.isFinite(y) && y >= 0.10);
 }
 function exposureSnapshot(extraAllocations = []){
-  const current = state.holdings || [];
+  const current = activeHoldingRows(state.holdings);
   const totalBefore = current.reduce((s,r)=>s+holdingValue(r),0);
   const extraTotal = extraAllocations.reduce((s,a)=>s+(a.amount || 0),0);
   const totalAfter = totalBefore + extraTotal;
