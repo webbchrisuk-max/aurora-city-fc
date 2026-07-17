@@ -2031,6 +2031,799 @@ tr:hover td{background:rgba(96,165,250,.06)}
   color:#e0ffff!important;
 }
 
+
+
+
+/* ===================== SECTION: TOP TRANSFER BOARD VISUALS ===================== */
+.top-transfer-board{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+.top-transfer-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(96,165,250,.22);
+  border-radius:24px;
+  background:linear-gradient(180deg,rgba(13,27,52,.88),rgba(7,17,31,.96));
+  box-shadow:0 14px 40px rgba(0,0,0,.24);
+}
+.top-transfer-card.lead{grid-column:span 1}
+.player-photo-frame{
+  position:relative;
+  min-height:250px;
+  padding:12px;
+  overflow:hidden;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,rgba(2,6,23,.08),rgba(2,6,23,.34));
+}
+.player-photo-frame:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 46%,rgba(255,255,255,.02));
+  pointer-events:none;
+}
+.player-photo{
+  position:relative;
+  width:100%;
+  height:226px;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  background-color:#0b1730;
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 12px 26px rgba(0,0,0,.30);
+}
+.player-photo-overlay{
+  position:absolute;
+  inset:auto 0 0 0;
+  padding:10px 12px 12px;
+  background:linear-gradient(180deg,transparent,rgba(2,6,23,.76) 56%,rgba(2,6,23,.94));
+}
+.player-photo-overlay strong{
+  display:block;
+  font-size:28px;
+  line-height:.92;
+  letter-spacing:-.07em;
+  color:#f8fafc;
+  text-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+.player-photo-overlay span{
+  display:block;
+  margin-top:5px;
+  color:#dbeafe;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.transfer-rank-chip{
+  position:absolute;
+  top:14px;
+  left:14px;
+  z-index:2;
+  min-width:44px;
+  height:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+  font-weight:1000;
+  color:#e0f2fe;
+  background:rgba(2,6,23,.56);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(10px);
+}
+.transfer-approval-chip{
+  position:absolute;
+  top:14px;
+  right:14px;
+  z-index:2;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:900;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(2,6,23,.50);
+  color:#bfdbfe;
+  backdrop-filter:blur(10px);
+}
+.transfer-approval-chip.green{color:#bbf7d0;border-color:rgba(52,211,153,.32);background:rgba(20,83,45,.24)}
+.transfer-approval-chip.amber{color:#fde68a;border-color:rgba(251,191,36,.30);background:rgba(120,53,15,.24)}
+.transfer-card-body{padding:14px 14px 15px}
+.transfer-card-body h4{margin:0;font-size:17px;letter-spacing:-.03em}
+.transfer-card-body p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.4;min-height:34px}
+.transfer-card-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+.transfer-card-metric{
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(2,6,23,.28);
+  border-radius:14px;
+  padding:8px;
+}
+.transfer-card-metric small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.transfer-card-metric strong{display:block;font-size:14px;margin-top:4px;color:#e5eefc}
+.transfer-storyline{
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.03);
+  border-radius:14px;
+  padding:8px 10px;
+  color:#cbd5e1;
+  font-size:12px;
+  line-height:1.4;
+}
+@media(max-width:1100px){
+  .top-transfer-board{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  .top-transfer-board{grid-template-columns:1fr}
+  .transfer-card-metrics{grid-template-columns:1fr 1fr}
+}
+
+.deadline-day-bar{
+  position:relative;
+  overflow:hidden;
+  margin:10px 0 14px;
+  border:1px solid rgba(251,191,36,.26);
+  border-radius:18px;
+  background:linear-gradient(90deg,rgba(124,45,18,.98),rgba(180,83,9,.95) 18%,rgba(15,23,42,.96) 18%,rgba(7,17,31,.98));
+  box-shadow:0 12px 32px rgba(0,0,0,.22);
+}
+.deadline-day-inner{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:stretch;
+}
+.deadline-day-tag{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  color:#fff7ed;
+  font-weight:1000;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  background:linear-gradient(135deg,#f59e0b,#b45309);
+  box-shadow:inset -1px 0 0 rgba(255,255,255,.12);
+}
+.deadline-day-tag .pulse{
+  width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.16);
+}
+.deadline-day-strip{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  padding:10px 14px;
+}
+.deadline-item{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:#dbeafe;
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.deadline-rank{
+  width:26px;height:26px;border-radius:9px;display:grid;place-items:center;
+  background:rgba(96,165,250,.18);border:1px solid rgba(96,165,250,.24);color:#bfdbfe;font-size:12px;font-weight:1000;
+}
+.deadline-item strong{color:#ffffff}
+.deadline-item b{color:#86efac}
+.deadline-item em{font-style:normal;color:#fde68a}
+.top-transfer-card{
+  border:1px solid rgba(96,165,250,.26);
+  box-shadow:0 16px 40px rgba(0,0,0,.28);
+}
+.top-transfer-card.selected{border-color:rgba(52,211,153,.36)}
+.top-transfer-card.watch{border-color:rgba(251,191,36,.30)}
+.player-photo-frame{padding:14px 14px 12px}
+.transfer-rank-chip{
+  min-width:66px;
+  height:66px;
+  border-radius:18px;
+  font-size:32px;
+  font-weight:1000;
+  box-shadow:0 10px 24px rgba(0,0,0,.24);
+}
+.transfer-approval-chip{
+  top:16px;
+  right:16px;
+  font-size:12px;
+  padding:7px 12px;
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+.deal-ribbon{
+  position:absolute;
+  left:-42px;
+  bottom:18px;
+  transform:rotate(-35deg);
+  min-width:180px;
+  text-align:center;
+  padding:7px 12px;
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  color:#fff;
+  box-shadow:0 10px 18px rgba(0,0,0,.28);
+  z-index:2;
+}
+.deal-ribbon.final{background:linear-gradient(90deg,#15803d,#34d399)}
+.deal-ribbon.watch{background:linear-gradient(90deg,#92400e,#f59e0b)}
+.deal-ribbon.approved{background:linear-gradient(90deg,#1d4ed8,#38bdf8)}
+.player-photo{height:232px;border-radius:20px}
+.player-photo-overlay strong{font-size:32px}
+.player-photo-overlay span{font-size:10px;letter-spacing:.14em}
+.transfer-card-body{padding:15px}
+.transfer-card-body h4{font-size:18px}
+.transfer-card-body p{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8}
+.transfer-card-metrics{gap:7px}
+.transfer-card-metric{
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(2,6,23,.32));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.transfer-card-metric strong{font-size:13px}
+.transfer-storyline{
+  position:relative;
+  padding-left:14px;
+}
+.transfer-storyline:before{
+  content:"";
+  position:absolute;
+  left:0;top:9px;bottom:9px;width:4px;border-radius:999px;
+  background:linear-gradient(180deg,#38bdf8,#34d399);
+}
+@media(max-width:900px){
+  .deadline-day-inner{grid-template-columns:1fr}
+  .deadline-day-tag{justify-content:center}
+}
+
+</style>
+<style>
+
+/* ===================== SECTION: TRANSFER CENTRE BROADCAST DEAL DESK ===================== */
+/* Keeps the old Aurora/Sky-style look, but makes the payday transfer process shorter and clearer. */
+.transfer-studio-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr);
+  gap:12px;
+  align-items:stretch;
+}
+.transfer-control-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.broadcast-panel{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(34,211,238,.28);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.14),transparent 34%),
+    linear-gradient(180deg,rgba(13,27,52,.92),rgba(7,17,31,.98));
+  border-radius:22px;
+  padding:15px;
+  box-shadow:0 14px 42px rgba(0,0,0,.25);
+}
+.broadcast-panel:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,rgba(255,255,255,.045),transparent 36%,rgba(34,211,238,.035));
+  pointer-events:none;
+}
+.broadcast-panel > *{position:relative;z-index:1}
+.broadcast-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.broadcast-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.broadcast-live{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid rgba(251,113,133,.38);
+  background:rgba(127,29,29,.28);
+  color:#fecdd3;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  font-weight:1000;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.broadcast-live:before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:#fb7185;
+  box-shadow:0 0 12px rgba(251,113,133,.90);
+}
+.broadcast-head h3,
+.broadcast-title h3{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-.03em;
+}
+.broadcast-head p{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+.payday-input-card{
+  border:1px solid rgba(52,211,153,.25);
+  background:
+    radial-gradient(circle at top right,rgba(52,211,153,.12),transparent 34%),
+    rgba(6,78,59,.13);
+}
+.payday-input-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(2,6,23,.38);
+  border-radius:999px;
+  padding:9px 12px;
+  margin-top:10px;
+}
+.payday-input-line span{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:900;
+}
+.payday-input-line input{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#eaffff;
+  font-size:22px;
+  font-weight:1000;
+  letter-spacing:-.04em;
+}
+.window-kpi{
+  border:1px solid rgba(96,165,250,.20);
+  background:rgba(2,6,23,.28);
+  border-radius:18px;
+  padding:12px;
+  min-height:104px;
+}
+.window-kpi small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.window-kpi strong{
+  display:block;
+  margin-top:8px;
+  font-size:25px;
+  line-height:1;
+  letter-spacing:-.05em;
+}
+.window-kpi span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:6px;
+  line-height:1.32;
+}
+.window-kpi.good strong{color:#bbf7d0}
+.window-kpi.warn strong{color:#fde68a}
+.window-kpi.bad strong{color:#fecdd3}
+.deal-sheet{
+  display:grid;
+  gap:9px;
+}
+.deal-row{
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr) minmax(116px,.22fr) minmax(116px,.22fr);
+  gap:10px;
+  align-items:center;
+  border:1px solid rgba(148,163,184,.16);
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.42),rgba(15,23,42,.48));
+  border-radius:16px;
+  padding:10px;
+}
+.deal-rank{
+  width:36px;
+  height:36px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,rgba(34,211,238,.22),rgba(96,165,250,.13));
+  border:1px solid rgba(96,165,250,.28);
+  color:#bfdbfe;
+  font-weight:1000;
+}
+.deal-main strong{
+  display:block;
+  font-size:15px;
+  letter-spacing:-.02em;
+}
+.deal-main span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+  line-height:1.35;
+}
+.deal-money,
+.deal-income{
+  text-align:right;
+}
+.deal-money small,
+.deal-income small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.deal-money strong,
+.deal-income strong{
+  display:block;
+  margin-top:3px;
+  font-size:17px;
+  color:#eaffff;
+}
+.deal-income strong{color:#bbf7d0}
+.status-chip{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  max-width:100%;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  font-weight:1000;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.72);
+  color:var(--soft);
+}
+.status-chip.pass{color:#bbf7d0;border-color:rgba(52,211,153,.32);background:rgba(20,83,45,.22)}
+.status-chip.caution{color:#fde68a;border-color:rgba(251,191,36,.32);background:rgba(120,53,15,.22)}
+.status-chip.block{color:#fecdd3;border-color:rgba(251,113,133,.32);background:rgba(127,29,29,.22)}
+.transfer-verdict-box{
+  border:1px solid rgba(52,211,153,.25);
+  background:rgba(6,78,59,.13);
+  border-radius:18px;
+  padding:13px;
+  margin-bottom:10px;
+}
+.transfer-verdict-box small{
+  display:block;
+  color:#bbf7d0;
+  text-transform:uppercase;
+  font-size:10px;
+  letter-spacing:.08em;
+  font-weight:1000;
+}
+.transfer-verdict-box strong{
+  display:block;
+  font-size:25px;
+  line-height:1;
+  letter-spacing:-.05em;
+  margin-top:5px;
+}
+.transfer-verdict-box span{
+  display:block;
+  color:var(--soft);
+  font-size:12px;
+  line-height:1.42;
+  margin-top:8px;
+}
+.short-wire-list{
+  display:grid;
+  gap:8px;
+}
+.short-wire-row{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:9px;
+  align-items:center;
+  border:1px solid rgba(148,163,184,.15);
+  background:rgba(2,6,23,.25);
+  border-radius:14px;
+  padding:9px;
+}
+.short-wire-icon{
+  width:30px;
+  height:30px;
+  border-radius:11px;
+  display:grid;
+  place-items:center;
+  background:rgba(96,165,250,.13);
+  border:1px solid rgba(96,165,250,.22);
+}
+.short-wire-row strong{
+  display:block;
+  font-size:13px;
+}
+.short-wire-row span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
+}
+.deal-note{
+  border:1px solid rgba(251,191,36,.22);
+  background:rgba(120,53,15,.12);
+  color:var(--soft);
+  border-radius:16px;
+  padding:11px;
+  font-size:12px;
+  line-height:1.42;
+  margin-top:10px;
+}
+.mini-table{
+  display:grid;
+  gap:8px;
+}
+.mini-table-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+  border:1px solid rgba(148,163,184,.14);
+  background:rgba(2,6,23,.24);
+  border-radius:14px;
+  padding:9px;
+}
+.mini-table-row strong{
+  display:block;
+  font-size:13px;
+}
+.mini-table-row span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:2px;
+  line-height:1.32;
+}
+.mini-table-row b{
+  color:#bbf7d0;
+  white-space:nowrap;
+}
+.transfer-centre-footer-note{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.35;
+  margin-top:10px;
+}
+@media(max-width:1020px){
+  .transfer-studio-grid,
+  .transfer-control-strip{
+    grid-template-columns:1fr;
+  }
+  .deal-row{
+    grid-template-columns:40px minmax(0,1fr);
+  }
+  .deal-money,
+  .deal-income{
+    grid-column:2;
+    text-align:left;
+  }
+  .short-wire-row{
+    grid-template-columns:32px minmax(0,1fr);
+  }
+  .short-wire-row .status-chip{grid-column:2;justify-self:start}
+}
+
+
+
+/* ===================== SECTION: TOP TRANSFER BOARD VISUALS ===================== */
+.top-transfer-board{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+.top-transfer-card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(96,165,250,.22);
+  border-radius:24px;
+  background:linear-gradient(180deg,rgba(13,27,52,.88),rgba(7,17,31,.96));
+  box-shadow:0 14px 40px rgba(0,0,0,.24);
+}
+.top-transfer-card.lead{grid-column:span 1}
+.transfer-photo-stage{
+  position:relative;
+  min-height:220px;
+  padding:14px;
+  overflow:hidden;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(135deg,rgba(2,6,23,.20),rgba(2,6,23,.55));
+}
+.transfer-photo-stage:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 42%,rgba(255,255,255,.03));
+  pointer-events:none;
+}
+.transfer-photo-stage.renewables{
+  background:
+    radial-gradient(circle at 18% 18%,rgba(52,211,153,.28),transparent 32%),
+    radial-gradient(circle at 84% 12%,rgba(34,211,238,.26),transparent 28%),
+    linear-gradient(180deg,rgba(3,105,161,.30),rgba(5,46,22,.45)),
+    linear-gradient(135deg,#082f49,#052e16 72%);
+}
+.transfer-photo-stage.consumer{
+  background:
+    radial-gradient(circle at 18% 18%,rgba(251,191,36,.22),transparent 30%),
+    radial-gradient(circle at 82% 12%,rgba(96,165,250,.22),transparent 30%),
+    linear-gradient(180deg,rgba(120,53,15,.24),rgba(30,41,59,.45)),
+    linear-gradient(135deg,#1e293b,#4c1d95 72%);
+}
+.transfer-photo-stage.finance{
+  background:
+    radial-gradient(circle at 20% 15%,rgba(96,165,250,.24),transparent 30%),
+    radial-gradient(circle at 80% 12%,rgba(167,139,250,.24),transparent 30%),
+    linear-gradient(180deg,rgba(30,64,175,.22),rgba(15,23,42,.55)),
+    linear-gradient(135deg,#0f172a,#172554 72%);
+}
+.transfer-photo-stage.property{
+  background:
+    radial-gradient(circle at 18% 18%,rgba(251,191,36,.18),transparent 30%),
+    radial-gradient(circle at 86% 14%,rgba(239,68,68,.16),transparent 30%),
+    linear-gradient(180deg,rgba(127,29,29,.16),rgba(15,23,42,.52)),
+    linear-gradient(135deg,#111827,#3f3f46 72%);
+}
+.transfer-photo-stage.quality{
+  background:
+    radial-gradient(circle at 20% 18%,rgba(34,211,238,.22),transparent 30%),
+    radial-gradient(circle at 84% 14%,rgba(96,165,250,.18),transparent 30%),
+    linear-gradient(180deg,rgba(8,47,73,.22),rgba(15,23,42,.52)),
+    linear-gradient(135deg,#0f172a,#0b1730 72%);
+}
+.transfer-rank-chip{
+  position:absolute;
+  top:14px;
+  left:14px;
+  z-index:2;
+  min-width:44px;
+  height:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+  font-weight:1000;
+  color:#e0f2fe;
+  background:rgba(2,6,23,.56);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(10px);
+}
+.transfer-approval-chip{
+  position:absolute;
+  top:14px;
+  right:14px;
+  z-index:2;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:900;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(2,6,23,.50);
+  color:#bfdbfe;
+  backdrop-filter:blur(10px);
+}
+.transfer-approval-chip.green{color:#bbf7d0;border-color:rgba(52,211,153,.32);background:rgba(20,83,45,.24)}
+.transfer-approval-chip.amber{color:#fde68a;border-color:rgba(251,191,36,.30);background:rgba(120,53,15,.24)}
+.transfer-photo-icon{
+  position:absolute;
+  right:18px;
+  bottom:14px;
+  font-size:92px;
+  line-height:1;
+  opacity:.26;
+  filter:drop-shadow(0 10px 20px rgba(0,0,0,.28));
+}
+.transfer-photo-ticker{
+  position:absolute;
+  left:18px;
+  bottom:18px;
+  z-index:1;
+}
+.transfer-photo-ticker strong{
+  display:block;
+  font-size:clamp(34px,5vw,56px);
+  line-height:.9;
+  letter-spacing:-.08em;
+  color:#f8fafc;
+  text-shadow:0 10px 24px rgba(0,0,0,.34);
+}
+.transfer-photo-ticker span{
+  display:block;
+  margin-top:5px;
+  color:#dbeafe;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.transfer-photo-wave,
+.transfer-photo-skyline,
+.transfer-photo-arrows{
+  position:absolute;
+  inset:auto 0 0 0;
+  height:82px;
+  opacity:.35;
+  pointer-events:none;
+}
+.transfer-photo-wave{
+  background:radial-gradient(circle at 20% 40%,rgba(255,255,255,.18),transparent 12%),
+             radial-gradient(circle at 52% 60%,rgba(255,255,255,.14),transparent 12%),
+             radial-gradient(circle at 82% 38%,rgba(255,255,255,.16),transparent 12%);
+}
+.transfer-photo-skyline{
+  background:linear-gradient(180deg,transparent 0,transparent 55%,rgba(255,255,255,.10) 55%,rgba(255,255,255,.10) 65%,transparent 65%),
+             linear-gradient(90deg,transparent 0 8%,rgba(255,255,255,.12) 8% 12%,transparent 12% 20%,rgba(255,255,255,.08) 20% 26%,transparent 26% 34%,rgba(255,255,255,.10) 34% 42%,transparent 42% 50%,rgba(255,255,255,.12) 50% 57%,transparent 57% 68%,rgba(255,255,255,.09) 68% 74%,transparent 74% 84%,rgba(255,255,255,.10) 84% 92%,transparent 92%);
+}
+.transfer-photo-arrows{
+  background:linear-gradient(135deg,transparent 0 22%,rgba(255,255,255,.12) 22% 24%,transparent 24% 46%,rgba(255,255,255,.10) 46% 48%,transparent 48% 100%);
+}
+.transfer-card-body{padding:14px 14px 15px}
+.transfer-card-body h4{margin:0;font-size:17px;letter-spacing:-.03em}
+.transfer-card-body p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.4;min-height:34px}
+.transfer-card-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+.transfer-card-metric{
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(2,6,23,.28);
+  border-radius:14px;
+  padding:8px;
+}
+.transfer-card-metric small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.transfer-card-metric strong{display:block;font-size:14px;margin-top:4px;color:#e5eefc}
+.transfer-storyline{
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.03);
+  border-radius:14px;
+  padding:8px 10px;
+  color:#cbd5e1;
+  font-size:12px;
+  line-height:1.4;
+}
+@media(max-width:1100px){
+  .top-transfer-board{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .top-transfer-card.lead{grid-column:span 1}
+}
+@media(max-width:700px){
+  .top-transfer-board{grid-template-columns:1fr}
+  .top-transfer-card.lead{grid-column:span 1}
+  .transfer-card-metrics{grid-template-columns:1fr 1fr}
+}
+
 </style>
 </head>
 <body>
@@ -2063,11 +2856,11 @@ tr:hover td{background:rgba(96,165,250,.06)}
     <div class="transfer-ticker-track" id="transferTicker">
       <div class="transfer-ticker-content">
         <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
-        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora scouting updates…</span>
+        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora recruitment desk…</span>
       </div>
       <div class="transfer-ticker-content" aria-hidden="true">
         <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
-        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora scouting updates…</span>
+        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora recruitment desk…</span>
       </div>
     </div>
   </section>
@@ -2078,219 +2871,145 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <div class="transfer-hero-logo"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
       <div class="kicker"><span class="kicker-dot"></span> Recruitment department</div>
       <h2>Transfer <span>Centre</span></h2>
-      <p>Find the right targets, compare income routes, check platform fit and build the next Aurora City FC promotion push.</p>
+      <p>Transfer desk, final deal sheet and registration checks for the strongest green-light income route.</p>
       <div class="hero-actions">
         <span class="pill" id="lastUpdated">Last updated: loading…</span>
-        <span class="pill">Transfer Budget: £500</span>
-        <span class="pill">Scout Focus: Impact + Income</span>
+        <span class="pill">Transfer Budget: £1,500</span>
+        <span class="pill">Scout Focus: Green-Light Income</span>
       </div>
     </div>
   </section>
 
-  <!-- ===================== SECTION: TRANSFER KPI STRIP ===================== -->
+  <!-- ===================== SECTION: CONTROL STRIP ===================== -->
   <section class="section">
-    <div class="transfer-grid">
-      <div class="transfer-card w3">
-        <div class="card-title"><h3>No.1 Target</h3><span class="badge green">Live</span></div>
-        <div class="transfer-kpi"><strong id="topTargetTicker">—</strong><span id="topTargetName">Loading target…</span></div>
-      </div>
-      <div class="transfer-card w3">
-        <div class="card-title"><h3>Squad Impact</h3><span class="badge blue">Scout</span></div>
-        <div class="transfer-kpi"><strong id="topTargetImpact">—</strong><span>promotion impact</span></div>
-      </div>
-      <div class="transfer-card w3">
-        <div class="card-title"><h3>Best Transfer Strategy</h3><span class="badge amber">Decision</span></div>
-        <div class="transfer-kpi"><strong id="bestRoute">—</strong><span id="bestRouteNote">Checking route…</span></div>
-      </div>
-      <div class="transfer-card w3">
-        <div class="card-title"><h3>Deal Readiness</h3><span class="badge purple">£500</span></div>
-        <div class="transfer-kpi"><strong id="readiness">—</strong><span>transfer committee status</span></div>
-      </div>
-    </div>
-  </section>
-<!-- ===================== SECTION: MANAGER VERDICT ===================== -->
-  <section class="section">
-    <div class="transfer-card w12">
-      <div class="card-title"><h3>Gaffer’s Final Call</h3><span class="badge green">Final call</span></div>
-      <div class="big-verdict" id="managerVerdict">Loading the gaffer’s notebook…</div>
-      <p class="note" id="managerVerdictText">The spreadsheet goblins are comparing impact, income and squad balance.</p>
-      <div class="route-tabs">
-        <button id="incomeRouteBtn">Club-Recommended Four</button>
-        <button id="upgradeRouteBtn">Highest Squad-Upgrade Four</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: TARGETS + SCOUT REPORT ===================== -->
-  <section class="section">
-    <div class="transfer-grid">
-      <div class="transfer-card w7">
-        <div class="card-title"><h3>Scouting Shortlist</h3><span class="badge blue">Top candidates</span></div>
-        <div class="target-list" id="targetList"><div class="loading">Loading shortlist…</div></div>
-        <div class="scout-notes-panel">
-          <div class="scout-notes-title">
-            <h4>Scout Notes</h4>
-            <span class="badge blue">Top 3 only</span>
-          </div>
-          <div class="scout-notes-grid" id="candidateReports"><div class="loading">Building player reports…</div></div>
+    <div class="transfer-control-strip">
+      <div class="broadcast-panel payday-input-card">
+        <div class="broadcast-title">
+          <span class="broadcast-live">Live</span>
+          <h3>Transfer Budget</h3>
         </div>
+        <label class="payday-input-line">
+          <span>£</span>
+          <input id="transferBudgetInput" type="number" min="0" step="25" value="1500" inputmode="decimal" aria-label="Transfer budget">
+        </label>
       </div>
-      <div class="transfer-card w5">
-        <div class="card-title"><h3>Chief Scout Player Report</h3><span class="badge green">Recommendation</span></div>
-        <div class="scout-list" id="scoutReport"><div class="loading">Loading scout report…</div></div>
+      <div class="window-kpi good">
+        <small>Final Route</small>
+        <strong id="headlineRoute">—</strong>
+        <span id="headlineRouteNote">Recruitment desk loading…</span>
+      </div>
+      <div class="window-kpi good">
+        <small>Yearly Income Added</small>
+        <strong id="headlineIncome">—</strong>
+        <span id="headlineMonthly">Monthly estimate loading…</span>
+      </div>
+      <div class="window-kpi warn">
+        <small>Deal Status</small>
+        <strong id="headlineStatus">—</strong>
+        <span id="headlineStatusNote">Final checks loading…</span>
       </div>
     </div>
   </section>
 
-  <!-- ===================== SECTION: PLATFORM + PAYDAY SLIP ===================== -->
+  <!-- ===================== SECTION: TOP TRANSFER BOARD ===================== -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>Top Transfer Board</h2>
+        <p>Visual shortlist of the strongest green-light income targets on the desk.</p>
+      </div>
+      <span class="badge blue">Sky Sports style board</span>
+    </div>
+    <div class="deadline-day-bar" id="deadlineDayBar">
+      <div class="loading">Loading deadline day board…</div>
+    </div>
+    <div class="top-transfer-board" id="topTransferBoard">
+      <div class="loading">Loading top transfer board…</div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: MAIN TRANSFER DESK ===================== -->
+  <section class="section">
+    <div class="transfer-studio-grid">
+      <div class="broadcast-panel">
+        <div class="broadcast-head">
+          <div>
+            <div class="broadcast-title"><span class="broadcast-live">Breaking</span><h3>Transfer Centre Final Deal Sheet</h3></div>
+            <p>Highest approved income route. One transfer fee in, one final deal sheet out.</p>
+          </div>
+          <span class="badge green" id="dealSheetBadge">Syncing</span>
+        </div>
+
+        <div class="transfer-verdict-box">
+          <small>Gaffer’s Call</small>
+          <strong id="gafferCall">Checking the market…</strong>
+          <span id="gafferCallText">Aurora is ranking the green-light names by yearly income added, then checking risk and platform fit.</span>
+        </div>
+
+        <div class="deal-sheet" id="finalDealSheet">
+          <div class="loading">Building final transfer slip…</div>
+        </div>
+        <div class="deal-note" id="holdbackNote">Holdback rule loading…</div>
+      </div>
+
+      <div class="broadcast-panel">
+        <div class="broadcast-head">
+          <div>
+            <div class="broadcast-title"><span class="broadcast-live">Desk</span><h3>Registration Desk</h3></div>
+            <p>Where each signing should be placed.</p>
+          </div>
+        </div>
+        <div class="short-wire-list" id="registrationDesk">
+          <div class="loading">Loading registration desk…</div>
+        </div>
+        <div class="transfer-centre-footer-note" id="deskNote">Platform check loading…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: BENCH + WATCH ===================== -->
   <section class="section">
     <div class="transfer-grid">
       <div class="transfer-card w6">
-        <div class="card-title"><h3>Registration Desk</h3><span class="badge purple">IG / Trade212</span></div>
-        <div class="platform-list" id="platformList"><div class="loading">Loading platform split…</div></div>
-
-          <!-- ===================== SECTION: FINAL DISCIPLINED DEAL SHEET ===================== -->
-          <div class="final-decision-panel" id="finalDecisionPanel">
-            <div class="final-decision-head">
-              <div>
-                <h4>Final Purchase Decision</h4>
-                <p>Clear final buy list after market, risk and concentration checks.</p>
-              </div>
-              <span class="badge amber" id="finalDecisionBadge">Syncing</span>
-            </div>
-            <div class="final-decision-action">
-              <small>Final Decision</small>
-              <strong id="finalDecisionAction">Checking clean passes…</strong>
-              <span id="finalDecisionReason">Waiting for the discipline engine.</span>
-            </div>
-            <div class="final-decision-slip" id="finalDecisionSlip"><div class="loading">Building final purchase split…</div></div>
-            <div class="final-decision-holdback" id="finalDecisionHoldback">Holdback rule loading…</div>
-          </div>
-
-        <div class="deadline-day-box">
-          <div class="deadline-day-head">
-            <div>
-              <h4>Deadline Day Countdown</h4>
-              <p>Payday acts as the transfer window deadline for this squad upgrade.</p>
-            </div>
-            <span class="badge amber" id="deadlineStatus">Live clock</span>
-          </div>
-          <div class="deadline-countdown">
-            <div class="deadline-unit"><strong id="deadlineDays">—</strong><span>Days</span></div>
-            <div class="deadline-unit"><strong id="deadlineHours">—</strong><span>Hours</span></div>
-            <div class="deadline-unit"><strong id="deadlineMinutes">—</strong><span>Mins</span></div>
-            <div class="deadline-unit"><strong id="deadlineSeconds">—</strong><span>Secs</span></div>
-          </div>
-          <div class="deadline-wire" aria-label="Deadline day ticker">
-            <div class="deadline-wire-track" id="deadlineWire">
-              <div class="deadline-wire-content">
-                <span><span class="deadline-wire-dot"></span> Loading deadline-day instruction…</span>
-              </div>
-              <div class="deadline-wire-content" aria-hidden="true">
-                <span><span class="deadline-wire-dot"></span> Loading deadline-day instruction…</span>
-              </div>
-            </div>
-          </div>
-          <div class="deadline-note" id="deadlineNote">The recruitment room is syncing the payday deadline.</div>
-
-          <div class="command-brief">
-            <div class="command-brief-title">
-              <h4>Deadline Day Command Brief</h4>
-              <span class="badge green">Final instruction</span>
-            </div>
-            <div class="command-brief-grid">
-              <div class="command-brief-item"><small>Current Plan</small><strong id="briefCurrentPlan">—</strong></div>
-              <div class="command-brief-item"><small>Lead Signing</small><strong id="briefLeadSigning">—</strong></div>
-              <div class="command-brief-item"><small>Budget</small><strong id="briefBudget">—</strong></div>
-              <div class="command-brief-item"><small>Registration Status</small><strong id="briefRegistration">—</strong></div>
-            </div>
-            <div class="command-brief-instruction" id="briefInstruction">Final command brief loading…</div>
-          </div>
-
-
-
-
-        </div>
-
+        <div class="card-title"><h3>Transfer Bench</h3><span class="badge blue">Next in line</span></div>
+        <div class="mini-table" id="benchList"><div class="loading">Loading bench options…</div></div>
       </div>
       <div class="transfer-card w6">
-        <div class="card-title"><h3>Transfer Budget Optimiser</h3><span class="badge amber">£500 window</span></div>
-        <div class="optimiser-panel">
-          <div class="optimiser-controls">
-            <label class="optimiser-control"><span>Transfer Fee</span><input id="transferBudgetInput" type="number" min="0" step="25" value="500"></label>
-            <label class="optimiser-control"><span>Tactic</span><select id="transferTacticSelect">
-              <option value="recommended">Club Recommended</option>
-              <option value="balanced">Balanced Split</option>
-              <option value="income">Best Income Return</option>
-              <option value="upgrade">Best Squad Upgrade</option>
-            </select></label>
-          </div>
-          <div class="optimiser-summary">
-            <div class="optimiser-stat"><small>Selected Route</small><strong id="optimiserRouteName">—</strong></div>
-            <div class="optimiser-stat"><small>Estimated Income</small><strong id="optimiserIncome">—</strong></div>
-            <div class="optimiser-stat"><small>Avg Impact</small><strong id="optimiserImpact">—</strong></div>
-            <div class="optimiser-stat"><small>Verdict</small><strong id="optimiserVerdictShort">—</strong></div>
-          </div>
-          <div class="optimiser-options" id="optimiserOptions"><div class="loading">Building tactical options…</div></div>
-          <div class="optimiser-slip" id="transferSlip"><div class="loading">Building transfer slip…</div></div>
-          <div class="optimiser-verdict" id="optimiserVerdict">The transfer committee is calculating the best use of the fee.</div>
-          <div class="decision-discipline-panel" id="decisionDisciplinePanel">
-            <div class="decision-discipline-head">
-              <div><strong>Decision Discipline Engine</strong><span>Market regime, concentration limits, confidence score and no-buy reasons.</span></div>
-              <span class="badge amber" id="decisionConfidenceBadge">Syncing</span>
-            </div>
-            <div class="decision-grid">
-              <div class="decision-box"><small>Market Mood</small><strong id="decisionMarketMood">—</strong><span id="decisionMarketNote">Waiting for market regime.</span></div>
-              <div class="decision-box"><small>Buy Permission Gate</small><strong id="decisionGateStatus">—</strong><span id="decisionGateNote">Checking risk controls.</span></div>
-              <div class="decision-box"><small>Concentration Watch</small><strong id="decisionConcentration">—</strong><span id="decisionConcentrationNote">Checking squad balance.</span></div>
-            </div>
-            <div class="decision-list" id="decisionGateList"><div class="loading">Checking every proposed signing…</div></div>
-            <div class="decision-list" id="decisionRejectedList"><div class="loading">Building no-buy reasons…</div></div>
-          </div>
-        </div>
+        <div class="card-title"><h3>No-Buy Watch</h3><span class="badge amber">Discipline</span></div>
+        <div class="mini-table" id="watchList"><div class="loading">Loading no-buy watch…</div></div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== SECTION: FOOTER ===================== -->
   <footer class="footer">
     Aurora City FC • Transfer Centre • Sheet engine: AuroraData
   </footer>
 </main>
 
-<!-- ===================== SECTION: DATA + LOGIC ===================== -->
 <script>
-const AURORA_MASTER_URL =
-"https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const AURORA_MASTER_URL = 'https://script.google.com/macros/s/AKfycbzR9kEguzDL5ICF4xn3nHBLyE0ELv_ZSgn46vld54V7KZt6CRsFU_mNzx0AQd1qXPei/exec';
 let AURORA_MASTER_CACHE = null;
-
-const INCOME_FOUR = ["LON:FSFL","LON:RGL","LON:UKW","LON:TRIG"];
-const UPGRADE_FOUR = ["LON:RGL","LON:RKT","LON:ULVR","LON:TRIG"];
-const DEPLOYMENT_PER_PLAYER = 125;
-const IMPACT_INCOME_TRIGGER = 20;
-let selectedTactic = 'recommended';
 
 const PLATFORM_RULES = {
   "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
   "FSFL":"Trade212","UKW":"IG ISA","ARCC":"IG ISA","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212"
 };
 
-const PLAYER_PORTRAITS = {
-  RGL: "assets/aurora-city-fc/players/rgl_player.png",
-  RKT: "assets/aurora-city-fc/players/rkt_player.png",
-  ULVR: "assets/aurora-city-fc/players/ulvr_player.png",
-  TRIG: "assets/aurora-city-fc/players/trig_player.png",
-  GCP: "assets/aurora-city-fc/players/gcp_player.png",
-  SBRY: "assets/aurora-city-fc/players/sbry_player.png",
-  OMP: "assets/aurora-city-fc/players/omp_player.png",
-  IMB: "assets/aurora-city-fc/players/imb_player.png"
+const SECTOR_LIMITS = {
+  reit_property: 0.30,
+  infrastructure_renewable: 0.34,
+  financials: 0.35,
+  high_yield_forward: 0.16,
+  single_holding: 0.22
 };
 
-let state = { holdings:[], watchlist:[], scout:[], globalWatchlist:[], auroraTimes:[], auroraRules:[] };
+let state = { holdings:[], watchlist:[], scout:[], auroraTimes:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
-const num = n => Number.isFinite(n) ? `${Math.round(n)}` : '—';
+const oneDecimal = n => Number.isFinite(n) ? `${n.toFixed(1)}%` : '—';
+const whole = n => Number.isFinite(n) ? `${Math.round(n)}` : '—';
+
 function parseNum(v){
   if(v === null || v === undefined) return NaN;
   const s = String(v).replace(/£|,|%/g,'').trim();
@@ -2299,111 +3018,603 @@ function parseNum(v){
 }
 function cleanTicker(t){ return String(t || '').trim().toUpperCase(); }
 function displayTicker(t){ return String(t || '').replace('LON:',''); }
-function shortTicker(t){ return displayTicker(t).replace('.GB','').replace('.L',''); }
+function shortTicker(t){ return displayTicker(t).replace('.GB','').replace('.L','').toUpperCase(); }
 function displayName(row){
   return row.name || row.company_name || row.company || row.Company || row.Name || row.security_name || row.stock_name || row["Company Name"] || row["Security Name"] || displayTicker(row.ticker) || '—';
+}
+function isActiveHolding(row){
+  const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
+  const value = holdingValue(row);
+  const status = String(row.status ?? row.Status ?? '').toLowerCase();
+  const role = String(row.role ?? row.Role ?? '').toLowerCase();
+  const exited = status.includes('sold') || status.includes('exited') || role.includes('exited');
+  return !exited && ((Number.isFinite(shares) && shares > 0) || value > 0);
+}
+function activeHoldings(){
+  return (state.holdings || []).filter(isActiveHolding);
+}
+function holdingValue(row){
+  const direct = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  if(Number.isFinite(direct) && direct > 0) return direct;
+  const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
+  const price = parseNum(row.live_price ?? row.price ?? row.Price);
+  return Number.isFinite(shares) && Number.isFinite(price) ? shares * price : 0;
 }
 function parseYield(row){
   const direct = row.dividend_yield ?? row.div_yield ?? row.yield_pct ?? row.Yield ?? row.yield ?? '';
   if(String(direct).includes('%')) return parseNum(direct) / 100;
   const directNum = parseNum(direct);
   if(Number.isFinite(directNum) && directNum > 0 && directNum < 1) return directNum;
-  if(Number.isFinite(directNum) && directNum >= 1 && directNum <= 15) return directNum / 100;
+  if(Number.isFinite(directNum) && directNum >= 1 && directNum <= 25) return directNum / 100;
+
   const annualTotal = parseNum(row.annual_dps_total ?? row.Annual_DPS_Total ?? row["Annual DPS Total"]);
-  const value = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
-  if(Number.isFinite(annualTotal) && Number.isFinite(value) && value > 0) return annualTotal / value;
-  const dps = parseNum(row.annual_dps);
-  const price = parseNum(row.live_price);
+  const value = holdingValue(row);
+  if(Number.isFinite(annualTotal) && value > 0) return annualTotal / value;
+
+  const dps = parseNum(row.annual_dps ?? row.Annual_DPS);
+  const price = parseNum(row.live_price ?? row.price ?? row.Price);
   if(Number.isFinite(dps) && Number.isFinite(price) && price > 0) return dps / price;
+
+  const from500 = incomeFrom500(row);
+  if(Number.isFinite(from500)) return from500 / 500;
   return NaN;
 }
-function scoutIncomeFrom500(row){
-  const priorityKeys = [
+function incomeFrom500(row){
+  const keys = [
     'return_from_500','income_from_500','annual_return_from_500','annual_income_from_500',
     'return_500','income_500','income_on_500','return_on_500',
     '£500_return','£500_income','500_return','500_income',
     'Return From £500','Income From £500','Annual Return From £500','Annual Income From £500',
     'Return from £500','Income from £500','Projected Income From £500','Projected Return From £500'
   ];
-  for(const key of priorityKeys){
+  for(const key of keys){
     if(row[key] !== undefined){
       const v = parseNum(row[key]);
-      if(Number.isFinite(v) && v >= 0) return v;
+      if(Number.isFinite(v) && v >= 0 && v < 200) return v;
     }
   }
   for(const key of Object.keys(row || {})){
-    const k = String(key).toLowerCase();
-    const looksLike500Income =
-      k.includes('500') &&
-      (k.includes('income') || k.includes('return') || k.includes('dividend')) &&
-      !k.includes('yield') &&
-      !k.includes('score') &&
-      !k.includes('%');
-    if(looksLike500Income){
+    const k = key.toLowerCase();
+    if(k.includes('500') && (k.includes('income') || k.includes('return') || k.includes('dividend')) && !k.includes('yield') && !k.includes('score')){
       const v = parseNum(row[key]);
-      if(Number.isFinite(v) && v >= 0 && v < 150) return v;
+      if(Number.isFinite(v) && v >= 0 && v < 200) return v;
     }
   }
   return NaN;
 }
 function incomeRate(row){
-  const from500 = scoutIncomeFrom500(row);
-  if(Number.isFinite(from500)) return from500 / 500;
   const y = parseYield(row);
-  if(Number.isFinite(y)) return y;
-  return NaN;
+  return Number.isFinite(y) ? y : NaN;
 }
 function annualIncomeForAmount(row, amount){
-  const rate = incomeRate(row);
-  return Number.isFinite(rate) ? amount * rate : 0;
+  const y = incomeRate(row);
+  return Number.isFinite(y) ? amount * y : 0;
 }
-function impact(row){ return parseNum(row.promotion_impact_score); }
+function impact(row){ return parseNum(row.promotion_impact_score ?? row.impact ?? row.Impact); }
 function buyStrength(row){ return parseNum(row.buy_strength ?? row.buy_strength_score ?? row.BuyStrength ?? row.score ?? row.buy_score); }
+function valuationBonus(row){
+  const v = String(row.valuation_status ?? row.valuation ?? row.Valuation ?? '').toLowerCase();
+  if(v.includes('undervalued') || v.includes('discount')) return 10;
+  if(v.includes('fair')) return 4;
+  if(v.includes('overvalued')) return -12;
+  return 0;
+}
+function platformFor(ticker){
+  return PLATFORM_RULES[shortTicker(ticker)] || 'Check platform';
+}
 function uniqueByTicker(rows){
   const map = new Map();
-  rows.forEach(r=>{
-    const t = cleanTicker(r.ticker);
+  rows.forEach(row => {
+    const t = cleanTicker(row.ticker);
     if(!t) return;
-    const existing = map.get(t);
-    if(!existing || (impact(r)||0) > (impact(existing)||0)) map.set(t,r);
+    const score = candidateScore(row);
+    const old = map.get(t);
+    if(!old || score > candidateScore(old)) map.set(t,row);
   });
   return [...map.values()];
 }
-function isActiveHolding(row){
-  const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
-  const currentValue = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
-  const status = String(row.status ?? row.Status ?? '').trim().toLowerCase();
-  const role = String(row.role ?? row.Role ?? '').trim().toLowerCase();
-  const exited = status.includes('sold') || status.includes('exited') || role.includes('exited');
-  return !exited && ((Number.isFinite(shares) && shares > 0) || (Number.isFinite(currentValue) && currentValue > 0));
-}
-function activeHoldingRows(rows){
-  return (rows || []).filter(isActiveHolding);
-}
 function findSecurity(ticker){
   const t = cleanTicker(ticker);
-  return activeHoldingRows(state.holdings).find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
+  return activeHoldings().find(r=>cleanTicker(r.ticker)===t)
+    || (state.watchlist || []).find(r=>cleanTicker(r.ticker)===t)
+    || (state.scout || []).find(r=>cleanTicker(r.ticker)===t)
+    || null;
 }
-function routeStats(tickers){
-  const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
-  const totalIncome = rows.reduce((sum,r)=>{
-    const y = parseYield(r);
-    return sum + (Number.isFinite(y) ? DEPLOYMENT_PER_PLAYER * y : 0);
-  },0);
-  const avgImpact = rows.length ? rows.reduce((s,r)=>s+(impact(r)||0),0) / rows.length : NaN;
-  return { rows, totalIncome, avgImpact };
+function sectorText(row){
+  return [row.sector,row.role,row.chemistry_role,row.chemistry_risk,row.squad_role,row.payout_risk,row.name,row.ticker]
+    .filter(Boolean).join(' ').toLowerCase();
 }
-function platformFor(ticker){
-  const s = shortTicker(ticker);
-  return PLATFORM_RULES[s] || "Check platform";
+function sectorBucket(row){
+  const t = shortTicker(row.ticker);
+  const s = sectorText(row);
+  if(['RGL','SUPR','PHP','LMP'].includes(t) || s.includes('reit') || s.includes('property')) return 'reit_property';
+  if(['FSFL','UKW','FGEN','TRIG','GCP','SEQI'].includes(t) || s.includes('renewable') || s.includes('infrastructure') || s.includes('wind') || s.includes('solar')) return 'infrastructure_renewable';
+  if(['LGEN','MNG','SDLF','PHNX'].includes(t) || s.includes('financial')) return 'financials';
+  if(['TSCO','ULVR','RKT','SBRY'].includes(t) || s.includes('consumer') || s.includes('defensive')) return 'defensive_quality';
+  if(['ARCC'].includes(t) || s.includes('bdc') || s.includes('credit')) return 'credit_income';
+  if(['VWRA','IITU'].includes(t) || s.includes('growth') || s.includes('etf')) return 'growth_academy';
+  return 'general';
 }
-function portraitFor(ticker){
-  const s = shortTicker(ticker);
-  return PLAYER_PORTRAITS[s] || "";
+function bucketLabel(bucket){
+  return ({
+    reit_property:'REIT/property',
+    infrastructure_renewable:'renewables/infrastructure',
+    financials:'financials',
+    defensive_quality:'defensive quality',
+    credit_income:'credit income',
+    growth_academy:'growth academy',
+    high_yield_forward:'high-yield',
+    general:'general'
+  })[bucket] || bucket;
+}
+function isHighYield(row){
+  const y = incomeRate(row);
+  return ['RGL','ARCC'].includes(shortTicker(row.ticker)) || (Number.isFinite(y) && y >= 0.10) || sectorText(row).includes('high-yield');
+}
+function marketFitScore(row){
+  const t = shortTicker(row.ticker);
+  const s = sectorText(row);
+  let score = 70;
+  if(['TSCO','ULVR','RKT','SUPR','PHP'].includes(t) || s.includes('defensive')) score += 12;
+  if(['FSFL','UKW','FGEN','TRIG'].includes(t) || s.includes('renewable') || s.includes('infrastructure')) score += 8;
+  if(['RGL','ARCC'].includes(t)) score -= 4;
+  if(String(row.payout_risk || '').toLowerCase().includes('very high')) score -= 18;
+  if(String(row.payout_risk || '').toLowerCase().includes('check')) score -= 6;
+  if(Number.isFinite(incomeRate(row)) && incomeRate(row) >= 0.10) score += 2;
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+function candidateScore(row){
+  const y = incomeRate(row);
+  const incomePart = Number.isFinite(y) ? Math.min(y,0.13) * 520 : 0;
+  const impactPart = (impact(row) || 0) * 0.80;
+  const strengthPart = (buyStrength(row) || 0) * 0.65;
+  const marketPart = marketFitScore(row) * 0.42;
+  const valuePart = valuationBonus(row);
+  const riskPenalty = isHighYield(row) ? 5 : 0;
+  return incomePart + impactPart + strengthPart + marketPart + valuePart - riskPenalty;
+}
+function incomePriorityScore(row){
+  const y = incomeRate(row);
+  if(!Number.isFinite(y) || y <= 0) return -9999;
+  const incomePart = Math.min(y,0.145) * 1000;
+  const marketPart = marketFitScore(row) * 0.22;
+  const strengthPart = (buyStrength(row) || 0) * 0.14;
+  const impactPart = (impact(row) || 0) * 0.10;
+  const valuePart = valuationBonus(row) * 0.35;
+  const payoutRisk = String(row.payout_risk ?? '').toLowerCase();
+  const riskPenalty = payoutRisk.includes('check') ? 8 : payoutRisk.includes('very high') ? 50 : 0;
+  return incomePart + marketPart + strengthPart + impactPart + valuePart - riskPenalty;
+}
+function exposureSnapshot(extra = []){
+  const current = activeHoldings();
+  const totalBefore = current.reduce((s,r)=>s + holdingValue(r),0);
+  const extraTotal = extra.reduce((s,a)=>s + (a.amount || 0),0);
+  const totalAfter = totalBefore + extraTotal;
+  const buckets = {};
+  const tickers = {};
+  current.forEach(r=>{
+    const v = holdingValue(r);
+    const b = sectorBucket(r);
+    buckets[b] = (buckets[b] || 0) + v;
+    const t = cleanTicker(r.ticker);
+    tickers[t] = (tickers[t] || 0) + v;
+    if(isHighYield(r)) buckets.high_yield_forward = (buckets.high_yield_forward || 0) + v;
+  });
+  extra.forEach(a=>{
+    const r = a.row;
+    const v = a.amount || 0;
+    const b = sectorBucket(r);
+    buckets[b] = (buckets[b] || 0) + v;
+    const t = cleanTicker(r.ticker);
+    tickers[t] = (tickers[t] || 0) + v;
+    if(isHighYield(r)) buckets.high_yield_forward = (buckets.high_yield_forward || 0) + v;
+  });
+  return {totalBefore,totalAfter,buckets,tickers};
+}
+function gateCandidate(row, amount = 0, snapshot = exposureSnapshot()) {
+  const reasons = [];
+  let status = 'pass';
+  const bucket = sectorBucket(row);
+  const ticker = cleanTicker(row.ticker);
+  const y = incomeRate(row);
+  const payoutRisk = String(row.payout_risk ?? '').toLowerCase();
+  const valuation = String(row.valuation_status ?? row.valuation ?? '').toLowerCase();
+
+  function caution(msg){ if(status !== 'block') status = 'caution'; reasons.push(msg); }
+  function block(msg){ status = 'block'; reasons.push(msg); }
+
+  if(payoutRisk.includes('very high')) block('Payout risk flagged very high.');
+  else if(payoutRisk.includes('check')) caution('Payout/cashflow needs a check.');
+
+  if(valuation.includes('overvalued')) caution('Valuation not a clean discount.');
+  if(Number.isFinite(y) && y >= 0.135) caution('Very high income rate, keep sizing controlled.');
+  else if(Number.isFinite(y) && y >= 0.10) reasons.push('Strong income rate; approved with sizing check.');
+
+  const afterTotal = snapshot.totalAfter + amount;
+  const bucketAfter = (snapshot.buckets[bucket] || 0) + amount;
+  const tickerAfter = (snapshot.tickers[ticker] || 0) + amount;
+  const bucketShare = afterTotal > 0 ? bucketAfter / afterTotal : NaN;
+  const tickerShare = afterTotal > 0 ? tickerAfter / afterTotal : NaN;
+  const highYieldAfter = (snapshot.buckets.high_yield_forward || 0) + (isHighYield(row) ? amount : 0);
+  const highYieldShare = afterTotal > 0 ? highYieldAfter / afterTotal : NaN;
+
+  const bucketLimit = SECTOR_LIMITS[bucket];
+  if(bucketLimit && Number.isFinite(bucketShare) && bucketShare > bucketLimit) caution(`${bucketLabel(bucket)} exposure near cap.`);
+  if(Number.isFinite(tickerShare) && tickerShare > SECTOR_LIMITS.single_holding) caution('Already a large squad position.');
+  if(isHighYield(row) && Number.isFinite(highYieldShare) && highYieldShare > SECTOR_LIMITS.high_yield_forward) caution('High-yield bucket is getting heavy.');
+
+  if(!Number.isFinite(y) || y <= 0) block('Income rate missing.');
+  if(!reasons.length) reasons.push('Passes the transfer desk checks.');
+
+  return {status,reasons,bucket,bucketShare,tickerShare};
+}
+function candidatePool(){
+  const rows = uniqueByTicker([...(state.watchlist || []), ...(state.scout || []), ...activeHoldings()]);
+  return rows
+    .filter(row => cleanTicker(row.ticker))
+    .filter(row => Number.isFinite(incomeRate(row)) || Number.isFinite(impact(row)) || Number.isFinite(buyStrength(row)))
+    .sort((a,b)=>candidateScore(b)-candidateScore(a));
+}
+function roundTo25(n){
+  return Math.max(0, Math.round(n / 25) * 25);
+}
+function buildDealSheet(){
+  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 0);
+  const snapshot = exposureSnapshot();
+  const pool = candidatePool();
+  const gated = pool.map(row => {
+    const gate = gateCandidate(row, Math.min(125,budget), snapshot);
+    return {row, gate, score:candidateScore(row)};
+  });
+
+  const minimumIncomeRate = budget >= 1000 ? 0.06 : 0.055;
+  const available = gated
+    .filter(x => x.gate.status !== 'block')
+    .filter(x => {
+      const y = incomeRate(x.row);
+      return Number.isFinite(y) && y >= minimumIncomeRate;
+    })
+    .sort((a,b) => incomePriorityScore(b.row) - incomePriorityScore(a.row));
+  const clean = available.filter(x => x.gate.status === 'pass');
+  const caution = available.filter(x => x.gate.status === 'caution');
+
+  let chosen = [];
+  if(clean.length >= 4) chosen = clean.slice(0,4);
+  else chosen = [...clean, ...caution].slice(0,4);
+
+  if(!chosen.length){
+    return {budget, chosen:[], rows:[], holdback:budget, status:'No buy', statusClass:'bad', route:'Hold cash', reason:'No candidate has passed the transfer desk today.', bench:gated.slice(0,5), watch:gated.filter(x=>x.gate.status === 'block').slice(0,5)};
+  }
+
+  const weightsByCount = {
+    1:[1.00],
+    2:[0.60,0.40],
+    3:[0.50,0.30,0.20],
+    4:[0.40,0.30,0.20,0.10]
+  };
+  const weights = weightsByCount[chosen.length] || weightsByCount[4];
+
+  let rows = chosen.map((item,i) => {
+    let amount = roundTo25(budget * weights[i]);
+    if(item.gate.status === 'caution') amount = Math.min(amount, roundTo25(budget * 0.25));
+    if(budget >= 200 && amount < 50) amount = 50;
+    return {
+      row:item.row,
+      gate:item.gate,
+      amount,
+      score:item.score,
+      income:annualIncomeForAmount(item.row, amount)
+    };
+  }).filter(item => item.amount > 0);
+
+  let spent = rows.reduce((s,r)=>s+r.amount,0);
+  if(spent > budget){
+    let over = spent - budget;
+    for(let i=rows.length-1; i>=0 && over>0; i--){
+      const cut = Math.min(over, rows[i].amount);
+      rows[i].amount -= cut;
+      over -= cut;
+    }
+    rows = rows.filter(r=>r.amount > 0);
+  }
+  spent = rows.reduce((s,r)=>s+r.amount,0);
+  rows.forEach(r => r.income = annualIncomeForAmount(r.row, r.amount));
+
+  const holdback = Math.max(0, budget - spent);
+  const cautionCount = rows.filter(r=>r.gate.status === 'caution').length;
+  const totalIncome = rows.reduce((s,r)=>s+r.income,0);
+  const route = rows.length >= 4 ? 'Highest Income Four' : rows.length === 1 ? 'Best Income Signing' : `Best Income ${rows.length}`;
+  const status = cautionCount ? 'Income approved with caution' : 'Income green light';
+  const statusClass = cautionCount ? 'warn' : 'good';
+  const reason = cautionCount
+    ? 'Income-first deal sheet: Aurora has picked the highest yearly income available from approved names, with controlled sizing where the risk gate shows yellow.'
+    : 'Income-first deal sheet: Aurora has picked the highest yearly income available from green-light names after valuation, platform and concentration checks.';
+
+  const selected = new Set(rows.map(r=>cleanTicker(r.row.ticker)));
+  const bench = gated.filter(x=>!selected.has(cleanTicker(x.row.ticker)) && x.gate.status !== 'block').slice(0,5);
+  const watch = [
+    ...gated.filter(x=>x.gate.status === 'block'),
+    ...gated.filter(x=>!selected.has(cleanTicker(x.row.ticker)) && x.gate.status === 'caution')
+  ].slice(0,5);
+
+  return {budget, rows, holdback, status, statusClass, route, reason, totalIncome, bench, watch};
+}
+
+function visualThemeFor(row){
+  const t = cleanTicker(row.ticker);
+  const n = `${t} ${displayName(row)}`.toLowerCase();
+  if(['TRIG','FSFL','UKW','FGEN','GCP'].includes(t) || /wind|solar|renew|infrastructure/.test(n)) return 'renewables';
+  if(['ULVR','TSCO','SBRY','IMB'].includes(t) || /unilever|consumer|tesco|supermarket/.test(n)) return 'consumer';
+  if(['ARCC','OSB','LGEN','MNG','IUKD','IITU','VWRA'].includes(t) || /capital|bank|financial|ares/.test(n)) return 'finance';
+  if(['RGL','SUPR','PHP','BBOX','LAND'].includes(t) || /reit|property|regional|health/.test(n)) return 'property';
+  return 'quality';
+}
+function themePalette(theme){
+  const map = {
+    renewables:{a:'#082f49',b:'#065f46',c:'#34d399',d:'#22d3ee',accent:'#bbf7d0'},
+    consumer:{a:'#1e293b',b:'#4c1d95',c:'#fbbf24',d:'#60a5fa',accent:'#fde68a'},
+    finance:{a:'#0f172a',b:'#172554',c:'#60a5fa',d:'#a78bfa',accent:'#bfdbfe'},
+    property:{a:'#111827',b:'#3f3f46',c:'#fb7185',d:'#fbbf24',accent:'#fecdd3'},
+    quality:{a:'#0f172a',b:'#0b1730',c:'#22d3ee',d:'#60a5fa',accent:'#dbeafe'}
+  };
+  return map[theme] || map.quality;
+}
+function visualStrapFor(row){
+  const theme = visualThemeFor(row);
+  if(theme === 'renewables') return 'Renewable income target';
+  if(theme === 'consumer') return 'Quality balance target';
+  if(theme === 'finance') return 'Income engine target';
+  if(theme === 'property') return 'Property income target';
+  return 'Approved squad option';
+}
+function visualStoryFor(item){
+  const y = incomeRate(item.row);
+  const reasons = item.gate?.reasons || [];
+  if(item.selected) return `Approved for the final deal sheet with ${Number.isFinite(y) ? (y*100).toFixed(2)+'% estimated income rate' : 'a live income rate'} and ${money(item.income)} a year from the planned buy.`;
+  return reasons[0] || 'High on the shortlist, but just outside the final deal sheet for this budget.';
+}
+function playerPhotoDataUri(row){
+  const ticker = displayTicker(row.ticker);
+  const theme = visualThemeFor(row);
+  const p = themePalette(theme);
+  const strap = visualStrapFor(row).toUpperCase();
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 440">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${p.a}"/>
+        <stop offset="100%" stop-color="${p.b}"/>
+      </linearGradient>
+      <radialGradient id="glow" cx="50%" cy="18%" r="70%">
+        <stop offset="0%" stop-color="${p.d}" stop-opacity="0.50"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="jersey" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${p.c}"/>
+        <stop offset="100%" stop-color="${p.d}"/>
+      </linearGradient>
+      <linearGradient id="strip" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.24)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+    </defs>
+    <rect width="360" height="440" rx="26" fill="url(#bg)"/>
+    <rect width="360" height="440" rx="26" fill="url(#glow)"/>
+    <circle cx="72" cy="78" r="42" fill="rgba(255,255,255,0.08)"/>
+    <circle cx="300" cy="62" r="58" fill="rgba(255,255,255,0.06)"/>
+    <path d="M0 338 Q90 304 180 338 T360 338 L360 440 L0 440 Z" fill="rgba(255,255,255,0.08)"/>
+    <ellipse cx="180" cy="418" rx="136" ry="88" fill="rgba(2,6,23,0.40)"/>
+    <path d="M108 410 Q130 296 180 284 Q230 296 252 410 Z" fill="url(#jersey)"/>
+    <path d="M136 410 Q150 325 180 318 Q210 325 224 410 Z" fill="rgba(255,255,255,0.13)"/>
+    <rect x="126" y="328" width="108" height="26" rx="13" fill="rgba(255,255,255,0.18)"/>
+    <text x="180" y="346" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" text-anchor="middle" fill="#ffffff">${ticker}</text>
+    <rect x="138" y="226" width="84" height="44" rx="22" fill="#d6a27b"/>
+    <circle cx="180" cy="172" r="68" fill="#e7b58c"/>
+    <path d="M118 164 Q122 92 180 92 Q238 92 242 164 L242 176 Q214 160 180 160 Q146 160 118 176 Z" fill="#0f172a"/>
+    <path d="M132 150 Q146 118 180 116 Q214 118 228 150 Q205 138 180 138 Q155 138 132 150 Z" fill="#111827"/>
+    <circle cx="154" cy="176" r="5" fill="#1f2937"/>
+    <circle cx="206" cy="176" r="5" fill="#1f2937"/>
+    <path d="M156 214 Q180 228 204 214" fill="none" stroke="#9a3412" stroke-width="5" stroke-linecap="round"/>
+    <path d="M104 408 Q132 340 148 324" fill="none" stroke="rgba(255,255,255,0.24)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M256 408 Q228 340 212 324" fill="none" stroke="rgba(255,255,255,0.24)" stroke-width="8" stroke-linecap="round"/>
+    <text x="24" y="34" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="${p.accent}">${strap}</text>
+  </svg>`;
+  return `url("data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}")`;
+}
+function buildTopTransferVisuals(deal){
+  const visual = [];
+  const seen = new Set();
+  for(const row of (deal.rows || [])){
+    const t = cleanTicker(row.row.ticker);
+    if(seen.has(t)) continue;
+    seen.add(t);
+    visual.push({row:row.row, amount:row.amount, income:row.income, gate:row.gate, score:row.score, selected:true});
+  }
+  for(const item of (deal.bench || [])){
+    const t = cleanTicker(item.row.ticker);
+    if(seen.has(t)) continue;
+    seen.add(t);
+    visual.push({row:item.row, amount:NaN, income:NaN, gate:item.gate, score:item.score, selected:false});
+    if(visual.length >= 4) break;
+  }
+  return visual.slice(0,4);
+}
+function renderDeadlineBar(deal){
+  const box = $('deadlineDayBar');
+  if(!box) return;
+  const items = buildTopTransferVisuals(deal);
+  if(!items.length){
+    box.innerHTML = '<div class="loading error">Deadline day board unavailable.</div>';
+    return;
+  }
+  const strip = items.map((item,idx)=>{
+    const t = displayTicker(item.row.ticker);
+    const buy = Number.isFinite(item.amount) ? money(item.amount) : 'Watch';
+    const income = Number.isFinite(item.income) ? money(item.income)+'/yr' : 'Shortlist';
+    return `<span class="deadline-item"><span class="deadline-rank">#${idx+1}</span><strong>${t}</strong><b>${buy}</b><em>${income}</em></span>`;
+  }).join('');
+  box.innerHTML = `<div class="deadline-day-inner"><div class="deadline-day-tag"><span class="pulse"></span>Deadline Day</div><div class="deadline-day-strip">${strip}</div></div>`;
+}
+
+function renderTopTransferBoard(deal){
+  const box = $('topTransferBoard');
+  if(!box) return;
+  const items = buildTopTransferVisuals(deal);
+  if(!items.length){
+    box.innerHTML = '<div class="loading error">No visual shortlist available from the current Aurora data.</div>';
+    return;
+  }
+  box.innerHTML = items.map((item, idx) => {
+    const row = item.row;
+    const ticker = displayTicker(row.ticker);
+    const rate = incomeRate(row);
+    const approvalClass = item.gate?.status === 'pass' ? 'green' : 'amber';
+    const approvalText = item.selected ? 'Final sheet' : (item.gate?.status === 'pass' ? 'Approved' : 'Watch');
+    const buyText = Number.isFinite(item.amount) ? money(item.amount) : 'Watch';
+    const incomeText = Number.isFinite(item.income) ? money(item.income) : '—';
+    const scoreText = Number.isFinite(item.score) ? Math.round(item.score) : '—';
+    const cardState = item.selected ? 'selected' : 'watch';
+    const ribbonClass = item.selected ? 'final' : (item.gate?.status === 'pass' ? 'approved' : 'watch');
+    const ribbonText = item.selected ? 'Done Deal' : (item.gate?.status === 'pass' ? 'Approved Target' : 'Watch List');
+    return `<article class="top-transfer-card ${idx === 0 ? 'lead' : ''} ${cardState}">
+      <div class="player-photo-frame">
+        <div class="transfer-rank-chip">#${idx+1}</div>
+        <div class="transfer-approval-chip ${approvalClass}">${approvalText}</div>
+        <div class="deal-ribbon ${ribbonClass}">${ribbonText}</div>
+        <div class="player-photo" style="background-image:${playerPhotoDataUri(row)};">
+          <div class="player-photo-overlay"><strong>${ticker}</strong><span>${visualStrapFor(row)}</span></div>
+        </div>
+      </div>
+      <div class="transfer-card-body">
+        <h4>${displayName(row)}</h4>
+        <p>${platformFor(row.ticker)} • ${item.selected ? 'On the final transfer slip' : 'On the live shortlist'}</p>
+        <div class="transfer-card-metrics">
+          <div class="transfer-card-metric"><small>Planned buy</small><strong>${buyText}</strong></div>
+          <div class="transfer-card-metric"><small>Est. yearly</small><strong>${Number.isFinite(item.income) ? incomeText+'/yr' : 'Watch'}</strong></div>
+          <div class="transfer-card-metric"><small>${item.selected ? 'Income rate' : 'Desk score'}</small><strong>${item.selected && Number.isFinite(rate) ? (rate*100).toFixed(2)+'%' : scoreText}</strong></div>
+        </div>
+        <div class="transfer-storyline">${visualStoryFor(item)}</div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function renderTransferTicker(deal){
+  const ticker = $('transferTicker');
+  if(!ticker) return;
+  const lead = deal.rows?.[0];
+  const leadText = lead ? `${displayTicker(lead.row.ticker)} ${money(lead.amount)}` : 'No signing cleared yet';
+  const income = Number.isFinite(deal.totalIncome) ? money(deal.totalIncome) : '—';
+  const names = (deal.rows || []).slice(1,4).map(r => `<span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Next: <b>${displayTicker(r.row.ticker)}</b> <strong>${money(r.amount)}</strong></span>`).join('');
+  const content = `
+    <div class="transfer-ticker-content">
+      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Lead signing: <b>${leadText}</b></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Route: <strong>${deal.route}</strong></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Yearly income added: <strong>${income}</strong></span>
+      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Holdback: <strong>${money(deal.holdback || 0)}</strong></span>
+      ${names}
+    </div>`;
+  ticker.innerHTML = content + content.replace('<div class="transfer-ticker-content">','<div class="transfer-ticker-content" aria-hidden="true">');
+}
+function renderKpis(deal){
+  const totalIncome = deal.rows.reduce((s,r)=>s+r.income,0);
+  if($('headlineRoute')) $('headlineRoute').textContent = deal.route;
+  if($('headlineRouteNote')) $('headlineRouteNote').textContent = deal.rows.length ? `${deal.rows.length} signing${deal.rows.length === 1 ? '' : 's'} on the slip` : 'No automatic signing';
+  if($('headlineIncome')) $('headlineIncome').textContent = money(totalIncome);
+  if($('headlineMonthly')) $('headlineMonthly').textContent = `${money(totalIncome / 12)} per month estimate`;
+  if($('headlineStatus')) $('headlineStatus').textContent = deal.status;
+  if($('headlineStatusNote')) $('headlineStatusNote').textContent = deal.holdback > 0 ? `${money(deal.holdback)} held back` : 'Full budget assigned';
+  const statusCard = $('headlineStatus')?.closest('.window-kpi');
+  if(statusCard){
+    statusCard.classList.remove('good','warn','bad');
+    statusCard.classList.add(deal.statusClass || 'good');
+  }
+}
+function renderDealSheet(deal){
+  const badge = $('dealSheetBadge');
+  if(badge){
+    badge.className = `badge ${deal.statusClass === 'bad' ? 'red' : deal.statusClass === 'warn' ? 'amber' : 'green'}`;
+    badge.textContent = deal.status;
+  }
+  if($('gafferCall')) $('gafferCall').textContent = deal.rows.length ? deal.route : 'Hold fire';
+  if($('gafferCallText')) $('gafferCallText').textContent = deal.reason;
+
+  const box = $('finalDealSheet');
+  if(!box) return;
+  if(!deal.rows.length){
+    box.innerHTML = `<div class="loading error">No final transfer slip approved from the current data.</div>`;
+  }else{
+    box.innerHTML = deal.rows.map((item,i)=>{
+      const y = incomeRate(item.row);
+      const ticker = displayTicker(item.row.ticker);
+      const gateClass = item.gate.status === 'pass' ? 'pass' : 'caution';
+      const gateText = item.gate.status === 'pass' ? 'Green light' : 'Controlled';
+      return `<div class="deal-row">
+        <div class="deal-rank">${i+1}</div>
+        <div class="deal-main">
+          <strong>${ticker} — ${displayName(item.row)}</strong>
+          <span><span class="status-chip ${gateClass}">${gateText}</span> &nbsp; ${platformFor(item.row.ticker)} • ${Number.isFinite(y) ? (y*100).toFixed(2)+'% income rate' : 'income check'} • ${item.gate.reasons[0] || 'Passes desk checks'}</span>
+        </div>
+        <div class="deal-money"><small>Buy</small><strong>${money(item.amount)}</strong></div>
+        <div class="deal-income"><small>Est. income</small><strong>${money(item.income)}/yr</strong></div>
+      </div>`;
+    }).join('');
+  }
+  if($('holdbackNote')) {
+    $('holdbackNote').textContent = deal.holdback > 0
+      ? `Transfer holdback: ${money(deal.holdback)} stays in cash. The desk does not force spare budget into one name just because it is available.`
+      : 'No holdback. The transfer desk has assigned the full fee to the highest green-light income route.';
+  }
+}
+function renderRegistrationDesk(deal){
+  const box = $('registrationDesk');
+  if(!box) return;
+  box.innerHTML = deal.rows.length ? deal.rows.map((item,i)=>`
+    <div class="short-wire-row">
+      <div class="short-wire-icon">${i+1}</div>
+      <div><strong>${displayTicker(item.row.ticker)}</strong><span>${platformFor(item.row.ticker)} • ${displayName(item.row)}</span></div>
+      <span class="status-chip ${item.gate.status === 'pass' ? 'pass' : 'caution'}">${item.gate.status === 'pass' ? 'Register' : 'Check'}</span>
+    </div>`).join('') : '<div class="loading">No registrations approved yet.</div>';
+  if($('deskNote')) $('deskNote').textContent = deal.rows.some(r=>platformFor(r.row.ticker).includes('Check'))
+    ? 'One or more signings need a platform check before placing the order.'
+    : 'Registration desk is clear for the approved deal sheet.';
+}
+function renderBench(deal){
+  const box = $('benchList');
+  if(!box) return;
+  box.innerHTML = deal.bench.length ? deal.bench.map(item=>{
+    const y = incomeRate(item.row);
+    return `<div class="mini-table-row">
+      <div><strong>${displayTicker(item.row.ticker)} — ${displayName(item.row)}</strong><span>${platformFor(item.row.ticker)} • ${Number.isFinite(y) ? (y*100).toFixed(2)+'% income' : 'income check'} • score ${whole(item.score)}</span></div>
+      <b>Bench</b>
+    </div>`;
+  }).join('') : '<div class="loading">No bench options available.</div>';
+}
+function renderWatch(deal){
+  const box = $('watchList');
+  if(!box) return;
+  box.innerHTML = deal.watch.length ? deal.watch.map(item=>`
+    <div class="mini-table-row">
+      <div><strong>${displayTicker(item.row.ticker)} — ${displayName(item.row)}</strong><span>${item.gate.reasons[0] || 'Not selected by the desk.'}</span></div>
+      <span class="status-chip ${item.gate.status === 'block' ? 'block' : 'caution'}">${item.gate.status === 'block' ? 'No buy' : 'Watch'}</span>
+    </div>`).join('') : '<div class="loading">No major red flags from the current shortlist.</div>';
+}
+function renderAll(){
+  if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
+  const deal = buildDealSheet();
+  renderTransferTicker(deal);
+  renderKpis(deal);
+  renderDeadlineBar(deal);
+  renderTopTransferBoard(deal);
+  renderDealSheet(deal);
+  renderRegistrationDesk(deal);
+  renderBench(deal);
+  renderWatch(deal);
 }
 async function fetchTab(tab){
   if(!AURORA_MASTER_CACHE){
-    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
+    const res = await fetch(AURORA_MASTER_URL, {cache:'no-store'});
     if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
   }
@@ -2413,907 +3624,28 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, globalWatchlist, auroraTimes, auroraRules] = await Promise.all([
+    const [holdings, watchlist, scout, auroraTimes] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
       fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('Global Watchlist').catch(()=>[]),
-      fetchTab('AuroraTimes').catch(()=>[]),
-      fetchTab('AuroraRules').catch(()=>[])
+      fetchTab('AuroraTimes').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout, globalWatchlist, auroraTimes, auroraRules };
+    state = { holdings, watchlist, scout, auroraTimes };
     renderAll();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
-    ['targetList','scoutReport','platformList','transferSlip'].forEach(id=>{ if($(id)) $(id).innerHTML = fail; });
+    ['finalDealSheet','registrationDesk','benchList','watchList'].forEach(id => { if($(id)) $(id).innerHTML = fail; });
+    if($('headlineStatus')) $('headlineStatus').textContent = 'Data error';
   }finally{
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
 }
-function targetRows(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])])
-    .filter(r => Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r)))
-    .sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))
-    .slice(0,8);
-}
-
-
-/* ===================== SECTION: TRANSFER TICKER DUPLICATE TARGET FIX ===================== */
-function uniqueRouteWithoutTopTarget(route, topTicker){
-  const top = cleanTicker(topTicker);
-  const seen = new Set([top]);
-  return (route || []).filter(t=>{
-    const key = cleanTicker(t);
-    if(!key || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-function renderTransferTicker(targets, preferred, route){
-  const ticker = $('transferTicker');
-  if(!ticker) return;
-
-  const top = targets?.[0] || null;
-  const topTicker = top ? displayTicker(top.ticker) : '—';
-  const topScore = top ? num(buyStrength(top) || impact(top)) : '—';
-
-  const cleanRoute = uniqueRouteWithoutTopTarget(route, topTicker);
-  const routeItems = cleanRoute.slice(0,3).map((t,i)=>{
-    const row = findSecurity(t);
-    const score = row ? num(buyStrength(row) || impact(row)) : '—';
-    return `<span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Target ${i+2}: <b>${displayTicker(t)}</b> <strong>${score}</strong></span>`;
-  }).join('');
-
-  const content = `
-    <div class="transfer-ticker-content">
-      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>No.1 Target: <b>${topTicker}</b></span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Strategy: <strong>${preferred || 'Optimiser Route'}</strong></span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Top Score: <strong>${topScore}</strong></span>
-      ${routeItems}
-    </div>
-    <div class="transfer-ticker-content" aria-hidden="true">
-      <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>No.1 Target: <b>${topTicker}</b></span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Strategy: <strong>${preferred || 'Optimiser Route'}</strong></span>
-      <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Top Score: <strong>${topScore}</strong></span>
-      ${routeItems}
-    </div>
-  `;
-
-  ticker.innerHTML = content;
-}
-
-function renderTargetList(rows){
-  $('targetList').innerHTML = rows.length ? rows.map((r,i)=>`
-    <div class="target-row">
-      <div class="rank-badge">${i+1}</div>
-      <div><strong>${displayTicker(r.ticker)}</strong><span>${displayName(r)}</span></div>
-      <div class="score-pill">${num(impact(r) || buyStrength(r))}</div>
-    </div>`).join('') : '<div class="loading">No transfer targets found.</div>';
-}
-
-function playerRole(row){
-  const t = shortTicker(row.ticker);
-  const roles = {
-    RGL:'High-risk bargain striker',
-    RKT:'Elite defensive forward',
-    ULVR:'Veteran leader',
-    TRIG:'Engine-room income runner',
-    GCP:'Set-piece income specialist',
-    SBRY:'Domestic value winger',
-    OMP:'Watchlist prospect',
-    IMB:'Veteran income finisher',
-    FSFL:'Solar-powered income engine',
-    UKW:'Wind-powered midfield runner'
-  };
-  return roles[t] || 'Squad improvement candidate';
-}
-function playerReason(row){
-  const t = shortTicker(row.ticker);
-  const y = incomeRate(row);
-  const imp = impact(row) || buyStrength(row) || 0;
-  const incomeText = Number.isFinite(y) ? `${(y*100).toFixed(2)}% income rate` : 'income still being checked';
-  const base = {
-    RGL:'Brings explosive income potential and a strong scout score, but needs managing like a high-upside signing with risk attached.',
-    RKT:'Adds quality, resilience and brand strength. Lower drama profile, but improves the squad with defensive reliability.',
-    ULVR:'A steady senior pro. Not the flashiest signing, but adds quality, consistency and long-term balance to the team.',
-    TRIG:'Improves the income engine and gives the squad infrastructure depth. Useful when the gaffer wants dependable cash flow.',
-    GCP:'A specialist income option. Useful for set-piece-style dividends, but needs monitoring for risk and consistency.',
-    SBRY:'Domestic value pick with recovery potential. Could strengthen the bench if valuation and momentum improve.',
-    OMP:'Prospect profile. Needs more evidence before becoming a first-team signing, but worth keeping in the scouting book.',
-    IMB:'Experienced income option. Strong yield appeal, but best treated as a veteran signing rather than a growth player.',
-    FSFL:'Big income profile with renewable-sector exposure. Strong for yield, but rate sensitivity needs watching.',
-    UKW:'Renewable income runner with strong cash-flow appeal. Useful for diversification but not risk-free.'
-  };
-  return base[t] || `Improves the transfer pool with ${incomeText} and a scout impact around ${num(imp)}. Keep under review before committing the full fee.`;
-}
-function playerTags(row){
-  const y = incomeRate(row);
-  const imp = impact(row) || buyStrength(row) || 0;
-  const tags = [playerRole(row)];
-  if(Number.isFinite(y)) tags.push(`${(y*100).toFixed(1)}% income`);
-  if(imp >= 85) tags.push('First-team ready');
-  else if(imp >= 70) tags.push('Strong squad option');
-  else tags.push('Monitor');
-  tags.push(platformFor(row.ticker));
-  return tags.slice(0,4);
-}
-function renderCandidateReports(rows){
-  const box = $('candidateReports');
-  if(!box) return;
-  const list = (rows || []).slice(0,3);
-  box.innerHTML = list.length ? list.map((r,i)=>{
-    const y = incomeRate(r);
-    const imp = impact(r) || buyStrength(r);
-    return `<div class="scout-note-card">
-      <div class="scout-note-top">
-        <div><strong>${i+1}. ${displayTicker(r.ticker)} — ${displayName(r)}</strong><span>${playerRole(r)} • Impact ${num(imp)} • ${Number.isFinite(y)?(y*100).toFixed(2)+'% income':'income check'}</span></div>
-        <div class="score-pill">${num(imp)}</div>
-      </div>
-      <p>${playerReason(r)}</p>
-      <div class="scout-note-tags">${playerTags(r).map(tag=>`<span>${tag}</span>`).join('')}</div>
-    </div>`;
-  }).join('') : '<div class="loading">No scout notes available yet.</div>';
-}
-
-function renderScoutReport(top){
-  if(!top){
-    $('scoutReport').innerHTML = '<div class="loading">No scout report available.</div>';
-    return;
-  }
-  const y = parseYield(top);
-  const ticker = displayTicker(top.ticker);
-  const portrait = portraitFor(top.ticker);
-  const rows = [
-    ['Player', ticker, displayName(top)],
-    ['Impact', num(impact(top) || buyStrength(top)), 'Promotion improvement score'],
-    ['Yield', Number.isFinite(y) ? `${(y*100).toFixed(2)}%` : '—', 'Income profile'],
-    ['Platform', platformFor(top.ticker), 'Likely trading venue'],
-    ['Verdict', (impact(top)||0) >= 85 ? 'Ready to sign' : 'Watchlist', 'Scout committee call']
-  ];
-
-  const portraitCard = portrait ? `
-    <div class="scout-row" style="grid-template-columns:1fr;padding:0;overflow:hidden;">
-      <div style="width:100%;height:640px;overflow:hidden;background:rgba(2,6,23,.28);">
-        <img src="${portrait}" alt="${ticker} player portrait" style="width:100%;height:100%;display:block;object-fit:cover;object-position:top center;">
-      </div>
-    </div>` : '';
-
-  $('scoutReport').innerHTML = portraitCard + rows.map((r,i)=>`
-    <div class="scout-row">
-      <div class="rank-badge">${i+1}</div>
-      <div><strong>${r[0]}</strong><span>${r[2]}</span></div>
-      <div class="score-pill">${r[1]}</div>
-    </div>`).join('');
-}
-
-
-function candidatePool(){
-  return uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[]), ...activeHoldingRows(state.holdings)])
-    .filter(r => cleanTicker(r.ticker) && (Number.isFinite(parseYield(r)) || Number.isFinite(impact(r)) || Number.isFinite(buyStrength(r))));
-}
-function bestIncomeCandidates(){
-  return candidatePool().filter(r=>Number.isFinite(incomeRate(r))).sort((a,b)=>incomeRate(b)-incomeRate(a)).slice(0,4).map(r=>cleanTicker(r.ticker));
-}
-function bestUpgradeCandidates(){
-  return candidatePool().sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0)).slice(0,4).map(r=>cleanTicker(r.ticker));
-}
-
-
-/* ===================== SECTION: MARKET REGIME DECISION ENGINE ===================== */
-function latestMacroText(){
-  const rows = Array.isArray(state.auroraTimes) ? state.auroraTimes : [];
-  return rows
-    .filter(r => String(r.ticker || r.Ticker || '').toUpperCase().includes('MACRO') || String(r.category || r.Category || '').toLowerCase().includes('macro'))
-    .slice(-6)
-    .map(r => [r.headline, r.Headline, r.category, r.Category, r.summary, r.Summary, r.notes, r.Notes, r.sentiment, r.Sentiment].filter(Boolean).join(' '))
-    .join(' ')
-    .toLowerCase();
-}
-function inferMarketRegime(){
-  const manual = AURORA_MASTER_CACHE?.market_regime || AURORA_MASTER_CACHE?.MarketRegime || AURORA_MASTER_CACHE?.Market_Regime;
-  if(manual && typeof manual === 'object'){
-    return {
-      condition: manual.condition || 'normal',
-      rateEnvironment: manual.rate_environment || manual.rateEnvironment || 'unknown',
-      inflationPressure: manual.inflation_pressure || manual.inflationPressure || 'unknown',
-      buyMode: manual.buy_mode || manual.buyMode || 'balanced',
-      label: manual.label || manual.condition || 'Manual market regime',
-      explanation: manual.explanation || manual.notes || 'Using the market regime supplied by AuroraMaster.'
-    };
-  }
-
-  const text = latestMacroText();
-  const hasVolatility = /volatile|volatility|selloff|sell-off|panic|crash|sharp fall|risk-off|risk off/.test(text);
-  const hasRateHold = /rate.*hold|hold.*rate|unchanged|steady|kept.*rate|holds interest/.test(text);
-  const hasRateCut = /rate cut|cut rates|lower rates|rates falling|falling rates|easing/.test(text);
-  const hasRateHike = /rate hike|raise rates|higher rates|tightening/.test(text);
-  const inflationFalling = /inflation.*fall|falling.*inflation|below.*forecast|cooling inflation|inflation.*below/.test(text);
-  const recessionRisk = /recession|slowdown|weak growth|unemployment|consumer pressure/.test(text);
-
-  if(hasVolatility){
-    return {
-      condition:'volatile',
-      rateEnvironment: hasRateHold ? 'high_but_stable' : hasRateCut ? 'falling' : 'uncertain',
-      inflationPressure: inflationFalling ? 'falling' : 'uncertain',
-      buyMode:'cautious',
-      label:'Volatile market',
-      explanation:'Market stress detected, so Aurora favours quality, defensive income and stronger payout cover over raw yield.'
-    };
-  }
-  if(recessionRisk){
-    return {
-      condition:'recession_risk',
-      rateEnvironment: hasRateCut ? 'falling' : hasRateHold ? 'high_but_stable' : 'uncertain',
-      inflationPressure: inflationFalling ? 'falling' : 'uncertain',
-      buyMode:'defensive',
-      label:'Recession-risk market',
-      explanation:'Aurora should prioritise defensive income, balance-sheet quality and lower cyclicality.'
-    };
-  }
-  if(hasRateCut){
-    return {
-      condition:'falling_rates',
-      rateEnvironment:'falling',
-      inflationPressure: inflationFalling ? 'falling' : 'easing',
-      buyMode:'income_opportunity',
-      label:'Falling-rate income market',
-      explanation:'Rate cuts or easing signals favour selected REITs and infrastructure, but concentration still matters.'
-    };
-  }
-  if(hasRateHike){
-    return {
-      condition:'higher_rates',
-      rateEnvironment:'rising',
-      inflationPressure:'high',
-      buyMode:'strict',
-      label:'Higher-rate pressure market',
-      explanation:'Aurora should be stricter with debt-heavy REITs, weak cover and speculative recovery names.'
-    };
-  }
-  if(hasRateHold || inflationFalling){
-    return {
-      condition:'stable_rates',
-      rateEnvironment: hasRateHold ? 'high_but_stable' : 'stable',
-      inflationPressure: inflationFalling ? 'falling' : 'stable',
-      buyMode:'balanced',
-      label:'Stable-rate income market',
-      explanation:'Rates are not getting worse, so income buys are allowed, but Aurora should still avoid chasing yield blindly.'
-    };
-  }
-  return {
-    condition:'normal',
-    rateEnvironment:'unknown',
-    inflationPressure:'unknown',
-    buyMode:'balanced',
-    label:'Normal market',
-    explanation:'No strong macro warning detected. Aurora uses its normal blend of income, valuation, impact and squad fit.'
-  };
-}
-function sectorText(row){
-  return [row.sector, row.role, row.chemistry_role, row.chemistry_risk, row.squad_role, row.payout_risk, row.name, row.ticker]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase();
-}
-function marketFitScore(row, regime = inferMarketRegime()){
-  const t = shortTicker(row.ticker);
-  const s = sectorText(row);
-  const y = incomeRate(row);
-  const payoutRisk = String(row.payout_risk || '').toLowerCase();
-  let score = 70;
-
-  if(s.includes('defensive') || s.includes('consumer') || ['TSCO','ULVR','RKT'].includes(t)) score += 14;
-  if(s.includes('infrastructure') || s.includes('renewable') || ['FSFL','UKW','FGEN','TRIG'].includes(t)) score += 8;
-  if(s.includes('reit') || ['SUPR','PHP','RGL'].includes(t)) score += 2;
-  if(s.includes('credit') || s.includes('bdc') || t === 'ARCC') score -= 2;
-  if(payoutRisk.includes('very high')) score -= 14;
-  if(payoutRisk.includes('check')) score -= 5;
-  if(Number.isFinite(y) && y >= 0.10) score += 4;
-
-  if(regime.condition === 'volatile' || regime.condition === 'recession_risk'){
-    if(['TSCO','ULVR','RKT','PHP','SUPR','LGEN','SDLF'].includes(t)) score += 12;
-    if(['RGL','ARCC','TW'].includes(t)) score -= 14;
-    if(s.includes('defensive')) score += 8;
-    if(s.includes('high-yield') || s.includes('recovery')) score -= 8;
-  }
-  if(regime.condition === 'falling_rates'){
-    if(['SUPR','PHP','FSFL','UKW','FGEN','TRIG','RGL'].includes(t)) score += 12;
-    if(t === 'RGL') score -= 4;
-  }
-  if(regime.condition === 'higher_rates'){
-    if(['RGL','SUPR','PHP','FSFL','UKW','FGEN','TRIG'].includes(t)) score -= 8;
-    if(['TSCO','ULVR','RKT','LGEN','SDLF'].includes(t)) score += 8;
-  }
-  if(regime.condition === 'stable_rates' || regime.condition === 'normal'){
-    if(['FSFL','UKW','SUPR','PHP','LGEN','SDLF'].includes(t)) score += 6;
-    if(['RGL','ARCC'].includes(t)) score -= 2;
-  }
-
-  return Math.max(0, Math.min(100, Math.round(score)));
-}
-function marketPlanBias(key, regime){
-  if(regime.condition === 'volatile') return key === 'income' ? -10 : key === 'balanced' ? 10 : 6;
-  if(regime.condition === 'recession_risk') return key === 'income' ? -8 : key === 'balanced' ? 12 : 4;
-  if(regime.condition === 'falling_rates') return key === 'income' ? 8 : key === 'balanced' ? 4 : 2;
-  if(regime.condition === 'higher_rates') return key === 'income' ? -8 : key === 'balanced' ? 8 : 4;
-  return key === 'balanced' ? 3 : 0;
-}
-function marketRegimeSummary(){
-  const regime = inferMarketRegime();
-  return `${regime.label}: ${regime.explanation}`;
-}
-
-function buildRoutePlan(routeName,tickers,budget,weights){
-  const regime = inferMarketRegime();
-  const rows = tickers.map(t=>findSecurity(t)).filter(Boolean);
-  const usableWeights = rows.map((_,i)=>weights?.[i] ?? 1);
-  const totalWeight = usableWeights.reduce((s,w)=>s+w,0) || rows.length || 1;
-  const allocations = rows.map((r,i)=>{
-    const amount = budget * (usableWeights[i] / totalWeight);
-    const y = incomeRate(r);
-    const estIncome = annualIncomeForAmount(r, amount);
-    const imp = impact(r) || buyStrength(r) || 0;
-    const marketFit = marketFitScore(r, regime);
-    return {row:r,amount,estIncome,impact:imp,yield:y,platform:platformFor(r.ticker),marketFit};
-  });
-  const totalIncome = allocations.reduce((s,a)=>s+a.estIncome,0);
-  const avgImpact = allocations.length ? allocations.reduce((s,a)=>s+a.impact,0)/allocations.length : NaN;
-  const avgYield = budget > 0 ? totalIncome / budget : NaN;
-  const avgMarketFit = allocations.length ? allocations.reduce((s,a)=>s+a.marketFit,0)/allocations.length : NaN;
-  return {routeName,allocations,totalIncome,avgImpact,avgYield,avgMarketFit,budget,regime};
-}
-function buildOptimiserPlans(){
-  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
-  const incomeTickers = bestIncomeCandidates();
-  const upgradeTickers = bestUpgradeCandidates();
-  const balancedBase = UPGRADE_FOUR.map(t=>findSecurity(t)).filter(Boolean).length >= 4 ? UPGRADE_FOUR : upgradeTickers;
-  const incomeBase = incomeTickers.length >= 4 ? incomeTickers : INCOME_FOUR;
-  const upgradeBase = upgradeTickers.length >= 4 ? upgradeTickers : UPGRADE_FOUR;
-  const balanced = buildRoutePlan('Balanced Split', balancedBase, budget, [1,1,1,1]);
-  const income = buildRoutePlan('Best Income Return', incomeBase, budget, [4,3,2,1]);
-  const upgrade = buildRoutePlan('Best Squad Upgrade', upgradeBase, budget, [4,3,2,1]);
-  const regime = inferMarketRegime();
-  const plans = [
-    {...balanced,key:'balanced',score:balanced.totalIncome*1.1+(balanced.avgImpact||0)*0.60+(balanced.avgMarketFit||0)*0.45+marketPlanBias('balanced',regime),note:'Equal split. Safe, simple, diversified.'},
-    {...income,key:'income',score:income.totalIncome*1.8+(income.avgImpact||0)*0.40+(income.avgMarketFit||0)*0.35+marketPlanBias('income',regime),note:'Weighted toward the highest income return for the fee.'},
-    {...upgrade,key:'upgrade',score:upgrade.totalIncome*0.8+(upgrade.avgImpact||0)*0.80+(upgrade.avgMarketFit||0)*0.45+marketPlanBias('upgrade',regime),note:'Weighted toward highest promotion impact and squad quality.'}
-  ];
-  const recommended = [...plans].sort((a,b)=>b.score-a.score)[0] || plans[0];
-  return {budget,plans,recommended};
-}
-function getSelectedPlan(){
-  const {plans,recommended} = buildOptimiserPlans();
-  if(selectedTactic === 'recommended') return recommended;
-  return plans.find(p=>p.key === selectedTactic) || recommended;
-}
-
-/* ===================== SECTION: OPTIMISER-LED HEADLINE STRATEGY ===================== */
-function headlinePlanFromOptimiser(){
-  const {recommended} = buildOptimiserPlans();
-  return recommended;
-}
-function routeFromPlan(plan){
-  return (plan?.allocations || []).map(a=>cleanTicker(a.row.ticker)).filter(Boolean);
-}
-function optimiserStrategyText(plan){
-  if(!plan) return 'Waiting for optimiser data.';
-  const regimeLine = ` Market condition: ${marketRegimeSummary()}`;
-  if(plan.key === 'income') return 'The optimiser is prioritising income return for this transfer fee, but only after applying the market-regime filter.' + regimeLine;
-  if(plan.key === 'upgrade') return 'The optimiser is prioritising squad quality, promotion impact and market fit. Income is still considered, but the gaffer is backing the right players for the current pitch.' + regimeLine;
-  if(plan.key === 'balanced') return 'The optimiser is spreading the transfer fee across a balanced route because the market-regime filter prefers sensible diversification over chasing yield.' + regimeLine;
-  return 'The optimiser has selected the strongest tactical route from the live candidates.' + regimeLine;
-}
-
-
-/* ===================== SECTION: BUY PERMISSION GATE + CONCENTRATION DISCIPLINE ===================== */
-const MARKET_DISCIPLINE_LIMITS = {
-  reit_property: 0.30,
-  infrastructure_renewable: 0.32,
-  financials: 0.35,
-  high_yield_forward: 0.12,
-  single_holding: 0.22
-};
-function holdingValue(row){
-  const direct = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
-  if(Number.isFinite(direct) && direct > 0) return direct;
-  const shares = parseNum(row.shares);
-  const price = parseNum(row.live_price);
-  return Number.isFinite(shares) && Number.isFinite(price) ? shares * price : 0;
-}
-function sectorBucket(row){
-  const t = shortTicker(row.ticker);
-  const s = sectorText(row);
-  if(['RGL','SUPR','PHP','LMP'].includes(t) || s.includes('reit') || s.includes('property')) return 'reit_property';
-  if(['FSFL','UKW','FGEN','TRIG','GCP','SEQI'].includes(t) || s.includes('infrastructure') || s.includes('renewable') || s.includes('wind') || s.includes('solar')) return 'infrastructure_renewable';
-  if(['LGEN','MNG','SDLF','PHNX'].includes(t) || s.includes('financial')) return 'financials';
-  if(['TSCO','ULVR','RKT','SBRY'].includes(t) || s.includes('consumer') || s.includes('defensive')) return 'defensive_quality';
-  if(['VWRA','IITU'].includes(t) || s.includes('growth') || s.includes('etf')) return 'growth_academy';
-  if(['ARCC'].includes(t) || s.includes('bdc') || s.includes('credit')) return 'credit_income';
-  return 'general';
-}
-function isHighYieldForward(row){
-  const t = shortTicker(row.ticker);
-  const y = incomeRate(row);
-  const s = sectorText(row);
-  return ['RGL','ARCC'].includes(t) || s.includes('high-yield') || (Number.isFinite(y) && y >= 0.10);
-}
-function exposureSnapshot(extraAllocations = []){
-  const current = activeHoldingRows(state.holdings);
-  const totalBefore = current.reduce((s,r)=>s+holdingValue(r),0);
-  const extraTotal = extraAllocations.reduce((s,a)=>s+(a.amount || 0),0);
-  const totalAfter = totalBefore + extraTotal;
-  const buckets = {};
-  const tickers = {};
-  current.forEach(r=>{
-    const val = holdingValue(r);
-    const b = sectorBucket(r);
-    buckets[b] = (buckets[b] || 0) + val;
-    const t = cleanTicker(r.ticker);
-    if(t) tickers[t] = (tickers[t] || 0) + val;
-    if(isHighYieldForward(r)) buckets.high_yield_forward = (buckets.high_yield_forward || 0) + val;
-  });
-  extraAllocations.forEach(a=>{
-    const r = a.row;
-    const val = a.amount || 0;
-    const b = sectorBucket(r);
-    buckets[b] = (buckets[b] || 0) + val;
-    const t = cleanTicker(r.ticker);
-    if(t) tickers[t] = (tickers[t] || 0) + val;
-    if(isHighYieldForward(r)) buckets.high_yield_forward = (buckets.high_yield_forward || 0) + val;
-  });
-  return {totalBefore,totalAfter,buckets,tickers};
-}
-function pct(v){ return Number.isFinite(v) ? `${(v*100).toFixed(1)}%` : '—'; }
-function bucketLabel(bucket){
-  return ({
-    reit_property:'REIT/property',
-    infrastructure_renewable:'infrastructure/renewables',
-    financials:'financials',
-    defensive_quality:'defensive quality',
-    growth_academy:'growth academy',
-    credit_income:'credit income',
-    high_yield_forward:'high-yield forwards',
-    general:'general'
-  })[bucket] || bucket;
-}
-function permissionGateForAllocation(allocation, snapshot, regime){
-  const row = allocation.row;
-  const amount = allocation.amount || 0;
-  const bucket = sectorBucket(row);
-  const ticker = cleanTicker(row.ticker);
-  const reasons = [];
-  let status = 'pass';
-  const afterBucketShare = snapshot.totalAfter ? (snapshot.buckets[bucket] || 0) / snapshot.totalAfter : NaN;
-  const afterSingleShare = snapshot.totalAfter ? (snapshot.tickers[ticker] || 0) / snapshot.totalAfter : NaN;
-  const highYieldShare = snapshot.totalAfter ? (snapshot.buckets.high_yield_forward || 0) / snapshot.totalAfter : NaN;
-  const y = incomeRate(row);
-  const payoutRisk = String(row.payout_risk || '').toLowerCase();
-  const valuation = String(row.valuation_status || '').toLowerCase();
-  const t = shortTicker(row.ticker);
-
-  function caution(reason){ if(status !== 'block') status = 'caution'; reasons.push(reason); }
-  function block(reason){ status = 'block'; reasons.push(reason); }
-
-  const bucketLimit = MARKET_DISCIPLINE_LIMITS[bucket];
-  if(bucketLimit && Number.isFinite(afterBucketShare)){
-    if(afterBucketShare > bucketLimit + 0.05) block(`${bucketLabel(bucket)} exposure would move above ${pct(bucketLimit)}.`);
-    else if(afterBucketShare > bucketLimit) caution(`${bucketLabel(bucket)} exposure is near the ${pct(bucketLimit)} cap.`);
-  }
-  if(Number.isFinite(afterSingleShare) && afterSingleShare > MARKET_DISCIPLINE_LIMITS.single_holding) caution(`${displayTicker(row.ticker)} would be a large single holding.`);
-  if(Number.isFinite(highYieldShare) && isHighYieldForward(row)){
-    if(highYieldShare > MARKET_DISCIPLINE_LIMITS.high_yield_forward + 0.03) caution(`High-yield forward bucket is getting spicy at ${pct(highYieldShare)}.`);
-    else if(highYieldShare > MARKET_DISCIPLINE_LIMITS.high_yield_forward) caution(`High-yield forward bucket is near the ${pct(MARKET_DISCIPLINE_LIMITS.high_yield_forward)} cap.`);
-  }
-  if(payoutRisk.includes('very high')) block('Payout risk is very high. No full-size buy without override.');
-  else if(payoutRisk.includes('check')) caution('Payout/cashflow needs checking before adding size.');
-  if(Number.isFinite(y) && y >= 0.10 && !payoutRisk.includes('low')) caution('Yield is above 10%, so this is income-forward territory, not blind buying.');
-  if(valuation.includes('overvalued')) caution('Valuation is not giving a clean discount.');
-  if((regime.condition === 'volatile' || regime.condition === 'recession_risk') && ['RGL','ARCC','TW'].includes(t)) caution('Current regime prefers caution on riskier income/cyclical names.');
-  if(regime.condition === 'higher_rates' && ['RGL','SUPR','PHP','FSFL','UKW','FGEN','TRIG'].includes(t)) caution('Higher-rate pressure can weigh on REITs/infrastructure.');
-  if(amount <= 0) block('No transfer fee allocated.');
-  if(!reasons.length) reasons.push('Passes market fit, valuation and concentration gate.');
-  return {status,reasons,bucket,afterBucketShare,afterSingleShare};
-}
-function planDiscipline(plan){
-  const regime = plan?.regime || inferMarketRegime();
-  const snapshot = exposureSnapshot(plan?.allocations || []);
-  const gates = (plan?.allocations || []).map(a=>({allocation:a,gate:permissionGateForAllocation(a,snapshot,regime)}));
-  const blockCount = gates.filter(g=>g.gate.status === 'block').length;
-  const cautionCount = gates.filter(g=>g.gate.status === 'caution').length;
-  let confidence = 'High';
-  if(blockCount) confidence = 'Low';
-  else if(cautionCount >= 2 || (plan?.avgMarketFit || 0) < 70) confidence = 'Medium';
-  const gateStatus = blockCount ? 'Blocked' : cautionCount ? 'Caution' : 'Pass';
-  return {regime,snapshot,gates,blockCount,cautionCount,confidence,gateStatus};
-}
-function noBuyReasonsForPlan(plan, discipline){
-  const selectedTickers = new Set((plan?.allocations || []).map(a=>cleanTicker(a.row.ticker)));
-  const candidates = targetRows().filter(r=>!selectedTickers.has(cleanTicker(r.ticker))).slice(0,4);
-  const snapshot = exposureSnapshot(plan?.allocations || []);
-  const regime = discipline?.regime || inferMarketRegime();
-  return candidates.map(r=>{
-    const dummy = {row:r, amount: Math.max(25, (plan?.budget || 500) / 4)};
-    const gate = permissionGateForAllocation(dummy, snapshot, regime);
-    let reason = gate.reasons[0] || 'Not selected by the optimiser route.';
-    if(gate.status === 'pass') reason = `Not selected today; ${bucketLabel(sectorBucket(r))} fit is okay, but route score was stronger elsewhere.`;
-    return {row:r, status:gate.status, reason};
-  });
-}
-function renderDecisionDiscipline(plan){
-  const panel = $('decisionDisciplinePanel');
-  if(!panel) return;
-  const discipline = planDiscipline(plan);
-  const regime = discipline.regime;
-  const confidenceBadge = $('decisionConfidenceBadge');
-  const gateClass = discipline.gateStatus === 'Pass' ? 'green' : discipline.gateStatus === 'Caution' ? 'amber' : 'red';
-  if(confidenceBadge){
-    confidenceBadge.className = `badge ${gateClass}`;
-    confidenceBadge.textContent = `${discipline.confidence} confidence`;
-  }
-  if($('decisionMarketMood')) $('decisionMarketMood').textContent = regime.label || 'Normal market';
-  if($('decisionMarketNote')) $('decisionMarketNote').textContent = regime.explanation || 'Using normal market rules.';
-  if($('decisionGateStatus')) $('decisionGateStatus').textContent = discipline.gateStatus;
-  if($('decisionGateNote')) $('decisionGateNote').textContent = discipline.gateStatus === 'Pass'
-    ? 'All proposed buys pass the permission gate.'
-    : discipline.gateStatus === 'Caution'
-      ? 'One or more buys are allowed only with controlled sizing.'
-      : 'One or more buys should not go through without manager override.';
-  const watchedBuckets = ['reit_property','infrastructure_renewable','financials','high_yield_forward'];
-  const topBucket = watchedBuckets.map(b=>({b,share:discipline.snapshot.totalAfter ? (discipline.snapshot.buckets[b]||0)/discipline.snapshot.totalAfter : NaN})).sort((a,b)=>(b.share||0)-(a.share||0))[0];
-  if($('decisionConcentration')) $('decisionConcentration').textContent = topBucket ? `${bucketLabel(topBucket.b)} ${pct(topBucket.share)}` : '—';
-  if($('decisionConcentrationNote')) $('decisionConcentrationNote').textContent = topBucket ? `Current biggest watched bucket after this route. Cap rules are applied before final recommendation.` : 'No concentration data available.';
-  const gateList = $('decisionGateList');
-  if(gateList){
-    gateList.innerHTML = discipline.gates.length ? discipline.gates.map(({allocation,gate})=>`<div class="decision-row">
-      <div><strong>${displayTicker(allocation.row.ticker)} — ${displayName(allocation.row)}</strong><span>${gate.reasons.slice(0,2).join(' ')}</span></div>
-      <div class="decision-tag ${gate.status}">${gate.status === 'pass' ? 'Pass' : gate.status === 'caution' ? 'Caution' : 'Block'}</div>
-    </div>`).join('') : '<div class="loading">No proposed buys to gate-check.</div>';
-  }
-  const rejectList = $('decisionRejectedList');
-  if(rejectList){
-    const rejected = noBuyReasonsForPlan(plan, discipline);
-    rejectList.innerHTML = rejected.length ? rejected.map(item=>`<div class="decision-row">
-      <div><strong>Not picked: ${displayTicker(item.row.ticker)} — ${displayName(item.row)}</strong><span>${item.reason}</span></div>
-      <div class="decision-tag ${item.status === 'block' ? 'block' : item.status === 'caution' ? 'caution' : 'pass'}">Watch</div>
-    </div>`).join('') : '<div class="loading">No rejected candidates to explain.</div>';
-  }
-}
-
-
-
-/* ===================== SECTION: FINAL DISCIPLINED DEAL SHEET LOGIC ===================== */
-function finalDecisionForPlan(plan){
-  const discipline = planDiscipline(plan);
-  const budget = Math.max(0, plan?.budget || parseNum($('transferBudgetInput')?.value) || 500);
-  const passGates = discipline.gates.filter(item => item.gate.status === 'pass');
-  const cautionGates = discipline.gates.filter(item => item.gate.status === 'caution');
-  const blockGates = discipline.gates.filter(item => item.gate.status === 'block');
-  let badge = 'Clean buy';
-  let badgeClass = 'green';
-  let action = 'Split between clean passes';
-  let reason = 'Only the names that passed the discipline gate are used for the final purchase list.';
-  let buys = [];
-  let holdback = 0;
-
-  if(passGates.length){
-    const splitAmount = budget / passGates.length;
-    buys = passGates.map(item => ({
-      row:item.allocation.row,
-      amount:splitAmount,
-      sourceStatus:'Clean pass',
-      sourceNote:'Passed market fit, valuation and concentration checks.'
-    }));
-    action = passGates.length === 1
-      ? `Buy ${displayTicker(passGates[0].allocation.row.ticker)} only`
-      : `Split ${money(budget)} between ${passGates.length} clean passes`;
-    reason = `${passGates.length} candidate${passGates.length === 1 ? '' : 's'} passed the final gate. Caution names stay controlled/watch unless the manager manually overrides.`;
-  }else if(cautionGates.length && !blockGates.length){
-    badge = 'Controlled buy';
-    badgeClass = 'amber';
-    const controlledAmount = Math.min(125, budget / cautionGates.length);
-    buys = cautionGates.map(item => ({
-      row:item.allocation.row,
-      amount:controlledAmount,
-      sourceStatus:'Controlled buy',
-      sourceNote:item.gate.reasons[0] || 'Allowed only with controlled sizing.'
-    }));
-    const deployed = buys.reduce((sum,item)=>sum + item.amount,0);
-    holdback = Math.max(0, budget - deployed);
-    action = `Controlled sizing only`;
-    reason = 'No clean passes found. Aurora allows small controlled buys only instead of forcing the whole budget into riskier names.';
-  }else{
-    badge = 'No buy';
-    badgeClass = 'red';
-    holdback = budget;
-    action = 'Hold cash / no automatic buy';
-    reason = blockGates.length ? 'At least one candidate was blocked by the final gate, so the deal sheet needs manual override.' : 'No eligible candidates passed the final gate.';
-  }
-
-  return {discipline,badge,badgeClass,action,reason,buys,holdback,budget};
-}
-function renderFinalDecision(plan){
-  const panel = $('finalDecisionPanel');
-  if(!panel) return;
-  const decision = finalDecisionForPlan(plan);
-  const badge = $('finalDecisionBadge');
-  if(badge){
-    badge.className = `badge ${decision.badgeClass}`;
-    badge.textContent = decision.badge;
-  }
-  if($('finalDecisionAction')) $('finalDecisionAction').textContent = decision.action;
-  if($('finalDecisionReason')) $('finalDecisionReason').textContent = decision.reason;
-  const slip = $('finalDecisionSlip');
-  if(slip){
-    slip.innerHTML = decision.buys.length ? decision.buys.map(item => {
-      const estimatedIncome = annualIncomeForAmount(item.row, item.amount);
-      return `<div class="final-decision-row">
-        <div><strong>${displayTicker(item.row.ticker)} — ${displayName(item.row)}</strong><span>${item.sourceStatus} • ${platformFor(item.row.ticker)} • ${item.sourceNote}</span></div>
-        <div class="final-decision-amount"><strong>${money(item.amount)}</strong><span>${money(estimatedIncome)}/yr est.</span></div>
-      </div>`;
-    }).join('') : '<div class="loading">No final buy list approved.</div>';
-  }
-  if($('finalDecisionHoldback')){
-    $('finalDecisionHoldback').textContent = decision.holdback > 0
-      ? `Holdback: ${money(decision.holdback)} stays unspent until a cleaner pass appears or the manager overrides the gate.`
-      : 'No holdback required. The full transfer fee is assigned to clean-pass candidates.';
-  }
-}
-
-function renderOptimiser(){
-  const {plans,recommended} = buildOptimiserPlans();
-  const selected = getSelectedPlan();
-  if($('optimiserRouteName')) $('optimiserRouteName').textContent = selected.routeName;
-  if($('optimiserIncome')) $('optimiserIncome').textContent = `${money(selected.totalIncome)}/yr`;
-  if($('optimiserImpact')) $('optimiserImpact').textContent = Number.isFinite(selected.avgImpact) ? `${Math.round(selected.avgImpact)}/100` : '—';
-  if($('optimiserVerdictShort')) $('optimiserVerdictShort').textContent = selected.key === recommended.key ? 'Recommended' : 'Manual';
-  const options = $('optimiserOptions');
-  if(options){
-    options.innerHTML = plans.map(plan=>`<button class="optimiser-option ${plan.key===selected.key?'active':''}" data-tactic="${plan.key}">
-      <strong>${plan.routeName}</strong><span>${plan.note}</span><b>${money(plan.totalIncome)}/yr • ${Number.isFinite(plan.avgImpact)?Math.round(plan.avgImpact)+'/100 impact':'impact —'}</b>
-    </button>`).join('');
-    options.querySelectorAll('[data-tactic]').forEach(btn=>btn.addEventListener('click',()=>{selectedTactic=btn.dataset.tactic;if($('transferTacticSelect')) $('transferTacticSelect').value=selectedTactic;renderOptimiser();}));
-  }
-  const slip = $('transferSlip');
-  if(slip){
-    slip.innerHTML = selected.allocations.length ? selected.allocations.map(a=>`<div class="optimiser-slip-row">
-      <div><strong>${displayTicker(a.row.ticker)} — ${displayName(a.row)}</strong><span>${a.platform} • ${Number.isFinite(a.yield)?(a.yield*100).toFixed(2)+'% income rate':'income unknown'} • impact ${num(a.impact)} • market fit ${num(a.marketFit)}</span></div>
-      <div class="optimiser-amount"><strong>${money(a.amount)}</strong><span>${money(a.estIncome)}/yr est.</span></div>
-    </div>`).join('') : '<div class="loading">No transfer route selected.</div>';
-  }
-  if($('optimiserVerdict')){
-    const monthly = selected.totalIncome / 12;
-    const top = selected.allocations[0];
-    $('optimiserVerdict').textContent = top ? `Recommended call: ${selected.routeName}. Lead signing is ${displayTicker(top.row.ticker)} at ${money(top.amount)}. Estimated return from this ${money(selected.budget)} transfer fee is ${money(selected.totalIncome)} yearly, around ${money(monthly)} monthly. Market filter: ${marketRegimeSummary()}` : 'No available candidates found for this transfer slip.';
-  }
-  renderDecisionDiscipline(selected);
-  renderFinalDecision(selected);
-}
-
-
-function renderTransferWindowStatus(targets, preferred){
-  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
-  const top = targets?.[0] || null;
-  const dealsReady = (targets || []).filter(r => (impact(r) || buyStrength(r) || 0) >= 70).length;
-  const topScore = top ? (impact(top) || buyStrength(top) || 0) : 0;
-  const confidence = topScore >= 85 && dealsReady >= 4 ? 'High' : topScore >= 70 && dealsReady >= 3 ? 'Good' : 'Building';
-
-  if($('windowBudget')) $('windowBudget').textContent = money(budget);
-  if($('windowTactic')) $('windowTactic').textContent = preferred || '—';
-  if($('windowTopTarget')) $('windowTopTarget').textContent = top ? displayTicker(top.ticker) : '—';
-  if($('windowDealsReady')) $('windowDealsReady').textContent = `${dealsReady}`;
-  if($('windowConfidence')) $('windowConfidence').textContent = confidence;
-}
-
-
-
-const PAYDAY_BASE_ISO = "2026-06-19T00:00:00+01:00";
-const PAYDAY_CYCLE_DAYS = 28;
-
-function nextPaydayDate(){
-  const base = new Date(PAYDAY_BASE_ISO);
-  const now = new Date();
-  const cycleMs = PAYDAY_CYCLE_DAYS * 24 * 60 * 60 * 1000;
-  if(now <= base) return base;
-  const cycles = Math.ceil((now - base) / cycleMs);
-  return new Date(base.getTime() + cycles * cycleMs);
-}
-function renderDeadlineWire(deadline, diffMs){
-  const wire = $('deadlineWire');
-  if(!wire) return;
-  const targets = targetRows();
-  const top = targets[0];
-  const topText = top ? `${displayTicker(top.ticker)} leads the window` : 'Top target loading';
-  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
-  const days = Math.max(0, Math.floor(diffMs / (24*60*60*1000)));
-  const deadlineText = deadline.toLocaleDateString('en-GB', { weekday:'short', day:'2-digit', month:'short' });
-
-  const content = `
-    <div class="deadline-wire-content">
-      <span><span class="deadline-wire-dot"></span><b>DEADLINE DAY</b> ${deadlineText}</span>
-      <span><span class="deadline-wire-dot"></span><b>TOP TRANSFER</b> ${topText}</span>
-      <span><span class="deadline-wire-dot"></span><b>DEAL SHEET</b> ${money(budget)} budget waiting for approval</span>
-      <span><span class="deadline-wire-dot"></span><b>REGISTRATION DESK</b> Platform paperwork active</span>
-      <span><span class="deadline-wire-dot"></span><b>WINDOW STATUS</b> ${days <= 1 ? 'Final checks in progress' : 'Scouting room open'}</span>
-      <span><span class="deadline-wire-dot"></span><b>SCOUT ROOM</b> Top three reports under review</span>
-      <span><span class="deadline-wire-dot"></span><b>BOARDROOM</b> Budget release pending payday</span>
-      <span><span class="deadline-wire-dot"></span><b>MANAGER INSTRUCTION</b> Run optimiser before submitting deal sheet</span>
-    </div>`;
-  wire.innerHTML = content + content.replace('<div class="deadline-wire-content">','<div class="deadline-wire-content" aria-hidden="true">');
-}
-
-function updateDeadlineCommandBrief(){
-  const targets = targetRows();
-  const top = targets[0] || null;
-  const preferred = $('managerVerdict')?.textContent || '—';
-  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 500);
-  const topPlatform = top ? platformFor(top.ticker) : '—';
-  const registration = top ? (topPlatform.includes('Check') ? 'Check platform first' : 'Cleared to register') : 'Awaiting scout data';
-
-  if($('briefCurrentPlan')) $('briefCurrentPlan').textContent = preferred;
-  if($('briefLeadSigning')) $('briefLeadSigning').textContent = top ? displayTicker(top.ticker) : '—';
-  if($('briefBudget')) $('briefBudget').textContent = money(budget);
-  if($('briefRegistration')) $('briefRegistration').textContent = registration;
-
-  if($('briefInstruction')){
-    const lead = top ? displayTicker(top.ticker) : 'the lead target';
-    const platformLine = top ? `${lead} route: ${topPlatform}. ` : '';
-    $('briefInstruction').textContent = `${platformLine}Final instruction: check the Registration Desk, confirm the optimiser route, then submit the payday deal sheet before the deadline clock hits zero.`;
-  }
-}
-
-function updateDeadlineCountdown(){
-  const deadline = nextPaydayDate();
-  const now = new Date();
-  const diffMs = Math.max(0, deadline - now);
-  const dayMs = 24*60*60*1000;
-  const hourMs = 60*60*1000;
-  const minMs = 60*1000;
-
-  const days = Math.floor(diffMs / dayMs);
-  const hours = Math.floor((diffMs % dayMs) / hourMs);
-  const mins = Math.floor((diffMs % hourMs) / minMs);
-  const secs = Math.floor((diffMs % minMs) / 1000);
-
-  if($('deadlineDays')) $('deadlineDays').textContent = String(days);
-  if($('deadlineHours')) $('deadlineHours').textContent = String(hours).padStart(2,'0');
-  if($('deadlineMinutes')) $('deadlineMinutes').textContent = String(mins).padStart(2,'0');
-  if($('deadlineSeconds')) $('deadlineSeconds').textContent = String(secs).padStart(2,'0');
-
-  const deadlineLabel = deadline.toLocaleDateString('en-GB', { weekday:'long', day:'2-digit', month:'long' });
-  if($('deadlineStatus')) $('deadlineStatus').textContent = days <= 1 ? 'Final day' : 'Live clock';
-  if($('deadlineNote')) $('deadlineNote').textContent = `Transfer window closes on payday: ${deadlineLabel}. Use the Registration Desk and Transfer Budget Optimiser before the deal sheet goes in.`;
-
-  renderDeadlineWire(deadline, diffMs);
-  updateDeadlineCommandBrief();
-}
-
-function registrationStatus(row){
-  const p = platformFor(row.ticker);
-  if(p.includes('Check')) return 'Paperwork check';
-  return 'Cleared to register';
-}
-function registrationReason(row){
-  const t = shortTicker(row.ticker);
-  const p = platformFor(row.ticker);
-  const imp = impact(row) || buyStrength(row) || 0;
-  const y = incomeRate(row);
-  const incomeText = Number.isFinite(y) ? `${(y*100).toFixed(2)}% income profile` : 'income profile still being checked';
-
-  if(p.includes('Check')){
-    return `${displayTicker(row.ticker)} has a strong scout case with impact ${num(imp)} and ${incomeText}, but the desk should confirm platform availability before the fee is committed.`;
-  }
-  if(p.includes('IG')){
-    return `${displayTicker(row.ticker)} is suited to the IG ISA route. Good for main-squad registration where quality, control and long-term holding discipline matter.`;
-  }
-  if(p.includes('Trade212')){
-    return `${displayTicker(row.ticker)} fits the Trade212 route. Useful for tactical income deployment and keeping the transfer fee flexible.`;
-  }
-  return `${displayTicker(row.ticker)} needs a platform check before registration is approved.`;
-}
-function registrationTags(row){
-  const p = platformFor(row.ticker);
-  const tags = [];
-  if(p.includes('Check')) tags.push('Check before signing');
-  else tags.push('Ready for paperwork');
-  tags.push(p);
-  const imp = impact(row) || buyStrength(row) || 0;
-  if(imp >= 85) tags.push('Priority file');
-  else if(imp >= 70) tags.push('Squad option');
-  else tags.push('Monitor');
-  return tags;
-}
-function renderRegistrationPanel(row, i){
-  const y = incomeRate(row);
-  const fee = DEPLOYMENT_PER_PLAYER;
-  const estIncome = annualIncomeForAmount(row, fee);
-  return `<div class="registration-panel" id="registrationPanel${i}">
-    <div class="registration-panel-grid">
-      <div class="registration-stat"><small>Registration Status</small><strong>${registrationStatus(row)}</strong></div>
-      <div class="registration-stat"><small>Platform Licence</small><strong>${platformFor(row.ticker)}</strong></div>
-      <div class="registration-stat"><small>£125 Est. Income</small><strong>${money(estIncome)}/yr</strong></div>
-    </div>
-    <div class="registration-note">${registrationReason(row)}</div>
-    <div class="registration-action">${registrationTags(row).map(tag=>`<span>${tag}</span>`).join('')}</div>
-  </div>`;
-}
-function toggleRegistrationPanel(i){
-  const panel = $(`registrationPanel${i}`);
-  if(!panel) return;
-  const isOpen = panel.classList.contains('open');
-  document.querySelectorAll('.registration-panel.open').forEach(el=>el.classList.remove('open'));
-  if(!isOpen) panel.classList.add('open');
-}
-
-function renderPlatformList(route){
-  const rows = route.map(t=>findSecurity(t)).filter(Boolean);
-  $('platformList').innerHTML = rows.length ? rows.map((r,i)=>`
-    <div class="platform-row registration-row" role="button" tabindex="0" onclick="toggleRegistrationPanel(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleRegistrationPanel(${i});}">
-      <div class="rank-badge">${i+1}</div>
-      <div><strong>${displayTicker(r.ticker)}</strong><span>${displayName(r)}</span></div>
-      <div class="score-pill">${platformFor(r.ticker)}</div>
-    </div>
-    ${renderRegistrationPanel(r,i)}`).join('') : '<div class="loading">No platform data found.</div>';
-}
-
-function renderTransferSlip(route){
-  renderOptimiser();
-}
-function renderAll(){
-  if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
-
-  const targets = targetRows();
-  const top = targets[0];
-
-  if(top){
-    $('topTargetTicker').textContent = displayTicker(top.ticker);
-    $('topTargetName').textContent = displayName(top);
-    $('topTargetImpact').textContent = num(impact(top) || buyStrength(top));
-  }
-
-  const optimiserPlan = headlinePlanFromOptimiser();
-  const preferred = optimiserPlan?.routeName || 'Optimiser Route';
-  const route = routeFromPlan(optimiserPlan);
-
-  $('bestRoute').textContent = preferred;
-  $('bestRouteNote').textContent = optimiserPlan
-    ? `${money(optimiserPlan.totalIncome)} est. annual income • ${Number.isFinite(optimiserPlan.avgImpact) ? Math.round(optimiserPlan.avgImpact) + '/100 avg impact' : 'impact —'}`
-    : 'Optimiser route loading';
-  $('readiness').textContent = route.length >= 4 ? 'Ready' : 'Scout';
-
-  $('managerVerdict').textContent = preferred;
-  $('managerVerdictText').textContent = optimiserStrategyText(optimiserPlan);
-
-  if($('incomeRouteBtn')) $('incomeRouteBtn').textContent = optimiserPlan?.key === 'income' ? 'Optimiser Pick: Income' : 'Income Route';
-  if($('upgradeRouteBtn')) $('upgradeRouteBtn').textContent = optimiserPlan?.key === 'upgrade' ? 'Optimiser Pick: Upgrade' : 'Upgrade Route';
-  $('incomeRouteBtn')?.classList.toggle('active', optimiserPlan?.key === 'income' || optimiserPlan?.key === 'balanced');
-  $('upgradeRouteBtn')?.classList.toggle('active', optimiserPlan?.key === 'upgrade');
-
-  renderTransferTicker(targets, preferred, route);
-  renderTargetList(targets);
-  renderCandidateReports(targets);
-  renderScoutReport(top);
-  renderPlatformList(route);
-  renderTransferSlip(route);
-  updateDeadlineCountdown();
-}
-$('refreshBtn')?.addEventListener('click', loadData);
-$('transferBudgetInput')?.addEventListener('input', ()=>{ renderOptimiser(); const targets = targetRows(); const plan = headlinePlanFromOptimiser(); const preferred = plan?.routeName || $('managerVerdict')?.textContent || '—'; const route = routeFromPlan(plan); renderTransferTicker(targets, preferred, route); renderPlatformList(route); updateDeadlineCountdown(); });
-$('transferTacticSelect')?.addEventListener('change', e=>{
-  selectedTactic = e.target.value;
-  renderOptimiser();
-  const targets = targetRows();
-  const plan = headlinePlanFromOptimiser();
-  const preferred = plan?.routeName || $('managerVerdict')?.textContent || '—';
-  const route = routeFromPlan(plan);
-  renderTransferTicker(targets, preferred, route);
-  renderPlatformList(route);
+$('refreshBtn')?.addEventListener('click', () => {
+  AURORA_MASTER_CACHE = null;
+  loadData();
 });
-
-setInterval(updateDeadlineCountdown, 1000);
+$('transferBudgetInput')?.addEventListener('input', renderAll);
 loadData();
 </script>
 </body>
