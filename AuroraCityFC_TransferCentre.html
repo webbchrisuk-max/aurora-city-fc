@@ -2995,6 +2995,17 @@ const PLATFORM_RULES = {
   "FSFL":"Trade212","UKW":"IG ISA","ARCC":"IG ISA","TRIG":"Trade212","RGL":"Trade212 / Check","GCP":"Trade212","PHP":"Trade212","FGEN":"Trade212","SEQI":"Trade212","TW":"Trade212"
 };
 
+const PLAYER_PORTRAITS = {
+  RGL: 'assets/aurora-city-fc/players/rgl_player.png',
+  RKT: 'assets/aurora-city-fc/players/rkt_player.png',
+  ULVR: 'assets/aurora-city-fc/players/ulvr_player.png',
+  TRIG: 'assets/aurora-city-fc/players/trig_player.png',
+  GCP: 'assets/aurora-city-fc/players/gcp_player.png',
+  SBRY: 'assets/aurora-city-fc/players/sbry_player.png',
+  OMP: 'assets/aurora-city-fc/players/omp_player.png',
+  IMB: 'assets/aurora-city-fc/players/imb_player.png'
+};
+
 const SECTOR_LIMITS = {
   reit_property: 0.30,
   infrastructure_renewable: 0.34,
@@ -3101,6 +3112,9 @@ function valuationBonus(row){
 }
 function platformFor(ticker){
   return PLATFORM_RULES[shortTicker(ticker)] || 'Check platform';
+}
+function portraitFor(ticker){
+  return PLAYER_PORTRAITS[shortTicker(ticker)] || '';
 }
 function uniqueByTicker(rows){
   const map = new Map();
@@ -3373,7 +3387,7 @@ function visualStoryFor(item){
   if(item.selected) return `Approved for the final deal sheet with ${Number.isFinite(y) ? (y*100).toFixed(2)+'% estimated income rate' : 'a live income rate'} and ${money(item.income)} a year from the planned buy.`;
   return reasons[0] || 'High on the shortlist, but just outside the final deal sheet for this budget.';
 }
-function playerPhotoDataUri(row){
+function silhouettePhotoDataUri(row){
   const ticker = displayTicker(row.ticker);
   const theme = visualThemeFor(row);
   const p = themePalette(theme);
@@ -3392,10 +3406,6 @@ function playerPhotoDataUri(row){
       <linearGradient id="jersey" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="${p.c}"/>
         <stop offset="100%" stop-color="${p.d}"/>
-      </linearGradient>
-      <linearGradient id="strip" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="rgba(255,255,255,0.24)"/>
-        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
       </linearGradient>
     </defs>
     <rect width="360" height="440" rx="26" fill="url(#bg)"/>
@@ -3420,6 +3430,11 @@ function playerPhotoDataUri(row){
     <text x="24" y="34" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="${p.accent}">${strap}</text>
   </svg>`;
   return `url("data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}")`;
+}
+function playerPhotoDataUri(row){
+  const portrait = portraitFor(row.ticker);
+  if(portrait) return `url("${portrait}")`;
+  return silhouettePhotoDataUri(row);
 }
 function buildTopTransferVisuals(deal){
   const visual = [];
