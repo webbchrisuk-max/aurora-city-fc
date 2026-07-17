@@ -2222,8 +2222,28 @@ function uniqueByTicker(rows){
   });
   return [...map.values()];
 }
+function isActiveHolding(row){
+  const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
+  const currentValue = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  const status = String(row.status ?? row.Status ?? '').trim().toLowerCase();
+  const role = String(row.role ?? row.Role ?? '').trim().toLowerCase();
+  const exited = status.includes('sold') || status.includes('exited') || role.includes('exited');
+  return !exited && ((Number.isFinite(shares) && shares > 0) || (Number.isFinite(currentValue) && currentValue > 0));
+}
+function activeHoldingRows(rows){
+  return (rows || []).filter(isActiveHolding);
+}
 function annualIncomeFromRow(row){
-  const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
+  const direct = parseNum(
+    row.annual_dps_total ??
+    row.Annual_DPS_Total ??
+    row["Annual DPS Total"] ??
+    row.annual_income ??
+    row.income_annual ??
+    row.dividend_income ??
+    row.AnnualIncome ??
+    row["Annual Income"]
+  );
   if(Number.isFinite(direct)) return direct;
   const value = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
   const y = parseYield(row);
@@ -2234,7 +2254,7 @@ function annualIncomeFromRow(row){
   return 0;
 }
 function portfolioAnnualIncome(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
+  return activeHoldingRows(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
 }
 function squadScore(row){
   const bs = buyStrength(row);
@@ -2575,7 +2595,7 @@ function renderChemistry(rows){
   const bench = sorted.slice(11,16);
   const concentration = rows.filter(r=>String(`${r.chemistry_risk||''} ${r.sector||''} ${r.role||''}`).toLowerCase().includes('concentration')).length;
   const leadership = starters.length ? starters.reduce((s,r)=>s+squadScore(r),0)/starters.length : avg;
-  const incomeTotal = rows.reduce((s,r)=>s+annualIncomeFromRow(r),0);
+  const incomeTotal = portfolioAnnualIncome();
   const incomeBalance = incomeTotal >= 6000 ? 'Strong' : incomeTotal >= 3000 ? 'Building' : 'Early Stage';
   const sectors = {};
   rows.forEach(r=>{
@@ -2797,7 +2817,8 @@ function renderSquadDevelopment(rows, annualIncome){
 function renderAll(){
   if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
 
-  const rows = uniqueByTicker(state.holdings).sort((a,b)=>squadScore(b)-squadScore(a));
+  const activeRows = activeHoldingRows(state.holdings);
+  const rows = uniqueByTicker(activeRows).sort((a,b)=>squadScore(b)-squadScore(a));
   const annualIncome = portfolioAnnualIncome();
   const monthly = annualIncome / 12;
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
