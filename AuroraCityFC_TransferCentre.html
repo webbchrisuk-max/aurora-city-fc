@@ -3020,13 +3020,26 @@ const PLAYER_PORTRAITS = {
   BTRW: PLAYER_BASE + 'btrw_player.png'
 };
 const PLAYER_PORTRAIT_POSITIONS = {
-  TRIG: '50% 28%',
-  GCP: '50% 24%',
+  TRIG: '50% 10%',
+  GCP: '50% 10%',
   LMP: '50% 8%',
   OSB: '50% 8%',
   ARCC: '50% 12%',
   OMP: '50% 12%',
   BTRW: '50% 10%'
+};
+const PLAYER_PORTRAIT_SCALES = {
+  TRIG: 1.08,
+  GCP: 1.08,
+  LMP: 1,
+  OSB: 1,
+  ARCC: 0.94,
+  OMP: 0.94,
+  BTRW: 0.94
+};
+const PLAYER_PORTRAIT_FITS = {
+  TRIG: 'cover',
+  GCP: 'cover'
 };
 const DIVIDEND_DPS_OVERRIDES = {
   RKT: 2.122,
@@ -3150,6 +3163,12 @@ function portraitFor(ticker){
 }
 function portraitPositionFor(ticker){
   return PLAYER_PORTRAIT_POSITIONS[shortTicker(ticker)] || '50% 24%';
+}
+function portraitScaleFor(ticker){
+  return PLAYER_PORTRAIT_SCALES[shortTicker(ticker)] || 1;
+}
+function portraitFitFor(ticker){
+  return PLAYER_PORTRAIT_FITS[shortTicker(ticker)] || 'cover';
 }
 function uniqueByTicker(rows){
   const map = new Map();
@@ -3536,8 +3555,8 @@ function renderTopTransferBoard(deal){
         <div class="transfer-rank-chip">#${idx+1}</div>
         <div class="transfer-approval-chip ${approvalClass}">${approvalText}</div>
         <div class="deal-ribbon ${ribbonClass}">${ribbonText}</div>
-        <div class="player-photo" style="background-image:${silhouettePhotoDataUri(row)};">
-          <img class="player-img" src="${playerPhotoSrc(row)}" alt="${ticker} player photo" style="object-position:${portraitPositionFor(row.ticker)};" onerror="this.onerror=null;this.src='${silhouettePhotoSrc(row)}';">
+        <div class="player-photo" style="background-image:${playerPhotoDataUri(row)};">
+          <img class="player-img" src="${playerPhotoSrc(row)}" alt="${ticker} player photo" style="object-fit:${portraitFitFor(row.ticker)};object-position:${portraitPositionFor(row.ticker)};transform:scale(${portraitScaleFor(row.ticker)});transform-origin:center top;" onerror="this.onerror=null;this.src='${silhouettePhotoSrc(row)}';">
           <div class="player-photo-overlay"><strong>${ticker}</strong><span>${visualStrapFor(row)}</span></div>
         </div>
       </div>
