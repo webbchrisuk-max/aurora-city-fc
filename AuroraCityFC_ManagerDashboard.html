@@ -1490,7 +1490,19 @@ function findSecurity(ticker){
   const t = cleanTicker(ticker);
   return state.holdings.find(r=>cleanTicker(r.ticker)===t) || state.watchlist.find(r=>cleanTicker(r.ticker)===t) || state.scout.find(r=>cleanTicker(r.ticker)===t) || null;
 }
+function activeHoldingRows(rows){
+  return (rows || []).filter(row=>{
+    const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
+    const status = String(row.status ?? row.Status ?? '').toUpperCase();
+    const role = String(row.role ?? row.Role ?? '').toUpperCase();
+    return Number.isFinite(shares) && shares > 0 && !status.includes('SOLD') && !role.includes('EXITED');
+  });
+}
 function annualIncomeFromRow(row){
+  // Prefer the sheet's already-calculated annual_dps_total.
+  // This avoids ticker de-dupe bugs and keeps dual-account holdings like PHP counted twice.
+  const sheetTotal = parseNum(row.annual_dps_total ?? row.Annual_DPS_Total ?? row["annual_dps_total"] ?? row["Annual DPS Total"]);
+  if(Number.isFinite(sheetTotal)) return sheetTotal;
   const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
   if(Number.isFinite(direct)) return direct;
   const value = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
@@ -1502,10 +1514,10 @@ function annualIncomeFromRow(row){
   return 0;
 }
 function portfolioAnnualIncome(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
+  return activeHoldingRows(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
 }
 function portfolioValue(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>{
+  return activeHoldingRows(state.holdings).reduce((sum,row)=>{
     const v = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
     return sum + (Number.isFinite(v) ? v : 0);
   },0);
@@ -1711,7 +1723,7 @@ function renderAll(){
     .sort((a,b)=>(impact(b)||0)-(impact(a)||0))
     .slice(0,4);
   if($('topTargetStatus')) $('topTargetStatus').textContent = targets[0] ? `${displayTicker(targets[0].ticker)} leads` : 'No target';
-  if($('squadCount')) $('squadCount').textContent = `${uniqueByTicker(state.holdings).length} holdings`;
+  if($('squadCount')) $('squadCount').textContent = `${activeHoldingRows(state.holdings).length} positions`;
   renderPreviewRows(targets, 'topTransferPreview', 'impact');
   renderPreviewRows(squad, 'squadPreview', 'impact');
 
