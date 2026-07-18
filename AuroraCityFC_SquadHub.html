@@ -2927,18 +2927,26 @@ function uniqueByTicker(rows){
   return [...map.values()];
 }
 function annualIncomeFromRow(row){
-  const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
+  // AuroraData's annual_dps_total is the authoritative annual cash-income field.
+  // Use it before estimating income from market value × yield.
+  const direct = parseNum(
+    row.annual_dps_total ?? row["annual_dps_total"] ?? row["Annual DPS Total"] ??
+    row.annual_income ?? row.income_annual ?? row.dividend_income ??
+    row.AnnualIncome ?? row["Annual Income"]
+  );
   if(Number.isFinite(direct)) return direct;
-  const value = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
-  const y = parseYield(row);
-  if(Number.isFinite(value) && Number.isFinite(y)) return value * y;
   const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
   const dps = parseNum(row.annual_dps ?? row.dps ?? row.dividend_per_share);
   if(Number.isFinite(shares) && Number.isFinite(dps)) return shares * dps;
+  const value = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  const y = parseYield(row);
+  if(Number.isFinite(value) && Number.isFinite(y)) return value * y;
   return 0;
 }
 function portfolioAnnualIncome(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
+  // Sum every active account row so holdings owned in both IG and Trading 212
+  // are not accidentally reduced to a single account.
+  return (state.holdings || []).filter(isActiveHolding).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
 }
 function squadScore(row){
   const bs = buyStrength(row);
@@ -3095,8 +3103,15 @@ function roleClass(role){ return role==='Captain'?'captain':role==='Vice-Captain
 function formatPrice(row){ const p=latestPrice(row); return Number.isFinite(p)?money(p):'—'; }
 function movementHtml(row){ const m=dailyMove(row); const cls=m>0?'move-up':m<0?'move-down':'move-flat'; const icon=m>0?'▲':m<0?'▼':'•'; return `<span class="${cls}">${icon} ${m>0?'+':''}${m.toFixed(2)}%</span>`; }
 function squadImageForTicker(ticker){
-  const t=cleanTicker(ticker);
-  const map={RGL:'assets/aurora-city-fc/players/rgl_squad.png'};
+  const t=cleanTicker(ticker).replace('LON:','').replace('.L','');
+  // Squad images are currently uploaded beside the HTML in the GitHub repo.
+  // The version query prevents an older failed image request being held in cache.
+  const map={RGL:'rgl_squad.png?v=20260718-2'};
+  return map[t]||'';
+}
+function squadImageFallbackForTicker(ticker){
+  const t=cleanTicker(ticker).replace('LON:','').replace('.L','');
+  const map={RGL:'assets/aurora-city-fc/players/rgl_squad.png?v=20260718-2'};
   return map[t]||'';
 }
 function playerProfileImageForTicker(ticker){
@@ -3111,7 +3126,8 @@ function renderFormation(rows, target){
     const score=Math.round(squadScore(row));
     const badge=slot.role==='Captain'?' C':slot.role==='Vice-Captain'?' VC':'';
     const squadImg=squadImageForTicker(row.ticker);
-    const visual=squadImg?`<div class="pitch-squad-photo"><img src="${squadImg}" alt="${displayTicker(row.ticker)} squad portrait" onerror="this.closest('.pitch-squad-photo').style.display='none';this.closest('.pitch-player-core').querySelector('.pitch-shirt').style.display='flex'"></div><div class="pitch-shirt" style="display:none"><div class="pitch-shirt-badge"></div><div class="pitch-shirt-code">${displayTicker(row.ticker)}</div><div class="pitch-shirt-number">${slot.number}</div></div>`:`<div class="pitch-shirt"><div class="pitch-shirt-badge"></div><div class="pitch-shirt-code">${displayTicker(row.ticker)}</div><div class="pitch-shirt-number">${slot.number}</div></div>`;
+    const fallbackImg=squadImageFallbackForTicker(row.ticker);
+    const visual=squadImg?`<div class="pitch-squad-photo"><img src="${squadImg}" data-fallback-src="${fallbackImg}" alt="${displayTicker(row.ticker)} squad portrait" onerror="if(this.dataset.fallbackSrc&&!this.dataset.retried){this.dataset.retried='1';this.src=this.dataset.fallbackSrc;}else{this.closest('.pitch-squad-photo').style.display='none';this.closest('.pitch-player-core').querySelector('.pitch-shirt').style.display='flex';}"></div><div class="pitch-shirt" style="display:none"><div class="pitch-shirt-badge"></div><div class="pitch-shirt-code">${displayTicker(row.ticker)}</div><div class="pitch-shirt-number">${slot.number}</div></div>`:`<div class="pitch-shirt"><div class="pitch-shirt-badge"></div><div class="pitch-shirt-code">${displayTicker(row.ticker)}</div><div class="pitch-shirt-number">${slot.number}</div></div>`;
     return `<div class="pitch-player ${slot.role==='Captain'?'star-player':''} ${squadImg?'has-squad-photo':''}" data-player-ticker="${cleanTicker(row.ticker)}" data-slot-pos="${slot.pos}" style="top:${slot.top}%;left:${slot.left}%" tabindex="0" role="button" aria-label="Open ${displayName(row)} profile"><div class="pitch-player-core"><div class="pitch-pos">${slot.pos}${badge}</div><div class="pitch-score">${score}</div>${visual}</div><span class="pitch-name">${displayName(row)}</span><small class="pitch-stars">${squadStars(score)}</small></div>`;
   }).join('');
   el.innerHTML=['<div class="pitch-mark pitch-outline"></div>','<div class="pitch-mark pitch-half"></div>','<div class="pitch-mark pitch-centre-circle"></div>','<div class="pitch-mark pitch-centre-dot"></div>','<div class="pitch-mark pitch-box-top"></div>','<div class="pitch-mark pitch-box-bottom"></div>','<div class="pitch-mark pitch-six-top"></div>','<div class="pitch-mark pitch-six-bottom"></div>',players].join('');
@@ -3148,7 +3164,7 @@ function openPlayerDrawer(ticker){
       const y=parseYield(r);
       const fv=fairValuePct(r);
       const recommendation=String(val(r,'recommendation','Recommendation','action','Action','status','Status')||'Hold / Review');
-      content.innerHTML=`<div class="player-profile-head"><div class="player-profile-shirt"><img src="${playerProfileImageForTicker(r.ticker)}" alt="${displayTicker(r.ticker)} player portrait" onerror="this.remove();this.parentElement.textContent='${displayTicker(r.ticker)}'"></div><div><h2>${displayName(r)}</h2><p>No. ${slot.number} • ${slot.pos} • ${slot.role}</p><div class="player-profile-badges"><span class="role-chip ${roleClass(slot.role)}">${slot.role}</span><span class="position-chip">Rating ${score}</span></div></div></div><div class="player-profile-grid"><div class="player-profile-metric"><small>Last Share Price</small><strong>${formatPrice(r)}</strong><span>Latest Aurora market feed</span></div><div class="player-profile-metric"><small>Today's Movement</small><strong>${movementHtml(r)}</strong><span>Current session change</span></div><div class="player-profile-metric"><small>Holding Value</small><strong>${money(holdingValue(r))}</strong><span>Current squad value</span></div><div class="player-profile-metric"><small>Annual Dividend</small><strong>${money(annual)}</strong><span>${money(annual/12)} per month</span></div><div class="player-profile-metric"><small>Dividend Yield</small><strong>${Number.isFinite(y)?(y*100).toFixed(2)+'%':'—'}</strong><span>Current income yield</span></div><div class="player-profile-metric"><small>Fair Value</small><strong>${Number.isFinite(fv)?fv.toFixed(1)+'%':'—'}</strong><span>Valuation indicator</span></div></div><div class="player-profile-section"><h3>Manager's Player Report</h3><div class="player-profile-line"><span>Squad position</span><strong>No. ${slot.number} ${slot.pos}</strong></div><div class="player-profile-line"><span>Aurora rating</span><strong>${score}/100 • ${scoreLabel(score)}</strong></div><div class="player-profile-line"><span>Current role</span><strong>${slot.role}</strong></div><div class="player-profile-line"><span>Recommendation</span><strong>${recommendation}</strong></div><div class="player-profile-line"><span>Company / player</span><strong>${displayName(r)}</strong></div></div>`;
+      content.innerHTML=`<div class="player-profile-head"><div class="player-profile-shirt"><img src="${playerProfileImageForTicker(r.ticker)}" data-fallback-src="${squadImageFallbackForTicker(r.ticker)}" alt="${displayTicker(r.ticker)} player portrait" onerror="if(this.dataset.fallbackSrc&&!this.dataset.retried){this.dataset.retried='1';this.src=this.dataset.fallbackSrc;}else{this.remove();this.parentElement.textContent='${displayTicker(r.ticker)}';}"></div><div><h2>${displayName(r)}</h2><p>No. ${slot.number} • ${slot.pos} • ${slot.role}</p><div class="player-profile-badges"><span class="role-chip ${roleClass(slot.role)}">${slot.role}</span><span class="position-chip">Rating ${score}</span></div></div></div><div class="player-profile-grid"><div class="player-profile-metric"><small>Last Share Price</small><strong>${formatPrice(r)}</strong><span>Latest Aurora market feed</span></div><div class="player-profile-metric"><small>Today's Movement</small><strong>${movementHtml(r)}</strong><span>Current session change</span></div><div class="player-profile-metric"><small>Holding Value</small><strong>${money(holdingValue(r))}</strong><span>Current squad value</span></div><div class="player-profile-metric"><small>Annual Dividend</small><strong>${money(annual)}</strong><span>${money(annual/12)} per month</span></div><div class="player-profile-metric"><small>Dividend Yield</small><strong>${Number.isFinite(y)?(y*100).toFixed(2)+'%':'—'}</strong><span>Current income yield</span></div><div class="player-profile-metric"><small>Fair Value</small><strong>${Number.isFinite(fv)?fv.toFixed(1)+'%':'—'}</strong><span>Valuation indicator</span></div></div><div class="player-profile-section"><h3>Manager's Player Report</h3><div class="player-profile-line"><span>Squad position</span><strong>No. ${slot.number} ${slot.pos}</strong></div><div class="player-profile-line"><span>Aurora rating</span><strong>${score}/100 • ${scoreLabel(score)}</strong></div><div class="player-profile-line"><span>Current role</span><strong>${slot.role}</strong></div><div class="player-profile-line"><span>Recommendation</span><strong>${recommendation}</strong></div><div class="player-profile-line"><span>Company / player</span><strong>${displayName(r)}</strong></div></div>`;
     }catch(err){
       console.error('Player profile render failed:',err);
       content.innerHTML='<div class="player-profile-section"><h3>Player profile could not load</h3><p style="color:var(--muted);margin:0">The squad remains available, but one of this player’s data fields could not be read. Refresh to retry.</p></div>';
