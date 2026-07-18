@@ -3235,19 +3235,28 @@ function renderFormation(rows, target){
   el.innerHTML=['<div class="pitch-mark pitch-outline"></div>','<div class="pitch-mark pitch-half"></div>','<div class="pitch-mark pitch-centre-circle"></div>','<div class="pitch-mark pitch-centre-dot"></div>','<div class="pitch-mark pitch-box-top"></div>','<div class="pitch-mark pitch-box-bottom"></div>','<div class="pitch-mark pitch-six-top"></div>','<div class="pitch-mark pitch-six-bottom"></div>',players].join('');
   renderTeamSelection(currentTeamPlan);
 }
+function accountRowsForTicker(ticker){ return (state.holdings||[]).filter(r=>isActiveHolding(r)&&tickerMatch(r.ticker,ticker)); }
+function holdingValueForTicker(ticker){
+  return accountRowsForTicker(ticker).reduce((sum,row)=>sum+holdingValue(row),0);
+}
+function annualIncomeForTicker(ticker){
+  return accountRowsForTicker(ticker).reduce((sum,row)=>sum+annualIncomeFromRow(row),0);
+}
 function renderTeamSelection(plan){
   const body=$('teamSelectionBody'), summary=$('teamSelectionSummary'); if(!body||!summary) return;
   const ordered=[...plan].sort((a,b)=>a.number-b.number);
   const rows=ordered.filter(x=>x.row);
-  const totalValue=rows.reduce((s,x)=>s+holdingValue(x.row),0), annual=rows.reduce((s,x)=>s+annualIncomeFromRow(x.row),0), avg=rows.length?rows.reduce((s,x)=>s+squadScore(x.row),0)/rows.length:0, rising=rows.filter(x=>dailyMove(x.row)>0).length;
+  // A player represents the same holding across every account. Aggregate duplicate
+  // account rows (for example PHP in IG ISA and Trade 212) before showing team totals.
+  const totalValue=rows.reduce((s,x)=>s+holdingValueForTicker(x.row.ticker),0), annual=rows.reduce((s,x)=>s+annualIncomeForTicker(x.row.ticker),0), avg=rows.length?rows.reduce((s,x)=>s+squadScore(x.row),0)/rows.length:0, rising=rows.filter(x=>dailyMove(x.row)>0).length;
   summary.innerHTML=`<div class="team-selection-stat"><small>Starting XI Value</small><strong>${money(totalValue)}</strong></div><div class="team-selection-stat"><small>Annual Dividends</small><strong>${money(annual)}</strong></div><div class="team-selection-stat"><small>Monthly Dividends</small><strong>${money(annual/12)}</strong></div><div class="team-selection-stat"><small>Average Rating</small><strong>${Math.round(avg)}/100</strong></div><div class="team-selection-stat"><small>Rising Today</small><strong>${rising} / ${rows.length}</strong></div>`;
   body.innerHTML=ordered.map(slot=>{
     const r=slot.row;if(!r)return `<tr><td><div class="squad-no">${slot.number}</div></td><td><span class="position-chip">${slot.pos}</span></td><td colspan="8">Open squad place</td></tr>`;
-    const annualIncome=annualIncomeFromRow(r);
-    return `<tr class="player-row" data-player-ticker="${cleanTicker(r.ticker)}"><td><div class="squad-no">${slot.number}</div></td><td><span class="position-chip">${slot.pos}</span></td><td class="player-cell"><strong>${displayTicker(r.ticker)} — ${displayName(r)}</strong><small>${slot.role}</small></td><td class="num">${formatPrice(r)}</td><td class="num">${movementHtml(r)}</td><td class="num">${money(holdingValue(r))}</td><td class="num">${money(annualIncome)}</td><td class="num">${money(annualIncome/12)}</td><td class="num"><strong>${Math.round(squadScore(r))}</strong></td><td><span class="role-chip ${roleClass(slot.role)}">${slot.role}</span></td></tr>`;
+    const annualIncome=annualIncomeForTicker(r.ticker);
+    const combinedValue=holdingValueForTicker(r.ticker);
+    return `<tr class="player-row" data-player-ticker="${cleanTicker(r.ticker)}"><td><div class="squad-no">${slot.number}</div></td><td><span class="position-chip">${slot.pos}</span></td><td class="player-cell"><strong>${displayTicker(r.ticker)} — ${displayName(r)}</strong><small>${slot.role}</small></td><td class="num">${formatPrice(r)}</td><td class="num">${movementHtml(r)}</td><td class="num">${money(combinedValue)}</td><td class="num">${money(annualIncome)}</td><td class="num">${money(annualIncome/12)}</td><td class="num"><strong>${Math.round(squadScore(r))}</strong></td><td><span class="role-chip ${roleClass(slot.role)}">${slot.role}</span></td></tr>`;
   }).join('');
 }
-function accountRowsForTicker(ticker){ return (state.holdings||[]).filter(r=>isActiveHolding(r)&&tickerMatch(r.ticker,ticker)); }
 function totalBookCost(ticker){ return accountRowsForTicker(ticker).reduce((s,r)=>{const n=parseNum(val(r,'book_cost','Book Cost','cost','Cost','invested','Invested'));return s+(Number.isFinite(n)?n:0);},0); }
 function accountSummary(ticker){
   const rows=accountRowsForTicker(ticker); if(!rows.length) return 'Account not labelled';
