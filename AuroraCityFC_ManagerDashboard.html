@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Aurora City FC — Manager Dashboard</title>
+<!-- Build: Analysis Bottom Door + Next Dividend • 18 Jul 2026 -->
 <style>
 :root{
   --bg:#020612;
@@ -95,7 +96,7 @@ button,input{font:inherit}
 .hero-progress-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#22d3ee,#34d399);transition:width .45s ease}
 
 /* KPI SCOREBOARD */
-.score-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:16px 0}
+.score-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:16px 0}
 .score-card{position:relative;overflow:hidden;min-height:132px;border:1px solid rgba(125,211,252,.18);border-radius:24px;background:linear-gradient(180deg,rgba(13,31,58,.84),rgba(5,14,28,.90));padding:18px;box-shadow:0 14px 44px rgba(0,0,0,.26)}
 .score-card:before{content:"";position:absolute;right:-40px;top:-45px;width:120px;height:120px;border-radius:50%;background:rgba(96,165,250,.14)}
 .score-card.green:before{background:rgba(52,211,153,.16)}.score-card.amber:before{background:rgba(251,191,36,.14)}
@@ -138,24 +139,34 @@ button,input{font:inherit}
 
 
 .analysis-footer-link{
-  margin-top:18px;
-  display:flex;
+  position:relative;
+  overflow:hidden;
+  margin:20px 0 72px;
+  min-height:176px;
+  display:grid;
+  grid-template-columns:92px minmax(0,1fr) 58px;
   align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  padding:20px 22px;
-  border:1px solid rgba(34,211,238,.34);
-  border-radius:24px;
+  gap:20px;
+  padding:24px 26px;
+  border:1px solid rgba(34,211,238,.48);
+  border-radius:28px;
   background:
-    radial-gradient(circle at 12% 0%,rgba(34,211,238,.18),transparent 35%),
-    linear-gradient(135deg,rgba(8,47,73,.82),rgba(6,18,36,.94));
-  box-shadow:0 18px 48px rgba(0,0,0,.28);
+    linear-gradient(90deg,rgba(2,6,23,.18),rgba(2,6,23,.74)),
+    radial-gradient(circle at 12% 20%,rgba(34,211,238,.34),transparent 28%),
+    radial-gradient(circle at 82% 0%,rgba(52,211,153,.20),transparent 34%),
+    linear-gradient(135deg,#082f49,#07111f 58%,#052e16);
+  box-shadow:0 22px 60px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05);
+  transition:.2s transform,.2s border-color,.2s box-shadow;
 }
-.analysis-footer-link:hover{border-color:rgba(34,211,238,.62);transform:translateY(-2px)}
-.analysis-footer-link strong{display:block;font-size:22px;letter-spacing:-.04em;color:#e0f2fe}
-.analysis-footer-link span{display:block;margin-top:5px;color:#9fb2ca;font-size:13px;line-height:1.4}
-.analysis-footer-arrow{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.32);color:#67e8f9;font-size:34px;line-height:1}
-@media(max-width:760px){.analysis-footer-link{padding:17px}.analysis-footer-link strong{font-size:19px}}
+.analysis-footer-link:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 0 40%,rgba(255,255,255,.055) 50%,transparent 60%);pointer-events:none}
+.analysis-footer-link:hover{border-color:rgba(34,211,238,.82);transform:translateY(-3px);box-shadow:0 28px 70px rgba(0,0,0,.44),0 0 0 4px rgba(34,211,238,.07)}
+.analysis-footer-icon{position:relative;width:82px;height:82px;border-radius:24px;display:grid;place-items:center;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.40);font-size:38px;box-shadow:0 0 34px rgba(34,211,238,.14)}
+.analysis-footer-copy{position:relative}
+.analysis-footer-kicker{display:block;margin-bottom:7px;color:#67e8f9;font-size:10px;font-weight:1000;letter-spacing:.16em;text-transform:uppercase}
+.analysis-footer-link strong{display:block;font-size:clamp(25px,3vw,38px);letter-spacing:-.055em;color:#e0f2fe;line-height:1}
+.analysis-footer-link span{display:block;margin-top:9px;color:#c3d4e8;font-size:14px;line-height:1.45;max-width:900px}
+.analysis-footer-arrow{position:relative;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.42);color:#67e8f9;font-size:40px;line-height:1}
+@media(max-width:760px){.analysis-footer-link{grid-template-columns:62px minmax(0,1fr) 44px;min-height:138px;padding:18px 16px;gap:12px;margin-bottom:64px}.analysis-footer-icon{width:58px;height:58px;border-radius:18px;font-size:28px}.analysis-footer-link strong{font-size:23px}.analysis-footer-link span{font-size:12px}.analysis-footer-arrow{width:42px;height:42px;font-size:31px}}
 
 </style>
 </head>
@@ -209,6 +220,7 @@ button,input{font:inherit}
     <div class="score-card"><div class="score-icon">👕</div><small>Active Squad</small><strong id="activeSquadCount">—</strong><span>Current first-team holdings</span></div>
     <div class="score-card"><div class="score-icon">🛡️</div><small>Board Confidence</small><strong id="portfolioStrength">—</strong><span>Overall club-health rating</span></div>
     <div class="score-card green"><div class="score-icon">🔁</div><small>Next Payday Boost</small><strong id="paydayBoost">—</strong><span id="paydayBoostNote">Estimated annual income</span></div>
+    <div class="score-card green"><div class="score-icon">💷</div><small>Next Dividend</small><strong id="nextDividendTicker">—</strong><span id="nextDividendNote">Checking payment calendar…</span></div>
   </section>
 
   <section class="command-grid">
@@ -255,17 +267,17 @@ button,input{font:inherit}
   </section>
 
   <section id="departments">
-    <div class="section-head"><div><h2>Club Departments</h2><p>The big doors at the bottom are the main navigation.</p></div><span class="badge blue">Explore all departments</span></div>
+    <div class="section-head"><div><h2>Club Departments</h2><p>The big doors at the bottom are the main navigation.</p></div><span class="badge blue">6 departments</span></div>
     <div class="department-grid">
       <a class="department-card" href="AuroraCityFC_TransferCentre.html"><div class="department-img" style="background-image:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/D764D6CB-72E4-44DB-80BB-DB50478C4558.png')"></div><div class="department-body"><span class="label">Recruitment</span><h3>Transfer Centre</h3><p>Highest income four, green lights, platform split and payday transfer slip.</p></div><div class="open-btn">›</div></a>
       <a class="department-card" href="AuroraCityFC_Boardroom.html"><div class="department-img" style="background-image:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/F80D2DA4-098D-4D45-A975-86114C4F9284.png')"></div><div class="department-body"><span class="label">Club Health</span><h3>Boardroom</h3><p>Board confidence, supporter mood, job security and long-term club status.</p></div><div class="open-btn">›</div></a>
       <a class="department-card" href="AuroraCityFC_SquadHub.html"><div class="department-img" style="background-image:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/D8D0378B-F3D2-4B10-8139-361CBD885284.png')"></div><div class="department-body"><span class="label">First Team</span><h3>Squad Hub</h3><p>Holdings, squad depth, chemistry, relegation watch and promotion form.</p></div><div class="open-btn">›</div></a>
       <a class="department-card" href="AuroraCityFC_TrainingGround.html"><div class="department-img" style="background-image:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png')"></div><div class="department-body"><span class="label">Development</span><h3>Training Ground</h3><p>Train weak positions, improve the squad and manage form.</p></div><div class="open-btn">›</div></a>
       <a class="department-card" href="AuroraCityFC_MediaCentre.html"><div class="department-img" style="background-image:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/30A97D0A-85EB-4052-9C04-EC45D316C681.png')"></div><div class="department-body"><span class="label">News Room</span><h3>Media Centre</h3><p>Aurora Times, headlines, market watch and manager reaction.</p></div><div class="open-btn">›</div></a>
-      <a class="department-card" href="AuroraCityFC_AnalysisRoom.html"><div class="department-img" style="background-image:radial-gradient(circle at 25% 20%,rgba(34,211,238,.56),transparent 30%),linear-gradient(135deg,#061224,#0c4a6e 55%,#052e16)"></div><div class="department-body"><span class="label">Performance Intelligence</span><h3>Analysis Room</h3><p>Dividend charts, income progression, squad contribution, risk shape and promotion tracking.</p></div><div class="open-btn">›</div></a>
     </div>
-    <a class="analysis-footer-link" href="AuroraCityFC_AnalysisRoom.html" aria-label="Open Performance Analysis Room">
-      <div><strong>Open Performance Analysis Room</strong><span>View dividend progression, squad contribution, sector shape, club-value form and tactical charts.</span></div>
+    <a class="analysis-footer-link" id="analysisRoomDepartment" href="AuroraCityFC_AnalysisRoom.html" aria-label="Open Performance Analysis Room">
+      <div class="analysis-footer-icon">📊</div>
+      <div class="analysis-footer-copy"><span class="analysis-footer-kicker">Sixth Department • Data & Tactics</span><strong>Performance Analysis Room</strong><span>Open the full dividend dashboard: income progression, player contribution, sector shape, club-value form, yield versus buy strength and promotion tracking.</span></div>
       <div class="analysis-footer-arrow">›</div>
     </a>
   </section>
@@ -432,6 +444,50 @@ function rowDate(row){
   const d = raw ? new Date(raw) : null;
   return d && !Number.isNaN(d.getTime()) ? d : null;
 }
+function dividendDateValue(raw){
+  if(raw === null || raw === undefined || raw === "") return null;
+  if(raw instanceof Date && !Number.isNaN(raw.getTime())) return raw;
+  if(typeof raw === "number" && Number.isFinite(raw)){
+    const d = new Date(Date.UTC(1899,11,30) + Math.round(raw) * 86400000);
+    return Number.isNaN(d.getTime()) ? null : new Date(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),12);
+  }
+  const s = String(raw).trim();
+  const uk = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if(uk){
+    const d = new Date(Number(uk[3]),Number(uk[2])-1,Number(uk[1]),12);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+function dividendAmount(row){
+  return firstFinite(row,["dividend_due","estimated_payment","payment_amount","amount_due","amount","Dividend Due","Dividend Amount"]);
+}
+function nextDividendPayment(){
+  const activeTickers = new Set(activeHoldings().map(row=>shortTicker(row.ticker)));
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const grouped = new Map();
+  (state.dividends || []).forEach(row=>{
+    const ticker = shortTicker(row.ticker ?? row.Ticker ?? row.symbol ?? row.Symbol);
+    if(!ticker || !activeTickers.has(ticker)) return;
+    const status = String(row.status ?? row.Status ?? row.payment_stage ?? row.PaymentStage ?? "").toLowerCase();
+    if(/paid|missed|cancelled|canceled|not due/.test(status)) return;
+    const date = dividendDateValue(row.pay_date ?? row.payment_date ?? row.payDate ?? row["Pay Date"] ?? row.date);
+    if(!date) return;
+    const day = new Date(date.getFullYear(),date.getMonth(),date.getDate());
+    if(day < today) return;
+    const key = `${ticker}|${day.getTime()}`;
+    const amount = dividendAmount(row);
+    const current = grouped.get(key) || {ticker,date:day,amount:0,amountKnown:false,accounts:new Set(),status:""};
+    if(Number.isFinite(amount)){ current.amount += amount; current.amountKnown = true; }
+    const account = String(row.account ?? row.Account ?? "").trim();
+    if(account) current.accounts.add(account);
+    if(!current.status) current.status = String(row.status ?? row.payment_stage ?? "").trim();
+    grouped.set(key,current);
+  });
+  return [...grouped.values()].sort((a,b)=>a.date-b.date || b.amount-a.amount)[0] || null;
+}
 function latestIncomeEvent(){
   const rows = (state.incomeLog || []).map((row,index)=>({row,index,date:rowDate(row)}));
   rows.sort((a,b)=>(b.date?.getTime()||b.index)-(a.date?.getTime()||a.index));
@@ -526,6 +582,7 @@ async function loadData(){
       globalWatchlist:tabs["Global Watchlist"] || [],
       scout:tabs.AuroraScout || [],
       news:tabs.AuroraTimes || [],
+      dividends:tabs.Dividends || [],
       incomeLog:tabs.IncomeLog || [],
       boardConfidence:tabs.BoardConfidence || [],
       moraleLog:tabs.MoraleLog || [],
@@ -559,13 +616,15 @@ function renderAll(){
   const routeIncome = route.reduce((s,x)=>s+x.income,0);
   const top = route[0]?.row;
   const newsCount = (state.news || []).length;
+  const nextDividend = nextDividendPayment();
 
   const dataStamp=latestDataTimestamp();
   $("lastUpdated").textContent = dataStamp ? `Aurora data: ${dataStamp.toLocaleString("en-GB")} • refreshed ${new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}` : `Refreshed: ${new Date().toLocaleString("en-GB")}`;
   $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  const nextDividendTickerText = nextDividend ? ` • Next dividend: ${nextDividend.ticker}${nextDividend.amountKnown ? ` ${money(nextDividend.amount)}` : ""} on ${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}` : "";
   $("tickerText").textContent = route.length
-    ? `Club News • Transfer Centre route ready: ${route.map(x=>displayTicker(x.row.ticker)).join(" / ")} • Estimated payday income ${money(routeIncome)}/yr • Gap to £500/m: ${money(gap)}`
-    : `Club News • Dashboard synced • ${active.length} active squad players loaded • Gap to £500/m: ${money(gap)}`;
+    ? `Club News • Transfer Centre route ready: ${route.map(x=>displayTicker(x.row.ticker)).join(" / ")} • Estimated payday income ${money(routeIncome)}/yr${nextDividendTickerText} • Gap to £500/m: ${money(gap)}`
+    : `Club News • Dashboard synced • ${active.length} active squad players loaded${nextDividendTickerText} • Gap to £500/m: ${money(gap)}`;
 
   $("heroSub").textContent = `Income rebuild at ${money(monthly)} per month. Gap to the £500/month target is ${money(gap)}. ${route.length ? "Transfer Centre has a live green-light route ready." : "Transfer Centre needs a fresh data check."}`;
   const division = divisionProgress(monthly);
@@ -612,6 +671,14 @@ function renderAll(){
   $("portfolioStrength").textContent = `${board}/100`;
   $("paydayBoost").textContent = route.length ? `${money(routeIncome)}/yr` : "—";
   $("paydayBoostNote").textContent = route.length ? `${route.length} proposed signings` : "No live route available";
+  if(nextDividend){
+    const days = Math.max(0,Math.ceil((nextDividend.date - new Date(new Date().setHours(0,0,0,0))) / 86400000));
+    $("nextDividendTicker").textContent = `${nextDividend.ticker}${nextDividend.amountKnown ? ` • ${money(nextDividend.amount)}` : ""}`;
+    $("nextDividendNote").textContent = `${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})} • ${days === 0 ? "Due today" : `${days} day${days===1?"":"s"} away`}${nextDividend.accounts.size > 1 ? ` • ${nextDividend.accounts.size} accounts combined` : ""}`;
+  }else{
+    $("nextDividendTicker").textContent = "No payment loaded";
+    $("nextDividendNote").textContent = "Add future pay dates to the Dividends sheet";
+  }
 
   $("briefingStatus").textContent = board >= 88 ? "Strong" : board >= 78 ? "Stable" : "Building";
   $("briefBoard").textContent = board >= 88 ? "Strong" : board >= 78 ? "Stable" : "Watch";
@@ -626,7 +693,7 @@ function renderAll(){
     <div class="action-row"><div class="action-icon">🔁</div><div><strong>Next Payday Route</strong><span>${route.map(x=>displayTicker(x.row.ticker)).join(" / ") || "Check Transfer Centre"}</span></div><div class="action-value">${money(routeIncome)}/yr</div></div>
     <div class="action-row"><div class="action-icon">🎯</div><div><strong>Top Transfer Target</strong><span>${top ? displayName(top) : "Waiting for candidate"}</span></div><div class="action-value">${top ? displayTicker(top.ticker) : "—"}</div></div>
     <div class="action-row"><div class="action-icon">🛡️</div><div><strong>Current Status</strong><span>${gap > 0 ? "Still chasing £500/month" : "Monthly target reached"}</span></div><div class="action-value">${gap > 0 ? money(gap) : "On target"}</div></div>
-    <div class="action-row"><div class="action-icon">🕒</div><div><strong>Last Update</strong><span>Live data synchronised</span></div><div class="action-value">${new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div></div>
+    <div class="action-row"><div class="action-icon">💷</div><div><strong>Next Dividend</strong><span>${nextDividend ? `${nextDividend.ticker} • ${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}` : "No future payment loaded"}</span></div><div class="action-value">${nextDividend?.amountKnown ? money(nextDividend.amount) : "—"}</div></div>
   `;
 
   $("deptTransfers").textContent = route.length ? route.length : "—";
@@ -648,7 +715,8 @@ function renderAll(){
   saveManagerSnapshot(value,income);
   window.AURORA_PAGE_CHECKS=()=>[
     {level:yieldHoldings.length?'ok':'bad',title:`${yieldHoldings.length} income-portfolio rows`,detail:'Portfolio yield is restricted to IG ISA and Trade 212 holdings.'},
-    {level:Number.isFinite(previousValue)?'ok':'warn',title:Number.isFinite(previousValue)?'Club-value trend source found':'Club-value trend is building',detail:Number.isFinite(previousValue)?'Historical or locally stored snapshot is available.':'A second distinct snapshot will activate the rise/fall indicator.'}
+    {level:Number.isFinite(previousValue)?'ok':'warn',title:Number.isFinite(previousValue)?'Club-value trend source found':'Club-value trend is building',detail:Number.isFinite(previousValue)?'Historical or locally stored snapshot is available.':'A second distinct snapshot will activate the rise/fall indicator.'},
+    {level:nextDividend?'ok':'warn',title:nextDividend?`Next dividend: ${nextDividend.ticker}`:'No future dividend found',detail:nextDividend?`${nextDividend.date.toLocaleDateString("en-GB")} • ${nextDividend.amountKnown?money(nextDividend.amount):"amount pending"}`:'The dashboard only shows future payments for active holdings.'}
   ];
 }
 $("refreshBtn")?.addEventListener("click", ()=>{ AURORA_MASTER_CACHE = null; loadData(); });
