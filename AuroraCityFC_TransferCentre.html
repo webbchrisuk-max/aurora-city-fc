@@ -3280,6 +3280,8 @@ const SECTOR_LIMITS = {
 let state = { holdings:[], watchlist:[], scout:[], auroraTimes:[] };
 const excludedTickers = new Set();
 const manualAmounts = new Map();
+const TRANSFER_SETTINGS_KEY = 'aurora_transfer_settings_v2';
+const TRANSFER_PLAN_KEY = 'aurora_transfer_plan_v2';
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -3297,6 +3299,70 @@ function displayTicker(t){ return String(t || '').replace('LON:',''); }
 function shortTicker(t){ return displayTicker(t).replace('.GB','').replace('.L','').toUpperCase(); }
 function displayName(row){
   return row.name || row.company_name || row.company || row.Company || row.Name || row.security_name || row.stock_name || row["Company Name"] || row["Security Name"] || displayTicker(row.ticker) || '—';
+}
+function restoreTransferSettings(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(TRANSFER_SETTINGS_KEY) || '{}');
+    const budget = parseNum(saved.budget);
+    const budgetInput = $('transferBudgetInput');
+    if(budgetInput && Number.isFinite(budget) && budget >= 0) budgetInput.value = budget;
+    excludedTickers.clear();
+    (Array.isArray(saved.excludedTickers) ? saved.excludedTickers : []).forEach(ticker => excludedTickers.add(cleanTicker(ticker)));
+    manualAmounts.clear();
+    const manual = saved.manualAmounts && typeof saved.manualAmounts === 'object' ? saved.manualAmounts : {};
+    Object.entries(manual).forEach(([ticker,amount])=>{
+      const value = parseNum(amount);
+      if(Number.isFinite(value) && value >= 0) manualAmounts.set(cleanTicker(ticker),value);
+    });
+  }catch(err){ console.warn('Transfer settings could not be restored',err); }
+}
+function persistTransferSettings(){
+  try{
+    const budget = Math.max(0,parseNum($('transferBudgetInput')?.value)||0);
+    localStorage.setItem(TRANSFER_SETTINGS_KEY,JSON.stringify({
+      budget,
+      excludedTickers:[...excludedTickers],
+      manualAmounts:Object.fromEntries(manualAmounts),
+      updatedAt:new Date().toISOString()
+    }));
+  }catch(err){ console.warn('Transfer settings could not be saved',err); }
+}
+function serialiseTransferPlan(deal){
+  return {
+    version:2,
+    source:'Transfer Centre final deal sheet',
+    budget:Number(deal?.budget)||0,
+    allocated:(deal?.rows||[]).reduce((sum,item)=>sum+(Number(item.amount)||0),0),
+    holdback:Number(deal?.holdback)||0,
+    totalIncome:Number(deal?.totalIncome)||0,
+    route:deal?.route||'Hold cash',
+    status:deal?.status||'No buy',
+    statusClass:deal?.statusClass||'bad',
+    reason:deal?.reason||'',
+    rows:(deal?.rows||[]).map(item=>({
+      ticker:cleanTicker(item.row?.ticker),
+      displayTicker:displayTicker(item.row?.ticker),
+      name:displayName(item.row),
+      account:platformFor(item.row?.ticker),
+      amount:Number(item.amount)||0,
+      income:Number(item.income)||0,
+      incomeRate:Number(incomeRate(item.row))||0,
+      gateStatus:item.gate?.status||'pass',
+      gateReason:item.gate?.reasons?.[0]||''
+    })),
+    updatedAt:new Date().toISOString()
+  };
+}
+function publishTransferPlan(deal){
+  const plan = serialiseTransferPlan(deal);
+  try{ localStorage.setItem(TRANSFER_PLAN_KEY,JSON.stringify(plan)); }catch(err){ console.warn('Transfer plan could not be saved',err); }
+  try{
+    if(window.parent && window.parent !== window){
+      window.parent.postMessage({type:'AURORA_TRANSFER_PLAN',plan},location.origin && location.origin !== 'null' ? location.origin : '*');
+    }
+  }catch(err){ console.warn('Transfer plan could not be published',err); }
+  window.AURORA_CURRENT_TRANSFER_PLAN = plan;
+  return plan;
 }
 function isActiveHolding(row){
   const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
@@ -4081,6 +4147,8 @@ function renderWatch(deal){
 function renderAll(){
   if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
   const deal = buildDealSheet();
+  persistTransferSettings();
+  publishTransferPlan(deal);
   renderTransferTicker(deal);
   renderKpis(deal);
   renderDeadlineBar(deal);
@@ -4144,8 +4212,9 @@ $('applyBestReturn')?.addEventListener('click',()=>{
   manualAmounts.clear();
   plan.rows.forEach(item=>manualAmounts.set(cleanTicker(item.row.ticker),item.amount));
   renderAll();
-  document.getElementById('finalDealSheet')?.scrollIntoView({behavior:'smooth',block:'start'});
+  if(!new URLSearchParams(location.search).has('sync')) document.getElementById('finalDealSheet')?.scrollIntoView({behavior:'smooth',block:'start'});
 });
+restoreTransferSettings();
 loadData();
 </script>
 

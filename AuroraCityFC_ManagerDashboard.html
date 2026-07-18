@@ -138,35 +138,6 @@ button,input{font:inherit}
 @media(max-width:560px){.aurora-system-button{right:10px;bottom:52px}.aurora-system-panel{right:10px;bottom:94px;width:calc(100vw - 20px)}}
 
 
-.analysis-footer-link{
-  position:relative;
-  overflow:hidden;
-  margin:20px 0 72px;
-  min-height:176px;
-  display:grid;
-  grid-template-columns:92px minmax(0,1fr) 58px;
-  align-items:center;
-  gap:20px;
-  padding:24px 26px;
-  border:1px solid rgba(34,211,238,.48);
-  border-radius:28px;
-  background:
-    linear-gradient(90deg,rgba(2,6,23,.18),rgba(2,6,23,.74)),
-    radial-gradient(circle at 12% 20%,rgba(34,211,238,.34),transparent 28%),
-    radial-gradient(circle at 82% 0%,rgba(52,211,153,.20),transparent 34%),
-    linear-gradient(135deg,#082f49,#07111f 58%,#052e16);
-  box-shadow:0 22px 60px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05);
-  transition:.2s transform,.2s border-color,.2s box-shadow;
-}
-.analysis-footer-link:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 0 40%,rgba(255,255,255,.055) 50%,transparent 60%);pointer-events:none}
-.analysis-footer-link:hover{border-color:rgba(34,211,238,.82);transform:translateY(-3px);box-shadow:0 28px 70px rgba(0,0,0,.44),0 0 0 4px rgba(34,211,238,.07)}
-.analysis-footer-icon{position:relative;width:82px;height:82px;border-radius:24px;display:grid;place-items:center;background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.40);font-size:38px;box-shadow:0 0 34px rgba(34,211,238,.14)}
-.analysis-footer-copy{position:relative}
-.analysis-footer-kicker{display:block;margin-bottom:7px;color:#67e8f9;font-size:10px;font-weight:1000;letter-spacing:.16em;text-transform:uppercase}
-.analysis-footer-link strong{display:block;font-size:clamp(25px,3vw,38px);letter-spacing:-.055em;color:#e0f2fe;line-height:1}
-.analysis-footer-link span{display:block;margin-top:9px;color:#c3d4e8;font-size:14px;line-height:1.45;max-width:900px}
-.analysis-footer-arrow{position:relative;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.42);color:#67e8f9;font-size:40px;line-height:1}
-@media(max-width:760px){.analysis-footer-link{grid-template-columns:62px minmax(0,1fr) 44px;min-height:138px;padding:18px 16px;gap:12px;margin-bottom:64px}.analysis-footer-icon{width:58px;height:58px;border-radius:18px;font-size:28px}.analysis-footer-link strong{font-size:23px}.analysis-footer-link span{font-size:12px}.analysis-footer-arrow{width:42px;height:42px;font-size:31px}}
 
 </style>
 </head>
@@ -262,7 +233,7 @@ button,input{font:inherit}
   </section>
 
   <section class="preview-grid">
-    <div class="panel"><div class="panel-head"><div><h3>Top Transfer Preview</h3><p>Same eligible highest-income route used by the Transfer Centre.</p></div><span class="badge green" id="topTransferBadge">Loading</span></div><div class="preview-list" id="topTransferPreview"><div class="loading">Loading transfer preview…</div></div></div>
+    <div class="panel"><div class="panel-head"><div><h3>Top Transfer Preview</h3><p>Exact current final deal sheet synced from the Transfer Centre.</p></div><span class="badge green" id="topTransferBadge">Loading</span></div><div class="preview-list" id="topTransferPreview"><div class="loading">Loading transfer preview…</div></div></div>
     <div class="panel"><div class="panel-head"><div><h3>First-Team Form Preview</h3><p>Biggest income players currently in the squad.</p></div><span class="badge blue" id="squadBadge">Loading</span></div><div class="preview-list" id="squadPreview"><div class="loading">Loading squad preview…</div></div></div>
   </section>
 
@@ -274,12 +245,8 @@ button,input{font:inherit}
       <a class="department-card" href="AuroraCityFC_SquadHub.html"><div class="department-img" style="background-image:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/D8D0378B-F3D2-4B10-8139-361CBD885284.png')"></div><div class="department-body"><span class="label">First Team</span><h3>Squad Hub</h3><p>Holdings, squad depth, chemistry, relegation watch and promotion form.</p></div><div class="open-btn">›</div></a>
       <a class="department-card" href="AuroraCityFC_TrainingGround.html"><div class="department-img" style="background-image:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png')"></div><div class="department-body"><span class="label">Development</span><h3>Training Ground</h3><p>Train weak positions, improve the squad and manage form.</p></div><div class="open-btn">›</div></a>
       <a class="department-card" href="AuroraCityFC_MediaCentre.html"><div class="department-img" style="background-image:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/30A97D0A-85EB-4052-9C04-EC45D316C681.png')"></div><div class="department-body"><span class="label">News Room</span><h3>Media Centre</h3><p>Aurora Times, headlines, market watch and manager reaction.</p></div><div class="open-btn">›</div></a>
+      <a class="department-card" id="analysisRoomDepartment" href="AuroraCityFC_AnalysisRoom.html" aria-label="Open Performance Analysis Room"><div class="department-img" style="background-image:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201200%20800%22%3E%0A%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%2306152a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23063b47%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20x1%3D%220%22%20y1%3D%221%22%20x2%3D%220%22%20y2%3D%220%22%3E%3Cstop%20stop-color%3D%22%230ea5e9%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2367e8f9%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%0A%3Crect%20width%3D%221200%22%20height%3D%22800%22%20fill%3D%22url%28%23g%29%22%2F%3E%0A%3Crect%20x%3D%2290%22%20y%3D%2290%22%20width%3D%221020%22%20height%3D%22580%22%20rx%3D%2228%22%20fill%3D%22%2307111f%22%20stroke%3D%22%2338bdf8%22%20stroke-opacity%3D%22.42%22%20stroke-width%3D%223%22%2F%3E%0A%3Cg%20stroke%3D%22%237dd3fc%22%20stroke-opacity%3D%22.14%22%3E%3Cpath%20d%3D%22M150%20190H1050M150%20290H1050M150%20390H1050M150%20490H1050M150%20590H1050%22%2F%3E%3Cpath%20d%3D%22M250%20150V620M450%20150V620M650%20150V620M850%20150V620%22%2F%3E%3C%2Fg%3E%0A%3Cg%20fill%3D%22url%28%23b%29%22%20opacity%3D%22.88%22%3E%3Crect%20x%3D%22180%22%20y%3D%22440%22%20width%3D%2290%22%20height%3D%22150%22%20rx%3D%2212%22%2F%3E%3Crect%20x%3D%22330%22%20y%3D%22350%22%20width%3D%2290%22%20height%3D%22240%22%20rx%3D%2212%22%2F%3E%3Crect%20x%3D%22480%22%20y%3D%22280%22%20width%3D%2290%22%20height%3D%22310%22%20rx%3D%2212%22%2F%3E%3Crect%20x%3D%22630%22%20y%3D%22380%22%20width%3D%2290%22%20height%3D%22210%22%20rx%3D%2212%22%2F%3E%3C%2Fg%3E%0A%3Cpath%20d%3D%22M180%20410%20C310%20360%20390%20380%20500%20300%20S720%20250%20820%20210%20S980%20190%201030%20150%22%20fill%3D%22none%22%20stroke%3D%22%2334d399%22%20stroke-width%3D%2218%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cg%20fill%3D%22%23d1fae5%22%3E%3Ccircle%20cx%3D%22180%22%20cy%3D%22410%22%20r%3D%2212%22%2F%3E%3Ccircle%20cx%3D%22500%22%20cy%3D%22300%22%20r%3D%2212%22%2F%3E%3Ccircle%20cx%3D%22820%22%20cy%3D%22210%22%20r%3D%2212%22%2F%3E%3Ccircle%20cx%3D%221030%22%20cy%3D%22150%22%20r%3D%2212%22%2F%3E%3C%2Fg%3E%0A%3Ctext%20x%3D%22150%22%20y%3D%22735%22%20fill%3D%22%23a5f3fc%22%20font-family%3D%22Arial%2Csans-serif%22%20font-size%3D%2254%22%20font-weight%3D%22700%22%3EPERFORMANCE%20ANALYSIS%3C%2Ftext%3E%0A%3C%2Fsvg%3E')"></div><div class="department-body"><span class="label">Data &amp; Tactics</span><h3>Analysis Room</h3><p>Income progression, player contribution, sector shape and club-value form.</p></div><div class="open-btn">›</div></a>
     </div>
-    <a class="analysis-footer-link" id="analysisRoomDepartment" href="AuroraCityFC_AnalysisRoom.html" aria-label="Open Performance Analysis Room">
-      <div class="analysis-footer-icon">📊</div>
-      <div class="analysis-footer-copy"><span class="analysis-footer-kicker">Sixth Department • Data & Tactics</span><strong>Performance Analysis Room</strong><span>Open the full dividend dashboard: income progression, player contribution, sector shape, club-value form, yield versus buy strength and promotion tracking.</span></div>
-      <div class="analysis-footer-arrow">›</div>
-    </a>
   </section>
 </main>
 
@@ -295,8 +262,8 @@ const TABS = [
   "MoraleLog","ManagerInbox","TrainingLog","BoardConfidence","AuroraFixtures","AuroraRules","DailySummary","PriceLog","DailyPriceSummary","LivePrices"
 ];
 const MONTHLY_TARGET = 500;
-const PAYDAY_BUDGET = 1500;
-const PAYDAY_SPLIT = [600,450,300,150];
+const TRANSFER_PLAN_KEY = 'aurora_transfer_plan_v2';
+let syncedTransferPlan = null;
 const PLATFORM_RULES = {
   TRIG:"IG ISA", FGEN:"IG ISA", UKW:"IG ISA", ARCC:"IG ISA", SUPR:"IG ISA", PHP:"IG ISA / Trade 212",
   FSFL:"Trade 212", GCP:"Trade 212", RGL:"Trade 212", LMP:"IG ISA", OSB:"IG Trading",
@@ -405,14 +372,75 @@ function candidatePool(){
       return (ib*1000 + (impact(b)||0)*0.2 + (buyStrength(b)||0)*0.2) - (ia*1000 + (impact(a)||0)*0.2 + (buyStrength(a)||0)*0.2);
     });
 }
-function buildPaydayRoute(){
-  const rows = candidatePool().slice(0,4);
-  return rows.map((row,i)=>{
-    const amount = PAYDAY_SPLIT[i] || 0;
-    const y = incomeRate(row);
-    return {row, amount, income:Number.isFinite(y) ? amount * y : 0, y};
-  });
+function normaliseTransferPlan(raw){
+  if(!raw || typeof raw !== 'object' || !Array.isArray(raw.rows)) return null;
+  const rows = raw.rows.map(item=>({
+    ticker:cleanTicker(item.ticker),
+    displayTicker:item.displayTicker || displayTicker(item.ticker),
+    name:item.name || displayTicker(item.ticker),
+    account:item.account || '',
+    amount:parseNum(item.amount),
+    income:parseNum(item.income),
+    incomeRate:parseNum(item.incomeRate),
+    gateStatus:item.gateStatus || 'pass',
+    gateReason:item.gateReason || ''
+  })).filter(item=>item.ticker && Number.isFinite(item.amount) && item.amount > 0);
+  return {
+    ...raw,
+    rows,
+    budget:parseNum(raw.budget),
+    allocated:parseNum(raw.allocated),
+    holdback:parseNum(raw.holdback),
+    totalIncome:parseNum(raw.totalIncome),
+    updatedAt:raw.updatedAt || ''
+  };
 }
+function readTransferPlanSnapshot(){
+  if(syncedTransferPlan) return syncedTransferPlan;
+  try{
+    const plan = normaliseTransferPlan(JSON.parse(localStorage.getItem(TRANSFER_PLAN_KEY) || 'null'));
+    if(plan) syncedTransferPlan = plan;
+    return plan;
+  }catch(_){ return null; }
+}
+function transferRouteFromPlan(plan){
+  return (plan?.rows || []).map(item=>({
+    row:{ticker:item.ticker,name:item.name,account:item.account},
+    amount:item.amount,
+    income:Number.isFinite(item.income) ? item.income : 0,
+    y:Number.isFinite(item.incomeRate) ? item.incomeRate : NaN,
+    gateStatus:item.gateStatus,
+    gateReason:item.gateReason
+  }));
+}
+function requestTransferPlanSync(){
+  if(document.getElementById('auroraTransferSyncFrame')) return;
+  const frame=document.createElement('iframe');
+  frame.id='auroraTransferSyncFrame';
+  frame.title='Transfer Centre deal-sheet sync';
+  frame.setAttribute('aria-hidden','true');
+  frame.tabIndex=-1;
+  frame.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-9999px;top:-9999px';
+  frame.src=`AuroraCityFC_TransferCentre.html?sync=1&ts=${Date.now()}`;
+  document.body.appendChild(frame);
+}
+window.addEventListener('message',event=>{
+  if(event.origin && location.origin !== 'null' && event.origin !== location.origin) return;
+  if(event.data?.type !== 'AURORA_TRANSFER_PLAN') return;
+  const plan=normaliseTransferPlan(event.data.plan);
+  if(!plan) return;
+  syncedTransferPlan=plan;
+  if(Array.isArray(state.holdings)) renderAll();
+});
+window.addEventListener('storage',event=>{
+  if(event.key !== TRANSFER_PLAN_KEY || !event.newValue) return;
+  try{
+    const plan=normaliseTransferPlan(JSON.parse(event.newValue));
+    if(!plan) return;
+    syncedTransferPlan=plan;
+    if(Array.isArray(state.holdings)) renderAll();
+  }catch(_){}
+});
 function currentDivision(monthly){
   const ladder = [
     [5000,"Club World Champion"],[3000,"World Class Club"],[2000,"European Giant"],
@@ -612,9 +640,11 @@ function renderAll(){
   const gap = Math.max(0, MONTHLY_TARGET - monthly);
   const board = boardScore(monthly,value,yieldRate);
   const active = activeHoldings();
-  const route = buildPaydayRoute();
-  const routeIncome = route.reduce((s,x)=>s+x.income,0);
+  const transferPlan = readTransferPlanSnapshot();
+  const route = transferRouteFromPlan(transferPlan);
+  const routeIncome = Number.isFinite(transferPlan?.totalIncome) ? transferPlan.totalIncome : route.reduce((s,x)=>s+x.income,0);
   const top = route[0]?.row;
+  const transferSynced = !!transferPlan;
   const newsCount = (state.news || []).length;
   const nextDividend = nextDividendPayment();
 
@@ -624,9 +654,9 @@ function renderAll(){
   const nextDividendTickerText = nextDividend ? ` • Next dividend: ${nextDividend.ticker}${nextDividend.amountKnown ? ` ${money(nextDividend.amount)}` : ""} on ${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}` : "";
   $("tickerText").textContent = route.length
     ? `Club News • Transfer Centre route ready: ${route.map(x=>displayTicker(x.row.ticker)).join(" / ")} • Estimated payday income ${money(routeIncome)}/yr${nextDividendTickerText} • Gap to £500/m: ${money(gap)}`
-    : `Club News • Dashboard synced • ${active.length} active squad players loaded${nextDividendTickerText} • Gap to £500/m: ${money(gap)}`;
+    : `Club News • Transfer Centre final deal sheet syncing • ${active.length} active squad players loaded${nextDividendTickerText} • Gap to £500/m: ${money(gap)}`;
 
-  $("heroSub").textContent = `Income rebuild at ${money(monthly)} per month. Gap to the £500/month target is ${money(gap)}. ${route.length ? "Transfer Centre has a live green-light route ready." : "Transfer Centre needs a fresh data check."}`;
+  $("heroSub").textContent = `Income rebuild at ${money(monthly)} per month. Gap to the £500/month target is ${money(gap)}. ${route.length ? "Transfer Centre final deal sheet is synced." : "Transfer Centre deal sheet is syncing."}`;
   const division = divisionProgress(monthly);
   $("currentDivision").textContent = division.current[1];
   $("divisionProgress").textContent = division.next
@@ -670,7 +700,7 @@ function renderAll(){
   $("activeSquadCount").textContent = active.length;
   $("portfolioStrength").textContent = `${board}/100`;
   $("paydayBoost").textContent = route.length ? `${money(routeIncome)}/yr` : "—";
-  $("paydayBoostNote").textContent = route.length ? `${route.length} proposed signings` : "No live route available";
+  $("paydayBoostNote").textContent = route.length ? `${route.length} signings • Transfer Centre final sheet` : "Syncing Transfer Centre deal sheet";
   if(nextDividend){
     const days = Math.max(0,Math.ceil((nextDividend.date - new Date(new Date().setHours(0,0,0,0))) / 86400000));
     $("nextDividendTicker").textContent = `${nextDividend.ticker}${nextDividend.amountKnown ? ` • ${money(nextDividend.amount)}` : ""}`;
@@ -686,11 +716,11 @@ function renderAll(){
   $("briefMorale").textContent = route.length >= 4 ? "Good" : "Monitor";
   $("briefingTitle").textContent = board >= 88 ? "Income rebuild progressing well." : "Income rebuild needs another push.";
   $("briefingText").textContent = route.length
-    ? `${route.length} green-light transfer options available. Estimated payday route adds ${money(routeIncome)} per year. Board confidence is ${board}/100 and the next target remains £500/month.`
-    : `Portfolio data is loaded, but the transfer route needs attention. Open the Transfer Centre before payday.`;
+    ? `${route.length} current Transfer Centre signings. The final deal sheet adds ${money(routeIncome)} per year. Board confidence is ${board}/100 and the next target remains £500/month.`
+    : `Portfolio data is loaded, but the transfer route needs attention. Open the Transfer Centre to sync the final deal sheet before payday.`;
 
   $("actionList").innerHTML = `
-    <div class="action-row"><div class="action-icon">🔁</div><div><strong>Next Payday Route</strong><span>${route.map(x=>displayTicker(x.row.ticker)).join(" / ") || "Check Transfer Centre"}</span></div><div class="action-value">${money(routeIncome)}/yr</div></div>
+    <div class="action-row"><div class="action-icon">🔁</div><div><strong>Next Payday Route</strong><span>${route.map(x=>displayTicker(x.row.ticker)).join(" / ") || "Syncing Transfer Centre final sheet"}</span></div><div class="action-value">${transferSynced ? `${money(routeIncome)}/yr` : 'Syncing…'}</div></div>
     <div class="action-row"><div class="action-icon">🎯</div><div><strong>Top Transfer Target</strong><span>${top ? displayName(top) : "Waiting for candidate"}</span></div><div class="action-value">${top ? displayTicker(top.ticker) : "—"}</div></div>
     <div class="action-row"><div class="action-icon">🛡️</div><div><strong>Current Status</strong><span>${gap > 0 ? "Still chasing £500/month" : "Monthly target reached"}</span></div><div class="action-value">${gap > 0 ? money(gap) : "On target"}</div></div>
     <div class="action-row"><div class="action-icon">💷</div><div><strong>Next Dividend</strong><span>${nextDividend ? `${nextDividend.ticker} • ${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}` : "No future payment loaded"}</span></div><div class="action-value">${nextDividend?.amountKnown ? money(nextDividend.amount) : "—"}</div></div>
@@ -714,12 +744,14 @@ function renderAll(){
   renderPreviewRows(squadRows, "squadPreview", row=>`${money(annualIncomeFromRow(row))}/yr`);
   saveManagerSnapshot(value,income);
   window.AURORA_PAGE_CHECKS=()=>[
+    {level:transferSynced?'ok':'warn',title:transferSynced?'Transfer Centre final sheet synced':'Transfer Centre sync pending',detail:transferSynced?`${route.length} signings • ${money(routeIncome)}/year from the exact final deal sheet.`:'The hidden Transfer Centre sync is still loading; no fallback estimate is being shown.'},
     {level:yieldHoldings.length?'ok':'bad',title:`${yieldHoldings.length} income-portfolio rows`,detail:'Portfolio yield is restricted to IG ISA and Trade 212 holdings.'},
     {level:Number.isFinite(previousValue)?'ok':'warn',title:Number.isFinite(previousValue)?'Club-value trend source found':'Club-value trend is building',detail:Number.isFinite(previousValue)?'Historical or locally stored snapshot is available.':'A second distinct snapshot will activate the rise/fall indicator.'},
     {level:nextDividend?'ok':'warn',title:nextDividend?`Next dividend: ${nextDividend.ticker}`:'No future dividend found',detail:nextDividend?`${nextDividend.date.toLocaleDateString("en-GB")} • ${nextDividend.amountKnown?money(nextDividend.amount):"amount pending"}`:'The dashboard only shows future payments for active holdings.'}
   ];
 }
 $("refreshBtn")?.addEventListener("click", ()=>{ AURORA_MASTER_CACHE = null; loadData(); });
+requestTransferPlanSync();
 loadData();
 setInterval(()=>{ if($("tickerTime")) $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }, 1000);
 
