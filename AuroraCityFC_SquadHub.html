@@ -3075,26 +3075,42 @@ function fairValuePct(row){
   return Number.isFinite(n) ? n : NaN;
 }
 function positionPlan(rows){
-  const pool=[...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(0,11);
+  const pool=[...rows].filter(isActiveHolding);
   const used=new Set();
+  const normalTicker=t=>cleanTicker(t).replace('LON:','').replace('.L','');
+  const fixed=ticker=>{
+    const row=pool.find(r=>normalTicker(r.ticker)===normalTicker(ticker) && !used.has(normalTicker(r.ticker))) || null;
+    if(row) used.add(normalTicker(row.ticker));
+    return row;
+  };
   const take=(sorter)=>{
-    const candidate=pool.filter(r=>!used.has(cleanTicker(r.ticker))).sort(sorter)[0]||null;
-    if(candidate) used.add(cleanTicker(candidate.ticker));
+    const candidate=pool.filter(r=>!used.has(normalTicker(r.ticker))).sort(sorter)[0]||null;
+    if(candidate) used.add(normalTicker(candidate.ticker));
     return candidate;
   };
   const reliability=r=>squadScore(r)+(holdingValue(r)>0?Math.min(12,Math.log10(holdingValue(r)+1)*2):0)-Math.abs(Math.min(10,dailyMove(r)))*.25;
+
+  // Locked Aurora City 4-2-1-3 shape:
+  // UKW — SUPR — FSFL
+  //        ARCC
+  // PHP          TSCO
+  // IITU — FGEN — TW — VWRA
+  //        RGL
   const plans=[
-    {number:1,pos:'GK',top:88,left:50,row:(()=>{const r=pool.find(x=>cleanTicker(x.ticker)==='RGL'&&!used.has(cleanTicker(x.ticker)));if(r){used.add(cleanTicker(r.ticker));return r;}return take((a,b)=>reliability(b)-reliability(a));})(),role:'Safe Hands'},
-    {number:9,pos:'ST',top:14,left:50,row:take((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a)),role:'Top Scorer'},
-    {number:10,pos:'CAM',top:40,left:50,row:take((a,b)=>squadScore(b)-squadScore(a)),role:'Playmaker'},
-    {number:6,pos:'CDM',top:58,left:50,row:take((a,b)=>(reliability(b)+holdingValue(b)/1000)-(reliability(a)+holdingValue(a)/1000)),role:'Captain'},
-    {number:7,pos:'RW',top:28,left:82,row:take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Right Wing'},
-    {number:11,pos:'LW',top:28,left:18,row:take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Left Wing'},
-    {number:8,pos:'CM',top:50,left:28,row:take((a,b)=>squadScore(b)-squadScore(a)),role:'Vice-Captain'},
-    {number:3,pos:'CB',top:75,left:38,row:take((a,b)=>reliability(b)-reliability(a)),role:'Centre Back'},
-    {number:4,pos:'CB',top:75,left:62,row:take((a,b)=>reliability(b)-reliability(a)),role:'Centre Back'},
-    {number:2,pos:'RB',top:70,left:82,row:take((a,b)=>reliability(b)-reliability(a)),role:'Right Back'},
-    {number:5,pos:'LB',top:70,left:18,row:take((a,b)=>reliability(b)-reliability(a)),role:'Left Back'}
+    {number:1,pos:'GK',top:89,left:50,row:fixed('RGL')||take((a,b)=>reliability(b)-reliability(a)),role:'Safe Hands'},
+
+    {number:5,pos:'LB',top:72,left:17,row:fixed('IITU')||take((a,b)=>reliability(b)-reliability(a)),role:'Left Back'},
+    {number:3,pos:'CB',top:72,left:38,row:fixed('FGEN')||take((a,b)=>reliability(b)-reliability(a)),role:'Centre Back'},
+    {number:4,pos:'CB',top:72,left:62,row:fixed('TW')||take((a,b)=>reliability(b)-reliability(a)),role:'Centre Back'},
+    {number:2,pos:'RB',top:72,left:83,row:fixed('VWRA')||take((a,b)=>reliability(b)-reliability(a)),role:'Right Back'},
+
+    {number:8,pos:'CM',top:53,left:32,row:fixed('PHP')||take((a,b)=>squadScore(b)-squadScore(a)),role:'Vice-Captain'},
+    {number:6,pos:'CM',top:53,left:68,row:fixed('TSCO')||take((a,b)=>(reliability(b)+holdingValue(b)/1000)-(reliability(a)+holdingValue(a)/1000)),role:'Captain'},
+    {number:10,pos:'CAM',top:36,left:50,row:fixed('ARCC')||take((a,b)=>squadScore(b)-squadScore(a)),role:'Playmaker'},
+
+    {number:11,pos:'LW',top:21,left:18,row:fixed('UKW')||take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Left Wing'},
+    {number:9,pos:'ST',top:14,left:50,row:fixed('SUPR')||take((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a)),role:'Top Scorer'},
+    {number:7,pos:'RW',top:21,left:82,row:fixed('FSFL')||take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Right Wing'}
   ];
   return plans;
 }
