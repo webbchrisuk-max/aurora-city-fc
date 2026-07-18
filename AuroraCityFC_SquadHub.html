@@ -2008,6 +2008,56 @@ tr:hover td{background:rgba(96,165,250,.06)}
 @media (max-width: 1300px){.mock-main-grid{grid-template-columns:1fr}.mock-lower-grid,.club-departments{grid-template-columns:repeat(2,minmax(0,1fr))}.pitch-stage{grid-template-columns:1fr}.legend-list{order:2}.mock-titlebar h2{font-size:52px}}
 @media (max-width: 900px){.mock-grid-4,.mock-lower-grid,.club-departments{grid-template-columns:1fr}.mock-titlebar{flex-direction:column}.mock-title-left{flex-direction:column}.mock-titlebar h2{font-size:42px}.mock-sub{font-size:22px}.pitch-board{min-width:640px;height:520px}}
 
+
+/* ===== Squad Hub spacing + depth + actual-holdings Hall of Fame patch ===== */
+.mock-main-grid{gap:22px}
+.mock-main-left,.mock-main-right{gap:22px}
+.mock-lower-grid{gap:22px;margin-top:22px}
+.mock-card{padding:22px}
+.panel-head{margin-bottom:18px}
+.panel-sub{margin-bottom:18px}
+
+/* Bench & depth gets its own roomy vertical treatment */
+.mock-main-right .mock-card:first-child{min-height:390px}
+.mock-main-right .bench-list{display:grid;grid-template-columns:1fr;gap:12px}
+.mock-main-right .bench-card{
+  grid-template-columns:58px minmax(0,1fr) auto;
+  gap:14px;
+  min-height:74px;
+  padding:13px 14px;
+  border-radius:18px;
+}
+.mock-main-right .bench-shirt-mini{width:54px;height:54px;border-radius:15px}
+.mock-main-right .bench-meta strong{font-size:15px;line-height:1.25}
+.mock-main-right .bench-meta small{font-size:12px;line-height:1.4;margin-top:4px}
+.mock-main-right .bench-score{font-size:22px;min-width:50px;text-align:center}
+
+/* Hall of Fame is full width, spacious and driven only by active holdings */
+.hall-of-fame-card{grid-column:1 / -1!important}
+.hall-of-fame-card .legend-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(210px,1fr));
+  gap:18px;
+  margin-top:16px;
+}
+.hall-of-fame-card .legend-tile{min-height:330px;border-radius:22px}
+.hall-of-fame-card .legend-player-img{height:205px}
+.hall-of-fame-card .legend-player-body{padding:16px}
+.hall-of-fame-card .legend-tile strong{font-size:21px;margin-top:11px}
+.hall-of-fame-card .legend-tile span{font-size:13px;line-height:1.45}
+.hall-of-fame-card .legend-income{margin-top:12px;padding:10px}
+.hall-note{color:#9fc2e4;font-size:13px;margin:-6px 0 14px}
+
+@media(max-width:1180px){
+  .hall-of-fame-card .legend-grid{grid-template-columns:repeat(2,minmax(220px,1fr))}
+}
+@media(max-width:700px){
+  .mock-card{padding:16px}
+  .mock-main-grid,.mock-lower-grid{gap:16px}
+  .hall-of-fame-card .legend-grid{grid-template-columns:1fr}
+  .hall-of-fame-card .legend-player-img{height:235px}
+}
+
 </style>
 </head>
 <body>
@@ -2122,8 +2172,8 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
   </section>
 
-  <section class="mock-lower-grid" style="grid-template-columns:1.5fr 1fr 1fr 1fr;">
-    <div class="mock-card" style="grid-column:span 2;">
+  <section class="mock-lower-grid" style="grid-template-columns:1.35fr .65fr;">
+    <div class="mock-card">
       <div class="panel-head"><h3>Development Focus</h3><span class="label">Coach Room</span></div>
       <div class="focus-wrap" id="monthlyFocus"><div class="loading">Loading focus…</div></div>
     </div>
@@ -2131,29 +2181,12 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <div class="panel-head"><h3>Backup Team</h3><span class="label">Next Up</span></div>
       <div class="movers-list" id="relegationWatch"><div class="loading">Checking backup team…</div></div>
     </div>
-    <div class="mock-card">
-      <div class="panel-head"><h3>Club Legends</h3><span class="label">Hall of Fame</span></div>
-      <div class="legend-grid" id="legendGrid"><div class="loading">Loading legends…</div></div>
-    </div>
   </section>
 
-  <section class="club-departments">
-    <div class="mock-card dept-lead">
-      <h3>Club Departments</h3>
-      <p>Your doors to every area of the club. Jump from squad management into transfers, board strategy, or the main club homepage.</p>
-    </div>
-    <a class="mock-card dept-card" href="AuroraCityFC_ManagerDashboard.html" style="--dept-bg:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/manager-dashboard-bg.jpg')">
-      <div><h4>Manager Dashboard</h4><p>Overview, KPIs and club insight.</p></div><div class="dept-arrow">Open →</div>
-    </a>
-    <a class="mock-card dept-card" href="AuroraCityFC_TransferCentre.html" style="--dept-bg:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/stadium-home-bg.jpg')">
-      <div><h4>Transfer Centre</h4><p>Targets, shortlists and payday decisions.</p></div><div class="dept-arrow">Open →</div>
-    </a>
-    <a class="mock-card dept-card" href="AuroraCityFC_Boardroom.html" style="--dept-bg:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/boardroom-bg.jpg')">
-      <div><h4>Boardroom</h4><p>Club strategy, finances and governance.</p></div><div class="dept-arrow">Open →</div>
-    </a>
-    <a class="mock-card dept-card" href="AuroraCityFC_TrainingGround.html" style="--dept-bg:url('https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/training-ground-bg.jpg')">
-      <div><h4>Training Ground / Media</h4><p>Development focus and club communications.</p></div><div class="dept-arrow">Open →</div>
-    </a>
+  <section class="mock-card hall-of-fame-card" style="margin-top:22px;">
+    <div class="panel-head"><h3>Club Legends</h3><span class="label">Hall of Fame</span></div>
+    <p class="hall-note">Selected automatically from the strongest active holdings in your current Aurora squad — no retired or sold names.</p>
+    <div class="legend-grid" id="legendGrid"><div class="loading">Loading current-holding legends…</div></div>
   </section>
 
   <div class="bottom-ticker" id="clubTicker">
@@ -2276,6 +2309,16 @@ function uniqueByTicker(rows){
   });
   return [...map.values()];
 }
+function isActiveHolding(row){
+  const status = String(val(row,'status','Status','holding_status','Holding Status','role','Role') || '').toLowerCase();
+  if(/sold|exited|closed|removed|watchlist|scout/.test(status)) return false;
+  const shares = parseNum(val(row,'shares','Shares','quantity','Quantity','units','Units'));
+  const value = parseNum(val(row,'current_value','Current Value','market_value','Market Value','holding_value','Holding Value','value','Value'));
+  return (Number.isFinite(shares) && shares > 0) || (Number.isFinite(value) && value > 0);
+}
+function activeHoldingRows(rows){
+  return (Array.isArray(rows) ? rows : []).filter(isActiveHolding);
+}
 function annualIncomeFromRow(row){
   const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
   if(Number.isFinite(direct)) return direct;
@@ -2288,7 +2331,7 @@ function annualIncomeFromRow(row){
   return 0;
 }
 function portfolioAnnualIncome(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
+  return activeHoldingRows(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
 }
 function squadScore(row){
   const bs = buyStrength(row);
@@ -2507,50 +2550,36 @@ function renderBench(rows, target){
 
 function legendImageForTicker(ticker){
   const t = cleanTicker(ticker).replace('LON:','');
-  const map = {
-    LGEN:'assets/aurora-city-fc/players/lgen_legend.png',
-    MNG:'assets/aurora-city-fc/players/mng_legend.png',
-    SUPR:'assets/aurora-city-fc/players/supr_legend.png',
-    SDLF:'assets/aurora-city-fc/players/sdlf_legend.png',
-    STLF:'assets/aurora-city-fc/players/stlf_legend.png'
-  };
-  return map[t] || `assets/aurora-city-fc/players/${t.toLowerCase()}_legend.png`;
+  return `assets/aurora-city-fc/players/${t.toLowerCase()}_player.png`;
 }
-function legendRole(ticker){
-  const t = cleanTicker(ticker).replace('LON:','');
-  const map = {
-    LGEN:'Club Captain',
-    MNG:'Vice Captain',
-    SUPR:'Income Legend',
-    SDLF:'Midfield General',
-    STLF:'Midfield General'
-  };
-  return map[t] || 'Club Legend';
+function legendRole(row, index){
+  if(index === 0) return 'Club Captain';
+  if(index === 1) return 'Vice Captain';
+  if(index === 2) return 'Income Leader';
+  if(index === 3) return 'First-Team Legend';
+  return 'Club Legend';
 }
 function chooseLegends(rows){
-  const sorted = [...rows].sort((a,b)=>(annualIncomeFromRow(b) || squadScore(b)) - (annualIncomeFromRow(a) || squadScore(a)));
-  const preferred = ['LGEN','MNG','SUPR','SDLF','STLF'];
-  const picked = [];
-  preferred.forEach(t=>{
-    const row = sorted.find(r=>cleanTicker(r.ticker).replace('LON:','') === t);
-    if(row && !picked.some(p=>cleanTicker(p.ticker) === cleanTicker(row.ticker))) picked.push(row);
-  });
-  sorted.forEach(row=>{
-    if(picked.length >= 4) return;
-    if(!picked.some(p=>cleanTicker(p.ticker) === cleanTicker(row.ticker))) picked.push(row);
-  });
-  return picked.slice(0,4);
+  return activeHoldingRows(rows)
+    .sort((a,b)=>{
+      const incomeDiff = annualIncomeFromRow(b) - annualIncomeFromRow(a);
+      if(Math.abs(incomeDiff) > 0.01) return incomeDiff;
+      return squadScore(b) - squadScore(a);
+    })
+    .slice(0,4);
 }
 function renderLegends(rows){
+  const grid = $('legendGrid');
+  if(!grid) return;
   const legends = chooseLegends(rows);
-  $('legendGrid').innerHTML = legends.length ? legends.map((r,i)=>{
+  grid.innerHTML = legends.length ? legends.map((r,i)=>{
     const ticker = displayTicker(r.ticker);
     const name = displayName(r);
     const img = legendImageForTicker(r.ticker);
-    const role = legendRole(r.ticker);
+    const role = legendRole(r,i);
     return `<div class="legend-tile">
       <div class="legend-player-img">
-        <img src="${img}" alt="${ticker} legend portrait">
+        <img src="${img}" alt="${ticker} current holding portrait" onerror="this.onerror=null;this.style.display='none';this.parentElement.style.background='linear-gradient(180deg,rgba(14,165,233,.18),rgba(15,23,42,.76))';">
       </div>
       <div class="legend-player-body">
         <div class="legend-role">${role}</div>
@@ -2559,10 +2588,8 @@ function renderLegends(rows){
         <span class="legend-income">Annual income ${money(annualIncomeFromRow(r))}</span>
       </div>
     </div>`;
-  }).join('') : '<div class="loading">No legends found yet.</div>';
+  }).join('') : '<div class="loading">No active holdings found for the Hall of Fame.</div>';
 }
-
-
 
 function renderSelectionIntel(rows, backups){
   const el = $('selectionIntel');
@@ -2851,7 +2878,7 @@ function renderSquadDevelopment(rows, annualIncome){
 function renderAll(){
   if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
 
-  const rows = uniqueByTicker(state.holdings).sort((a,b)=>squadScore(b)-squadScore(a));
+  const rows = uniqueByTicker(activeHoldingRows(state.holdings)).sort((a,b)=>squadScore(b)-squadScore(a));
   const annualIncome = portfolioAnnualIncome();
   const monthly = annualIncome / 12;
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
@@ -2970,7 +2997,7 @@ function renderMockBottomTicker(rows, annualIncome){
 }
 function renderAll(){
   if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
-  const rows = uniqueByTicker(state.holdings).sort((a,b)=>squadScore(b)-squadScore(a));
+  const rows = uniqueByTicker(activeHoldingRows(state.holdings)).sort((a,b)=>squadScore(b)-squadScore(a));
   const annualIncome = portfolioAnnualIncome();
   const monthly = annualIncome / 12;
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
