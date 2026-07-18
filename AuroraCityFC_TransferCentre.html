@@ -2934,6 +2934,78 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 
 </style>
+
+<style>
+/* ===== Final deal budget placement + richer top-line intelligence ===== */
+.lead-signing-kpi{
+  border-color:rgba(34,211,238,.28);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.14),transparent 42%),
+    rgba(2,6,23,.30);
+}
+.lead-signing-kpi strong{color:#a5f3fc!important}
+.window-kpi span{white-space:normal}
+.window-kpi .kpi-line{display:block;margin-top:3px;color:#cbd5e1;font-size:11px;line-height:1.35}
+.window-kpi .kpi-line.good{color:#86efac}
+.window-kpi .kpi-line.warn{color:#fde68a}
+.window-kpi .kpi-line.bad{color:#fecdd3}
+.deal-budget-panel{
+  margin:14px 0 16px;
+  border:1px solid rgba(52,211,153,.28);
+  background:
+    radial-gradient(circle at 88% 0%,rgba(52,211,153,.13),transparent 36%),
+    linear-gradient(180deg,rgba(6,78,59,.16),rgba(2,6,23,.42));
+  border-radius:20px;
+  padding:15px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.deal-budget-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+.deal-budget-head p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+  max-width:720px;
+}
+.deal-budget-grid{
+  display:grid;
+  grid-template-columns:minmax(230px,.72fr) minmax(330px,1.28fr);
+  gap:10px;
+  align-items:stretch;
+  margin-top:12px;
+}
+.deal-budget-input{margin-top:0;border-radius:16px;min-height:68px}
+.deal-budget-input span{font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.deal-budget-input input{text-align:right}
+.deal-budget-panel .allocation-budget-summary{margin-top:0}
+.deal-budget-panel .allocation-budget-stat{display:flex;flex-direction:column;justify-content:center;min-height:68px}
+.deal-budget-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  margin-top:8px;
+}
+.deal-budget-footer .allocation-budget-note{margin-top:0;flex:1}
+.deal-budget-context{
+  color:#bfdbfe;
+  font-size:10px;
+  line-height:1.35;
+  text-align:right;
+  max-width:46%;
+}
+@media(max-width:760px){
+  .deal-budget-head,.deal-budget-footer{flex-direction:column}
+  .deal-budget-grid{grid-template-columns:1fr}
+  .deal-budget-context{max-width:none;text-align:left}
+}
+</style>
+
 </head>
 <body>
 <!-- ===================== SECTION: APP SHELL ===================== -->
@@ -2983,7 +3055,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
       <p>Transfer desk, final deal sheet and registration checks for the strongest green-light income route.</p>
       <div class="hero-actions">
         <span class="pill" id="lastUpdated">Last updated: loading…</span>
-        <span class="pill">Transfer Budget: £1,500</span>
+        <span class="pill">Allocation Mode: Adjustable</span>
         <span class="pill">Scout Focus: Green-Light Income</span>
       </div>
     </div>
@@ -2992,22 +3064,10 @@ tr:hover td{background:rgba(96,165,250,.06)}
   <!-- ===================== SECTION: CONTROL STRIP ===================== -->
   <section class="section">
     <div class="transfer-control-strip">
-      <div class="broadcast-panel payday-input-card">
-        <div class="broadcast-title">
-          <span class="broadcast-live">Live</span>
-          <h3>Transfer Budget</h3>
-        </div>
-        <label class="payday-input-line">
-          <span>£</span>
-          <input id="transferBudgetInput" type="number" min="0" step="25" value="1500" inputmode="decimal" aria-label="Transfer budget">
-        </label>
-        <div class="allocation-budget-summary" aria-live="polite">
-          <div class="allocation-budget-stat"><small>Allocated</small><strong id="allocatedTransferBudget">£0.00</strong></div>
-          <div class="allocation-budget-stat remaining" id="remainingTransferBudgetCard"><small>Still Available</small><strong id="remainingTransferBudget">£1,500.00</strong></div>
-        </div>
-        <div class="allocation-budget-progress"><i id="allocationBudgetProgress"></i></div>
-        <span class="allocation-budget-note" id="allocationBudgetNote">£0.00 of £1,500.00 allocated.</span>
-        <button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset plan</button>
+      <div class="window-kpi lead-signing-kpi">
+        <small>Lead Signing</small>
+        <strong id="headlineLead">—</strong>
+        <span id="headlineLeadNote">Top deal loading…</span>
       </div>
       <div class="window-kpi good">
         <small>Final Route</small>
@@ -3080,6 +3140,31 @@ tr:hover td{background:rgba(96,165,250,.06)}
           <small>Gaffer’s Call</small>
           <strong id="gafferCall">Checking the market…</strong>
           <span id="gafferCallText">Aurora is ranking the green-light names by yearly income added, then checking risk and platform fit.</span>
+        </div>
+
+        <div class="deal-budget-panel">
+          <div class="deal-budget-head">
+            <div>
+              <div class="broadcast-title"><span class="broadcast-live">Budget</span><h3>Final Deal Allocation</h3></div>
+              <p>Change the transfer budget or any individual buy amount here. The remaining balance updates instantly against the final £1,500 route.</p>
+            </div>
+            <button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset recommendation</button>
+          </div>
+          <div class="deal-budget-grid">
+            <label class="payday-input-line deal-budget-input">
+              <span>Transfer budget £</span>
+              <input id="transferBudgetInput" type="number" min="0" step="25" value="1500" inputmode="decimal" aria-label="Transfer budget">
+            </label>
+            <div class="allocation-budget-summary" aria-live="polite">
+              <div class="allocation-budget-stat"><small>Allocated</small><strong id="allocatedTransferBudget">£0.00</strong></div>
+              <div class="allocation-budget-stat remaining" id="remainingTransferBudgetCard"><small>Still Available</small><strong id="remainingTransferBudget">£1,500.00</strong></div>
+            </div>
+          </div>
+          <div class="allocation-budget-progress"><i id="allocationBudgetProgress"></i></div>
+          <div class="deal-budget-footer">
+            <span class="allocation-budget-note" id="allocationBudgetNote">£0.00 of £1,500.00 allocated.</span>
+            <span class="deal-budget-context" id="dealBudgetContext">Waiting for the final route…</span>
+          </div>
         </div>
 
         <div class="deal-sheet" id="finalDealSheet">
@@ -3824,13 +3909,35 @@ function renderTransferTicker(deal){
 }
 function renderKpis(deal){
   const totalIncome = deal.rows.reduce((s,r)=>s+r.income,0);
-  if($('headlineRoute')) $('headlineRoute').textContent = deal.route;
-  if($('headlineRouteNote')) $('headlineRouteNote').textContent = deal.rows.length ? `${deal.rows.length} signing${deal.rows.length === 1 ? '' : 's'} on the slip` : 'No automatic signing';
-  if($('headlineIncome')) $('headlineIncome').textContent = money(totalIncome);
-  if($('headlineMonthly')) $('headlineMonthly').textContent = `${money(totalIncome / 12)} per month estimate`;
-  if($('headlineStatus')) $('headlineStatus').textContent = deal.status;
-  if($('headlineStatusNote')) $('headlineStatusNote').textContent = deal.holdback > 0 ? `${money(deal.holdback)} held back` : 'Full budget assigned';
   const allocated = Math.max(0,(deal.budget||0)-(deal.holdback||0));
+  const lead = deal.rows?.[0];
+  const routeTickers = deal.rows?.map(r=>displayTicker(r.row.ticker)).join(' • ') || 'Hold cash';
+  const greenCount = deal.rows?.filter(r=>r.gate.status === 'pass').length || 0;
+  const cautionCount = deal.rows?.filter(r=>r.gate.status === 'caution').length || 0;
+  const platformChecks = deal.rows?.filter(r=>platformFor(r.row.ticker).toLowerCase().includes('check')).length || 0;
+  const blendedRate = allocated > 0 ? totalIncome / allocated : NaN;
+  const incomePerThousand = allocated > 0 ? (totalIncome / allocated) * 1000 : NaN;
+
+  if($('headlineLead')) $('headlineLead').textContent = lead ? displayTicker(lead.row.ticker) : 'No signing';
+  if($('headlineLeadNote')) $('headlineLeadNote').innerHTML = lead
+    ? `<span class="kpi-line">${money(lead.amount)} allocation • ${platformFor(lead.row.ticker)}</span><span class="kpi-line good">${money(lead.income)}/yr • ${Number.isFinite(incomeRate(lead.row)) ? (incomeRate(lead.row)*100).toFixed(2)+'% income rate' : 'income check'}</span>`
+    : '<span class="kpi-line bad">No candidate has cleared the desk.</span>';
+
+  if($('headlineRoute')) $('headlineRoute').textContent = routeTickers;
+  if($('headlineRouteNote')) $('headlineRouteNote').innerHTML = deal.rows.length
+    ? `<span class="kpi-line">${deal.rows.length} signing${deal.rows.length === 1 ? '' : 's'} • ${money(allocated)} allocated</span><span class="kpi-line ${deal.holdback>0?'warn':'good'}">${deal.holdback>0 ? money(deal.holdback)+' cash remaining' : 'Full route funded'}</span>`
+    : '<span class="kpi-line bad">No automatic route available.</span>';
+
+  if($('headlineIncome')) $('headlineIncome').textContent = `${money(totalIncome)}/yr`;
+  if($('headlineMonthly')) $('headlineMonthly').innerHTML = `<span class="kpi-line good">${money(totalIncome / 12)}/month added</span><span class="kpi-line">${Number.isFinite(blendedRate)?(blendedRate*100).toFixed(2)+'% blended income rate':'—'} • ${Number.isFinite(incomePerThousand)?money(incomePerThousand)+'/yr per £1,000':'—'}</span>`;
+
+  const headlineStatusText = deal.statusClass === 'bad' ? 'Hold fire' : deal.statusClass === 'warn' ? 'Controlled route' : 'Ready to place';
+  if($('headlineStatus')) $('headlineStatus').textContent = headlineStatusText;
+  if($('headlineStatusNote')) $('headlineStatusNote').innerHTML = `<span class="kpi-line ${deal.statusClass==='bad'?'bad':deal.statusClass==='warn'?'warn':'good'}">${greenCount} green light • ${cautionCount} controlled</span><span class="kpi-line">${platformChecks} platform check${platformChecks===1?'':'s'} • ${deal.holdback>0?money(deal.holdback)+' unallocated':'budget fully assigned'}</span>`;
+
+  if($('dealBudgetContext')) $('dealBudgetContext').textContent = deal.rows.length
+    ? `${deal.rows.length} deals • Average allocation ${money(allocated/deal.rows.length)} • Projected ${money(totalIncome)}/year added`
+    : 'No approved deals currently using the budget.';
   const remaining = Math.max(0,deal.holdback||0);
   if($('allocatedTransferBudget')) $('allocatedTransferBudget').textContent = money(allocated);
   if($('remainingTransferBudget')) $('remainingTransferBudget').textContent = money(remaining);
