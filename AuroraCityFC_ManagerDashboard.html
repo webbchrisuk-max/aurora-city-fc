@@ -129,6 +129,13 @@ button,input{font:inherit}
 
 /* ===== Aurora v2.0 Manager polish ===== */
 .hq-hero{min-height:300px}.hero-inner{padding:34px}.score-strip{gap:18px}.score-card{min-height:148px;padding:20px}.command-grid{gap:20px}.panel{border-radius:30px}.briefing-card{padding:30px;gap:32px}.action-list{gap:12px;padding:18px 20px 22px}.action-row{padding:14px}.dept-status-grid{gap:16px}.preview-grid{gap:20px}.department-grid{gap:18px}.department-card{min-height:260px}.section-head{margin-top:30px}@media(max-width:760px){.hq-hero{min-height:0}.hero-inner{padding:20px}.department-card{min-height:220px}}
+
+/* ===== Aurora system check ===== */
+.aurora-system-button{position:fixed;right:16px;bottom:58px;z-index:75;border:1px solid rgba(34,211,238,.34);background:rgba(3,12,28,.92);color:#a5f3fc;border-radius:999px;padding:9px 13px;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 12px 32px rgba(0,0,0,.35);cursor:pointer}
+.aurora-system-panel{position:fixed;right:16px;bottom:104px;width:min(390px,calc(100vw - 32px));max-height:64vh;overflow:auto;z-index:76;border:1px solid rgba(96,165,250,.30);background:linear-gradient(180deg,rgba(8,21,43,.98),rgba(2,7,18,.98));border-radius:22px;padding:16px;box-shadow:0 26px 80px rgba(0,0,0,.55);display:none}
+.aurora-system-panel.open{display:block}.aurora-system-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.aurora-system-head h3{margin:0;font-size:17px}.aurora-system-close{border:0;background:transparent;color:#cbd5e1;font-size:24px;cursor:pointer}.aurora-system-list{display:grid;gap:8px}.aurora-system-row{display:grid;grid-template-columns:14px 1fr;gap:9px;align-items:start;border:1px solid rgba(148,163,184,.14);background:rgba(2,6,23,.35);border-radius:14px;padding:10px}.aurora-system-dot{width:10px;height:10px;border-radius:50%;margin-top:3px;background:#34d399;box-shadow:0 0 12px rgba(52,211,153,.28)}.aurora-system-row.warn .aurora-system-dot{background:#fbbf24}.aurora-system-row.bad .aurora-system-dot{background:#fb7185}.aurora-system-row strong{display:block;font-size:12px}.aurora-system-row span{display:block;color:#93a4bd;font-size:11px;line-height:1.4;margin-top:3px}
+@media(max-width:560px){.aurora-system-button{right:10px;bottom:52px}.aurora-system-panel{right:10px;bottom:94px;width:calc(100vw - 20px)}}
+
 </style>
 </head>
 <body>
@@ -210,7 +217,7 @@ button,input{font:inherit}
   <section class="dept-status-grid">
     <a class="dept-mini" href="AuroraCityFC_TransferCentre.html"><div class="dept-mini-top"><div class="dept-icon">🔁</div><span class="badge green">Live</span></div><h3>Transfer Centre</h3><strong id="deptTransfers">—</strong><p>Green-light income route</p><div class="dept-mini-footer"><span><b id="deptTopTarget">—</b> top target</span></div></a>
     <a class="dept-mini" href="AuroraCityFC_Boardroom.html"><div class="dept-mini-top"><div class="dept-icon">👥</div><span class="badge blue">Board</span></div><h3>Boardroom</h3><strong id="deptBoard">—</strong><p>Confidence and club health</p><div class="dept-mini-footer"><span>risk <b id="deptRisk">normal</b></span></div></a>
-    <a class="dept-mini" href="AuroraCityFC_SquadHub.html"><div class="dept-mini-top"><div class="dept-icon">👕</div><span class="badge blue">Squad</span></div><h3>Squad Hub</h3><strong id="deptSquad">—</strong><p>Active first-team holdings</p><div class="dept-mini-footer"><span><b id="deptCaptain">—</b> captain</span></div></a>
+    <a class="dept-mini" href="AuroraCityFC_SquadHub.html"><div class="dept-mini-top"><div class="dept-icon">👕</div><span class="badge blue">Squad</span></div><h3>Squad Hub</h3><strong id="deptSquad">—</strong><p>Active first-team holdings</p><div class="dept-mini-footer"><span><b id="deptCaptain">—</b> watch</span></div></a>
     <a class="dept-mini" href="AuroraCityFC_TrainingGround.html"><div class="dept-mini-top"><div class="dept-icon">⛳</div><span class="badge amber">Training</span></div><h3>Training Ground</h3><strong id="deptTraining">Watch</strong><p>Improve weak areas and form</p><div class="dept-mini-footer"><span>focus <b>income</b></span></div></a>
     <a class="dept-mini" href="AuroraCityFC_MediaCentre.html"><div class="dept-mini-top"><div class="dept-icon">🎥</div><span class="badge blue">Media</span></div><h3>Media Centre</h3><strong id="deptMedia">—</strong><p>Latest Aurora Times stories</p><div class="dept-mini-footer"><span><b id="deptNewsCount">—</b> items</span></div></a>
   </section>
@@ -241,7 +248,7 @@ let state = {};
 
 const TABS = [
   "Holdings","Watchlist","Global Watchlist","AuroraScout","Dividends","IncomeLog","AuroraTimes",
-  "MoraleLog","ManagerInbox","TrainingLog","BoardConfidence","AuroraFixtures","AuroraRules"
+  "MoraleLog","ManagerInbox","TrainingLog","BoardConfidence","AuroraFixtures","AuroraRules","DailySummary","PriceLog","DailyPriceSummary","LivePrices"
 ];
 const MONTHLY_TARGET = 500;
 const PAYDAY_BUDGET = 1500;
@@ -401,22 +408,37 @@ function latestIncomeEvent(){
     const change = firstFinite(row,["annual_income_change","income_change","annual_change","change","delta","income_added","added_income","Annual Income Change"]);
     if(Number.isFinite(change) && change !== 0){
       const ticker = displayTicker(row.ticker ?? row.Ticker ?? row.symbol ?? row.Symbol);
-      return {change,ticker:ticker||"Latest activity"};
+      return {change,ticker:ticker||"Latest activity",date:item.date};
     }
   }
   return null;
 }
-function previousClubValue(current){
-  const rows = (state.incomeLog || []).map((row,index)=>({row,index,date:rowDate(row)}));
-  rows.sort((a,b)=>(b.date?.getTime()||b.index)-(a.date?.getTime()||a.index));
-  const values=[];
-  for(const item of rows){
-    const v=firstFinite(item.row,["club_value","portfolio_value","total_value","market_value","Club Value","Portfolio Value"]);
-    if(Number.isFinite(v)) values.push(v);
+function managerSnapshotHistory(){
+  try{ const rows=JSON.parse(localStorage.getItem('aurora_manager_snapshots')||'[]'); return Array.isArray(rows)?rows:[]; }catch(_){ return []; }
+}
+function saveManagerSnapshot(value,income){
+  if(!Number.isFinite(value)||!Number.isFinite(income)) return;
+  const rows=managerSnapshotHistory();
+  const latest=rows[rows.length-1];
+  if(!latest || Math.abs(latest.value-value)>.005 || Math.abs(latest.income-income)>.005 || Date.now()-latest.time>21600000){
+    rows.push({time:Date.now(),value,income});
+    localStorage.setItem('aurora_manager_snapshots',JSON.stringify(rows.slice(-40)));
   }
-  if(values.length>=2) return values[1];
-  if(values.length===1 && Math.abs(values[0]-current)>0.005) return values[0];
-  return NaN;
+}
+function previousClubValue(current){
+  const sourceRows=[...(state.dailySummary||[]),...(state.dailyPriceSummary||[]),...(state.priceLog||[]),...(state.incomeLog||[])];
+  const values=sourceRows.map((row,index)=>({
+    value:firstFinite(row,["club_value","portfolio_value","total_value","market_value","closing_value","Club Value","Portfolio Value","Total Value"]),
+    date:rowDate(row),index
+  })).filter(x=>Number.isFinite(x.value)).sort((a,b)=>(b.date?.getTime()||b.index)-(a.date?.getTime()||a.index));
+  const historical=values.find(x=>Math.abs(x.value-current)>.005);
+  if(historical) return historical.value;
+  const local=managerSnapshotHistory().slice().reverse().find(x=>Number.isFinite(x.value)&&Math.abs(x.value-current)>.005);
+  return local?.value ?? NaN;
+}
+function latestDataTimestamp(){
+  const rows=[...(state.dailySummary||[]),...(state.dailyPriceSummary||[]),...(state.priceLog||[]),...(state.incomeLog||[]),...(state.livePrices||[])];
+  return rows.map(rowDate).filter(Boolean).sort((a,b)=>b-a)[0]||null;
 }
 function boardScore(monthly, value, yieldRate){
   const incomeScore = Math.min(100, Math.max(60, (monthly / MONTHLY_TARGET) * 100));
@@ -476,7 +498,11 @@ async function loadData(){
       boardConfidence:tabs.BoardConfidence || [],
       moraleLog:tabs.MoraleLog || [],
       managerInbox:tabs.ManagerInbox || [],
-      trainingLog:tabs.TrainingLog || []
+      trainingLog:tabs.TrainingLog || [],
+      dailySummary:tabs.DailySummary || [],
+      priceLog:tabs.PriceLog || [],
+      dailyPriceSummary:tabs.DailyPriceSummary || [],
+      livePrices:tabs.LivePrices || []
     };
     renderAll();
   }catch(err){
@@ -502,7 +528,8 @@ function renderAll(){
   const top = route[0]?.row;
   const newsCount = (state.news || []).length;
 
-  $("lastUpdated").textContent = `Last updated: ${new Date().toLocaleString("en-GB")}`;
+  const dataStamp=latestDataTimestamp();
+  $("lastUpdated").textContent = dataStamp ? `Aurora data: ${dataStamp.toLocaleString("en-GB")} • refreshed ${new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}` : `Refreshed: ${new Date().toLocaleString("en-GB")}`;
   $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
   $("tickerText").textContent = route.length
     ? `Club News • Transfer Centre route ready: ${route.map(x=>displayTicker(x.row.ticker)).join(" / ")} • Estimated payday income ${money(routeIncome)}/yr • Gap to £500/m: ${money(gap)}`
@@ -533,7 +560,7 @@ function renderAll(){
   const incomeTrend = $("annualIncomeTrend");
   if(latestIncome){
     incomeTrend.className = `hero-detail ${latestIncome.change > 0 ? "positive" : "negative"}`;
-    incomeTrend.textContent = `${latestIncome.change > 0 ? "▲" : "▼"} ${money(Math.abs(latestIncome.change))} from ${latestIncome.ticker}`;
+    incomeTrend.textContent = `${latestIncome.change > 0 ? "▲" : "▼"} ${money(Math.abs(latestIncome.change))}/yr • ${latestIncome.ticker}${latestIncome.date ? ` • ${latestIncome.date.toLocaleDateString("en-GB")}` : ""}`;
   }else{
     incomeTrend.className = "hero-detail neutral";
     incomeTrend.textContent = "Latest purchase increase not recorded in IncomeLog";
@@ -574,8 +601,10 @@ function renderAll(){
   $("deptTopTarget").textContent = top ? displayTicker(top.ticker) : "—";
   $("deptBoard").textContent = board >= 88 ? "Strong" : board >= 78 ? "Stable" : "Watch";
   $("deptRisk").textContent = Number.isFinite(yieldRate) && yieldRate > 0.08 ? "yield watch" : "normal";
-  $("deptSquad").textContent = active.length;
-  $("deptCaptain").textContent = active.slice().sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a))[0] ? displayTicker(active.slice().sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a))[0].ticker) : "—";
+  const weakPlayers=active.filter(r=>Number.isFinite(buyStrength(r))&&buyStrength(r)<60).sort((a,b)=>buyStrength(a)-buyStrength(b));
+  $("deptSquad").textContent = `${active.length} active`;
+  $("deptCaptain").textContent = weakPlayers[0] ? displayTicker(weakPlayers[0].ticker) : "All clear";
+  if($("deptTraining")) $("deptTraining").textContent = weakPlayers.length ? `${weakPlayers.length} focus` : "Clear";
   $("deptMedia").textContent = newsCount ? "Live" : "Quiet";
   $("deptNewsCount").textContent = newsCount || "0";
   $("topTransferBadge").textContent = top ? `${displayTicker(top.ticker)} leads` : "No target";
@@ -584,11 +613,69 @@ function renderAll(){
   renderPreviewRows(route.map(x=>x.row), "topTransferPreview", (row,i)=>`${money(route[i].income)}/yr`);
   const squadRows = active.slice().sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a)).slice(0,4);
   renderPreviewRows(squadRows, "squadPreview", row=>`${money(annualIncomeFromRow(row))}/yr`);
+  saveManagerSnapshot(value,income);
+  window.AURORA_PAGE_CHECKS=()=>[
+    {level:yieldHoldings.length?'ok':'bad',title:`${yieldHoldings.length} income-portfolio rows`,detail:'Portfolio yield is restricted to IG ISA and Trade 212 holdings.'},
+    {level:Number.isFinite(previousValue)?'ok':'warn',title:Number.isFinite(previousValue)?'Club-value trend source found':'Club-value trend is building',detail:Number.isFinite(previousValue)?'Historical or locally stored snapshot is available.':'A second distinct snapshot will activate the rise/fall indicator.'}
+  ];
 }
 $("refreshBtn")?.addEventListener("click", ()=>{ AURORA_MASTER_CACHE = null; loadData(); });
 loadData();
 setInterval(()=>{ if($("tickerTime")) $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }, 1000);
 
 </script>
+
+<button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>
+<aside class="aurora-system-panel" id="auroraSystemPanel" aria-hidden="true">
+  <div class="aurora-system-head"><h3>Aurora System Check</h3><button class="aurora-system-close" id="auroraSystemClose" type="button" aria-label="Close system check">×</button></div>
+  <div class="aurora-system-list" id="auroraSystemList"><div class="aurora-system-row"><i class="aurora-system-dot"></i><div><strong>Waiting for live data</strong><span>Open after the page has finished loading.</span></div></div></div>
+</aside>
+
+
+<script>
+(function(){
+  const button=document.getElementById('auroraSystemButton');
+  const panel=document.getElementById('auroraSystemPanel');
+  const close=document.getElementById('auroraSystemClose');
+  const list=document.getElementById('auroraSystemList');
+  if(!button||!panel||!list) return;
+  const parseDate=row=>{
+    const raw=row?.date??row?.Date??row?.timestamp??row?.Timestamp??row?.updated_at??row?.Updated??row?.time;
+    const d=raw?new Date(raw):null; return d&&!Number.isNaN(d.getTime())?d:null;
+  };
+  const ticker=row=>String(row?.ticker??row?.Ticker??'').trim().toUpperCase().replace('LON:','').replace('.L','');
+  const value=row=>{
+    const raw=row?.current_value??row?.market_value??row?.holding_value??row?.value??row?.Value;
+    const n=Number(String(raw??'').replace(/[£,%]/g,'')); return Number.isFinite(n)?n:0;
+  };
+  const qty=row=>{const n=Number(String(row?.shares??row?.quantity??row?.units??'').replace(/,/g,''));return Number.isFinite(n)?n:0;};
+  function build(){
+    const s=(typeof state!=='undefined'&&state)||{};
+    const holdings=Array.isArray(s.holdings)?s.holdings:[];
+    const active=holdings.filter(r=>qty(r)>0||value(r)>0);
+    const counts=new Map(); active.forEach(r=>{const t=ticker(r);if(t)counts.set(t,(counts.get(t)||0)+1);});
+    const duplicates=[...counts].filter(([,n])=>n>1);
+    const missingAccount=active.filter(r=>!String(r.account??r.Account??r.platform??r.broker??'').trim()).length;
+    const valuationRows=[...(s.watchlist||[]),...(s.scout||[]),...(s.globalWatchlist||[])];
+    const missingFair=valuationRows.filter(r=>ticker(r)&&!(r.fair_value??r['Fair Value']??r.target_price??r['Target Price'])).length;
+    const allRows=Object.values(s).flatMap(v=>Array.isArray(v)?v:[]);
+    const latest=allRows.map(parseDate).filter(Boolean).sort((a,b)=>b-a)[0];
+    const ageHours=latest?(Date.now()-latest.getTime())/36e5:NaN;
+    const extra=(typeof window.AURORA_PAGE_CHECKS==='function'?window.AURORA_PAGE_CHECKS():[])||[];
+    const checks=[
+      {level:active.length?'ok':'bad',title:`${active.length} active holding rows`,detail:active.length?'Holdings are available to the page.':'No active holdings were detected.'},
+      {level:missingAccount?'warn':'ok',title:missingAccount?`${missingAccount} holding rows missing an account`:'Account labels complete',detail:missingAccount?'Add IG ISA, Trade 212 or the correct platform to prevent scope errors.':'Account-scoped calculations can be applied safely.'},
+      {level:duplicates.length?'warn':'ok',title:duplicates.length?`${duplicates.length} tickers appear in multiple accounts`:'No unexpected duplicate tickers',detail:duplicates.length?duplicates.slice(0,6).map(([t,n])=>`${t} ×${n}`).join(' • '):'Unique-ticker and account totals can be separated deliberately.'},
+      {level:missingFair?'warn':'ok',title:missingFair?`${missingFair} valuation rows missing fair value`:'Fair-value fields available',detail:missingFair?'Those rows will show a neutral valuation until the sheet is completed.':'Transfer valuation indicators have source data.'},
+      {level:Number.isFinite(ageHours)&&ageHours>26?'bad':Number.isFinite(ageHours)&&ageHours>8?'warn':'ok',title:latest?`Latest dated row: ${latest.toLocaleString('en-GB')}`:'No dated data row found',detail:Number.isFinite(ageHours)?`${ageHours.toFixed(1)} hours old.`:'The page can still run, but true data freshness cannot be confirmed.'},
+      ...extra
+    ];
+    list.innerHTML=checks.map(c=>`<div class="aurora-system-row ${c.level==='ok'?'':c.level}"><i class="aurora-system-dot"></i><div><strong>${c.title}</strong><span>${c.detail}</span></div></div>`).join('');
+  }
+  function toggle(open){panel.classList.toggle('open',open);panel.setAttribute('aria-hidden',String(!open));if(open)build();}
+  button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
+})();
+</script>
+
 </body>
 </html>

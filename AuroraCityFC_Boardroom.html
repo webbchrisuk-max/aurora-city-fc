@@ -2297,6 +2297,18 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 /* ===== Aurora v2.0 Boardroom priority hierarchy ===== */
 .board-priority-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:18px 0 22px}.priority-card{position:relative;overflow:hidden;border:1px solid rgba(96,165,250,.22);background:linear-gradient(180deg,rgba(13,27,52,.88),rgba(7,17,31,.95));border-radius:24px;padding:18px;min-height:126px;box-shadow:0 14px 38px rgba(0,0,0,.24)}.priority-card:before{content:"";position:absolute;right:-28px;top:-34px;width:100px;height:100px;border-radius:50%;background:rgba(96,165,250,.12)}.priority-card.green:before{background:rgba(52,211,153,.14)}.priority-card.amber:before{background:rgba(251,191,36,.13)}.priority-card.red:before{background:rgba(251,113,133,.12)}.priority-card small{display:block;color:#9fb7d2;text-transform:uppercase;letter-spacing:.1em;font-size:10px;font-weight:900}.priority-card strong{display:block;font-size:24px;margin-top:12px;color:#e0f2fe}.priority-card.green strong{color:#86efac}.priority-card.amber strong{color:#fde68a}.priority-card.red strong{color:#fecdd3}.priority-card span{display:block;color:#93a4bd;font-size:12px;margin-top:7px}.executive-grid{gap:18px!important}.chairman-verdict,.board-decision-card{padding:22px!important}.board-grid{gap:18px!important}.board-card{padding:18px!important}@media(max-width:900px){.board-priority-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.board-priority-strip{grid-template-columns:1fr}}
+
+/* ===== Board accountability + trend register ===== */
+.decision-log{display:grid;gap:9px}.decision-log-row{display:grid;grid-template-columns:1.35fr .7fr .7fr .8fr;gap:10px;align-items:center;border:1px solid var(--line);background:rgba(2,6,23,.27);border-radius:15px;padding:11px}.decision-log-row.header{background:rgba(30,64,175,.18);color:#bfdbfe;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}.decision-log-row strong{font-size:13px}.decision-log-row span{color:var(--muted);font-size:12px}.decision-status{display:inline-flex!important;width:max-content;border-radius:999px;padding:5px 8px;border:1px solid rgba(52,211,153,.28);background:rgba(20,83,45,.18);color:#bbf7d0!important;font-weight:900}.decision-status.watch{border-color:rgba(251,191,36,.28);background:rgba(120,53,15,.18);color:#fde68a!important}.board-trend-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}.board-trend-card{border:1px solid var(--line);background:rgba(2,6,23,.26);border-radius:15px;padding:11px}.board-trend-card small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase}.board-trend-card strong{display:block;margin-top:6px;font-size:18px}.board-trend-card span{display:block;margin-top:5px;color:#86efac;font-size:11px}
+@media(max-width:800px){.decision-log-row{grid-template-columns:1fr 1fr}.decision-log-row.header{display:none}.board-trend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:500px){.decision-log-row,.board-trend-grid{grid-template-columns:1fr}}
+
+
+/* ===== Aurora system check ===== */
+.aurora-system-button{position:fixed;right:16px;bottom:58px;z-index:75;border:1px solid rgba(34,211,238,.34);background:rgba(3,12,28,.92);color:#a5f3fc;border-radius:999px;padding:9px 13px;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 12px 32px rgba(0,0,0,.35);cursor:pointer}
+.aurora-system-panel{position:fixed;right:16px;bottom:104px;width:min(390px,calc(100vw - 32px));max-height:64vh;overflow:auto;z-index:76;border:1px solid rgba(96,165,250,.30);background:linear-gradient(180deg,rgba(8,21,43,.98),rgba(2,7,18,.98));border-radius:22px;padding:16px;box-shadow:0 26px 80px rgba(0,0,0,.55);display:none}
+.aurora-system-panel.open{display:block}.aurora-system-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.aurora-system-head h3{margin:0;font-size:17px}.aurora-system-close{border:0;background:transparent;color:#cbd5e1;font-size:24px;cursor:pointer}.aurora-system-list{display:grid;gap:8px}.aurora-system-row{display:grid;grid-template-columns:14px 1fr;gap:9px;align-items:start;border:1px solid rgba(148,163,184,.14);background:rgba(2,6,23,.35);border-radius:14px;padding:10px}.aurora-system-dot{width:10px;height:10px;border-radius:50%;margin-top:3px;background:#34d399;box-shadow:0 0 12px rgba(52,211,153,.28)}.aurora-system-row.warn .aurora-system-dot{background:#fbbf24}.aurora-system-row.bad .aurora-system-dot{background:#fb7185}.aurora-system-row strong{display:block;font-size:12px}.aurora-system-row span{display:block;color:#93a4bd;font-size:11px;line-height:1.4;margin-top:3px}
+@media(max-width:560px){.aurora-system-button{right:10px;bottom:52px}.aurora-system-panel{right:10px;bottom:94px;width:calc(100vw - 20px)}}
+
 </style>
 </head>
 <body>
@@ -2384,7 +2396,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 
   <section class="board-priority-strip">
-    <div class="priority-card"><small>Board Confidence</small><strong id="priorityConfidence">—</strong><span>Chairman position</span></div>
+    <div class="priority-card"><small>Dividend Sustainability</small><strong id="prioritySustainability">—</strong><span>Income quality and yield control</span></div>
     <div class="priority-card green"><small>Financial Health</small><strong id="priorityHealth">—</strong><span>Income engine status</span></div>
     <div class="priority-card amber"><small>Next Objective</small><strong id="priorityObjective">—</strong><span>Board-approved target</span></div>
     <div class="priority-card red"><small>Principal Risk</small><strong id="priorityRisk">—</strong><span>What needs watching</span></div>
@@ -2455,6 +2467,15 @@ tr:hover td{background:rgba(96,165,250,.06)}
         <div class="card-title"><h3>Club health</h3><span class="badge green">Status</span></div>
         <div class="board-list" id="clubHealth"><div class="loading">Loading club health…</div></div>
       </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== SECTION: BOARD DECISION LOG ===================== -->
+  <section class="section" id="board-decision-log">
+    <div class="board-grid">
+      <div class="board-card w8"><div class="card-title"><h3>Board Decision Log</h3><span class="badge blue">Accountability</span></div><div class="decision-log" id="boardDecisionLog"><div class="loading">Preparing decision register…</div></div></div>
+      <div class="board-card w4"><div class="card-title"><h3>90-Day Direction</h3><span class="badge green">Trend</span></div><div class="board-trend-grid" id="boardTrendGrid"><div class="loading">Building trend record…</div></div></div>
     </div>
   </section>
 
@@ -2968,7 +2989,7 @@ function renderExecutiveControl(boardScore, supporterScore, monthly, annualIncom
       <button class="risk-row" type="button" data-board-id="${r.id}">
         <div class="agenda-icon">${r.icon}</div>
         <div><strong>${r.title}</strong><span>${r.note}</span></div>
-        <div class="risk-level ${riskLevelClass(r.level)}">${r.level}</div>
+        <div><div class="risk-level ${riskLevelClass(r.level)}">${r.level}</div><span style="display:block;color:var(--muted);font-size:10px;margin-top:5px">Owner: ${r.id.includes('transfer')?'Transfer Centre':r.id.includes('squad')?'Coaching':'Board'} • Review: monthly</span></div>
       </button>
     `).join('');
   }
@@ -3130,6 +3151,26 @@ function renderTrophies(annualIncome){
   }).join('');
 }
 
+function boardHistory(){try{const x=JSON.parse(localStorage.getItem('aurora_board_history')||'[]');return Array.isArray(x)?x:[];}catch(_){return [];}}
+function saveBoardHistory(board,supporters,monthly,value){
+  const rows=boardHistory(),last=rows[rows.length-1];
+  if(!last||Date.now()-last.time>21600000||last.board!==board||Math.abs(last.monthly-monthly)>.005){rows.push({time:Date.now(),board,supporters,monthly,value});localStorage.setItem('aurora_board_history',JSON.stringify(rows.slice(-90)));}
+}
+function renderDecisionLog(boardScore,supporterScore,monthly,rep,avgStrength,targets,value){
+  const log=$('boardDecisionLog'),trend=$('boardTrendGrid'); if(!log||!trend)return;
+  const decisions=[
+    {title:'Approve next £1,500 transfer window',status:targets.length?'Approved':'Watch',owner:'Manager',review:'Next payday'},
+    {title:'Protect dividend sustainability',status:value>0&&portfolioAnnualIncome()/value<.12?'Controlled':'Watch',owner:'Finance',review:'Monthly'},
+    {title:`Reach ${rep.next?rep.next.label:'elite maintenance'}`,status:rep.next?'In progress':'Achieved',owner:'Board',review:'Monthly'},
+    {title:'Improve lowest-rated squad positions',status:avgStrength>=70?'Controlled':'Watch',owner:'Coaching',review:'Next review'}
+  ];
+  log.innerHTML='<div class="decision-log-row header"><span>Decision</span><span>Status</span><span>Owner</span><span>Review</span></div>'+decisions.map(d=>`<div class="decision-log-row"><strong>${d.title}</strong><span class="decision-status ${d.status==='Watch'||d.status==='In progress'?'watch':''}">${d.status}</span><span>${d.owner}</span><span>${d.review}</span></div>`).join('');
+  const hist=boardHistory(),prev=hist.slice().reverse().find(x=>x.board!==boardScore||Math.abs(x.monthly-monthly)>.005);
+  const delta=(now,old)=>prev&&Number.isFinite(old)?now-old:NaN;
+  const cards=[['Board confidence',`${boardScore}%`,delta(boardScore,prev?.board)],['Supporter mood',`${supporterScore}%`,delta(supporterScore,prev?.supporters)],['Monthly income',money(monthly),delta(monthly,prev?.monthly)],['Club value',money(value),delta(value,prev?.value)]];
+  trend.innerHTML=cards.map(([label,val,d])=>`<div class="board-trend-card"><small>${label}</small><strong>${val}</strong><span>${Number.isFinite(d)?`${d>=0?'▲':'▼'} ${label.includes('income')||label.includes('value')?money(Math.abs(d)):Math.abs(d).toFixed(0)}`:'Building history'}</span></div>`).join('');
+  saveBoardHistory(boardScore,supporterScore,monthly,value);
+}
 function renderAll(){
   if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
 
@@ -3150,7 +3191,7 @@ function renderAll(){
   const boardScore = clampScore(boardBase + boardNewsImpact);
   const supporterScore = clampScore(supporterBase + supporterNewsImpact);
 
-  if($('priorityConfidence')) $('priorityConfidence').textContent = `${boardScore}%`;
+  if($('prioritySustainability')) { const active=activeHoldings(); const incomeYield=value>0?annualIncome/value:NaN; $('prioritySustainability').textContent = Number.isFinite(incomeYield)&&incomeYield<.12?'Controlled':'Review'; }
   if($('priorityHealth')) $('priorityHealth').textContent = monthly >= 500 ? 'Promotion level' : monthly >= 250 ? 'Healthy build' : 'Foundation stage';
   if($('priorityObjective')) $('priorityObjective').textContent = rep.next ? `${money(rep.next.monthly)}/month` : 'Maintain elite level';
   if($('priorityRisk')) $('priorityRisk').textContent = avgStrength < 65 ? 'Squad quality' : targets.length < 3 ? 'Thin transfer pipeline' : 'Concentration watch';
@@ -3195,6 +3236,11 @@ function renderAll(){
   ]);
 
   renderNews(boardScore, supporterScore, monthly, rep);
+  renderDecisionLog(boardScore,supporterScore,monthly,rep,avgStrength,targets,value);
+  window.AURORA_PAGE_CHECKS=()=>[
+    {level:boardScore>=82?'ok':'warn',title:`Board confidence ${boardScore}%`,detail:boardScore>=82?'The board currently backs the strategy.':'The executive plan needs clearer progress.'},
+    {level:targets.length>=3?'ok':'warn',title:`${targets.length} viable recruitment targets`,detail:targets.length>=3?'Transfer pipeline has reasonable depth.':'The board should review shortlist depth.'}
+  ];
 }
 $('refreshBtn')?.addEventListener('click', loadData);
 loadData();
@@ -3258,5 +3304,58 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>
+<aside class="aurora-system-panel" id="auroraSystemPanel" aria-hidden="true">
+  <div class="aurora-system-head"><h3>Aurora System Check</h3><button class="aurora-system-close" id="auroraSystemClose" type="button" aria-label="Close system check">×</button></div>
+  <div class="aurora-system-list" id="auroraSystemList"><div class="aurora-system-row"><i class="aurora-system-dot"></i><div><strong>Waiting for live data</strong><span>Open after the page has finished loading.</span></div></div></div>
+</aside>
+
+
+<script>
+(function(){
+  const button=document.getElementById('auroraSystemButton');
+  const panel=document.getElementById('auroraSystemPanel');
+  const close=document.getElementById('auroraSystemClose');
+  const list=document.getElementById('auroraSystemList');
+  if(!button||!panel||!list) return;
+  const parseDate=row=>{
+    const raw=row?.date??row?.Date??row?.timestamp??row?.Timestamp??row?.updated_at??row?.Updated??row?.time;
+    const d=raw?new Date(raw):null; return d&&!Number.isNaN(d.getTime())?d:null;
+  };
+  const ticker=row=>String(row?.ticker??row?.Ticker??'').trim().toUpperCase().replace('LON:','').replace('.L','');
+  const value=row=>{
+    const raw=row?.current_value??row?.market_value??row?.holding_value??row?.value??row?.Value;
+    const n=Number(String(raw??'').replace(/[£,%]/g,'')); return Number.isFinite(n)?n:0;
+  };
+  const qty=row=>{const n=Number(String(row?.shares??row?.quantity??row?.units??'').replace(/,/g,''));return Number.isFinite(n)?n:0;};
+  function build(){
+    const s=(typeof state!=='undefined'&&state)||{};
+    const holdings=Array.isArray(s.holdings)?s.holdings:[];
+    const active=holdings.filter(r=>qty(r)>0||value(r)>0);
+    const counts=new Map(); active.forEach(r=>{const t=ticker(r);if(t)counts.set(t,(counts.get(t)||0)+1);});
+    const duplicates=[...counts].filter(([,n])=>n>1);
+    const missingAccount=active.filter(r=>!String(r.account??r.Account??r.platform??r.broker??'').trim()).length;
+    const valuationRows=[...(s.watchlist||[]),...(s.scout||[]),...(s.globalWatchlist||[])];
+    const missingFair=valuationRows.filter(r=>ticker(r)&&!(r.fair_value??r['Fair Value']??r.target_price??r['Target Price'])).length;
+    const allRows=Object.values(s).flatMap(v=>Array.isArray(v)?v:[]);
+    const latest=allRows.map(parseDate).filter(Boolean).sort((a,b)=>b-a)[0];
+    const ageHours=latest?(Date.now()-latest.getTime())/36e5:NaN;
+    const extra=(typeof window.AURORA_PAGE_CHECKS==='function'?window.AURORA_PAGE_CHECKS():[])||[];
+    const checks=[
+      {level:active.length?'ok':'bad',title:`${active.length} active holding rows`,detail:active.length?'Holdings are available to the page.':'No active holdings were detected.'},
+      {level:missingAccount?'warn':'ok',title:missingAccount?`${missingAccount} holding rows missing an account`:'Account labels complete',detail:missingAccount?'Add IG ISA, Trade 212 or the correct platform to prevent scope errors.':'Account-scoped calculations can be applied safely.'},
+      {level:duplicates.length?'warn':'ok',title:duplicates.length?`${duplicates.length} tickers appear in multiple accounts`:'No unexpected duplicate tickers',detail:duplicates.length?duplicates.slice(0,6).map(([t,n])=>`${t} ×${n}`).join(' • '):'Unique-ticker and account totals can be separated deliberately.'},
+      {level:missingFair?'warn':'ok',title:missingFair?`${missingFair} valuation rows missing fair value`:'Fair-value fields available',detail:missingFair?'Those rows will show a neutral valuation until the sheet is completed.':'Transfer valuation indicators have source data.'},
+      {level:Number.isFinite(ageHours)&&ageHours>26?'bad':Number.isFinite(ageHours)&&ageHours>8?'warn':'ok',title:latest?`Latest dated row: ${latest.toLocaleString('en-GB')}`:'No dated data row found',detail:Number.isFinite(ageHours)?`${ageHours.toFixed(1)} hours old.`:'The page can still run, but true data freshness cannot be confirmed.'},
+      ...extra
+    ];
+    list.innerHTML=checks.map(c=>`<div class="aurora-system-row ${c.level==='ok'?'':c.level}"><i class="aurora-system-dot"></i><div><strong>${c.title}</strong><span>${c.detail}</span></div></div>`).join('');
+  }
+  function toggle(open){panel.classList.toggle('open',open);panel.setAttribute('aria-hidden',String(!open));if(open)build();}
+  button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
+})();
+</script>
+
 </body>
 </html>

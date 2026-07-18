@@ -2640,6 +2640,18 @@ body.player-drawer-open{overflow:hidden!important}
   .pitch-player[data-slot-pos="RW"],.pitch-player[data-slot-pos="RB"]{margin-left:-22px}
 }
 
+
+/* ===== Formation safety + positional depth ===== */
+.pitch-name{max-width:124px;padding:3px 6px;border-radius:7px;background:rgba(2,6,23,.58);line-height:1.16;text-shadow:0 2px 5px rgba(0,0,0,.8)}.pitch-stars{min-height:14px;line-height:1}.depth-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.depth-card{border:1px solid var(--line);background:rgba(2,6,23,.28);border-radius:18px;padding:12px}.depth-card small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.depth-card strong{display:block;margin-top:7px;font-size:15px}.depth-card span{display:block;margin-top:6px;font-size:11px;line-height:1.35;color:#93a4bd}.depth-status{display:inline-flex!important;width:max-content;border-radius:999px;padding:4px 7px;border:1px solid rgba(52,211,153,.28);color:#bbf7d0!important;background:rgba(20,83,45,.18)}.depth-status.warn{color:#fde68a!important;border-color:rgba(251,191,36,.28);background:rgba(120,53,15,.18)}.depth-status.bad{color:#fecdd3!important;border-color:rgba(251,113,133,.28);background:rgba(127,29,29,.18)}.rating-breakdown{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.rating-part{border:1px solid rgba(148,163,184,.13);background:rgba(2,6,23,.30);border-radius:13px;padding:9px}.rating-part small{display:block;color:#93a4bd;font-size:9px;text-transform:uppercase}.rating-part strong{display:block;margin-top:4px;color:#bfdbfe}
+@media(max-width:900px){.depth-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.depth-grid,.rating-breakdown{grid-template-columns:1fr}.pitch-name{max-width:86px;font-size:10px}}
+
+
+/* ===== Aurora system check ===== */
+.aurora-system-button{position:fixed;right:16px;bottom:58px;z-index:75;border:1px solid rgba(34,211,238,.34);background:rgba(3,12,28,.92);color:#a5f3fc;border-radius:999px;padding:9px 13px;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 12px 32px rgba(0,0,0,.35);cursor:pointer}
+.aurora-system-panel{position:fixed;right:16px;bottom:104px;width:min(390px,calc(100vw - 32px));max-height:64vh;overflow:auto;z-index:76;border:1px solid rgba(96,165,250,.30);background:linear-gradient(180deg,rgba(8,21,43,.98),rgba(2,7,18,.98));border-radius:22px;padding:16px;box-shadow:0 26px 80px rgba(0,0,0,.55);display:none}
+.aurora-system-panel.open{display:block}.aurora-system-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.aurora-system-head h3{margin:0;font-size:17px}.aurora-system-close{border:0;background:transparent;color:#cbd5e1;font-size:24px;cursor:pointer}.aurora-system-list{display:grid;gap:8px}.aurora-system-row{display:grid;grid-template-columns:14px 1fr;gap:9px;align-items:start;border:1px solid rgba(148,163,184,.14);background:rgba(2,6,23,.35);border-radius:14px;padding:10px}.aurora-system-dot{width:10px;height:10px;border-radius:50%;margin-top:3px;background:#34d399;box-shadow:0 0 12px rgba(52,211,153,.28)}.aurora-system-row.warn .aurora-system-dot{background:#fbbf24}.aurora-system-row.bad .aurora-system-dot{background:#fb7185}.aurora-system-row strong{display:block;font-size:12px}.aurora-system-row span{display:block;color:#93a4bd;font-size:11px;line-height:1.4;margin-top:3px}
+@media(max-width:560px){.aurora-system-button{right:10px;bottom:52px}.aurora-system-panel{right:10px;bottom:94px;width:calc(100vw - 20px)}}
+
 </style>
 </head>
 <body>
@@ -2752,6 +2764,15 @@ body.player-drawer-open{overflow:hidden!important}
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== SECTION: POSITIONAL DEPTH ===================== -->
+  <section class="section">
+    <div class="squad-card w12" style="width:100%">
+      <div class="card-title"><h3>Positional Depth Chart</h3><span class="badge blue">Recruitment needs</span></div>
+      <div class="depth-grid" id="positionalDepth"><div class="loading">Checking positional cover…</div></div>
     </div>
   </section>
 
@@ -3109,6 +3130,10 @@ function transferMoney(millions){
   if(Math.abs(millions) < 0.01) return '£0.00m';
   return `${millions < 0 ? '-' : ''}£${Math.abs(millions).toFixed(2)}m`;
 }
+const FORMATION_433=Object.freeze({
+  GK:{top:89,left:50},LB:{top:72,left:17},LCB:{top:72,left:38},RCB:{top:72,left:62},RB:{top:72,left:83},
+  LCM:{top:47,left:32},RCM:{top:47,left:68},CAM:{top:34,left:50},LW:{top:20,left:18},ST:{top:13,left:50},RW:{top:20,left:82}
+});
 function positionPlan(rows){
   const pool=[...rows].filter(isActiveHolding);
   const used=new Set();
@@ -3132,20 +3157,20 @@ function positionPlan(rows){
   // IITU — FGEN — TW — VWRA
   //        RGL
   const plans=[
-    {number:1,pos:'GK',top:89,left:50,row:fixed('RGL')||take((a,b)=>reliability(b)-reliability(a)),role:'Safe Hands'},
+    {number:1,pos:'GK',...FORMATION_433.GK,row:fixed('RGL')||take((a,b)=>reliability(b)-reliability(a)),role:'Safe Hands'},
 
-    {number:5,pos:'LB',top:72,left:17,row:fixed('IITU')||take((a,b)=>reliability(b)-reliability(a)),role:'Left Back'},
-    {number:3,pos:'CB',top:72,left:38,row:fixed('FGEN')||take((a,b)=>reliability(b)-reliability(a)),role:'Centre Back'},
-    {number:4,pos:'CB',top:72,left:62,row:fixed('TW')||take((a,b)=>reliability(b)-reliability(a)),role:'Centre Back'},
-    {number:2,pos:'RB',top:72,left:83,row:fixed('VWRA')||take((a,b)=>reliability(b)-reliability(a)),role:'Right Back'},
+    {number:5,pos:'LB',...FORMATION_433.LB,row:fixed('IITU')||take((a,b)=>reliability(b)-reliability(a)),role:'Left Back'},
+    {number:3,pos:'CB',...FORMATION_433.LCB,row:fixed('FGEN')||take((a,b)=>reliability(b)-reliability(a)),role:'Centre Back'},
+    {number:4,pos:'CB',...FORMATION_433.RCB,row:fixed('TW')||take((a,b)=>reliability(b)-reliability(a)),role:'Centre Back'},
+    {number:2,pos:'RB',...FORMATION_433.RB,row:fixed('VWRA')||take((a,b)=>reliability(b)-reliability(a)),role:'Right Back'},
 
-    {number:8,pos:'CM',top:48,left:32,row:fixed('PHP')||take((a,b)=>squadScore(b)-squadScore(a)),role:'Vice-Captain'},
-    {number:6,pos:'CM',top:48,left:68,row:fixed('TSCO')||take((a,b)=>(reliability(b)+holdingValue(b)/1000)-(reliability(a)+holdingValue(a)/1000)),role:'Captain'},
-    {number:10,pos:'CAM',top:36,left:50,row:fixed('ARCC')||take((a,b)=>squadScore(b)-squadScore(a)),role:'Playmaker'},
+    {number:8,pos:'CM',...FORMATION_433.LCM,row:fixed('PHP')||take((a,b)=>squadScore(b)-squadScore(a)),role:'Vice-Captain'},
+    {number:6,pos:'CM',...FORMATION_433.RCM,row:fixed('TSCO')||take((a,b)=>(reliability(b)+holdingValue(b)/1000)-(reliability(a)+holdingValue(a)/1000)),role:'Captain'},
+    {number:10,pos:'CAM',...FORMATION_433.CAM,row:fixed('ARCC')||take((a,b)=>squadScore(b)-squadScore(a)),role:'Playmaker'},
 
-    {number:11,pos:'LW',top:21,left:18,row:fixed('UKW')||take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Left Wing'},
-    {number:9,pos:'ST',top:14,left:50,row:fixed('SUPR')||take((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a)),role:'Top Scorer'},
-    {number:7,pos:'RW',top:21,left:82,row:fixed('FSFL')||take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Right Wing'}
+    {number:11,pos:'LW',...FORMATION_433.LW,row:fixed('UKW')||take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Left Wing'},
+    {number:9,pos:'ST',...FORMATION_433.ST,row:fixed('SUPR')||take((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a)),role:'Top Scorer'},
+    {number:7,pos:'RW',...FORMATION_433.RW,row:fixed('FSFL')||take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Right Wing'}
   ];
   return plans;
 }
@@ -3222,6 +3247,37 @@ function renderTeamSelection(plan){
     return `<tr class="player-row" data-player-ticker="${cleanTicker(r.ticker)}"><td><div class="squad-no">${slot.number}</div></td><td><span class="position-chip">${slot.pos}</span></td><td class="player-cell"><strong>${displayTicker(r.ticker)} — ${displayName(r)}</strong><small>${slot.role}</small></td><td class="num">${formatPrice(r)}</td><td class="num">${movementHtml(r)}</td><td class="num">${money(holdingValue(r))}</td><td class="num">${money(annualIncome)}</td><td class="num">${money(annualIncome/12)}</td><td class="num"><strong>${Math.round(squadScore(r))}</strong></td><td><span class="role-chip ${roleClass(slot.role)}">${slot.role}</span></td></tr>`;
   }).join('');
 }
+function accountRowsForTicker(ticker){ return (state.holdings||[]).filter(r=>isActiveHolding(r)&&tickerMatch(r.ticker,ticker)); }
+function totalBookCost(ticker){ return accountRowsForTicker(ticker).reduce((s,r)=>{const n=parseNum(val(r,'book_cost','Book Cost','cost','Cost','invested','Invested'));return s+(Number.isFinite(n)?n:0);},0); }
+function accountSummary(ticker){
+  const rows=accountRowsForTicker(ticker); if(!rows.length) return 'Account not labelled';
+  return rows.map(r=>`${String(val(r,'account','Account','platform','Platform','broker','Broker')||'Unlabelled')}: ${money(holdingValue(r))}`).join(' • ');
+}
+function ratingBreakdown(row){
+  const income=Math.max(0,Math.min(100,Number.isFinite(parseYield(row))?parseYield(row)*1000:50));
+  const valuation=fairValuePct(row); const valueScore=Number.isFinite(valuation)?Math.max(0,Math.min(100,55+valuation*1.5)):50;
+  const form=Math.max(0,Math.min(100,50+dailyMove(row)*4));
+  const quality=Number.isFinite(buyStrength(row))?buyStrength(row):50;
+  return {income,value:valueScore,form,quality};
+}
+function renderPositionalDepth(plan,allRows){
+  const box=$('positionalDepth'); if(!box) return;
+  const bench=allRows.filter(r=>!plan.some(slot=>slot.row&&tickerMatch(slot.row.ticker,r.ticker))).sort((a,b)=>squadScore(b)-squadScore(a));
+  const groups=[
+    {label:'Goalkeeper',slots:['GK']},{label:'Defence',slots:['LB','CB','RB']},{label:'Central midfield',slots:['CM']},{label:'Attacking midfield',slots:['CAM']},{label:'Front three',slots:['LW','ST','RW']}
+  ];
+  box.innerHTML=groups.map(group=>{
+    const starters=plan.filter(s=>group.slots.includes(s.pos)&&s.row); const backups=bench.filter(r=>{
+      const name=`${displayTicker(r.ticker)} ${displayName(r)}`.toLowerCase();
+      if(group.label==='Goalkeeper') return /reit|rgl|keeper/.test(name);
+      if(group.label==='Defence') return /infrastructure|taylor|world|iitu|fgen|tw|vwra/.test(name);
+      if(group.label==='Front three') return /wind|solar|supermarket|ukw|fsfl|supr/.test(name);
+      return true;
+    }).slice(0,2);
+    const status=backups.length>=2?'Covered':backups.length===1?'Thin':'Critical'; const cls=status==='Covered'?'':status==='Thin'?'warn':'bad';
+    return `<div class="depth-card"><small>${group.label}</small><strong>${starters.map(s=>displayTicker(s.row.ticker)).join(' / ')||'Open place'}</strong><span>Backup: ${backups.map(r=>displayTicker(r.ticker)).join(' / ')||'None'}</span><span class="depth-status ${cls}">${status}</span></div>`;
+  }).join('');
+}
 function openPlayerDrawer(ticker){
   const drawer=$('playerDrawer'), backdrop=$('playerDrawerBackdrop'), content=$('playerDrawerContent');
   if(!drawer||!backdrop||!content) return;
@@ -3244,7 +3300,7 @@ function openPlayerDrawer(ticker){
       const upsideLabel=Number.isFinite(valuation.upsideMillions)
         ? `${valuation.upsideMillions>=0?'+':''}${transferMoney(valuation.upsideMillions)}`
         : '—';
-      content.innerHTML=`<div class="player-profile-head"><div class="player-profile-shirt"><img src="${playerProfileImageForTicker(r.ticker)}" data-fallback-src="${squadImageFallbackForTicker(r.ticker)}" alt="${displayTicker(r.ticker)} player portrait" onerror="if(this.dataset.fallbackSrc&&!this.dataset.retried){this.dataset.retried='1';this.src=this.dataset.fallbackSrc;}else{this.remove();this.parentElement.textContent='${displayTicker(r.ticker)}';}"></div><div><h2>${displayName(r)}</h2><p>No. ${slot.number} • ${slot.pos} • ${slot.role}</p><div class="player-profile-badges"><span class="role-chip ${roleClass(slot.role)}">${slot.role}</span><span class="position-chip">Rating ${score}</span></div></div></div><div class="player-profile-grid"><div class="player-profile-metric"><small>Last Share Price</small><strong>${formatPrice(r)}</strong><span>Latest Aurora market feed</span></div><div class="player-profile-metric"><small>Today's Movement</small><strong>${movementHtml(r)}</strong><span>Current session change</span></div><div class="player-profile-metric"><small>Current Market Value</small><strong>${transferMoney(valuation.currentMillions)}</strong><span>£1,000 holding value = £1m football value</span></div><div class="player-profile-metric"><small>Estimated Transfer Value</small><strong>${transferMoney(valuation.estimatedMillions)}</strong><span>Adjusted using Aurora fair value</span></div><div class="player-profile-metric"><small>Transfer Upside</small><strong>${upsideLabel}</strong><span>${Number.isFinite(valuation.gapPct)?(valuation.gapPct>=0?'+':'')+valuation.gapPct.toFixed(1)+'% versus fair value':'Awaiting valuation data'}</span></div><div class="player-profile-metric"><small>Release Clause</small><strong>${transferMoney(valuation.releaseClauseMillions)}</strong><span>10% above estimated transfer value</span></div><div class="player-profile-metric"><small>Valuation Status</small><strong>${valuation.status}</strong><span>Aurora transfer-market indicator</span></div><div class="player-profile-metric"><small>Annual Dividend</small><strong>${money(annual)}</strong><span>${money(annual/12)} per month</span></div><div class="player-profile-metric"><small>Dividend Yield</small><strong>${Number.isFinite(y)?(y*100).toFixed(2)+'%':'—'}</strong><span>Current income yield</span></div></div><div class="player-profile-section"><h3>Manager's Player Report</h3><div class="player-profile-line"><span>Squad position</span><strong>No. ${slot.number} ${slot.pos}</strong></div><div class="player-profile-line"><span>Aurora rating</span><strong>${score}/100 • ${scoreLabel(score)}</strong></div><div class="player-profile-line"><span>Current role</span><strong>${slot.role}</strong></div><div class="player-profile-line"><span>Recommendation</span><strong>${recommendation}</strong></div><div class="player-profile-line"><span>Company / player</span><strong>${displayName(r)}</strong></div></div>`;
+      content.innerHTML=`<div class="player-profile-head"><div class="player-profile-shirt"><img src="${playerProfileImageForTicker(r.ticker)}" data-fallback-src="${squadImageFallbackForTicker(r.ticker)}" alt="${displayTicker(r.ticker)} player portrait" onerror="if(this.dataset.fallbackSrc&&!this.dataset.retried){this.dataset.retried='1';this.src=this.dataset.fallbackSrc;}else{this.remove();this.parentElement.textContent='${displayTicker(r.ticker)}';}"></div><div><h2>${displayName(r)}</h2><p>No. ${slot.number} • ${slot.pos} • ${slot.role}</p><div class="player-profile-badges"><span class="role-chip ${roleClass(slot.role)}">${slot.role}</span><span class="position-chip">Rating ${score}</span></div></div></div><div class="player-profile-grid"><div class="player-profile-metric"><small>Last Share Price</small><strong>${formatPrice(r)}</strong><span>Latest Aurora market feed</span></div><div class="player-profile-metric"><small>Today's Movement</small><strong>${movementHtml(r)}</strong><span>Current session change</span></div><div class="player-profile-metric"><small>Current Market Value</small><strong>${transferMoney(valuation.currentMillions)}</strong><span>£1,000 holding value = £1m football value</span></div><div class="player-profile-metric"><small>Estimated Transfer Value</small><strong>${transferMoney(valuation.estimatedMillions)}</strong><span>Adjusted using Aurora fair value</span></div><div class="player-profile-metric"><small>Transfer Upside</small><strong>${upsideLabel}</strong><span>${Number.isFinite(valuation.gapPct)?(valuation.gapPct>=0?'+':'')+valuation.gapPct.toFixed(1)+'% versus fair value':'Awaiting valuation data'}</span></div><div class="player-profile-metric"><small>Release Clause</small><strong>${transferMoney(valuation.releaseClauseMillions)}</strong><span>10% above estimated transfer value</span></div><div class="player-profile-metric"><small>Valuation Status</small><strong>${valuation.status}</strong><span>Aurora transfer-market indicator</span></div><div class="player-profile-metric"><small>Annual Dividend</small><strong>${money(annual)}</strong><span>${money(annual/12)} per month</span></div><div class="player-profile-metric"><small>Dividend Yield</small><strong>${Number.isFinite(y)?(y*100).toFixed(2)+'%':'—'}</strong><span>Current income yield</span></div></div><div class="player-profile-section"><h3>Manager's Player Report</h3><div class="player-profile-line"><span>Squad position</span><strong>No. ${slot.number} ${slot.pos}</strong></div><div class="player-profile-line"><span>Aurora rating</span><strong>${score}/100 • ${scoreLabel(score)}</strong></div><div class="player-profile-line"><span>Current role</span><strong>${slot.role}</strong></div><div class="player-profile-line"><span>Recommendation</span><strong>${recommendation}</strong></div><div class="player-profile-line"><span>Company / player</span><strong>${displayName(r)}</strong></div><div class="player-profile-line"><span>Accounts</span><strong>${accountSummary(r.ticker)}</strong></div><div class="player-profile-line"><span>Book cost</span><strong>${money(totalBookCost(r.ticker))}</strong></div><div class="player-profile-line"><span>Unrealised gain / loss</span><strong>${money(holdingValue(r)-totalBookCost(r.ticker))}</strong></div><div class="rating-breakdown">${Object.entries(ratingBreakdown(r)).map(([label,value])=>`<div class="rating-part"><small>${label}</small><strong>${Math.round(value)}/100</strong></div>`).join('')}</div></div>`;
     }catch(err){
       console.error('Player profile render failed:',err);
       content.innerHTML='<div class="player-profile-section"><h3>Player profile could not load</h3><p style="color:var(--muted);margin:0">The squad remains available, but one of this player’s data fields could not be read. Refresh to retry.</p></div>';
@@ -3740,6 +3796,11 @@ function renderAll(){
   renderChemistry(rows);
   renderSquadDevelopment(rows, annualIncome);
   renderLegends(rows);
+  renderPositionalDepth(currentTeamPlan,rows);
+  window.AURORA_PAGE_CHECKS=()=>[
+    {level:currentTeamPlan.filter(x=>x.row).length===11?'ok':'bad',title:`${currentTeamPlan.filter(x=>x.row).length}/11 starting places filled`,detail:'The formation engine is using one central 4-3-3 coordinate map.'},
+    {level:rows.every(r=>squadImageForTicker(r.ticker))?'ok':'warn',title:rows.every(r=>squadImageForTicker(r.ticker))?'Every active player has an image mapping':'One or more player image mappings are missing',detail:'System Check tests mappings; the browser fallback still protects the pitch.'}
+  ];
 }
 document.addEventListener('click',e=>{ const player=e.target.closest('[data-player-ticker]'); if(player) openPlayerDrawer(player.dataset.playerTicker); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closePlayerDrawer(); const player=e.target.closest?.('[data-player-ticker]'); if(player&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openPlayerDrawer(player.dataset.playerTicker);} });
@@ -3759,5 +3820,58 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>
+<aside class="aurora-system-panel" id="auroraSystemPanel" aria-hidden="true">
+  <div class="aurora-system-head"><h3>Aurora System Check</h3><button class="aurora-system-close" id="auroraSystemClose" type="button" aria-label="Close system check">×</button></div>
+  <div class="aurora-system-list" id="auroraSystemList"><div class="aurora-system-row"><i class="aurora-system-dot"></i><div><strong>Waiting for live data</strong><span>Open after the page has finished loading.</span></div></div></div>
+</aside>
+
+
+<script>
+(function(){
+  const button=document.getElementById('auroraSystemButton');
+  const panel=document.getElementById('auroraSystemPanel');
+  const close=document.getElementById('auroraSystemClose');
+  const list=document.getElementById('auroraSystemList');
+  if(!button||!panel||!list) return;
+  const parseDate=row=>{
+    const raw=row?.date??row?.Date??row?.timestamp??row?.Timestamp??row?.updated_at??row?.Updated??row?.time;
+    const d=raw?new Date(raw):null; return d&&!Number.isNaN(d.getTime())?d:null;
+  };
+  const ticker=row=>String(row?.ticker??row?.Ticker??'').trim().toUpperCase().replace('LON:','').replace('.L','');
+  const value=row=>{
+    const raw=row?.current_value??row?.market_value??row?.holding_value??row?.value??row?.Value;
+    const n=Number(String(raw??'').replace(/[£,%]/g,'')); return Number.isFinite(n)?n:0;
+  };
+  const qty=row=>{const n=Number(String(row?.shares??row?.quantity??row?.units??'').replace(/,/g,''));return Number.isFinite(n)?n:0;};
+  function build(){
+    const s=(typeof state!=='undefined'&&state)||{};
+    const holdings=Array.isArray(s.holdings)?s.holdings:[];
+    const active=holdings.filter(r=>qty(r)>0||value(r)>0);
+    const counts=new Map(); active.forEach(r=>{const t=ticker(r);if(t)counts.set(t,(counts.get(t)||0)+1);});
+    const duplicates=[...counts].filter(([,n])=>n>1);
+    const missingAccount=active.filter(r=>!String(r.account??r.Account??r.platform??r.broker??'').trim()).length;
+    const valuationRows=[...(s.watchlist||[]),...(s.scout||[]),...(s.globalWatchlist||[])];
+    const missingFair=valuationRows.filter(r=>ticker(r)&&!(r.fair_value??r['Fair Value']??r.target_price??r['Target Price'])).length;
+    const allRows=Object.values(s).flatMap(v=>Array.isArray(v)?v:[]);
+    const latest=allRows.map(parseDate).filter(Boolean).sort((a,b)=>b-a)[0];
+    const ageHours=latest?(Date.now()-latest.getTime())/36e5:NaN;
+    const extra=(typeof window.AURORA_PAGE_CHECKS==='function'?window.AURORA_PAGE_CHECKS():[])||[];
+    const checks=[
+      {level:active.length?'ok':'bad',title:`${active.length} active holding rows`,detail:active.length?'Holdings are available to the page.':'No active holdings were detected.'},
+      {level:missingAccount?'warn':'ok',title:missingAccount?`${missingAccount} holding rows missing an account`:'Account labels complete',detail:missingAccount?'Add IG ISA, Trade 212 or the correct platform to prevent scope errors.':'Account-scoped calculations can be applied safely.'},
+      {level:duplicates.length?'warn':'ok',title:duplicates.length?`${duplicates.length} tickers appear in multiple accounts`:'No unexpected duplicate tickers',detail:duplicates.length?duplicates.slice(0,6).map(([t,n])=>`${t} ×${n}`).join(' • '):'Unique-ticker and account totals can be separated deliberately.'},
+      {level:missingFair?'warn':'ok',title:missingFair?`${missingFair} valuation rows missing fair value`:'Fair-value fields available',detail:missingFair?'Those rows will show a neutral valuation until the sheet is completed.':'Transfer valuation indicators have source data.'},
+      {level:Number.isFinite(ageHours)&&ageHours>26?'bad':Number.isFinite(ageHours)&&ageHours>8?'warn':'ok',title:latest?`Latest dated row: ${latest.toLocaleString('en-GB')}`:'No dated data row found',detail:Number.isFinite(ageHours)?`${ageHours.toFixed(1)} hours old.`:'The page can still run, but true data freshness cannot be confirmed.'},
+      ...extra
+    ];
+    list.innerHTML=checks.map(c=>`<div class="aurora-system-row ${c.level==='ok'?'':c.level}"><i class="aurora-system-dot"></i><div><strong>${c.title}</strong><span>${c.detail}</span></div></div>`).join('');
+  }
+  function toggle(open){panel.classList.toggle('open',open);panel.setAttribute('aria-hidden',String(!open));if(open)build();}
+  button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
+})();
+</script>
+
 </body>
 </html>
