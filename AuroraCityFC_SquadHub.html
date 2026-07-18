@@ -3122,7 +3122,7 @@ function squadImageForTicker(ticker){
   const t=cleanTicker(ticker).replace('LON:','').replace('.L','');
   // Squad images are currently uploaded beside the HTML in the GitHub repo.
   // The version query prevents an older failed image request being held in cache.
-  const version='?v=20260718-4';
+  const version='?v=20260718-5';
   const map={
     RGL:'rgl_squad.png',
     VWRA:'vwra_squad.png',
@@ -3140,7 +3140,7 @@ function squadImageForTicker(ticker){
 }
 function squadImageFallbackForTicker(ticker){
   const t=cleanTicker(ticker).replace('LON:','').replace('.L','');
-  const version='?v=20260718-4';
+  const version='?v=20260718-5';
   const map={
     RGL:'assets/aurora-city-fc/players/rgl_squad.png',
     VWRA:'assets/aurora-city-fc/players/vwra_squad.png',
@@ -3274,7 +3274,7 @@ function renderLegends(rows){
     const role = legendRoleForRow(r,i);
     return `<div class="legend-tile" data-player-ticker="${cleanTicker(r.ticker)}" tabindex="0" role="button" aria-label="Open ${name} profile">
       <div class="legend-player-img">
-        <img src="${img}" alt="${ticker} legend portrait" onerror="this.style.display='none'">
+        <img src="${img}" data-fallback-src="${squadImageFallbackForTicker(r.ticker)}" alt="${ticker} legend portrait" onerror="if(this.dataset.fallbackSrc&&!this.dataset.retried){this.dataset.retried='1';this.src=this.dataset.fallbackSrc;}else{this.style.display='none';}">
       </div>
       <div class="legend-player-body">
         <div class="legend-role">${role}</div>
