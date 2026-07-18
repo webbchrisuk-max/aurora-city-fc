@@ -3375,7 +3375,7 @@ let AURORA_MASTER_CACHE = null;
 
 const PLATFORM_RULES = {
   "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
-  "FSFL":"Trade212","UKW":"IG ISA","ARCC":"IG ISA","TRIG":"IG ISA","RGL":"Trade212","GCP":"Trade212","PHP":"IG ISA / Trade212","FGEN":"IG ISA","SEQI":"Trade212","TW":"IG ISA","OSB":"IG Trading"
+  "FSFL":"Trade 212","UKW":"IG ISA","ARCC":"IG ISA","TRIG":"Trade 212","RGL":"Trade 212","GCP":"Trade 212","PHP":"IG ISA / Trade 212","FGEN":"IG ISA","SEQI":"Trade 212","TW":"IG ISA","OSB":"IG ISA"
 };
 
 const PLAYER_BASE = 'https://webbchrisuk-max.github.io/aurora-city-fc/assets/aurora-city-fc/players/';
@@ -3495,15 +3495,19 @@ function currentHoldingForRegistration(ticker,account){
   return (state.holdings||[]).find(row=>registrationShortTicker(row.ticker)===t&&normalizeRegistrationAccount(row.account||row.platform||row.broker)===a)||null;
 }
 function registrationAccountOptions(ticker){
+  // Always let the manager choose between the two live investment accounts.
+  // The platform rule is placed first so the recommended/default account is selected automatically.
   const rule=platformFor(ticker);
   const found=[];
-  String(rule||'').split('/').forEach(part=>{
-    const a=normalizeRegistrationAccount(part); if(a&&!found.includes(a)&&!a.includes('CHECK')) found.push(a);
-  });
-  (state.holdings||[]).filter(row=>registrationShortTicker(row.ticker)===registrationShortTicker(ticker)).forEach(row=>{
-    const a=normalizeRegistrationAccount(row.account); if(a&&!found.includes(a)) found.push(a);
-  });
-  return found.length?found:['IG ISA','TRADE 212'];
+  const add=account=>{
+    const a=normalizeRegistrationAccount(account);
+    if(a&&!a.includes('CHECK')&&!found.includes(a)) found.push(a);
+  };
+  String(rule||'').split('/').forEach(add);
+  add('IG ISA');
+  add('TRADE 212');
+  (state.holdings||[]).filter(row=>registrationShortTicker(row.ticker)===registrationShortTicker(ticker)).forEach(row=>add(row.account||row.platform||row.broker));
+  return found;
 }
 function registrationCurrency(row){
   const t=registrationShortTicker(row?.ticker);
@@ -3557,8 +3561,10 @@ function updateRegistrationPreview(form){
   set('income',Number.isFinite(p.added)?`${money(p.added)}/yr`:'—');
   const fxField=form.querySelector('[data-fx-field]'); if(fxField) fxField.hidden=p.currency==='GBP';
   const accountMessage=form.querySelector('[data-form-message]');
-  if(accountMessage&&!p.holding){accountMessage.textContent='New signing: Aurora will create a fresh Holdings row and LivePrices entry when you confirm.';accountMessage.className='registration-message pending';}
-  else if(accountMessage&&(accountMessage.classList.contains('error')||accountMessage.classList.contains('pending'))){accountMessage.textContent='Existing squad player: this purchase will top up the current account row.';accountMessage.className='registration-message';}
+  if(accountMessage&&!p.holding){accountMessage.textContent='New signing: Aurora will create a fresh Holdings row and LivePrices entry in the selected account when you confirm.';accountMessage.className='registration-message pending';}
+  else if(accountMessage&&p.holding){accountMessage.textContent='Existing squad player: this purchase will top up the selected account row.';accountMessage.className='registration-message';}
+  const submit=form.querySelector('button[type="submit"]');
+  if(submit&&!registrationBusy) submit.textContent=p.holding?'Confirm top-up':'Confirm new signing';
 }
 async function postRegistration(payload){
   if(!registrationConnection.endpoint||!registrationConnection.token) throw new Error('Connect the Registration Desk to the Apps Script web app first.');
@@ -4437,7 +4443,7 @@ function renderRegistrationDesk(deal){
     return `<div class="registration-card" data-registration-card="${escapeHtml(key)}">
       <div class="registration-card-head">
         <div class="short-wire-icon">${i+1}</div>
-        <div class="registration-card-main"><strong>${escapeHtml(short)} — ${escapeHtml(displayName(item.row))}</strong><span>${escapeHtml(accounts.join(' / '))} • Deal-sheet allocation ${money(item.amount)} • ${item.gate.status==='pass'?'Green light':'Controlled registration'}</span></div>
+        <div class="registration-card-main"><strong>${escapeHtml(short)} — ${escapeHtml(displayName(item.row))}</strong><span>Recommended: ${escapeHtml(accounts[0])} • Account can be changed in the form • Deal-sheet allocation ${money(item.amount)} • ${item.gate.status==='pass'?'Green light':'Controlled registration'}</span></div>
         <button class="registration-btn registration-open-btn ${open?'primary':''}" data-open-registration="${escapeHtml(key)}" type="button">${open?'Close form':'Register purchase'}</button>
       </div>
       <form class="registration-panel ${open?'open':''}" data-registration-form
@@ -4462,7 +4468,7 @@ function renderRegistrationDesk(deal){
         data-chemistry-risk="${escapeHtml(item.row.chemistry_risk??'')}"
         data-squad-balance-note="${escapeHtml(item.row.squad_balance_note??'')}">
         <div class="registration-form-grid">
-          <label class="registration-field"><span>Account</span><select name="account">${accountOptions}</select></label>
+          <label class="registration-field"><span>Account — choose where you bought it</span><select name="account">${accountOptions}</select></label>
           <label class="registration-field"><span>Trade date</span><input name="tradeDate" type="date" value="${registrationDateValue()}" required></label>
           <label class="registration-field"><span>Shares bought</span><input name="shares" type="number" min="0.00000001" step="0.00000001" inputmode="decimal" placeholder="e.g. 797" required></label>
           <label class="registration-field"><span>Executed price</span><input name="price" type="number" min="0" step="0.0001" inputmode="decimal" value="${escapeHtml(suggestedPrice)}" placeholder="Completed fill price" required></label>
