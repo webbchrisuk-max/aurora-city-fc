@@ -121,6 +121,9 @@ button,input{font:inherit}
 
 @media(max-width:1180px){.hero-inner,.command-grid{grid-template-columns:1fr}.score-strip,.dept-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.department-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.preview-grid{grid-template-columns:1fr}.hero-scoreboard{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.app{padding:10px 10px 78px}.topbar-inner{padding:10px;align-items:flex-start}.brand h1{font-size:18px}.brand p{font-size:11px}.crest{width:46px;height:46px;border-radius:14px}.nav a:not(.active){display:none}.nav a,.nav button{padding:8px 10px}.hq-hero{border-radius:24px;margin-top:12px}.hero-inner{padding:18px}.hero-title{font-size:42px}.hero-scoreboard,.score-strip,.dept-status-grid,.department-grid{grid-template-columns:1fr}.briefing-card{grid-template-columns:1fr;min-height:0}.briefing-crest{width:150px;height:150px}.briefing-stats{grid-template-columns:1fr}.action-row,.preview-row{grid-template-columns:42px 1fr}.action-value,.preview-value{grid-column:2;text-align:left}.department-card{min-height:205px}.ticker-inner{gap:10px}}
+
+/* ===== Aurora v2.0 Manager polish ===== */
+.hq-hero{min-height:300px}.hero-inner{padding:34px}.score-strip{gap:18px}.score-card{min-height:148px;padding:20px}.command-grid{gap:20px}.panel{border-radius:30px}.briefing-card{padding:30px;gap:32px}.action-list{gap:12px;padding:18px 20px 22px}.action-row{padding:14px}.dept-status-grid{gap:16px}.preview-grid{gap:20px}.department-grid{gap:18px}.department-card{min-height:260px}.section-head{margin-top:30px}@media(max-width:760px){.hq-hero{min-height:0}.hero-inner{padding:20px}.department-card{min-height:220px}}
 </style>
 </head>
 <body>
@@ -151,7 +154,7 @@ button,input{font:inherit}
         <div class="hero-tags">
           <span class="hero-tag" id="lastUpdated">Last updated: loading…</span>
           <span class="hero-tag">Objective: £500/month passive income</span>
-          <span class="hero-tag">Bottom cards are the main departments</span>
+          <span class="hero-tag">Department doors are the main navigation</span>
         </div>
       </div>
       <div class="hero-scoreboard">
@@ -209,7 +212,7 @@ button,input{font:inherit}
   </section>
 
   <section class="preview-grid">
-    <div class="panel"><div class="panel-head"><div><h3>Top Transfer Preview</h3><p>Highest green-light income options from live data.</p></div><span class="badge green" id="topTransferBadge">Loading</span></div><div class="preview-list" id="topTransferPreview"><div class="loading">Loading transfer preview…</div></div></div>
+    <div class="panel"><div class="panel-head"><div><h3>Top Transfer Preview</h3><p>Same eligible highest-income route used by the Transfer Centre.</p></div><span class="badge green" id="topTransferBadge">Loading</span></div><div class="preview-list" id="topTransferPreview"><div class="loading">Loading transfer preview…</div></div></div>
     <div class="panel"><div class="panel-head"><div><h3>First-Team Form Preview</h3><p>Biggest income players currently in the squad.</p></div><span class="badge blue" id="squadBadge">Loading</span></div><div class="preview-list" id="squadPreview"><div class="loading">Loading squad preview…</div></div></div>
   </section>
 
@@ -328,7 +331,7 @@ function isCandidateOkay(row){
   const text = `${statusText(row)} ${row.trial_status || ""} ${row.trial_verdict || ""} ${row.manager_note || ""} ${row.chemistry_risk || ""}`.toLowerCase();
   if(/sold|exit|no buy|do not sign|dividend check|blocked|avoid/.test(text)) return false;
   const y = incomeRate(row);
-  if(!Number.isFinite(y) || y <= 0) return false;
+  if(!Number.isFinite(y) || y <= 0 || y > 0.14) return false;
   return /buy|accumulate|watch|monitor|candidate|trial|hold/.test(text) || (buyStrength(row) || 0) >= 60 || (impact(row) || 0) >= 60;
 }
 function candidatePool(){

@@ -2294,6 +2294,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
   filter:drop-shadow(0 14px 18px rgba(0,0,0,.36));
 }
 
+
+/* ===== Aurora v2.0 Boardroom priority hierarchy ===== */
+.board-priority-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:18px 0 22px}.priority-card{position:relative;overflow:hidden;border:1px solid rgba(96,165,250,.22);background:linear-gradient(180deg,rgba(13,27,52,.88),rgba(7,17,31,.95));border-radius:24px;padding:18px;min-height:126px;box-shadow:0 14px 38px rgba(0,0,0,.24)}.priority-card:before{content:"";position:absolute;right:-28px;top:-34px;width:100px;height:100px;border-radius:50%;background:rgba(96,165,250,.12)}.priority-card.green:before{background:rgba(52,211,153,.14)}.priority-card.amber:before{background:rgba(251,191,36,.13)}.priority-card.red:before{background:rgba(251,113,133,.12)}.priority-card small{display:block;color:#9fb7d2;text-transform:uppercase;letter-spacing:.1em;font-size:10px;font-weight:900}.priority-card strong{display:block;font-size:24px;margin-top:12px;color:#e0f2fe}.priority-card.green strong{color:#86efac}.priority-card.amber strong{color:#fde68a}.priority-card.red strong{color:#fecdd3}.priority-card span{display:block;color:#93a4bd;font-size:12px;margin-top:7px}.executive-grid{gap:18px!important}.chairman-verdict,.board-decision-card{padding:22px!important}.board-grid{gap:18px!important}.board-card{padding:18px!important}@media(max-width:900px){.board-priority-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.board-priority-strip{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -2379,6 +2382,13 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
   </section>
 
+
+  <section class="board-priority-strip">
+    <div class="priority-card"><small>Board Confidence</small><strong id="priorityConfidence">—</strong><span>Chairman position</span></div>
+    <div class="priority-card green"><small>Financial Health</small><strong id="priorityHealth">—</strong><span>Income engine status</span></div>
+    <div class="priority-card amber"><small>Next Objective</small><strong id="priorityObjective">—</strong><span>Board-approved target</span></div>
+    <div class="priority-card red"><small>Principal Risk</small><strong id="priorityRisk">—</strong><span>What needs watching</span></div>
+  </section>
 
   <!-- ===================== SECTION: EXECUTIVE CONTROL ROOM ===================== -->
   <section class="section" id="executive-control-room">
@@ -2587,32 +2597,12 @@ function uniqueByTicker(rows){
   });
   return [...map.values()];
 }
-function isActiveHolding(row){
-  const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
-  const currentValue = parseNum(row.current_value ?? row.value ?? row.market_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
-  const status = String(row.status ?? row.Status ?? '').trim().toLowerCase();
-  const role = String(row.role ?? row.Role ?? '').trim().toLowerCase();
-  const exited = status.includes('sold') || status.includes('exited') || role.includes('exited');
-  return !exited && ((Number.isFinite(shares) && shares > 0) || (Number.isFinite(currentValue) && currentValue > 0));
-}
-function activeHoldingRows(rows){
-  return (rows || []).filter(isActiveHolding);
-}
 function annualIncomeFromRow(row){
-  // Prefer the sheet's already-calculated annual_dps_total.
-  // This keeps dual-account holdings like PHP IG ISA + PHP Trade 212 counted correctly.
-  const direct = parseNum(
-    row.annual_dps_total ??
-    row.Annual_DPS_Total ??
-    row["Annual DPS Total"] ??
-    row.annual_income ??
-    row.income_annual ??
-    row.dividend_income ??
-    row.AnnualIncome ??
-    row["Annual Income"]
-  );
+  const total = parseNum(row.annual_dps_total ?? row.Annual_DPS_Total ?? row["Annual DPS Total"]);
+  if(Number.isFinite(total)) return total;
+  const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
   if(Number.isFinite(direct)) return direct;
-  const value = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  const value = parseNum(row.current_value ?? row.market_value ?? row.value ?? row.Value);
   const y = parseYield(row);
   if(Number.isFinite(value) && Number.isFinite(y)) return value * y;
   const shares = parseNum(row.shares ?? row.quantity ?? row.units ?? row.Shares);
@@ -2621,16 +2611,16 @@ function annualIncomeFromRow(row){
   return 0;
 }
 function portfolioAnnualIncome(){
-  return activeHoldingRows(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
+  return uniqueByTicker(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
 }
 function portfolioValue(){
-  return activeHoldingRows(state.holdings).reduce((sum,row)=>{
+  return uniqueByTicker(state.holdings).reduce((sum,row)=>{
     const v = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
     return sum + (Number.isFinite(v) ? v : 0);
   },0);
 }
 function avgBuyStrength(){
-  const rows = uniqueByTicker(activeHoldingRows(state.holdings));
+  const rows = uniqueByTicker(state.holdings);
   const vals = rows.map(buyStrength).filter(Number.isFinite);
   return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 70;
 }
@@ -3159,6 +3149,12 @@ function renderAll(){
   const supporterNewsImpact = summedNewsImpact('Supporter_Impact','Supporter Impact','supporter_impact');
   const boardScore = clampScore(boardBase + boardNewsImpact);
   const supporterScore = clampScore(supporterBase + supporterNewsImpact);
+
+  if($('priorityConfidence')) $('priorityConfidence').textContent = `${boardScore}%`;
+  if($('priorityHealth')) $('priorityHealth').textContent = monthly >= 500 ? 'Promotion level' : monthly >= 250 ? 'Healthy build' : 'Foundation stage';
+  if($('priorityObjective')) $('priorityObjective').textContent = rep.next ? `${money(rep.next.monthly)}/month` : 'Maintain elite level';
+  if($('priorityRisk')) $('priorityRisk').textContent = avgStrength < 65 ? 'Squad quality' : targets.length < 3 ? 'Thin transfer pipeline' : 'Concentration watch';
+
 
   $('boardConfidence').textContent = `${boardScore}%`;
   $('boardConfidenceLabel').textContent = `${scoreLabel(boardScore)}${signedImpact(boardNewsImpact)}`;

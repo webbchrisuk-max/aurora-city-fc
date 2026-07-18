@@ -2058,6 +2058,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
   .hall-of-fame-card .legend-player-img{height:235px}
 }
 
+
+/* ===== Aurora v2.0 Squad polish ===== */
+.mock-main-grid{gap:22px}.mock-main-left,.mock-main-right{gap:22px}.mock-card{padding:22px}.mock-lower-grid{gap:22px;margin-top:22px}.panel-head{margin-bottom:18px}.panel-sub{margin-bottom:18px}.bench-list{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}.upgraded-bench{grid-template-columns:34px 54px minmax(0,1fr) auto!important;min-height:78px;padding:13px 14px!important}.bench-rank{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:rgba(96,165,250,.13);border:1px solid rgba(96,165,250,.22);font-weight:900;color:#bfdbfe}.bench-shirt-mini{width:54px!important;height:54px!important}.bench-meta strong{font-size:15px!important}.bench-meta small{font-size:12px!important}.bench-score{font-size:18px!important;padding:8px 11px!important}.selection-room-grid{gap:14px}.selection-box{padding:16px}.hall-of-fame-card{padding:26px!important}.hall-note{margin:0 0 20px;color:#9fb7d2;line-height:1.5}.hall-of-fame-card .legend-grid{grid-template-columns:repeat(4,minmax(220px,1fr))!important;gap:20px!important}.hall-of-fame-card .legend-tile{min-height:360px!important}.hall-of-fame-card .legend-player-img{height:225px!important}.hall-of-fame-card .legend-player-body{padding:18px!important}.hall-of-fame-card .legend-tile strong{font-size:22px!important}.hall-of-fame-card .legend-income{margin-top:14px!important;padding:10px!important}@media(max-width:1100px){.hall-of-fame-card .legend-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}@media(max-width:650px){.mock-card{padding:16px}.upgraded-bench{grid-template-columns:30px 48px minmax(0,1fr)!important}.upgraded-bench .bench-score{grid-column:3;justify-self:start}.hall-of-fame-card .legend-grid{grid-template-columns:1fr!important}.hall-of-fame-card .legend-player-img{height:260px!important}}
 </style>
 </head>
 <body>
@@ -2320,6 +2323,8 @@ function activeHoldingRows(rows){
   return (Array.isArray(rows) ? rows : []).filter(isActiveHolding);
 }
 function annualIncomeFromRow(row){
+  const total = parseNum(row.annual_dps_total ?? row.Annual_DPS_Total ?? row["Annual DPS Total"]);
+  if(Number.isFinite(total)) return total;
   const direct = parseNum(row.annual_income ?? row.income_annual ?? row.dividend_income ?? row.AnnualIncome ?? row["Annual Income"]);
   if(Number.isFinite(direct)) return direct;
   const value = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
@@ -2540,16 +2545,25 @@ function renderFormation(rows, target){
 function renderBench(rows, target){
   const el = $(target);
   if(!el) return;
-  const bench = [...rows].sort((a,b)=>squadScore(b)-squadScore(a)).slice(11,16);
-  el.innerHTML = bench.length ? bench.map(r=>`<div class="bench-card">
-    <div class="bench-shirt-mini"><span>${displayTicker(r.ticker)}</span></div>
-    <div class="bench-meta"><strong>${displayName(r)}</strong><small>${money(annualIncomeFromRow(r))} annual income</small></div>
-    <div class="bench-score">${num(squadScore(r))}</div>
-  </div>`).join('') : '<div class="loading">No bench players yet — once the XI is full, the next strongest holdings appear here.</div>';
+  const sorted = [...rows].sort((a,b)=>squadScore(b)-squadScore(a));
+  const bench = sorted.slice(11,16);
+  const firstXI = sorted.slice(0,11);
+  const weakestXI = firstXI.length ? Math.min(...firstXI.map(squadScore)) : 0;
+  el.innerHTML = bench.length ? bench.map((r,i)=>{
+    const score = Math.round(squadScore(r));
+    const gap = Math.max(0, Math.round(weakestXI-score));
+    const status = gap <= 2 ? 'Pushing to start' : gap <= 7 ? 'Matchday bench' : 'Rotation option';
+    return `<div class="bench-card upgraded-bench">
+      <div class="bench-rank">${i+12}</div>
+      <div class="bench-shirt-mini"><span>${displayTicker(r.ticker)}</span></div>
+      <div class="bench-meta"><strong>${displayName(r)}</strong><small>${status} • ${money(annualIncomeFromRow(r))}/yr</small></div>
+      <div class="bench-score">${score}</div>
+    </div>`;
+  }).join('') : '<div class="loading">No matchday bench yet — the current active squad is smaller than sixteen players.</div>';
 }
 
 function legendImageForTicker(ticker){
-  const t = cleanTicker(ticker).replace('LON:','');
+  const t = cleanTicker(ticker).replace('LON:','').replace('.L','');
   return `assets/aurora-city-fc/players/${t.toLowerCase()}_player.png`;
 }
 function legendRole(row, index){
@@ -2560,13 +2574,15 @@ function legendRole(row, index){
   return 'Club Legend';
 }
 function chooseLegends(rows){
-  return activeHoldingRows(rows)
-    .sort((a,b)=>{
-      const incomeDiff = annualIncomeFromRow(b) - annualIncomeFromRow(a);
-      if(Math.abs(incomeDiff) > 0.01) return incomeDiff;
-      return squadScore(b) - squadScore(a);
-    })
-    .slice(0,4);
+  const active = activeHoldingRows(rows);
+  const maxIncome = Math.max(1, ...active.map(annualIncomeFromRow));
+  const maxValue = Math.max(1, ...active.map(r=>parseNum(val(r,'current_value','Current Value','market_value','Market Value','value','Value')) || 0));
+  return [...active].map(r=>{
+    const income = annualIncomeFromRow(r);
+    const value = parseNum(val(r,'current_value','Current Value','market_value','Market Value','value','Value')) || 0;
+    const legendScore = (income/maxIncome)*60 + (value/maxValue)*25 + (squadScore(r)/100)*15;
+    return {...r,__legendScore:legendScore};
+  }).sort((a,b)=>b.__legendScore-a.__legendScore).slice(0,4);
 }
 function renderLegends(rows){
   const grid = $('legendGrid');
