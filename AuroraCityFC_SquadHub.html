@@ -3086,7 +3086,7 @@ function positionPlan(rows){
   const plans=[
     {number:1,pos:'GK',top:88,left:50,row:(()=>{const r=pool.find(x=>cleanTicker(x.ticker)==='RGL'&&!used.has(cleanTicker(x.ticker)));if(r){used.add(cleanTicker(r.ticker));return r;}return take((a,b)=>reliability(b)-reliability(a));})(),role:'Safe Hands'},
     {number:9,pos:'ST',top:14,left:50,row:take((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a)),role:'Top Scorer'},
-    {number:10,pos:'CAM',top:47,left:50,row:take((a,b)=>squadScore(b)-squadScore(a)),role:'Playmaker'},
+    {number:10,pos:'CAM',top:40,left:50,row:take((a,b)=>squadScore(b)-squadScore(a)),role:'Playmaker'},
     {number:6,pos:'CDM',top:58,left:50,row:take((a,b)=>(reliability(b)+holdingValue(b)/1000)-(reliability(a)+holdingValue(a)/1000)),role:'Captain'},
     {number:7,pos:'RW',top:28,left:82,row:take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Right Wing'},
     {number:11,pos:'LW',top:28,left:18,row:take((a,b)=>(dailyMove(b)+squadScore(b)*.2)-(dailyMove(a)+squadScore(a)*.2)),role:'Left Wing'},
@@ -3223,21 +3223,8 @@ function renderBench(rows, target){
 }
 
 function legendImageForTicker(ticker){
-  const t = cleanTicker(ticker);
-  const map = {
-    TSCO:'assets/aurora-city-fc/players/tsco_legend.png',
-    PHP:'assets/aurora-city-fc/players/php_legend.png',
-    RGL:'assets/aurora-city-fc/players/rgl_legend.png',
-    VWRA:'assets/aurora-city-fc/players/vwra_legend.png',
-    FGEN:'assets/aurora-city-fc/players/fgen_legend.png',
-    TW:'assets/aurora-city-fc/players/tw_legend.png',
-    IITU:'assets/aurora-city-fc/players/iitu_legend.png',
-    FSFL:'assets/aurora-city-fc/players/fsfl_legend.png',
-    SUPR:'assets/aurora-city-fc/players/supr_legend.png',
-    ARCC:'assets/aurora-city-fc/players/arcc_legend.png',
-    UKW:'assets/aurora-city-fc/players/ukw_legend.png'
-  };
-  return map[t] || `assets/aurora-city-fc/players/${t.toLowerCase()}_legend.png`;
+  // Use the same live squad portrait everywhere for visual consistency.
+  return squadImageForTicker(ticker) || squadImageFallbackForTicker(ticker);
 }
 function chooseLegends(rows){
   const active = [...rows].filter(isActiveHolding);
