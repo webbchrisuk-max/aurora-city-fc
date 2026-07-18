@@ -172,7 +172,7 @@ button,input{font:inherit}
 
   <section class="score-strip">
     <div class="score-card green"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span>Current passive-income run rate</span></div>
-    <div class="score-card"><div class="score-icon">%</div><small>Portfolio Yield</small><strong id="portfolioYield">—</strong><span>Income generated from club value</span></div>
+    <div class="score-card"><div class="score-icon">%</div><small>Portfolio Yield</small><strong id="portfolioYield">—</strong><span>IG ISA + Trade 212 holdings only</span></div>
     <div class="score-card"><div class="score-icon">👕</div><small>Active Squad</small><strong id="activeSquadCount">—</strong><span>Current first-team holdings</span></div>
     <div class="score-card"><div class="score-icon">🛡️</div><small>Board Confidence</small><strong id="portfolioStrength">—</strong><span>Overall club-health rating</span></div>
     <div class="score-card green"><div class="score-icon">🔁</div><small>Next Payday Boost</small><strong id="paydayBoost">—</strong><span id="paydayBoostNote">Estimated annual income</span></div>
@@ -279,6 +279,12 @@ function isActiveHolding(row){
   return (Number.isFinite(shares) && shares > 0) || (Number.isFinite(value) && value > 0);
 }
 function activeHoldings(){ return (state.holdings || []).filter(isActiveHolding); }
+function incomePortfolioHoldings(){
+  return activeHoldings().filter(row=>{
+    const account = String(row.account ?? row.platform ?? row.broker ?? row.Account ?? "").trim().toUpperCase();
+    return account === "IG ISA" || account === "TRADE 212" || account === "TRADING 212" || account === "TRADING 212 ISA" || account === "TRADE212 ISA";
+  });
+}
 function annualIncomeFromRow(row){
   const directTotal = parseNum(row.annual_dps_total ?? row.Annual_DPS_Total ?? row["Annual DPS Total"]);
   if(Number.isFinite(directTotal)) return directTotal;
@@ -484,7 +490,10 @@ function renderAll(){
   const income = portfolioAnnualIncome();
   const monthly = income / 12;
   const value = portfolioValue();
-  const yieldRate = value > 0 ? income / value : NaN;
+  const yieldHoldings = incomePortfolioHoldings();
+  const yieldIncome = yieldHoldings.reduce((s,r)=>s+annualIncomeFromRow(r),0);
+  const yieldValue = yieldHoldings.reduce((s,r)=>s+holdingValue(r),0);
+  const yieldRate = yieldValue > 0 ? yieldIncome / yieldValue : NaN;
   const gap = Math.max(0, MONTHLY_TARGET - monthly);
   const board = boardScore(monthly,value,yieldRate);
   const active = activeHoldings();
