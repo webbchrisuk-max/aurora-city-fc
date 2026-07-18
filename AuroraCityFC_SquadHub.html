@@ -3106,13 +3106,39 @@ function squadImageForTicker(ticker){
   const t=cleanTicker(ticker).replace('LON:','').replace('.L','');
   // Squad images are currently uploaded beside the HTML in the GitHub repo.
   // The version query prevents an older failed image request being held in cache.
-  const map={RGL:'rgl_squad.png?v=20260718-2'};
-  return map[t]||'';
+  const version='?v=20260718-4';
+  const map={
+    RGL:'rgl_squad.png',
+    VWRA:'vwra_squad.png',
+    FGEN:'fgen_squad.png',
+    TW:'tw_squad.png',
+    IITU:'iitu_squad.png',
+    TSCO:'tsco_squad.png',
+    FSFL:'fsfl_squad.png',
+    PHP:'php_squad.png',
+    SUPR:'supr_squad.png',
+    ARCC:'arcc_squad.png',
+    UKW:'ukw_squad.png'
+  };
+  return map[t] ? map[t] + version : '';
 }
 function squadImageFallbackForTicker(ticker){
   const t=cleanTicker(ticker).replace('LON:','').replace('.L','');
-  const map={RGL:'assets/aurora-city-fc/players/rgl_squad.png?v=20260718-2'};
-  return map[t]||'';
+  const version='?v=20260718-4';
+  const map={
+    RGL:'assets/aurora-city-fc/players/rgl_squad.png',
+    VWRA:'assets/aurora-city-fc/players/vwra_squad.png',
+    FGEN:'assets/aurora-city-fc/players/fgen_squad.png',
+    TW:'assets/aurora-city-fc/players/tw_squad.png',
+    IITU:'assets/aurora-city-fc/players/iitu_squad.png',
+    TSCO:'assets/aurora-city-fc/players/tsco_squad.png',
+    FSFL:'assets/aurora-city-fc/players/fsfl_squad.png',
+    PHP:'assets/aurora-city-fc/players/php_squad.png',
+    SUPR:'assets/aurora-city-fc/players/supr_squad.png',
+    ARCC:'assets/aurora-city-fc/players/arcc_squad.png',
+    UKW:'assets/aurora-city-fc/players/ukw_squad.png'
+  };
+  return map[t] ? map[t] + version : '';
 }
 function playerProfileImageForTicker(ticker){
   return squadImageForTicker(ticker)||legendImageForTicker(ticker);
