@@ -2311,6 +2311,38 @@ tr:hover td{background:rgba(96,165,250,.06)}
 .aurora-system-panel.open{display:block}.aurora-system-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.aurora-system-head h3{margin:0;font-size:17px}.aurora-system-close{border:0;background:transparent;color:#cbd5e1;font-size:24px;cursor:pointer}.aurora-system-list{display:grid;gap:8px}.aurora-system-row{display:grid;grid-template-columns:14px 1fr;gap:9px;align-items:start;border:1px solid rgba(148,163,184,.14);background:rgba(2,6,23,.35);border-radius:14px;padding:10px}.aurora-system-dot{width:10px;height:10px;border-radius:50%;margin-top:3px;background:#34d399;box-shadow:0 0 12px rgba(52,211,153,.28)}.aurora-system-row.warn .aurora-system-dot{background:#fbbf24}.aurora-system-row.bad .aurora-system-dot{background:#fb7185}.aurora-system-row strong{display:block;font-size:12px}.aurora-system-row span{display:block;color:#93a4bd;font-size:11px;line-height:1.4;margin-top:3px}
 @media(max-width:560px){.aurora-system-button{right:10px;bottom:52px}.aurora-system-panel{right:10px;bottom:94px;width:calc(100vw - 20px)}}
 
+
+/* ===================== SECTION: BEST RETURN ALLOCATION ===================== */
+.best-return-panel{
+  border:1px solid rgba(52,211,153,.28);
+  background:
+    radial-gradient(circle at top right,rgba(52,211,153,.13),transparent 34%),
+    radial-gradient(circle at bottom left,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,rgba(8,31,42,.92),rgba(4,14,27,.98));
+  border-radius:24px;
+  padding:16px;
+  box-shadow:0 16px 48px rgba(0,0,0,.28);
+}
+.best-return-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}
+.best-return-head h3{margin:0;font-size:21px;letter-spacing:-.04em}
+.best-return-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.4;max-width:760px}
+.best-return-summary{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:stretch;margin-bottom:12px}
+.best-return-stat{border:1px solid rgba(148,163,184,.18);background:rgba(2,6,23,.34);border-radius:16px;padding:11px}
+.best-return-stat small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+.best-return-stat strong{display:block;margin-top:5px;font-size:21px;letter-spacing:-.04em;color:#86efac}
+.best-return-stat span{display:block;margin-top:4px;color:var(--muted);font-size:10px;line-height:1.35}
+.best-return-apply{align-self:stretch;border:1px solid rgba(52,211,153,.34);background:rgba(20,83,45,.28);color:#bbf7d0;border-radius:16px;padding:10px 15px;font-weight:1000;cursor:pointer;min-width:150px}
+.best-return-apply:disabled{opacity:.45;cursor:not-allowed}
+.best-return-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.best-return-card{border:1px solid rgba(96,165,250,.18);background:rgba(2,6,23,.30);border-radius:17px;padding:11px}
+.best-return-card-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.best-return-card strong{display:block;font-size:16px}
+.best-return-card b{color:#86efac;font-size:18px;white-space:nowrap}
+.best-return-card span{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-top:6px}
+.best-return-note{display:block;margin-top:10px;color:#9fb7d2;font-size:10px;line-height:1.45}
+@media(max-width:960px){.best-return-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.best-return-summary{grid-template-columns:1fr 1fr}.best-return-apply{grid-column:1/-1}}
+@media(max-width:560px){.best-return-head{flex-direction:column}.best-return-grid,.best-return-summary{grid-template-columns:1fr}.best-return-apply{grid-column:auto}}
+
 </style>
 <style>
 
@@ -2424,6 +2456,60 @@ tr:hover td{background:rgba(96,165,250,.06)}
   font-weight:1000;
   letter-spacing:-.04em;
 }
+.allocation-budget-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.allocation-budget-stat{
+  border:1px solid rgba(148,163,184,.18);
+  background:rgba(2,6,23,.34);
+  border-radius:14px;
+  padding:9px 10px;
+}
+.allocation-budget-stat small{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:900;
+}
+.allocation-budget-stat strong{
+  display:block;
+  margin-top:4px;
+  font-size:18px;
+  letter-spacing:-.04em;
+  color:#e0f2fe;
+}
+.allocation-budget-stat.remaining strong{color:#86efac}
+.allocation-budget-stat.over strong{color:#fecdd3}
+.allocation-budget-progress{
+  height:7px;
+  margin-top:10px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(148,163,184,.14);
+  border:1px solid rgba(148,163,184,.10);
+}
+.allocation-budget-progress i{
+  display:block;
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#22d3ee,#34d399);
+  transition:width .2s ease;
+}
+.allocation-budget-note{
+  display:block;
+  margin-top:7px;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.35;
+}
+.allocation-budget-note.warn{color:#fde68a}
+@media(max-width:560px){.allocation-budget-summary{grid-template-columns:1fr 1fr}}
 .window-kpi{
   border:1px solid rgba(96,165,250,.20);
   background:rgba(2,6,23,.28);
@@ -2915,6 +3001,12 @@ tr:hover td{background:rgba(96,165,250,.06)}
           <span>£</span>
           <input id="transferBudgetInput" type="number" min="0" step="25" value="1500" inputmode="decimal" aria-label="Transfer budget">
         </label>
+        <div class="allocation-budget-summary" aria-live="polite">
+          <div class="allocation-budget-stat"><small>Allocated</small><strong id="allocatedTransferBudget">£0.00</strong></div>
+          <div class="allocation-budget-stat remaining" id="remainingTransferBudgetCard"><small>Still Available</small><strong id="remainingTransferBudget">£1,500.00</strong></div>
+        </div>
+        <div class="allocation-budget-progress"><i id="allocationBudgetProgress"></i></div>
+        <span class="allocation-budget-note" id="allocationBudgetNote">£0.00 of £1,500.00 allocated.</span>
         <button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset plan</button>
       </div>
       <div class="window-kpi good">
@@ -2932,6 +3024,26 @@ tr:hover td{background:rgba(96,165,250,.06)}
         <strong id="headlineStatus">—</strong>
         <span id="headlineStatusNote">Final checks loading…</span>
       </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: BEST RETURN ALLOCATION ===================== -->
+  <section class="section" id="best-return-allocation">
+    <div class="best-return-panel">
+      <div class="best-return-head">
+        <div>
+          <h3>Best Return Allocation</h3>
+          <p>The highest projected annual income available from the same approved four. Every signing keeps a minimum place in the plan, then the spare budget moves to the strongest income rate while Aurora respects yellow-risk sizing.</p>
+        </div>
+        <span class="badge green">Income maximised</span>
+      </div>
+      <div class="best-return-summary">
+        <div class="best-return-stat"><small>Best yearly income</small><strong id="bestReturnIncome">—</strong><span id="bestReturnMonthly">Calculating monthly boost…</span></div>
+        <div class="best-return-stat"><small>Versus current allocation</small><strong id="bestReturnUplift">—</strong><span id="bestReturnSpend">Calculating full-budget use…</span></div>
+        <button class="best-return-apply" id="applyBestReturn" type="button" disabled>Apply best-return amounts</button>
+      </div>
+      <div class="best-return-grid" id="bestReturnGrid"><div class="loading">Optimising the four approved transfers…</div></div>
+      <span class="best-return-note" id="bestReturnNote">This is the income-maximised version, not the most evenly diversified version. The standard 40/30/20/10 route remains Aurora’s balanced recommendation.</span>
     </div>
   </section>
 
@@ -3378,7 +3490,7 @@ function buildDealSheet(){
   else chosen = [...clean, ...caution].slice(0,4);
 
   if(!chosen.length){
-    return {budget, chosen:[], rows:[], holdback:budget, status:'No buy', statusClass:'bad', route:'Hold cash', reason:'No candidate has passed the transfer desk today.', bench:gated.slice(0,5), watch:gated.filter(x=>x.gate.status === 'block').slice(0,5)};
+    return {budget, chosen:[], rows:[], holdback:budget, requestedSpent:0, autoReduced:0, status:'No buy', statusClass:'bad', route:'Hold cash', reason:'No candidate has passed the transfer desk today.', bench:gated.slice(0,5), watch:gated.filter(x=>x.gate.status === 'block').slice(0,5)};
   }
 
   const weightsByCount = {
@@ -3405,6 +3517,7 @@ function buildDealSheet(){
   }).filter(item => item.amount > 0);
 
   let spent = rows.reduce((s,r)=>s+r.amount,0);
+  const requestedSpent = spent;
   if(spent > budget){
     let over = spent - budget;
     for(let i=rows.length-1; i>=0 && over>0; i--){
@@ -3434,7 +3547,95 @@ function buildDealSheet(){
     ...gated.filter(x=>!selected.has(cleanTicker(x.row.ticker)) && x.gate.status === 'caution')
   ].slice(0,5);
 
-  return {budget, rows, holdback, status, statusClass, route, reason, totalIncome, bench, watch};
+  return {budget, chosen, rows, holdback, requestedSpent, autoReduced:Math.max(0,requestedSpent-budget), status, statusClass, route, reason, totalIncome, bench, watch};
+}
+
+
+function buildBestReturnAllocation(deal){
+  const chosen=(deal.chosen||[]).map(item=>({row:item.row,gate:item.gate,score:item.score}));
+  const budget=roundTo25(Math.max(0,deal.budget||0));
+  if(!chosen.length||budget<=0) return {rows:[],totalIncome:0,spent:0,holdback:budget};
+
+  const count=chosen.length;
+  const affordableBase=Math.floor((budget/count)/25)*25;
+  const minimumEach=Math.max(0,Math.min(150,affordableBase));
+  const amounts=new Map(chosen.map(item=>[cleanTicker(item.row.ticker),minimumEach]));
+  let spent=minimumEach*count;
+  let remaining=Math.max(0,budget-spent);
+  const normalMaxShare=count>=4?.70:count===3?.75:count===2?.85:1;
+
+  while(remaining>=25){
+    let best=null;
+    for(const item of chosen){
+      const ticker=cleanTicker(item.row.ticker);
+      const current=amounts.get(ticker)||0;
+      const hardMax=item.gate.status==='caution'
+        ? roundTo25(budget*.25)
+        : roundTo25(budget*normalMaxShare);
+      if(current+25>hardMax) continue;
+
+      const otherAllocations=chosen
+        .filter(other=>cleanTicker(other.row.ticker)!==ticker)
+        .map(other=>({row:other.row,amount:amounts.get(cleanTicker(other.row.ticker))||0}));
+      const snapshot=exposureSnapshot(otherAllocations);
+      const proposedGate=gateCandidate(item.row,current+25,snapshot);
+      if(proposedGate.status==='block') continue;
+      if(item.gate.status==='pass'&&proposedGate.status==='caution') continue;
+
+      const rate=incomeRate(item.row);
+      if(!Number.isFinite(rate)||rate<=0) continue;
+      const rank=(rate*100000)+(incomePriorityScore(item.row)||0);
+      if(!best||rank>best.rank) best={item,ticker,rank};
+    }
+    if(!best) break;
+    amounts.set(best.ticker,(amounts.get(best.ticker)||0)+25);
+    remaining-=25;
+  }
+
+  const rows=chosen.map(item=>{
+    const amount=amounts.get(cleanTicker(item.row.ticker))||0;
+    return {...item,amount,income:annualIncomeForAmount(item.row,amount)};
+  }).filter(item=>item.amount>0);
+  spent=rows.reduce((sum,item)=>sum+item.amount,0);
+  return {
+    rows,
+    totalIncome:rows.reduce((sum,item)=>sum+item.income,0),
+    spent,
+    holdback:Math.max(0,budget-spent),
+    minimumEach
+  };
+}
+
+function renderBestReturnAllocation(deal){
+  const plan=buildBestReturnAllocation(deal);
+  window.AURORA_BEST_RETURN_PLAN=plan;
+  const button=$('applyBestReturn');
+  if(button) button.disabled=!plan.rows.length;
+  if($('bestReturnIncome')) $('bestReturnIncome').textContent=plan.rows.length?`${money(plan.totalIncome)}/yr`:'—';
+  if($('bestReturnMonthly')) $('bestReturnMonthly').textContent=plan.rows.length?`${money(plan.totalIncome/12)}/month estimated`:'No approved route available.';
+  const uplift=plan.totalIncome-(deal.totalIncome||0);
+  if($('bestReturnUplift')){
+    $('bestReturnUplift').textContent=plan.rows.length?`${uplift>=0?'+':''}${money(uplift)}/yr`:'—';
+    $('bestReturnUplift').style.color=uplift>0?'#86efac':uplift<0?'#fb7185':'#cbd5e1';
+  }
+  if($('bestReturnSpend')) $('bestReturnSpend').textContent=plan.rows.length
+    ? `${money(plan.spent)} allocated${plan.holdback>0?` • ${money(plan.holdback)} held back`:''}`
+    : 'Waiting for approved targets.';
+
+  const grid=$('bestReturnGrid');
+  if(grid){
+    grid.innerHTML=plan.rows.length?plan.rows.map((item,index)=>{
+      const rate=incomeRate(item.row);
+      return `<div class="best-return-card">
+        <div class="best-return-card-top"><strong>#${index+1} ${displayTicker(item.row.ticker)}</strong><b>${money(item.amount)}</b></div>
+        <span>${displayName(item.row)} • ${Number.isFinite(rate)?(rate*100).toFixed(2)+'% income rate':'income check'}</span>
+        <span>Projected income: <strong style="display:inline;color:#86efac">${money(item.income)}/yr</strong></span>
+      </div>`;
+    }).join(''):'<div class="loading">No approved four-player route is available to optimise.</div>';
+  }
+  if($('bestReturnNote')) $('bestReturnNote').textContent=plan.rows.length
+    ? `All ${plan.rows.length} approved names remain in the plan with at least ${money(plan.minimumEach)} each. Remaining £25 blocks go to the highest projected income rate until a sizing or concentration guard is reached. This maximises projected dividend income; it does not guarantee investment returns or capital growth.`
+    : 'The best-return plan will appear once Aurora has approved at least one transfer target.';
 }
 
 function visualThemeFor(row){
@@ -3629,6 +3830,27 @@ function renderKpis(deal){
   if($('headlineMonthly')) $('headlineMonthly').textContent = `${money(totalIncome / 12)} per month estimate`;
   if($('headlineStatus')) $('headlineStatus').textContent = deal.status;
   if($('headlineStatusNote')) $('headlineStatusNote').textContent = deal.holdback > 0 ? `${money(deal.holdback)} held back` : 'Full budget assigned';
+  const allocated = Math.max(0,(deal.budget||0)-(deal.holdback||0));
+  const remaining = Math.max(0,deal.holdback||0);
+  if($('allocatedTransferBudget')) $('allocatedTransferBudget').textContent = money(allocated);
+  if($('remainingTransferBudget')) $('remainingTransferBudget').textContent = money(remaining);
+  const remainingCard=$('remainingTransferBudgetCard');
+  if(remainingCard){
+    remainingCard.classList.toggle('over',(deal.autoReduced||0)>0);
+    remainingCard.classList.toggle('remaining',!((deal.autoReduced||0)>0));
+    const label=remainingCard.querySelector('small');
+    if(label) label.textContent=(deal.autoReduced||0)>0?'Auto Adjusted':'Still Available';
+    if((deal.autoReduced||0)>0 && $('remainingTransferBudget')) $('remainingTransferBudget').textContent=money(deal.autoReduced);
+  }
+  const usedPct=deal.budget>0?Math.min(100,(allocated/deal.budget)*100):0;
+  if($('allocationBudgetProgress')) $('allocationBudgetProgress').style.width=`${usedPct}%`;
+  if($('allocationBudgetNote')){
+    const note=$('allocationBudgetNote');
+    note.classList.toggle('warn',(deal.autoReduced||0)>0);
+    note.textContent=(deal.autoReduced||0)>0
+      ? `Your requested allocations were ${money(deal.autoReduced)} over budget, so Aurora reduced lower-priority allocations automatically.`
+      : `${money(allocated)} of ${money(deal.budget||0)} allocated • ${money(remaining)} left to assign.`;
+  }
   const statusCard = $('headlineStatus')?.closest('.window-kpi');
   if(statusCard){
     statusCard.classList.remove('good','warn','bad');
@@ -3760,6 +3982,7 @@ function renderAll(){
   renderBench(deal);
   renderWatch(deal);
   renderPostTransferImpact(deal);
+  renderBestReturnAllocation(deal);
   window.AURORA_PAGE_CHECKS=()=>[
     {level:deal.rows.length?'ok':'warn',title:`${deal.rows.length} approved signings`,detail:deal.rows.length?`${money(deal.totalIncome||0)}/year estimated income added.`:'No target currently clears the transfer gates.'},
     {level:excludedTickers.size?'warn':'ok',title:excludedTickers.size?`${excludedTickers.size} manually excluded`:'No manual exclusions',detail:excludedTickers.size?[...excludedTickers].join(' • '):'Automatic route is using the full eligible pool.'}
@@ -3807,6 +4030,14 @@ document.addEventListener('click',event=>{
   const exclude=event.target.closest?.('[data-exclude-ticker]'); if(exclude){excludedTickers.add(cleanTicker(exclude.dataset.excludeTicker));manualAmounts.delete(cleanTicker(exclude.dataset.excludeTicker));renderAll();}
 });
 $('resetTransferPlan')?.addEventListener('click',()=>{excludedTickers.clear();manualAmounts.clear();if($('transferBudgetInput'))$('transferBudgetInput').value=1500;renderAll();});
+$('applyBestReturn')?.addEventListener('click',()=>{
+  const plan=window.AURORA_BEST_RETURN_PLAN;
+  if(!plan?.rows?.length) return;
+  manualAmounts.clear();
+  plan.rows.forEach(item=>manualAmounts.set(cleanTicker(item.row.ticker),item.amount));
+  renderAll();
+  document.getElementById('finalDealSheet')?.scrollIntoView({behavior:'smooth',block:'start'});
+});
 loadData();
 </script>
 
