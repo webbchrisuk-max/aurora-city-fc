@@ -3459,7 +3459,7 @@ function registrationShortTicker(t){ return shortTicker(cleanTicker(t)); }
 function normalizeRegistrationAccount(account){
   const raw=String(account||'').trim().toUpperCase().replace(/\s+/g,' ');
   if(raw==='TRADE212'||raw==='TRADING 212'||raw==='TRADING212'||raw==='TRADE 212 ISA'||raw==='TRADING 212 ISA') return 'TRADE 212';
-  if(raw==='IG'||raw==='IGISA') return 'IG ISA';
+  if(raw==='IG'||raw==='IGISA'||raw==='IG ISA'||raw==='IG TRADING'||raw.startsWith('IG TRADING')) return 'IG ISA';
   return raw;
 }
 function restoreRegistrationConnection(){
@@ -3557,8 +3557,8 @@ function updateRegistrationPreview(form){
   set('income',Number.isFinite(p.added)?`${money(p.added)}/yr`:'—');
   const fxField=form.querySelector('[data-fx-field]'); if(fxField) fxField.hidden=p.currency==='GBP';
   const accountMessage=form.querySelector('[data-form-message]');
-  if(accountMessage&&!p.holding){accountMessage.textContent='No matching Holdings row exists for this ticker and account. Register against an existing account row first.';accountMessage.className='registration-message error';}
-  else if(accountMessage&&accountMessage.classList.contains('error')){accountMessage.textContent='Enter the completed fill exactly as shown by your platform, then confirm the registration.';accountMessage.className='registration-message';}
+  if(accountMessage&&!p.holding){accountMessage.textContent='New signing: Aurora will create a fresh Holdings row and LivePrices entry when you confirm.';accountMessage.className='registration-message pending';}
+  else if(accountMessage&&(accountMessage.classList.contains('error')||accountMessage.classList.contains('pending'))){accountMessage.textContent='Existing squad player: this purchase will top up the current account row.';accountMessage.className='registration-message';}
 }
 async function postRegistration(payload){
   if(!registrationConnection.endpoint||!registrationConnection.token) throw new Error('Connect the Registration Desk to the Apps Script web app first.');
@@ -3581,8 +3581,22 @@ async function postRegistration(payload){
 }
 function applyRegistrationResult(result,payload){
   if(!result||result.queued) return;
-  const holding=currentHoldingForRegistration(payload.ticker,payload.account);
-  if(holding){
+  let holding=currentHoldingForRegistration(payload.ticker,payload.account);
+  if(!holding&&result.createdNewHolding){
+    holding={
+      ticker:result.tickerFull||payload.ticker,
+      name:result.name||payload.name,
+      account:payload.account,
+      sector:payload.sector||'OTHER',
+      role:payload.role||payload.squadRole||'NEW SIGNING',
+      shares:result.newShares,
+      book_cost:result.newBookCostGbp,
+      average_price:result.newAverageGbp,
+      annual_dps:result.annualDpsGbp||payload.annualDps||0,
+      annual_dps_total:(result.newShares||0)*(result.annualDpsGbp||payload.annualDps||0)
+    };
+    state.holdings.push(holding);
+  }else if(holding){
     holding.shares=result.newShares;
     holding.book_cost=result.newBookCostGbp;
     holding.average_price=result.newAverageGbp;
@@ -4426,7 +4440,27 @@ function renderRegistrationDesk(deal){
         <div class="registration-card-main"><strong>${escapeHtml(short)} — ${escapeHtml(displayName(item.row))}</strong><span>${escapeHtml(accounts.join(' / '))} • Deal-sheet allocation ${money(item.amount)} • ${item.gate.status==='pass'?'Green light':'Controlled registration'}</span></div>
         <button class="registration-btn registration-open-btn ${open?'primary':''}" data-open-registration="${escapeHtml(key)}" type="button">${open?'Close form':'Register purchase'}</button>
       </div>
-      <form class="registration-panel ${open?'open':''}" data-registration-form data-ticker="${escapeHtml(ticker)}" data-name="${escapeHtml(displayName(item.row))}" data-annual-dps="${escapeHtml(item.row.annual_dps??'')}">
+      <form class="registration-panel ${open?'open':''}" data-registration-form
+        data-ticker="${escapeHtml(ticker)}"
+        data-name="${escapeHtml(displayName(item.row))}"
+        data-annual-dps="${escapeHtml(item.row.annual_dps??'')}"
+        data-sector="${escapeHtml(item.row.sector??item.row.Sector??'')}"
+        data-role="${escapeHtml(item.row.role??item.row.squad_role??'')}"
+        data-buy-strength="${escapeHtml(item.row.buy_strength??'')}"
+        data-low-52w="${escapeHtml(item.row.low_52w??'')}"
+        data-high-52w="${escapeHtml(item.row.high_52w??'')}"
+        data-payout-ratio="${escapeHtml(item.row.payout_ratio??'')}"
+        data-payout-risk="${escapeHtml(item.row.payout_risk??'')}"
+        data-dividend-growth-5y="${escapeHtml(item.row.dividend_growth_5y??'')}"
+        data-squad-role="${escapeHtml(item.row.squad_role??'')}"
+        data-promotion-impact-score="${escapeHtml(item.row.promotion_impact_score??'')}"
+        data-trial-status="${escapeHtml(item.row.trial_status??'')}"
+        data-trial-rank="${escapeHtml(item.row.trial_rank??'')}"
+        data-trial-verdict="${escapeHtml(item.row.trial_verdict??'')}"
+        data-manager-note="${escapeHtml(item.row.manager_note??item.row.notes??'')}"
+        data-chemistry-role="${escapeHtml(item.row.chemistry_role??'')}"
+        data-chemistry-risk="${escapeHtml(item.row.chemistry_risk??'')}"
+        data-squad-balance-note="${escapeHtml(item.row.squad_balance_note??'')}">
         <div class="registration-form-grid">
           <label class="registration-field"><span>Account</span><select name="account">${accountOptions}</select></label>
           <label class="registration-field"><span>Trade date</span><input name="tradeDate" type="date" value="${registrationDateValue()}" required></label>
@@ -4444,8 +4478,8 @@ function renderRegistrationDesk(deal){
           <div class="registration-stat"><small>New average</small><strong data-preview="average">—</strong></div>
           <div class="registration-stat"><small>Income added</small><strong data-preview="income">—</strong></div>
         </div>
-        <div class="registration-message" data-form-message>Enter the completed fill exactly as shown by your platform, then confirm the registration.</div>
-        <div class="registration-form-actions"><button class="registration-btn primary" type="submit">Confirm registration</button><button class="registration-btn" type="reset">Clear form</button></div>
+        <div class="registration-message ${holding?'':'pending'}" data-form-message>${holding?'Existing squad player: this purchase will top up the current account row.':'New signing: confirming this trade will create the Holdings row and LivePrices entry automatically.'}</div>
+        <div class="registration-form-actions"><button class="registration-btn primary" type="submit">${holding?'Confirm top-up':'Confirm new signing'}</button><button class="registration-btn" type="reset">Clear form</button></div>
         ${lastMatch?`<div class="registration-last"><span>Last registered here: ${escapeHtml(last.transactionId||'')} • ${escapeHtml(last.message||'Completed')}</span></div>`:''}
       </form>
     </div>`;
@@ -4453,7 +4487,7 @@ function renderRegistrationDesk(deal){
   box.querySelectorAll('[data-registration-form]').forEach(updateRegistrationPreview);
   if($('deskNote')) $('deskNote').textContent = deal.rows.some(r=>platformFor(r.row.ticker).includes('Check'))
     ? 'One or more signings need a platform check before placing the order.'
-    : 'Enter the completed platform fill here. AuroraData then updates shares, book cost, weighted average and annual income automatically.';
+    : 'Enter the completed platform fill here. Existing players are topped up; brand-new signings automatically receive a Holdings row and LivePrices entry.';
 }
 function renderBench(deal){
   const box = $('benchList');
@@ -4556,7 +4590,6 @@ document.addEventListener('submit',async event=>{
   const account=form.querySelector('[name="account"]')?.value||'';
   const holding=currentHoldingForRegistration(form.dataset.ticker,account);
   const msg=form.querySelector('[data-form-message]');
-  if(!holding){msg.textContent='No matching Holdings row exists for this ticker and account, so nothing was changed.';msg.className='registration-message error';return;}
   const shares=parseNum(form.querySelector('[name="shares"]')?.value);
   const price=parseNum(form.querySelector('[name="price"]')?.value);
   if(!(shares>0)||!(price>0)){msg.textContent='Enter both the completed share quantity and executed price.';msg.className='registration-message error';return;}
@@ -4566,26 +4599,34 @@ document.addEventListener('submit',async event=>{
     $('registrationConnection')?.scrollIntoView({behavior:'smooth',block:'center'}); return;
   }
   const payload={
-    action:'registerPurchase',transactionId:registrationId(),ticker:form.dataset.ticker,name:form.dataset.name,account,
+    action:'registerPurchase',transactionId:registrationId(),createIfMissing:true,
+    ticker:form.dataset.ticker,name:form.dataset.name,account,
     shares,priceInput:price,priceUnit:form.querySelector('[name="priceUnit"]')?.value||'GBP',currency:form.querySelector('[name="currency"]')?.value||'GBP',
     fees:parseNum(form.querySelector('[name="fees"]')?.value)||0,fxRateToGbp:parseNum(form.querySelector('[name="fxRate"]')?.value),
     tradeDate:form.querySelector('[name="tradeDate"]')?.value||registrationDateValue(),note:form.querySelector('[name="note"]')?.value||'',
+    annualDps:parseNum(form.dataset.annualDps),sector:form.dataset.sector||'',role:form.dataset.role||'',
+    buyStrength:parseNum(form.dataset.buyStrength),low52w:parseNum(form.dataset.low52w),high52w:parseNum(form.dataset.high52w),
+    payoutRatio:form.dataset.payoutRatio||'',payoutRisk:form.dataset.payoutRisk||'',dividendGrowth5y:form.dataset.dividendGrowth5y||'',
+    squadRole:form.dataset.squadRole||'',promotionImpactScore:parseNum(form.dataset.promotionImpactScore),
+    trialStatus:form.dataset.trialStatus||'',trialRank:parseNum(form.dataset.trialRank),trialVerdict:form.dataset.trialVerdict||'',
+    managerNote:form.dataset.managerNote||'',chemistryRole:form.dataset.chemistryRole||'',chemistryRisk:form.dataset.chemistryRisk||'',
+    squadBalanceNote:form.dataset.squadBalanceNote||'',
     source:'Aurora City FC Transfer Centre',userAgent:navigator.userAgent
   };
   registrationBusy=true;
   const submit=form.querySelector('button[type="submit"]'); if(submit){submit.disabled=true;submit.textContent='Registering…';}
-  msg.textContent='Sending the completed trade to AuroraData…';msg.className='registration-message pending';
+  msg.textContent=holding?'Sending the completed top-up to AuroraData…':'Creating the new squad holding and registering the completed trade…';msg.className='registration-message pending';
   try{
     const result=await postRegistration(payload);
     applyRegistrationResult(result,payload);
-    const message=result.queued?result.message:`Registered. ${displayTicker(payload.ticker)} now has ${Number(result.newShares).toLocaleString('en-GB',{maximumFractionDigits:8})} shares at an estimated ${money(result.newAverageGbp)} weighted average. Annual income added: ${money(result.annualIncomeAddedGbp)}.`;
+    const message=result.queued?result.message:`${result.createdNewHolding?'New signing created and registered':'Top-up registered'}. ${displayTicker(payload.ticker)} now has ${Number(result.newShares).toLocaleString('en-GB',{maximumFractionDigits:8})} shares at an estimated ${money(result.newAverageGbp)} weighted average. Annual income added: ${money(result.annualIncomeAddedGbp)}.`;
     msg.textContent=message;msg.className=`registration-message ${result.queued?'pending':'success'}`;
     localStorage.setItem(REGISTRATION_LAST_KEY,JSON.stringify({transactionId:payload.transactionId,ticker:payload.ticker,account:payload.account,message,at:new Date().toISOString()}));
     if(!result.queued){setTimeout(()=>renderAll(),900);}
   }catch(err){
     console.error(err);msg.textContent=err.message||'Registration failed. AuroraData was not changed.';msg.className='registration-message error';
   }finally{
-    registrationBusy=false;if(submit){submit.disabled=false;submit.textContent='Confirm registration';}
+    registrationBusy=false;if(submit){submit.disabled=false;submit.textContent=currentHoldingForRegistration(form.dataset.ticker,account)?'Confirm top-up':'Confirm new signing';}
   }
 });
 $('saveRegistrationConnection')?.addEventListener('click',()=>{persistRegistrationConnection();registrationMessage(registrationConnection.endpoint&&registrationConnection.token?'Connection saved in this browser. Use Test connection before the first live registration.':'Enter both the web-app URL and private token.');});
