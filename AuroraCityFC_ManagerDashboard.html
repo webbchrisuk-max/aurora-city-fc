@@ -88,6 +88,10 @@ button,input{font:inherit}
 .hero-stat small{position:relative;display:block;color:#94a3b8;text-transform:uppercase;letter-spacing:.12em;font-size:10px;font-weight:900}
 .hero-stat strong{position:relative;display:block;margin-top:7px;font-size:22px;letter-spacing:-.04em;color:#e0f2fe}
 .hero-stat.green strong{color:#86efac}.hero-stat.amber strong{color:#fde68a}
+.hero-detail{position:relative;display:block;margin-top:8px;font-size:11px;line-height:1.35;color:#94a3b8;font-weight:800}
+.hero-detail.positive{color:#86efac}.hero-detail.negative{color:#fb7185}.hero-detail.neutral{color:#cbd5e1}
+.hero-progress{position:relative;height:5px;margin-top:9px;border-radius:999px;background:rgba(148,163,184,.16);overflow:hidden}
+.hero-progress-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#22d3ee,#34d399);transition:width .45s ease}
 
 /* KPI SCOREBOARD */
 .score-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:16px 0}
@@ -149,7 +153,7 @@ button,input{font:inherit}
     <div class="hero-inner">
       <div>
         <div class="hero-kicker"><span class="hero-dot"></span> Live Matchday Command Centre</div>
-                <p class="hero-sub" id="heroSub">Club homepage loading. Checking income rebuild, board confidence and next payday route.</p>
+        <p class="hero-sub" id="heroSub">Club homepage loading. Checking income rebuild, board confidence and next payday route.</p>
         <div class="hero-tags">
           <span class="hero-tag" id="lastUpdated">Last updated: loading…</span>
           <span class="hero-tag">Objective: £500/month passive income</span>
@@ -157,20 +161,20 @@ button,input{font:inherit}
         </div>
       </div>
       <div class="hero-scoreboard">
-        <div class="hero-stat"><small>Current Division</small><strong id="currentDivision">Loading…</strong></div>
-        <div class="hero-stat"><small>Club Value</small><strong id="heroClubValue">—</strong></div>
-        <div class="hero-stat green"><small>Annual Income</small><strong id="heroAnnualIncome">—</strong></div>
-        <div class="hero-stat amber"><small>Next Target Gap</small><strong id="heroTargetGap">—</strong></div>
+        <div class="hero-stat"><small>Current Division</small><strong id="currentDivision">Loading…</strong><span class="hero-detail neutral" id="divisionProgress">Next promotion loading…</span></div>
+        <div class="hero-stat"><small>Club Value</small><strong id="heroClubValue">—</strong><span class="hero-detail neutral" id="clubValueTrend">Waiting for previous snapshot…</span></div>
+        <div class="hero-stat green"><small>Annual Income</small><strong id="heroAnnualIncome">—</strong><span class="hero-detail neutral" id="annualIncomeTrend">Waiting for latest purchase…</span></div>
+        <div class="hero-stat amber"><small>Next Target Gap</small><strong id="heroTargetGap">—</strong><span class="hero-detail neutral" id="targetProgressText">Progress loading…</span><div class="hero-progress"><div class="hero-progress-fill" id="targetProgressFill"></div></div></div>
       </div>
     </div>
   </section>
 
   <section class="score-strip">
-    <div class="score-card"><div class="score-icon">📊</div><small>Club Value</small><strong id="clubValue">—</strong><span>Total valuation</span></div>
-    <div class="score-card green"><div class="score-icon">£</div><small>Annual Income</small><strong id="annualIncome">—</strong><span>This financial year</span></div>
-    <div class="score-card"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span>Tracked income</span></div>
-    <div class="score-card"><div class="score-icon">🛡️</div><small>Portfolio Strength</small><strong id="portfolioStrength">—</strong><span>Overall strength</span></div>
-    <div class="score-card green"><div class="score-icon">🎯</div><small>Next Target</small><strong id="nextTarget">£500/m</strong><span id="nextTargetNote">Payday goal</span></div>
+    <div class="score-card green"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span>Current passive-income run rate</span></div>
+    <div class="score-card"><div class="score-icon">%</div><small>Portfolio Yield</small><strong id="portfolioYield">—</strong><span>Income generated from club value</span></div>
+    <div class="score-card"><div class="score-icon">👕</div><small>Active Squad</small><strong id="activeSquadCount">—</strong><span>Current first-team holdings</span></div>
+    <div class="score-card"><div class="score-icon">🛡️</div><small>Board Confidence</small><strong id="portfolioStrength">—</strong><span>Overall club-health rating</span></div>
+    <div class="score-card green"><div class="score-icon">🔁</div><small>Next Payday Boost</small><strong id="paydayBoost">—</strong><span id="paydayBoostNote">Estimated annual income</span></div>
   </section>
 
   <section class="command-grid">
@@ -358,6 +362,55 @@ function currentDivision(monthly){
   ];
   return ladder.find(([m])=>monthly>=m)?.[1] || "Local Club";
 }
+function divisionProgress(monthly){
+  const ladder = [
+    [0,"Local Club"],[100,"Regional Club"],[250,"National Club"],[500,"Championship Club"],
+    [1000,"Premier League Club"],[2000,"European Giant"],[3000,"World Class Club"],[5000,"Club World Champion"]
+  ];
+  let current = ladder[0], next = null;
+  for(let i=0;i<ladder.length;i++){
+    if(monthly >= ladder[i][0]) current = ladder[i];
+    if(monthly < ladder[i][0]){ next = ladder[i]; break; }
+  }
+  return { current, next, gap: next ? Math.max(0,next[0]-monthly) : 0 };
+}
+function firstFinite(row, keys){
+  for(const key of keys){
+    const n = parseNum(row?.[key]);
+    if(Number.isFinite(n)) return n;
+  }
+  return NaN;
+}
+function rowDate(row){
+  const raw = row?.date ?? row?.Date ?? row?.timestamp ?? row?.Timestamp ?? row?.created_at ?? row?.updated_at ?? row?.time;
+  const d = raw ? new Date(raw) : null;
+  return d && !Number.isNaN(d.getTime()) ? d : null;
+}
+function latestIncomeEvent(){
+  const rows = (state.incomeLog || []).map((row,index)=>({row,index,date:rowDate(row)}));
+  rows.sort((a,b)=>(b.date?.getTime()||b.index)-(a.date?.getTime()||a.index));
+  for(const item of rows){
+    const row=item.row;
+    const change = firstFinite(row,["annual_income_change","income_change","annual_change","change","delta","income_added","added_income","Annual Income Change"]);
+    if(Number.isFinite(change) && change !== 0){
+      const ticker = displayTicker(row.ticker ?? row.Ticker ?? row.symbol ?? row.Symbol);
+      return {change,ticker:ticker||"Latest activity"};
+    }
+  }
+  return null;
+}
+function previousClubValue(current){
+  const rows = (state.incomeLog || []).map((row,index)=>({row,index,date:rowDate(row)}));
+  rows.sort((a,b)=>(b.date?.getTime()||b.index)-(a.date?.getTime()||a.index));
+  const values=[];
+  for(const item of rows){
+    const v=firstFinite(item.row,["club_value","portfolio_value","total_value","market_value","Club Value","Portfolio Value"]);
+    if(Number.isFinite(v)) values.push(v);
+  }
+  if(values.length>=2) return values[1];
+  if(values.length===1 && Math.abs(values[0]-current)>0.005) return values[0];
+  return NaN;
+}
 function boardScore(monthly, value, yieldRate){
   const incomeScore = Math.min(100, Math.max(60, (monthly / MONTHLY_TARGET) * 100));
   const valueScore = value >= 100000 ? 96 : value >= 50000 ? 88 : value >= 25000 ? 80 : 72;
@@ -412,6 +465,7 @@ async function loadData(){
       globalWatchlist:tabs["Global Watchlist"] || [],
       scout:tabs.AuroraScout || [],
       news:tabs.AuroraTimes || [],
+      incomeLog:tabs.IncomeLog || [],
       boardConfidence:tabs.BoardConfidence || [],
       moraleLog:tabs.MoraleLog || [],
       managerInbox:tabs.ManagerInbox || [],
@@ -445,18 +499,50 @@ function renderAll(){
     : `Club News • Dashboard synced • ${active.length} active squad players loaded • Gap to £500/m: ${money(gap)}`;
 
   $("heroSub").textContent = `Income rebuild at ${money(monthly)} per month. Gap to the £500/month target is ${money(gap)}. ${route.length ? "Transfer Centre has a live green-light route ready." : "Transfer Centre needs a fresh data check."}`;
-  $("currentDivision").textContent = currentDivision(monthly);
+  const division = divisionProgress(monthly);
+  $("currentDivision").textContent = division.current[1];
+  $("divisionProgress").textContent = division.next
+    ? `Next: ${division.next[1]} • ${money(division.gap)}/month required`
+    : "Top division reached";
+
   $("heroClubValue").textContent = money(value);
+  const previousValue = previousClubValue(value);
+  const valueChange = Number.isFinite(previousValue) ? value - previousValue : NaN;
+  const valueChangePct = Number.isFinite(previousValue) && previousValue !== 0 ? valueChange / previousValue : NaN;
+  const clubTrend = $("clubValueTrend");
+  if(Number.isFinite(valueChange)){
+    clubTrend.className = `hero-detail ${valueChange > 0 ? "positive" : valueChange < 0 ? "negative" : "neutral"}`;
+    clubTrend.textContent = `${valueChange > 0 ? "▲" : valueChange < 0 ? "▼" : "•"} ${money(Math.abs(valueChange))}${Number.isFinite(valueChangePct) ? ` (${Math.abs(valueChangePct*100).toFixed(2)}%)` : ""} since previous snapshot`;
+  }else{
+    clubTrend.className = "hero-detail neutral";
+    clubTrend.textContent = "Previous club-value snapshot not available yet";
+  }
+
   $("heroAnnualIncome").textContent = money(income);
+  const latestIncome = latestIncomeEvent();
+  const incomeTrend = $("annualIncomeTrend");
+  if(latestIncome){
+    incomeTrend.className = `hero-detail ${latestIncome.change > 0 ? "positive" : "negative"}`;
+    incomeTrend.textContent = `${latestIncome.change > 0 ? "▲" : "▼"} ${money(Math.abs(latestIncome.change))} from ${latestIncome.ticker}`;
+  }else{
+    incomeTrend.className = "hero-detail neutral";
+    incomeTrend.textContent = "Latest purchase increase not recorded in IncomeLog";
+  }
+
   if($("heroMonthlyIncome")) $("heroMonthlyIncome").textContent = money(monthly);
   $("heroTargetGap").textContent = gap > 0 ? money(gap) : "Target hit";
+  const targetPct = Math.max(0,Math.min(100,(monthly / MONTHLY_TARGET) * 100));
+  $("targetProgressText").textContent = gap > 0
+    ? `${targetPct.toFixed(1)}% complete • ${money(gap * 12)}/year still required`
+    : "100% complete • promotion target achieved";
+  $("targetProgressFill").style.width = `${targetPct}%`;
 
-  $("clubValue").textContent = money0(value);
-  $("annualIncome").textContent = money(income);
   $("monthlyIncome").textContent = money(monthly);
+  $("portfolioYield").textContent = Number.isFinite(yieldRate) ? `${(yieldRate*100).toFixed(2)}%` : "—";
+  $("activeSquadCount").textContent = active.length;
   $("portfolioStrength").textContent = `${board}/100`;
-  $("nextTarget").textContent = "£500/m";
-  $("nextTargetNote").textContent = gap > 0 ? `${money(gap)} gap` : "target hit";
+  $("paydayBoost").textContent = route.length ? `${money(routeIncome)}/yr` : "—";
+  $("paydayBoostNote").textContent = route.length ? `${route.length} proposed signings` : "No live route available";
 
   $("briefingStatus").textContent = board >= 88 ? "Strong" : board >= 78 ? "Stable" : "Building";
   $("briefBoard").textContent = board >= 88 ? "Strong" : board >= 78 ? "Stable" : "Watch";
