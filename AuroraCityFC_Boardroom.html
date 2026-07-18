@@ -2618,6 +2618,25 @@ function uniqueByTicker(rows){
   });
   return [...map.values()];
 }
+function holdingStatus(row){
+  return String(row?.status ?? row?.Status ?? row?.holding_status ?? row?.HoldingStatus ?? '').trim().toLowerCase();
+}
+function holdingQuantity(row){
+  return parseNum(row?.shares ?? row?.quantity ?? row?.units ?? row?.Shares ?? row?.Quantity ?? row?.Units);
+}
+function holdingMarketValue(row){
+  return parseNum(row?.current_value ?? row?.market_value ?? row?.holding_value ?? row?.value ?? row?.Value ?? row?.['Market Value']);
+}
+function isActiveHolding(row){
+  const status = holdingStatus(row);
+  if(/sold|exit|exited|closed|removed|inactive/.test(status)) return false;
+  const quantity = holdingQuantity(row);
+  const value = holdingMarketValue(row);
+  return (Number.isFinite(quantity) && quantity > 0) || (Number.isFinite(value) && value > 0);
+}
+function activeHoldings(){
+  return (Array.isArray(state.holdings) ? state.holdings : []).filter(isActiveHolding);
+}
 function annualIncomeFromRow(row){
   const total = parseNum(row.annual_dps_total ?? row.Annual_DPS_Total ?? row["Annual DPS Total"]);
   if(Number.isFinite(total)) return total;
@@ -2632,16 +2651,16 @@ function annualIncomeFromRow(row){
   return 0;
 }
 function portfolioAnnualIncome(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
+  return activeHoldings().reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
 }
 function portfolioValue(){
-  return uniqueByTicker(state.holdings).reduce((sum,row)=>{
-    const v = parseNum(row.value ?? row.market_value ?? row.current_value ?? row.holding_value ?? row.Value ?? row["Market Value"]);
+  return activeHoldings().reduce((sum,row)=>{
+    const v = holdingMarketValue(row);
     return sum + (Number.isFinite(v) ? v : 0);
   },0);
 }
 function avgBuyStrength(){
-  const rows = uniqueByTicker(state.holdings);
+  const rows = uniqueByTicker(activeHoldings());
   const vals = rows.map(buyStrength).filter(Number.isFinite);
   return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 70;
 }
@@ -3191,7 +3210,7 @@ function renderAll(){
   const boardScore = clampScore(boardBase + boardNewsImpact);
   const supporterScore = clampScore(supporterBase + supporterNewsImpact);
 
-  if($('prioritySustainability')) { const active=activeHoldings(); const incomeYield=value>0?annualIncome/value:NaN; $('prioritySustainability').textContent = Number.isFinite(incomeYield)&&incomeYield<.12?'Controlled':'Review'; }
+  if($('prioritySustainability')) { const incomeYield=value>0?annualIncome/value:NaN; $('prioritySustainability').textContent = Number.isFinite(incomeYield)&&incomeYield<.12?'Controlled':'Review'; }
   if($('priorityHealth')) $('priorityHealth').textContent = monthly >= 500 ? 'Promotion level' : monthly >= 250 ? 'Healthy build' : 'Foundation stage';
   if($('priorityObjective')) $('priorityObjective').textContent = rep.next ? `${money(rep.next.monthly)}/month` : 'Maintain elite level';
   if($('priorityRisk')) $('priorityRisk').textContent = avgStrength < 65 ? 'Squad quality' : targets.length < 3 ? 'Thin transfer pipeline' : 'Concentration watch';
