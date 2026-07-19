@@ -2,446 +2,1247 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aurora FC | Club HQ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#030712" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Aurora City FC | Manager Access</title>
   <style>
+    :root {
+      --ink: #02040a;
+      --navy: #06101f;
+      --panel: rgba(5, 13, 27, 0.72);
+      --line: rgba(164, 225, 255, 0.18);
+      --cyan: #3cecff;
+      --blue: #2d82ff;
+      --violet: #8b5cff;
+      --green: #65ffb4;
+      --white: #f5fbff;
+      --muted: rgba(225, 241, 255, 0.68);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+    }
+
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--ink);
     }
 
     body {
-      min-height: 100vh;
+      min-height: 100svh;
       overflow: hidden;
-      background:
-        radial-gradient(circle at top left, rgba(0, 255, 170, 0.14), transparent 30%),
-        radial-gradient(circle at top right, rgba(0, 153, 255, 0.14), transparent 35%),
-        radial-gradient(circle at bottom center, rgba(120, 90, 255, 0.12), transparent 40%),
-        linear-gradient(160deg, #03060d 0%, #08111d 40%, #050913 100%);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: var(--white);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0.01em;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
       position: relative;
-    }
-
-    .aurora {
-      position: absolute;
-      inset: -20%;
+      min-height: 100svh;
+      overflow: hidden;
+      isolation: isolate;
       background:
-        radial-gradient(ellipse at 15% 25%, rgba(0,255,180,0.18), transparent 30%),
-        radial-gradient(ellipse at 85% 20%, rgba(0,170,255,0.18), transparent 30%),
-        radial-gradient(ellipse at 50% 75%, rgba(130,90,255,0.14), transparent 35%);
-      filter: blur(60px);
-      animation: drift 12s ease-in-out infinite alternate;
-      z-index: 0;
+        radial-gradient(circle at 50% 14%, rgba(60, 236, 255, 0.12), transparent 25%),
+        radial-gradient(circle at 20% 48%, rgba(45, 130, 255, 0.14), transparent 32%),
+        radial-gradient(circle at 83% 50%, rgba(139, 92, 255, 0.13), transparent 30%),
+        linear-gradient(180deg, #07111e 0%, #030712 48%, #010307 100%);
     }
 
-    @keyframes drift {
-      0% {
-        transform: translate(-2%, -2%) scale(1);
-      }
-      100% {
-        transform: translate(2%, 2%) scale(1.08);
-      }
+    .stadium,
+    .stadium::before,
+    .stadium::after,
+    .noise,
+    .scanlines,
+    .vignette,
+    .particles,
+    .pitch,
+    .light-rig {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .stadium {
+      z-index: -8;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.84), transparent 25% 75%, rgba(0, 0, 0, 0.84)),
+        linear-gradient(180deg, transparent 0 48%, rgba(0, 0, 0, 0.66) 70%, #010205 100%);
+    }
+
+    .stadium::before {
+      content: "";
+      inset: auto -6% -12% -6%;
+      height: 58%;
+      background:
+        repeating-radial-gradient(ellipse at 50% 112%, rgba(197, 229, 255, 0.12) 0 1px, transparent 2px 10px),
+        linear-gradient(180deg, rgba(4, 12, 25, 0.2), rgba(0, 0, 0, 0.92));
+      clip-path: polygon(0 28%, 15% 17%, 35% 8%, 50% 5%, 65% 8%, 85% 17%, 100% 28%, 100% 100%, 0 100%);
+      opacity: 0.7;
+    }
+
+    .stadium::after {
+      content: "";
+      inset: 0;
+      background:
+        linear-gradient(105deg, transparent 0 18%, rgba(96, 220, 255, 0.05) 30%, transparent 43%),
+        linear-gradient(255deg, transparent 0 18%, rgba(105, 116, 255, 0.06) 30%, transparent 43%);
+      animation: stadiumPulse 7s ease-in-out infinite alternate;
+    }
+
+    .light-rig {
+      z-index: -7;
+      inset: -8% -5% auto -5%;
+      height: 46%;
+      background:
+        radial-gradient(ellipse at 12% 18%, rgba(255,255,255,0.95) 0 1px, rgba(135,224,255,0.32) 2px 4px, transparent 5px),
+        radial-gradient(ellipse at 22% 12%, rgba(255,255,255,0.95) 0 1px, rgba(135,224,255,0.28) 2px 4px, transparent 5px),
+        radial-gradient(ellipse at 78% 12%, rgba(255,255,255,0.95) 0 1px, rgba(135,224,255,0.28) 2px 4px, transparent 5px),
+        radial-gradient(ellipse at 88% 18%, rgba(255,255,255,0.95) 0 1px, rgba(135,224,255,0.32) 2px 4px, transparent 5px);
+      filter: drop-shadow(0 0 14px rgba(80, 217, 255, 0.85));
     }
 
     .beam {
       position: absolute;
-      top: -20%;
-      width: 32vw;
-      height: 140vh;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.14), rgba(255,255,255,0));
-      filter: blur(28px);
+      z-index: -6;
+      top: -22%;
+      width: 36vw;
+      height: 130vh;
       opacity: 0.22;
-      z-index: 0;
-      animation: sweep 7s ease-in-out infinite alternate;
+      filter: blur(18px);
+      transform-origin: top center;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(177, 235, 255, 0.38), rgba(54, 159, 255, 0.08) 44%, transparent 72%);
+      clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
     }
 
-    .beam.left {
-      left: -5%;
-      transform: rotate(18deg);
+    .beam-left {
+      left: 1%;
+      transform: rotate(15deg);
+      animation: sweepLeft 8s ease-in-out infinite alternate;
     }
 
-    .beam.right {
-      right: -5%;
-      transform: rotate(-18deg);
-      animation-delay: 1.2s;
+    .beam-right {
+      right: 1%;
+      transform: rotate(-15deg);
+      animation: sweepRight 8.5s ease-in-out infinite alternate;
     }
 
-    @keyframes sweep {
-      from {
-        transform: translateX(0) rotate(18deg);
-      }
-      to {
-        transform: translateX(25px) rotate(24deg);
-      }
+    .pitch {
+      z-index: -5;
+      inset: auto -10% -36% -10%;
+      height: 70%;
+      opacity: 0.34;
+      transform: perspective(500px) rotateX(66deg);
+      transform-origin: center bottom;
+      background:
+        linear-gradient(90deg, transparent 49.8%, rgba(120, 238, 255, 0.34) 50%, transparent 50.2%),
+        linear-gradient(180deg, transparent 48.9%, rgba(120, 238, 255, 0.26) 49.3% 50.7%, transparent 51.1%),
+        repeating-linear-gradient(90deg, rgba(85, 180, 166, 0.08) 0 12.5%, rgba(23, 93, 84, 0.06) 12.5% 25%);
+      border: 1px solid rgba(105, 233, 255, 0.24);
+      box-shadow: 0 -25px 90px rgba(42, 214, 255, 0.06);
     }
 
-    .container {
-      position: relative;
-      z-index: 2;
-      width: min(94%, 620px);
-      padding: 40px 28px 34px;
-      border-radius: 28px;
-      background: rgba(7, 13, 24, 0.68);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.45),
-        inset 0 0 0 1px rgba(255,255,255,0.03);
-      backdrop-filter: blur(16px);
-      text-align: center;
+    .pitch::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 18%;
+      aspect-ratio: 1;
+      border: 1px solid rgba(120, 238, 255, 0.32);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
     }
 
-    .top-bar {
+    .noise {
+      z-index: 20;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    .scanlines {
+      z-index: 19;
+      opacity: 0.12;
+      background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(144, 226, 255, 0.06) 4px);
+    }
+
+    .vignette {
+      z-index: 18;
+      box-shadow: inset 0 0 180px 45px rgba(0, 0, 0, 0.86);
+    }
+
+    .particles {
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      bottom: -8px;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+      opacity: 0;
+      animation: rise var(--duration) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    .hud {
+      position: absolute;
+      z-index: 8;
+      top: calc(18px + var(--safe-top));
+      left: calc(22px + var(--safe-left));
+      right: calc(22px + var(--safe-right));
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 22px;
-      color: rgba(255,255,255,0.6);
-      font-size: 0.8rem;
-      letter-spacing: 1.1px;
+      justify-content: space-between;
+      color: rgba(221, 244, 255, 0.72);
+      font-size: clamp(0.65rem, 1vw, 0.78rem);
+      font-weight: 700;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
     }
 
-    .status-pill {
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(0,255,180,0.08);
-      border: 1px solid rgba(0,255,180,0.18);
-      color: #aefde5;
-      font-weight: 600;
-    }
-
-    .crest {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 20px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(0,255,180,0.95), rgba(0,145,255,0.82) 55%, rgba(8,15,28,0.9) 100%);
+    .hud-cluster {
       display: flex;
       align-items: center;
-      justify-content: center;
-      box-shadow:
-        0 0 24px rgba(0,255,180,0.2),
-        0 0 55px rgba(0,153,255,0.25);
-      border: 2px solid rgba(255,255,255,0.12);
-      position: relative;
-      overflow: hidden;
+      gap: 12px;
     }
 
-    .crest::before {
+    .online-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px var(--green);
+      animation: online 1.7s ease-in-out infinite;
+    }
+
+    .hud-rule {
+      width: clamp(40px, 8vw, 100px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+    }
+
+    .hud-cluster:last-child .hud-rule {
+      background: linear-gradient(270deg, var(--cyan), transparent);
+    }
+
+    .corner {
+      position: absolute;
+      z-index: 8;
+      width: 62px;
+      height: 62px;
+      border-color: rgba(85, 224, 255, 0.35);
+      pointer-events: none;
+    }
+
+    .corner-tl {
+      top: calc(52px + var(--safe-top));
+      left: calc(22px + var(--safe-left));
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+
+    .corner-tr {
+      top: calc(52px + var(--safe-top));
+      right: calc(22px + var(--safe-right));
+      border-top: 1px solid;
+      border-right: 1px solid;
+    }
+
+    .corner-bl {
+      bottom: calc(20px + var(--safe-bottom));
+      left: calc(22px + var(--safe-left));
+      border-bottom: 1px solid;
+      border-left: 1px solid;
+    }
+
+    .corner-br {
+      bottom: calc(20px + var(--safe-bottom));
+      right: calc(22px + var(--safe-right));
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+
+    .boot-screen,
+    .access-screen,
+    .transition-screen {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding:
+        calc(78px + var(--safe-top))
+        calc(28px + var(--safe-right))
+        calc(42px + var(--safe-bottom))
+        calc(28px + var(--safe-left));
+      transition: opacity 0.75s ease, visibility 0.75s ease, transform 0.75s ease;
+    }
+
+    .boot-screen {
+      z-index: 12;
+      background: rgba(1, 4, 10, 0.38);
+    }
+
+    .boot-screen.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.04);
+    }
+
+    .boot-card {
+      width: min(560px, 92vw);
+      text-align: center;
+    }
+
+    .boot-mark {
+      position: relative;
+      width: clamp(104px, 13vw, 150px);
+      aspect-ratio: 1;
+      margin: 0 auto 28px;
+      display: grid;
+      place-items: center;
+    }
+
+    .boot-mark::before,
+    .boot-mark::after {
       content: "";
       position: absolute;
-      inset: 9px;
+      inset: 0;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.16);
+      border: 1px solid rgba(82, 226, 255, 0.38);
     }
 
-    .crest span {
-      font-size: 2.3rem;
+    .boot-mark::before {
+      animation: orbit 4s linear infinite;
+      border-top-color: var(--cyan);
+      border-right-color: transparent;
+    }
+
+    .boot-mark::after {
+      inset: 10px;
+      animation: orbitReverse 2.7s linear infinite;
+      border-bottom-color: var(--violet);
+      border-left-color: transparent;
+    }
+
+    .boot-mark img {
+      width: 68%;
+      height: 68%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 24px rgba(50, 221, 255, 0.5));
+    }
+
+    .boot-kicker,
+    .access-kicker {
+      color: var(--cyan);
+      font-size: clamp(0.7rem, 1.2vw, 0.84rem);
       font-weight: 800;
-      letter-spacing: 1px;
-      color: #fff;
-      text-shadow: 0 0 12px rgba(255,255,255,0.25);
-      z-index: 1;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
     }
 
-    h1 {
-      font-size: clamp(2.2rem, 4vw, 3.4rem);
-      font-weight: 800;
-      line-height: 1;
-      margin-bottom: 8px;
-      letter-spacing: 0.5px;
+    .boot-title {
+      margin-top: 10px;
+      font-size: clamp(1.45rem, 3vw, 2.15rem);
+      font-weight: 850;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
     }
 
-    .gradient-text {
-      background: linear-gradient(90deg, #00f0b5, #4cc8ff, #9784ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .boot-message {
+      min-height: 1.5em;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+      letter-spacing: 0.08em;
     }
 
-    .subtitle {
-      font-size: 1rem;
-      color: rgba(255,255,255,0.75);
-      margin-bottom: 26px;
+    .boot-track {
+      position: relative;
+      height: 3px;
+      margin-top: 24px;
+      overflow: hidden;
+      background: rgba(180, 229, 255, 0.12);
     }
 
-    .info-box {
-      margin: 0 auto 24px;
-      padding: 16px 18px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      text-align: left;
+    .boot-progress {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--cyan), var(--violet));
+      box-shadow: 0 0 14px rgba(60, 236, 255, 0.85);
+      transition: width 0.22s ease;
     }
 
-    .info-line {
+    .boot-meta {
       display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 11px;
+      color: rgba(219, 239, 255, 0.42);
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .access-screen {
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(18px) scale(0.985);
+    }
+
+    .access-screen.is-active {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    .access-layout {
+      width: min(1180px, 94vw);
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(300px, 0.82fr);
+      align-items: center;
+      gap: clamp(32px, 6vw, 86px);
+    }
+
+    .club-stage {
+      position: relative;
+      text-align: center;
+      padding: 18px 0;
+    }
+
+    .club-stage::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: 50%;
+      top: 45%;
+      width: min(58vw, 650px);
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(53, 217, 255, 0.15), rgba(27, 87, 169, 0.05) 38%, transparent 68%);
+      filter: blur(4px);
+      animation: halo 4s ease-in-out infinite alternate;
+    }
+
+    .crest-shell {
+      position: relative;
+      width: clamp(150px, 19vw, 230px);
+      aspect-ratio: 1;
+      margin: 0 auto 24px;
+      display: grid;
+      place-items: center;
+    }
+
+    .crest-shell::before,
+    .crest-shell::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .crest-shell::before {
+      inset: -9%;
+      border: 1px solid rgba(76, 223, 255, 0.27);
+      border-left-color: transparent;
+      border-right-color: transparent;
+      animation: orbit 12s linear infinite;
+    }
+
+    .crest-shell::after {
+      inset: 2%;
+      background: radial-gradient(circle, rgba(28, 150, 255, 0.18), rgba(7, 20, 41, 0.25) 58%, transparent 72%);
+      box-shadow: 0 0 75px rgba(47, 196, 255, 0.18);
+    }
+
+    .crest-shell img {
+      position: relative;
+      z-index: 2;
+      width: 78%;
+      height: 78%;
+      object-fit: contain;
+      filter:
+        drop-shadow(0 0 14px rgba(89, 224, 255, 0.52))
+        drop-shadow(0 24px 34px rgba(0, 0, 0, 0.72));
+      animation: crestFloat 4s ease-in-out infinite;
+    }
+
+    .club-name {
+      font-size: clamp(2.35rem, 5.8vw, 5.8rem);
+      font-weight: 950;
+      line-height: 0.9;
+      letter-spacing: -0.045em;
+      text-transform: uppercase;
+      text-wrap: balance;
+      text-shadow: 0 8px 36px rgba(0, 0, 0, 0.75);
+    }
+
+    .club-name span {
+      display: block;
+      margin-top: 0.12em;
+      color: transparent;
+      background: linear-gradient(90deg, #dff9ff 4%, #58e8ff 43%, #b098ff 94%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .club-motto {
+      margin-top: 16px;
+      color: rgba(229, 245, 255, 0.66);
+      font-size: clamp(0.72rem, 1.15vw, 0.9rem);
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+
+    .access-panel {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(24px, 3.5vw, 38px);
+      border: 1px solid rgba(130, 225, 255, 0.2);
+      border-radius: 3px;
+      background:
+        linear-gradient(135deg, rgba(9, 26, 51, 0.84), rgba(3, 10, 23, 0.68)),
+        repeating-linear-gradient(90deg, transparent 0 29px, rgba(100, 210, 255, 0.025) 30px);
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.48),
+        inset 0 0 46px rgba(44, 173, 255, 0.05);
+      backdrop-filter: blur(16px);
+    }
+
+    .access-panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -34%;
+      width: 32%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      animation: panelScan 4s linear infinite;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
       justify-content: space-between;
       gap: 14px;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      font-size: 0.95rem;
+      padding-bottom: 17px;
+      border-bottom: 1px solid rgba(136, 219, 255, 0.12);
     }
 
-    .info-line:last-child {
-      border-bottom: none;
+    .panel-code {
+      color: rgba(222, 242, 255, 0.45);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
     }
 
-    .info-label {
-      color: rgba(255,255,255,0.55);
-    }
-
-    .info-value {
-      color: rgba(255,255,255,0.92);
-      font-weight: 600;
-      text-align: right;
-    }
-
-    .loading-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: rgba(255,255,255,0.92);
-    }
-
-    .progress-wrap {
-      width: 100%;
-      height: 14px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-bottom: 12px;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #00f0b5, #39c4ff, #7a5cff);
-      box-shadow: 0 0 18px rgba(0, 240, 181, 0.3);
-      transition: width 0.15s linear;
-    }
-
-    .progress-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      font-size: 0.92rem;
-    }
-
-    .progress-status {
-      color: rgba(255,255,255,0.72);
-      font-weight: 500;
-    }
-
-    .progress-percent {
-      color: #fff;
-      font-weight: 700;
-    }
-
-    .button-row {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .btn {
-      border: none;
-      outline: none;
-      padding: 14px 22px;
-      border-radius: 14px;
-      font-size: 0.96rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.25s ease;
-      text-decoration: none;
+    .live-badge {
       display: inline-flex;
       align-items: center;
+      gap: 8px;
+      color: var(--green);
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .manager-profile {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 16px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .manager-avatar {
+      position: relative;
+      width: 58px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(99, 228, 255, 0.36);
+      background: linear-gradient(145deg, rgba(48, 184, 255, 0.16), rgba(139, 92, 255, 0.12));
+      color: var(--white);
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      clip-path: polygon(14% 0, 100% 0, 100% 86%, 86% 100%, 0 100%, 0 14%);
+    }
+
+    .manager-avatar::after {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .manager-label {
+      color: rgba(220, 241, 255, 0.48);
+      font-size: 0.66rem;
+      font-weight: 750;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .manager-name {
+      margin-top: 3px;
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .profile-status {
+      margin-top: 4px;
+      color: var(--cyan);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .system-tile {
+      min-height: 70px;
+      padding: 13px;
+      border: 1px solid rgba(133, 217, 255, 0.1);
+      background: rgba(255,255,255,0.025);
+    }
+
+    .system-tile small {
+      display: block;
+      color: rgba(222, 241, 255, 0.44);
+      font-size: 0.61rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .system-tile strong {
+      display: block;
+      margin-top: 8px;
+      color: #eafaff;
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .system-tile strong::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      vertical-align: 0.08em;
+    }
+
+    .enter-button {
+      position: relative;
+      width: 100%;
+      margin-top: 24px;
+      padding: 18px 20px;
+      overflow: hidden;
+      border: 1px solid rgba(126, 230, 255, 0.4);
+      border-radius: 2px;
+      background:
+        linear-gradient(90deg, rgba(21, 124, 199, 0.92), rgba(46, 216, 246, 0.92) 56%, rgba(116, 86, 241, 0.94));
+      color: #00101a;
+      cursor: pointer;
+      font-size: clamp(0.86rem, 1.2vw, 1rem);
+      font-weight: 950;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      box-shadow: 0 12px 35px rgba(39, 181, 255, 0.18);
+      transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .enter-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-115%) skewX(-18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.52), transparent);
+      animation: buttonShine 3.6s ease-in-out infinite;
+    }
+
+    .enter-button:hover,
+    .enter-button:focus-visible {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      box-shadow: 0 18px 46px rgba(42, 202, 255, 0.28);
+      outline: none;
+    }
+
+    .enter-button:active {
+      transform: translateY(1px) scale(0.995);
+    }
+
+    .button-subline {
+      display: flex;
       justify-content: center;
-      min-width: 170px;
+      gap: 8px;
+      margin-top: 12px;
+      color: rgba(218, 239, 255, 0.4);
+      font-size: 0.62rem;
+      font-weight: 750;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
 
-    .btn-primary {
-      background: linear-gradient(90deg, #00f0b5, #29b7ff);
-      color: #041018;
-      box-shadow: 0 10px 24px rgba(0, 200, 255, 0.22);
+    .keycap {
+      padding: 1px 5px 2px;
+      border: 1px solid rgba(168, 226, 255, 0.23);
+      color: rgba(226, 245, 255, 0.62);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 30px rgba(0, 200, 255, 0.3);
+    .transition-screen {
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      background: #02050b;
     }
 
-    .btn-secondary {
-      background: rgba(255,255,255,0.06);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.08);
+    .transition-screen.is-active {
+      opacity: 1;
+      visibility: visible;
     }
 
-    .btn-secondary:hover {
-      background: rgba(255,255,255,0.1);
-      transform: translateY(-2px);
+    .transition-copy {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      transform: scale(0.94);
+      opacity: 0;
+      transition: transform 0.45s ease 0.2s, opacity 0.45s ease 0.2s;
     }
 
-    .footer-note {
-      margin-top: 22px;
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.4);
+    .transition-screen.is-active .transition-copy {
+      transform: scale(1);
+      opacity: 1;
     }
 
-    @media (max-width: 640px) {
-      .container {
-        padding: 28px 18px 24px;
+    .transition-copy img {
+      width: 92px;
+      height: 92px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 22px rgba(60, 236, 255, 0.55));
+    }
+
+    .transition-copy h2 {
+      margin-top: 20px;
+      font-size: clamp(1.25rem, 2.5vw, 2rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .transition-copy p {
+      margin-top: 10px;
+      color: var(--cyan);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .door {
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      bottom: 0;
+      width: 50.2%;
+      background:
+        repeating-linear-gradient(90deg, transparent 0 31px, rgba(105, 222, 255, 0.025) 32px),
+        linear-gradient(180deg, #071223, #02050b);
+      transition: transform 0.95s cubic-bezier(.72,.03,.21,1) 0.55s;
+    }
+
+    .door::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, var(--cyan) 22% 78%, transparent);
+      box-shadow: 0 0 18px rgba(60, 236, 255, 0.85);
+    }
+
+    .door-left {
+      left: 0;
+    }
+
+    .door-left::after {
+      right: 0;
+    }
+
+    .door-right {
+      right: 0;
+    }
+
+    .door-right::after {
+      left: 0;
+    }
+
+    .transition-screen.open .door-left {
+      transform: translateX(-100%);
+    }
+
+    .transition-screen.open .door-right {
+      transform: translateX(100%);
+    }
+
+    .transition-screen.open .transition-copy {
+      opacity: 0;
+      transform: scale(1.1);
+      transition-delay: 0.55s;
+    }
+
+    @keyframes stadiumPulse {
+      from { opacity: 0.62; }
+      to { opacity: 1; }
+    }
+
+    @keyframes sweepLeft {
+      from { transform: rotate(10deg) translateX(-4%); opacity: 0.13; }
+      to { transform: rotate(22deg) translateX(8%); opacity: 0.28; }
+    }
+
+    @keyframes sweepRight {
+      from { transform: rotate(-10deg) translateX(4%); opacity: 0.13; }
+      to { transform: rotate(-22deg) translateX(-8%); opacity: 0.28; }
+    }
+
+    @keyframes rise {
+      0% { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0; }
+      12% { opacity: 0.55; }
+      100% { transform: translate3d(var(--drift), -105vh, 0) scale(1.25); opacity: 0; }
+    }
+
+    @keyframes online {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.75); }
+    }
+
+    @keyframes orbit {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitReverse {
+      to { transform: rotate(-360deg); }
+    }
+
+    @keyframes halo {
+      from { transform: translate(-50%, -50%) scale(0.94); opacity: 0.75; }
+      to { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+    }
+
+    @keyframes crestFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
+    }
+
+    @keyframes panelScan {
+      to { left: 104%; }
+    }
+
+    @keyframes buttonShine {
+      0%, 48% { transform: translateX(-115%) skewX(-18deg); }
+      70%, 100% { transform: translateX(420%) skewX(-18deg); }
+    }
+
+    @media (max-width: 820px) {
+      body {
+        overflow: auto;
       }
 
-      .top-bar {
-        flex-direction: column;
-        gap: 10px;
+      .app {
+        min-height: 100svh;
+        overflow: hidden;
       }
 
-      .info-line {
-        flex-direction: column;
-        align-items: flex-start;
+      .access-layout {
+        width: min(560px, 92vw);
+        grid-template-columns: 1fr;
+        gap: 18px;
       }
 
-      .info-value {
-        text-align: left;
+      .club-stage {
+        padding: 0;
       }
 
-      .btn {
-        width: 100%;
+      .crest-shell {
+        width: clamp(110px, 26vw, 150px);
+        margin-bottom: 10px;
+      }
+
+      .club-name {
+        font-size: clamp(2.1rem, 10vw, 3.5rem);
+      }
+
+      .club-motto {
+        margin-top: 10px;
+      }
+
+      .access-panel {
+        padding: 20px;
+      }
+
+      .manager-profile {
+        margin-top: 18px;
+      }
+
+      .system-grid {
+        margin-top: 18px;
+      }
+
+      .enter-button {
+        margin-top: 18px;
+      }
+    }
+
+    @media (max-height: 620px) and (orientation: landscape) {
+      .boot-screen,
+      .access-screen,
+      .transition-screen {
+        padding-top: calc(58px + var(--safe-top));
+        padding-bottom: calc(18px + var(--safe-bottom));
+      }
+
+      .access-layout {
+        width: min(1100px, 93vw);
+        grid-template-columns: minmax(0, 1.08fr) minmax(310px, 0.92fr);
+        gap: 30px;
+      }
+
+      .crest-shell {
+        width: clamp(110px, 17vh, 150px);
+        margin-bottom: 8px;
+      }
+
+      .club-name {
+        font-size: clamp(2.35rem, 8.5vh, 4.4rem);
+      }
+
+      .club-motto {
+        margin-top: 9px;
+      }
+
+      .access-panel {
+        padding: 20px 24px;
+      }
+
+      .manager-profile {
+        margin-top: 15px;
+      }
+
+      .system-grid {
+        margin-top: 15px;
+      }
+
+      .system-tile {
+        min-height: 58px;
+        padding: 10px;
+      }
+
+      .enter-button {
+        margin-top: 15px;
+        padding: 14px 18px;
+      }
+
+      .button-subline {
+        margin-top: 8px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+
+      .boot-progress,
+      .boot-screen,
+      .access-screen,
+      .transition-screen,
+      .door,
+      .transition-copy {
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
-  <div class="aurora"></div>
-  <div class="beam left"></div>
-  <div class="beam right"></div>
+  <main class="app" id="app">
+    <div class="stadium"></div>
+    <div class="light-rig"></div>
+    <div class="beam beam-left"></div>
+    <div class="beam beam-right"></div>
+    <div class="pitch"></div>
+    <div class="particles" id="particles" aria-hidden="true"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
 
-  <div class="container">
-    <div class="top-bar">
-      <div>Aurora FC • Club Loading Interface</div>
-      <div class="status-pill">System Online</div>
-    </div>
-
-    <div class="crest">
-      <span>AF</span>
-    </div>
-
-    <h1><span class="gradient-text">Aurora FC</span></h1>
-    <p class="subtitle">Manager Access • Club HQ • Transfer Intelligence</p>
-
-    <div class="info-box">
-      <div class="info-line">
-        <div class="info-label">Access Portal</div>
-        <div class="info-value">Aurora City FC Manager Dashboard</div>
+    <header class="hud" aria-label="Aurora system status">
+      <div class="hud-cluster">
+        <span class="online-dot"></span>
+        <span>Aurora Network</span>
+        <span class="hud-rule"></span>
       </div>
-      <div class="info-line">
-        <div class="info-label">Mode</div>
-        <div class="info-value">Live Club Systems Initialisation</div>
+      <div class="hud-cluster">
+        <span class="hud-rule"></span>
+        <span>Manager Access // 01</span>
       </div>
-      <div class="info-line">
-        <div class="info-label">Destination</div>
-        <div class="info-value">Manager Dashboard</div>
+    </header>
+
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <section class="boot-screen" id="bootScreen" aria-live="polite">
+      <div class="boot-card">
+        <div class="boot-mark">
+          <img src="./assets/aurora-city-fc/icons/icon-512.png" alt="Aurora City FC crest" />
+        </div>
+        <p class="boot-kicker">Aurora Football Operating System</p>
+        <h1 class="boot-title">Initialising Club HQ</h1>
+        <p class="boot-message" id="bootMessage">Authenticating manager profile...</p>
+        <div class="boot-track" aria-hidden="true">
+          <div class="boot-progress" id="bootProgress"></div>
+        </div>
+        <div class="boot-meta">
+          <span id="bootPercent">00%</span>
+          <span id="bootCode">AUTH // MANAGER</span>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="loading-title" id="loadingTitle">Initialising Club Systems</div>
+    <section class="access-screen" id="accessScreen" aria-labelledby="clubTitle">
+      <div class="access-layout">
+        <div class="club-stage">
+          <p class="access-kicker">Welcome to the future of football</p>
+          <div class="crest-shell">
+            <img src="./assets/aurora-city-fc/icons/icon-512.png" alt="Aurora City FC crest" />
+          </div>
+          <h1 class="club-name" id="clubTitle">Aurora City <span>Football Club</span></h1>
+          <p class="club-motto">Vision • Intelligence • Legacy</p>
+        </div>
 
-    <div class="progress-wrap">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
+        <aside class="access-panel" aria-label="Manager access panel">
+          <div class="panel-header">
+            <div>
+              <p class="access-kicker">Club Command Access</p>
+              <p class="panel-code">ACFC // HQ // 2026</p>
+            </div>
+            <div class="live-badge">
+              <span class="online-dot"></span>
+              Systems Live
+            </div>
+          </div>
 
-    <div class="progress-row">
-      <div class="progress-status" id="progressStatus">Preparing Aurora Command Centre...</div>
-      <div class="progress-percent" id="progressPercent">0%</div>
-    </div>
+          <div class="manager-profile">
+            <div class="manager-avatar" aria-hidden="true">WB</div>
+            <div>
+              <p class="manager-label">Authenticated Manager</p>
+              <p class="manager-name">Webby</p>
+              <p class="profile-status">Full club clearance granted</p>
+            </div>
+          </div>
 
-    <div class="button-row">
-      <button class="btn btn-primary" id="enterBtn" onclick="goToDashboard()" disabled>
-        Loading...
-      </button>
-      <button class="btn btn-secondary" onclick="skipIntro()">
-        Skip Intro
-      </button>
-    </div>
+          <div class="system-grid" aria-label="Available club systems">
+            <div class="system-tile">
+              <small>Manager Dashboard</small>
+              <strong>Ready</strong>
+            </div>
+            <div class="system-tile">
+              <small>Transfer Centre</small>
+              <strong>Connected</strong>
+            </div>
+            <div class="system-tile">
+              <small>Squad Intelligence</small>
+              <strong>Synced</strong>
+            </div>
+            <div class="system-tile">
+              <small>Club Data Feed</small>
+              <strong>Live</strong>
+            </div>
+          </div>
 
-    <div class="footer-note">
-      Aurora FC systems are booting up. You will be redirected automatically.
-    </div>
-  </div>
+          <button class="enter-button" id="enterButton" type="button">
+            Enter Aurora City FC
+          </button>
+          <div class="button-subline">
+            <span class="keycap">Enter</span>
+            <span>or tap to continue</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="transition-screen" id="transitionScreen" aria-live="polite">
+      <div class="door door-left"></div>
+      <div class="door door-right"></div>
+      <div class="transition-copy">
+        <img src="./assets/aurora-city-fc/icons/icon-512.png" alt="" />
+        <h2>Welcome, Manager</h2>
+        <p>Opening Aurora HQ</p>
+      </div>
+    </section>
+  </main>
 
   <script>
-    const progressBar = document.getElementById("progressBar");
-    const progressPercent = document.getElementById("progressPercent");
-    const progressStatus = document.getElementById("progressStatus");
-    const loadingTitle = document.getElementById("loadingTitle");
-    const enterBtn = document.getElementById("enterBtn");
+    (() => {
+      "use strict";
 
-    const dashboardURL = "AuroraCityFC_ManagerDashboard.html";
+      const dashboardURL = "AuroraCityFC_ManagerDashboard.html";
+      const bootScreen = document.getElementById("bootScreen");
+      const accessScreen = document.getElementById("accessScreen");
+      const transitionScreen = document.getElementById("transitionScreen");
+      const bootProgress = document.getElementById("bootProgress");
+      const bootPercent = document.getElementById("bootPercent");
+      const bootMessage = document.getElementById("bootMessage");
+      const bootCode = document.getElementById("bootCode");
+      const enterButton = document.getElementById("enterButton");
+      const particles = document.getElementById("particles");
 
-    const stages = [
-      { stop: 18, title: "Initialising Club Systems", status: "Waking up core Aurora modules..." },
-      { stop: 38, title: "Loading Squad Data", status: "Building active squad intelligence..." },
-      { stop: 60, title: "Syncing Transfer Centre", status: "Checking targets, values and movement..." },
-      { stop: 82, title: "Preparing Matchday Dashboard", status: "Loading manager view and club HQ panels..." },
-      { stop: 100, title: "Aurora HQ Ready", status: "All systems loaded. Ready for manager access." }
-    ];
+      const stages = [
+        { at: 0, message: "Authenticating manager profile...", code: "AUTH // MANAGER" },
+        { at: 19, message: "Connecting to Aurora Master data...", code: "DATA // MASTER" },
+        { at: 42, message: "Synchronising squad intelligence...", code: "SQUAD // LIVE" },
+        { at: 64, message: "Opening transfer network...", code: "MARKET // ONLINE" },
+        { at: 83, message: "Preparing club command interface...", code: "HQ // READY" },
+        { at: 100, message: "Manager access granted.", code: "ACCESS // GRANTED" }
+      ];
 
-    let progress = 0;
-    let currentStage = 0;
+      let progress = 0;
+      let entering = false;
 
-    function updateStage() {
-      while (currentStage < stages.length - 1 && progress > stages[currentStage].stop) {
-        currentStage++;
+      function createParticles() {
+        const count = window.innerWidth < 700 ? 20 : 36;
+        const fragment = document.createDocumentFragment();
+
+        for (let i = 0; i < count; i += 1) {
+          const particle = document.createElement("span");
+          particle.className = "particle";
+          particle.style.left = `${Math.random() * 100}%`;
+          particle.style.setProperty("--duration", `${7 + Math.random() * 9}s`);
+          particle.style.setProperty("--delay", `${-Math.random() * 14}s`);
+          particle.style.setProperty("--drift", `${-45 + Math.random() * 90}px`);
+          particle.style.opacity = `${0.18 + Math.random() * 0.35}`;
+          fragment.appendChild(particle);
+        }
+
+        particles.appendChild(fragment);
       }
 
-      loadingTitle.textContent = stages[currentStage].title;
-      progressStatus.textContent = stages[currentStage].status;
-      progressBar.style.width = progress + "%";
-      progressPercent.textContent = progress + "%";
+      function updateBoot(value) {
+        const bounded = Math.min(100, Math.max(0, Math.round(value)));
+        bootProgress.style.width = `${bounded}%`;
+        bootPercent.textContent = `${String(bounded).padStart(2, "0")}%`;
 
-      if (progress >= 100) {
-        enterBtn.disabled = false;
-        enterBtn.textContent = "Enter Aurora HQ";
-      }
-    }
-
-    function goToDashboard() {
-      window.location.href = dashboardURL;
-    }
-
-    function skipIntro() {
-      window.location.href = dashboardURL;
-    }
-
-    const loader = setInterval(() => {
-      const increment = Math.floor(Math.random() * 4) + 1;
-      progress += increment;
-
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(loader);
+        const activeStage = [...stages].reverse().find((stage) => bounded >= stage.at) || stages[0];
+        bootMessage.textContent = activeStage.message;
+        bootCode.textContent = activeStage.code;
       }
 
-      updateStage();
-
-      if (progress === 100) {
-        setTimeout(() => {
-          goToDashboard();
-        }, 1400);
+      function finishBoot() {
+        updateBoot(100);
+        window.setTimeout(() => {
+          bootScreen.classList.add("is-hidden");
+          accessScreen.classList.add("is-active");
+          enterButton.focus({ preventScroll: true });
+        }, 520);
       }
-    }, 110);
+
+      function runBoot() {
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (reduceMotion) {
+          progress = 100;
+          finishBoot();
+          return;
+        }
+
+        const timer = window.setInterval(() => {
+          const distance = 100 - progress;
+          const increment = distance > 28 ? 3 + Math.random() * 5 : distance > 8 ? 1.4 + Math.random() * 2.4 : 0.8 + Math.random() * 1.2;
+          progress = Math.min(100, progress + increment);
+          updateBoot(progress);
+
+          if (progress >= 100) {
+            window.clearInterval(timer);
+            finishBoot();
+          }
+        }, 105);
+      }
+
+      function enterClub() {
+        if (entering) return;
+        entering = true;
+        enterButton.disabled = true;
+        transitionScreen.classList.add("is-active");
+
+        window.setTimeout(() => {
+          transitionScreen.classList.add("open");
+        }, 320);
+
+        window.setTimeout(() => {
+          window.location.href = dashboardURL;
+        }, 1550);
+      }
+
+      enterButton.addEventListener("click", enterClub);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && accessScreen.classList.contains("is-active")) {
+          event.preventDefault();
+          enterClub();
+        }
+      });
+
+      createParticles();
+      runBoot();
+    })();
   </script>
 </body>
 </html>
