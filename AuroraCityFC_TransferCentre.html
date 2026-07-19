@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: AuroraData PlatformRules central source • 19 Jul 2026 -->
+<!-- Build: Visible AuroraData PlatformRules status • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -3338,6 +3338,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
             <div class="broadcast-title"><span class="broadcast-live">Desk</span><h3>Registration Desk</h3></div>
             <p>Where each signing should be placed.</p>
           </div>
+          <span class="status-chip caution" id="platformRulesStatus" title="Live account rules from AuroraData">Rules: loading…</span>
         </div>
         <details class="registration-connection" id="registrationConnection">
           <summary><span>Secure AuroraData connection</span><span class="registration-connection-status" id="registrationConnectionStatus">Not connected</span></summary>
@@ -3674,16 +3675,25 @@ function applyPlatformRules(result){
   window.AURORA_PLATFORM_RULE_DETAILS=details;
 }
 async function loadPlatformRules(){
-  if(!registrationConnection.endpoint||!registrationConnection.token) return false;
+  const rulesChip=$('platformRulesStatus');
+  if(!registrationConnection.endpoint||!registrationConnection.token){
+    if(rulesChip){rulesChip.textContent='Rules: connect AuroraData';rulesChip.className='status-chip caution';}
+    if($('deskNote')) $('deskNote').textContent='Connect AuroraData to load the live PlatformRules table.';
+    return false;
+  }
+  if(rulesChip){rulesChip.textContent='Rules: loading…';rulesChip.className='status-chip caution';}
   try{
     const result=await postRegistration({action:'getPlatformRules',transactionId:registrationId(),source:'Aurora City FC Transfer Centre'});
     if(result.queued) return false;
     applyPlatformRules(result);
-    if($('deskNote')) $('deskNote').textContent=`Platform rules loaded from AuroraData: ${result.count||Object.keys(PLATFORM_RULE_DETAILS).length} tickers.`;
+    const ruleCount=result.count||Object.keys(PLATFORM_RULE_DETAILS).length;
+    if(rulesChip){rulesChip.textContent=`Rules: ${ruleCount} loaded`;rulesChip.className='status-chip pass';rulesChip.title=`${ruleCount} live platform rules loaded from AuroraData`; }
+    if($('deskNote')) $('deskNote').textContent=`Platform rules loaded from AuroraData: ${ruleCount} tickers.`;
     if(state.holdings?.length||state.watchlist?.length||state.scout?.length) renderAll();
     return true;
   }catch(err){
     console.warn('PlatformRules could not be loaded; using embedded emergency rules.',err);
+    if(rulesChip){rulesChip.textContent='Rules: unavailable';rulesChip.className='status-chip block';rulesChip.title='AuroraData PlatformRules could not be loaded; emergency embedded rules are active';}
     if($('deskNote')) $('deskNote').textContent='PlatformRules unavailable — embedded emergency rules are active.';
     return false;
   }
@@ -4765,7 +4775,7 @@ document.addEventListener('submit',async event=>{
   }
 });
 $('saveRegistrationConnection')?.addEventListener('click',async()=>{persistRegistrationConnection();registrationMessage(registrationConnection.endpoint&&registrationConnection.token?'Connection saved in this browser. Loading PlatformRules…':'Enter both the web-app URL and private token.');if(registrationConnection.endpoint&&registrationConnection.token)await loadPlatformRules();loadRegistrationHistory();});
-$('clearRegistrationConnection')?.addEventListener('click',()=>{localStorage.removeItem(REGISTRATION_CONNECTION_KEY);registrationConnection={endpoint:'',token:''};if($('registrationEndpoint'))$('registrationEndpoint').value='';if($('registrationToken'))$('registrationToken').value='';updateRegistrationConnectionStatus();registrationMessage('Connection removed from this browser.');});
+$('clearRegistrationConnection')?.addEventListener('click',()=>{localStorage.removeItem(REGISTRATION_CONNECTION_KEY);registrationConnection={endpoint:'',token:''};if($('registrationEndpoint'))$('registrationEndpoint').value='';if($('registrationToken'))$('registrationToken').value='';updateRegistrationConnectionStatus();const rulesChip=$('platformRulesStatus');if(rulesChip){rulesChip.textContent='Rules: connect AuroraData';rulesChip.className='status-chip caution';}registrationMessage('Connection removed from this browser.');if($('deskNote'))$('deskNote').textContent='Connect AuroraData to load the live PlatformRules table.';});
 $('testRegistrationConnection')?.addEventListener('click',async()=>{
   persistRegistrationConnection();
   if(!registrationConnection.endpoint||!registrationConnection.token){registrationMessage('Enter both the web-app URL and token first.','error');return;}
