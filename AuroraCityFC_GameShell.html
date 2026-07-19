@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#020612" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Aurora City FC | Manager Session</title>
+  <style>
+    :root {
+      --shell-height: 48px;
+      --ink: #020612;
+      --panel: rgba(2, 8, 22, 0.94);
+      --line: rgba(125, 211, 252, 0.2);
+      --cyan: #22d3ee;
+      --blue: #60a5fa;
+      --green: #34d399;
+      --red: #fb7185;
+      --text: #eaf4ff;
+      --muted: #93a4bd;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--ink);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .game-shell {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--ink);
+    }
+
+    .session-bar {
+      position: absolute;
+      z-index: 30;
+      inset: 0 0 auto 0;
+      height: calc(var(--shell-height) + var(--safe-top));
+      padding:
+        var(--safe-top)
+        calc(12px + var(--safe-right))
+        0
+        calc(12px + var(--safe-left));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background:
+        linear-gradient(90deg, rgba(8, 47, 73, 0.55), transparent 34%, rgba(30, 64, 175, 0.2)),
+        var(--panel);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(18px);
+    }
+
+    .session-brand,
+    .session-actions,
+    .session-route {
+      display: flex;
+      align-items: center;
+    }
+
+    .session-brand {
+      min-width: 0;
+      gap: 10px;
+    }
+
+    .session-crest {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(125, 211, 252, 0.3);
+      background: #020617;
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.14);
+    }
+
+    .session-crest img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .session-copy {
+      min-width: 0;
+    }
+
+    .session-kicker {
+      margin: 0;
+      color: #7dd3fc;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .session-manager {
+      margin: 2px 0 0;
+      color: #e0f2fe;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .session-route {
+      min-width: 0;
+      justify-content: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .online-dot {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.1), 0 0 15px rgba(52, 211, 153, 0.55);
+    }
+
+    #routeName {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .session-actions {
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    .logout-button {
+      min-height: 34px;
+      border: 1px solid rgba(251, 113, 133, 0.28);
+      border-radius: 11px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #fecdd3;
+      background: rgba(76, 5, 25, 0.38);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: 160ms ease;
+    }
+
+    .logout-button:hover,
+    .logout-button:focus-visible {
+      color: #fff1f2;
+      border-color: rgba(251, 113, 133, 0.58);
+      background: rgba(136, 19, 55, 0.48);
+      box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.1);
+      outline: none;
+    }
+
+    .power-icon {
+      width: 15px;
+      height: 15px;
+      display: block;
+    }
+
+    .club-frame {
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      right: 0;
+      top: calc(var(--shell-height) + var(--safe-top));
+      bottom: 0;
+      width: 100%;
+      height: calc(100% - var(--shell-height) - var(--safe-top));
+      border: 0;
+      background: var(--ink);
+      transition: filter 260ms ease, opacity 260ms ease, transform 420ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .game-shell.is-paused .club-frame {
+      filter: blur(5px) brightness(0.52);
+      transform: scale(0.994);
+    }
+
+    .modal-layer,
+    .exit-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 70;
+      display: grid;
+      place-items: center;
+      padding:
+        calc(20px + var(--safe-top))
+        calc(20px + var(--safe-right))
+        calc(20px + var(--safe-bottom))
+        calc(20px + var(--safe-left));
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 190ms ease, visibility 190ms ease;
+    }
+
+    .modal-layer {
+      background: rgba(1, 4, 12, 0.66);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal-layer.is-active,
+    .exit-layer.is-active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .logout-card {
+      width: min(430px, 100%);
+      overflow: hidden;
+      border: 1px solid rgba(125, 211, 252, 0.22);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 86% 0%, rgba(34, 211, 238, 0.13), transparent 34%),
+        linear-gradient(180deg, rgba(10, 26, 48, 0.98), rgba(3, 10, 23, 0.99));
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58);
+    }
+
+    .logout-card-top {
+      padding: 24px 24px 18px;
+      text-align: center;
+    }
+
+    .logout-card-crest {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px;
+      overflow: hidden;
+      border: 1px solid rgba(125, 211, 252, 0.28);
+      border-radius: 22px;
+      background: #020617;
+      box-shadow: 0 0 34px rgba(34, 211, 238, 0.16);
+    }
+
+    .logout-card-crest img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .logout-eyebrow {
+      margin: 0;
+      color: #7dd3fc;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .logout-title {
+      margin: 9px 0 8px;
+      color: #f8fbff;
+      font-size: clamp(25px, 4vw, 34px);
+      line-height: 1;
+      letter-spacing: -0.045em;
+    }
+
+    .logout-copy {
+      margin: 0 auto;
+      max-width: 330px;
+      color: #b6c6dd;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .logout-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 18px 18px;
+    }
+
+    .modal-button {
+      min-height: 46px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .cancel-button {
+      color: #dbeafe;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.72);
+    }
+
+    .confirm-button {
+      color: #fff1f2;
+      border: 1px solid rgba(251, 113, 133, 0.42);
+      background: linear-gradient(135deg, rgba(159, 18, 57, 0.92), rgba(76, 5, 25, 0.95));
+    }
+
+    .cancel-button:hover,
+    .cancel-button:focus-visible {
+      border-color: rgba(125, 211, 252, 0.5);
+      outline: none;
+    }
+
+    .confirm-button:hover,
+    .confirm-button:focus-visible {
+      border-color: rgba(251, 113, 133, 0.74);
+      outline: none;
+    }
+
+    .exit-layer {
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 32%, rgba(34, 211, 238, 0.15), transparent 28%),
+        #01040b;
+    }
+
+    .exit-layer::before,
+    .exit-layer::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50.5%;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent),
+        linear-gradient(180deg, #071426, #020713);
+      border-color: rgba(125, 211, 252, 0.2);
+      transition: transform 720ms cubic-bezier(.72,0,.2,1);
+    }
+
+    .exit-layer::before {
+      left: 0;
+      border-right: 1px solid rgba(125, 211, 252, 0.22);
+      transform: translateX(-101%);
+    }
+
+    .exit-layer::after {
+      right: 0;
+      border-left: 1px solid rgba(125, 211, 252, 0.22);
+      transform: translateX(101%);
+    }
+
+    .exit-layer.is-active::before,
+    .exit-layer.is-active::after {
+      transform: translateX(0);
+    }
+
+    .exit-message {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 300ms ease 420ms, transform 300ms ease 420ms;
+    }
+
+    .exit-layer.is-active .exit-message {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .exit-message img {
+      width: 82px;
+      height: 82px;
+      display: block;
+      margin: 0 auto 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(125, 211, 252, 0.28);
+      box-shadow: 0 0 38px rgba(34, 211, 238, 0.18);
+    }
+
+    .exit-message h2 {
+      margin: 0;
+      font-size: clamp(29px, 5vw, 48px);
+      letter-spacing: -0.055em;
+    }
+
+    .exit-message p {
+      margin: 8px 0 0;
+      color: #7dd3fc;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .frame-fallback {
+      position: absolute;
+      z-index: 0;
+      inset: calc(var(--shell-height) + var(--safe-top)) 0 0;
+      display: grid;
+      place-items: center;
+      padding: 30px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 680px) {
+      :root {
+        --shell-height: 46px;
+      }
+
+      .session-route {
+        display: none;
+      }
+
+      .session-kicker {
+        font-size: 8px;
+      }
+
+      .session-manager {
+        font-size: 12px;
+      }
+
+      .logout-button {
+        min-width: 38px;
+        padding: 0 10px;
+      }
+
+      .logout-label {
+        display: none;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .session-copy {
+        display: none;
+      }
+
+      .logout-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell" id="gameShell">
+    <header class="session-bar">
+      <div class="session-brand">
+        <div class="session-crest">
+          <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="Aurora City FC crest" />
+        </div>
+        <div class="session-copy">
+          <p class="session-kicker">Aurora City FC</p>
+          <p class="session-manager">Manager Session • Webby</p>
+        </div>
+      </div>
+
+      <div class="session-route" aria-live="polite">
+        <span class="online-dot" aria-hidden="true"></span>
+        <span id="routeName">Manager Dashboard</span>
+      </div>
+
+      <div class="session-actions">
+        <button class="logout-button" id="logoutButton" type="button" aria-haspopup="dialog">
+          <svg class="power-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3v9" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+            <path d="M7.35 5.9a8 8 0 1 0 9.3 0" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+          </svg>
+          <span class="logout-label">Log Out</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="frame-fallback">
+      <p>Loading Aurora City FC Manager Dashboard…</p>
+    </div>
+
+    <iframe
+      class="club-frame"
+      id="clubFrame"
+      src="AuroraCityFC_ManagerDashboard.html"
+      title="Aurora City FC club system"
+      allow="fullscreen"
+    ></iframe>
+
+    <section class="modal-layer" id="logoutModal" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+      <div class="logout-card">
+        <div class="logout-card-top">
+          <div class="logout-card-crest">
+            <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="" />
+          </div>
+          <p class="logout-eyebrow">Manager Session Control</p>
+          <h1 class="logout-title" id="logoutTitle">Exit Aurora City FC?</h1>
+          <p class="logout-copy">
+            Your club data remains saved. This closes the manager session and returns you to the Aurora access screen.
+          </p>
+        </div>
+
+        <div class="logout-actions">
+          <button class="modal-button cancel-button" id="cancelLogout" type="button">Stay in Club</button>
+          <button class="modal-button confirm-button" id="confirmLogout" type="button">Log Out</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="exit-layer" id="exitLayer" aria-live="polite">
+      <div class="exit-message">
+        <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="" />
+        <h2>Session Closed</h2>
+        <p>Returning to manager access</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const gameShell = document.getElementById("gameShell");
+      const clubFrame = document.getElementById("clubFrame");
+      const routeName = document.getElementById("routeName");
+      const logoutButton = document.getElementById("logoutButton");
+      const logoutModal = document.getElementById("logoutModal");
+      const cancelLogout = document.getElementById("cancelLogout");
+      const confirmLogout = document.getElementById("confirmLogout");
+      const exitLayer = document.getElementById("exitLayer");
+
+      const routeLabels = {
+        "AuroraCityFC_ManagerDashboard.html": "Manager Dashboard",
+        "AuroraCityFC_TransferCentre.html": "Transfer Centre",
+        "AuroraCityFC_SquadHub.html": "Squad Hub",
+        "AuroraCityFC_Boardroom.html": "Boardroom",
+        "AuroraCityFC_TrainingGround.html": "Training Ground",
+        "AuroraCityFC_MediaCentre.html": "Media Centre",
+        "AuroraCityFC_AnalysisRoom.html": "Analysis Room"
+      };
+
+      let previousFocus = null;
+      let loggingOut = false;
+
+      function updateRouteLabel() {
+        try {
+          const currentFile = clubFrame.contentWindow.location.pathname.split("/").pop();
+          routeName.textContent = routeLabels[currentFile] || "Aurora Club System";
+          document.title = `Aurora City FC | ${routeLabels[currentFile] || "Manager Session"}`;
+        } catch (error) {
+          routeName.textContent = "Aurora Club System";
+        }
+      }
+
+      function openLogoutModal() {
+        if (loggingOut) return;
+        previousFocus = document.activeElement;
+        gameShell.classList.add("is-paused");
+        logoutModal.classList.add("is-active");
+        confirmLogout.focus();
+      }
+
+      function closeLogoutModal() {
+        logoutModal.classList.remove("is-active");
+        gameShell.classList.remove("is-paused");
+        if (previousFocus && typeof previousFocus.focus === "function") {
+          previousFocus.focus();
+        }
+      }
+
+      function completeLogout() {
+        if (loggingOut) return;
+        loggingOut = true;
+        logoutModal.classList.remove("is-active");
+        exitLayer.classList.add("is-active");
+
+        window.setTimeout(() => {
+          window.location.replace("index.html?logout=1");
+        }, 1350);
+      }
+
+      logoutButton.addEventListener("click", openLogoutModal);
+      cancelLogout.addEventListener("click", closeLogoutModal);
+      confirmLogout.addEventListener("click", completeLogout);
+
+      logoutModal.addEventListener("click", (event) => {
+        if (event.target === logoutModal) {
+          closeLogoutModal();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && logoutModal.classList.contains("is-active")) {
+          event.preventDefault();
+          closeLogoutModal();
+        }
+      });
+
+      clubFrame.addEventListener("load", updateRouteLabel);
+    })();
+  </script>
+</body>
+</html>
