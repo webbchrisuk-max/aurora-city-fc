@@ -1,17 +1,17 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#030712" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#030712" name="theme-color"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Transfer Centre</title>
 <!-- Build: Visible AuroraData PlatformRules status • 19 Jul 2026 -->
-
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
 
@@ -3190,7 +3190,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 
 </style>
-
 <style>
 /* ===== Final deal budget placement + richer top-line intelligence ===== */
 .lead-signing-kpi{
@@ -3261,9 +3260,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
   .deal-budget-context{max-width:none;text-align:left}
 }
 </style>
-
 <script src="AuroraFCData.js"></script>
-
 <style>
 /* ===================== AURORA SELL DESK ===================== */
 .sell-desk-shell{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);gap:16px}
@@ -3296,299 +3293,486 @@ tr:hover td{background:rgba(96,165,250,.06)}
 @media(max-width:900px){.sell-desk-shell{grid-template-columns:1fr}.sell-ticket-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.sell-desk-form,.sell-execution-form{grid-template-columns:1fr}.sell-desk-form .wide,.sell-execution-form .wide{grid-column:auto}.sell-desk-preview{grid-template-columns:1fr}.sell-ticket-head{flex-direction:column}.sell-ticket-grid{grid-template-columns:1fr 1fr}}
 </style>
-</head>
+<style id="auroraCinematicHeroStyles">
+/* ==============================================================
+   AURORA CITY FC — CINEMATIC DEPARTMENT HERO SYSTEM
+   Shared footprint, shared navigation, department-specific identity
+   ============================================================== */
+:root{
+  --aurora-hero-height:336px;
+  --aurora-hero-radius:30px;
+}
+
+/* Top navigation stays identical on every page. */
+.topbar .nav,.nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+}
+.topbar .nav a,.topbar .nav button,.nav a,.nav button{
+  box-sizing:border-box!important;
+  width:96px!important;min-width:96px!important;max-width:96px!important;
+  height:40px!important;min-height:40px!important;max-height:40px!important;
+  flex:0 0 96px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  margin:0!important;padding:0 9px!important;
+  border:1px solid rgba(148,163,184,.20)!important;border-radius:999px!important;
+  background:rgba(15,23,42,.72)!important;color:#dbeafe!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+  font-size:12px!important;font-weight:800!important;line-height:1!important;
+  white-space:nowrap!important;transform:none!important;scale:1!important;
+}
+.topbar .nav a:hover,.topbar .nav button:hover,.nav a:hover,.nav button:hover{
+  border-color:rgba(34,211,238,.40)!important;
+  background:rgba(8,47,73,.62)!important;
+  color:#e0f2fe!important;transform:none!important;scale:1!important;
+}
+.topbar .nav a.active,.topbar .nav a[aria-current="page"],.nav a.active,.nav a[aria-current="page"]{
+  border-color:rgba(34,211,238,.74)!important;
+  background:linear-gradient(180deg,rgba(8,70,92,.94),rgba(8,47,73,.88))!important;
+  color:#effcff!important;
+  box-shadow:inset 0 0 0 1px rgba(103,232,249,.18),inset 0 1px 0 rgba(255,255,255,.08)!important;
+  transform:none!important;scale:1!important;
+}
+
+.aurora-dept-hero{
+  position:relative!important;
+  isolation:isolate;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-columns:minmax(300px,.78fr) minmax(410px,1.38fr) minmax(220px,.58fr)!important;
+  width:100%!important;
+  height:var(--aurora-hero-height)!important;
+  min-height:var(--aurora-hero-height)!important;
+  max-height:var(--aurora-hero-height)!important;
+  margin:18px 0 16px!important;
+  border:1px solid rgba(125,211,252,.26)!important;
+  border-radius:var(--aurora-hero-radius)!important;
+  background:#030914!important;
+  box-shadow:0 22px 70px rgba(0,0,0,.44)!important;
+}
+.aurora-dept-hero::after{
+  content:"";position:absolute;z-index:7;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent,#22d3ee,#60a5fa,transparent);
+}
+.aurora-dept-hero__image{
+  position:absolute;z-index:-3;inset:0;
+  background-image:var(--aurora-hero-image);
+  background-size:cover;background-position:center center;background-repeat:no-repeat;
+  filter:saturate(1.06) contrast(1.04);
+}
+.aurora-dept-hero__shade{
+  position:absolute;z-index:-2;inset:0;
+  background:
+    linear-gradient(90deg,rgba(2,6,18,.99) 0%,rgba(2,6,18,.96) 20%,rgba(2,6,18,.47) 43%,rgba(2,6,18,.18) 68%,rgba(2,6,18,.88) 84%,rgba(2,6,18,.97) 100%),
+    linear-gradient(180deg,rgba(2,6,18,.06),rgba(2,6,18,.64));
+}
+.aurora-dept-hero__grid{
+  position:absolute;z-index:-1;inset:0;opacity:.26;pointer-events:none;
+  background-image:linear-gradient(rgba(34,211,238,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.06) 1px,transparent 1px);
+  background-size:38px 38px;
+  mask-image:linear-gradient(90deg,#000,transparent 72%);
+}
+.aurora-dept-hero__copy{
+  position:relative;z-index:2;min-width:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:25px 12px 25px 28px;
+}
+.aurora-dept-hero__kicker{
+  align-self:flex-start;display:inline-flex;align-items:center;gap:9px;
+  padding:7px 11px;border:1px solid rgba(34,211,238,.30);border-radius:999px;
+  background:rgba(8,47,73,.50);color:#a5f3fc;
+  font-size:11px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;
+}
+.aurora-dept-hero__kicker-dot{
+  width:8px;height:8px;border-radius:50%;background:#34d399;
+  box-shadow:0 0 0 5px rgba(52,211,153,.12),0 0 17px rgba(52,211,153,.58);
+}
+.aurora-dept-hero__title{
+  margin:15px 0 7px!important;
+  font-size:clamp(39px,4.8vw,66px)!important;
+  line-height:.88!important;letter-spacing:-.065em!important;
+  color:#f5f9ff!important;text-shadow:0 14px 45px rgba(0,0,0,.46);
+}
+.aurora-dept-hero__title span{display:block;color:#55c7ff}
+.aurora-dept-hero--training .aurora-dept-hero__title span{color:#34d399}
+.aurora-dept-hero__strap{
+  margin:0 0 8px;color:#dbeafe;font-size:14px;font-weight:800;line-height:1.35;
+}
+.aurora-dept-hero__copytext{
+  margin:0;max-width:390px;color:#aebed3;font-size:13px;line-height:1.48;
+}
+.aurora-dept-hero__pills{
+  display:grid;grid-template-columns:1fr;gap:7px;margin-top:14px;max-width:310px;
+}
+.aurora-dept-pill{
+  min-height:31px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:6px 10px;border:1px solid rgba(125,211,252,.22);border-radius:999px;
+  background:rgba(2,6,23,.58);color:#d7e6f7;font-size:11px;font-weight:800;
+  overflow:hidden;
+}
+.aurora-dept-pill span:last-child{color:#7dd3fc;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aurora-dept-pill .positive{color:#6ee7b7!important}
+.aurora-dept-hero__visual-space{min-width:0}
+.aurora-dept-hero__rail{
+  position:relative;z-index:2;min-width:0;
+  display:grid;grid-template-rows:repeat(4,minmax(0,1fr));gap:9px;
+  padding:18px 18px 18px 8px;
+}
+.aurora-hero-tile{
+  position:relative;overflow:hidden;
+  display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:10px;align-items:center;
+  min-height:0;padding:10px 11px;
+  border:1px solid rgba(125,211,252,.20);border-radius:18px;
+  background:linear-gradient(180deg,rgba(10,26,48,.91),rgba(4,13,27,.93));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 12px 30px rgba(0,0,0,.22);
+}
+.aurora-hero-tile::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 100% 0%,rgba(34,211,238,.08),transparent 38%);
+}
+.aurora-hero-tile__icon{
+  width:42px;height:42px;display:grid;place-items:center;border-radius:13px;
+  border:1px solid rgba(96,165,250,.24);background:rgba(30,64,175,.18);
+  color:#7dd3fc;font-size:20px;font-weight:900;
+}
+.aurora-hero-tile.green .aurora-hero-tile__icon{color:#6ee7b7;background:rgba(6,78,59,.34);border-color:rgba(52,211,153,.25)}
+.aurora-hero-tile.amber .aurora-hero-tile__icon{color:#fde68a;background:rgba(120,53,15,.30);border-color:rgba(251,191,36,.24)}
+.aurora-hero-tile__body{min-width:0;position:relative;z-index:1}
+.aurora-hero-tile small{display:block;color:#91a5bd;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.aurora-hero-tile strong{display:block;margin-top:4px;color:#eff7ff;font-size:17px;line-height:1.05;letter-spacing:-.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-hero-tile.green strong{color:#86efac}
+.aurora-hero-tile.amber strong{color:#fde68a}
+.aurora-hero-tile span{display:block;margin-top:4px;color:#8fa3bd;font-size:10px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-hero-progress{height:5px;margin-top:6px;border-radius:999px;background:rgba(148,163,184,.16);overflow:hidden}
+.aurora-hero-progress > i{display:block;height:100%;width:65%;border-radius:inherit;background:linear-gradient(90deg,#22d3ee,#34d399)}
+.aurora-media-ticker{
+  position:absolute;z-index:5;left:0;right:0;bottom:0;height:36px;
+  display:flex;align-items:center;gap:18px;padding:0 22px;
+  border-top:1px solid rgba(125,211,252,.18);background:rgba(2,6,18,.88);backdrop-filter:blur(12px);
+  color:#cbd5e1;font-size:11px;white-space:nowrap;overflow:hidden;
+}
+.aurora-media-ticker strong{color:#6ee7b7;font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.aurora-media-ticker span{overflow:hidden;text-overflow:ellipsis}
+.aurora-dept-hero--media .aurora-dept-hero__copy,
+.aurora-dept-hero--media .aurora-dept-hero__rail{padding-bottom:48px}
+
+/* Analysis keeps its current concept, but matches the same outer footprint. */
+.aurora-analysis-preserved{
+  height:var(--aurora-hero-height)!important;
+  min-height:var(--aurora-hero-height)!important;
+  max-height:var(--aurora-hero-height)!important;
+  overflow:hidden!important;
+}
+.aurora-analysis-preserved .hero-inner{height:100%!important;min-height:0!important;padding:24px!important;align-items:stretch!important}
+.aurora-analysis-preserved h2{font-size:clamp(34px,4.2vw,58px)!important;margin:13px 0 7px!important}
+.aurora-analysis-preserved .hero-copy{font-size:clamp(14px,1.15vw,17px)!important;line-height:1.4!important}
+.aurora-analysis-preserved .hero-tags{margin-top:12px!important}
+.aurora-analysis-preserved .hero-tag{padding:7px 10px!important;font-size:11px!important}
+.aurora-analysis-preserved .tactics-board{height:100%!important;min-height:0!important;max-height:100%!important}
+
+@media(max-width:1100px){
+  .aurora-dept-hero{grid-template-columns:minmax(280px,.78fr) minmax(360px,1.25fr) 220px!important}
+  .aurora-dept-hero__copy{padding-left:22px}
+  .aurora-dept-hero__title{font-size:clamp(36px,5vw,55px)!important}
+}
+@media(max-width:820px){
+  :root{--aurora-hero-height:auto}
+  .topbar .nav,.nav{flex-wrap:nowrap!important;overflow-x:auto!important;justify-content:flex-start!important}
+  .topbar .nav a,.topbar .nav button,.nav a,.nav button{
+    width:88px!important;min-width:88px!important;max-width:88px!important;
+    height:36px!important;min-height:36px!important;max-height:36px!important;flex-basis:88px!important;
+  }
+  .aurora-dept-hero{
+    grid-template-columns:1fr!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
+  }
+  .aurora-dept-hero__image{position:relative;height:245px;grid-row:2;background-position:center}
+  .aurora-dept-hero__shade{background:linear-gradient(180deg,rgba(2,6,18,.93),rgba(2,6,18,.22) 40%,rgba(2,6,18,.88))}
+  .aurora-dept-hero__copy{grid-row:1;padding:22px}
+  .aurora-dept-hero__visual-space{display:none}
+  .aurora-dept-hero__rail{grid-row:3;grid-template-columns:1fr 1fr;grid-template-rows:auto;padding:12px}
+  .aurora-media-ticker{position:relative;grid-row:4}
+  .aurora-analysis-preserved{height:auto!important;min-height:0!important;max-height:none!important}
+  .aurora-analysis-preserved .hero-inner{height:auto!important;grid-template-columns:1fr!important}
+  .aurora-analysis-preserved .tactics-board{height:220px!important;min-height:220px!important}
+}
+</style></head>
 <body>
 <!-- ===================== SECTION: APP SHELL ===================== -->
 <div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="crest"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC Badge"></div>
-      <div>
-        <h1>Aurora City FC</h1>
-        <p>Transfer Centre • Recruitment HQ</p>
-      </div>
-    </div>
-    <div class="nav">
-      <a href="AuroraCityFC_ManagerDashboard.html">Home</a>
-      <a class="active" href="AuroraCityFC_TransferCentre.html">Transfers</a>
-      <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
-      <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a href="AuroraCityFC_AnalysisRoom.html">Analysis</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
-      <button class="refresh-btn" id="refreshBtn">Refresh</button>
-    </div>
-  </div>
+<div class="topbar-inner">
+<div class="brand">
+<div class="crest"><img alt="Aurora City FC Badge" src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/></div>
+<div>
+<h1>Aurora City FC</h1>
+<p>Transfer Centre • Recruitment HQ</p>
 </div>
-
+</div>
+<div class="nav">
+<a href="AuroraCityFC_ManagerDashboard.html">Home</a>
+<a aria-current="page" class="active" href="AuroraCityFC_TransferCentre.html">Transfers</a>
+<a href="AuroraCityFC_Boardroom.html">Boardroom</a>
+<a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+<a href="AuroraCityFC_AnalysisRoom.html">Analysis</a>
+<a href="AuroraCityFC_MediaCentre.html">Media</a>
+<a href="AuroraCityFC_TrainingGround.html">Training</a>
+<button class="refresh-btn" id="refreshBtn">Refresh</button>
+</div>
+</div>
+</div>
 <main class="app">
-
-  <!-- ===================== SECTION: TRANSFER NEWS TICKER ===================== -->
-  <section class="transfer-ticker" aria-label="Transfer news ticker">
-    <div class="transfer-ticker-track" id="transferTicker">
-      <div class="transfer-ticker-content">
-        <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
-        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora recruitment desk…</span>
-      </div>
-      <div class="transfer-ticker-content" aria-hidden="true">
-        <span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
-        <span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora recruitment desk…</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: TRANSFER HERO ===================== -->
-  <section class="transfer-hero">
-    <div class="transfer-hero-content">
-      <div class="transfer-hero-logo"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
-      <div class="kicker"><span class="kicker-dot"></span> Recruitment department</div>
-      <h2>Transfer <span>Centre</span></h2>
-      <p>Transfer desk, final deal sheet and registration checks for the strongest green-light income route.</p>
-      <div class="hero-actions">
-        <span class="pill" id="lastUpdated">Last updated: loading…</span>
-        <span class="pill">Allocation Mode: Adjustable</span>
-        <span class="pill">Scout Focus: Green-Light Income</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: CONTROL STRIP ===================== -->
-  <section class="section">
-    <div class="transfer-control-strip">
-      <div class="window-kpi lead-signing-kpi">
-        <small>Lead Signing</small>
-        <strong id="headlineLead">—</strong>
-        <span id="headlineLeadNote">Top deal loading…</span>
-      </div>
-      <div class="window-kpi good">
-        <small>Final Route</small>
-        <strong id="headlineRoute">—</strong>
-        <span id="headlineRouteNote">Recruitment desk loading…</span>
-      </div>
-      <div class="window-kpi good">
-        <small>Yearly Income Added</small>
-        <strong id="headlineIncome">—</strong>
-        <span id="headlineMonthly">Monthly estimate loading…</span>
-      </div>
-      <div class="window-kpi warn">
-        <small>Deal Status</small>
-        <strong id="headlineStatus">—</strong>
-        <span id="headlineStatusNote">Final checks loading…</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: BEST RETURN ALLOCATION ===================== -->
-  <section class="section" id="best-return-allocation">
-    <div class="best-return-panel">
-      <div class="best-return-head">
-        <div>
-          <h3>Best Return Allocation</h3>
-          <p>The highest projected annual income available from the same approved four. Every signing keeps a minimum place in the plan, then the spare budget moves to the strongest income rate while Aurora respects yellow-risk sizing.</p>
-        </div>
-        <span class="badge green">Income maximised</span>
-      </div>
-      <div class="best-return-summary">
-        <div class="best-return-stat"><small>Best yearly income</small><strong id="bestReturnIncome">—</strong><span id="bestReturnMonthly">Calculating monthly boost…</span></div>
-        <div class="best-return-stat"><small>Versus current allocation</small><strong id="bestReturnUplift">—</strong><span id="bestReturnSpend">Calculating full-budget use…</span></div>
-        <button class="best-return-apply" id="applyBestReturn" type="button" disabled>Apply best-return amounts</button>
-      </div>
-      <div class="best-return-grid" id="bestReturnGrid"><div class="loading">Optimising the four approved transfers…</div></div>
-      <span class="best-return-note" id="bestReturnNote">This is the income-maximised version, not the most evenly diversified version. The standard 40/30/20/10 route remains Aurora’s balanced recommendation.</span>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: TOP TRANSFER BOARD ===================== -->
-  <section class="section">
-    <div class="section-head">
-      <div>
-        <h2>Top Transfer Board</h2>
-        <p>Visual shortlist of the strongest green-light income targets on the desk.</p>
-      </div>
-      <span class="badge blue">Sky Sports style board</span>
-    </div>
-    <div class="deadline-day-bar" id="deadlineDayBar">
-      <div class="loading">Loading deadline day board…</div>
-    </div>
-    <div class="top-transfer-board" id="topTransferBoard">
-      <div class="loading">Loading top transfer board…</div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: MAIN TRANSFER DESK ===================== -->
-  <section class="section">
-    <div class="transfer-studio-grid">
-      <div class="broadcast-panel">
-        <div class="broadcast-head">
-          <div>
-            <div class="broadcast-title"><span class="broadcast-live">Breaking</span><h3>Transfer Centre Final Deal Sheet</h3></div>
-            <p>Highest approved income route. One transfer fee in, one final deal sheet out.</p>
-          </div>
-          <span class="badge green" id="dealSheetBadge">Syncing</span>
-        </div>
-
-        <div class="transfer-verdict-box">
-          <small>Gaffer’s Call</small>
-          <strong id="gafferCall">Checking the market…</strong>
-          <span id="gafferCallText">Aurora is ranking the green-light names by yearly income added, then checking risk and platform fit.</span>
-        </div>
-
-        <div class="deal-budget-panel">
-          <div class="deal-budget-head">
-            <div>
-              <div class="broadcast-title"><span class="broadcast-live">Budget</span><h3>Final Deal Allocation</h3></div>
-              <p>Change the transfer budget or any individual buy amount here. The remaining balance updates instantly against the final £1,500 route.</p>
-            </div>
-            <button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset recommendation</button>
-          </div>
-          <div class="deal-budget-grid">
-            <label class="payday-input-line deal-budget-input">
-              <span>Transfer budget £</span>
-              <input id="transferBudgetInput" type="number" min="0" step="25" value="1500" inputmode="decimal" aria-label="Transfer budget">
-            </label>
-            <div class="allocation-budget-summary" aria-live="polite">
-              <div class="allocation-budget-stat"><small>Allocated</small><strong id="allocatedTransferBudget">£0.00</strong></div>
-              <div class="allocation-budget-stat remaining" id="remainingTransferBudgetCard"><small>Still Available</small><strong id="remainingTransferBudget">£1,500.00</strong></div>
-            </div>
-          </div>
-          <div class="allocation-budget-progress"><i id="allocationBudgetProgress"></i></div>
-          <div class="deal-budget-footer">
-            <span class="allocation-budget-note" id="allocationBudgetNote">£0.00 of £1,500.00 allocated.</span>
-            <span class="deal-budget-context" id="dealBudgetContext">Waiting for the final route…</span>
-          </div>
-        </div>
-
-        <!-- ===================== SECTION: POST-TRANSFER IMPACT ===================== -->
-        <div class="post-transfer-inline" id="post-transfer-impact">
-          <div class="post-transfer-inline-head">
-            <div><h3>Post-Transfer Impact</h3><p>What the approved deal sheet would do to income, yield and promotion progress.</p></div>
-            <span class="badge green">Before → after</span>
-          </div>
-          <div class="post-impact-grid" id="postTransferImpact"><div class="loading">Calculating post-transfer impact…</div></div>
-        </div>
-
-        <div class="deal-sheet" id="finalDealSheet">
-          <div class="loading">Building final transfer slip…</div>
-        </div>
-        <div class="deal-note" id="holdbackNote">Holdback rule loading…</div>
-      </div>
-
-      <div class="broadcast-panel">
-        <div class="broadcast-head">
-          <div>
-            <div class="broadcast-title"><span class="broadcast-live">Desk</span><h3>Registration Desk</h3></div>
-            <p>Where each signing should be placed.</p>
-          </div>
-          <span class="status-chip caution" id="platformRulesStatus" title="Live account rules from AuroraData">Rules: loading…</span>
-        </div>
-        <details class="registration-connection" id="registrationConnection">
-          <summary><span>Secure AuroraData connection</span><span class="registration-connection-status" id="registrationConnectionStatus">Not connected</span></summary>
-          <div class="registration-connection-body">
-            <div class="registration-connection-grid">
-              <label class="registration-field wide"><span>Apps Script web-app URL</span><input id="registrationEndpoint" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label>
-              <label class="registration-field wide"><span>Private registration token</span><input id="registrationToken" type="password" placeholder="Paste the private token once" autocomplete="off"></label>
-            </div>
-            <div class="registration-connection-actions">
-              <button class="registration-btn primary" id="saveRegistrationConnection" type="button">Save connection</button>
-              <button class="registration-btn" id="testRegistrationConnection" type="button">Test connection</button>
-              <button class="registration-btn danger" id="clearRegistrationConnection" type="button">Forget connection</button>
-            </div>
-            <div class="registration-message" id="registrationConnectionMessage">The URL and token stay in this browser only. They are not written into the public HTML file.</div>
-          </div>
-        </details>
-        <div class="short-wire-list" id="registrationDesk">
-          <div class="loading">Loading registration desk…</div>
-        </div>
-        <div class="registration-history">
-          <div class="registration-history-head"><div><strong>Recent Registration Activity</strong><span>Latest PurchaseLog entries with protected undo.</span></div><button class="registration-btn" id="refreshRegistrationHistory" type="button">Refresh activity</button></div>
-          <div class="registration-history-list" id="registrationHistory"><div class="loading">Connect AuroraData to load recent activity.</div></div>
-        </div>
-        <div class="transfer-centre-footer-note" id="deskNote">Platform check loading…</div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ===================== SECTION: INCOMING OFFERS ===================== -->
-  <section class="section" id="incoming-offers">
-    <div class="section-head">
-      <div><h2>Incoming Offers</h2><p>Rival clubs, retirement packages and verified corporate bids — all calculated from the real holding numbers.</p></div>
-      <span class="badge blue" id="incomingOfferCount">0 live offers</span>
-    </div>
-    <div class="incoming-offers-shell">
-      <div class="incoming-offers-toolbar">
-        <div>
-          <h3 style="margin:0;font-size:19px">Chairman’s Offer Room</h3>
-          <p>Simulated bids are clearly marked <b>Aurora Scenario</b>. A real takeover or tender offer is only shown as <b>Verified Offer</b> when supported by an official source.</p>
-        </div>
-        <div class="incoming-offers-actions">
-          <button class="registration-btn" id="refreshIncomingOffers" type="button">Refresh offers</button>
-          <button class="registration-btn primary" id="generateIncomingOffers" type="button">Open new market round</button>
-        </div>
-      </div>
-      <div class="offer-room-note"><span>📨</span><div><b>These cards never sell a holding.</b> Accepting one only moves the proposal into Sell Desk for your separate approval. You still execute any eventual sale manually with IG or Trade 212.</div></div>
-      <div class="incoming-offers-grid" id="incomingOfferGrid"><div class="offer-empty">Connect AuroraData to receive incoming transfer offers.</div></div>
-      <div class="registration-message" id="incomingOfferMessage">Offer room waiting for the Registration Desk connection.</div>
-    </div>
-  </section>
-
-
-  <!-- ===================== SECTION: SELL DESK ===================== -->
-  <section class="section" id="sell-desk">
-    <div class="section-head">
-      <div><h2>Outgoing Transfers — Sell Desk</h2><p>Creates review tickets, requires your approval and records only trades you have already completed with the broker.</p></div>
-      <span class="badge amber">Human approval only</span>
-    </div>
-    <div class="sell-desk-warning"><span>🔐</span><div><b>Aurora cannot place a broker order.</b>Approving a ticket only marks the plan as approved inside AuroraData. You still sell manually in IG or Trade 212, then record the completed fill here. Tesco SAYE / Equiniti remains protected until 2029.</div></div>
-    <div class="sell-desk-shell">
-      <div class="sell-desk-panel">
-        <div class="card-title"><h3>Create Review Ticket</h3><span class="badge blue">No trade placed</span></div>
-        <form id="sellTicketForm">
-          <div class="sell-desk-form">
-            <label class="registration-field wide"><span>Active holding</span><select id="sellHoldingSelect" name="holding" required><option value="">Loading active holdings…</option></select></label>
-            <label class="registration-field"><span>Trigger</span><select name="triggerType"><option>MANUAL REVIEW</option><option>DIVIDEND SUSPENDED</option><option>DIVIDEND CUT 20 PLUS</option><option>THESIS BROKEN</option><option>PAYOUT UNSAFE</option><option>SINGLE HOLDING OVER LIMIT</option><option>SECTOR OVER LIMIT</option></select></label>
-            <label class="registration-field"><span>Severity</span><select name="severity"><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></label>
-            <label class="registration-field"><span>Proposed action</span><select name="proposedAction" id="sellProposedAction"><option value="TRIM">Trim holding</option><option value="EXIT REVIEW">Full exit review</option><option value="EXIT">Full exit</option></select></label>
-            <label class="registration-field"><span>Shares proposed</span><input name="proposedShares" id="sellProposedShares" type="number" min="0" step="any" required></label>
-            <label class="registration-field wide"><span>Reason</span><textarea name="reason" placeholder="Explain exactly why the holding should be reviewed for a trim or exit." required></textarea></label>
-            <label class="registration-field wide"><span>Evidence / source</span><textarea name="evidence" placeholder="Results, dividend announcement, cash-flow concern, DecisionEngine evidence or manager note."></textarea></label>
-          </div>
-          <div class="sell-desk-preview">
-            <div><small>Current holding</small><strong id="sellCurrentShares">—</strong></div>
-            <div><small>Estimated proceeds</small><strong id="sellEstimatedProceeds">—</strong></div>
-            <div><small>Income removed</small><strong id="sellIncomeLost">—</strong></div>
-          </div>
-          <div class="registration-message" id="sellTicketMessage">Choose a holding to prepare a review ticket. Nothing is sent to a broker.</div>
-          <div class="registration-form-actions"><button class="registration-btn primary" type="submit">Create sell-review ticket</button><button class="registration-btn" id="refreshSellTickets" type="button">Refresh tickets</button></div>
-        </form>
-      </div>
-      <div class="sell-desk-panel">
-        <div class="card-title"><h3>Approval Queue</h3><span class="badge amber" id="sellTicketCount">0 active</span></div>
-        <div class="sell-desk-list" id="sellTicketList"><div class="sell-desk-empty">Connect AuroraData to load Sell Desk tickets.</div></div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ===================== SECTION: BENCH + WATCH ===================== -->
-  <section class="section">
-    <div class="transfer-grid">
-      <div class="transfer-card w6">
-        <div class="card-title"><h3>Transfer Bench</h3><span class="badge blue">Next in line</span></div>
-        <div class="mini-table" id="benchList"><div class="loading">Loading bench options…</div></div>
-      </div>
-      <div class="transfer-card w6">
-        <div class="card-title"><h3>No-Buy Watch</h3><span class="badge amber">Discipline</span></div>
-        <div class="mini-table" id="watchList"><div class="loading">Loading no-buy watch…</div></div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer">
+<!-- ===================== SECTION: TRANSFER NEWS TICKER ===================== -->
+<section aria-label="Transfer news ticker" class="transfer-ticker">
+<div class="transfer-ticker-track" id="transferTicker">
+<div class="transfer-ticker-content">
+<span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+<span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora recruitment desk…</span>
+</div>
+<div aria-hidden="true" class="transfer-ticker-content">
+<span class="transfer-ticker-item"><span class="transfer-ticker-tag">Transfer Wire</span></span>
+<span class="transfer-ticker-item"><span class="transfer-ticker-dot"></span>Loading Aurora recruitment desk…</span>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: TRANSFER HERO ===================== -->
+<section class="aurora-dept-hero aurora-dept-hero--transfer" style="--aurora-hero-image:url('assets/aurora-city-fc/heroes/transfer-centre-war-room.jpg')">
+<div aria-hidden="true" class="aurora-dept-hero__image"></div>
+<div aria-hidden="true" class="aurora-dept-hero__shade"></div>
+<div aria-hidden="true" class="aurora-dept-hero__grid"></div>
+<div class="aurora-dept-hero__copy">
+<div class="aurora-dept-hero__kicker"><span class="aurora-dept-hero__kicker-dot"></span>Recruitment HQ</div>
+<h2 class="aurora-dept-hero__title">Transfer<span>Centre</span></h2>
+<p class="aurora-dept-hero__strap">Recruitment HQ • Market Intelligence Live</p>
+<p class="aurora-dept-hero__copytext">Global scouting, green-light income routes and negotiation control. Find the strongest approved targets and prepare the final deal sheet.</p>
+<div class="aurora-dept-hero__pills"><div class="aurora-dept-pill"><span>Market intelligence</span><span class="positive" id="lastUpdated">Last updated: loading…</span></div><div class="aurora-dept-pill"><span>Scout focus</span><span class="positive">Green-light income</span></div><div class="aurora-dept-pill"><span>Allocation mode</span><span class="">Adjustable</span></div></div>
+</div>
+<div aria-hidden="true" class="aurora-dept-hero__visual-space"></div>
+<div class="aurora-dept-hero__rail"><article class="aurora-hero-tile green"><div class="aurora-hero-tile__icon">🎯</div><div class="aurora-hero-tile__body"><small>Lead Signing</small><strong data-mirror-id="headlineLead">Loading…</strong><span data-mirror-id="headlineLeadNote">Top deal loading…</span></div></article><article class="aurora-hero-tile"><div class="aurora-hero-tile__icon">🔗</div><div class="aurora-hero-tile__body"><small>Final Route</small><strong data-mirror-id="headlineRoute">Loading…</strong><span data-mirror-id="headlineRouteNote">Recruitment desk loading…</span></div></article><article class="aurora-hero-tile"><div class="aurora-hero-tile__icon">💷</div><div class="aurora-hero-tile__body"><small>Yearly Income Added</small><strong data-mirror-id="headlineIncome">Loading…</strong><span data-mirror-id="headlineMonthly">Monthly estimate loading…</span></div></article><article class="aurora-hero-tile green"><div class="aurora-hero-tile__icon">✓</div><div class="aurora-hero-tile__body"><small>Deal Status</small><strong data-mirror-id="headlineStatus">Loading…</strong><span data-mirror-id="headlineStatusNote">Final checks loading…</span></div></article></div>
+</section>
+<!-- ===================== SECTION: CONTROL STRIP ===================== -->
+<section class="section">
+<div class="transfer-control-strip">
+<div class="window-kpi lead-signing-kpi">
+<small>Lead Signing</small>
+<strong id="headlineLead">—</strong>
+<span id="headlineLeadNote">Top deal loading…</span>
+</div>
+<div class="window-kpi good">
+<small>Final Route</small>
+<strong id="headlineRoute">—</strong>
+<span id="headlineRouteNote">Recruitment desk loading…</span>
+</div>
+<div class="window-kpi good">
+<small>Yearly Income Added</small>
+<strong id="headlineIncome">—</strong>
+<span id="headlineMonthly">Monthly estimate loading…</span>
+</div>
+<div class="window-kpi warn">
+<small>Deal Status</small>
+<strong id="headlineStatus">—</strong>
+<span id="headlineStatusNote">Final checks loading…</span>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: BEST RETURN ALLOCATION ===================== -->
+<section class="section" id="best-return-allocation">
+<div class="best-return-panel">
+<div class="best-return-head">
+<div>
+<h3>Best Return Allocation</h3>
+<p>The highest projected annual income available from the same approved four. Every signing keeps a minimum place in the plan, then the spare budget moves to the strongest income rate while Aurora respects yellow-risk sizing.</p>
+</div>
+<span class="badge green">Income maximised</span>
+</div>
+<div class="best-return-summary">
+<div class="best-return-stat"><small>Best yearly income</small><strong id="bestReturnIncome">—</strong><span id="bestReturnMonthly">Calculating monthly boost…</span></div>
+<div class="best-return-stat"><small>Versus current allocation</small><strong id="bestReturnUplift">—</strong><span id="bestReturnSpend">Calculating full-budget use…</span></div>
+<button class="best-return-apply" disabled="" id="applyBestReturn" type="button">Apply best-return amounts</button>
+</div>
+<div class="best-return-grid" id="bestReturnGrid"><div class="loading">Optimising the four approved transfers…</div></div>
+<span class="best-return-note" id="bestReturnNote">This is the income-maximised version, not the most evenly diversified version. The standard 40/30/20/10 route remains Aurora’s balanced recommendation.</span>
+</div>
+</section>
+<!-- ===================== SECTION: TOP TRANSFER BOARD ===================== -->
+<section class="section">
+<div class="section-head">
+<div>
+<h2>Top Transfer Board</h2>
+<p>Visual shortlist of the strongest green-light income targets on the desk.</p>
+</div>
+<span class="badge blue">Sky Sports style board</span>
+</div>
+<div class="deadline-day-bar" id="deadlineDayBar">
+<div class="loading">Loading deadline day board…</div>
+</div>
+<div class="top-transfer-board" id="topTransferBoard">
+<div class="loading">Loading top transfer board…</div>
+</div>
+</section>
+<!-- ===================== SECTION: MAIN TRANSFER DESK ===================== -->
+<section class="section">
+<div class="transfer-studio-grid">
+<div class="broadcast-panel">
+<div class="broadcast-head">
+<div>
+<div class="broadcast-title"><span class="broadcast-live">Breaking</span><h3>Transfer Centre Final Deal Sheet</h3></div>
+<p>Highest approved income route. One transfer fee in, one final deal sheet out.</p>
+</div>
+<span class="badge green" id="dealSheetBadge">Syncing</span>
+</div>
+<div class="transfer-verdict-box">
+<small>Gaffer’s Call</small>
+<strong id="gafferCall">Checking the market…</strong>
+<span id="gafferCallText">Aurora is ranking the green-light names by yearly income added, then checking risk and platform fit.</span>
+</div>
+<div class="deal-budget-panel">
+<div class="deal-budget-head">
+<div>
+<div class="broadcast-title"><span class="broadcast-live">Budget</span><h3>Final Deal Allocation</h3></div>
+<p>Change the transfer budget or any individual buy amount here. The remaining balance updates instantly against the final £1,500 route.</p>
+</div>
+<button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset recommendation</button>
+</div>
+<div class="deal-budget-grid">
+<label class="payday-input-line deal-budget-input">
+<span>Transfer budget £</span>
+<input aria-label="Transfer budget" id="transferBudgetInput" inputmode="decimal" min="0" step="25" type="number" value="1500"/>
+</label>
+<div aria-live="polite" class="allocation-budget-summary">
+<div class="allocation-budget-stat"><small>Allocated</small><strong id="allocatedTransferBudget">£0.00</strong></div>
+<div class="allocation-budget-stat remaining" id="remainingTransferBudgetCard"><small>Still Available</small><strong id="remainingTransferBudget">£1,500.00</strong></div>
+</div>
+</div>
+<div class="allocation-budget-progress"><i id="allocationBudgetProgress"></i></div>
+<div class="deal-budget-footer">
+<span class="allocation-budget-note" id="allocationBudgetNote">£0.00 of £1,500.00 allocated.</span>
+<span class="deal-budget-context" id="dealBudgetContext">Waiting for the final route…</span>
+</div>
+</div>
+<!-- ===================== SECTION: POST-TRANSFER IMPACT ===================== -->
+<div class="post-transfer-inline" id="post-transfer-impact">
+<div class="post-transfer-inline-head">
+<div><h3>Post-Transfer Impact</h3><p>What the approved deal sheet would do to income, yield and promotion progress.</p></div>
+<span class="badge green">Before → after</span>
+</div>
+<div class="post-impact-grid" id="postTransferImpact"><div class="loading">Calculating post-transfer impact…</div></div>
+</div>
+<div class="deal-sheet" id="finalDealSheet">
+<div class="loading">Building final transfer slip…</div>
+</div>
+<div class="deal-note" id="holdbackNote">Holdback rule loading…</div>
+</div>
+<div class="broadcast-panel">
+<div class="broadcast-head">
+<div>
+<div class="broadcast-title"><span class="broadcast-live">Desk</span><h3>Registration Desk</h3></div>
+<p>Where each signing should be placed.</p>
+</div>
+<span class="status-chip caution" id="platformRulesStatus" title="Live account rules from AuroraData">Rules: loading…</span>
+</div>
+<details class="registration-connection" id="registrationConnection">
+<summary><span>Secure AuroraData connection</span><span class="registration-connection-status" id="registrationConnectionStatus">Not connected</span></summary>
+<div class="registration-connection-body">
+<div class="registration-connection-grid">
+<label class="registration-field wide"><span>Apps Script web-app URL</span><input autocomplete="off" id="registrationEndpoint" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec" type="url"/></label>
+<label class="registration-field wide"><span>Private registration token</span><input autocomplete="off" id="registrationToken" placeholder="Paste the private token once" type="password"/></label>
+</div>
+<div class="registration-connection-actions">
+<button class="registration-btn primary" id="saveRegistrationConnection" type="button">Save connection</button>
+<button class="registration-btn" id="testRegistrationConnection" type="button">Test connection</button>
+<button class="registration-btn danger" id="clearRegistrationConnection" type="button">Forget connection</button>
+</div>
+<div class="registration-message" id="registrationConnectionMessage">The URL and token stay in this browser only. They are not written into the public HTML file.</div>
+</div>
+</details>
+<div class="short-wire-list" id="registrationDesk">
+<div class="loading">Loading registration desk…</div>
+</div>
+<div class="registration-history">
+<div class="registration-history-head"><div><strong>Recent Registration Activity</strong><span>Latest PurchaseLog entries with protected undo.</span></div><button class="registration-btn" id="refreshRegistrationHistory" type="button">Refresh activity</button></div>
+<div class="registration-history-list" id="registrationHistory"><div class="loading">Connect AuroraData to load recent activity.</div></div>
+</div>
+<div class="transfer-centre-footer-note" id="deskNote">Platform check loading…</div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: INCOMING OFFERS ===================== -->
+<section class="section" id="incoming-offers">
+<div class="section-head">
+<div><h2>Incoming Offers</h2><p>Rival clubs, retirement packages and verified corporate bids — all calculated from the real holding numbers.</p></div>
+<span class="badge blue" id="incomingOfferCount">0 live offers</span>
+</div>
+<div class="incoming-offers-shell">
+<div class="incoming-offers-toolbar">
+<div>
+<h3 style="margin:0;font-size:19px">Chairman’s Offer Room</h3>
+<p>Simulated bids are clearly marked <b>Aurora Scenario</b>. A real takeover or tender offer is only shown as <b>Verified Offer</b> when supported by an official source.</p>
+</div>
+<div class="incoming-offers-actions">
+<button class="registration-btn" id="refreshIncomingOffers" type="button">Refresh offers</button>
+<button class="registration-btn primary" id="generateIncomingOffers" type="button">Open new market round</button>
+</div>
+</div>
+<div class="offer-room-note"><span>📨</span><div><b>These cards never sell a holding.</b> Accepting one only moves the proposal into Sell Desk for your separate approval. You still execute any eventual sale manually with IG or Trade 212.</div></div>
+<div class="incoming-offers-grid" id="incomingOfferGrid"><div class="offer-empty">Connect AuroraData to receive incoming transfer offers.</div></div>
+<div class="registration-message" id="incomingOfferMessage">Offer room waiting for the Registration Desk connection.</div>
+</div>
+</section>
+<!-- ===================== SECTION: SELL DESK ===================== -->
+<section class="section" id="sell-desk">
+<div class="section-head">
+<div><h2>Outgoing Transfers — Sell Desk</h2><p>Creates review tickets, requires your approval and records only trades you have already completed with the broker.</p></div>
+<span class="badge amber">Human approval only</span>
+</div>
+<div class="sell-desk-warning"><span>🔐</span><div><b>Aurora cannot place a broker order.</b>Approving a ticket only marks the plan as approved inside AuroraData. You still sell manually in IG or Trade 212, then record the completed fill here. Tesco SAYE / Equiniti remains protected until 2029.</div></div>
+<div class="sell-desk-shell">
+<div class="sell-desk-panel">
+<div class="card-title"><h3>Create Review Ticket</h3><span class="badge blue">No trade placed</span></div>
+<form id="sellTicketForm">
+<div class="sell-desk-form">
+<label class="registration-field wide"><span>Active holding</span><select id="sellHoldingSelect" name="holding" required=""><option value="">Loading active holdings…</option></select></label>
+<label class="registration-field"><span>Trigger</span><select name="triggerType"><option>MANUAL REVIEW</option><option>DIVIDEND SUSPENDED</option><option>DIVIDEND CUT 20 PLUS</option><option>THESIS BROKEN</option><option>PAYOUT UNSAFE</option><option>SINGLE HOLDING OVER LIMIT</option><option>SECTOR OVER LIMIT</option></select></label>
+<label class="registration-field"><span>Severity</span><select name="severity"><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></label>
+<label class="registration-field"><span>Proposed action</span><select id="sellProposedAction" name="proposedAction"><option value="TRIM">Trim holding</option><option value="EXIT REVIEW">Full exit review</option><option value="EXIT">Full exit</option></select></label>
+<label class="registration-field"><span>Shares proposed</span><input id="sellProposedShares" min="0" name="proposedShares" required="" step="any" type="number"/></label>
+<label class="registration-field wide"><span>Reason</span><textarea name="reason" placeholder="Explain exactly why the holding should be reviewed for a trim or exit." required=""></textarea></label>
+<label class="registration-field wide"><span>Evidence / source</span><textarea name="evidence" placeholder="Results, dividend announcement, cash-flow concern, DecisionEngine evidence or manager note."></textarea></label>
+</div>
+<div class="sell-desk-preview">
+<div><small>Current holding</small><strong id="sellCurrentShares">—</strong></div>
+<div><small>Estimated proceeds</small><strong id="sellEstimatedProceeds">—</strong></div>
+<div><small>Income removed</small><strong id="sellIncomeLost">—</strong></div>
+</div>
+<div class="registration-message" id="sellTicketMessage">Choose a holding to prepare a review ticket. Nothing is sent to a broker.</div>
+<div class="registration-form-actions"><button class="registration-btn primary" type="submit">Create sell-review ticket</button><button class="registration-btn" id="refreshSellTickets" type="button">Refresh tickets</button></div>
+</form>
+</div>
+<div class="sell-desk-panel">
+<div class="card-title"><h3>Approval Queue</h3><span class="badge amber" id="sellTicketCount">0 active</span></div>
+<div class="sell-desk-list" id="sellTicketList"><div class="sell-desk-empty">Connect AuroraData to load Sell Desk tickets.</div></div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: BENCH + WATCH ===================== -->
+<section class="section">
+<div class="transfer-grid">
+<div class="transfer-card w6">
+<div class="card-title"><h3>Transfer Bench</h3><span class="badge blue">Next in line</span></div>
+<div class="mini-table" id="benchList"><div class="loading">Loading bench options…</div></div>
+</div>
+<div class="transfer-card w6">
+<div class="card-title"><h3>No-Buy Watch</h3><span class="badge amber">Discipline</span></div>
+<div class="mini-table" id="watchList"><div class="loading">Loading no-buy watch…</div></div>
+</div>
+</div>
+</section>
+<footer class="footer">
     Aurora City FC • Transfer Centre • Sheet engine: AuroraData
   </footer>
 </main>
-
 <script>
 const AURORA_MASTER_URL = 'https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json';
 let AURORA_MASTER_CACHE = null;
@@ -5302,14 +5486,11 @@ loadSellTickets();
 loadIncomingOffers(true);
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
-
 <button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>
-<aside class="aurora-system-panel" id="auroraSystemPanel" aria-hidden="true">
-  <div class="aurora-system-head"><h3>Aurora System Check</h3><button class="aurora-system-close" id="auroraSystemClose" type="button" aria-label="Close system check">×</button></div>
-  <div class="aurora-system-list" id="auroraSystemList"><div class="aurora-system-row"><i class="aurora-system-dot"></i><div><strong>Waiting for live data</strong><span>Open after the page has finished loading.</span></div></div></div>
+<aside aria-hidden="true" class="aurora-system-panel" id="auroraSystemPanel">
+<div class="aurora-system-head"><h3>Aurora System Check</h3><button aria-label="Close system check" class="aurora-system-close" id="auroraSystemClose" type="button">×</button></div>
+<div class="aurora-system-list" id="auroraSystemList"><div class="aurora-system-row"><i class="aurora-system-dot"></i><div><strong>Waiting for live data</strong><span>Open after the page has finished loading.</span></div></div></div>
 </aside>
-
-
 <script>
 (function(){
   const button=document.getElementById('auroraSystemButton');
@@ -5354,6 +5535,25 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
 })();
 </script>
-
-</body>
+<script id="auroraHeroMirrorScript">
+(() => {
+  'use strict';
+  const syncHeroMirrors = () => {
+    document.querySelectorAll('[data-mirror-id]').forEach(node => {
+      const source = document.getElementById(node.dataset.mirrorId);
+      if (!source || source === node) return;
+      const value = (source.textContent || '').replace(/\s+/g,' ').trim();
+      if (value) node.textContent = value;
+    });
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncHeroMirrors, { once:true });
+  } else {
+    syncHeroMirrors();
+  }
+  const observer = new MutationObserver(syncHeroMirrors);
+  observer.observe(document.documentElement, { subtree:true, childList:true, characterData:true });
+  window.addEventListener('load', syncHeroMirrors, { once:true });
+})();
+</script></body>
 </html>

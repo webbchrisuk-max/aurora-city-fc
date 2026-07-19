@@ -1,14 +1,15 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#030712" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#030712" name="theme-color"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Performance Analysis Room</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
@@ -53,110 +54,310 @@ a{color:inherit;text-decoration:none}button,input{font:inherit}
 @media(max-width:480px){.score-strip{grid-template-columns:1fr}.hero h2{font-size:35px}.hero-tags{display:grid}.hero-tag{text-align:center}.chart-wrap{height:280px}.tc1{left:24%}.tc2{left:73%}.tc4{left:25%}.tc5{left:75%}}
 </style>
 <script src="AuroraFCData.js"></script>
-</head>
+<style id="auroraCinematicHeroStyles">
+/* ==============================================================
+   AURORA CITY FC — CINEMATIC DEPARTMENT HERO SYSTEM
+   Shared footprint, shared navigation, department-specific identity
+   ============================================================== */
+:root{
+  --aurora-hero-height:336px;
+  --aurora-hero-radius:30px;
+}
+
+/* Top navigation stays identical on every page. */
+.topbar .nav,.nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+}
+.topbar .nav a,.topbar .nav button,.nav a,.nav button{
+  box-sizing:border-box!important;
+  width:96px!important;min-width:96px!important;max-width:96px!important;
+  height:40px!important;min-height:40px!important;max-height:40px!important;
+  flex:0 0 96px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  margin:0!important;padding:0 9px!important;
+  border:1px solid rgba(148,163,184,.20)!important;border-radius:999px!important;
+  background:rgba(15,23,42,.72)!important;color:#dbeafe!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+  font-size:12px!important;font-weight:800!important;line-height:1!important;
+  white-space:nowrap!important;transform:none!important;scale:1!important;
+}
+.topbar .nav a:hover,.topbar .nav button:hover,.nav a:hover,.nav button:hover{
+  border-color:rgba(34,211,238,.40)!important;
+  background:rgba(8,47,73,.62)!important;
+  color:#e0f2fe!important;transform:none!important;scale:1!important;
+}
+.topbar .nav a.active,.topbar .nav a[aria-current="page"],.nav a.active,.nav a[aria-current="page"]{
+  border-color:rgba(34,211,238,.74)!important;
+  background:linear-gradient(180deg,rgba(8,70,92,.94),rgba(8,47,73,.88))!important;
+  color:#effcff!important;
+  box-shadow:inset 0 0 0 1px rgba(103,232,249,.18),inset 0 1px 0 rgba(255,255,255,.08)!important;
+  transform:none!important;scale:1!important;
+}
+
+.aurora-dept-hero{
+  position:relative!important;
+  isolation:isolate;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-columns:minmax(300px,.78fr) minmax(410px,1.38fr) minmax(220px,.58fr)!important;
+  width:100%!important;
+  height:var(--aurora-hero-height)!important;
+  min-height:var(--aurora-hero-height)!important;
+  max-height:var(--aurora-hero-height)!important;
+  margin:18px 0 16px!important;
+  border:1px solid rgba(125,211,252,.26)!important;
+  border-radius:var(--aurora-hero-radius)!important;
+  background:#030914!important;
+  box-shadow:0 22px 70px rgba(0,0,0,.44)!important;
+}
+.aurora-dept-hero::after{
+  content:"";position:absolute;z-index:7;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent,#22d3ee,#60a5fa,transparent);
+}
+.aurora-dept-hero__image{
+  position:absolute;z-index:-3;inset:0;
+  background-image:var(--aurora-hero-image);
+  background-size:cover;background-position:center center;background-repeat:no-repeat;
+  filter:saturate(1.06) contrast(1.04);
+}
+.aurora-dept-hero__shade{
+  position:absolute;z-index:-2;inset:0;
+  background:
+    linear-gradient(90deg,rgba(2,6,18,.99) 0%,rgba(2,6,18,.96) 20%,rgba(2,6,18,.47) 43%,rgba(2,6,18,.18) 68%,rgba(2,6,18,.88) 84%,rgba(2,6,18,.97) 100%),
+    linear-gradient(180deg,rgba(2,6,18,.06),rgba(2,6,18,.64));
+}
+.aurora-dept-hero__grid{
+  position:absolute;z-index:-1;inset:0;opacity:.26;pointer-events:none;
+  background-image:linear-gradient(rgba(34,211,238,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.06) 1px,transparent 1px);
+  background-size:38px 38px;
+  mask-image:linear-gradient(90deg,#000,transparent 72%);
+}
+.aurora-dept-hero__copy{
+  position:relative;z-index:2;min-width:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:25px 12px 25px 28px;
+}
+.aurora-dept-hero__kicker{
+  align-self:flex-start;display:inline-flex;align-items:center;gap:9px;
+  padding:7px 11px;border:1px solid rgba(34,211,238,.30);border-radius:999px;
+  background:rgba(8,47,73,.50);color:#a5f3fc;
+  font-size:11px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;
+}
+.aurora-dept-hero__kicker-dot{
+  width:8px;height:8px;border-radius:50%;background:#34d399;
+  box-shadow:0 0 0 5px rgba(52,211,153,.12),0 0 17px rgba(52,211,153,.58);
+}
+.aurora-dept-hero__title{
+  margin:15px 0 7px!important;
+  font-size:clamp(39px,4.8vw,66px)!important;
+  line-height:.88!important;letter-spacing:-.065em!important;
+  color:#f5f9ff!important;text-shadow:0 14px 45px rgba(0,0,0,.46);
+}
+.aurora-dept-hero__title span{display:block;color:#55c7ff}
+.aurora-dept-hero--training .aurora-dept-hero__title span{color:#34d399}
+.aurora-dept-hero__strap{
+  margin:0 0 8px;color:#dbeafe;font-size:14px;font-weight:800;line-height:1.35;
+}
+.aurora-dept-hero__copytext{
+  margin:0;max-width:390px;color:#aebed3;font-size:13px;line-height:1.48;
+}
+.aurora-dept-hero__pills{
+  display:grid;grid-template-columns:1fr;gap:7px;margin-top:14px;max-width:310px;
+}
+.aurora-dept-pill{
+  min-height:31px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:6px 10px;border:1px solid rgba(125,211,252,.22);border-radius:999px;
+  background:rgba(2,6,23,.58);color:#d7e6f7;font-size:11px;font-weight:800;
+  overflow:hidden;
+}
+.aurora-dept-pill span:last-child{color:#7dd3fc;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aurora-dept-pill .positive{color:#6ee7b7!important}
+.aurora-dept-hero__visual-space{min-width:0}
+.aurora-dept-hero__rail{
+  position:relative;z-index:2;min-width:0;
+  display:grid;grid-template-rows:repeat(4,minmax(0,1fr));gap:9px;
+  padding:18px 18px 18px 8px;
+}
+.aurora-hero-tile{
+  position:relative;overflow:hidden;
+  display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:10px;align-items:center;
+  min-height:0;padding:10px 11px;
+  border:1px solid rgba(125,211,252,.20);border-radius:18px;
+  background:linear-gradient(180deg,rgba(10,26,48,.91),rgba(4,13,27,.93));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 12px 30px rgba(0,0,0,.22);
+}
+.aurora-hero-tile::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 100% 0%,rgba(34,211,238,.08),transparent 38%);
+}
+.aurora-hero-tile__icon{
+  width:42px;height:42px;display:grid;place-items:center;border-radius:13px;
+  border:1px solid rgba(96,165,250,.24);background:rgba(30,64,175,.18);
+  color:#7dd3fc;font-size:20px;font-weight:900;
+}
+.aurora-hero-tile.green .aurora-hero-tile__icon{color:#6ee7b7;background:rgba(6,78,59,.34);border-color:rgba(52,211,153,.25)}
+.aurora-hero-tile.amber .aurora-hero-tile__icon{color:#fde68a;background:rgba(120,53,15,.30);border-color:rgba(251,191,36,.24)}
+.aurora-hero-tile__body{min-width:0;position:relative;z-index:1}
+.aurora-hero-tile small{display:block;color:#91a5bd;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.aurora-hero-tile strong{display:block;margin-top:4px;color:#eff7ff;font-size:17px;line-height:1.05;letter-spacing:-.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-hero-tile.green strong{color:#86efac}
+.aurora-hero-tile.amber strong{color:#fde68a}
+.aurora-hero-tile span{display:block;margin-top:4px;color:#8fa3bd;font-size:10px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-hero-progress{height:5px;margin-top:6px;border-radius:999px;background:rgba(148,163,184,.16);overflow:hidden}
+.aurora-hero-progress > i{display:block;height:100%;width:65%;border-radius:inherit;background:linear-gradient(90deg,#22d3ee,#34d399)}
+.aurora-media-ticker{
+  position:absolute;z-index:5;left:0;right:0;bottom:0;height:36px;
+  display:flex;align-items:center;gap:18px;padding:0 22px;
+  border-top:1px solid rgba(125,211,252,.18);background:rgba(2,6,18,.88);backdrop-filter:blur(12px);
+  color:#cbd5e1;font-size:11px;white-space:nowrap;overflow:hidden;
+}
+.aurora-media-ticker strong{color:#6ee7b7;font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.aurora-media-ticker span{overflow:hidden;text-overflow:ellipsis}
+.aurora-dept-hero--media .aurora-dept-hero__copy,
+.aurora-dept-hero--media .aurora-dept-hero__rail{padding-bottom:48px}
+
+/* Analysis keeps its current concept, but matches the same outer footprint. */
+.aurora-analysis-preserved{
+  height:var(--aurora-hero-height)!important;
+  min-height:var(--aurora-hero-height)!important;
+  max-height:var(--aurora-hero-height)!important;
+  overflow:hidden!important;
+}
+.aurora-analysis-preserved .hero-inner{height:100%!important;min-height:0!important;padding:24px!important;align-items:stretch!important}
+.aurora-analysis-preserved h2{font-size:clamp(34px,4.2vw,58px)!important;margin:13px 0 7px!important}
+.aurora-analysis-preserved .hero-copy{font-size:clamp(14px,1.15vw,17px)!important;line-height:1.4!important}
+.aurora-analysis-preserved .hero-tags{margin-top:12px!important}
+.aurora-analysis-preserved .hero-tag{padding:7px 10px!important;font-size:11px!important}
+.aurora-analysis-preserved .tactics-board{height:100%!important;min-height:0!important;max-height:100%!important}
+
+@media(max-width:1100px){
+  .aurora-dept-hero{grid-template-columns:minmax(280px,.78fr) minmax(360px,1.25fr) 220px!important}
+  .aurora-dept-hero__copy{padding-left:22px}
+  .aurora-dept-hero__title{font-size:clamp(36px,5vw,55px)!important}
+}
+@media(max-width:820px){
+  :root{--aurora-hero-height:auto}
+  .topbar .nav,.nav{flex-wrap:nowrap!important;overflow-x:auto!important;justify-content:flex-start!important}
+  .topbar .nav a,.topbar .nav button,.nav a,.nav button{
+    width:88px!important;min-width:88px!important;max-width:88px!important;
+    height:36px!important;min-height:36px!important;max-height:36px!important;flex-basis:88px!important;
+  }
+  .aurora-dept-hero{
+    grid-template-columns:1fr!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
+  }
+  .aurora-dept-hero__image{position:relative;height:245px;grid-row:2;background-position:center}
+  .aurora-dept-hero__shade{background:linear-gradient(180deg,rgba(2,6,18,.93),rgba(2,6,18,.22) 40%,rgba(2,6,18,.88))}
+  .aurora-dept-hero__copy{grid-row:1;padding:22px}
+  .aurora-dept-hero__visual-space{display:none}
+  .aurora-dept-hero__rail{grid-row:3;grid-template-columns:1fr 1fr;grid-template-rows:auto;padding:12px}
+  .aurora-media-ticker{position:relative;grid-row:4}
+  .aurora-analysis-preserved{height:auto!important;min-height:0!important;max-height:none!important}
+  .aurora-analysis-preserved .hero-inner{height:auto!important;grid-template-columns:1fr!important}
+  .aurora-analysis-preserved .tactics-board{height:220px!important;min-height:220px!important}
+}
+</style></head>
 <body>
 <div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
-      <div><h1>Aurora City FC</h1><p>Performance Analysis Room • Data & Tactics</p></div>
-    </div>
-    <div class="nav">
-      <a href="AuroraCityFC_ManagerDashboard.html">Home</a>
-      <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
-      <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
-      <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a class="active" href="AuroraCityFC_AnalysisRoom.html">Analysis</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
-      <button class="refresh-btn" id="refreshBtn">Refresh</button>
-    </div>
-  </div>
+<div class="topbar-inner">
+<div class="brand">
+<div class="crest"><img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/></div>
+<div><h1>Aurora City FC</h1><p>Performance Analysis Room • Data &amp; Tactics</p></div>
+</div>
+<div class="nav">
+<a href="AuroraCityFC_ManagerDashboard.html">Home</a>
+<a href="AuroraCityFC_TransferCentre.html">Transfers</a>
+<a href="AuroraCityFC_Boardroom.html">Boardroom</a>
+<a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
+<a aria-current="page" class="active" href="AuroraCityFC_AnalysisRoom.html">Analysis</a>
+<a href="AuroraCityFC_MediaCentre.html">Media</a>
+<a href="AuroraCityFC_TrainingGround.html">Training</a>
+<button class="refresh-btn" id="refreshBtn">Refresh</button>
+</div>
+</div>
 </div>
 <main class="app" id="analysis">
-  <section class="hero">
-    <div class="hero-inner">
-      <div>
-        <div class="kicker"><span class="dot"></span> Performance intelligence live</div>
-        <h2>Analysis Room<span>See the whole match.</span></h2>
-        <p class="hero-copy" id="heroCopy">Loading Aurora’s income form, squad contribution, risk shape and progression towards the next division.</p>
-        <div class="hero-tags">
-          <span class="hero-tag" id="dataFreshness">Aurora data: loading…</span>
-          <span class="hero-tag">Primary objective: £500/month</span>
-          <span class="hero-tag">Charts update from AuroraMaster.json</span>
-        </div>
-      </div>
-      <div class="tactics-board" aria-label="Aurora performance tactics board">
-        <div class="halfway"></div><div class="centre-circle"></div>
-        <div class="tactic-chip tc1"><small>Attack</small><strong id="boardIncome">Income</strong></div>
-        <div class="tactic-chip tc2"><small>Form</small><strong id="boardForm">Loading</strong></div>
-        <div class="tactic-chip tc3"><small>Shape</small><strong id="boardShape">Balanced?</strong></div>
-        <div class="tactic-chip tc4"><small>Control</small><strong id="boardYield">Yield</strong></div>
-        <div class="tactic-chip tc5"><small>Target</small><strong id="boardTarget">£500/m</strong></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="score-strip">
-    <div class="score-card green"><div class="score-icon">⚽</div><small>Annual Income</small><strong id="annualIncome">—</strong><span id="annualIncomeNote">Current squad dividend run rate</span></div>
-    <div class="score-card green"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span id="monthlyIncomeNote">Average monthly run rate</span></div>
-    <div class="score-card"><div class="score-icon">🏟️</div><small>Club Value</small><strong id="clubValue">—</strong><span id="clubValueNote">All active holdings including Tesco</span></div>
-    <div class="score-card"><div class="score-icon">%</div><small>Income Yield</small><strong id="portfolioYield">—</strong><span>IG ISA + Trade 212 only</span></div>
-    <div class="score-card amber"><div class="score-icon">🎯</div><small>Gap to £500/month</small><strong id="targetGap">—</strong><span id="targetGapNote">Promotion distance</span></div>
-  </section>
-
-  <div class="section-head"><div><h2>Match Analysis</h2><p>Progression, contribution and portfolio shape in one live review.</p></div><span class="badge blue" id="analysisStatus">Loading data</span></div>
-  <section class="chart-grid">
-    <article class="panel span-8">
-      <div class="panel-head"><div><h3>Annual Income Progression</h3><p>Estimated run-rate progression reconstructed from logged income changes.</p></div><span class="badge green" id="incomeTrendBadge">Form line</span></div>
-      <div class="chart-wrap"><canvas id="incomeProgressChart"></canvas><div class="chart-empty" id="incomeProgressEmpty">No dated income events are available yet.</div></div>
-    </article>
-    <article class="panel span-4">
-      <div class="panel-head"><div><h3>Income Target</h3><p>Current monthly run rate against the £500 target.</p></div><span class="badge amber">Promotion race</span></div>
-      <div class="chart-wrap compact"><canvas id="targetChart"></canvas><div class="chart-empty" id="targetEmpty">Target data unavailable.</div></div>
-    </article>
-
-    <article class="panel span-7">
-      <div class="panel-head"><div><h3>Dividend Contribution by Player</h3><p>Annual income contribution with duplicate account rows combined.</p></div><span class="badge green" id="topIncomeBadge">Top scorer</span></div>
-      <div class="chart-wrap tall"><canvas id="incomeContributionChart"></canvas><div class="chart-empty" id="incomeContributionEmpty">No dividend income rows found.</div></div>
-    </article>
-    <article class="panel span-5">
-      <div class="panel-head"><div><h3>Squad Shape by Sector</h3><p>Investing portfolio value across IG ISA and Trade 212.</p></div><span class="badge blue" id="sectorBadge">Shape check</span></div>
-      <div class="chart-wrap tall"><canvas id="sectorChart"></canvas><div class="chart-empty" id="sectorEmpty">No sector data found.</div></div>
-    </article>
-
-    <article class="panel span-8">
-      <div class="panel-head"><div><h3>Club Value Form</h3><p>Current squad replayed through available price-log dates. This is an indicative form line, not a transaction-perfect historical valuation.</p></div><span class="badge blue" id="valueTrendBadge">Last 30 logs</span></div>
-      <div class="chart-wrap"><canvas id="valueProgressChart"></canvas><div class="chart-empty" id="valueProgressEmpty">Price history is still building.</div></div>
-    </article>
-    <article class="panel span-4">
-      <div class="panel-head"><div><h3>Yield vs Buy Strength</h3><p>Income rate against Aurora’s current recruitment score.</p></div><span class="badge amber">Tactical map</span></div>
-      <div class="chart-wrap"><canvas id="yieldStrengthChart"></canvas><div class="chart-empty" id="yieldStrengthEmpty">Not enough scored holdings.</div></div>
-    </article>
-  </section>
-
-  <div class="section-head"><div><h2>Manager’s Review</h2><p>The key message behind the charts.</p></div><span class="badge green" id="verdictStatus">Analysis ready</span></div>
-  <section class="verdict-grid">
-    <article class="verdict-card">
-      <div class="verdict-main"><div class="manager-icon">🧠</div><div><h3 id="verdictTitle">Loading the match report…</h3><p id="verdictText">Aurora is checking income momentum, concentration and the next promotion gap.</p></div></div>
-      <div class="verdict-list" id="verdictList"></div>
-    </article>
-    <article class="verdict-card">
-      <div class="panel-head"><div><h3>Current Tactical Shape</h3><p>Where the investing squad is carrying the most weight.</p></div><span class="badge blue">Live exposure</span></div>
-      <div class="verdict-list" id="shapeList"></div>
-    </article>
-  </section>
-
-  <div class="section-head"><div><h2>Player Performance Table</h2><p>Combined view of value, income, yield and profit/loss by ticker.</p></div><span class="badge blue" id="playerCountBadge">— players</span></div>
-  <section class="panel">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Player</th><th>Role / Sector</th><th>Value</th><th>Annual Income</th><th>Yield</th><th>Profit / Loss</th><th>Buy Strength</th><th>Income Share</th></tr></thead>
-        <tbody id="playerTable"><tr><td colspan="8" class="loading">Loading player analysis…</td></tr></tbody>
-      </table>
-    </div>
-  </section>
-  <p class="footer-note">Performance Analysis Room uses the same AuroraMaster.json feed as the rest of Aurora City FC. Historical charts become stronger as PriceLog, IncomeLog and TradeReviewLog continue to build.</p>
+<section class="hero aurora-analysis-preserved">
+<div class="hero-inner">
+<div>
+<div class="kicker"><span class="dot"></span> Performance intelligence live</div>
+<h2>Analysis Room<span>See the whole match.</span></h2>
+<p class="hero-copy" id="heroCopy">Loading Aurora’s income form, squad contribution, risk shape and progression towards the next division.</p>
+<div class="hero-tags">
+<span class="hero-tag" id="dataFreshness">Aurora data: loading…</span>
+<span class="hero-tag">Primary objective: £500/month</span>
+<span class="hero-tag">Charts update from AuroraMaster.json</span>
+</div>
+</div>
+<div aria-label="Aurora performance tactics board" class="tactics-board">
+<div class="halfway"></div><div class="centre-circle"></div>
+<div class="tactic-chip tc1"><small>Attack</small><strong id="boardIncome">Income</strong></div>
+<div class="tactic-chip tc2"><small>Form</small><strong id="boardForm">Loading</strong></div>
+<div class="tactic-chip tc3"><small>Shape</small><strong id="boardShape">Balanced?</strong></div>
+<div class="tactic-chip tc4"><small>Control</small><strong id="boardYield">Yield</strong></div>
+<div class="tactic-chip tc5"><small>Target</small><strong id="boardTarget">£500/m</strong></div>
+</div>
+</div>
+</section>
+<section class="score-strip">
+<div class="score-card green"><div class="score-icon">⚽</div><small>Annual Income</small><strong id="annualIncome">—</strong><span id="annualIncomeNote">Current squad dividend run rate</span></div>
+<div class="score-card green"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span id="monthlyIncomeNote">Average monthly run rate</span></div>
+<div class="score-card"><div class="score-icon">🏟️</div><small>Club Value</small><strong id="clubValue">—</strong><span id="clubValueNote">All active holdings including Tesco</span></div>
+<div class="score-card"><div class="score-icon">%</div><small>Income Yield</small><strong id="portfolioYield">—</strong><span>IG ISA + Trade 212 only</span></div>
+<div class="score-card amber"><div class="score-icon">🎯</div><small>Gap to £500/month</small><strong id="targetGap">—</strong><span id="targetGapNote">Promotion distance</span></div>
+</section>
+<div class="section-head"><div><h2>Match Analysis</h2><p>Progression, contribution and portfolio shape in one live review.</p></div><span class="badge blue" id="analysisStatus">Loading data</span></div>
+<section class="chart-grid">
+<article class="panel span-8">
+<div class="panel-head"><div><h3>Annual Income Progression</h3><p>Estimated run-rate progression reconstructed from logged income changes.</p></div><span class="badge green" id="incomeTrendBadge">Form line</span></div>
+<div class="chart-wrap"><canvas id="incomeProgressChart"></canvas><div class="chart-empty" id="incomeProgressEmpty">No dated income events are available yet.</div></div>
+</article>
+<article class="panel span-4">
+<div class="panel-head"><div><h3>Income Target</h3><p>Current monthly run rate against the £500 target.</p></div><span class="badge amber">Promotion race</span></div>
+<div class="chart-wrap compact"><canvas id="targetChart"></canvas><div class="chart-empty" id="targetEmpty">Target data unavailable.</div></div>
+</article>
+<article class="panel span-7">
+<div class="panel-head"><div><h3>Dividend Contribution by Player</h3><p>Annual income contribution with duplicate account rows combined.</p></div><span class="badge green" id="topIncomeBadge">Top scorer</span></div>
+<div class="chart-wrap tall"><canvas id="incomeContributionChart"></canvas><div class="chart-empty" id="incomeContributionEmpty">No dividend income rows found.</div></div>
+</article>
+<article class="panel span-5">
+<div class="panel-head"><div><h3>Squad Shape by Sector</h3><p>Investing portfolio value across IG ISA and Trade 212.</p></div><span class="badge blue" id="sectorBadge">Shape check</span></div>
+<div class="chart-wrap tall"><canvas id="sectorChart"></canvas><div class="chart-empty" id="sectorEmpty">No sector data found.</div></div>
+</article>
+<article class="panel span-8">
+<div class="panel-head"><div><h3>Club Value Form</h3><p>Current squad replayed through available price-log dates. This is an indicative form line, not a transaction-perfect historical valuation.</p></div><span class="badge blue" id="valueTrendBadge">Last 30 logs</span></div>
+<div class="chart-wrap"><canvas id="valueProgressChart"></canvas><div class="chart-empty" id="valueProgressEmpty">Price history is still building.</div></div>
+</article>
+<article class="panel span-4">
+<div class="panel-head"><div><h3>Yield vs Buy Strength</h3><p>Income rate against Aurora’s current recruitment score.</p></div><span class="badge amber">Tactical map</span></div>
+<div class="chart-wrap"><canvas id="yieldStrengthChart"></canvas><div class="chart-empty" id="yieldStrengthEmpty">Not enough scored holdings.</div></div>
+</article>
+</section>
+<div class="section-head"><div><h2>Manager’s Review</h2><p>The key message behind the charts.</p></div><span class="badge green" id="verdictStatus">Analysis ready</span></div>
+<section class="verdict-grid">
+<article class="verdict-card">
+<div class="verdict-main"><div class="manager-icon">🧠</div><div><h3 id="verdictTitle">Loading the match report…</h3><p id="verdictText">Aurora is checking income momentum, concentration and the next promotion gap.</p></div></div>
+<div class="verdict-list" id="verdictList"></div>
+</article>
+<article class="verdict-card">
+<div class="panel-head"><div><h3>Current Tactical Shape</h3><p>Where the investing squad is carrying the most weight.</p></div><span class="badge blue">Live exposure</span></div>
+<div class="verdict-list" id="shapeList"></div>
+</article>
+</section>
+<div class="section-head"><div><h2>Player Performance Table</h2><p>Combined view of value, income, yield and profit/loss by ticker.</p></div><span class="badge blue" id="playerCountBadge">— players</span></div>
+<section class="panel">
+<div class="table-wrap">
+<table>
+<thead><tr><th>Player</th><th>Role / Sector</th><th>Value</th><th>Annual Income</th><th>Yield</th><th>Profit / Loss</th><th>Buy Strength</th><th>Income Share</th></tr></thead>
+<tbody id="playerTable"><tr><td class="loading" colspan="8">Loading player analysis…</td></tr></tbody>
+</table>
+</div>
+</section>
+<p class="footer-note">Performance Analysis Room uses the same AuroraMaster.json feed as the rest of Aurora City FC. Historical charts become stronger as PriceLog, IncomeLog and TradeReviewLog continue to build.</p>
 </main>
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
