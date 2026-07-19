@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
+<!-- Build: Embedded TRIG account restriction fallback • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -3577,7 +3578,15 @@ function registrationSafety(form,p){
   const livePrice=parseNum(form.dataset.livePriceGbp);
   const allocation=parseNum(form.dataset.dealAllocation);
   const fees=parseNum(form.querySelector('[name="fees"]')?.value)||0;
-  if(window.AuroraFC&&!AuroraFC.accountAllowed(ticker,account)) blocking.push(`${registrationShortTicker(ticker)} is not available in ${account}. Select ${AuroraFC.allowedAccounts(ticker).join(' or ')}.`);
+  const tickerKey=registrationShortTicker(ticker);
+  const normalizedAccount=normalizeRegistrationAccount(account);
+  const allowedAccounts=(window.AuroraFC&&typeof AuroraFC.allowedAccounts==='function')
+    ? AuroraFC.allowedAccounts(ticker)
+    : (tickerKey==='TRIG'?['TRADE 212']:['IG ISA','TRADE 212']);
+  const accountAllowed=(window.AuroraFC&&typeof AuroraFC.accountAllowed==='function')
+    ? AuroraFC.accountAllowed(ticker,account)
+    : allowedAccounts.includes(normalizedAccount);
+  if(!accountAllowed) blocking.push(`${tickerKey} is not available in ${account}. Select ${allowedAccounts.join(' or ')}.`);
   if(currency==='USD'&&unit!=='USD') blocking.push('USD purchases must use USD per share.');
   if(currency==='GBP'&&unit==='USD') blocking.push('GBP purchases cannot use USD per share.');
   const enteredGbp=currency==='GBP'?registrationNativePrice(priceInput,unit):(Number.isFinite(p.fx)?registrationNativePrice(priceInput,unit)*p.fx:NaN);
