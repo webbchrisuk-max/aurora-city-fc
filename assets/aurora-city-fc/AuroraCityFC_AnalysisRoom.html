@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#030712" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+<title>Aurora City FC — Performance Analysis Room</title>
+<!-- Build: Photographic Analysis Hero Refresh • 19 Jul 2026 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#030712;--panel:#07111f;--panel2:#0b1730;--card:#0d1b34;--card2:#102345;
+  --line:rgba(148,163,184,.18);--line2:rgba(96,165,250,.30);--txt:#e5eefc;--muted:#93a4bd;
+  --soft:#cbd5e1;--blue:#60a5fa;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;
+  --red:#fb7185;--purple:#a78bfa;--shadow:0 18px 55px rgba(0,0,0,.35);--radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--txt);-webkit-font-smoothing:antialiased;min-height:100vh;
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.34),rgba(2,6,23,.82) 58%,rgba(2,6,23,.97)),
+    radial-gradient(circle at 12% 6%,rgba(34,211,238,.22),transparent 30%),
+    radial-gradient(circle at 88% 8%,rgba(96,165,250,.19),transparent 32%),
+    #030712;
+}
+a{color:inherit;text-decoration:none}button,input{font:inherit}
+.topbar{position:sticky;top:0;z-index:70;background:rgba(2,6,18,.78);backdrop-filter:blur(20px);border-bottom:1px solid rgba(125,211,252,.14)}
+.topbar-inner{width:min(1580px,100%);margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 18px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}.crest{width:58px;height:58px;border-radius:18px;overflow:hidden;border:1px solid rgba(125,211,252,.28);box-shadow:0 0 34px rgba(34,211,238,.18);background:#020617;flex:0 0 auto}.crest img{width:100%;height:100%;object-fit:cover}.brand h1{margin:0;font-size:24px;letter-spacing:-.045em;line-height:1}.brand p{margin:5px 0 0;color:#7dd3fc;font-size:13px;letter-spacing:.02em}
+.nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.nav a,.nav button{border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.68);color:#dbeafe;border-radius:999px;padding:10px 14px;font-size:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);cursor:pointer}.nav a:hover,.nav button:hover,.nav a.active{border-color:rgba(34,211,238,.48);color:#e0f2fe;background:rgba(8,47,73,.72);box-shadow:0 0 0 3px rgba(34,211,238,.08)}
+.app{width:min(1580px,100%);margin:0 auto;padding:0 18px 60px}
+.hero{position:relative;overflow:hidden;border:1px solid rgba(125,211,252,.24);border-radius:32px;margin:18px 0 16px;background:linear-gradient(115deg,rgba(2,6,18,.98),rgba(5,20,39,.94) 52%,rgba(8,47,73,.84));box-shadow:var(--shadow)}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(34,211,238,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.035) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(90deg,#000,transparent 70%)}
+.hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),var(--blue),transparent)}
+.hero-inner{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:20px;padding:28px}.kicker{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid rgba(34,211,238,.26);border-radius:999px;background:rgba(8,47,73,.44);color:#a5f3fc;font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 6px rgba(52,211,153,.12)}
+.hero h2{margin:16px 0 8px;font-size:clamp(36px,5vw,68px);line-height:.92;letter-spacing:-.065em}.hero h2 span{display:block;color:#7dd3fc}.hero-copy{margin:0;max-width:790px;color:#dbeafe;font-size:clamp(15px,1.35vw,19px);line-height:1.48}.hero-tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.hero-tag{border:1px solid rgba(148,163,184,.18);background:rgba(2,6,23,.5);border-radius:999px;padding:9px 12px;color:#b6c6dd;font-size:12px;font-weight:800}
+.tactics-board{position:relative;min-height:220px;border-radius:24px;border:1px solid rgba(52,211,153,.25);overflow:hidden;background:linear-gradient(180deg,rgba(5,46,22,.42),rgba(5,35,26,.62)),repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0 7.5%,rgba(255,255,255,.055) 7.5% 15%);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.tactics-board:before{content:"";position:absolute;inset:9px;border:1px solid rgba(209,250,229,.32);border-radius:16px}.halfway{position:absolute;left:50%;top:9px;bottom:9px;width:1px;background:rgba(209,250,229,.32)}.centre-circle{position:absolute;width:74px;height:74px;border:1px solid rgba(209,250,229,.32);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}.tactic-chip{position:absolute;transform:translate(-50%,-50%);min-width:82px;text-align:center;padding:8px 10px;border:1px solid rgba(125,211,252,.32);border-radius:15px;background:rgba(2,6,23,.84);box-shadow:0 8px 24px rgba(0,0,0,.32)}.tactic-chip small{display:block;color:#94a3b8;font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}.tactic-chip strong{display:block;margin-top:3px;color:#dff7ff;font-size:13px}.tc1{left:22%;top:26%}.tc2{left:68%;top:24%}.tc3{left:50%;top:51%}.tc4{left:26%;top:78%}.tc5{left:76%;top:76%}
+.score-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:16px 0}.score-card{position:relative;overflow:hidden;min-height:128px;border:1px solid rgba(125,211,252,.18);border-radius:24px;background:linear-gradient(180deg,rgba(13,31,58,.84),rgba(5,14,28,.92));padding:18px;box-shadow:0 14px 44px rgba(0,0,0,.26)}.score-card:before{content:"";position:absolute;right:-42px;top:-44px;width:120px;height:120px;border-radius:50%;background:rgba(96,165,250,.13)}.score-card.green:before{background:rgba(52,211,153,.12)}.score-card.amber:before{background:rgba(251,191,36,.12)}.score-icon{position:absolute;right:17px;top:15px;color:#7dd3fc;font-size:18px}.score-card small{display:block;color:#94a3b8;text-transform:uppercase;letter-spacing:.12em;font-size:10px;font-weight:900}.score-card strong{display:block;margin-top:12px;font-size:25px;letter-spacing:-.04em}.score-card.green strong{color:#86efac}.score-card.amber strong{color:#fde68a}.score-card span{display:block;margin-top:9px;color:#91a5bd;font-size:11px;line-height:1.35}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:28px 2px 12px}.section-head h2{margin:0;font-size:24px;letter-spacing:-.04em}.section-head p{margin:5px 0 0;color:var(--muted);font-size:13px}.badge{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(148,163,184,.18);border-radius:999px;padding:7px 10px;background:rgba(15,23,42,.7);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:900;color:#cbd5e1}.badge.green{color:#86efac;border-color:rgba(52,211,153,.28);background:rgba(6,78,59,.28)}.badge.blue{color:#7dd3fc;border-color:rgba(34,211,238,.28);background:rgba(8,47,73,.35)}.badge.amber{color:#fde68a;border-color:rgba(251,191,36,.28);background:rgba(120,53,15,.25)}.badge.red{color:#fda4af;border-color:rgba(251,113,133,.28);background:rgba(127,29,29,.25)}
+.chart-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:15px}.panel{position:relative;overflow:hidden;border:1px solid rgba(125,211,252,.17);border-radius:24px;background:linear-gradient(180deg,rgba(10,26,48,.86),rgba(5,14,28,.94));box-shadow:0 14px 44px rgba(0,0,0,.25);padding:18px}.panel:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,rgba(96,165,250,.08),transparent 30%);pointer-events:none}.panel.span-8{grid-column:span 8}.panel.span-7{grid-column:span 7}.panel.span-6{grid-column:span 6}.panel.span-5{grid-column:span 5}.panel.span-4{grid-column:span 4}.panel-head{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}.panel-head h3{margin:0;font-size:17px;letter-spacing:-.025em}.panel-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.4}.chart-wrap{position:relative;height:330px}.chart-wrap.tall{height:390px}.chart-wrap.compact{height:280px}.chart-empty{position:absolute;inset:0;display:none;place-items:center;text-align:center;color:#93a4bd;padding:30px;border:1px dashed rgba(148,163,184,.16);border-radius:18px;background:rgba(2,6,23,.24)}
+.verdict-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:15px}.verdict-card{border:1px solid rgba(125,211,252,.17);border-radius:24px;background:linear-gradient(180deg,rgba(10,26,48,.86),rgba(5,14,28,.94));padding:20px;box-shadow:0 14px 44px rgba(0,0,0,.25)}.verdict-main{display:flex;gap:16px;align-items:flex-start}.manager-icon{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(34,211,238,.2),rgba(96,165,250,.18));border:1px solid rgba(125,211,252,.25);font-size:28px;flex:0 0 auto}.verdict-card h3{margin:0;font-size:19px}.verdict-card p{margin:8px 0 0;color:#c5d3e6;line-height:1.55;font-size:13px}.verdict-list{display:grid;gap:10px;margin-top:16px}.verdict-row{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;padding:11px 12px;border:1px solid rgba(148,163,184,.14);border-radius:16px;background:rgba(2,6,23,.38)}.verdict-dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 5px rgba(34,211,238,.08)}.verdict-row strong{font-size:12px}.verdict-row span{font-size:11px;color:#91a5bd}.verdict-value{font-weight:900;color:#dff7ff;font-size:12px;text-align:right}
+.table-wrap{overflow:auto;border:1px solid rgba(148,163,184,.13);border-radius:18px}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:12px 13px;text-align:left;border-bottom:1px solid rgba(148,163,184,.1);font-size:12px}th{position:sticky;top:0;background:#0a1730;color:#93c5fd;text-transform:uppercase;letter-spacing:.09em;font-size:9px;z-index:2}td{color:#d6e2f2}tr:last-child td{border-bottom:0}.ticker{font-weight:900;color:#e0f2fe}.positive{color:#86efac!important}.negative{color:#fda4af!important}.neutral{color:#cbd5e1!important}.mini-bar{height:6px;border-radius:999px;background:rgba(148,163,184,.13);overflow:hidden;min-width:100px}.mini-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--cyan),var(--green))}
+.loading{padding:28px;text-align:center;color:#93a4bd}.error{color:#fda4af}.footer-note{margin:20px 2px 0;color:#72849e;font-size:11px;line-height:1.55;text-align:center}
+@media(max-width:1180px){.score-strip{grid-template-columns:repeat(3,1fr)}.panel.span-8,.panel.span-7{grid-column:span 12}.panel.span-5,.panel.span-4,.panel.span-6{grid-column:span 6}.hero-inner{grid-template-columns:1fr}.tactics-board{min-height:230px}}
+@media(max-width:760px){.topbar-inner{align-items:flex-start}.brand h1{font-size:19px}.brand p{font-size:11px}.crest{width:48px;height:48px}.nav{gap:6px}.nav a,.nav button{padding:8px 10px;font-size:11px}.app{padding:0 11px 42px}.hero{border-radius:24px}.hero-inner{padding:20px}.hero h2{font-size:40px}.score-strip{grid-template-columns:1fr 1fr;gap:10px}.score-card{min-height:116px;padding:15px}.score-card strong{font-size:21px}.panel.span-8,.panel.span-7,.panel.span-6,.panel.span-5,.panel.span-4{grid-column:span 12}.chart-wrap,.chart-wrap.tall{height:300px}.verdict-grid{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.tactics-board{min-height:220px}.tactic-chip{min-width:70px;padding:7px 8px}.tactic-chip strong{font-size:11px}}
+@media(max-width:480px){.score-strip{grid-template-columns:1fr}.hero h2{font-size:35px}.hero-tags{display:grid}.hero-tag{text-align:center}.chart-wrap{height:280px}.tc1{left:24%}.tc2{left:73%}.tc4{left:25%}.tc5{left:75%}}
+
+
+/* ================= UNIVERSAL AURORA SLIDE-OUT SIDEBAR ================= */
+:root{
+  --fm-sidebar:238px;
+  --fm-sidebar-compact:214px;
+}
+
+html{scroll-behavior:smooth}
+body{overflow-x:hidden}
+
+.fm-shell{
+  display:block!important;
+  min-height:100vh;
+}
+
+.fm-sidebar{
+  position:fixed!important;
+  top:0!important;
+  left:0!important;
+  width:var(--fm-sidebar)!important;
+  height:100vh!important;
+  z-index:110!important;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  transform:translateX(0);
+  border-right:1px solid rgba(125,211,252,.18);
+  background:
+    radial-gradient(circle at 20% 0%,rgba(34,211,238,.12),transparent 30%),
+    linear-gradient(180deg,rgba(5,18,38,.99),rgba(2,7,18,.995));
+  box-shadow:18px 0 60px rgba(0,0,0,.30);
+  transition:transform .26s cubic-bezier(.2,.8,.2,1);
+  will-change:transform;
+}
+
+.fm-workspace{
+  position:relative;
+  min-width:0;
+  margin-left:var(--fm-sidebar);
+  transition:margin-left .26s cubic-bezier(.2,.8,.2,1);
+}
+
+body.fm-sidebar-hidden .fm-sidebar{
+  transform:translateX(calc(-100% - 18px));
+}
+
+body.fm-sidebar-hidden .fm-workspace{
+  margin-left:0;
+}
+
+.fm-side-brand{
+  position:relative;
+  flex:0 0 auto;
+  min-height:82px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 15px;
+  border-bottom:1px solid rgba(125,211,252,.14);
+  background:rgba(2,6,18,.34);
+}
+
+.fm-side-crest{
+  width:48px;
+  height:48px;
+  flex:0 0 auto;
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.28);
+  border-radius:15px;
+  box-shadow:0 0 26px rgba(34,211,238,.16);
+}
+
+.fm-side-crest img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.fm-side-brand strong{
+  display:block;
+  color:#f0f9ff;
+  font-size:15px;
+  letter-spacing:-.035em;
+}
+
+.fm-side-brand span{
+  display:block;
+  margin-top:4px;
+  color:#67e8f9;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.fm-side-scroll{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  padding:11px 9px 20px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(125,211,252,.25) transparent;
+}
+
+.fm-nav-group{
+  margin:13px 10px 7px;
+  color:#64748b;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+
+.fm-side-link{
+  min-height:42px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr);
+  align-items:center;
+  gap:7px;
+  margin:2px 0;
+  padding:7px 9px;
+  border:1px solid transparent;
+  border-radius:11px;
+  color:#cbd5e1;
+  background:transparent;
+  font-size:13px;
+  font-weight:750;
+  transition:background .18s,border-color .18s,color .18s,transform .18s;
+}
+
+.fm-side-link:hover{
+  color:#f0f9ff;
+  border-color:rgba(125,211,252,.16);
+  background:rgba(30,64,175,.18);
+  transform:translateX(2px);
+}
+
+.fm-side-link.active{
+  color:#fff;
+  border-color:rgba(34,211,238,.40);
+  background:linear-gradient(90deg,rgba(14,116,144,.62),rgba(30,64,175,.36));
+  box-shadow:inset 3px 0 0 #67e8f9,0 8px 22px rgba(2,132,199,.12);
+}
+
+.fm-side-icon{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:rgba(148,163,184,.08);
+  color:#7dd3fc;
+  font-size:15px;
+}
+
+.fm-side-link.active .fm-side-icon{
+  color:#ecfeff;
+  background:rgba(34,211,238,.18);
+}
+
+.fm-side-folder{
+  margin:2px 0;
+  overflow:hidden;
+  border:1px solid transparent;
+  border-radius:11px;
+}
+
+.fm-side-folder[open],
+.fm-side-folder.active{
+  border-color:rgba(125,211,252,.16);
+  background:rgba(8,47,73,.18);
+}
+
+.fm-side-folder summary{
+  min-height:42px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) 18px;
+  align-items:center;
+  gap:7px;
+  padding:7px 9px;
+  border-radius:11px;
+  color:#cbd5e1;
+  cursor:pointer;
+  list-style:none;
+  font-size:13px;
+  font-weight:750;
+  user-select:none;
+  transition:background .18s,color .18s;
+}
+
+.fm-side-folder summary::-webkit-details-marker{display:none}
+
+.fm-side-folder summary:hover,
+.fm-side-folder.active summary{
+  color:#f0f9ff;
+  background:rgba(30,64,175,.18);
+}
+
+.fm-folder-arrow{
+  color:#64748b;
+  font-size:17px;
+  text-align:center;
+  transition:transform .18s,color .18s;
+}
+
+.fm-side-folder[open] .fm-folder-arrow{
+  color:#67e8f9;
+  transform:rotate(90deg);
+}
+
+.fm-side-submenu{
+  display:grid;
+  gap:2px;
+  padding:2px 7px 9px 42px;
+}
+
+.fm-side-submenu a{
+  position:relative;
+  min-height:31px;
+  display:flex;
+  align-items:center;
+  padding:6px 9px;
+  border-radius:8px;
+  color:#8fa2ba;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.2;
+}
+
+.fm-side-submenu a:before{
+  content:"";
+  position:absolute;
+  left:-12px;
+  width:7px;
+  height:1px;
+  background:rgba(125,211,252,.28);
+}
+
+.fm-side-submenu a:hover,
+.fm-side-submenu a.active{
+  color:#e0f2fe;
+  background:rgba(30,64,175,.22);
+}
+
+.fm-side-footer{
+  flex:0 0 auto;
+  display:grid;
+  gap:5px;
+  padding:10px 9px 13px;
+  border-top:1px solid rgba(125,211,252,.14);
+  background:rgba(2,6,18,.54);
+}
+
+.fm-side-action,
+.fm-side-footer .aurora-system-button{
+  position:static!important;
+  right:auto!important;
+  bottom:auto!important;
+  z-index:auto!important;
+  width:100%!important;
+  min-height:42px!important;
+  display:grid!important;
+  grid-template-columns:30px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:7px!important;
+  padding:7px 9px!important;
+  border:1px solid rgba(125,211,252,.13)!important;
+  border-radius:11px!important;
+  background:rgba(15,23,42,.46)!important;
+  color:#cbd5e1!important;
+  text-align:left!important;
+  font-size:13px!important;
+  font-weight:750!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+  box-shadow:none!important;
+  cursor:pointer;
+}
+
+.fm-side-action:before,
+.fm-side-footer .aurora-system-button:before{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:rgba(148,163,184,.08);
+  color:#7dd3fc;
+}
+
+.fm-side-action:before{content:"↻"}
+.fm-side-footer .aurora-system-button:before{content:"✓"}
+
+.fm-side-action:hover,
+.fm-side-footer .aurora-system-button:hover{
+  color:#f0f9ff!important;
+  border-color:rgba(125,211,252,.24)!important;
+  background:rgba(30,64,175,.18)!important;
+}
+
+.fm-side-clock{
+  padding:6px 10px 2px;
+  color:#64748b;
+  font-size:10px;
+  letter-spacing:.05em;
+  text-align:center;
+}
+
+.fm-sidebar-collapse{
+  position:absolute;
+  top:50%;
+  right:-14px;
+  z-index:3;
+  width:28px;
+  height:62px;
+  display:grid;
+  place-items:center;
+  transform:translateY(-50%);
+  border:1px solid rgba(34,211,238,.30);
+  border-left:0;
+  border-radius:0 12px 12px 0;
+  background:rgba(4,18,36,.97);
+  color:#67e8f9;
+  font-size:24px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:9px 0 24px rgba(0,0,0,.30);
+}
+
+.fm-sidebar-collapse:hover{
+  color:#ecfeff;
+  background:rgba(8,47,73,.98);
+}
+
+.fm-sidebar-edge-zone{
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:109;
+  width:24px;
+  opacity:0;
+  pointer-events:none;
+  cursor:e-resize;
+  touch-action:pan-y;
+  transition:opacity .18s ease;
+}
+
+body.fm-sidebar-hidden .fm-sidebar-edge-zone{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.fm-sidebar-edge-handle{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:18px;
+  height:92px;
+  display:grid;
+  place-items:center;
+  transform:translateY(-50%);
+  border:1px solid rgba(34,211,238,.34);
+  border-left:0;
+  border-radius:0 13px 13px 0;
+  background:linear-gradient(180deg,rgba(4,18,36,.98),rgba(8,47,73,.94));
+  color:#67e8f9;
+  font-size:21px;
+  font-weight:1000;
+  box-shadow:8px 0 28px rgba(0,0,0,.34),0 0 18px rgba(34,211,238,.08);
+}
+
+.fm-sidebar-edge-zone:hover .fm-sidebar-edge-handle,
+.fm-sidebar-edge-zone:focus .fm-sidebar-edge-handle{
+  color:#ecfeff;
+  border-color:rgba(34,211,238,.56);
+  background:linear-gradient(180deg,rgba(8,47,73,.98),rgba(14,116,144,.82));
+}
+
+.fm-sidebar,
+.fm-sidebar-edge-zone{
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* Remove old page-level navigation shells after the HTML is replaced. */
+.fm-workspace > .topbar,
+.fm-workspace > .transfer-command-bar{
+  display:none!important;
+}
+
+/* Fixed page utilities follow the sidebar width. */
+.bottom-ticker{
+  left:var(--fm-sidebar)!important;
+  transition:left .26s cubic-bezier(.2,.8,.2,1);
+}
+
+body.fm-sidebar-hidden .bottom-ticker{
+  left:0!important;
+}
+
+/* The system-check popup remains usable from the shared sidebar. */
+.aurora-system-panel{
+  right:18px!important;
+}
+
+body.fm-sidebar-hidden .aurora-system-panel{
+  right:18px!important;
+}
+
+/* Transfer deep links no longer need to clear a top navigation bar. */
+#transfer-overview,
+#best-return-allocation,
+#top-transfer-board,
+#deal-sheet,
+#registration-desk,
+#incoming-offers,
+#sell-desk,
+#transfer-bench,
+#no-buy-watch{
+  scroll-margin-top:18px!important;
+}
+
+@media(max-width:1180px){
+  .fm-sidebar{
+    width:var(--fm-sidebar-compact)!important;
+  }
+
+  .fm-workspace{
+    margin-left:var(--fm-sidebar-compact);
+  }
+
+  .bottom-ticker{
+    left:var(--fm-sidebar-compact)!important;
+  }
+
+  .fm-side-link,
+  .fm-side-folder summary,
+  .fm-side-action,
+  .fm-side-footer .aurora-system-button{
+    font-size:12px!important;
+  }
+}
+
+@media(max-width:900px){
+  .fm-sidebar{
+    width:198px!important;
+  }
+
+  .fm-workspace{
+    margin-left:198px;
+  }
+
+  .bottom-ticker{
+    left:198px!important;
+  }
+
+  body.fm-sidebar-hidden .fm-workspace{
+    margin-left:0;
+  }
+
+  body.fm-sidebar-hidden .bottom-ticker{
+    left:0!important;
+  }
+
+  .fm-side-brand{
+    padding-left:10px;
+    padding-right:10px;
+  }
+}
+
+@media(pointer:coarse){
+  .fm-sidebar-edge-zone{width:30px}
+
+  .fm-sidebar-edge-handle{
+    width:21px;
+    height:104px;
+  }
+
+  .fm-sidebar-collapse{
+    width:31px;
+    height:68px;
+    right:-17px;
+  }
+}
+
+
+
+/* ================= LOCKED SIDEBAR FOOTER FIX ================= */
+.fm-sidebar{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  height:100dvh!important;
+  min-height:100svh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+}
+
+.fm-side-brand{
+  grid-row:1!important;
+  min-height:76px!important;
+  flex:none!important;
+  position:relative!important;
+  z-index:4!important;
+}
+
+.fm-side-scroll{
+  grid-row:2!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  scroll-padding-bottom:18px!important;
+  padding:10px 9px 18px!important;
+  position:relative!important;
+  z-index:1!important;
+}
+
+.fm-side-scroll:after{
+  content:"";
+  display:block;
+  height:8px;
+}
+
+.fm-side-footer{
+  grid-row:3!important;
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  flex:none!important;
+  width:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:8px 9px calc(10px + env(safe-area-inset-bottom))!important;
+  overflow:visible!important;
+  z-index:6!important;
+  border-top:1px solid rgba(125,211,252,.22)!important;
+  background:linear-gradient(180deg,rgba(3,12,27,.99),rgba(2,7,18,1))!important;
+  box-shadow:0 -14px 28px rgba(0,0,0,.34)!important;
+}
+
+.fm-side-footer .fm-side-action,
+.fm-side-footer .aurora-system-button{
+  min-height:38px!important;
+  height:38px!important;
+  margin:0!important;
+  padding:5px 8px!important;
+  font-size:11px!important;
+  line-height:1!important;
+}
+
+.fm-side-footer .fm-side-action:before,
+.fm-side-footer .aurora-system-button:before{
+  width:25px!important;
+  height:25px!important;
+  border-radius:8px!important;
+}
+
+.fm-side-clock{
+  min-height:18px!important;
+  padding:4px 6px 0!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+}
+
+.fm-side-scroll .fm-nav-group:last-of-type{
+  margin-top:13px!important;
+}
+
+.fm-side-scroll .fm-side-link:last-child{
+  margin-bottom:4px!important;
+}
+
+@supports not (height:100dvh){
+  .fm-sidebar{
+    height:100vh!important;
+    max-height:100vh!important;
+  }
+}
+
+@media(max-height:720px){
+  .fm-side-brand{
+    min-height:64px!important;
+    padding-top:8px!important;
+    padding-bottom:8px!important;
+  }
+
+  .fm-side-crest{
+    width:42px!important;
+    height:42px!important;
+  }
+
+  .fm-side-scroll{
+    padding-top:7px!important;
+    padding-bottom:10px!important;
+  }
+
+  .fm-nav-group{
+    margin-top:8px!important;
+    margin-bottom:4px!important;
+  }
+
+  .fm-side-link,
+  .fm-side-folder summary{
+    min-height:37px!important;
+    padding-top:4px!important;
+    padding-bottom:4px!important;
+  }
+
+  .fm-side-footer{
+    gap:3px!important;
+    padding-top:6px!important;
+  }
+
+  .fm-side-footer .fm-side-action,
+  .fm-side-footer .aurora-system-button{
+    min-height:34px!important;
+    height:34px!important;
+  }
+
+  .fm-side-clock{
+    display:none!important;
+  }
+}
+
+
+
+/* ================= COMPACT TRANSFER MENU FOOTER ================= */
+body.fm-transfer-menu-open .fm-side-footer .fm-side-action,
+body.fm-transfer-menu-open .fm-side-footer .fm-side-clock{
+  display:none!important;
+}
+
+/* On every page except Home, collapse the footer completely while the
+   Transfer Centre submenu is open. Home keeps System Check available. */
+body.fm-transfer-menu-open:not(.fm-has-system-check) .fm-side-footer{
+  min-height:0!important;
+  height:0!important;
+  padding:0!important;
+  gap:0!important;
+  overflow:hidden!important;
+  border-top:0!important;
+  box-shadow:none!important;
+}
+
+/* Home retains a compact System Check-only footer while the menu is open. */
+body.fm-transfer-menu-open.fm-has-system-check .fm-side-footer{
+  padding-top:6px!important;
+}
+
+body.fm-transfer-menu-open.fm-has-system-check
+.fm-side-footer .aurora-system-button{
+  margin:0!important;
+}
+
+/* Give the navigation all remaining room immediately after the footer shrinks. */
+body.fm-transfer-menu-open .fm-side-scroll{
+  padding-bottom:10px!important;
+}
+
+
+
+/* ================= PHOTOGRAPHIC HERO REFRESH ================= */
+.aurora-photo-hero{
+  position:relative;
+  overflow:hidden;
+  min-height:372px;
+  margin:18px 0 16px;
+  padding:24px;
+  display:flex;
+  align-items:flex-end;
+  border:1px solid rgba(125,211,252,.24);
+  border-radius:30px;
+  background:#020617;
+  box-shadow:0 28px 60px rgba(0,0,0,.30);
+}
+.aurora-photo-banner{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+}
+.aurora-photo-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.92) 0%,rgba(2,6,23,.72) 42%,rgba(2,6,23,.30) 74%,rgba(2,6,23,.14) 100%),
+    radial-gradient(circle at 84% 18%,rgba(34,211,238,.16),transparent 30%);
+  z-index:0;
+}
+.aurora-photo-hero:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,#22d3ee,#60a5fa,transparent);
+  z-index:1;
+}
+.aurora-photo-content{
+  position:relative;
+  z-index:2;
+  max-width:860px;
+}
+.aurora-photo-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 11px;
+  border:1px solid rgba(191,219,254,.18);
+  border-radius:999px;
+  background:rgba(15,23,42,.44);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:900;
+}
+.aurora-photo-kicker-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 12px rgba(34,197,94,.66);
+}
+.aurora-photo-title{
+  margin:14px 0 0;
+  font-size:clamp(40px,7vw,90px);
+  line-height:.9;
+  letter-spacing:-.07em;
+  text-transform:uppercase;
+}
+.aurora-photo-title span{
+  display:block;
+  color:#22d3ee;
+  text-shadow:0 0 24px rgba(34,211,238,.22);
+}
+.aurora-photo-sub{
+  margin:14px 0 0;
+  max-width:720px;
+  color:#dbeafe;
+  font-size:15px;
+  line-height:1.5;
+}
+.aurora-photo-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.aurora-photo-pill{
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(2,6,23,.56);
+  border-radius:999px;
+  padding:9px 12px;
+  color:#cbd5e1;
+  font-size:12px;
+  white-space:nowrap;
+}
+.aurora-photo-meta{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+  max-width:960px;
+}
+.aurora-photo-stat{
+  border:1px solid rgba(125,211,252,.16);
+  background:rgba(2,6,23,.54);
+  border-radius:18px;
+  padding:14px 15px;
+  backdrop-filter:blur(2px);
+}
+.aurora-photo-stat small{
+  display:block;
+  color:#93c5fd;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.aurora-photo-stat strong{
+  display:block;
+  margin-top:6px;
+  font-size:28px;
+  line-height:1;
+  letter-spacing:-.05em;
+  color:#f8fafc;
+}
+.aurora-photo-stat span{
+  display:block;
+  margin-top:6px;
+  color:#cbd5e1;
+  font-size:12px;
+  line-height:1.35;
+}
+.aurora-photo-meta.analysis-meta{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
+@media(max-width:1180px){
+  .aurora-photo-meta.analysis-meta{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+@media(max-width:900px){
+  .aurora-photo-hero{
+    min-height:344px;
+    padding:18px;
+    border-radius:24px;
+  }
+  .aurora-photo-meta,
+  .aurora-photo-meta.analysis-meta{
+    grid-template-columns:1fr;
+  }
+  .aurora-photo-stat strong{
+    font-size:24px;
+  }
+}
+
+</style>
+<script src="AuroraFCData.js"></script>
+</head>
+<body>
+
+<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone"
+     aria-label="Open navigation" role="button" tabindex="0">
+  <span class="fm-sidebar-edge-handle">›</span>
+</div>
+
+<div class="fm-shell">
+  <aside class="fm-sidebar" aria-label="Aurora City FC navigation">
+    <div class="fm-side-brand">
+      <button class="fm-sidebar-collapse" id="fmSidebarCollapse"
+              type="button" aria-label="Hide navigation"
+              title="Hide navigation">‹</button>
+
+      <div class="fm-side-crest">
+        <img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"
+             alt="Aurora City FC crest">
+      </div>
+
+      <div>
+        <strong>Aurora City FC</strong>
+        <span>Club HQ</span>
+      </div>
+    </div>
+
+    <nav class="fm-side-scroll">
+      <div class="fm-nav-group">Navigation</div>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_ManagerDashboard.html">
+        <span class="fm-side-icon">⌂</span>
+        <span>Home</span>
+      </a>
+
+      <div class="fm-nav-group">Performance</div>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_SquadHub.html">
+        <span class="fm-side-icon">♟</span>
+        <span>Squad Hub</span>
+      </a>
+
+      <a class="fm-side-link active"
+         href="AuroraCityFC_AnalysisRoom.html">
+        <span class="fm-side-icon">⌁</span>
+        <span>Analysis Room</span>
+      </a>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_TrainingGround.html">
+        <span class="fm-side-icon">▲</span>
+        <span>Training Ground</span>
+      </a>
+
+      <div class="fm-nav-group">Recruitment</div>
+
+      <details class="fm-side-folder"
+               id="transferSideMenu">
+        <summary>
+          <span class="fm-side-icon">⇄</span>
+          <span>Transfer Centre</span>
+          <span class="fm-folder-arrow">›</span>
+        </summary>
+
+        <div class="fm-side-submenu">
+<a href="AuroraCityFC_TransferCentre.html#transfer-overview">Overview</a>
+          <a href="AuroraCityFC_TransferCentre.html#incoming-offers">Incoming Offers</a>
+          <a href="AuroraCityFC_TransferCentre.html#deal-sheet">Deal Sheet</a>
+          <a href="AuroraCityFC_TransferCentre.html#sell-desk">Sell Desk</a>
+          <a href="AuroraCityFC_TransferCentre.html#best-return-allocation">Best Return</a>
+          <a href="AuroraCityFC_TransferCentre.html#registration-desk">Registration</a>
+          <a href="AuroraCityFC_TransferCentre.html#top-transfer-board">Transfer Board</a>
+          <a href="AuroraCityFC_TransferCentre.html#transfer-bench">Bench</a>
+        </div>
+      </details>
+
+      <div class="fm-nav-group">Club</div>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_Boardroom.html">
+        <span class="fm-side-icon">♜</span>
+        <span>Boardroom</span>
+      </a>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_MediaCentre.html">
+        <span class="fm-side-icon">●</span>
+        <span>Media Centre</span>
+      </a>
+    </nav>
+
+    <div class="fm-side-footer">
+      <button class="fm-side-action" id="refreshBtn" type="button">Refresh Data</button>
+      
+      <div class="fm-side-clock" id="fmClock">Manager session live</div>
+    </div>
+  </aside>
+
+  <div class="fm-workspace">
+
+
+<main class="app" id="analysis">
+
+  <section class="aurora-photo-hero" aria-label="Analysis Room hero">
+    <img class="aurora-photo-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/analysis-room-performance-lab.png" alt="Analysis Room performance lab hero">
+    <div class="aurora-photo-content">
+      <div class="aurora-photo-kicker"><span class="aurora-photo-kicker-dot"></span> Performance intelligence live</div>
+      <h2 class="aurora-photo-title">Analysis <span>Room</span></h2>
+      <p class="aurora-photo-sub" id="heroCopy">Loading Aurora’s income form, squad contribution, risk shape and progression towards the next division.</p>
+      <div class="aurora-photo-actions">
+        <span class="aurora-photo-pill" id="dataFreshness">Aurora data: loading…</span>
+        <span class="aurora-photo-pill">Primary objective: £500/month</span>
+        <span class="aurora-photo-pill">Charts update from AuroraMaster.json</span>
+      </div>
+      <div class="aurora-photo-meta analysis-meta">
+        <div class="aurora-photo-stat"><small>Income</small><strong id="boardIncome">Income</strong><span>Attack lane</span></div>
+        <div class="aurora-photo-stat"><small>Form</small><strong id="boardForm">Loading</strong><span>Current squad momentum</span></div>
+        <div class="aurora-photo-stat"><small>Shape</small><strong id="boardShape">Balanced?</strong><span>Portfolio structure</span></div>
+        <div class="aurora-photo-stat"><small>Control</small><strong id="boardYield">Yield</strong><span>Quality and discipline</span></div>
+        <div class="aurora-photo-stat"><small>Target</small><strong id="boardTarget">£500/m</strong><span>Promotion objective</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="score-strip">
+    <div class="score-card green"><div class="score-icon">⚽</div><small>Annual Income</small><strong id="annualIncome">—</strong><span id="annualIncomeNote">Current squad dividend run rate</span></div>
+    <div class="score-card green"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span id="monthlyIncomeNote">Average monthly run rate</span></div>
+    <div class="score-card"><div class="score-icon">🏟️</div><small>Club Value</small><strong id="clubValue">—</strong><span id="clubValueNote">All active holdings including Tesco</span></div>
+    <div class="score-card"><div class="score-icon">%</div><small>Income Yield</small><strong id="portfolioYield">—</strong><span>IG ISA + Trade 212 only</span></div>
+    <div class="score-card amber"><div class="score-icon">🎯</div><small>Gap to £500/month</small><strong id="targetGap">—</strong><span id="targetGapNote">Promotion distance</span></div>
+  </section>
+
+  <div class="section-head"><div><h2>Match Analysis</h2><p>Progression, contribution and portfolio shape in one live review.</p></div><span class="badge blue" id="analysisStatus">Loading data</span></div>
+  <section class="chart-grid">
+    <article class="panel span-8">
+      <div class="panel-head"><div><h3>Annual Income Progression</h3><p>Estimated run-rate progression reconstructed from logged income changes.</p></div><span class="badge green" id="incomeTrendBadge">Form line</span></div>
+      <div class="chart-wrap"><canvas id="incomeProgressChart"></canvas><div class="chart-empty" id="incomeProgressEmpty">No dated income events are available yet.</div></div>
+    </article>
+    <article class="panel span-4">
+      <div class="panel-head"><div><h3>Income Target</h3><p>Current monthly run rate against the £500 target.</p></div><span class="badge amber">Promotion race</span></div>
+      <div class="chart-wrap compact"><canvas id="targetChart"></canvas><div class="chart-empty" id="targetEmpty">Target data unavailable.</div></div>
+    </article>
+
+    <article class="panel span-7">
+      <div class="panel-head"><div><h3>Dividend Contribution by Player</h3><p>Annual income contribution with duplicate account rows combined.</p></div><span class="badge green" id="topIncomeBadge">Top scorer</span></div>
+      <div class="chart-wrap tall"><canvas id="incomeContributionChart"></canvas><div class="chart-empty" id="incomeContributionEmpty">No dividend income rows found.</div></div>
+    </article>
+    <article class="panel span-5">
+      <div class="panel-head"><div><h3>Squad Shape by Sector</h3><p>Investing portfolio value across IG ISA and Trade 212.</p></div><span class="badge blue" id="sectorBadge">Shape check</span></div>
+      <div class="chart-wrap tall"><canvas id="sectorChart"></canvas><div class="chart-empty" id="sectorEmpty">No sector data found.</div></div>
+    </article>
+
+    <article class="panel span-8">
+      <div class="panel-head"><div><h3>Club Value Form</h3><p>Current squad replayed through available price-log dates. This is an indicative form line, not a transaction-perfect historical valuation.</p></div><span class="badge blue" id="valueTrendBadge">Last 30 logs</span></div>
+      <div class="chart-wrap"><canvas id="valueProgressChart"></canvas><div class="chart-empty" id="valueProgressEmpty">Price history is still building.</div></div>
+    </article>
+    <article class="panel span-4">
+      <div class="panel-head"><div><h3>Yield vs Buy Strength</h3><p>Income rate against Aurora’s current recruitment score.</p></div><span class="badge amber">Tactical map</span></div>
+      <div class="chart-wrap"><canvas id="yieldStrengthChart"></canvas><div class="chart-empty" id="yieldStrengthEmpty">Not enough scored holdings.</div></div>
+    </article>
+  </section>
+
+  <div class="section-head"><div><h2>Manager’s Review</h2><p>The key message behind the charts.</p></div><span class="badge green" id="verdictStatus">Analysis ready</span></div>
+  <section class="verdict-grid">
+    <article class="verdict-card">
+      <div class="verdict-main"><div class="manager-icon">🧠</div><div><h3 id="verdictTitle">Loading the match report…</h3><p id="verdictText">Aurora is checking income momentum, concentration and the next promotion gap.</p></div></div>
+      <div class="verdict-list" id="verdictList"></div>
+    </article>
+    <article class="verdict-card">
+      <div class="panel-head"><div><h3>Current Tactical Shape</h3><p>Where the investing squad is carrying the most weight.</p></div><span class="badge blue">Live exposure</span></div>
+      <div class="verdict-list" id="shapeList"></div>
+    </article>
+  </section>
+
+  <div class="section-head"><div><h2>Player Performance Table</h2><p>Combined view of value, income, yield and profit/loss by ticker.</p></div><span class="badge blue" id="playerCountBadge">— players</span></div>
+  <section class="panel">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Player</th><th>Role / Sector</th><th>Value</th><th>Annual Income</th><th>Yield</th><th>Profit / Loss</th><th>Buy Strength</th><th>Income Share</th></tr></thead>
+        <tbody id="playerTable"><tr><td colspan="8" class="loading">Loading player analysis…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+  <p class="footer-note">Performance Analysis Room uses the same AuroraMaster.json feed as the rest of Aurora City FC. Historical charts become stronger as PriceLog, IncomeLog and TradeReviewLog continue to build.</p>
+</main>
+<script>
+const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const MONTHLY_TARGET = 500;
+const TABS = ["Holdings","IncomeLog","TradeReviewLog","PriceLog","DailyPriceSummary","LivePrices","Dividends","SectorLimits","MarketRegime"];
+let AURORA_MASTER_CACHE = null;
+let state = {};
+const charts = {};
+const $ = id => document.getElementById(id);
+const money = n => Number.isFinite(n) ? new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:2}).format(n) : "—";
+const money0 = n => Number.isFinite(n) ? new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n) : "—";
+const number1 = n => Number.isFinite(n) ? n.toFixed(1) : "—";
+const pct = n => Number.isFinite(n) ? `${(n*100).toFixed(2)}%` : "—";
+function parseNum(v){
+  if(v===null||v===undefined||v==="") return NaN;
+  if(typeof v==="number") return v;
+  const s=String(v).replace(/[£$,]/g,"").trim();
+  if(!s) return NaN;
+  if(s.endsWith("%")){const n=Number(s.slice(0,-1));return Number.isFinite(n)?n/100:NaN;}
+  const n=Number(s);return Number.isFinite(n)?n:NaN;
+}
+function norm(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]/g,"");}
+function cleanTicker(t){return String(t||"").trim().toUpperCase();}
+function shortTicker(t){return cleanTicker(t).replace("LON:","").replace(".L","");}
+function rowTicker(r){return shortTicker(r?.ticker??r?.Ticker??r?.symbol??r?.Symbol);}
+function rowName(r){return r?.name??r?.Name??r?.company??r?.Company??r?.security_name??rowTicker(r)??"—";}
+function rowDate(r){return r?.date??r?.Date??r?.timestamp??r?.Timestamp??r?.created_at??r?.CreatedAt??r?.checked_at;}
+function toDate(v){
+  if(v instanceof Date&&!isNaN(v)) return v;
+  if(typeof v==="number"&&v>25000&&v<80000) return new Date(Math.round((v-25569)*86400*1000));
+  if(!v) return null;
+  const d=new Date(v);return isNaN(d)?null:d;
+}
+function dateLabel(d){return d?d.toLocaleDateString("en-GB",{day:"numeric",month:"short"}):"—";}
+function statusText(r){return String(r?.status??r?.Status??r?.trial_status??"").toLowerCase();}
+function isActiveHolding(r){
+  if(/sold|exit|exited|closed|removed|inactive/.test(statusText(r))) return false;
+  const q=parseNum(r?.shares??r?.quantity??r?.units??r?.Shares);
+  const v=parseNum(r?.current_value??r?.market_value??r?.value??r?.Value);
+  return (Number.isFinite(q)&&q>0)||(Number.isFinite(v)&&v>0);
+}
+function accountText(r){return String(r?.account??r?.platform??r?.broker??r?.Account??"").trim().toUpperCase();}
+function isIncomeAccount(r){const a=accountText(r);return a==="IG ISA"||a==="TRADE 212"||a==="TRADING 212"||a==="TRADING 212 ISA"||a==="TRADE212 ISA";}
+function holdingValue(r){
+  const v=parseNum(r?.current_value??r?.market_value??r?.holding_value??r?.value??r?.Value);if(Number.isFinite(v))return v;
+  const q=parseNum(r?.shares??r?.quantity??r?.units);const p=parseNum(r?.live_price??r?.price);return Number.isFinite(q)&&Number.isFinite(p)?q*p:0;
+}
+function annualIncome(r){
+  const direct=parseNum(r?.annual_dps_total??r?.Annual_DPS_Total??r?.annual_income??r?.income_annual??r?.dividend_income??r?.["Annual Income"]);if(Number.isFinite(direct))return direct;
+  const q=parseNum(r?.shares??r?.quantity??r?.units);const dps=parseNum(r?.annual_dps??r?.dps??r?.dividend_per_share);if(Number.isFinite(q)&&Number.isFinite(dps))return q*dps;
+  const y=incomeRate(r),v=holdingValue(r);return Number.isFinite(y)&&Number.isFinite(v)?y*v:0;
+}
+function incomeRate(r){
+  const inc=parseNum(r?.annual_dps_total??r?.annual_income),v=holdingValue(r);if(Number.isFinite(inc)&&inc>0&&v>0)return inc/v;
+  const raw=r?.yield_pct??r?.Yield??r?.yield??r?.dividend_yield;const y=parseNum(raw);if(Number.isFinite(y))return y>1?y/100:y;
+  const dps=parseNum(r?.annual_dps??r?.dps);const price=parseNum(r?.live_price??r?.price);return Number.isFinite(dps)&&Number.isFinite(price)&&price>0?dps/price:NaN;
+}
+function profitLoss(r){
+  const p=parseNum(r?.profit_loss??r?.Profit_Loss??r?.pl??r?.gain_loss);if(Number.isFinite(p))return p;
+  const v=holdingValue(r),b=parseNum(r?.book_cost??r?.cost_basis);return Number.isFinite(v)&&Number.isFinite(b)?v-b:0;
+}
+function buyStrength(r){const n=parseNum(r?.buy_strength??r?.Buy_Strength??r?.score??r?.Score);return Number.isFinite(n)?n:0;}
+function readTab(master,tab){
+  const wanted=norm(tab);
+  function pick(obj){if(!obj||typeof obj!=="object")return[];if(Array.isArray(obj[tab]))return obj[tab];const k=Object.keys(obj).find(key=>norm(key)===wanted);return k&&Array.isArray(obj[k])?obj[k]:[];}
+  let rows=pick(master);if(rows.length)return rows;
+  for(const key of ["data","tabs","sheets","feeds"]){rows=pick(master?.[key]);if(rows.length)return rows;}
+  return [];
+}
+function activeHoldings(){return (state.holdings||[]).filter(isActiveHolding);}
+function combinedHoldings(){
+  const map=new Map();
+  activeHoldings().forEach(r=>{
+    const t=rowTicker(r);if(!t)return;
+    if(!map.has(t))map.set(t,{ticker:t,name:rowName(r),sector:r?.sector??r?.Sector??"Unclassified",role:r?.role??r?.squad_role??r?.Squad_Role??"Squad Player",accounts:new Set(),shares:0,value:0,book:0,profit:0,income:0,buyStrength:0,rows:[]});
+    const x=map.get(t);x.accounts.add(accountText(r));x.shares+=Math.max(0,parseNum(r?.shares??r?.quantity??r?.units)||0);x.value+=holdingValue(r);x.book+=Math.max(0,parseNum(r?.book_cost??r?.cost_basis)||0);x.profit+=profitLoss(r);x.income+=annualIncome(r);x.buyStrength=Math.max(x.buyStrength,buyStrength(r));x.rows.push(r);
+  });
+  return [...map.values()].map(x=>({...x,accounts:[...x.accounts],yield:x.value>0?x.income/x.value:0,incomeShare:0}));
+}
+function annualTotal(){return activeHoldings().reduce((s,r)=>s+annualIncome(r),0);}
+function clubValue(){return activeHoldings().reduce((s,r)=>s+holdingValue(r),0);}
+function incomePortfolio(){return activeHoldings().filter(isIncomeAccount);}
+function portfolioYield(){const rows=incomePortfolio(),inc=rows.reduce((s,r)=>s+annualIncome(r),0),v=rows.reduce((s,r)=>s+holdingValue(r),0);return v>0?inc/v:NaN;}
+function latestTimestamp(){
+  const all=[...(state.priceLog||[]),...(state.dailyPriceSummary||[]),...(state.incomeLog||[]),...(state.tradeReviewLog||[])];
+  const dates=all.map(r=>toDate(rowDate(r))).filter(Boolean).sort((a,b)=>b-a);return dates[0]||null;
+}
+function combinedSectorData(){
+  const map=new Map();incomePortfolio().forEach(r=>{const s=String(r?.sector??r?.Sector??"Unclassified").trim()||"Unclassified";map.set(s,(map.get(s)||0)+holdingValue(r));});
+  return [...map.entries()].map(([sector,value])=>({sector,value})).sort((a,b)=>b.value-a.value);
+}
+function incomeEvents(){
+  const events=[];const seen=new Set();
+  function add(rows,kind){
+    (rows||[]).forEach(r=>{
+      const d=toDate(rowDate(r));if(!d)return;
+      let amount=parseNum(r?.income_added??r?.Annual_Income_Added??r?.annual_income_added??r?.income_change??r?.Income_Added);
+      if(!Number.isFinite(amount))return;
+      const t=rowTicker(r)||String(r?.into??r?.source??kind??"Event");
+      const key=`${d.toISOString().slice(0,10)}|${t}|${amount.toFixed(2)}`;if(seen.has(key))return;seen.add(key);events.push({date:d,amount,ticker:t});
+    });
+  }
+  add(state.incomeLog,"IncomeLog");add(state.tradeReviewLog,"TradeReviewLog");
+  return events.sort((a,b)=>a.date-b.date);
+}
+function incomeProgression(){
+  const current=annualTotal(),events=incomeEvents();if(!events.length)return[];
+  const totalChanges=events.reduce((s,e)=>s+e.amount,0);let running=current-totalChanges;
+  const byDay=new Map();events.forEach(e=>{const k=e.date.toISOString().slice(0,10);byDay.set(k,(byDay.get(k)||0)+e.amount);});
+  const pts=[];for(const [k,amt] of [...byDay.entries()].sort((a,b)=>a[0].localeCompare(b[0]))){running+=amt;pts.push({date:new Date(`${k}T12:00:00`),value:running});}
+  if(pts.length&&Math.abs(pts[pts.length-1].value-current)>.01)pts.push({date:new Date(),value:current});
+  return pts.slice(-24);
+}
+function valueProgression(){
+  const combined=combinedHoldings();const shares=new Map(combined.map(x=>[x.ticker,x.shares]));
+  const rows=(state.priceLog||[]).map(r=>({date:toDate(rowDate(r)),ticker:rowTicker(r),price:parseNum(r?.price??r?.close_price??r?.Price??r?.Close_Price)})).filter(x=>x.date&&x.ticker&&Number.isFinite(x.price));
+  if(!rows.length)return[];
+  const dates=[...new Set(rows.map(x=>x.date.toISOString().slice(0,10)))].sort();const byDate=new Map();rows.forEach(x=>{const k=x.date.toISOString().slice(0,10);if(!byDate.has(k))byDate.set(k,new Map());byDate.get(k).set(x.ticker,x.price);});
+  const lastPrice=new Map();const pts=[];
+  dates.forEach(k=>{for(const [t,p] of byDate.get(k))lastPrice.set(t,p);let total=0,covered=0;for(const [t,q] of shares){const p=lastPrice.get(t);if(Number.isFinite(p)){total+=p*q;covered++;}}if(covered>=Math.max(3,Math.ceil(shares.size*.5)))pts.push({date:new Date(`${k}T12:00:00`),value:total,coverage:covered});});
+  return pts.slice(-30);
+}
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function chartBase(){
+  Chart.defaults.color="#aebed2";Chart.defaults.borderColor="rgba(148,163,184,.12)";Chart.defaults.font.family='Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+}
+function lineChart(id,labels,data,label,opts={}){
+  destroyChart(id);const ctx=$(id);if(!ctx)return;
+  charts[id]=new Chart(ctx,{type:"line",data:{labels,datasets:[{label,data,borderColor:opts.borderColor||"#22d3ee",backgroundColor:opts.backgroundColor||"rgba(34,211,238,.13)",fill:true,tension:.32,pointRadius:3,pointHoverRadius:5,borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${label}: ${money(c.parsed.y)}`}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:8}},y:{beginAtZero:false,ticks:{callback:v=>money0(v)}}}}});
+}
+function barChart(id,labels,data,label){
+  destroyChart(id);const ctx=$(id);if(!ctx)return;
+  charts[id]=new Chart(ctx,{type:"bar",data:{labels,datasets:[{label,data,backgroundColor:"rgba(52,211,153,.72)",borderColor:"rgba(134,239,172,.9)",borderWidth:1,borderRadius:8}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${label}: ${money(c.parsed.x)}`}}},scales:{x:{ticks:{callback:v=>money0(v)}},y:{grid:{display:false}}}}});
+}
+function doughnutChart(id,labels,data){
+  destroyChart(id);const ctx=$(id);if(!ctx)return;
+  charts[id]=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data,borderColor:"rgba(3,7,18,.9)",borderWidth:4,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:"63%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,padding:14,usePointStyle:true}},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.parsed)}`}}}}});
+}
+function targetChart(current){
+  destroyChart("targetChart");const remaining=Math.max(0,MONTHLY_TARGET-current);charts.targetChart=new Chart($("targetChart"),{type:"doughnut",data:{labels:["Current monthly income","Gap remaining"],datasets:[{data:[Math.min(current,MONTHLY_TARGET),remaining],backgroundColor:["rgba(52,211,153,.82)","rgba(251,191,36,.28)"],borderColor:["rgba(134,239,172,.95)","rgba(251,191,36,.45)"],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:"70%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,padding:14,usePointStyle:true}},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.parsed)}/month`}}}}});
+}
+function scatterChart(rows){
+  destroyChart("yieldStrengthChart");const data=rows.filter(x=>x.yield>0&&x.buyStrength>0).map(x=>({x:x.yield*100,y:x.buyStrength,ticker:x.ticker,value:x.value}));
+  if(data.length<2){showEmpty("yieldStrengthChart","yieldStrengthEmpty");return;}
+  charts.yieldStrengthChart=new Chart($("yieldStrengthChart"),{type:"scatter",data:{datasets:[{label:"Holdings",data,backgroundColor:"rgba(96,165,250,.72)",borderColor:"rgba(147,197,253,.95)",pointRadius:data.map(x=>Math.max(5,Math.min(13,Math.sqrt(x.value)/8))),pointHoverRadius:data.map(x=>Math.max(7,Math.min(15,Math.sqrt(x.value)/7)))}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.ticker}: ${c.raw.x.toFixed(2)}% yield • strength ${c.raw.y}`}}},scales:{x:{title:{display:true,text:"Dividend yield"},ticks:{callback:v=>`${v}%`}},y:{title:{display:true,text:"Buy strength"},min:0,max:100}}}});
+}
+function showEmpty(canvasId,emptyId){const c=$(canvasId),e=$(emptyId);if(c)c.style.display="none";if(e)e.style.display="grid";}
+function showCanvas(canvasId,emptyId){const c=$(canvasId),e=$(emptyId);if(c)c.style.display="block";if(e)e.style.display="none";}
+function renderCharts(){
+  if(typeof Chart==="undefined"){
+    ["incomeProgressChart","targetChart","incomeContributionChart","sectorChart","valueProgressChart","yieldStrengthChart"].forEach(id=>{const empty=id.replace("Chart","Empty");showEmpty(id,empty);});
+    $("analysisStatus").textContent="Chart library unavailable";$("analysisStatus").className="badge red";return;
+  }
+  chartBase();const combined=combinedHoldings();const currentIncome=annualTotal(),monthly=currentIncome/12;
+  const incPts=incomeProgression();if(incPts.length){showCanvas("incomeProgressChart","incomeProgressEmpty");lineChart("incomeProgressChart",incPts.map(x=>dateLabel(x.date)),incPts.map(x=>x.value),"Annual income");const delta=incPts.at(-1).value-incPts[0].value;$("incomeTrendBadge").textContent=`${delta>=0?"▲":"▼"} ${money(Math.abs(delta))}`;$("incomeTrendBadge").className=`badge ${delta>=0?"green":"red"}`;}else showEmpty("incomeProgressChart","incomeProgressEmpty");
+  showCanvas("targetChart","targetEmpty");targetChart(monthly);
+  const incomeRows=combined.filter(x=>x.income>0).sort((a,b)=>b.income-a.income).slice(0,10);if(incomeRows.length){showCanvas("incomeContributionChart","incomeContributionEmpty");barChart("incomeContributionChart",incomeRows.map(x=>x.ticker),incomeRows.map(x=>x.income),"Annual income");$("topIncomeBadge").textContent=`Top scorer: ${incomeRows[0].ticker}`;}else showEmpty("incomeContributionChart","incomeContributionEmpty");
+  const sectors=combinedSectorData();if(sectors.length){showCanvas("sectorChart","sectorEmpty");doughnutChart("sectorChart",sectors.map(x=>x.sector),sectors.map(x=>x.value));const total=sectors.reduce((s,x)=>s+x.value,0),top=sectors[0];$("sectorBadge").textContent=`${top.sector}: ${total?((top.value/total)*100).toFixed(1):0}%`;$("sectorBadge").className=`badge ${(top.value/total)>.35?"amber":"blue"}`;}else showEmpty("sectorChart","sectorEmpty");
+  const valPts=valueProgression();if(valPts.length>1){showCanvas("valueProgressChart","valueProgressEmpty");lineChart("valueProgressChart",valPts.map(x=>dateLabel(x.date)),valPts.map(x=>x.value),"Indicative club value",{borderColor:"#60a5fa",backgroundColor:"rgba(96,165,250,.12)"});const change=valPts.at(-1).value-valPts[0].value;$("valueTrendBadge").textContent=`${change>=0?"▲":"▼"} ${money(Math.abs(change))}`;$("valueTrendBadge").className=`badge ${change>=0?"green":"red"}`;}else showEmpty("valueProgressChart","valueProgressEmpty");
+  showCanvas("yieldStrengthChart","yieldStrengthEmpty");scatterChart(combined);
+}
+function renderKpis(){
+  const income=annualTotal(),monthly=income/12,value=clubValue(),y=portfolioYield(),gap=Math.max(0,MONTHLY_TARGET-monthly),progress=Math.min(1,monthly/MONTHLY_TARGET);
+  $("annualIncome").textContent=money(income);$("monthlyIncome").textContent=money(monthly);$("clubValue").textContent=money(value);$("portfolioYield").textContent=pct(y);$("targetGap").textContent=money(gap);
+  $("annualIncomeNote").textContent=`${money(income/365)} per day on an annualised basis`;$("monthlyIncomeNote").textContent=`${(progress*100).toFixed(1)}% of the £500 target`;$("targetGapNote").textContent=gap>0?`${money(gap*12)} more annual income needed`:"Top target reached";
+  $("boardIncome").textContent=money0(income)+"/yr";$("boardYield").textContent=pct(y);$("boardTarget").textContent=`${(progress*100).toFixed(0)}% complete`;
+  const valPts=valueProgression();const form=valPts.length>1?valPts.at(-1).value-valPts[0].value:NaN;$("boardForm").textContent=Number.isFinite(form)?`${form>=0?"▲":"▼"} ${money0(Math.abs(form))}`:"Building";
+  const sectors=combinedSectorData(),sectorTotal=sectors.reduce((s,x)=>s+x.value,0),topSector=sectors[0];$("boardShape").textContent=topSector&&sectorTotal?`${((topSector.value/sectorTotal)*100).toFixed(0)}% ${topSector.sector}`:"Loading";
+  $("heroCopy").textContent=`Aurora is producing ${money(monthly)} per month in annualised dividend income, with ${money(gap)} still required for promotion to the £500/month objective.`;
+  const stamp=latestTimestamp();if(window.AuroraFC)AuroraFC.setFreshness("dataFreshness",AURORA_MASTER_CACHE,{prefix:"Aurora generated"});else $("dataFreshness").textContent=stamp?`Aurora data: ${stamp.toLocaleString("en-GB")}`:"Aurora generated: unavailable";
+}
+function renderVerdict(){
+  const combined=combinedHoldings().sort((a,b)=>b.income-a.income),income=annualTotal(),monthly=income/12,gap=Math.max(0,MONTHLY_TARGET-monthly),y=portfolioYield(),sectors=combinedSectorData(),sectorTotal=sectors.reduce((s,x)=>s+x.value,0),topSector=sectors[0],topIncome=combined.find(x=>x.income>0),topProfit=[...combined].sort((a,b)=>b.profit-a.profit)[0];
+  const progress=monthly/MONTHLY_TARGET;let title,text,status="Analysis ready",statusClass="green";
+  if(progress>=1){title="Promotion secured — protect the lead.";text="The £500 monthly income target has been reached. The next tactical job is protecting dividend quality and reducing avoidable concentration.";}
+  else if(progress>=.8){title="Strong promotion push — final third reached.";text=`The squad is producing ${money(monthly)} per month and needs another ${money(gap)} to reach the £500 target. Income momentum is strong, but allocation discipline still matters.`;}
+  else{title="Rebuild progressing — keep the shape disciplined.";text=`Current annual income is ${money(income)}. The route to £500 per month remains open, but the next transfers should improve income without making one sector carry the entire team.`;status="Work in progress";statusClass="amber";}
+  $("verdictTitle").textContent=title;$("verdictText").textContent=text;$("verdictStatus").textContent=status;$("verdictStatus").className=`badge ${statusClass}`;
+  const rows=[
+    {label:"Top income scorer",detail:topIncome?`${topIncome.name} contributes the most annual income.`:"No income scorer found.",value:topIncome?`${topIncome.ticker} • ${money(topIncome.income)}`:"—"},
+    {label:"Best current profit",detail:topProfit?`${topProfit.name} has the largest current gain.`:"No profit data found.",value:topProfit?`${topProfit.ticker} • ${money(topProfit.profit)}`:"—"},
+    {label:"Promotion gap",detail:"Extra average monthly income needed to hit £500.",value:money(gap)},
+    {label:"Income portfolio yield",detail:"IG ISA and Trade 212 income divided by their live value.",value:pct(y)}
+  ];
+  $("verdictList").innerHTML=rows.map(r=>`<div class="verdict-row"><span class="verdict-dot"></span><div><strong>${r.label}</strong><span>${r.detail}</span></div><div class="verdict-value">${r.value}</div></div>`).join("");
+  const shapeRows=sectors.slice(0,5).map(s=>{const share=sectorTotal?s.value/sectorTotal:0;return {label:s.sector,detail:`${pct(share)} of the investing portfolio`,value:money(s.value),warn:share>.3};});
+  if(topSector&&sectorTotal&&topSector.value/sectorTotal>.3)shapeRows.unshift({label:"Concentration watch",detail:`${topSector.sector} is above 30% of the investing portfolio.`,value:`${((topSector.value/sectorTotal)*100).toFixed(1)}%`,warn:true});
+  $("shapeList").innerHTML=shapeRows.map(r=>`<div class="verdict-row"><span class="verdict-dot" style="background:${r.warn?"var(--amber)":"var(--cyan)"}"></span><div><strong>${r.label}</strong><span>${r.detail}</span></div><div class="verdict-value ${r.warn?"negative":""}">${r.value}</div></div>`).join("");
+  $("analysisStatus").textContent=progress>=.8?"Strong form":"Rebuild analysis";$("analysisStatus").className=`badge ${progress>=.8?"green":"amber"}`;
+}
+function renderTable(){
+  const rows=combinedHoldings().sort((a,b)=>b.value-a.value),totalIncome=rows.reduce((s,x)=>s+x.income,0);rows.forEach(x=>x.incomeShare=totalIncome>0?x.income/totalIncome:0);$("playerCountBadge").textContent=`${rows.length} players`;
+  $("playerTable").innerHTML=rows.length?rows.map(x=>`<tr><td><span class="ticker">${x.ticker}</span><br><span style="color:#8295af">${x.name}</span></td><td>${x.role}<br><span style="color:#8295af">${x.sector}</span></td><td>${money(x.value)}</td><td class="${x.income>0?"positive":"neutral"}">${money(x.income)}</td><td>${pct(x.yield)}</td><td class="${x.profit>0?"positive":x.profit<0?"negative":"neutral"}">${money(x.profit)}</td><td>${x.buyStrength||"—"}</td><td><div style="display:flex;align-items:center;gap:9px"><div class="mini-bar"><i style="width:${Math.min(100,x.incomeShare*100)}%"></i></div><span>${(x.incomeShare*100).toFixed(1)}%</span></div></td></tr>`).join(""):`<tr><td colspan="8" class="loading">No active holdings found.</td></tr>`;
+}
+async function fetchMaster(){if(!AURORA_MASTER_CACHE){const res=await fetch(AURORA_MASTER_URL,{cache:"no-store"});if(!res.ok)throw new Error(`AuroraMaster failed: ${res.status}`);AURORA_MASTER_CACHE=await res.json();}return AURORA_MASTER_CACHE;}
+async function loadData(force=false){
+  const btn=$("refreshBtn");if(btn){btn.disabled=true;btn.textContent="Loading…";}if(force)AURORA_MASTER_CACHE=null;
+  try{const master=await fetchMaster(),tabs={};TABS.forEach(t=>tabs[t]=readTab(master,t));state={holdings:tabs.Holdings||[],incomeLog:tabs.IncomeLog||[],tradeReviewLog:tabs.TradeReviewLog||[],priceLog:tabs.PriceLog||[],dailyPriceSummary:tabs.DailyPriceSummary||[],livePrices:tabs.LivePrices||[],dividends:tabs.Dividends||[],sectorLimits:tabs.SectorLimits||[],marketRegime:tabs.MarketRegime||[]};renderKpis();renderCharts();renderVerdict();renderTable();}
+  catch(err){console.error(err);$("analysisStatus").textContent="Data error";$("analysisStatus").className="badge red";$("heroCopy").textContent=`Unable to load AuroraMaster.json: ${err.message||"Unknown error"}`;$("playerTable").innerHTML=`<tr><td colspan="8" class="loading error">${err.message||"Unable to load Aurora data."}</td></tr>`;}
+  finally{if(btn){btn.disabled=false;btn.textContent="Refresh";}}
+}
+$("refreshBtn").addEventListener("click",()=>loadData(true));
+loadData();
+if(window.AuroraFC) AuroraFC.registerServiceWorker();
+</script>
+
+  </div>
+</div>
+
+<script id="aurora-universal-sidebar">
+(() => {
+  "use strict";
+
+  const body = document.body;
+  const sidebar = document.querySelector(".fm-sidebar");
+  const workspace = document.querySelector(".fm-workspace");
+  const edgeZone = document.getElementById("fmSidebarEdgeZone");
+  const collapseButton = document.getElementById("fmSidebarCollapse");
+  const transferMenu = document.getElementById("transferSideMenu");
+  const clock = document.getElementById("fmClock");
+
+  if (!sidebar || !workspace || !edgeZone || !collapseButton) return;
+
+  const hiddenClass = "fm-sidebar-hidden";
+  const transferStateKey = "aurora_transfer_sidebar_open";
+  const autoHideDelay = 2600;
+
+  let hideTimer = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchSource = "";
+  let gestureHandled = false;
+
+  const clearHideTimer = () => {
+    if (!hideTimer) return;
+    window.clearTimeout(hideTimer);
+    hideTimer = 0;
+  };
+
+  const isHidden = () => body.classList.contains(hiddenClass);
+
+  const showSidebar = () => {
+    clearHideTimer();
+    body.classList.remove(hiddenClass);
+    sidebar.setAttribute("aria-hidden", "false");
+    edgeZone.setAttribute("aria-hidden", "true");
+  };
+
+  const hideSidebar = () => {
+    clearHideTimer();
+    body.classList.add(hiddenClass);
+    sidebar.setAttribute("aria-hidden", "true");
+    edgeZone.setAttribute("aria-hidden", "false");
+  };
+
+  const scheduleHide = (delay = autoHideDelay) => {
+    clearHideTimer();
+    hideTimer = window.setTimeout(() => {
+      if (!sidebar.matches(":hover") &&
+          !sidebar.contains(document.activeElement)) {
+        hideSidebar();
+      }
+    }, delay);
+  };
+
+  const updateClock = () => {
+    if (!clock) return;
+    const now = new Date();
+
+    clock.textContent =
+      now.toLocaleDateString("en-GB", {
+        weekday:"short",
+        day:"2-digit",
+        month:"short"
+      }) +
+      " • " +
+      now.toLocaleTimeString("en-GB", {
+        hour:"2-digit",
+        minute:"2-digit"
+      });
+  };
+
+  const updateTransferActiveLink = () => {
+    if (!transferMenu) return;
+
+    const currentFile =
+      window.location.pathname.split("/").pop() ||
+      "AuroraCityFC_ManagerDashboard.html";
+    const currentHash = window.location.hash || "";
+
+    transferMenu.querySelectorAll(".fm-side-submenu a").forEach(link => {
+      const url = new URL(link.href, window.location.href);
+      const linkFile = url.pathname.split("/").pop();
+      const linkHash = url.hash || "";
+
+      const selected =
+        currentFile === "AuroraCityFC_TransferCentre.html" &&
+        linkFile === currentFile &&
+        (
+          (currentHash && linkHash === currentHash) ||
+          (!currentHash && !linkHash)
+        );
+
+      link.classList.toggle("active", selected);
+    });
+  };
+
+  collapseButton.addEventListener("click", hideSidebar);
+
+  edgeZone.addEventListener("pointerenter", showSidebar);
+  edgeZone.addEventListener("click", showSidebar);
+  edgeZone.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    showSidebar();
+  });
+
+  sidebar.addEventListener("pointerenter", clearHideTimer);
+  sidebar.addEventListener("pointerleave", () => scheduleHide(1200));
+  sidebar.addEventListener("focusin", clearHideTimer);
+  sidebar.addEventListener("focusout", () => scheduleHide(1500));
+
+  document.addEventListener("mousemove", event => {
+    if (isHidden() && event.clientX <= 18) showSidebar();
+  }, { passive:true });
+
+  workspace.addEventListener("pointerdown", event => {
+    if (!isHidden() && event.pointerType !== "mouse") hideSidebar();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !isHidden()) hideSidebar();
+  });
+
+  const beginTouch = (event, source) => {
+    const touch = event.touches?.[0];
+    if (!touch) return;
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchSource = source;
+    gestureHandled = false;
+  };
+
+  const trackTouch = event => {
+    if (gestureHandled) return;
+
+    const touch = event.touches?.[0];
+    if (!touch) return;
+
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+
+    if (Math.abs(deltaY) > Math.abs(deltaX) * 1.15) return;
+
+    if (touchSource === "edge" && deltaX > 42) {
+      gestureHandled = true;
+      showSidebar();
+    }
+
+    if (touchSource === "sidebar" && deltaX < -42) {
+      gestureHandled = true;
+      hideSidebar();
+    }
+  };
+
+  edgeZone.addEventListener(
+    "touchstart",
+    event => beginTouch(event, "edge"),
+    { passive:true }
+  );
+  edgeZone.addEventListener("touchmove", trackTouch, { passive:true });
+
+  sidebar.addEventListener(
+    "touchstart",
+    event => beginTouch(event, "sidebar"),
+    { passive:true }
+  );
+  sidebar.addEventListener("touchmove", trackTouch, { passive:true });
+
+  if (transferMenu) {
+    const currentFile = window.location.pathname.split("/").pop();
+
+    try {
+      if (currentFile === "AuroraCityFC_TransferCentre.html") {
+        transferMenu.open = true;
+      } else {
+        transferMenu.open =
+          sessionStorage.getItem(transferStateKey) === "1";
+      }
+    } catch (_) {}
+
+    transferMenu.addEventListener("toggle", () => {
+      try {
+        sessionStorage.setItem(
+          transferStateKey,
+          transferMenu.open ? "1" : "0"
+        );
+      } catch (_) {}
+    });
+  }
+
+  window.addEventListener("hashchange", updateTransferActiveLink);
+  window.addEventListener("pageshow", () => {
+    showSidebar();
+    updateTransferActiveLink();
+    scheduleHide(4200);
+  });
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then(registrations => registrations.forEach(item => item.update()))
+      .catch(() => {});
+  }
+
+  updateClock();
+  window.setInterval(updateClock, 30000);
+  updateTransferActiveLink();
+  showSidebar();
+  scheduleHide(4200);
+})();
+</script>
+
+
+<script id="aurora-transfer-menu-footer-control">
+(() => {
+  "use strict";
+
+  const body = document.body;
+  const transferMenu = document.getElementById("transferSideMenu");
+  const systemButton = document.getElementById("auroraSystemButton");
+
+  body.classList.toggle("fm-has-system-check", Boolean(systemButton));
+
+  if (!transferMenu) return;
+
+  const updateFooter = () => {
+    body.classList.toggle("fm-transfer-menu-open", transferMenu.open);
+  };
+
+  transferMenu.addEventListener("toggle", updateFooter);
+  window.addEventListener("pageshow", updateFooter);
+  updateFooter();
+})();
+</script>
+
+</body>
+</html>
