@@ -3192,7 +3192,7 @@ function renderDecisionLog(boardScore,supporterScore,monthly,rep,avgStrength,tar
   saveBoardHistory(boardScore,supporterScore,monthly,value);
 }
 function renderAll(){
-  if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
+  if($('lastUpdated')) { if(window.AuroraFC) AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'}); else $('lastUpdated').textContent='Aurora generated: unavailable'; }
 
   const annualIncome = portfolioAnnualIncome();
   renderTrophies(annualIncome);
@@ -3316,13 +3316,7 @@ setTimeout(()=>{
 
 <!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(err => {
-      console.warn('Aurora City FC service worker registration failed:', err);
-    });
-  });
-}
+if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
 
 <button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>

@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#030712" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Manager Dashboard</title>
 <!-- Build: Analysis Bottom Door + Next Dividend • 18 Jul 2026 -->
 <style>
@@ -140,6 +146,7 @@ button,input{font:inherit}
 
 
 </style>
+<script src="AuroraFCData.js"></script>
 </head>
 <body>
 <div class="topbar">
@@ -152,7 +159,7 @@ button,input{font:inherit}
       </div>
     </div>
     <div class="nav">
-      <a href="AuroraCityFC_ManagerDashboard.html">Home</a>
+      <a class="active" href="AuroraCityFC_ManagerDashboard.html">Home</a>
       <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
       <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
       <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
@@ -264,11 +271,7 @@ const TABS = [
 const MONTHLY_TARGET = 500;
 const TRANSFER_PLAN_KEY = 'aurora_transfer_plan_v2';
 let syncedTransferPlan = null;
-const PLATFORM_RULES = {
-  TRIG:"IG ISA", FGEN:"IG ISA", UKW:"IG ISA", ARCC:"IG ISA", SUPR:"IG ISA", PHP:"IG ISA / Trade 212",
-  FSFL:"Trade 212", GCP:"Trade 212", RGL:"Trade 212", LMP:"IG ISA", OSB:"IG Trading",
-  RKT:"IG ISA", ULVR:"IG ISA", IMB:"IG ISA", SBRY:"IG ISA", TW:"IG ISA"
-};
+const PLATFORM_RULES = window.AURORA_PLATFORM_RULES || {TRIG:'Trade 212',FSFL:'Trade 212',UKW:'IG ISA',ARCC:'IG ISA',RGL:'Trade 212',GCP:'Trade 212',PHP:'IG ISA / Trade 212',FGEN:'IG ISA',SEQI:'Trade 212',TW:'IG ISA',OSB:'IG ISA'};
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:2}).format(n) : "—";
@@ -649,7 +652,8 @@ function renderAll(){
   const nextDividend = nextDividendPayment();
 
   const dataStamp=latestDataTimestamp();
-  $("lastUpdated").textContent = dataStamp ? `Aurora data: ${dataStamp.toLocaleString("en-GB")} • refreshed ${new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}` : `Refreshed: ${new Date().toLocaleString("en-GB")}`;
+  if(window.AuroraFC) AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'});
+  else $("lastUpdated").textContent = dataStamp ? `Aurora data: ${dataStamp.toLocaleString("en-GB")}` : 'Aurora generated: unavailable';
   $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
   const nextDividendTickerText = nextDividend ? ` • Next dividend: ${nextDividend.ticker}${nextDividend.amountKnown ? ` ${money(nextDividend.amount)}` : ""} on ${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}` : "";
   $("tickerText").textContent = route.length
@@ -755,6 +759,7 @@ requestTransferPlanSync();
 loadData();
 setInterval(()=>{ if($("tickerTime")) $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }, 1000);
 
+if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
 
 <button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>

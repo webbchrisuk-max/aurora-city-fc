@@ -106,7 +106,7 @@ function newsIcon(cat){cat=String(cat||'').toLowerCase();if(cat.includes('buybac
 function newsScore(imp){const x=String(imp||'Normal').toLowerCase();if(x.includes('breaking'))return ['Breaking','red'];if(x.includes('high'))return ['High','amber'];if(x.includes('club'))return ['Club',''];return ['News','']}
 function targets(){return uniqueByTicker([...(state.watchlist||[]),...(state.scout||[])]).filter(r=>Number.isFinite(impact(r))||Number.isFinite(buyStrength(r))).sort((a,b)=>(impact(b)||buyStrength(b)||0)-(impact(a)||buyStrength(a)||0))}function row(icon,title,note,value,cls=''){return `<div class="row"><div class="icon">${icon}</div><div><strong>${title}</strong><span>${note}</span></div><div class="score-pill ${cls}">${value}</div></div>`}function cls(s){return s>=90?'':s>=80?'amber':'red'}
 function renderAll(){
-if($('lastUpdated'))$('lastUpdated').textContent=`Last updated: ${new Date().toLocaleString('en-GB')}`;
+if($('lastUpdated')){if(window.AuroraFC)AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'});else $('lastUpdated').textContent='Aurora generated: unavailable'};
 const hs=uniqueByTicker(state.holdings),ts=targets(),news=auroraNews(),topNews=news[0],top=ts[0],annual=hs.reduce((s,r)=>s+annualIncomeFromRow(r),0),monthly=annual/12,topScore=top?Math.round(impact(top)||buyStrength(top)||0):NaN;
 $('topHeadline').textContent=topNews?String(val(topNews,'Ticker','ticker')||val(topNews,'Category','category')||'News'):top?displayTicker(top.ticker):'—';
 $('topHeadlineNote').textContent=topNews?String(val(topNews,'Headline','headline')):(top?`Impact ${topScore} headline target`:'No headline found');
@@ -125,7 +125,7 @@ $('dividendDesk').innerHTML=divs.length?divs.map(d=>{const t=displayTicker(d.tic
 $('rumourMill').innerHTML=ts.slice(0,8).map((t,i)=>{const s=Math.round(impact(t)||buyStrength(t)||0);return row(i===0?'🔥':i<3?'👀':'📋',`${displayTicker(t.ticker)} under media watch`,`${displayName(t)}`,`${s}`,cls(s))}).join('')||'<div class="loading">No rumour targets found.</div>';
 $('matchReport').innerHTML=[row('🏟️','Income match report',`Annual tracked income: ${money(annual)}`,`${money(monthly)}/m`),row('⭐','Man of the Match',top?`${displayTicker(top.ticker)} leads the headlines.`:'No clear winner yet.',top?`${topScore}`:'—',top?cls(topScore):''),row('📣','Supporter reaction',news.length?'Aurora Times is now live from the sheet newsroom.':topScore>=90?'Fans are excited by the current transfer shortlist.':'Fans want steady progress.',news.length?'Live':topScore>=90?'Positive':'Stable')].join('')
 }
-$('refreshBtn')?.addEventListener('click',loadAuroraData);loadAuroraData();if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./service-worker.js').catch(err=>console.warn('Aurora City FC service worker registration failed:',err))})}
+$('refreshBtn')?.addEventListener('click',loadAuroraData);loadAuroraData();if(window.AuroraFC)AuroraFC.registerServiceWorker()
 </script>
 </body>
 </html>
