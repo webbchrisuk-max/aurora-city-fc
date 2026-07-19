@@ -1,4 +1,4 @@
-/* Aurora City FC — shared rules and reliability helpers */
+/* Aurora City FC — shared rules, navigation and consistent department heroes */
 (function(){
   'use strict';
 
@@ -13,6 +13,31 @@
     TRIG:Object.freeze(['TRADE 212']),
     GCP:Object.freeze(['TRADE 212'])
   });
+
+  const PAGE_BY_FILE = Object.freeze({
+    'auroracityfc_managerdashboard.html':'home',
+    'auroracityfc_transfercentre.html':'transfers',
+    'auroracityfc_boardroom.html':'boardroom',
+    'auroracityfc_squadhub.html':'squad',
+    'auroracityfc_analysisroom.html':'analysis',
+    'auroracityfc_mediacentre.html':'media',
+    'auroracityfc_trainingground.html':'training'
+  });
+
+  function currentFile(){
+    return (window.location.pathname.split('/').pop() || '').toLowerCase();
+  }
+
+  function currentPage(){
+    const file=currentFile();
+    if(!file || file==='index.html' || file==='auroracityfc_index.html') return 'home';
+    return PAGE_BY_FILE[file] || '';
+  }
+
+  function installPageIdentity(){
+    const page=currentPage();
+    if(page) document.documentElement.dataset.auroraPage=page;
+  }
 
   function shortTicker(value){
     return String(value||'').trim().toUpperCase().replace(/^LON:/,'').replace(/\.L$/,'').replace(/\.GB$/,'');
@@ -59,25 +84,57 @@
     const info=freshness(data,options.freshMinutes??90,options.staleMinutes??180);
     const prefix=options.prefix || 'Aurora generated';
     target.classList.remove('aurora-fresh','aurora-warning','aurora-stale','aurora-unknown');
+
     if(!info.date){
       target.textContent=`${prefix}: unavailable`;
       target.classList.add('aurora-unknown');
       target.title='AuroraMaster.json did not contain a readable generated_at timestamp.';
       return info;
     }
-    const time=info.date.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    const age=info.ageMinutes<60?`${Math.round(info.ageMinutes)} min old`:`${(info.ageMinutes/60).toFixed(1)} hr old`;
+
+    const time=info.date.toLocaleString('en-GB',{
+      day:'2-digit',
+      month:'short',
+      year:'numeric',
+      hour:'2-digit',
+      minute:'2-digit'
+    });
+    const age=info.ageMinutes<60
+      ? `${Math.round(info.ageMinutes)} min old`
+      : `${(info.ageMinutes/60).toFixed(1)} hr old`;
+
     target.textContent=`${prefix}: ${time} • ${age}`;
-    target.classList.add(info.level==='fresh'?'aurora-fresh':info.level==='warning'?'aurora-warning':'aurora-stale');
+    target.classList.add(
+      info.level==='fresh'
+        ? 'aurora-fresh'
+        : info.level==='warning'
+          ? 'aurora-warning'
+          : 'aurora-stale'
+    );
     target.title=`AuroraMaster.json is ${info.label}.`;
     return info;
   }
 
   function installFreshnessStyles(){
     if(document.getElementById('aurora-shared-styles')) return;
+
     const style=document.createElement('style');
     style.id='aurora-shared-styles';
-    style.textContent='.aurora-fresh{color:#86efac!important;border-color:rgba(52,211,153,.32)!important}.aurora-warning{color:#fde68a!important;border-color:rgba(251,191,36,.34)!important}.aurora-stale{color:#fecdd3!important;border-color:rgba(251,113,133,.36)!important}.aurora-unknown{color:#cbd5e1!important}';
+    style.textContent=`
+      .aurora-fresh{
+        color:#86efac!important;
+        border-color:rgba(52,211,153,.32)!important
+      }
+      .aurora-warning{
+        color:#fde68a!important;
+        border-color:rgba(251,191,36,.34)!important
+      }
+      .aurora-stale{
+        color:#fecdd3!important;
+        border-color:rgba(251,113,133,.36)!important
+      }
+      .aurora-unknown{color:#cbd5e1!important}
+    `;
     document.head.appendChild(style);
   }
 
@@ -87,7 +144,7 @@
     const style=document.createElement('style');
     style.id='aurora-shared-nav-styles';
     style.textContent=`
-      /* Aurora shared top navigation — identical geometry on every club page */
+      /* Identical top-navigation geometry on every Aurora department */
       .topbar .nav,
       .nav{
         display:flex!important;
@@ -149,11 +206,6 @@
       .topbar .nav button:hover,
       .nav a:hover,
       .nav button:hover{
-        inline-size:96px!important;
-        block-size:40px!important;
-        width:96px!important;
-        height:40px!important;
-        padding:0 9px!important;
         border-color:rgba(34,211,238,.38)!important;
         background:rgba(8,47,73,.58)!important;
         color:#e0f2fe!important;
@@ -166,19 +218,6 @@
       .topbar .nav a[aria-current="page"],
       .nav a.active,
       .nav a[aria-current="page"]{
-        inline-size:96px!important;
-        min-inline-size:96px!important;
-        max-inline-size:96px!important;
-        block-size:40px!important;
-        min-block-size:40px!important;
-        max-block-size:40px!important;
-        width:96px!important;
-        min-width:96px!important;
-        max-width:96px!important;
-        height:40px!important;
-        min-height:40px!important;
-        max-height:40px!important;
-        padding:0 9px!important;
         border-color:rgba(34,211,238,.74)!important;
         background:linear-gradient(180deg,rgba(8,70,92,.92),rgba(8,47,73,.86))!important;
         color:#e6fbff!important;
@@ -194,11 +233,6 @@
       .topbar .nav button:focus-visible,
       .nav a:focus-visible,
       .nav button:focus-visible{
-        inline-size:96px!important;
-        block-size:40px!important;
-        width:96px!important;
-        height:40px!important;
-        padding:0 9px!important;
         border-color:rgba(125,211,252,.78)!important;
         box-shadow:
           inset 0 0 0 2px rgba(125,211,252,.24),
@@ -212,19 +246,7 @@
         .topbar .nav a,
         .topbar .nav button,
         .nav a,
-        .nav button,
-        .topbar .nav a:hover,
-        .topbar .nav button:hover,
-        .nav a:hover,
-        .nav button:hover,
-        .topbar .nav a.active,
-        .topbar .nav a[aria-current="page"],
-        .nav a.active,
-        .nav a[aria-current="page"],
-        .topbar .nav a:focus-visible,
-        .topbar .nav button:focus-visible,
-        .nav a:focus-visible,
-        .nav button:focus-visible{
+        .nav button{
           inline-size:88px!important;
           min-inline-size:88px!important;
           max-inline-size:88px!important;
@@ -240,8 +262,6 @@
           flex-basis:88px!important;
           padding:0 7px!important;
           font-size:11px!important;
-          transform:none!important;
-          scale:1!important;
         }
       }
     `;
@@ -249,19 +269,25 @@
   }
 
   function syncActiveNavigation(){
-    const currentFile=(window.location.pathname.split('/').pop() || 'AuroraCityFC_ManagerDashboard.html').toLowerCase();
-    const aliases=new Map([
-      ['index.html','auroracityfc_managerdashboard.html'],
-      ['','auroracityfc_managerdashboard.html']
-    ]);
-    const resolvedCurrent=aliases.get(currentFile) || currentFile;
+    const current=currentFile();
+    const resolvedCurrent=(!current || current==='index.html' || current==='auroracityfc_index.html')
+      ? 'auroracityfc_managerdashboard.html'
+      : current;
 
     document.querySelectorAll('.nav a[href]').forEach(link=>{
       let linkFile='';
+
       try{
-        linkFile=new URL(link.getAttribute('href'),window.location.href).pathname.split('/').pop().toLowerCase();
+        linkFile=new URL(link.getAttribute('href'),window.location.href)
+          .pathname
+          .split('/')
+          .pop()
+          .toLowerCase();
       }catch(_){
-        linkFile=String(link.getAttribute('href') || '').split('/').pop().toLowerCase();
+        linkFile=String(link.getAttribute('href') || '')
+          .split('/')
+          .pop()
+          .toLowerCase();
       }
 
       const isActive=linkFile===resolvedCurrent;
@@ -287,14 +313,212 @@
     window.addEventListener('pageshow',apply);
   }
 
-  function registerServiceWorker(){
-    if(!('serviceWorker' in navigator)) return;
-    window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(err=>console.warn('Aurora City FC service worker registration failed:',err)),{once:true});
+  function installHeroStyles(){
+    if(document.getElementById('aurora-shared-hero-styles')) return;
+
+    const style=document.createElement('style');
+    style.id='aurora-shared-hero-styles';
+    style.textContent=`
+      :root{
+        --aurora-department-hero-height:336px;
+      }
+
+      /*
+       * Every main department hero uses the same desktop/iPad footprint as Home.
+       * Content and background imagery remain page-specific.
+       */
+      html[data-aurora-page="home"] body main.app > .hq-hero,
+      html[data-aurora-page="transfers"] body main.app > .hero,
+      html[data-aurora-page="boardroom"] body main.app > .hero,
+      html[data-aurora-page="squad"] body main.app > .hero,
+      html[data-aurora-page="analysis"] body main.app > .hero,
+      html[data-aurora-page="media"] body main.app > .hero,
+      html[data-aurora-page="training"] body main.app > .hero{
+        box-sizing:border-box!important;
+        width:100%!important;
+        height:var(--aurora-department-hero-height)!important;
+        min-height:var(--aurora-department-hero-height)!important;
+        max-height:var(--aurora-department-hero-height)!important;
+        margin-top:18px!important;
+        margin-bottom:16px!important;
+        overflow:hidden!important;
+      }
+
+      /* Home */
+      html[data-aurora-page="home"] .hq-hero .hero-inner{
+        box-sizing:border-box!important;
+        height:100%!important;
+        min-height:0!important;
+        padding:28px!important;
+        align-items:stretch!important;
+        overflow:hidden!important;
+      }
+
+      /* Transfer Centre, Boardroom and Squad Hub */
+      html[data-aurora-page="transfers"] main.app > .hero,
+      html[data-aurora-page="boardroom"] main.app > .hero,
+      html[data-aurora-page="squad"] main.app > .hero{
+        align-items:stretch!important;
+      }
+
+      html[data-aurora-page="transfers"] main.app > .hero > *,
+      html[data-aurora-page="boardroom"] main.app > .hero > *,
+      html[data-aurora-page="squad"] main.app > .hero > *{
+        box-sizing:border-box!important;
+        min-height:0!important;
+        max-height:100%!important;
+      }
+
+      html[data-aurora-page="transfers"] .hero-card,
+      html[data-aurora-page="boardroom"] .hero-card,
+      html[data-aurora-page="squad"] .hero-card{
+        height:100%!important;
+        padding:20px!important;
+        overflow:hidden!important;
+      }
+
+      html[data-aurora-page="transfers"] .scoreboard,
+      html[data-aurora-page="boardroom"] .scoreboard,
+      html[data-aurora-page="squad"] .scoreboard{
+        height:100%!important;
+        min-height:0!important;
+        overflow:hidden!important;
+        grid-auto-rows:minmax(0,1fr)!important;
+      }
+
+      html[data-aurora-page="transfers"] .hero-title,
+      html[data-aurora-page="boardroom"] .hero-title,
+      html[data-aurora-page="squad"] .hero-title{
+        font-size:clamp(30px,5vw,58px)!important;
+      }
+
+      /* Analysis Room */
+      html[data-aurora-page="analysis"] .hero .hero-inner{
+        box-sizing:border-box!important;
+        height:100%!important;
+        min-height:0!important;
+        padding:24px!important;
+        align-items:stretch!important;
+        overflow:hidden!important;
+      }
+
+      html[data-aurora-page="analysis"] .hero h2{
+        font-size:clamp(34px,4.3vw,58px)!important;
+        margin-top:13px!important;
+        margin-bottom:7px!important;
+      }
+
+      html[data-aurora-page="analysis"] .hero-copy{
+        font-size:clamp(14px,1.18vw,17px)!important;
+        line-height:1.4!important;
+      }
+
+      html[data-aurora-page="analysis"] .hero-tags{
+        margin-top:12px!important;
+      }
+
+      html[data-aurora-page="analysis"] .hero-tag{
+        padding:7px 10px!important;
+        font-size:11px!important;
+      }
+
+      html[data-aurora-page="analysis"] .tactics-board{
+        box-sizing:border-box!important;
+        height:100%!important;
+        min-height:0!important;
+        max-height:100%!important;
+      }
+
+      /* Media Centre and Training Ground */
+      html[data-aurora-page="media"] main.app > .hero,
+      html[data-aurora-page="training"] main.app > .hero{
+        padding:22px!important;
+        align-items:flex-end!important;
+        background-position:center center!important;
+        background-size:cover!important;
+      }
+
+      html[data-aurora-page="media"] .hero h2,
+      html[data-aurora-page="training"] .hero h2{
+        font-size:clamp(38px,5.7vw,64px)!important;
+        margin-top:11px!important;
+      }
+
+      html[data-aurora-page="media"] .hero p,
+      html[data-aurora-page="training"] .hero p{
+        margin-top:10px!important;
+        line-height:1.42!important;
+      }
+
+      html[data-aurora-page="media"] .hero-actions,
+      html[data-aurora-page="training"] .hero-actions{
+        margin-top:12px!important;
+      }
+
+      html[data-aurora-page="media"] .hero .pill,
+      html[data-aurora-page="training"] .hero .pill{
+        padding:7px 10px!important;
+        font-size:11px!important;
+      }
+
+      /* Keep any full-bleed hero artwork fitted inside the shared footprint. */
+      html[data-aurora-page] main.app > .hero > img:first-child{
+        max-height:100%!important;
+        object-fit:cover!important;
+      }
+
+      /*
+       * Phones need natural growth for readable text.
+       * iPad landscape and desktop retain the identical 336px department height.
+       */
+      @media(max-width:760px){
+        :root{
+          --aurora-department-hero-height:330px;
+        }
+
+        html[data-aurora-page="home"] body main.app > .hq-hero,
+        html[data-aurora-page="transfers"] body main.app > .hero,
+        html[data-aurora-page="boardroom"] body main.app > .hero,
+        html[data-aurora-page="squad"] body main.app > .hero,
+        html[data-aurora-page="analysis"] body main.app > .hero,
+        html[data-aurora-page="media"] body main.app > .hero,
+        html[data-aurora-page="training"] body main.app > .hero{
+          height:auto!important;
+          min-height:330px!important;
+          max-height:none!important;
+        }
+
+        html[data-aurora-page="analysis"] .hero .hero-inner{
+          height:auto!important;
+          grid-template-columns:1fr!important;
+          overflow:visible!important;
+        }
+
+        html[data-aurora-page="analysis"] .tactics-board{
+          height:210px!important;
+          min-height:210px!important;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
   }
 
+  function registerServiceWorker(){
+    if(!('serviceWorker' in navigator)) return;
+
+    window.addEventListener('load',()=>{
+      navigator.serviceWorker
+        .register('./service-worker.js')
+        .catch(err=>console.warn('Aurora City FC service worker registration failed:',err));
+    },{once:true});
+  }
+
+  installPageIdentity();
   installFreshnessStyles();
   installNavigationStyles();
   installNavigationState();
+  installHeroStyles();
 
   window.AURORA_PLATFORM_RULES=PLATFORM_RULES;
   window.AURORA_ACCOUNT_AVAILABILITY=ACCOUNT_AVAILABILITY;
