@@ -3164,6 +3164,39 @@ tr:hover td{background:rgba(96,165,250,.06)}
 </style>
 
 <script src="AuroraFCData.js"></script>
+
+<style>
+/* ===================== AURORA SELL DESK ===================== */
+.sell-desk-shell{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);gap:16px}
+.sell-desk-panel{border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,rgba(15,23,42,.82),rgba(2,6,23,.72));padding:16px;box-shadow:0 18px 44px rgba(0,0,0,.18)}
+.sell-desk-warning{display:flex;gap:10px;align-items:flex-start;border:1px solid rgba(251,191,36,.34);background:rgba(120,53,15,.20);color:#fde68a;border-radius:16px;padding:12px;margin-bottom:14px;font-size:12px;line-height:1.5}
+.sell-desk-warning b{display:block;color:#fff7d6;margin-bottom:2px}
+.sell-desk-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sell-desk-form .wide{grid-column:1/-1}
+.sell-desk-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.sell-desk-preview div{border:1px solid var(--line);background:rgba(15,23,42,.72);border-radius:14px;padding:10px}
+.sell-desk-preview small{display:block;color:var(--muted);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.sell-desk-preview strong{display:block;color:#f8fafc;margin-top:4px;font-size:13px}
+.sell-desk-list{display:grid;gap:10px}
+.sell-ticket{border:1px solid var(--line);border-radius:18px;background:rgba(2,6,23,.45);padding:13px}
+.sell-ticket-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.sell-ticket-head strong{display:block;font-size:14px;color:#f8fafc}.sell-ticket-head span{display:block;color:var(--muted);font-size:10px;margin-top:3px;line-height:1.4}
+.sell-ticket-status{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:950;letter-spacing:.07em;text-transform:uppercase;border:1px solid var(--line);white-space:nowrap}
+.sell-ticket-status.proposed{color:#fde68a;border-color:rgba(251,191,36,.38);background:rgba(120,53,15,.22)}
+.sell-ticket-status.approved{color:#bbf7d0;border-color:rgba(34,197,94,.38);background:rgba(20,83,45,.22)}
+.sell-ticket-status.executed{color:#bae6fd;border-color:rgba(56,189,248,.38);background:rgba(12,74,110,.22)}
+.sell-ticket-status.rejected,.sell-ticket-status.cancelled{color:#fecaca;border-color:rgba(248,113,113,.35);background:rgba(127,29,29,.20)}
+.sell-ticket-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:11px 0}
+.sell-ticket-grid div{border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:8px;background:rgba(15,23,42,.52)}
+.sell-ticket-grid small{display:block;color:var(--muted);font-size:8px;text-transform:uppercase;font-weight:900;letter-spacing:.07em}.sell-ticket-grid b{display:block;margin-top:3px;font-size:11px;color:#e2e8f0}
+.sell-ticket-reason{font-size:11px;line-height:1.5;color:#cbd5e1;margin:8px 0}
+.sell-ticket-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.sell-execution-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.sell-execution-form .wide{grid-column:1/-1}
+.sell-desk-empty{border:1px dashed rgba(148,163,184,.28);border-radius:16px;padding:18px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:900px){.sell-desk-shell{grid-template-columns:1fr}.sell-ticket-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.sell-desk-form,.sell-execution-form{grid-template-columns:1fr}.sell-desk-form .wide,.sell-execution-form .wide{grid-column:auto}.sell-desk-preview{grid-template-columns:1fr}.sell-ticket-head{flex-direction:column}.sell-ticket-grid{grid-template-columns:1fr 1fr}}
+</style>
 </head>
 <body>
 <!-- ===================== SECTION: APP SHELL ===================== -->
@@ -3363,6 +3396,43 @@ tr:hover td{background:rgba(96,165,250,.06)}
           <div class="registration-history-list" id="registrationHistory"><div class="loading">Connect AuroraData to load recent activity.</div></div>
         </div>
         <div class="transfer-centre-footer-note" id="deskNote">Platform check loading…</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== SECTION: SELL DESK ===================== -->
+  <section class="section" id="sell-desk">
+    <div class="section-head">
+      <div><h2>Outgoing Transfers — Sell Desk</h2><p>Creates review tickets, requires your approval and records only trades you have already completed with the broker.</p></div>
+      <span class="badge amber">Human approval only</span>
+    </div>
+    <div class="sell-desk-warning"><span>🔐</span><div><b>Aurora cannot place a broker order.</b>Approving a ticket only marks the plan as approved inside AuroraData. You still sell manually in IG or Trade 212, then record the completed fill here. Tesco SAYE / Equiniti remains protected until 2029.</div></div>
+    <div class="sell-desk-shell">
+      <div class="sell-desk-panel">
+        <div class="card-title"><h3>Create Review Ticket</h3><span class="badge blue">No trade placed</span></div>
+        <form id="sellTicketForm">
+          <div class="sell-desk-form">
+            <label class="registration-field wide"><span>Active holding</span><select id="sellHoldingSelect" name="holding" required><option value="">Loading active holdings…</option></select></label>
+            <label class="registration-field"><span>Trigger</span><select name="triggerType"><option>MANUAL REVIEW</option><option>DIVIDEND SUSPENDED</option><option>DIVIDEND CUT 20 PLUS</option><option>THESIS BROKEN</option><option>PAYOUT UNSAFE</option><option>SINGLE HOLDING OVER LIMIT</option><option>SECTOR OVER LIMIT</option></select></label>
+            <label class="registration-field"><span>Severity</span><select name="severity"><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option></select></label>
+            <label class="registration-field"><span>Proposed action</span><select name="proposedAction" id="sellProposedAction"><option value="TRIM">Trim holding</option><option value="EXIT REVIEW">Full exit review</option><option value="EXIT">Full exit</option></select></label>
+            <label class="registration-field"><span>Shares proposed</span><input name="proposedShares" id="sellProposedShares" type="number" min="0" step="any" required></label>
+            <label class="registration-field wide"><span>Reason</span><textarea name="reason" placeholder="Explain exactly why the holding should be reviewed for a trim or exit." required></textarea></label>
+            <label class="registration-field wide"><span>Evidence / source</span><textarea name="evidence" placeholder="Results, dividend announcement, cash-flow concern, DecisionEngine evidence or manager note."></textarea></label>
+          </div>
+          <div class="sell-desk-preview">
+            <div><small>Current holding</small><strong id="sellCurrentShares">—</strong></div>
+            <div><small>Estimated proceeds</small><strong id="sellEstimatedProceeds">—</strong></div>
+            <div><small>Income removed</small><strong id="sellIncomeLost">—</strong></div>
+          </div>
+          <div class="registration-message" id="sellTicketMessage">Choose a holding to prepare a review ticket. Nothing is sent to a broker.</div>
+          <div class="registration-form-actions"><button class="registration-btn primary" type="submit">Create sell-review ticket</button><button class="registration-btn" id="refreshSellTickets" type="button">Refresh tickets</button></div>
+        </form>
+      </div>
+      <div class="sell-desk-panel">
+        <div class="card-title"><h3>Approval Queue</h3><span class="badge amber" id="sellTicketCount">0 active</span></div>
+        <div class="sell-desk-list" id="sellTicketList"><div class="sell-desk-empty">Connect AuroraData to load Sell Desk tickets.</div></div>
       </div>
     </div>
   </section>
@@ -3646,7 +3716,7 @@ async function postRegistration(payload){
   }catch(err){
     if(String(err?.message||'').toLowerCase().includes('failed to fetch')||err instanceof TypeError){
       await fetch(registrationConnection.endpoint,{method:'POST',mode:'no-cors',body,redirect:'follow'});
-      return {ok:true,queued:true,transactionId:payload.transactionId,message:'Purchase submitted. Browser security prevented the confirmation response; check PurchaseLog or refresh Aurora after the export runs.'};
+      return {ok:true,queued:true,transactionId:payload.transactionId,message:'Request submitted. Browser security prevented the confirmation response; check AuroraData or refresh after the export runs.'};
     }
     throw err;
   }
@@ -4691,6 +4761,7 @@ async function loadData(){
     ]);
     state = { holdings, watchlist, scout, auroraTimes };
     renderAll();
+    renderSellDeskHoldings();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
@@ -4774,7 +4845,7 @@ document.addEventListener('submit',async event=>{
     registrationBusy=false;if(submit){submit.disabled=false;submit.textContent=currentHoldingForRegistration(form.dataset.ticker,account)?'Confirm top-up':'Confirm new signing';}
   }
 });
-$('saveRegistrationConnection')?.addEventListener('click',async()=>{persistRegistrationConnection();registrationMessage(registrationConnection.endpoint&&registrationConnection.token?'Connection saved in this browser. Loading PlatformRules…':'Enter both the web-app URL and private token.');if(registrationConnection.endpoint&&registrationConnection.token)await loadPlatformRules();loadRegistrationHistory();});
+$('saveRegistrationConnection')?.addEventListener('click',async()=>{persistRegistrationConnection();registrationMessage(registrationConnection.endpoint&&registrationConnection.token?'Connection saved in this browser. Loading PlatformRules…':'Enter both the web-app URL and private token.');if(registrationConnection.endpoint&&registrationConnection.token)await loadPlatformRules();loadRegistrationHistory();loadSellTickets();});
 $('clearRegistrationConnection')?.addEventListener('click',()=>{localStorage.removeItem(REGISTRATION_CONNECTION_KEY);registrationConnection={endpoint:'',token:''};if($('registrationEndpoint'))$('registrationEndpoint').value='';if($('registrationToken'))$('registrationToken').value='';updateRegistrationConnectionStatus();const rulesChip=$('platformRulesStatus');if(rulesChip){rulesChip.textContent='Rules: connect AuroraData';rulesChip.className='status-chip caution';}registrationMessage('Connection removed from this browser.');if($('deskNote'))$('deskNote').textContent='Connect AuroraData to load the live PlatformRules table.';});
 $('testRegistrationConnection')?.addEventListener('click',async()=>{
   persistRegistrationConnection();
@@ -4783,7 +4854,7 @@ $('testRegistrationConnection')?.addEventListener('click',async()=>{
   try{
     const result=await postRegistration({action:'test',transactionId:registrationId(),source:'Aurora City FC Transfer Centre'});
     registrationMessage(result.queued?'Test request submitted, but the browser could not read the cross-site confirmation. The connection may still be working.':(result.message||'Registration service is ready.'),result.queued?'pending':'success');
-    if(!result.queued){await loadPlatformRules();loadRegistrationHistory();}
+    if(!result.queued){await loadPlatformRules();loadRegistrationHistory();loadSellTickets();}
   }catch(err){registrationMessage(err.message||'Connection test failed.','error');}
 });
 
@@ -4805,11 +4876,146 @@ $('applyBestReturn')?.addEventListener('click',()=>{
   renderAll();
   if(!new URLSearchParams(location.search).has('sync')) document.getElementById('finalDealSheet')?.scrollIntoView({behavior:'smooth',block:'start'});
 });
+
+
+/* ===================== AURORA SELL DESK UI ===================== */
+let sellTickets=[];
+let sellDeskBusy=false;
+function sellDeskActiveHoldings(){
+  return activeHoldings().filter(row=>{
+    const account=normalizeRegistrationAccount(row.account||row.platform||row.broker);
+    const ticker=registrationShortTicker(row.ticker);
+    const shares=parseNum(row.shares);
+    return shares>0&&['IG ISA','TRADE 212'].includes(account)&&ticker!=='TSCO';
+  }).sort((a,b)=>String(a.name||a.ticker).localeCompare(String(b.name||b.ticker)));
+}
+function sellDeskHoldingKey(row){return `${registrationShortTicker(row.ticker)}|${normalizeRegistrationAccount(row.account||row.platform||row.broker)}`;}
+function selectedSellHolding(){
+  const key=$('sellHoldingSelect')?.value||'';
+  return sellDeskActiveHoldings().find(row=>sellDeskHoldingKey(row)===key)||null;
+}
+function renderSellDeskHoldings(){
+  const select=$('sellHoldingSelect'); if(!select) return;
+  const current=select.value; const rows=sellDeskActiveHoldings();
+  select.innerHTML='<option value="">Select an active holding…</option>'+rows.map(row=>{
+    const account=normalizeRegistrationAccount(row.account||row.platform||row.broker);
+    return `<option value="${escapeHtml(sellDeskHoldingKey(row))}">${escapeHtml(displayTicker(row.ticker))} — ${escapeHtml(row.name||'')} (${escapeHtml(account)})</option>`;
+  }).join('');
+  if(rows.some(row=>sellDeskHoldingKey(row)===current)) select.value=current;
+  updateSellTicketPreview();
+}
+function updateSellTicketPreview(){
+  const form=$('sellTicketForm'); if(!form) return;
+  const row=selectedSellHolding(); const sharesInput=$('sellProposedShares'); const action=$('sellProposedAction')?.value||'TRIM';
+  if(!row){
+    if($('sellCurrentShares'))$('sellCurrentShares').textContent='—';
+    if($('sellEstimatedProceeds'))$('sellEstimatedProceeds').textContent='—';
+    if($('sellIncomeLost'))$('sellIncomeLost').textContent='—';
+    return;
+  }
+  const currentShares=parseNum(row.shares)||0;
+  if(sharesInput){sharesInput.max=String(currentShares);if(!parseNum(sharesInput.value)){sharesInput.value=action==='TRIM'?String(Math.max(0.00000001,currentShares*.25)):String(currentShares);}}
+  const proposed=Math.max(0,Math.min(currentShares,parseNum(sharesInput?.value)||0));
+  const value=holdingValue(row); const estimated=currentShares>0?value*(proposed/currentShares):0;
+  const dps=parseNum(row.annual_dps)||0; const lost=proposed*dps;
+  if($('sellCurrentShares'))$('sellCurrentShares').textContent=currentShares.toLocaleString('en-GB',{maximumFractionDigits:8});
+  if($('sellEstimatedProceeds'))$('sellEstimatedProceeds').textContent=money(estimated);
+  if($('sellIncomeLost'))$('sellIncomeLost').textContent=`${money(lost)}/yr`;
+}
+function sellTicketStatusClass(status){return String(status||'').toLowerCase().replace(/\s+/g,'-');}
+function executionFormHtml(ticket){
+  const defaultPrice=ticket.currency==='USD'?'':ticket.livePrice||'';
+  const fxField=ticket.currency==='USD'?`<label class="registration-field"><span>USD → GBP rate</span><input name="fxRate" type="number" step="any" min="0" placeholder="e.g. 0.74" required></label>`:'';
+  return `<form class="sell-execution-form" data-sell-execution="${escapeHtml(ticket.ticketId)}">
+    <label class="registration-field"><span>Shares actually sold</span><input name="shares" type="number" step="any" min="0" max="${ticket.proposedShares}" value="${ticket.proposedShares}" required></label>
+    <label class="registration-field"><span>Executed price (${escapeHtml(ticket.priceUnit)})</span><input name="price" type="number" step="any" min="0" value="${escapeHtml(defaultPrice)}" required></label>
+    <label class="registration-field"><span>Fees (${escapeHtml(ticket.currency)})</span><input name="fees" type="number" step="any" min="0" value="0"></label>
+    ${fxField}
+    <label class="registration-field"><span>Trade date</span><input name="tradeDate" type="date" value="${registrationDateValue()}" required></label>
+    <label class="registration-field wide"><span>Execution note</span><input name="note" type="text" placeholder="Broker fill reference or reason for a partial fill."></label>
+    <div class="registration-message wide" data-sale-message>Only use this after the broker confirms the sale. Aurora will update Holdings and PurchaseLog.</div>
+    <div class="registration-form-actions wide"><button class="registration-btn danger" type="submit">Record completed sale</button><button class="registration-btn" type="button" data-sell-status="CANCELLED" data-ticket-id="${escapeHtml(ticket.ticketId)}">Cancel ticket</button></div>
+  </form>`;
+}
+function renderSellTicketList(){
+  const list=$('sellTicketList'); if(!list) return;
+  const active=sellTickets.filter(t=>!['REJECTED','EXECUTED','CANCELLED'].includes(String(t.approvalStatus||'').toUpperCase()));
+  if($('sellTicketCount'))$('sellTicketCount').textContent=`${active.length} active`;
+  if(!sellTickets.length){list.innerHTML='<div class="sell-desk-empty">No sell-review tickets. That is a good thing — nothing is being pushed toward the exit door.</div>';return;}
+  list.innerHTML=sellTickets.map(ticket=>{
+    const status=String(ticket.approvalStatus||'PROPOSED').toUpperCase();
+    const actions=status==='PROPOSED'?`<div class="sell-ticket-actions"><button class="registration-btn primary" type="button" data-sell-status="APPROVED" data-ticket-id="${escapeHtml(ticket.ticketId)}">Approve review</button><button class="registration-btn danger" type="button" data-sell-status="REJECTED" data-ticket-id="${escapeHtml(ticket.ticketId)}">Reject</button></div>`:'';
+    const execution=status==='APPROVED'?executionFormHtml(ticket):'';
+    return `<article class="sell-ticket">
+      <div class="sell-ticket-head"><div><strong>${escapeHtml(ticket.ticker)} — ${escapeHtml(ticket.name)}</strong><span>${escapeHtml(ticket.account)} • ${escapeHtml(ticket.triggerType)} • ${escapeHtml(ticket.proposedAction)}</span></div><span class="sell-ticket-status ${sellTicketStatusClass(status)}">${escapeHtml(status)}</span></div>
+      <div class="sell-ticket-grid"><div><small>Proposed shares</small><b>${Number(ticket.proposedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})}</b></div><div><small>Estimated proceeds</small><b>${money(Number(ticket.estimatedProceedsGbp||0))}</b></div><div><small>Income removed</small><b>${money(Number(ticket.annualIncomeLostGbp||0))}/yr</b></div><div><small>Severity</small><b>${escapeHtml(ticket.severity||'—')}</b></div></div>
+      <div class="sell-ticket-reason"><b>Reason:</b> ${escapeHtml(ticket.reason||'No reason recorded.')}${ticket.evidence?`<br><b>Evidence:</b> ${escapeHtml(ticket.evidence)}`:''}</div>
+      ${actions}${execution}
+    </article>`;
+  }).join('');
+}
+async function loadSellTickets(){
+  if(!$('sellTicketList')) return;
+  if(!registrationConnection.endpoint||!registrationConnection.token){sellTickets=[];renderSellTicketList();return;}
+  $('sellTicketList').innerHTML='<div class="loading">Loading Sell Desk tickets…</div>';
+  try{
+    const result=await postRegistration({action:'listSellTickets',limit:50,includeClosed:true,source:'Aurora City FC Sell Desk'});
+    if(result.queued){$('sellTicketList').innerHTML='<div class="sell-desk-empty">The request was sent, but this browser could not read the response. Refresh after the Apps Script deployment is updated.</div>';return;}
+    sellTickets=Array.isArray(result.tickets)?result.tickets:[];renderSellTicketList();
+  }catch(err){$('sellTicketList').innerHTML=`<div class="sell-desk-empty">${escapeHtml(err.message||'Unable to load Sell Desk. Deploy the updated Apps Script first.')}</div>`;}
+}
+async function updateSellTicketStatus(ticketId,status,button){
+  if(sellDeskBusy)return;
+  const verb=status==='APPROVED'?'approve this internal review ticket':'mark this ticket '+status.toLowerCase();
+  if(!window.confirm(`Are you sure you want to ${verb}?\n\nThis does not place a broker order.`))return;
+  sellDeskBusy=true;if(button){button.disabled=true;button.textContent='Updating…';}
+  try{const result=await postRegistration({action:'updateSellTicket',ticketId,status,approvedBy:'Manager',source:'Aurora City FC Sell Desk',userAgent:navigator.userAgent});registrationMessage(result.message||'Sell Desk ticket updated.','success');await loadSellTickets();}
+  catch(err){registrationMessage(err.message||'Sell Desk update failed.','error');if(button)button.disabled=false;}
+  finally{sellDeskBusy=false;}
+}
+
+
+$('sellHoldingSelect')?.addEventListener('change',()=>{const input=$('sellProposedShares');if(input)input.value='';updateSellTicketPreview();});
+$('sellProposedAction')?.addEventListener('change',()=>{const row=selectedSellHolding();const input=$('sellProposedShares');if(row&&input){const current=parseNum(row.shares)||0;input.value=$('sellProposedAction').value==='TRIM'?String(Math.max(.00000001,current*.25)):String(current);}updateSellTicketPreview();});
+$('sellProposedShares')?.addEventListener('input',updateSellTicketPreview);
+$('refreshSellTickets')?.addEventListener('click',loadSellTickets);
+$('sellTicketForm')?.addEventListener('submit',async event=>{
+  event.preventDefault();if(sellDeskBusy)return;
+  const form=event.currentTarget;const row=selectedSellHolding();const msg=$('sellTicketMessage');
+  if(!row){msg.textContent='Choose an active IG ISA or Trade 212 holding first.';msg.className='registration-message error';return;}
+  if(!registrationConnection.endpoint||!registrationConnection.token){$('registrationConnection')?.setAttribute('open','');msg.textContent='Connect the Registration Desk before creating a sell-review ticket.';msg.className='registration-message error';return;}
+  const currentShares=parseNum(row.shares)||0;const proposed=parseNum(form.proposedShares.value)||0;
+  if(!(proposed>0)||proposed>currentShares){msg.textContent='The proposed quantity must be above zero and no greater than the holding.';msg.className='registration-message error';return;}
+  const reason=String(form.reason.value||'').trim();if(reason.length<8){msg.textContent='Add a clear reason for the review.';msg.className='registration-message error';return;}
+  const detail=platformRuleDetailsFor(row.ticker);const currency=detail?.currency||registrationCurrency(row);const priceUnit=detail?.priceUnit||registrationUnitFor(row);
+  const currentValue=holdingValue(row);const estimated=currentShares>0?currentValue*(proposed/currentShares):0;
+  const liveGbp=parseNum(row.live_price)||0;const livePrice=priceUnit==='PENCE'?liveGbp*100:liveGbp;
+  const payload={action:'createSellTicket',ticketId:`SELL-${Date.now()}`,ticker:row.ticker,name:row.name,account:row.account,triggerType:form.triggerType.value,severity:form.severity.value,proposedAction:form.proposedAction.value,proposedShares:proposed,livePrice,estimatedProceedsGbp:estimated,currency,priceUnit,reason,evidence:form.evidence.value||'',source:'Aurora City FC Sell Desk',userAgent:navigator.userAgent};
+  sellDeskBusy=true;const submit=form.querySelector('button[type="submit"]');submit.disabled=true;submit.textContent='Creating…';msg.textContent='Creating internal review ticket…';msg.className='registration-message pending';
+  try{const result=await postRegistration(payload);msg.textContent=result.message||'Sell-review ticket created. No broker order was placed.';msg.className=`registration-message ${result.queued?'pending':'success'}`;if(!result.queued){form.reason.value='';form.evidence.value='';await loadSellTickets();}}
+  catch(err){msg.textContent=err.message||'Sell-review ticket was not created.';msg.className='registration-message error';}
+  finally{sellDeskBusy=false;submit.disabled=false;submit.textContent='Create sell-review ticket';}
+});
+document.addEventListener('click',event=>{const button=event.target.closest?.('[data-sell-status]');if(!button)return;updateSellTicketStatus(button.dataset.ticketId,button.dataset.sellStatus,button);});
+document.addEventListener('submit',async event=>{
+  const form=event.target.closest?.('[data-sell-execution]');if(!form)return;event.preventDefault();if(sellDeskBusy)return;
+  const ticket=sellTickets.find(t=>t.ticketId===form.dataset.sellExecution);if(!ticket)return;
+  const msg=form.querySelector('[data-sale-message]');const shares=parseNum(form.shares.value);const price=parseNum(form.price.value);
+  if(!(shares>0)||!(price>0)){msg.textContent='Enter the broker-confirmed shares and execution price.';msg.className='registration-message error wide';return;}
+  if(!window.confirm(`Record this completed broker sale in AuroraData?\n\n${ticket.ticker} • ${shares} shares\n\nThis does not send an order to the broker.`))return;
+  const payload={action:'registerSale',transactionId:`SALE-${Date.now()}`,ticketId:ticket.ticketId,shares,priceInput:price,priceUnit:ticket.priceUnit,currency:ticket.currency,fees:parseNum(form.fees.value)||0,fxRateToGbp:parseNum(form.fxRate?.value),tradeDate:form.tradeDate.value||registrationDateValue(),note:form.note.value||'',source:'Aurora City FC Sell Desk',userAgent:navigator.userAgent};
+  sellDeskBusy=true;const submit=form.querySelector('button[type="submit"]');submit.disabled=true;submit.textContent='Recording…';msg.textContent='Recording the broker-confirmed sale in AuroraData…';msg.className='registration-message pending wide';
+  try{const result=await postRegistration(payload);msg.textContent=`${result.message} Net proceeds: ${money(result.netProceedsGbp)}. Annual income removed: ${money(result.annualIncomeLostGbp)}.`;msg.className=`registration-message ${result.queued?'pending':'success'} wide`;if(!result.queued){const local=state.holdings.find(r=>registrationShortTicker(r.ticker)===ticket.ticker&&normalizeRegistrationAccount(r.account)===normalizeRegistrationAccount(ticket.account));if(local)local.shares=result.newShares;await loadSellTickets();await loadRegistrationHistory();renderSellDeskHoldings();}}
+  catch(err){msg.textContent=err.message||'The sale record failed. Holdings were not changed.';msg.className='registration-message error wide';submit.disabled=false;submit.textContent='Record completed sale';}
+  finally{sellDeskBusy=false;}
+});
+
 restoreTransferSettings();
 restoreRegistrationConnection();
 loadPlatformRules();
 loadData();
 loadRegistrationHistory();
+loadSellTickets();
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
 
