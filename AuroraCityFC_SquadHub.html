@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 
 <title>Aurora City FC — Squad Hub</title>
-<!-- Build: Recruitment Dropdown Overview Only • 19 Jul 2026 -->
+<!-- Build: Photographic Squad Hero Refresh • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -4073,6 +4073,167 @@ body.fm-transfer-menu-open .fm-side-scroll{
   padding-bottom:10px!important;
 }
 
+
+
+/* ================= PHOTOGRAPHIC HERO REFRESH ================= */
+.aurora-photo-hero{
+  position:relative;
+  overflow:hidden;
+  min-height:372px;
+  margin:18px 0 16px;
+  padding:24px;
+  display:flex;
+  align-items:flex-end;
+  border:1px solid rgba(125,211,252,.24);
+  border-radius:30px;
+  background:#020617;
+  box-shadow:0 28px 60px rgba(0,0,0,.30);
+}
+.aurora-photo-banner{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+}
+.aurora-photo-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.92) 0%,rgba(2,6,23,.72) 42%,rgba(2,6,23,.30) 74%,rgba(2,6,23,.14) 100%),
+    radial-gradient(circle at 84% 18%,rgba(34,211,238,.16),transparent 30%);
+  z-index:0;
+}
+.aurora-photo-hero:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,#22d3ee,#60a5fa,transparent);
+  z-index:1;
+}
+.aurora-photo-content{
+  position:relative;
+  z-index:2;
+  max-width:860px;
+}
+.aurora-photo-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 11px;
+  border:1px solid rgba(191,219,254,.18);
+  border-radius:999px;
+  background:rgba(15,23,42,.44);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:900;
+}
+.aurora-photo-kicker-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 12px rgba(34,197,94,.66);
+}
+.aurora-photo-title{
+  margin:14px 0 0;
+  font-size:clamp(40px,7vw,90px);
+  line-height:.9;
+  letter-spacing:-.07em;
+  text-transform:uppercase;
+}
+.aurora-photo-title span{
+  display:block;
+  color:#22d3ee;
+  text-shadow:0 0 24px rgba(34,211,238,.22);
+}
+.aurora-photo-sub{
+  margin:14px 0 0;
+  max-width:720px;
+  color:#dbeafe;
+  font-size:15px;
+  line-height:1.5;
+}
+.aurora-photo-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.aurora-photo-pill{
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(2,6,23,.56);
+  border-radius:999px;
+  padding:9px 12px;
+  color:#cbd5e1;
+  font-size:12px;
+  white-space:nowrap;
+}
+.aurora-photo-meta{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+  max-width:960px;
+}
+.aurora-photo-stat{
+  border:1px solid rgba(125,211,252,.16);
+  background:rgba(2,6,23,.54);
+  border-radius:18px;
+  padding:14px 15px;
+  backdrop-filter:blur(2px);
+}
+.aurora-photo-stat small{
+  display:block;
+  color:#93c5fd;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.aurora-photo-stat strong{
+  display:block;
+  margin-top:6px;
+  font-size:28px;
+  line-height:1;
+  letter-spacing:-.05em;
+  color:#f8fafc;
+}
+.aurora-photo-stat span{
+  display:block;
+  margin-top:6px;
+  color:#cbd5e1;
+  font-size:12px;
+  line-height:1.35;
+}
+.aurora-photo-meta.analysis-meta{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
+@media(max-width:1180px){
+  .aurora-photo-meta.analysis-meta{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+@media(max-width:900px){
+  .aurora-photo-hero{
+    min-height:344px;
+    padding:18px;
+    border-radius:24px;
+  }
+  .aurora-photo-meta,
+  .aurora-photo-meta.analysis-meta{
+    grid-template-columns:1fr;
+  }
+  .aurora-photo-stat strong{
+    font-size:24px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4179,43 +4340,20 @@ body.fm-transfer-menu-open .fm-side-scroll{
 
 <main class="app">
   <!-- ===================== SECTION: SQUAD HERO ===================== -->
-  <section class="aurora-dept-hero aurora-squad-hero">
-<div class="aurora-dept-copy">
-<div class="kicker"><span class="kicker-dot"></span> First-team department</div>
-<h2 class="aurora-dept-title">Squad <span>Hub</span></h2>
-<p class="aurora-dept-sub">Current holdings, squad form, buy strength, chemistry warnings, club legends and trophy cabinet progress.</p>
-<div class="hero-actions"><span class="pill" id="lastUpdated">Last updated: loading…</span><span class="pill">Squad Role: Income + Quality</span><span class="pill">Manager Rule: No hiding in the reserves</span></div>
-</div>
-<div class="aurora-dept-scene"><div class="aurora-scene-label">Tactical Locker Room</div><svg viewBox="0 0 720 336" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-<defs>
- <linearGradient id="sbg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071525"/><stop offset="1" stop-color="#0b3249"/></linearGradient>
- <linearGradient id="pitch" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#14532d"/><stop offset="1" stop-color="#052e16"/></linearGradient>
- <radialGradient id="sglow"><stop stop-color="#22d3ee" stop-opacity=".4"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
-</defs>
-<rect width="720" height="336" fill="url(#sbg)"/>
-<circle cx="540" cy="70" r="220" fill="url(#sglow)" opacity=".45"/>
-<!-- locker wall -->
-<g transform="translate(48 22)" fill="#07111f" stroke="#255273"><rect width="624" height="74" rx="10"/><path d="M104 0V74M208 0V74M312 0V74M416 0V74M520 0V74"/></g>
-<g fill="#7dd3fc" font-family="system-ui" font-weight="800" text-anchor="middle"><text x="100" y="54" font-size="18">09</text><text x="204" y="54" font-size="18">10</text><text x="308" y="54" font-size="18">08</text><text x="412" y="54" font-size="18">06</text><text x="516" y="54" font-size="18">04</text><text x="620" y="54" font-size="18">01</text></g>
-<g fill="#93a4bd" font-family="system-ui" font-size="7" text-anchor="middle"><text x="100" y="70">ST</text><text x="204" y="70">AM</text><text x="308" y="70">CM</text><text x="412" y="70">CM</text><text x="516" y="70">CB</text><text x="620" y="70">GK</text></g>
-<!-- tactical board -->
-<g transform="translate(96 108)"><rect width="528" height="204" rx="18" fill="url(#pitch)" stroke="#4ade80" stroke-opacity=".4"/><rect x="12" y="12" width="504" height="180" rx="13" fill="none" stroke="#d1fae5" stroke-opacity=".35"/><path d="M264 12V192" stroke="#d1fae5" stroke-opacity=".35"/><circle cx="264" cy="102" r="34" fill="none" stroke="#d1fae5" stroke-opacity=".35"/><rect x="12" y="56" width="74" height="92" fill="none" stroke="#d1fae5" stroke-opacity=".35"/><rect x="442" y="56" width="74" height="92" fill="none" stroke="#d1fae5" stroke-opacity=".35"/>
-<g fill="#2563eb" stroke="#dbeafe" stroke-width="2" font-family="system-ui" font-size="9" font-weight="900" text-anchor="middle">
- <g transform="translate(110 48)"><circle r="14"/><text y="3" fill="#fff" stroke="none">9</text></g>
- <g transform="translate(105 102)"><circle r="14"/><text y="3" fill="#fff" stroke="none">11</text></g>
- <g transform="translate(110 156)"><circle r="14"/><text y="3" fill="#fff" stroke="none">7</text></g>
- <g transform="translate(235 56)"><circle r="14"/><text y="3" fill="#fff" stroke="none">10</text></g>
- <g transform="translate(235 102)"><circle r="14"/><text y="3" fill="#fff" stroke="none">8</text></g>
- <g transform="translate(235 148)"><circle r="14"/><text y="3" fill="#fff" stroke="none">6</text></g>
- <g transform="translate(366 42)"><circle r="14"/><text y="3" fill="#fff" stroke="none">3</text></g>
- <g transform="translate(366 82)"><circle r="14"/><text y="3" fill="#fff" stroke="none">4</text></g>
- <g transform="translate(366 122)"><circle r="14"/><text y="3" fill="#fff" stroke="none">5</text></g>
- <g transform="translate(366 162)"><circle r="14"/><text y="3" fill="#fff" stroke="none">2</text></g>
- <g transform="translate(474 102)"><circle r="14"/><text y="3" fill="#fff" stroke="none">1</text></g>
-</g></g>
-</svg>
-<div class="aurora-scene-chip" style="right:24px;bottom:20px"><small>First-team shape</small><strong>4–3–3</strong><span>Balanced</span></div>
-</div></section>
+  
+  <section class="aurora-photo-hero" aria-label="Squad Hub hero">
+    <img class="aurora-photo-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/squad-hub-tactical-room.png" alt="Squad Hub tactical room hero">
+    <div class="aurora-photo-content">
+      <div class="aurora-photo-kicker"><span class="aurora-photo-kicker-dot"></span> First-team department</div>
+      <h2 class="aurora-photo-title">Squad <span>Hub</span></h2>
+      <p class="aurora-photo-sub">Current holdings, squad form, buy strength, chemistry warnings, club legends and trophy cabinet progress.</p>
+      <div class="aurora-photo-actions">
+        <span class="aurora-photo-pill" id="lastUpdated">Last updated: loading…</span>
+        <span class="aurora-photo-pill">Squad Role: Income + Quality</span>
+        <span class="aurora-photo-pill">Manager Rule: No hiding in the reserves</span>
+      </div>
+    </div>
+  </section>
 
   <!-- ===================== SECTION: SQUAD KPI STRIP ===================== -->
   <section class="section">

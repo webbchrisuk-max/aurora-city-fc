@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Performance Analysis Room</title>
-<!-- Build: Recruitment Dropdown Overview Only • 19 Jul 2026 -->
+<!-- Build: Photographic Analysis Hero Refresh • 19 Jul 2026 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -717,6 +717,167 @@ body.fm-transfer-menu-open .fm-side-scroll{
   padding-bottom:10px!important;
 }
 
+
+
+/* ================= PHOTOGRAPHIC HERO REFRESH ================= */
+.aurora-photo-hero{
+  position:relative;
+  overflow:hidden;
+  min-height:372px;
+  margin:18px 0 16px;
+  padding:24px;
+  display:flex;
+  align-items:flex-end;
+  border:1px solid rgba(125,211,252,.24);
+  border-radius:30px;
+  background:#020617;
+  box-shadow:0 28px 60px rgba(0,0,0,.30);
+}
+.aurora-photo-banner{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+}
+.aurora-photo-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.92) 0%,rgba(2,6,23,.72) 42%,rgba(2,6,23,.30) 74%,rgba(2,6,23,.14) 100%),
+    radial-gradient(circle at 84% 18%,rgba(34,211,238,.16),transparent 30%);
+  z-index:0;
+}
+.aurora-photo-hero:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,#22d3ee,#60a5fa,transparent);
+  z-index:1;
+}
+.aurora-photo-content{
+  position:relative;
+  z-index:2;
+  max-width:860px;
+}
+.aurora-photo-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 11px;
+  border:1px solid rgba(191,219,254,.18);
+  border-radius:999px;
+  background:rgba(15,23,42,.44);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:900;
+}
+.aurora-photo-kicker-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 12px rgba(34,197,94,.66);
+}
+.aurora-photo-title{
+  margin:14px 0 0;
+  font-size:clamp(40px,7vw,90px);
+  line-height:.9;
+  letter-spacing:-.07em;
+  text-transform:uppercase;
+}
+.aurora-photo-title span{
+  display:block;
+  color:#22d3ee;
+  text-shadow:0 0 24px rgba(34,211,238,.22);
+}
+.aurora-photo-sub{
+  margin:14px 0 0;
+  max-width:720px;
+  color:#dbeafe;
+  font-size:15px;
+  line-height:1.5;
+}
+.aurora-photo-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.aurora-photo-pill{
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(2,6,23,.56);
+  border-radius:999px;
+  padding:9px 12px;
+  color:#cbd5e1;
+  font-size:12px;
+  white-space:nowrap;
+}
+.aurora-photo-meta{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+  max-width:960px;
+}
+.aurora-photo-stat{
+  border:1px solid rgba(125,211,252,.16);
+  background:rgba(2,6,23,.54);
+  border-radius:18px;
+  padding:14px 15px;
+  backdrop-filter:blur(2px);
+}
+.aurora-photo-stat small{
+  display:block;
+  color:#93c5fd;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.aurora-photo-stat strong{
+  display:block;
+  margin-top:6px;
+  font-size:28px;
+  line-height:1;
+  letter-spacing:-.05em;
+  color:#f8fafc;
+}
+.aurora-photo-stat span{
+  display:block;
+  margin-top:6px;
+  color:#cbd5e1;
+  font-size:12px;
+  line-height:1.35;
+}
+.aurora-photo-meta.analysis-meta{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
+@media(max-width:1180px){
+  .aurora-photo-meta.analysis-meta{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+@media(max-width:900px){
+  .aurora-photo-hero{
+    min-height:344px;
+    padding:18px;
+    border-radius:24px;
+  }
+  .aurora-photo-meta,
+  .aurora-photo-meta.analysis-meta{
+    grid-template-columns:1fr;
+  }
+  .aurora-photo-stat strong{
+    font-size:24px;
+  }
+}
+
 </style>
 <script src="AuroraFCData.js"></script>
 </head>
@@ -822,25 +983,24 @@ body.fm-transfer-menu-open .fm-side-scroll{
 
 
 <main class="app" id="analysis">
-  <section class="hero">
-    <div class="hero-inner">
-      <div>
-        <div class="kicker"><span class="dot"></span> Performance intelligence live</div>
-        <h2>Analysis Room<span>See the whole match.</span></h2>
-        <p class="hero-copy" id="heroCopy">Loading Aurora’s income form, squad contribution, risk shape and progression towards the next division.</p>
-        <div class="hero-tags">
-          <span class="hero-tag" id="dataFreshness">Aurora data: loading…</span>
-          <span class="hero-tag">Primary objective: £500/month</span>
-          <span class="hero-tag">Charts update from AuroraMaster.json</span>
-        </div>
+
+  <section class="aurora-photo-hero" aria-label="Analysis Room hero">
+    <img class="aurora-photo-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/analysis-room-performance-lab.png" alt="Analysis Room performance lab hero">
+    <div class="aurora-photo-content">
+      <div class="aurora-photo-kicker"><span class="aurora-photo-kicker-dot"></span> Performance intelligence live</div>
+      <h2 class="aurora-photo-title">Analysis <span>Room</span></h2>
+      <p class="aurora-photo-sub" id="heroCopy">Loading Aurora’s income form, squad contribution, risk shape and progression towards the next division.</p>
+      <div class="aurora-photo-actions">
+        <span class="aurora-photo-pill" id="dataFreshness">Aurora data: loading…</span>
+        <span class="aurora-photo-pill">Primary objective: £500/month</span>
+        <span class="aurora-photo-pill">Charts update from AuroraMaster.json</span>
       </div>
-      <div class="tactics-board" aria-label="Aurora performance tactics board">
-        <div class="halfway"></div><div class="centre-circle"></div>
-        <div class="tactic-chip tc1"><small>Attack</small><strong id="boardIncome">Income</strong></div>
-        <div class="tactic-chip tc2"><small>Form</small><strong id="boardForm">Loading</strong></div>
-        <div class="tactic-chip tc3"><small>Shape</small><strong id="boardShape">Balanced?</strong></div>
-        <div class="tactic-chip tc4"><small>Control</small><strong id="boardYield">Yield</strong></div>
-        <div class="tactic-chip tc5"><small>Target</small><strong id="boardTarget">£500/m</strong></div>
+      <div class="aurora-photo-meta analysis-meta">
+        <div class="aurora-photo-stat"><small>Income</small><strong id="boardIncome">Income</strong><span>Attack lane</span></div>
+        <div class="aurora-photo-stat"><small>Form</small><strong id="boardForm">Loading</strong><span>Current squad momentum</span></div>
+        <div class="aurora-photo-stat"><small>Shape</small><strong id="boardShape">Balanced?</strong><span>Portfolio structure</span></div>
+        <div class="aurora-photo-stat"><small>Control</small><strong id="boardYield">Yield</strong><span>Quality and discipline</span></div>
+        <div class="aurora-photo-stat"><small>Target</small><strong id="boardTarget">£500/m</strong><span>Promotion objective</span></div>
       </div>
     </div>
   </section>
