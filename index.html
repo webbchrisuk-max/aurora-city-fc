@@ -1134,7 +1134,7 @@
     (() => {
       "use strict";
 
-      const dashboardURL = "AuroraCityFC_GameShell.html";
+      const dashboardURL = "AuroraCityFC_ManagerDashboard.html";
       const bootScreen = document.getElementById("bootScreen");
       const accessScreen = document.getElementById("accessScreen");
       const transitionScreen = document.getElementById("transitionScreen");
@@ -1144,15 +1144,6 @@
       const bootCode = document.getElementById("bootCode");
       const enterButton = document.getElementById("enterButton");
       const particles = document.getElementById("particles");
-      const loggedOut = new URLSearchParams(window.location.search).get("logout") === "1";
-      const profileStatus = document.querySelector(".profile-status");
-
-      if (loggedOut && profileStatus) {
-        profileStatus.textContent = "Previous manager session closed safely";
-        window.setTimeout(() => {
-          window.history.replaceState({}, "", window.location.pathname);
-        }, 1200);
-      }
 
       const stages = [
         { at: 0, message: "Authenticating manager profile...", code: "AUTH // MANAGER" },
