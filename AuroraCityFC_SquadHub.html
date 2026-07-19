@@ -2762,442 +2762,84 @@ body.player-drawer-open{overflow:hidden!important}
   .aurora-dept-scene{display:none!important}
 }
 
-</style>
 
-
-
-
-<style id="aurora-direct-session-style">
-:root{
-  --aurora-session-height:52px;
-  --aurora-session-safe-top:env(safe-area-inset-top,0px);
-}
-
-.aurora-session-bar{
-  position:sticky;
-  top:0;
-  z-index:100000;
-  min-height:calc(var(--aurora-session-height) + var(--aurora-session-safe-top));
-  padding:
-    var(--aurora-session-safe-top)
-    calc(14px + env(safe-area-inset-right,0px))
-    0
-    calc(14px + env(safe-area-inset-left,0px));
+/* ===================== SECTION: COMPACT FOOTBALL MANAGER MATCHDAY VIEW ===================== */
+.squad-matchday-grid{
   display:grid;
-  grid-template-columns:minmax(210px,1fr) auto minmax(210px,1fr);
-  align-items:center;
-  gap:14px;
-  background:
-    linear-gradient(90deg,rgba(8,47,73,.58),transparent 36%,rgba(30,64,175,.20)),
-    rgba(2,7,20,.97);
-  border-bottom:1px solid rgba(125,211,252,.20);
-  box-shadow:0 10px 32px rgba(0,0,0,.38);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+  grid-template-columns:minmax(380px,.78fr) minmax(650px,1.22fr);
+  gap:12px;
+  align-items:start;
 }
-
-.aurora-session-brand{
-  min-width:0;
-  display:flex;
-  align-items:center;
-  gap:10px;
+.squad-formation-card,.squad-teamsheet-card{min-width:0;height:100%}
+.squad-formation-card{padding:14px}
+.squad-formation-card .formation-wrap{gap:8px;margin-top:8px}
+.squad-formation-card .formation-toolbar{gap:8px}
+.squad-formation-card .formation-toolbar p{max-width:340px;font-size:11px;line-height:1.35}
+.squad-formation-card .formation-badges{gap:5px}
+.squad-formation-card .formation-badges .badge{padding:5px 8px;font-size:9px}
+.compact-pitch-scroll{width:100%;max-width:100%;overflow:hidden!important;padding:0!important;margin:0!important}
+.compact-pitch-board{width:100%!important;min-width:0!important;height:510px!important;min-height:510px!important;max-height:510px!important;border-radius:20px!important}
+.compact-pitch-board .pitch-outline{inset:12px;border-radius:15px}
+.compact-pitch-board .pitch-half{top:12px;bottom:12px}
+.compact-pitch-board .pitch-centre-circle{width:92px;height:92px}
+.compact-pitch-board .pitch-centre-dot{width:7px;height:7px}
+.compact-pitch-board .pitch-box-top,.compact-pitch-board .pitch-box-bottom{width:42%;height:76px}
+.compact-pitch-board .pitch-box-top,.compact-pitch-board .pitch-six-top{top:12px}
+.compact-pitch-board .pitch-box-bottom,.compact-pitch-board .pitch-six-bottom{bottom:12px}
+.compact-pitch-board .pitch-six-top,.compact-pitch-board .pitch-six-bottom{width:23%;height:35px}
+.compact-pitch-board .pitch-player{width:76px!important;gap:3px!important}
+.compact-pitch-board .pitch-player-core{width:58px!important;height:54px!important}
+.compact-pitch-board .pitch-player.has-squad-photo .pitch-player-core{width:58px!important;height:68px!important}
+.compact-pitch-board .pitch-squad-photo{border-radius:11px}
+.compact-pitch-board .pitch-pos{top:-6px!important;left:-7px!important;padding:3px 5px!important;font-size:7px!important;letter-spacing:.04em!important}
+.compact-pitch-board .pitch-score{top:-6px!important;right:-7px!important;min-width:24px!important;height:24px!important;padding:0 5px!important;border-width:1px!important;font-size:9px!important}
+.compact-pitch-board .pitch-shirt-badge{left:15px!important;top:15px!important;width:9px!important;height:9px!important}
+.compact-pitch-board .pitch-shirt-code{font-size:12px!important}
+.compact-pitch-board .pitch-name{max-width:76px!important;padding:2px 4px!important;font-size:8px!important;line-height:1.05!important}
+.compact-pitch-board .pitch-stars{min-height:10px!important;font-size:8px!important;line-height:1!important}
+.squad-teamsheet-card{padding:14px}
+.squad-teamsheet-card .team-selection-head{margin:0 0 9px}
+.squad-teamsheet-card .team-selection-head h4{font-size:20px}
+.squad-teamsheet-card .team-selection-head p{max-width:520px;margin-top:3px;font-size:11px;line-height:1.35}
+.compact-team-summary{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important;margin-bottom:8px!important}
+.compact-team-summary .team-selection-stat{min-width:0;padding:8px!important;border-radius:12px!important}
+.compact-team-summary .team-selection-stat small{font-size:7px!important;letter-spacing:.04em!important}
+.compact-team-summary .team-selection-stat strong{margin-top:4px!important;font-size:14px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compact-team-table-wrap{width:100%!important;max-width:100%!important;overflow:visible!important;contain:none!important;border-radius:14px!important}
+.compact-team-table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important}
+.compact-team-table .col-number{width:5%}
+.compact-team-table .col-position{width:6%}
+.compact-team-table .col-player{width:21%}
+.compact-team-table .col-price{width:9%}
+.compact-team-table .col-today{width:8%}
+.compact-team-table .col-holding{width:10%}
+.compact-team-table .col-year{width:10%}
+.compact-team-table .col-month{width:10%}
+.compact-team-table .col-rating{width:7%}
+.compact-team-table .col-status{width:14%}
+.compact-team-table th,.compact-team-table td{min-width:0!important;padding:6px 4px!important;font-size:9px!important;line-height:1.16!important;overflow-wrap:anywhere}
+.compact-team-table th{position:static!important;font-size:7px!important;letter-spacing:.04em!important}
+.compact-team-table .squad-no{width:24px!important;height:24px!important;border-radius:8px!important;font-size:9px!important}
+.compact-team-table .position-chip{min-width:0!important;padding:4px 5px!important;font-size:8px!important}
+.compact-team-table .player-cell strong{font-size:9px!important;line-height:1.12!important}
+.compact-team-table .player-cell small{margin-top:2px!important;font-size:7px!important;line-height:1.1!important}
+.compact-team-table .role-chip{width:100%;max-width:100%;justify-content:center;padding:4px 3px!important;border-radius:8px!important;font-size:7px!important;line-height:1.05!important;white-space:normal!important;text-align:center}
+.squad-support-grid{margin-top:12px}
+.squad-support-grid .selection-bench-list{max-height:220px}
+@media(max-width:1120px){
+  .squad-matchday-grid{grid-template-columns:1fr}
+  .compact-pitch-board{height:560px!important;min-height:560px!important;max-height:560px!important}
 }
-
-.aurora-session-crest{
-  width:34px;
-  height:34px;
-  flex:0 0 auto;
-  border-radius:11px;
-  overflow:hidden;
-  border:1px solid rgba(125,211,252,.30);
-  background:#020617;
-  box-shadow:0 0 22px rgba(34,211,238,.14);
-}
-
-.aurora-session-crest img{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:cover;
-}
-
-.aurora-session-copy{
-  min-width:0;
-}
-
-.aurora-session-copy small{
-  display:block;
-  color:#7dd3fc;
-  font-size:9px;
-  line-height:1;
-  font-weight:900;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  white-space:nowrap;
-}
-
-.aurora-session-copy strong{
-  display:block;
-  margin-top:4px;
-  color:#eaf4ff;
-  font-size:13px;
-  line-height:1;
-  font-weight:900;
-  white-space:nowrap;
-}
-
-.aurora-session-section{
-  min-width:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:9px;
-  color:#aab9cc;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  white-space:nowrap;
-}
-
-.aurora-session-dot{
-  width:8px;
-  height:8px;
-  flex:0 0 auto;
-  border-radius:50%;
-  background:#34d399;
-  box-shadow:
-    0 0 0 5px rgba(52,211,153,.10),
-    0 0 16px rgba(52,211,153,.58);
-}
-
-.aurora-session-actions{
-  display:flex;
-  justify-content:flex-end;
-}
-
-.aurora-session-logout{
-  min-height:36px;
-  border:1px solid rgba(251,113,133,.36);
-  border-radius:12px;
-  padding:0 14px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  color:#ffe4e6;
-  background:
-    linear-gradient(135deg,rgba(136,19,55,.68),rgba(76,5,25,.82));
-  box-shadow:
-    0 8px 22px rgba(76,5,25,.28),
-    inset 0 1px 0 rgba(255,255,255,.07);
-  cursor:pointer;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.10em;
-  text-transform:uppercase;
-}
-
-.aurora-session-logout:hover,
-.aurora-session-logout:focus-visible{
-  border-color:rgba(251,113,133,.72);
-  background:
-    linear-gradient(135deg,rgba(190,24,93,.82),rgba(95,10,35,.92));
-  outline:none;
-}
-
-.aurora-session-logout svg{
-  width:16px;
-  height:16px;
-}
-
-.aurora-session-modal,
-.aurora-session-exit{
-  position:fixed;
-  inset:0;
-  z-index:200000;
-  display:grid;
-  place-items:center;
-  padding:24px;
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-  transition:opacity .2s ease,visibility .2s ease;
-}
-
-.aurora-session-modal{
-  background:rgba(1,4,12,.70);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-}
-
-.aurora-session-modal.is-active,
-.aurora-session-exit.is-active{
-  opacity:1;
-  visibility:visible;
-  pointer-events:auto;
-}
-
-.aurora-session-card{
-  width:min(430px,100%);
-  overflow:hidden;
-  border:1px solid rgba(125,211,252,.22);
-  border-radius:24px;
-  background:
-    radial-gradient(circle at 86% 0%,rgba(34,211,238,.13),transparent 34%),
-    linear-gradient(180deg,rgba(10,26,48,.99),rgba(3,10,23,.99));
-  box-shadow:0 30px 90px rgba(0,0,0,.60);
-}
-
-.aurora-session-card-main{
-  padding:25px 24px 20px;
-  text-align:center;
-}
-
-.aurora-session-card-crest{
-  width:72px;
-  height:72px;
-  margin:0 auto 16px;
-  overflow:hidden;
-  border:1px solid rgba(125,211,252,.28);
-  border-radius:22px;
-  background:#020617;
-  box-shadow:0 0 34px rgba(34,211,238,.16);
-}
-
-.aurora-session-card-crest img{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:cover;
-}
-
-.aurora-session-eyebrow{
-  margin:0;
-  color:#7dd3fc;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-}
-
-.aurora-session-card h2{
-  margin:10px 0 8px;
-  color:#f8fbff;
-  font-size:32px;
-  line-height:1;
-  letter-spacing:-.045em;
-}
-
-.aurora-session-card p{
-  margin:0 auto;
-  max-width:330px;
-  color:#b6c6dd;
-  font-size:14px;
-  line-height:1.5;
-}
-
-.aurora-session-buttons{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  padding:0 18px 18px;
-}
-
-.aurora-session-buttons button{
-  min-height:46px;
-  border-radius:14px;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.aurora-session-cancel{
-  color:#dbeafe;
-  border:1px solid rgba(148,163,184,.20);
-  background:rgba(15,23,42,.72);
-}
-
-.aurora-session-confirm{
-  color:#fff1f2;
-  border:1px solid rgba(251,113,133,.42);
-  background:linear-gradient(135deg,rgba(159,18,57,.92),rgba(76,5,25,.95));
-}
-
-.aurora-session-exit{
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 32%,rgba(34,211,238,.15),transparent 28%),
-    #01040b;
-}
-
-.aurora-session-exit::before,
-.aurora-session-exit::after{
-  content:"";
-  position:absolute;
-  top:0;
-  bottom:0;
-  width:50.5%;
-  background:
-    linear-gradient(90deg,rgba(255,255,255,.025),transparent),
-    linear-gradient(180deg,#071426,#020713);
-  transition:transform .72s cubic-bezier(.72,0,.2,1);
-}
-
-.aurora-session-exit::before{
-  left:0;
-  border-right:1px solid rgba(125,211,252,.22);
-  transform:translateX(-101%);
-}
-
-.aurora-session-exit::after{
-  right:0;
-  border-left:1px solid rgba(125,211,252,.22);
-  transform:translateX(101%);
-}
-
-.aurora-session-exit.is-active::before,
-.aurora-session-exit.is-active::after{
-  transform:translateX(0);
-}
-
-.aurora-session-exit-message{
-  position:relative;
-  z-index:2;
-  text-align:center;
-  opacity:0;
-  transform:translateY(12px);
-  transition:opacity .3s ease .42s,transform .3s ease .42s;
-}
-
-.aurora-session-exit.is-active .aurora-session-exit-message{
-  opacity:1;
-  transform:translateY(0);
-}
-
-.aurora-session-exit-message img{
-  width:82px;
-  height:82px;
-  display:block;
-  margin:0 auto 18px;
-  border-radius:24px;
-  border:1px solid rgba(125,211,252,.28);
-  box-shadow:0 0 38px rgba(34,211,238,.18);
-}
-
-.aurora-session-exit-message h2{
-  margin:0;
-  color:#fff;
-  font-size:clamp(30px,5vw,48px);
-  letter-spacing:-.055em;
-}
-
-.aurora-session-exit-message p{
-  margin:8px 0 0;
-  color:#7dd3fc;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-}
-
-/* Existing page topbars now sit below the permanent Manager Session bar. */
-body > .topbar,
-main.app > .topbar,
-.app > .topbar{
-  top:calc(var(--aurora-session-height) + var(--aurora-session-safe-top))!important;
-}
-
 @media(max-width:760px){
-  :root{--aurora-session-height:48px}
-
-  .aurora-session-bar{
-    grid-template-columns:minmax(0,1fr) auto;
-    gap:10px;
-    padding-left:calc(10px + env(safe-area-inset-left,0px));
-    padding-right:calc(10px + env(safe-area-inset-right,0px));
-  }
-
-  .aurora-session-section{display:none}
-  .aurora-session-copy small{display:none}
-  .aurora-session-copy strong{font-size:12px}
-  .aurora-session-logout{min-height:34px;padding:0 11px}
+  .compact-pitch-scroll{overflow-x:auto!important;padding-bottom:7px!important}
+  .compact-pitch-board{min-width:680px!important;height:560px!important;min-height:560px!important}
+  .compact-team-table-wrap{overflow-x:auto!important}
+  .compact-team-table{min-width:780px!important}
 }
 
-@media(max-width:390px){
-  .aurora-session-copy{display:none}
-  .aurora-session-buttons{grid-template-columns:1fr}
-}
-
-@media(prefers-reduced-motion:reduce){
-  .aurora-session-modal,
-  .aurora-session-exit,
-  .aurora-session-exit::before,
-  .aurora-session-exit::after,
-  .aurora-session-exit-message{
-    transition:none!important;
-  }
-}
 </style>
-
 </head>
 <body>
-
-<div class="aurora-session-bar" id="auroraSessionBar">
-  <div class="aurora-session-brand">
-    <div class="aurora-session-crest">
-      <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="Aurora City FC crest">
-    </div>
-    <div class="aurora-session-copy">
-      <small>Aurora City FC</small>
-      <strong>Manager Session • Webby</strong>
-    </div>
-  </div>
-
-  <div class="aurora-session-section">
-    <span class="aurora-session-dot" aria-hidden="true"></span>
-    <span>SQUAD HUB</span>
-  </div>
-
-  <div class="aurora-session-actions">
-    <button class="aurora-session-logout" id="auroraLogoutButton" type="button">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M12 3v9" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
-        <path d="M7.35 5.9a8 8 0 1 0 9.3 0" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
-      </svg>
-      <span>Log Out</span>
-    </button>
-  </div>
-</div>
-
-<section class="aurora-session-modal" id="auroraLogoutModal" role="dialog" aria-modal="true" aria-labelledby="auroraLogoutTitle">
-  <div class="aurora-session-card">
-    <div class="aurora-session-card-main">
-      <div class="aurora-session-card-crest">
-        <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="">
-      </div>
-      <p class="aurora-session-eyebrow">Manager Session Control</p>
-      <h2 id="auroraLogoutTitle">Exit Aurora City FC?</h2>
-      <p>Your club data remains saved. This closes the manager session and returns you to the Aurora access screen.</p>
-    </div>
-
-    <div class="aurora-session-buttons">
-      <button class="aurora-session-cancel" id="auroraCancelLogout" type="button">Stay in Club</button>
-      <button class="aurora-session-confirm" id="auroraConfirmLogout" type="button">Log Out</button>
-    </div>
-  </div>
-</section>
-
-<section class="aurora-session-exit" id="auroraExitLayer" aria-live="polite">
-  <div class="aurora-session-exit-message">
-    <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="">
-    <h2>Session Closed</h2>
-    <p>Returning to manager access</p>
-  </div>
-</section>
-
 <!-- ===================== SECTION: APP SHELL ===================== -->
 <div class="topbar">
   <div class="topbar-inner">
@@ -3284,45 +2926,109 @@ main.app > .topbar,
   </section>
 
   <!-- ===================== SECTION: FIRST TEAM + RELEGATION WATCH ===================== -->
-  <section class="section">
-    <div class="squad-grid">
-      <div class="squad-card w8">
-        <div class="card-title"><h3>First-team formation</h3><span class="badge green">Matchday XI</span></div>
+  <section class="section squad-matchday-section">
+    <div class="squad-matchday-grid">
+
+      <div class="squad-card squad-formation-card">
+        <div class="card-title">
+          <h3>First-team formation</h3>
+          <span class="badge green">Matchday XI</span>
+        </div>
+
         <div class="formation-wrap">
           <div class="formation-toolbar">
-            <p>Real-pitch squad view with a proper football shape. Strongest holdings start in the XI, while the next best names drop into the bench and depth chart.</p>
+            <p>Compact match view. Tap any player to open the full profile.</p>
             <div class="formation-badges">
-              <span class="badge green">4-3-3 shape</span>
-              <span class="badge">Balanced setup</span>
+              <span class="badge green">4-3-3</span>
+              <span class="badge">Balanced</span>
             </div>
           </div>
-          <div class="pitch-scroll"><div class="pitch-board" id="firstTeamPitch"><div class="loading">Setting the team up on the pitch…</div></div></div>
-          <div class="team-selection-wrap">
-            <div class="team-selection-head">
-              <div><h4>Team Selection</h4><p>Proper squad numbers and positions. Tap any player to open the full player profile.</p></div>
-              <span class="badge blue">Starting XI</span>
+
+          <div class="pitch-scroll compact-pitch-scroll">
+            <div class="pitch-board compact-pitch-board" id="firstTeamPitch">
+              <div class="loading">Setting the team up on the pitch…</div>
             </div>
-            <div class="team-selection-summary" id="teamSelectionSummary"><div class="loading">Preparing teamsheet…</div></div>
-            <div class="team-selection-table-wrap">
-              <table class="team-selection-table">
-                <thead><tr><th>No.</th><th>Pos</th><th>Player</th><th class="num">Last Price</th><th class="num">Today</th><th class="num">Holding</th><th class="num">Year Div.</th><th class="num">Month Div.</th><th class="num">Rating</th><th>Status</th></tr></thead>
-                <tbody id="teamSelectionBody"><tr><td colspan="10"><div class="loading">Selecting the team…</div></td></tr></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="bench-wrap">
-            <div class="bench-header">
-              <div class="card-title" style="margin:0;padding:0;background:none;border:none;box-shadow:none"><h3>Bench & depth chart</h3><span class="badge amber">Rotation options</span></div>
-              <p>Next names after the starting XI. No duplicates from the pitch.</p>
-            </div>
-            <div class="bench-list" id="benchList"><div class="loading">Loading bench…</div></div>
           </div>
         </div>
       </div>
+
+      <div class="squad-card squad-teamsheet-card">
+        <div class="team-selection-head">
+          <div>
+            <h4>Team Selection</h4>
+            <p>Starting XI market, dividend and performance information in one view.</p>
+          </div>
+          <span class="badge blue">Starting XI</span>
+        </div>
+
+        <div class="team-selection-summary compact-team-summary" id="teamSelectionSummary">
+          <div class="loading">Preparing teamsheet…</div>
+        </div>
+
+        <div class="team-selection-table-wrap compact-team-table-wrap">
+          <table class="team-selection-table compact-team-table">
+            <colgroup>
+              <col class="col-number">
+              <col class="col-position">
+              <col class="col-player">
+              <col class="col-price">
+              <col class="col-today">
+              <col class="col-holding">
+              <col class="col-year">
+              <col class="col-month">
+              <col class="col-rating">
+              <col class="col-status">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Pos</th>
+                <th>Player</th>
+                <th class="num">Price</th>
+                <th class="num">Today</th>
+                <th class="num">Holding</th>
+                <th class="num">Year Div.</th>
+                <th class="num">Month Div.</th>
+                <th class="num">Rating</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="teamSelectionBody">
+              <tr>
+                <td colspan="10"><div class="loading">Selecting the team…</div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="squad-grid squad-support-grid">
+      <div class="squad-card w8">
+        <div class="bench-wrap">
+          <div class="bench-header">
+            <div class="card-title" style="margin:0;padding:0;background:none;border:none;box-shadow:none">
+              <h3>Bench & depth chart</h3>
+              <span class="badge amber">Rotation options</span>
+            </div>
+            <p>Next names after the starting XI. No duplicates from the pitch.</p>
+          </div>
+          <div class="bench-list" id="benchList">
+            <div class="loading">Loading bench…</div>
+          </div>
+        </div>
+      </div>
+
       <div class="squad-card w4">
-        <div class="card-title"><h3>Selection Room</h3><span class="badge blue">Bench intelligence</span></div>
+        <div class="card-title">
+          <h3>Selection Room</h3>
+          <span class="badge blue">Bench intelligence</span>
+        </div>
         <div class="selection-room">
-          <div class="selection-bench-list" id="relegationWatch"><div class="loading">Checking backup team…</div></div>
+          <div class="selection-bench-list" id="relegationWatch">
+            <div class="loading">Checking backup team…</div>
+          </div>
           <div class="selection-intel-grid" id="selectionIntel">
             <div class="loading">Loading selection intelligence…</div>
           </div>
@@ -4443,67 +4149,5 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
 })();
 </script>
-
-
-<script id="aurora-direct-session-script">
-(() => {
-  "use strict";
-
-  const logoutButton = document.getElementById("auroraLogoutButton");
-  const logoutModal = document.getElementById("auroraLogoutModal");
-  const cancelLogout = document.getElementById("auroraCancelLogout");
-  const confirmLogout = document.getElementById("auroraConfirmLogout");
-  const exitLayer = document.getElementById("auroraExitLayer");
-
-  if (!logoutButton || !logoutModal || !cancelLogout || !confirmLogout || !exitLayer) {
-    return;
-  }
-
-  let previousFocus = null;
-  let loggingOut = false;
-
-  function openLogout() {
-    if (loggingOut) return;
-    previousFocus = document.activeElement;
-    logoutModal.classList.add("is-active");
-    confirmLogout.focus();
-  }
-
-  function closeLogout() {
-    logoutModal.classList.remove("is-active");
-
-    if (previousFocus && typeof previousFocus.focus === "function") {
-      previousFocus.focus();
-    }
-  }
-
-  function completeLogout() {
-    if (loggingOut) return;
-    loggingOut = true;
-    logoutModal.classList.remove("is-active");
-    exitLayer.classList.add("is-active");
-
-    window.setTimeout(() => {
-      window.location.replace("index.html?logout=1");
-    }, 1350);
-  }
-
-  logoutButton.addEventListener("click", openLogout);
-  cancelLogout.addEventListener("click", closeLogout);
-  confirmLogout.addEventListener("click", completeLogout);
-
-  logoutModal.addEventListener("click", event => {
-    if (event.target === logoutModal) closeLogout();
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && logoutModal.classList.contains("is-active")) {
-      event.preventDefault();
-      closeLogout();
-    }
-  });
-})();
-</script>
-
 </body>
 </html>
