@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: Recruitment Dropdown Overview Only • 19 Jul 2026 -->
+<!-- Build: Transfer Centre Duplicate Links Removed • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -3880,56 +3880,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
   line-height:1;
   text-align:center;
 }
-.transfer-operations-panel{
-  display:grid;
-  grid-template-columns:repeat(6,minmax(0,1fr));
-  gap:9px;
-  padding:15px;
-  border:1px solid rgba(125,211,252,.18);
-  border-radius:24px;
-  background:
-    radial-gradient(circle at 90% 0%,rgba(34,211,238,.10),transparent 28%),
-    linear-gradient(180deg,rgba(9,26,47,.88),rgba(5,13,25,.94));
-  box-shadow:0 16px 44px rgba(0,0,0,.24);
-}
-.transfer-operation-link{
-  min-width:0;
-  min-height:112px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  gap:8px;
-  padding:13px;
-  border:1px solid rgba(148,163,184,.13);
-  border-radius:17px;
-  background:rgba(2,6,23,.28);
-  transition:.18s transform,.18s border-color,.18s background;
-}
-.transfer-operation-link:hover{
-  transform:translateY(-2px);
-  border-color:rgba(34,211,238,.36);
-  background:rgba(8,47,73,.30);
-}
-.transfer-operation-link span{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  color:#7dd3fc;
-  font-size:10px;
-  font-weight:1000;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.transfer-operation-link strong{
-  color:#eff8ff;
-  font-size:16px;
-  letter-spacing:-.035em;
-}
-.transfer-operation-link small{
-  color:#8293a9;
-  font-size:9px;
-  line-height:1.35;
-}
 #transfer-overview,
 #best-return-allocation,
 #top-transfer-board,
@@ -3946,7 +3896,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
   .transfer-command-brand{min-width:156px}
   .transfer-command-brand span{display:none}
   .transfer-section-nav a{padding:8px 9px;font-size:8px}
-  .transfer-operations-panel{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:760px){
   .transfer-command-brand{min-width:auto}
@@ -3954,7 +3903,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
   .transfer-command-crest{width:38px;height:38px}
   .transfer-home-button{padding:8px 10px}
   .transfer-section-nav a{font-size:8px}
-  .transfer-operations-panel{grid-template-columns:1fr 1fr}
 }
 
 
@@ -4765,42 +4713,6 @@ body.fm-transfer-menu-open .fm-side-scroll{
         <strong id="heroCashRemaining">—</strong>
         <span id="heroCashRemainingNote">Checking the current allocation…</span>
       </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: RECRUITMENT OPERATIONS ===================== -->
-  <section class="section">
-    <div class="transfer-operations-panel">
-      <a class="transfer-operation-link" href="#incoming-offers">
-        <span>Incoming Offers <b id="quickIncomingCount">0</b></span>
-        <strong>Chairman’s Offer Room</strong>
-        <small>Review open bids, counters and offer scenarios.</small>
-      </a>
-      <a class="transfer-operation-link" href="#deal-sheet">
-        <span>Deal Sheet <b id="quickDealStatus">Sync</b></span>
-        <strong>Final Buying Route</strong>
-        <small>Open the approved allocation and yearly income added.</small>
-      </a>
-      <a class="transfer-operation-link" href="#sell-desk">
-        <span>Sell Desk <b id="quickSellCount">0</b></span>
-        <strong>Outgoing Transfers</strong>
-        <small>Create and approve internal exit-review tickets.</small>
-      </a>
-      <a class="transfer-operation-link" href="#registration-desk">
-        <span>Registration <b id="quickRegistrationStatus">—</b></span>
-        <strong>Record Completed Buys</strong>
-        <small>Register the confirmed broker fill and account.</small>
-      </a>
-      <a class="transfer-operation-link" href="#best-return-allocation">
-        <span>Best Return <b id="quickBestReturnIncome">—</b></span>
-        <strong>Income Optimiser</strong>
-        <small>Compare the income-maximised version of the route.</small>
-      </a>
-      <a class="transfer-operation-link" href="#transfer-bench">
-        <span>Bench <b id="quickBenchCount">—</b></span>
-        <strong>Backup Targets</strong>
-        <small>See the next names waiting behind the final four.</small>
-      </a>
     </div>
   </section>
 
@@ -5861,7 +5773,6 @@ function renderBestReturnAllocation(deal){
   const button=$('applyBestReturn');
   if(button) button.disabled=!plan.rows.length;
   if($('bestReturnIncome')) $('bestReturnIncome').textContent=plan.rows.length?`${money(plan.totalIncome)}/yr`:'—';
-  if($('quickBestReturnIncome')) $('quickBestReturnIncome').textContent=plan.rows.length?money(plan.totalIncome):'—';
   if($('bestReturnMonthly')) $('bestReturnMonthly').textContent=plan.rows.length?`${money(plan.totalIncome/12)}/month estimated`:'No approved route available.';
   const uplift=plan.totalIncome-(deal.totalIncome||0);
   if($('bestReturnUplift')){
@@ -6190,7 +6101,6 @@ function renderDealSheet(deal){
     badge.textContent = deal.status;
   }
   if($('subnavDealStatus')) $('subnavDealStatus').textContent = deal.rows.length ? 'Ready' : 'Hold';
-  if($('quickDealStatus')) $('quickDealStatus').textContent = deal.rows.length ? 'Ready' : 'Hold';
   if($('gafferCall')) $('gafferCall').textContent = deal.rows.length ? deal.route : 'Hold fire';
   if($('gafferCallText')) $('gafferCallText').textContent = deal.reason;
 
@@ -6288,14 +6198,12 @@ function renderRegistrationDesk(deal){
     </div>`;
   }).join('') : '<div class="loading">No registrations approved yet.</div>';
   box.querySelectorAll('[data-registration-form]').forEach(updateRegistrationPreview);
-  if($('quickRegistrationStatus')) $('quickRegistrationStatus').textContent=deal.rows.length?`${deal.rows.length} ready`:'None';
   if($('deskNote')) $('deskNote').textContent = deal.rows.some(r=>platformFor(r.row.ticker).includes('Check'))
     ? 'One or more signings need a platform check before placing the order.'
     : 'Enter the completed platform fill here. Existing players are topped up; brand-new signings automatically receive a Holdings row and LivePrices entry.';
 }
 function renderBench(deal){
   const box = $('benchList');
-  if($('quickBenchCount')) $('quickBenchCount').textContent=deal.bench.length;
   if(!box) return;
   box.innerHTML = deal.bench.length ? deal.bench.map(item=>{
     const y = incomeRate(item.row);
@@ -6535,7 +6443,6 @@ function renderSellTicketList(){
   const active=sellTickets.filter(t=>!['REJECTED','EXECUTED','CANCELLED'].includes(String(t.approvalStatus||'').toUpperCase()));
   if($('sellTicketCount'))$('sellTicketCount').textContent=`${active.length} active`;
   if($('subnavSellCount')) $('subnavSellCount').textContent=active.length;
-  if($('quickSellCount')) $('quickSellCount').textContent=active.length;
   if(!sellTickets.length){list.innerHTML='<div class="sell-desk-empty">No sell-review tickets. That is a good thing — nothing is being pushed toward the exit door.</div>';return;}
   list.innerHTML=sellTickets.map(ticket=>{
     const status=String(ticket.approvalStatus||'PROPOSED').toUpperCase();
@@ -6631,7 +6538,6 @@ function renderIncomingOffers(){
   const live=ordered.filter(o=>['OPEN','COUNTERED'].includes(String(o.status||'').toUpperCase())).length;
   if($('incomingOfferCount'))$('incomingOfferCount').textContent=`${live} live offer${live===1?'':'s'}`;
   if($('subnavIncomingCount')) $('subnavIncomingCount').textContent=live;
-  if($('quickIncomingCount')) $('quickIncomingCount').textContent=live;
   if(!ordered.length){
     grid.innerHTML='<div class="offer-empty">No offers are on the chairman’s desk. Open a new market round to generate football-style bids from the live portfolio.</div>';
     return;
