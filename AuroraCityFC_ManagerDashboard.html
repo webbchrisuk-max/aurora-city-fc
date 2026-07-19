@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Manager Dashboard</title>
-<!-- Build: Manager Command Centre • 19 Jul 2026 -->
+<!-- Build: Navigation-First Manager Dashboard • 19 Jul 2026 -->
 <style>
 :root{
   --bg:#020612;
@@ -470,10 +470,364 @@ body{
 @media(max-width:1080px){.command-span-7,.command-span-6,.command-span-5{grid-column:span 12}}
 @media(max-width:900px){.command-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.verdict-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+
+/* ================= NAVIGATION-FIRST MANAGER DASHBOARD ================= */
+.nav-first-app{display:grid;gap:18px}
+.nav-first-hero{
+  display:grid;
+  grid-template-columns:minmax(320px,.72fr) minmax(680px,1.28fr);
+  gap:24px;
+  margin-top:18px;
+  padding:25px;
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.24);
+  border-radius:30px;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(34,211,238,.19),transparent 34%),
+    radial-gradient(circle at 90% 0%,rgba(96,165,250,.16),transparent 30%),
+    linear-gradient(115deg,rgba(2,6,18,.98),rgba(5,20,39,.94) 56%,rgba(8,47,73,.76));
+  box-shadow:var(--shadow);
+}
+.nav-first-intro{align-self:center;min-width:0}
+.nav-first-intro h2{
+  margin:18px 0 11px;
+  font-size:clamp(38px,4.4vw,68px);
+  line-height:.9;
+  letter-spacing:-.072em;
+}
+.nav-first-intro h2 span{display:block;color:#7dd3fc}
+.nav-first-intro>p{max-width:650px;margin:0;color:#dbeafe;font-size:16px;line-height:1.5}
+.nav-first-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.nav-first-meta span{
+  padding:8px 10px;
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:999px;
+  background:rgba(2,6,23,.42);
+  color:#9eb0c6;
+  font-size:10px;
+  font-weight:850;
+}
+.nav-first-meta b{color:#e0f2fe}
+.status-rail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-self:stretch}
+.status-rail{
+  position:relative;
+  min-width:0;
+  min-height:92px;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  padding:13px 15px;
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.17);
+  border-radius:17px;
+  background:linear-gradient(90deg,rgba(15,23,42,.79),rgba(8,18,34,.93));
+}
+.status-rail:after{
+  content:"";
+  position:absolute;
+  right:-34px;top:-42px;
+  width:110px;height:110px;border-radius:50%;
+  background:rgba(96,165,250,.11);
+}
+.status-rail.green:after{background:rgba(52,211,153,.12)}
+.status-rail.amber:after{background:rgba(251,191,36,.12)}
+.status-rail-icon{
+  width:42px;height:42px;
+  display:grid;place-items:center;
+  border:1px solid rgba(34,211,238,.22);
+  border-radius:13px;
+  background:rgba(34,211,238,.10);
+  color:#7dd3fc;
+  font-size:16px;
+  font-weight:1000;
+}
+.status-rail-copy{position:relative;min-width:0}
+.status-rail small{
+  display:block;color:#94a3b8;
+  font-size:9px;font-weight:1000;
+  letter-spacing:.12em;text-transform:uppercase;
+}
+.status-rail-copy>span{
+  display:block;
+  margin-top:5px;
+  overflow:hidden;
+  color:#8fa0b6;
+  font-size:10px;
+  line-height:1.3;
+  text-overflow:ellipsis;
+}
+.status-rail>strong{
+  position:relative;
+  z-index:2;
+  color:#e0f2fe;
+  font-size:22px;
+  letter-spacing:-.05em;
+  white-space:nowrap;
+}
+.status-rail.green>strong{color:#86efac}
+.status-rail.amber>strong{color:#fde68a}
+.status-rail .hero-progress{margin-top:6px}
+.manager-brief-bar{
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) minmax(520px,.75fr);
+  gap:18px;
+  align-items:center;
+  padding:17px 19px;
+  border:1px solid rgba(125,211,252,.16);
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(9,26,47,.82),rgba(5,13,25,.92));
+  box-shadow:0 14px 38px rgba(0,0,0,.22);
+}
+.manager-brief-main{display:flex;align-items:flex-start;gap:12px}
+.manager-brief-main h3{margin:0;font-size:19px;letter-spacing:-.04em}
+.manager-brief-main p{margin:6px 0 0;color:#aab9cb;font-size:12px;line-height:1.45}
+.manager-brief-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.manager-brief-stats div{
+  padding:10px;
+  border:1px solid rgba(148,163,184,.13);
+  border-radius:14px;
+  background:rgba(2,6,23,.28);
+}
+.manager-brief-stats small{
+  display:block;color:#718096;font-size:8px;font-weight:1000;
+  letter-spacing:.11em;text-transform:uppercase;
+}
+.manager-brief-stats strong{display:block;margin-top:5px;color:#86efac;font-size:13px}
+.manager-route-section{
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.18);
+  border-radius:27px;
+  background:
+    radial-gradient(circle at 92% 0%,rgba(34,211,238,.09),transparent 28%),
+    linear-gradient(180deg,rgba(9,26,47,.90),rgba(5,13,25,.96));
+  box-shadow:var(--shadow);
+}
+.route-section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  padding:20px 20px 0;
+}
+.route-kicker{
+  display:block;
+  margin-bottom:5px;
+  color:#67e8f9;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.route-section-head h3{margin:0;font-size:24px;letter-spacing:-.045em}
+.route-section-head p{margin:6px 0 0;color:#899ab2;font-size:12px;line-height:1.42}
+.route-action-list{padding:14px 17px 18px;gap:8px}
+.route-action-list .action-row{
+  grid-template-columns:44px minmax(0,1fr) auto 20px;
+  min-height:65px;
+  padding:10px 12px;
+  border-radius:15px;
+}
+.route-action-list .action-icon{width:42px;height:42px;border-radius:13px}
+.action-link-arrow{color:#67e8f9;font-size:19px;font-weight:1000}
+.department-summary-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;
+  padding:16px 18px 4px;
+}
+.department-summary-strip>div{
+  min-width:0;
+  padding:12px;
+  border:1px solid rgba(148,163,184,.13);
+  border-radius:15px;
+  background:rgba(2,6,23,.28);
+}
+.department-summary-strip small{
+  display:block;color:#77889e;font-size:8px;font-weight:1000;
+  letter-spacing:.11em;text-transform:uppercase;
+}
+.department-summary-strip strong{
+  display:block;
+  margin-top:6px;
+  overflow:hidden;
+  color:#e0f2fe;
+  font-size:16px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.department-summary-strip span{
+  display:block;
+  margin-top:4px;
+  color:#7e8fa5;
+  font-size:9px;
+  line-height:1.3;
+}
+.route-directory{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:13px 18px 17px;
+}
+.route-directory-row{
+  display:grid;
+  grid-template-columns:40px minmax(0,1fr) auto 16px;
+  gap:11px;
+  align-items:center;
+  min-height:68px;
+  padding:10px 11px;
+  border:1px solid rgba(148,163,184,.13);
+  border-radius:15px;
+  background:rgba(2,6,23,.28);
+  transition:.18s transform,.18s border-color,.18s background;
+}
+.route-directory-row:hover{
+  transform:translateX(2px);
+  border-color:rgba(34,211,238,.35);
+  background:rgba(8,47,73,.32);
+}
+.route-directory-row.live{border-color:rgba(52,211,153,.24)}
+.route-directory-row.urgent{border-color:rgba(34,211,238,.25)}
+.route-directory-row.amber{border-color:rgba(251,191,36,.23)}
+.route-directory-icon{
+  width:40px;height:40px;
+  display:grid;place-items:center;
+  border:1px solid rgba(96,165,250,.20);
+  border-radius:12px;
+  background:rgba(96,165,250,.10);
+  color:#7dd3fc;
+  font-weight:1000;
+}
+.route-directory-row b{display:block;color:#e7f3ff;font-size:13px}
+.route-directory-row small{display:block;margin-top:4px;color:#7f90a7;font-size:10px;line-height:1.3}
+.route-directory-row em{
+  color:#9fb0c5;
+  font-size:9px;
+  font-style:normal;
+  font-weight:900;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.route-directory-row i{color:#67e8f9;font-size:18px;font-style:normal}
+.route-preview-list{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+  padding:0 18px 18px;
+}
+.route-preview-list .preview-row{
+  grid-template-columns:32px minmax(0,1fr);
+  align-content:start;
+  padding:8px;
+  border-radius:13px;
+}
+.route-preview-list .rank{width:32px;height:32px;border-radius:10px}
+.route-preview-list .preview-value{
+  grid-column:2;
+  text-align:left;
+  font-size:10px;
+}
+.route-preview-list .preview-row strong{font-size:11px}
+.route-preview-list .preview-row span{font-size:9px}
+.route-department-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.compact-route-section{min-width:0}
+.route-group{padding:15px 18px 0}
+.route-group:last-child{padding-bottom:18px}
+.route-group h4{
+  margin:0 0 8px;
+  color:#a5f3fc;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.route-group a{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto 16px;
+  gap:10px;
+  align-items:center;
+  padding:10px 11px;
+  border-top:1px solid rgba(148,163,184,.12);
+}
+.route-group a:first-of-type{border-top:0}
+.route-group a:hover{background:rgba(8,47,73,.24)}
+.route-group a span{color:#dcecff;font-size:12px;font-weight:800}
+.route-group a b{color:#8192a8;font-size:9px;font-weight:800}
+.route-group a i{color:#67e8f9;font-size:17px;font-style:normal}
+.club-operation-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  padding:16px 18px 0;
+}
+.club-operation-summary>div{
+  padding:13px;
+  border:1px solid rgba(148,163,184,.13);
+  border-radius:15px;
+  background:rgba(2,6,23,.28);
+}
+.club-operation-summary small{
+  display:block;color:#77889e;font-size:8px;font-weight:1000;
+  letter-spacing:.11em;text-transform:uppercase;
+}
+.club-operation-summary strong{display:block;margin-top:6px;color:#86efac;font-size:21px}
+.club-operation-summary span{display:block;margin-top:5px;color:#8192a8;font-size:9px;line-height:1.35}
+.media-route-feature{
+  margin:16px 18px 0;
+  padding:14px;
+  border:1px solid rgba(96,165,250,.20);
+  border-radius:17px;
+  background:rgba(30,64,175,.10);
+}
+.media-route-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.media-route-head>span{color:#8fa0b5;font-size:9px}
+.media-route-feature>small{display:block;margin-top:10px;color:#7dd3fc;font-size:9px;text-transform:uppercase}
+.media-route-feature h4{margin:7px 0;color:#eff8ff;font-size:18px;line-height:1.12;letter-spacing:-.035em}
+.media-route-feature p{margin:0;color:#a6b5c7;font-size:11px;line-height:1.45}
+.manager-information-strip{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;
+  padding:0;
+}
+.information-item{
+  padding:15px 17px;
+  border-left:1px solid rgba(148,163,184,.13);
+}
+.information-item:first-child{border-left:0}
+.information-item small{
+  display:block;color:#77889e;font-size:8px;font-weight:1000;
+  letter-spacing:.11em;text-transform:uppercase;
+}
+.information-item strong{display:block;margin-top:6px;color:#e0f2fe;font-size:16px}
+.information-item span{display:block;margin-top:4px;color:#7e8fa5;font-size:9px;line-height:1.3}
+.legacy-live-hooks{display:none!important}
+.manager-command-header,.manager-verdict,.manager-command-grid,
+.score-strip,.command-grid,.dept-status-grid,.preview-grid,#departments{display:none!important}
+@media(max-width:1280px){
+  .nav-first-hero{grid-template-columns:1fr}
+  .manager-brief-bar{grid-template-columns:1fr}
+}
+@media(max-width:1080px){
+  .route-department-grid{grid-template-columns:1fr}
+  .route-preview-list{grid-template-columns:1fr 1fr}
+}
+@media(max-width:920px){
+  .status-rail-grid,.route-directory{grid-template-columns:1fr}
+  .department-summary-strip,.manager-brief-stats{grid-template-columns:1fr 1fr}
+  .manager-information-strip{grid-template-columns:1fr}
+  .information-item{border-left:0;border-top:1px solid rgba(148,163,184,.13)}
+  .information-item:first-child{border-top:0}
+}
+
 </style>
 <script src="AuroraFCData.js"></script>
 <script>
-window.AURORA_MANAGER_BUILD = "MANAGER-COMMAND-CENTRE-2026-07-19";
+window.AURORA_MANAGER_BUILD = "NAVIGATION-FIRST-2026-07-19";
 </script>
 </head>
 <body>
@@ -542,43 +896,96 @@ window.AURORA_MANAGER_BUILD = "MANAGER-COMMAND-CENTRE-2026-07-19";
       </div>
     </div>
     <div class="fm-top-context">
-      <span class="fm-page-path">Home / Manager Command Centre</span>
+      <span class="fm-page-path">Home / Manager Office</span>
       <span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
     </div>
   </div>
 </div>
 
 
-<main class="app fm-command-app">
-  <section class="manager-command-header" id="club-overview">
-    <div class="command-identity">
-      <div class="hero-kicker"><span class="hero-dot"></span> Live manager command centre</div>
+
+<main class="app nav-first-app">
+  <section class="nav-first-hero" id="club-overview">
+    <div class="nav-first-intro">
+      <div class="hero-kicker"><span class="hero-dot"></span> Live manager office</div>
       <h2>Aurora City FC <span>Manager Dashboard</span></h2>
-      <p id="heroSub">Loading the latest club position, recruitment route and income target.</p>
-      <div class="command-meta">
+      <p id="heroSub">Loading the current club position and the exact jobs that need your attention.</p>
+
+      <div class="nav-first-meta">
         <span id="lastUpdated">Last updated: loading…</span>
         <span><b id="currentDivision">Loading…</b></span>
         <span id="divisionProgress">Next promotion loading…</span>
       </div>
     </div>
 
-    <div class="command-metric-grid">
-      <article class="command-metric"><small>Club Value</small><strong id="heroClubValue">—</strong><span class="hero-detail neutral" id="clubValueTrend">Waiting for previous snapshot…</span></article>
-      <article class="command-metric green"><small>Annual Income</small><strong id="heroAnnualIncome">—</strong><span class="hero-detail neutral" id="annualIncomeTrend">Waiting for latest purchase…</span></article>
-      <article class="command-metric green"><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span>Current passive-income run rate</span><span id="heroMonthlyIncome" hidden>—</span></article>
-      <article class="command-metric amber"><small>Gap to £500/month</small><strong id="heroTargetGap">—</strong><span id="targetProgressText">Progress loading…</span><div class="hero-progress"><div class="hero-progress-fill" id="targetProgressFill"></div></div></article>
-      <article class="command-metric"><small>Portfolio Yield</small><strong id="portfolioYield">—</strong><span>IG ISA and Trading 212 holdings</span></article>
-      <article class="command-metric"><small>Board Confidence</small><strong id="portfolioStrength">—</strong><span>Overall club-health rating</span></article>
+    <div class="status-rail-grid">
+      <article class="status-rail">
+        <div class="status-rail-icon">£</div>
+        <div class="status-rail-copy">
+          <small>Club Value</small>
+          <span class="hero-detail neutral" id="clubValueTrend">Waiting for previous snapshot…</span>
+        </div>
+        <strong id="heroClubValue">—</strong>
+      </article>
+
+      <article class="status-rail green">
+        <div class="status-rail-icon">↗</div>
+        <div class="status-rail-copy">
+          <small>Annual Income</small>
+          <span class="hero-detail neutral" id="annualIncomeTrend">Waiting for latest purchase…</span>
+        </div>
+        <strong id="heroAnnualIncome">—</strong>
+      </article>
+
+      <article class="status-rail green">
+        <div class="status-rail-icon">M</div>
+        <div class="status-rail-copy">
+          <small>Monthly Income</small>
+          <span>Current passive-income run rate</span>
+        </div>
+        <strong id="monthlyIncome">—</strong>
+      </article>
+
+      <article class="status-rail amber">
+        <div class="status-rail-icon">◎</div>
+        <div class="status-rail-copy">
+          <small>Gap to £500/month</small>
+          <span id="targetProgressText">Progress loading…</span>
+          <div class="hero-progress"><div class="hero-progress-fill" id="targetProgressFill"></div></div>
+        </div>
+        <strong id="heroTargetGap">—</strong>
+      </article>
+
+      <article class="status-rail">
+        <div class="status-rail-icon">%</div>
+        <div class="status-rail-copy">
+          <small>Portfolio Yield</small>
+          <span>IG ISA and Trading 212 scope</span>
+        </div>
+        <strong id="portfolioYield">—</strong>
+      </article>
+
+      <article class="status-rail">
+        <div class="status-rail-icon">♜</div>
+        <div class="status-rail-copy">
+          <small>Board Confidence</small>
+          <span>Overall club-health rating</span>
+        </div>
+        <strong id="portfolioStrength">—</strong>
+      </article>
     </div>
   </section>
 
-  <section class="manager-verdict">
-    <div class="verdict-copy">
+  <section class="manager-brief-bar">
+    <div class="manager-brief-main">
       <span class="badge green" id="briefingStatus">Loading</span>
-      <h3 id="briefingTitle">Loading club briefing…</h3>
-      <p id="briefingText">The coaching staff are preparing the latest manager report.</p>
+      <div>
+        <h3 id="briefingTitle">Loading club briefing…</h3>
+        <p id="briefingText">The manager office is preparing the latest report.</p>
+      </div>
     </div>
-    <div class="verdict-stats">
+
+    <div class="manager-brief-stats">
       <div><small>Financial Health</small><strong id="briefHealth">—</strong></div>
       <div><small>Team Morale</small><strong id="briefMorale">—</strong></div>
       <div><small>Active Squad</small><strong id="activeSquadCount">—</strong></div>
@@ -586,66 +993,252 @@ window.AURORA_MANAGER_BUILD = "MANAGER-COMMAND-CENTRE-2026-07-19";
     </div>
   </section>
 
-  <section class="manager-command-grid">
-    <article class="command-panel command-span-7">
-      <div class="command-panel-head"><div><span class="panel-kicker">Manager Office</span><h3>Action Centre</h3><p>The live items that need your attention now.</p></div><span class="badge green">Live</span></div>
-      <div class="action-list manager-actions" id="actionList"><div class="loading">Loading manager actions…</div></div>
-    </article>
-
-    <article class="command-panel command-span-5 media-command-panel">
-      <div class="command-panel-head"><div><span class="panel-kicker">Aurora Times</span><h3>Latest Media Story</h3><p><span id="deptMedia">Loading</span> newsroom • <b id="deptNewsCount">—</b> stories</p></div><span class="badge blue" id="latestMediaBadge">News</span></div>
-      <div class="media-feature">
-        <div class="media-feature-icon">AFC</div>
-        <div><span class="media-feature-meta" id="latestMediaMeta">Newsroom loading…</span><h4 id="latestMediaHeadline">Waiting for the latest headline…</h4><p id="latestMediaSummary">Aurora Times is checking the live newsroom feed.</p></div>
+  <section class="manager-route-section priority-section">
+    <div class="route-section-head">
+      <div>
+        <span class="route-kicker">Manager Office</span>
+        <h3>Next Actions</h3>
+        <p>Every row takes you directly to the job—not merely to the top of a department page.</p>
       </div>
-      <a class="panel-open-link" href="AuroraCityFC_MediaCentre.html">Open Media Centre <span>→</span></a>
-    </article>
+      <span class="badge green">Live priorities</span>
+    </div>
 
-    <article class="command-panel command-span-6">
-      <div class="command-panel-head"><div><span class="panel-kicker">Recruitment</span><h3>Transfer Desk</h3><p>The current payday route from the exact Transfer Centre deal sheet.</p></div><span class="badge green" id="topTransferBadge">Loading</span></div>
-      <div class="panel-stat-row">
-        <div><small>Lead Target</small><strong id="deptTopTarget">—</strong></div>
-        <div><small>Approved Deals</small><strong id="deptTransfers">—</strong></div>
-        <div><small>Annual Added</small><strong id="paydayBoost">—</strong><span id="paydayBoostNote">Syncing route…</span></div>
+    <div class="action-list route-action-list" id="actionList">
+      <div class="loading">Loading manager priorities…</div>
+    </div>
+  </section>
+
+  <section class="manager-route-section recruitment-section">
+    <div class="route-section-head">
+      <div>
+        <span class="route-kicker">Recruitment Department</span>
+        <h3>Recruitment Office</h3>
+        <p>Open the exact Transfer Centre desk you need without scrolling through the whole page.</p>
       </div>
-      <div class="preview-list compact-preview" id="topTransferPreview"><div class="loading">Loading transfer route…</div></div>
-      <a class="panel-open-link" href="AuroraCityFC_TransferCentre.html">Open Transfer Centre <span>→</span></a>
-    </article>
+      <span class="badge green" id="topTransferBadge">Loading</span>
+    </div>
 
-    <article class="command-panel command-span-6">
-      <div class="command-panel-head"><div><span class="panel-kicker">First Team</span><h3>Squad Report</h3><p>Income leaders and players requiring development attention.</p></div><span class="badge blue" id="squadBadge">Loading</span></div>
-      <div class="panel-stat-row">
-        <div><small>Squad Status</small><strong id="deptSquad">—</strong></div>
-        <div><small>Watch Player</small><strong id="deptCaptain">—</strong></div>
-        <div><small>Training Focus</small><strong id="deptTraining">—</strong></div>
+    <div class="department-summary-strip">
+      <div><small>Lead Target</small><strong id="deptTopTarget">—</strong></div>
+      <div><small>Approved Deals</small><strong id="deptTransfers">—</strong></div>
+      <div><small>Annual Income Added</small><strong id="paydayBoost">—</strong><span id="paydayBoostNote">Syncing route…</span></div>
+      <div><small>Deal Status</small><strong id="scheduleTransferStatus">Syncing…</strong><span id="scheduleTransferNote">Waiting for the final deal sheet.</span></div>
+    </div>
+
+    <div class="route-directory recruitment-directory">
+      <a class="route-directory-row urgent" href="AuroraCityFC_TransferCentre.html#incoming-offers">
+        <span class="route-directory-icon">✉</span>
+        <span><b>Incoming Offers</b><small>Open the chairman’s offer room and review bids.</small></span>
+        <em>Offers desk</em><i>›</i>
+      </a>
+      <a class="route-directory-row live" href="AuroraCityFC_TransferCentre.html#deal-sheet">
+        <span class="route-directory-icon">✓</span>
+        <span><b>Final Deal Sheet</b><small>The approved payday buying route and allocations.</small></span>
+        <em id="routeDealTarget">Current plan</em><i>›</i>
+      </a>
+      <a class="route-directory-row amber" href="AuroraCityFC_TransferCentre.html#sell-desk">
+        <span class="route-directory-icon">⇥</span>
+        <span><b>Sell Desk</b><small>Create, review or record an outgoing transfer.</small></span>
+        <em>Exit reviews</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_TransferCentre.html#best-return-allocation">
+        <span class="route-directory-icon">↗</span>
+        <span><b>Best Return Allocation</b><small>Compare the income-maximised version of the plan.</small></span>
+        <em>Optimiser</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_TransferCentre.html#registration-desk">
+        <span class="route-directory-icon">⌁</span>
+        <span><b>Registration Desk</b><small>Record completed purchases and the correct account.</small></span>
+        <em>Completed buys</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_TransferCentre.html#top-transfer-board">
+        <span class="route-directory-icon">★</span>
+        <span><b>Top Transfer Board</b><small>View the strongest live recruitment candidates.</small></span>
+        <em>Shortlist</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_TransferCentre.html#transfer-bench">
+        <span class="route-directory-icon">Ⅱ</span>
+        <span><b>Transfer Bench</b><small>Backup signings waiting behind the final route.</small></span>
+        <em>Next in line</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_TransferCentre.html#no-buy-watch">
+        <span class="route-directory-icon">!</span>
+        <span><b>No-Buy Watch</b><small>Blocked or controlled names requiring discipline.</small></span>
+        <em>Risk watch</em><i>›</i>
+      </a>
+    </div>
+
+    <div class="preview-list route-preview-list" id="topTransferPreview">
+      <div class="loading">Loading the current deal route…</div>
+    </div>
+  </section>
+
+  <section class="manager-route-section squad-section">
+    <div class="route-section-head">
+      <div>
+        <span class="route-kicker">First Team</span>
+        <h3>Squad Operations</h3>
+        <p>Go straight to selection, depth, chemistry or development work.</p>
       </div>
-      <div class="preview-list compact-preview" id="squadPreview"><div class="loading">Loading squad report…</div></div>
-      <a class="panel-open-link" href="AuroraCityFC_SquadHub.html">Open Squad Hub <span>→</span></a>
+      <span class="badge blue" id="squadBadge">Loading</span>
+    </div>
+
+    <div class="department-summary-strip">
+      <div><small>Squad Status</small><strong id="deptSquad">—</strong></div>
+      <div><small>Watch Player</small><strong id="deptCaptain">—</strong></div>
+      <div><small>Training Focus</small><strong id="deptTraining">—</strong></div>
+      <div><small>Current Income Target</small><strong id="scheduleTargetStatus">—</strong><span id="scheduleTargetNote">Checking target progress.</span></div>
+    </div>
+
+    <div class="route-directory">
+      <a class="route-directory-row live" href="AuroraCityFC_SquadHub.html#firstTeamPitch">
+        <span class="route-directory-icon">▦</span>
+        <span><b>First-Team Formation</b><small>Open the pitch and current team shape.</small></span>
+        <em>Starting XI</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_SquadHub.html#teamSelectionBody">
+        <span class="route-directory-icon">♟</span>
+        <span><b>Team Selection</b><small>View the selected eleven and player roles.</small></span>
+        <em>Selection</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_SquadHub.html#benchList">
+        <span class="route-directory-icon">Ⅱ</span>
+        <span><b>Bench and Depth</b><small>Review reserves and positional cover.</small></span>
+        <em>Depth chart</em><i>›</i>
+      </a>
+      <a class="route-directory-row amber" href="AuroraCityFC_SquadHub.html#relegationWatch">
+        <span class="route-directory-icon">!</span>
+        <span><b>Selection Room</b><small>Open relegation watch and manager advice.</small></span>
+        <em>Attention</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_SquadHub.html#positionalDepth">
+        <span class="route-directory-icon">◇</span>
+        <span><b>Positional Depth</b><small>Check strength and cover across the formation.</small></span>
+        <em>Positions</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_SquadHub.html#chemistryBoard">
+        <span class="route-directory-icon">⌘</span>
+        <span><b>Dressing Room Chemistry</b><small>Review account balance and squad chemistry.</small></span>
+        <em>Chemistry</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_SquadHub.html#trainingReportGrid">
+        <span class="route-directory-icon">▲</span>
+        <span><b>Development Centre</b><small>Open the coach’s player-development report.</small></span>
+        <em>Development</em><i>›</i>
+      </a>
+      <a class="route-directory-row" href="AuroraCityFC_SquadHub.html#moraleScore">
+        <span class="route-directory-icon">☺</span>
+        <span><b>Squad Morale</b><small>Check dressing-room mood and captain’s message.</small></span>
+        <em>Morale</em><i>›</i>
+      </a>
+    </div>
+
+    <div class="preview-list route-preview-list" id="squadPreview">
+      <div class="loading">Loading first-team income leaders…</div>
+    </div>
+  </section>
+
+  <section class="route-department-grid">
+    <article class="manager-route-section compact-route-section">
+      <div class="route-section-head">
+        <div>
+          <span class="route-kicker">Performance Department</span>
+          <h3>Analysis and Training</h3>
+          <p>Jump directly into a chart, report or training task.</p>
+        </div>
+        <span class="badge blue">Performance</span>
+      </div>
+
+      <div class="route-group">
+        <h4>Analysis Room</h4>
+        <a href="AuroraCityFC_AnalysisRoom.html#incomeProgressChart"><span>Annual Income Runway</span><b>Progress chart</b><i>›</i></a>
+        <a href="AuroraCityFC_AnalysisRoom.html#incomeContributionChart"><span>Dividend Contribution</span><b>Player income</b><i>›</i></a>
+        <a href="AuroraCityFC_AnalysisRoom.html#sectorChart"><span>Sector Shape</span><b>Exposure</b><i>›</i></a>
+        <a href="AuroraCityFC_AnalysisRoom.html#valueProgressChart"><span>Club Value Form</span><b>Value trend</b><i>›</i></a>
+        <a href="AuroraCityFC_AnalysisRoom.html#yieldStrengthChart"><span>Yield vs Buy Strength</span><b>Recruitment data</b><i>›</i></a>
+      </div>
+
+      <div class="route-group">
+        <h4>Training Ground</h4>
+        <a href="AuroraCityFC_TrainingGround.html#risingStars"><span>Rising Stars</span><b>Best form</b><i>›</i></a>
+        <a href="AuroraCityFC_TrainingGround.html#medicalRoom"><span>Medical Room</span><b>Risk watch</b><i>›</i></a>
+        <a href="AuroraCityFC_TrainingGround.html#formList"><span>Training Form Table</span><b>Full squad</b><i>›</i></a>
+        <a href="AuroraCityFC_TrainingGround.html#trainingFocus"><span>Training Focus</span><b>Current priority</b><i>›</i></a>
+      </div>
     </article>
 
-    <article class="command-panel command-span-6">
-      <div class="command-panel-head"><div><span class="panel-kicker">Club Leadership</span><h3>Board Update</h3><p>Confidence, risk and the board’s current view of the rebuild.</p></div><span class="badge green" id="deptBoard">Loading</span></div>
-      <div class="board-command-grid">
-        <div class="board-command-score"><small>Board Confidence</small><strong id="boardCommandScore">—</strong><span id="boardCommandVerdict">Loading board verdict…</span></div>
-        <div class="board-command-list">
-          <div><span>Financial health</span><strong id="boardFinancialHealth">—</strong></div>
-          <div><span>Current risk</span><strong id="deptRisk">—</strong></div>
-          <div><span>Squad morale</span><strong id="boardMorale">—</strong></div>
+    <article class="manager-route-section compact-route-section">
+      <div class="route-section-head">
+        <div>
+          <span class="route-kicker">Club Operations</span>
+          <h3>Boardroom and Media</h3>
+          <p>Open the exact leadership decision or newsroom desk.</p>
+        </div>
+        <span class="badge green" id="deptBoard">Loading</span>
+      </div>
+
+      <div class="club-operation-summary">
+        <div>
+          <small>Board Confidence</small>
+          <strong id="boardCommandScore">—</strong>
+          <span id="boardCommandVerdict">Loading board verdict…</span>
+        </div>
+        <div>
+          <small>Financial Health</small>
+          <strong id="boardFinancialHealth">—</strong>
+          <span>Risk: <b id="deptRisk">—</b> • Morale: <b id="boardMorale">—</b></span>
         </div>
       </div>
-      <a class="panel-open-link" href="AuroraCityFC_Boardroom.html">Open Boardroom <span>→</span></a>
-    </article>
 
-    <article class="command-panel command-span-6" id="schedule-panel">
-      <div class="command-panel-head"><div><span class="panel-kicker">Calendar</span><h3>Upcoming Schedule</h3><p>The next financial and club-management events.</p></div><span class="badge amber">Next Up</span></div>
-      <div class="schedule-list">
-        <div class="schedule-row"><span class="schedule-icon">💷</span><div><small>Next Dividend</small><strong id="nextDividendTicker">—</strong><p id="nextDividendNote">Checking payment calendar…</p></div></div>
-        <div class="schedule-row"><span class="schedule-icon">⇄</span><div><small>Transfer Route</small><strong id="scheduleTransferStatus">Syncing…</strong><p id="scheduleTransferNote">Waiting for the final deal sheet.</p></div></div>
-        <div class="schedule-row"><span class="schedule-icon">🎯</span><div><small>Income Objective</small><strong id="scheduleTargetStatus">—</strong><p id="scheduleTargetNote">Checking progress to £500/month.</p></div></div>
-        <div class="schedule-row"><span class="schedule-icon">↻</span><div><small>Data Status</small><strong id="scheduleDataStatus">Loading…</strong><p id="scheduleDataNote">Checking the latest Aurora update.</p></div></div>
+      <div class="route-group">
+        <h4>Boardroom</h4>
+        <a href="AuroraCityFC_Boardroom.html#executive-control-room"><span>Executive Control Room</span><b>Chairman view</b><i>›</i></a>
+        <a href="AuroraCityFC_Boardroom.html#board-agenda-risk"><span>Board Agenda</span><b>Current risks</b><i>›</i></a>
+        <a href="AuroraCityFC_Boardroom.html#board-decision-log"><span>Decision Log</span><b>Board history</b><i>›</i></a>
+        <a href="AuroraCityFC_Boardroom.html#aurora-honours-cabinet"><span>Honours Cabinet</span><b>Milestones</b><i>›</i></a>
+      </div>
+
+      <div class="media-route-feature">
+        <div class="media-route-head">
+          <span class="badge blue" id="latestMediaBadge">News</span>
+          <span><b id="deptMedia">Loading</b> newsroom • <b id="deptNewsCount">—</b> stories</span>
+        </div>
+        <small id="latestMediaMeta">Newsroom loading…</small>
+        <h4 id="latestMediaHeadline">Waiting for the latest headline…</h4>
+        <p id="latestMediaSummary">Aurora Times is checking the live newsroom feed.</p>
+      </div>
+
+      <div class="route-group">
+        <h4>Media Centre</h4>
+        <a href="AuroraCityFC_MediaCentre.html#breakingStories"><span>Breaking Stories</span><b>Latest news</b><i>›</i></a>
+        <a href="AuroraCityFC_MediaCentre.html#dividendDesk"><span>Dividend Desk</span><b>Income news</b><i>›</i></a>
+        <a href="AuroraCityFC_MediaCentre.html#rumourMill"><span>Transfer Rumours</span><b>Market watch</b><i>›</i></a>
+        <a href="AuroraCityFC_MediaCentre.html#matchReport"><span>Dividend Match Report</span><b>Daily verdict</b><i>›</i></a>
       </div>
     </article>
   </section>
+
+  <section class="manager-route-section manager-information-strip">
+    <div class="information-item">
+      <small>Next Dividend</small>
+      <strong id="nextDividendTicker">—</strong>
+      <span id="nextDividendNote">Checking payment calendar…</span>
+    </div>
+    <div class="information-item">
+      <small>Target Position</small>
+      <strong id="managerTargetSummary">—</strong>
+      <span id="managerTargetDetail">Checking progress to £500/month.</span>
+    </div>
+    <div class="information-item">
+      <small>Data Status</small>
+      <strong id="scheduleDataStatus">Loading…</strong>
+      <span id="scheduleDataNote">Checking the latest Aurora update.</span>
+    </div>
+  </section>
+
+  <div class="legacy-live-hooks" aria-hidden="true">
+    <span id="heroMonthlyIncome"></span>
+  </div>
 </main>
 
 <div class="bottom-ticker"><div class="ticker-inner"><span class="live-chip">LIVE</span><span id="tickerTime">--:--</span><span class="ticker-scroll" id="tickerText">Aurora City FC news ticker loading…</span></div></div>
@@ -1156,14 +1749,47 @@ function renderAll(){
   const boardLabel = board >= 88 ? "Strong" : board >= 78 ? "Stable" : "Watch";
   const latestHeadline = latestMedia
     ? String(mediaValue(latestMedia,"Headline","headline"))
-    : top ? `${displayTicker(top.ticker)} leads the transfer headlines` : "No major media story loaded";
+    : top
+      ? `${displayTicker(top.ticker)} leads the transfer headlines`
+      : "No major media story loaded";
 
   $("actionList").innerHTML = `
-    <a class="action-row" href="AuroraCityFC_TransferCentre.html"><div class="action-icon">⇄</div><div><strong>Transfer Centre</strong><span>${route.length ? `${route.length} approved signings • ${route.map(x=>displayTicker(x.row.ticker)).join(" / ")}` : "Final deal sheet is still syncing"}</span></div><div class="action-value">${route.length ? `${money(routeIncome)}/yr` : "Syncing"}</div><div class="action-link-arrow">›</div></a>
-    <a class="action-row" href="#schedule-panel"><div class="action-icon">💷</div><div><strong>Next Dividend</strong><span>${nextDividend ? `${nextDividend.ticker} • ${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}` : "No future payment loaded"}</span></div><div class="action-value">${nextDividend?.amountKnown ? money(nextDividend.amount) : "—"}</div><div class="action-link-arrow">›</div></a>
-    <a class="action-row" href="AuroraCityFC_SquadHub.html"><div class="action-icon">♟</div><div><strong>Squad Hub</strong><span>${weakPlayers.length ? `${weakPlayers.length} player${weakPlayers.length===1?"":"s"} require development attention` : "No immediate development warning"}</span></div><div class="action-value">${weakPlayers[0] ? displayTicker(weakPlayers[0].ticker) : "All clear"}</div><div class="action-link-arrow">›</div></a>
-    <a class="action-row" href="AuroraCityFC_Boardroom.html"><div class="action-icon">♜</div><div><strong>Boardroom</strong><span>Confidence and club-health review</span></div><div class="action-value">${boardLabel}</div><div class="action-link-arrow">›</div></a>
-    <a class="action-row" href="AuroraCityFC_MediaCentre.html"><div class="action-icon">●</div><div><strong>Media Centre</strong><span>${latestHeadline}</span></div><div class="action-value">${mediaStories.length || newsCount}</div><div class="action-link-arrow">›</div></a>
+    <a class="action-row" href="AuroraCityFC_TransferCentre.html#deal-sheet">
+      <div class="action-icon">✓</div>
+      <div><strong>Review Final Deal Sheet</strong><span>${route.length ? `${route.length} approved signings • ${route.map(x=>displayTicker(x.row.ticker)).join(" / ")}` : "Final deal sheet is still syncing"}</span></div>
+      <div class="action-value">${route.length ? `${money(routeIncome)}/yr` : "Syncing"}</div>
+      <div class="action-link-arrow">›</div>
+    </a>
+    <a class="action-row" href="AuroraCityFC_TransferCentre.html#incoming-offers">
+      <div class="action-icon">✉</div>
+      <div><strong>Check Incoming Offers</strong><span>Open the chairman’s offer room and review live approaches.</span></div>
+      <div class="action-value">Offer room</div>
+      <div class="action-link-arrow">›</div>
+    </a>
+    <a class="action-row" href="AuroraCityFC_TransferCentre.html#sell-desk">
+      <div class="action-icon">⇥</div>
+      <div><strong>Open Sell Desk</strong><span>Create, approve or record an outgoing transfer review.</span></div>
+      <div class="action-value">Exit desk</div>
+      <div class="action-link-arrow">›</div>
+    </a>
+    <a class="action-row" href="AuroraCityFC_SquadHub.html#relegationWatch">
+      <div class="action-icon">♟</div>
+      <div><strong>Review Squad Watch</strong><span>${weakPlayers.length ? `${weakPlayers.length} player${weakPlayers.length===1?"":"s"} require development attention` : "No immediate development warning"}</span></div>
+      <div class="action-value">${weakPlayers[0] ? displayTicker(weakPlayers[0].ticker) : "All clear"}</div>
+      <div class="action-link-arrow">›</div>
+    </a>
+    <a class="action-row" href="AuroraCityFC_AnalysisRoom.html#incomeProgressChart">
+      <div class="action-icon">◎</div>
+      <div><strong>Check Income Runway</strong><span>${gap > 0 ? `${money(gap)}/month still required for the current objective` : "Monthly income target achieved"}</span></div>
+      <div class="action-value">${targetPct.toFixed(1)}%</div>
+      <div class="action-link-arrow">›</div>
+    </a>
+    <a class="action-row" href="AuroraCityFC_MediaCentre.html#breakingStories">
+      <div class="action-icon">●</div>
+      <div><strong>Read Latest Club Story</strong><span>${latestHeadline}</span></div>
+      <div class="action-value">${mediaStories.length || newsCount || 0}</div>
+      <div class="action-link-arrow">›</div>
+    </a>
   `;
 
   $("deptTransfers").textContent = route.length ? route.length : "—";
@@ -1204,6 +1830,8 @@ function renderAll(){
   $("scheduleTransferNote").textContent = route.length ? `${money(routeIncome)}/year expected from the current route.` : "Open the Transfer Centre to confirm the final route.";
   $("scheduleTargetStatus").textContent = gap > 0 ? `${money(gap)}/month required` : "Target achieved";
   $("scheduleTargetNote").textContent = gap > 0 ? `${targetPct.toFixed(1)}% of the £500/month objective completed.` : "The current monthly income objective has been reached.";
+  if($("managerTargetSummary")) $("managerTargetSummary").textContent = $("scheduleTargetStatus")?.textContent || "—";
+  if($("managerTargetDetail")) $("managerTargetDetail").textContent = $("scheduleTargetNote")?.textContent || "Checking target progress.";
   $("scheduleDataStatus").textContent = dataStamp ? "Aurora data live" : "Timestamp unavailable";
   $("scheduleDataNote").textContent = dataStamp ? dataStamp.toLocaleString("en-GB") : "The page loaded, but no dated feed row was found.";
 
@@ -1213,6 +1841,7 @@ function renderAll(){
   $("sideTransferBadge").className = `fm-side-status ${transferSynced ? "live" : ""}`.trim();
   $("sideBoardBadge").textContent = board >= 88 ? "Strong" : board >= 78 ? "Stable" : "Watch";
   $("sideMediaBadge").textContent = mediaStories.length || newsCount || 0;
+  if($("routeDealTarget")) $("routeDealTarget").textContent = top ? displayTicker(top.ticker) : "Current plan";
 
   renderPreviewRows(route.map(x=>x.row), "topTransferPreview", (row,i)=>`${money(route[i].income)}/yr`);
   const squadRows = active.slice().sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a)).slice(0,4);
