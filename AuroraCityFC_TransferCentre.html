@@ -2457,6 +2457,25 @@ tr:hover td{background:rgba(96,165,250,.06)}
 .deadline-day-bar{margin-bottom:18px}.top-transfer-board{gap:18px!important}.top-transfer-card{border-radius:24px!important}.transfer-studio-grid{gap:20px!important}.broadcast-panel{border-radius:26px!important}.deal-sheet{gap:12px!important}.deal-row{padding:15px!important}.short-wire-list{gap:11px!important}.transfer-grid{gap:20px!important}.section{margin-top:22px!important}.broadcast-head{padding-bottom:14px!important}.transfer-verdict-box{padding:16px!important}.deal-note,.transfer-centre-footer-note{margin-top:14px!important}@media(max-width:760px){.top-transfer-board{gap:14px!important}.transfer-studio-grid{grid-template-columns:1fr!important}}
 
 /* ===== Transfer execution controls + post-deal impact ===== */
+/* Post-transfer impact now sits directly above the Final Deal Sheet. */
+.post-transfer-inline{
+  margin:16px 0 14px;
+  padding:14px;
+  border:1px solid rgba(52,211,153,.26);
+  background:linear-gradient(180deg,rgba(6,78,59,.14),rgba(2,6,23,.34));
+  border-radius:20px;
+}
+.post-transfer-inline-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.post-transfer-inline-head h3{margin:0;font-size:18px;letter-spacing:-.03em}
+.post-transfer-inline-head p{margin:5px 0 0;color:var(--muted);font-size:11px;line-height:1.4}
+@media(max-width:560px){.post-transfer-inline-head{flex-direction:column}}
+
 .transfer-reset-btn,.deal-exclude-btn{border:1px solid rgba(96,165,250,.28);background:rgba(15,23,42,.72);color:#bfdbfe;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900;cursor:pointer}.deal-exclude-btn{color:#fecdd3;border-color:rgba(251,113,133,.28);background:rgba(127,29,29,.18)}
 .allocation-input{width:92px;border:1px solid rgba(96,165,250,.28);background:rgba(2,6,23,.55);color:#e5eefc;border-radius:10px;padding:7px 8px;font-weight:900;text-align:right}.deal-control-line{display:flex;justify-content:flex-end;gap:7px;align-items:center;margin-top:7px}.post-impact-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.post-impact-card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(13,27,52,.88),rgba(7,17,31,.94));border-radius:20px;padding:14px;min-height:118px}.post-impact-card small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}.post-impact-card strong{display:block;font-size:22px;margin-top:8px;color:#e0f2fe}.post-impact-card span{display:block;color:#86efac;font-size:11px;margin-top:7px;line-height:1.35}.post-impact-progress{height:6px;border-radius:999px;background:rgba(148,163,184,.14);overflow:hidden;margin-top:9px}.post-impact-progress i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#34d399);border-radius:inherit}.deal-execution-note{margin-top:8px;color:#93a4bd;font-size:11px;line-height:1.35}
 @media(max-width:1050px){.post-impact-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.post-impact-grid{grid-template-columns:1fr}.deal-control-line{justify-content:flex-start;flex-wrap:wrap}.allocation-input{width:110px}}
@@ -3359,6 +3378,15 @@ tr:hover td{background:rgba(96,165,250,.06)}
           </div>
         </div>
 
+        <!-- ===================== SECTION: POST-TRANSFER IMPACT ===================== -->
+        <div class="post-transfer-inline" id="post-transfer-impact">
+          <div class="post-transfer-inline-head">
+            <div><h3>Post-Transfer Impact</h3><p>What the approved deal sheet would do to income, yield and promotion progress.</p></div>
+            <span class="badge green">Before → after</span>
+          </div>
+          <div class="post-impact-grid" id="postTransferImpact"><div class="loading">Calculating post-transfer impact…</div></div>
+        </div>
+
         <div class="deal-sheet" id="finalDealSheet">
           <div class="loading">Building final transfer slip…</div>
         </div>
@@ -3437,12 +3465,6 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
   </section>
 
-
-  <!-- ===================== SECTION: POST-TRANSFER IMPACT ===================== -->
-  <section class="section" id="post-transfer-impact">
-    <div class="section-head"><div><h2>Post-Transfer Impact</h2><p>What the approved deal sheet would do to income, yield and promotion progress.</p></div><span class="badge green">Before → after</span></div>
-    <div class="post-impact-grid" id="postTransferImpact"><div class="loading">Calculating post-transfer impact…</div></div>
-  </section>
 
   <!-- ===================== SECTION: BENCH + WATCH ===================== -->
   <section class="section">
@@ -5009,6 +5031,22 @@ document.addEventListener('submit',async event=>{
   catch(err){msg.textContent=err.message||'The sale record failed. Holdings were not changed.';msg.className='registration-message error wide';submit.disabled=false;submit.textContent='Record completed sale';}
   finally{sellDeskBusy=false;}
 });
+
+function forcePostTransferImpactPlacement(){
+  const impact=document.getElementById('post-transfer-impact');
+  const finalSheet=document.getElementById('finalDealSheet');
+  if(!impact||!finalSheet||!finalSheet.parentNode) return;
+  if(impact.nextElementSibling!==finalSheet){
+    finalSheet.parentNode.insertBefore(impact,finalSheet);
+  }
+}
+
+/* Keep the impact panel locked directly above the Final Deal Sheet, even if an older cached layout or later render tries to move it. */
+forcePostTransferImpactPlacement();
+document.addEventListener('DOMContentLoaded',forcePostTransferImpactPlacement,{once:true});
+window.addEventListener('load',forcePostTransferImpactPlacement,{once:true});
+setTimeout(forcePostTransferImpactPlacement,250);
+setTimeout(forcePostTransferImpactPlacement,1500);
 
 restoreTransferSettings();
 restoreRegistrationConnection();
