@@ -5,12 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#030712" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Manager Dashboard</title>
-<!-- Build: Football Manager Sidebar • 19 Jul 2026 -->
+<!-- Build: Football Manager Sidebar Standalone Fix • 19 Jul 2026 -->
 <style>
 :root{
   --bg:#020612;
@@ -413,31 +416,9 @@ body{
 
 </style>
 <script src="AuroraFCData.js"></script>
-
-<script id="aurora-manager-shell-guard">
-(() => {
-  "use strict";
-
-  const page = window.location.pathname.split("/").pop();
-
-  /*
-   * Older Aurora HTML files may be opened directly by the installed web app,
-   * a saved bookmark or browser history. Reopen them inside the permanent
-   * Manager Session shell so the Log Out control is always available.
-   */
-  if (
-    window.self === window.top &&
-    page &&
-    page !== "AuroraCityFC_GameShell.html"
-  ) {
-    const shellUrl =
-      "AuroraCityFC_GameShell.html?page=" + encodeURIComponent(page);
-
-    window.location.replace(shellUrl);
-  }
-})();
+<script>
+window.AURORA_MANAGER_BUILD = "FM-SIDEBAR-STANDALONE-2026-07-19";
 </script>
-
 </head>
 <body>
 
@@ -497,7 +478,7 @@ body{
       </div>
     </div>
     <div class="fm-top-context">
-      <span class="fm-page-path">Home / Club HQ</span>
+      <span class="fm-page-path">Home / Club HQ • FM Sidebar Build</span>
       <span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
     </div>
   </div>
@@ -936,7 +917,12 @@ function readTab(master, tab){
 }
 async function loadData(){
   const btn = $("refreshBtn");
-  if(btn){ btn.disabled = true; btn.textContent = "Loading…"; }
+  const btnLabel = btn?.querySelector("span:last-child");
+  if(btn){
+    btn.disabled = true;
+    if(btnLabel) btnLabel.textContent = "Loading…";
+    else btn.textContent = "Loading…";
+  }
   try{
     const master = await fetchMaster();
     const tabs = {};
@@ -963,7 +949,11 @@ async function loadData(){
     console.error(err);
     $("actionList").innerHTML = `<div class="loading error">${err.message || "Unable to load AuroraData."}</div>`;
   }finally{
-    if(btn){ btn.disabled = false; btn.textContent = "Refresh"; }
+    if(btn){
+      btn.disabled = false;
+      if(btnLabel) btnLabel.textContent = "Refresh Data";
+      else btn.textContent = "Refresh Data";
+    }
   }
 }
 function renderAll(){
