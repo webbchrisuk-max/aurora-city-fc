@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#030712" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
+<!-- Build: Embedded TRIG account restriction fallback • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -1953,6 +1960,17 @@ tr:hover td{background:rgba(96,165,250,.06)}
 .registration-message.success{border-color:rgba(34,197,94,.30);background:rgba(20,83,45,.23);color:#bbf7d0}
 .registration-message.error{border-color:rgba(248,113,113,.30);background:rgba(127,29,29,.22);color:#fecaca}
 .registration-message.pending{border-color:rgba(251,191,36,.30);background:rgba(120,53,15,.20);color:#fde68a}
+
+.registration-safety{margin-top:10px}
+.registration-history{margin-top:14px;border:1px solid var(--line);border-radius:18px;background:rgba(2,6,23,.26);overflow:hidden}
+.registration-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid var(--line)}
+.registration-history-head strong{font-size:13px}.registration-history-head span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.registration-history-list{display:grid}
+.registration-history-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 12px;border-bottom:1px solid var(--line)}
+.registration-history-row:last-child{border-bottom:0}.registration-history-row strong{display:block;font-size:13px}.registration-history-row span{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.4}
+.registration-history-actions{display:flex;align-items:center;gap:7px}.registration-history-status{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#bbf7d0}
+.registration-history-status.undone{color:#fecdd3}.registration-history-status.undo{color:#fde68a}
+@media(max-width:700px){.registration-history-row{grid-template-columns:1fr}.registration-history-actions{justify-content:flex-start}}
 .registration-last{
   margin-top:9px;
   display:flex;
@@ -3145,6 +3163,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 }
 </style>
 
+<script src="AuroraFCData.js"></script>
 </head>
 <body>
 <!-- ===================== SECTION: APP SHELL ===================== -->
@@ -3338,6 +3357,10 @@ tr:hover td{background:rgba(96,165,250,.06)}
         <div class="short-wire-list" id="registrationDesk">
           <div class="loading">Loading registration desk…</div>
         </div>
+        <div class="registration-history">
+          <div class="registration-history-head"><div><strong>Recent Registration Activity</strong><span>Latest PurchaseLog entries with protected undo.</span></div><button class="registration-btn" id="refreshRegistrationHistory" type="button">Refresh activity</button></div>
+          <div class="registration-history-list" id="registrationHistory"><div class="loading">Connect AuroraData to load recent activity.</div></div>
+        </div>
         <div class="transfer-centre-footer-note" id="deskNote">Platform check loading…</div>
       </div>
     </div>
@@ -3373,10 +3396,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
 const AURORA_MASTER_URL = 'https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json';
 let AURORA_MASTER_CACHE = null;
 
-const PLATFORM_RULES = {
-  "RKT":"IG ISA","ULVR":"IG ISA","LGEN":"IG ISA","MNG":"IG ISA","SDLF":"IG ISA","SUPR":"IG ISA","IMB":"IG ISA","SBRY":"IG ISA","LMP":"IG ISA",
-  "FSFL":"Trade 212","UKW":"IG ISA","ARCC":"IG ISA","TRIG":"Trade 212","RGL":"Trade 212","GCP":"Trade 212","PHP":"IG ISA / Trade 212","FGEN":"IG ISA","SEQI":"Trade 212","TW":"IG ISA","OSB":"IG ISA"
-};
+const PLATFORM_RULES = window.AURORA_PLATFORM_RULES || {TRIG:'Trade 212',FSFL:'Trade 212',UKW:'IG ISA',ARCC:'IG ISA',RGL:'Trade 212',GCP:'Trade 212',PHP:'IG ISA / Trade 212',FGEN:'IG ISA',SEQI:'Trade 212',TW:'IG ISA',OSB:'IG ISA'};
 
 const PLAYER_BASE = 'https://webbchrisuk-max.github.io/aurora-city-fc/assets/aurora-city-fc/players/';
 const PLAYER_PORTRAITS = {
@@ -3457,10 +3477,7 @@ function parseNum(v){
 function cleanTicker(t){ return String(t || '').trim().toUpperCase(); }
 function registrationShortTicker(t){ return shortTicker(cleanTicker(t)); }
 function normalizeRegistrationAccount(account){
-  const raw=String(account||'').trim().toUpperCase().replace(/\s+/g,' ');
-  if(raw==='TRADE212'||raw==='TRADING 212'||raw==='TRADING212'||raw==='TRADE 212 ISA'||raw==='TRADING 212 ISA') return 'TRADE 212';
-  if(raw==='IG'||raw==='IGISA'||raw==='IG ISA'||raw==='IG TRADING'||raw.startsWith('IG TRADING')) return 'IG ISA';
-  return raw;
+  return window.AuroraFC ? AuroraFC.normalizeAccount(account) : String(account||'').trim().toUpperCase().replace(/\s+/g,' ');
 }
 function restoreRegistrationConnection(){
   try{
@@ -3551,6 +3568,36 @@ function registrationPreviewFromForm(form){
   const added=Number.isFinite(shares)?shares*dps:NaN;
   return {gross,total,totalGbp,newShares,avg,added,holding,currency,fx};
 }
+function registrationSafety(form,p){
+  const warnings=[]; const blocking=[];
+  const ticker=form.dataset.ticker;
+  const account=form.querySelector('[name="account"]')?.value||'';
+  const priceInput=parseNum(form.querySelector('[name="price"]')?.value);
+  const unit=form.querySelector('[name="priceUnit"]')?.value||'GBP';
+  const currency=form.querySelector('[name="currency"]')?.value||'GBP';
+  const livePrice=parseNum(form.dataset.livePriceGbp);
+  const allocation=parseNum(form.dataset.dealAllocation);
+  const fees=parseNum(form.querySelector('[name="fees"]')?.value)||0;
+  const tickerKey=registrationShortTicker(ticker);
+  const normalizedAccount=normalizeRegistrationAccount(account);
+  const allowedAccounts=(window.AuroraFC&&typeof AuroraFC.allowedAccounts==='function')
+    ? AuroraFC.allowedAccounts(ticker)
+    : (tickerKey==='TRIG'?['TRADE 212']:['IG ISA','TRADE 212']);
+  const accountAllowed=(window.AuroraFC&&typeof AuroraFC.accountAllowed==='function')
+    ? AuroraFC.accountAllowed(ticker,account)
+    : allowedAccounts.includes(normalizedAccount);
+  if(!accountAllowed) blocking.push(`${tickerKey} is not available in ${account}. Select ${allowedAccounts.join(' or ')}.`);
+  if(currency==='USD'&&unit!=='USD') blocking.push('USD purchases must use USD per share.');
+  if(currency==='GBP'&&unit==='USD') blocking.push('GBP purchases cannot use USD per share.');
+  const enteredGbp=currency==='GBP'?registrationNativePrice(priceInput,unit):(Number.isFinite(p.fx)?registrationNativePrice(priceInput,unit)*p.fx:NaN);
+  if(Number.isFinite(livePrice)&&livePrice>0&&Number.isFinite(enteredGbp)&&enteredGbp>0){
+    const ratio=enteredGbp/livePrice;
+    if(ratio>5||ratio<0.2) blocking.push(`Possible price-unit error: the entered price is far from Aurora's ${money(livePrice)} reference price.${unit==='GBP'&&currency==='GBP'?' Did you mean pence per share?':''}`);
+  }
+  if(Number.isFinite(allocation)&&allocation>0&&Number.isFinite(p.totalGbp)&&p.totalGbp>allocation*1.15) warnings.push(`Trade cost ${money(p.totalGbp)} is more than 15% above the ${money(allocation)} deal-sheet allocation.`);
+  if(Number.isFinite(p.gross)&&p.gross>0&&fees>p.gross*0.1) warnings.push('Fees are more than 10% of the gross trade cost. Check the fees entry.');
+  return {warnings,blocking};
+}
 function updateRegistrationPreview(form){
   const p=registrationPreviewFromForm(form);
   const set=(key,value)=>{const el=form.querySelector(`[data-preview="${key}"]`);if(el)el.textContent=value;};
@@ -3560,11 +3607,18 @@ function updateRegistrationPreview(form){
   set('average',Number.isFinite(p.avg)?`${money(p.avg)} / share`:'—');
   set('income',Number.isFinite(p.added)?`${money(p.added)}/yr`:'—');
   const fxField=form.querySelector('[data-fx-field]'); if(fxField) fxField.hidden=p.currency==='GBP';
+  const safety=registrationSafety(form,p); form.dataset.safetyBlocked=safety.blocking.length?'true':'false';
+  const safetyBox=form.querySelector('[data-safety-message]');
+  if(safetyBox){
+    if(safety.blocking.length){safetyBox.textContent=`STOP: ${safety.blocking.join(' ')}`;safetyBox.className='registration-message error registration-safety';}
+    else if(safety.warnings.length){safetyBox.textContent=`Check: ${safety.warnings.join(' ')}`;safetyBox.className='registration-message pending registration-safety';}
+    else{safetyBox.textContent='Safety check passed: account, currency, price unit and allocation look consistent.';safetyBox.className='registration-message success registration-safety';}
+  }
   const accountMessage=form.querySelector('[data-form-message]');
   if(accountMessage&&!p.holding){accountMessage.textContent='New signing: Aurora will create a fresh Holdings row and LivePrices entry in the selected account when you confirm.';accountMessage.className='registration-message pending';}
   else if(accountMessage&&p.holding){accountMessage.textContent='Existing squad player: this purchase will top up the selected account row.';accountMessage.className='registration-message';}
   const submit=form.querySelector('button[type="submit"]');
-  if(submit&&!registrationBusy) submit.textContent=p.holding?'Confirm top-up':'Confirm new signing';
+  if(submit&&!registrationBusy){submit.textContent=p.holding?'Confirm top-up':'Confirm new signing';submit.disabled=safety.blocking.length>0;}
 }
 async function postRegistration(payload){
   if(!registrationConnection.endpoint||!registrationConnection.token) throw new Error('Connect the Registration Desk to the Apps Script web app first.');
@@ -3611,6 +3665,24 @@ function applyRegistrationResult(result,payload){
   }
 }
 function lastRegistration(){try{return JSON.parse(localStorage.getItem(REGISTRATION_LAST_KEY)||'null');}catch(_){return null;}}
+
+function registrationPriceLabel(row){const unit=String(row.priceUnit||'').toUpperCase();const currency=String(row.currency||'GBP').toUpperCase();return unit==='PENCE'?`${Number(row.priceInput||0).toLocaleString('en-GB',{maximumFractionDigits:4})}p`:`${currency==='USD'?'$':'£'}${Number(row.priceInput||0).toLocaleString('en-GB',{maximumFractionDigits:6})}`;}
+function renderRegistrationHistory(rows){
+  const box=$('registrationHistory'); if(!box) return;
+  box.innerHTML=rows?.length?rows.map(row=>{
+    const status=String(row.status||'').toUpperCase(); const cls=status==='UNDONE'?'undone':status==='UNDO'?'undo':'';
+    const submitted=row.submittedAt?new Date(row.submittedAt):null; const when=submitted&&!Number.isNaN(submitted.getTime())?submitted.toLocaleString('en-GB'):'Time unavailable';
+    const undo=row.canUndo?`<button class="registration-btn danger" type="button" data-undo-registration="${escapeHtml(row.transactionId)}" data-undo-label="${escapeHtml(`${row.ticker} • ${row.account} • ${row.shares} shares • ${money(row.totalCostGbp)}`)}">Undo</button>`:'';
+    return `<div class="registration-history-row"><div><strong>${escapeHtml(row.ticker)} — ${escapeHtml(row.name||'Purchase registration')}</strong><span>${escapeHtml(row.account)} • ${Number(row.shares||0).toLocaleString('en-GB',{maximumFractionDigits:8})} shares at ${escapeHtml(registrationPriceLabel(row))} • ${money(Number(row.totalCostGbp)||0)} • ${when}</span></div><div class="registration-history-actions"><span class="registration-history-status ${cls}">${escapeHtml(status.replace('_',' '))}</span>${undo}</div></div>`;
+  }).join(''):'<div class="loading">No PurchaseLog activity yet.</div>';
+}
+async function loadRegistrationHistory(){
+  const box=$('registrationHistory'); if(!box) return;
+  if(!registrationConnection.endpoint||!registrationConnection.token){box.innerHTML='<div class="loading">Save the AuroraData connection to load PurchaseLog activity.</div>';return;}
+  box.innerHTML='<div class="loading">Loading recent PurchaseLog activity…</div>';
+  try{const result=await postRegistration({action:'listRecentRegistrations',limit:12,transactionId:registrationId(),source:'Aurora City FC Transfer Centre'});if(result.queued) throw new Error('Browser security prevented the activity response.');renderRegistrationHistory(result.registrations||[]);}catch(err){box.innerHTML=`<div class="loading error">${escapeHtml(err.message||'Unable to load recent activity.')}</div>`;}
+}
+
 
 function displayTicker(t){ return String(t || '').replace('LON:',''); }
 function shortTicker(t){ return displayTicker(t).replace('.GB','').replace('.L','').toUpperCase(); }
@@ -4449,6 +4521,9 @@ function renderRegistrationDesk(deal){
       <form class="registration-panel ${open?'open':''}" data-registration-form
         data-ticker="${escapeHtml(ticker)}"
         data-name="${escapeHtml(displayName(item.row))}"
+        data-deal-allocation="${escapeHtml(item.amount)}"
+        data-live-price-gbp="${escapeHtml(live)}"
+        data-recommended-account="${escapeHtml(accounts[0])}"
         data-annual-dps="${escapeHtml(item.row.annual_dps??'')}"
         data-sector="${escapeHtml(item.row.sector??item.row.Sector??'')}"
         data-role="${escapeHtml(item.row.role??item.row.squad_role??'')}"
@@ -4484,6 +4559,7 @@ function renderRegistrationDesk(deal){
           <div class="registration-stat"><small>New average</small><strong data-preview="average">—</strong></div>
           <div class="registration-stat"><small>Income added</small><strong data-preview="income">—</strong></div>
         </div>
+        <div class="registration-message success registration-safety" data-safety-message>Safety check ready.</div>
         <div class="registration-message ${holding?'':'pending'}" data-form-message>${holding?'Existing squad player: this purchase will top up the current account row.':'New signing: confirming this trade will create the Holdings row and LivePrices entry automatically.'}</div>
         <div class="registration-form-actions"><button class="registration-btn primary" type="submit">${holding?'Confirm top-up':'Confirm new signing'}</button><button class="registration-btn" type="reset">Clear form</button></div>
         ${lastMatch?`<div class="registration-last"><span>Last registered here: ${escapeHtml(last.transactionId||'')} • ${escapeHtml(last.message||'Completed')}</span></div>`:''}
@@ -4516,7 +4592,7 @@ function renderWatch(deal){
     </div>`).join('') : '<div class="loading">No major red flags from the current shortlist.</div>';
 }
 function renderAll(){
-  if($('lastUpdated')) $('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString('en-GB')}`;
+  if($('lastUpdated')) { if(window.AuroraFC) AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'}); else $('lastUpdated').textContent='Aurora generated: unavailable'; }
   const deal = buildDealSheet();
   persistTransferSettings();
   publishTransferPlan(deal);
@@ -4599,6 +4675,8 @@ document.addEventListener('submit',async event=>{
   const shares=parseNum(form.querySelector('[name="shares"]')?.value);
   const price=parseNum(form.querySelector('[name="price"]')?.value);
   if(!(shares>0)||!(price>0)){msg.textContent='Enter both the completed share quantity and executed price.';msg.className='registration-message error';return;}
+  updateRegistrationPreview(form);
+  if(form.dataset.safetyBlocked==='true'){const safetyBox=form.querySelector('[data-safety-message]');safetyBox?.scrollIntoView({behavior:'smooth',block:'center'});return;}
   if(!registrationConnection.endpoint||!registrationConnection.token){
     $('registrationConnection')?.setAttribute('open','');
     msg.textContent='Save the Apps Script URL and private token above before registering the purchase.';msg.className='registration-message error';
@@ -4617,6 +4695,7 @@ document.addEventListener('submit',async event=>{
     trialStatus:form.dataset.trialStatus||'',trialRank:parseNum(form.dataset.trialRank),trialVerdict:form.dataset.trialVerdict||'',
     managerNote:form.dataset.managerNote||'',chemistryRole:form.dataset.chemistryRole||'',chemistryRisk:form.dataset.chemistryRisk||'',
     squadBalanceNote:form.dataset.squadBalanceNote||'',
+    dealAllocationGbp:parseNum(form.dataset.dealAllocation),referencePriceGbp:parseNum(form.dataset.livePriceGbp),
     source:'Aurora City FC Transfer Centre',userAgent:navigator.userAgent
   };
   registrationBusy=true;
@@ -4628,14 +4707,14 @@ document.addEventListener('submit',async event=>{
     const message=result.queued?result.message:`${result.createdNewHolding?'New signing created and registered':'Top-up registered'}. ${displayTicker(payload.ticker)} now has ${Number(result.newShares).toLocaleString('en-GB',{maximumFractionDigits:8})} shares at an estimated ${money(result.newAverageGbp)} weighted average. Annual income added: ${money(result.annualIncomeAddedGbp)}.`;
     msg.textContent=message;msg.className=`registration-message ${result.queued?'pending':'success'}`;
     localStorage.setItem(REGISTRATION_LAST_KEY,JSON.stringify({transactionId:payload.transactionId,ticker:payload.ticker,account:payload.account,message,at:new Date().toISOString()}));
-    if(!result.queued){setTimeout(()=>renderAll(),900);}
+    if(!result.queued){setTimeout(()=>{renderAll();loadRegistrationHistory();},900);}
   }catch(err){
     console.error(err);msg.textContent=err.message||'Registration failed. AuroraData was not changed.';msg.className='registration-message error';
   }finally{
     registrationBusy=false;if(submit){submit.disabled=false;submit.textContent=currentHoldingForRegistration(form.dataset.ticker,account)?'Confirm top-up':'Confirm new signing';}
   }
 });
-$('saveRegistrationConnection')?.addEventListener('click',()=>{persistRegistrationConnection();registrationMessage(registrationConnection.endpoint&&registrationConnection.token?'Connection saved in this browser. Use Test connection before the first live registration.':'Enter both the web-app URL and private token.');});
+$('saveRegistrationConnection')?.addEventListener('click',()=>{persistRegistrationConnection();registrationMessage(registrationConnection.endpoint&&registrationConnection.token?'Connection saved in this browser. Use Test connection before the first live registration.':'Enter both the web-app URL and private token.');loadRegistrationHistory();});
 $('clearRegistrationConnection')?.addEventListener('click',()=>{localStorage.removeItem(REGISTRATION_CONNECTION_KEY);registrationConnection={endpoint:'',token:''};if($('registrationEndpoint'))$('registrationEndpoint').value='';if($('registrationToken'))$('registrationToken').value='';updateRegistrationConnectionStatus();registrationMessage('Connection removed from this browser.');});
 $('testRegistrationConnection')?.addEventListener('click',async()=>{
   persistRegistrationConnection();
@@ -4643,10 +4722,19 @@ $('testRegistrationConnection')?.addEventListener('click',async()=>{
   registrationMessage('Testing the AuroraData registration service…','pending');
   try{
     const result=await postRegistration({action:'test',transactionId:registrationId(),source:'Aurora City FC Transfer Centre'});
-    registrationMessage(result.queued?'Test request submitted, but the browser could not read the cross-site confirmation. The connection may still be working.':(result.message||'Registration service is ready.'),result.queued?'pending':'success');
+    registrationMessage(result.queued?'Test request submitted, but the browser could not read the cross-site confirmation. The connection may still be working.':(result.message||'Registration service is ready.'),result.queued?'pending':'success');if(!result.queued)loadRegistrationHistory();
   }catch(err){registrationMessage(err.message||'Connection test failed.','error');}
 });
 
+$('refreshRegistrationHistory')?.addEventListener('click',loadRegistrationHistory);
+document.addEventListener('click',async event=>{
+  const button=event.target.closest?.('[data-undo-registration]'); if(!button) return;
+  const transactionId=button.dataset.undoRegistration; const label=button.dataset.undoLabel||transactionId;
+  if(!window.confirm(`Undo this registration?\n\n${label}\n\nAurora will restore the previous Holdings data and log the reversal.`)) return;
+  button.disabled=true;button.textContent='Undoing…';
+  try{const result=await postRegistration({action:'undoRegistration',transactionId,newTransactionId:`UNDO-${Date.now()}`,source:'Aurora City FC Transfer Centre',userAgent:navigator.userAgent});registrationMessage(result.message||'Registration was undone.','success');AURORA_MASTER_CACHE=null;await loadData();await loadRegistrationHistory();}
+  catch(err){registrationMessage(err.message||'Undo failed.','error');button.disabled=false;button.textContent='Undo';}
+});
 $('resetTransferPlan')?.addEventListener('click',()=>{excludedTickers.clear();manualAmounts.clear();if($('transferBudgetInput'))$('transferBudgetInput').value=1500;renderAll();});
 $('applyBestReturn')?.addEventListener('click',()=>{
   const plan=window.AURORA_BEST_RETURN_PLAN;
@@ -4659,6 +4747,8 @@ $('applyBestReturn')?.addEventListener('click',()=>{
 restoreTransferSettings();
 restoreRegistrationConnection();
 loadData();
+loadRegistrationHistory();
+if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
 
 <button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>
