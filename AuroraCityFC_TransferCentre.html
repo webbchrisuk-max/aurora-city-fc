@@ -3557,6 +3557,190 @@ tr:hover td{background:rgba(96,165,250,.06)}
   }
 }
 
+
+/* ===================== AURORA HOME-STYLE HERO MASTER ===================== */
+.aurora-home-hero{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:14px;
+  margin:0 0 14px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.aurora-home-hero-card{
+  --aurora-hero-image:none;
+  --aurora-hero-mark:"AC";
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-width:0;
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  border:1px solid var(--line2,rgba(96,165,250,.22));
+  border-radius:calc(var(--radius,18px) + 4px);
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+  padding:20px;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.91) 0%,rgba(2,6,23,.72) 44%,rgba(2,6,23,.25) 100%),
+    radial-gradient(circle at 78% 18%,rgba(34,211,238,.18),transparent 36%),
+    var(--aurora-hero-image) center center/cover no-repeat,
+    linear-gradient(135deg,rgba(8,47,73,.72),rgba(15,23,42,.92));
+}
+.aurora-home-hero-card::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:auto -80px -115px auto;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  border:36px solid rgba(96,165,250,.08);
+  pointer-events:none;
+}
+.aurora-home-hero-card::after{
+  content:var(--aurora-hero-mark);
+  position:absolute;
+  z-index:-1;
+  right:22px;
+  bottom:14px;
+  color:rgba(226,232,240,.055);
+  font-size:clamp(70px,10vw,150px);
+  font-weight:1000;
+  letter-spacing:-.08em;
+  pointer-events:none;
+}
+.aurora-home-kicker{
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  gap:8px;
+  padding:6px 10px;
+  border:1px solid rgba(191,219,254,.18);
+  border-radius:999px;
+  background:rgba(15,23,42,.52);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-kicker-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:0 0 0 4px rgba(52,211,153,.14);
+}
+.aurora-home-hero-title{
+  max-width:780px;
+  margin:16px 0 10px;
+  color:var(--text,#eef7ff);
+  font-size:clamp(31px,7vw,64px);
+  line-height:.92;
+  letter-spacing:-.06em;
+}
+.aurora-home-hero-sub{
+  max-width:720px;
+  margin:0;
+  color:var(--muted,#9fb2c8);
+  font-size:15px;
+  line-height:1.45;
+}
+.aurora-home-hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.aurora-home-pill{
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:999px;
+  padding:9px 12px;
+  background:rgba(2,6,23,.58);
+  color:var(--soft,#d6e4f5);
+  font-size:12px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-scoreboard{
+  min-width:0;
+  display:grid;
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.aurora-home-score-card{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:var(--radius,18px);
+  padding:16px;
+  background:linear-gradient(180deg,rgba(15,23,42,.90),rgba(7,17,31,.90));
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+}
+.aurora-home-score-card small{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted,#9fb2c8);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.aurora-home-score-card strong{
+  display:block;
+  color:var(--text,#eef7ff);
+  font-size:clamp(20px,2.1vw,26px);
+  line-height:1.05;
+  letter-spacing:-.04em;
+  overflow-wrap:anywhere;
+}
+.aurora-home-score-card span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted,#9fb2c8);
+  font-size:12px;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.aurora-home-data-hooks{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  clip-path:inset(50%)!important;
+}
+@media(max-width:900px){
+  .aurora-home-hero{grid-template-columns:1fr}
+  .aurora-home-scoreboard{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none}
+}
+@media(max-width:760px){
+  .aurora-home-hero,
+  .aurora-home-scoreboard{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .aurora-home-hero{grid-template-columns:1fr!important}
+  .aurora-home-scoreboard{grid-template-columns:1fr!important}
+  .aurora-home-hero-card,
+  .aurora-home-score-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .aurora-home-hero-card{min-height:330px;background-position:center center}
+}
+
 </style>
 </head>
 <body>
@@ -3600,52 +3784,33 @@ tr:hover td{background:rgba(96,165,250,.06)}
   </section>
 
   <!-- ===================== SECTION: TRANSFER HERO ===================== -->
-  <section class="aurora-dept-hero aurora-transfer-hero">
-<div class="aurora-dept-copy">
-<div class="kicker"><span class="kicker-dot"></span> Recruitment department</div>
-<h2 class="aurora-dept-title">Transfer <span>Centre</span></h2>
-<p class="aurora-dept-sub">Transfer desk, final deal sheet and registration checks for the strongest green-light income route.</p>
-<div class="hero-actions"><span class="pill" id="lastUpdated">Last updated: loading…</span><span class="pill">Allocation Mode: Adjustable</span><span class="pill">Scout Focus: Green-Light Income</span></div>
-</div>
-<div class="aurora-dept-scene"><div class="aurora-scene-label">Recruitment War Room</div><svg viewBox="0 0 720 336" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-<defs>
- <linearGradient id="tbg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#04101f"/><stop offset="1" stop-color="#0a3550"/></linearGradient>
- <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0d2743"/><stop offset="1" stop-color="#06101e"/></linearGradient>
- <radialGradient id="glow"><stop stop-color="#38bdf8" stop-opacity=".55"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient>
-</defs>
-<rect width="720" height="336" fill="url(#tbg)"/>
-<circle cx="540" cy="90" r="210" fill="url(#glow)" opacity=".35"/>
-<g opacity=".14" stroke="#7dd3fc"><path d="M0 70H720M0 145H720M0 220H720M0 295H720"/><path d="M90 0V336M180 0V336M270 0V336M360 0V336M450 0V336M540 0V336M630 0V336"/></g>
-<!-- three scouting screens -->
-<g transform="translate(58 48)">
- <path d="M0 12Q0 0 12 0H184Q196 0 196 12V202H0Z" fill="url(#screen)" stroke="#1d4f73"/>
- <rect x="16" y="19" width="164" height="90" rx="8" fill="#07192c" stroke="#226188"/>
- <circle cx="58" cy="63" r="23" fill="#0e7490" opacity=".65"/><path d="M58 41c-9 0-16 8-16 17 0 5 2 9 6 12-12 5-18 14-18 27h56c0-13-7-22-18-27 4-3 6-7 6-12 0-9-7-17-16-17Z" fill="#7dd3fc" opacity=".75"/>
- <rect x="99" y="40" width="58" height="7" rx="3.5" fill="#22d3ee" opacity=".75"/><rect x="99" y="56" width="45" height="5" rx="2.5" fill="#60a5fa" opacity=".5"/><rect x="99" y="70" width="66" height="5" rx="2.5" fill="#60a5fa" opacity=".35"/>
- <g fill="#7dd3fc" opacity=".65"><rect x="16" y="126" width="40" height="8" rx="4"/><rect x="16" y="145" width="108" height="6" rx="3"/><rect x="16" y="160" width="146" height="6" rx="3"/><rect x="16" y="175" width="86" height="6" rx="3"/></g>
-</g>
-<g transform="translate(266 28)">
- <path d="M0 12Q0 0 12 0H210Q222 0 222 12V222H0Z" fill="url(#screen)" stroke="#27729a"/>
- <rect x="16" y="18" width="190" height="120" rx="8" fill="#061625" stroke="#246d92"/>
- <g fill="none" stroke="#22d3ee" opacity=".65"><path d="M28 102L57 71l30 17 32-46 27 20 32-31"/><circle cx="57" cy="71" r="3" fill="#22d3ee"/><circle cx="119" cy="42" r="3" fill="#22d3ee"/><circle cx="178" cy="31" r="3" fill="#22d3ee"/></g>
- <text x="28" y="36" fill="#7dd3fc" font-size="11" font-family="system-ui" font-weight="700">GLOBAL MARKET MAP</text>
- <g fill="#60a5fa" opacity=".45"><rect x="16" y="155" width="74" height="10" rx="5"/><rect x="16" y="177" width="126" height="7" rx="3.5"/><rect x="16" y="194" width="98" height="7" rx="3.5"/></g>
-</g>
-<g transform="translate(500 58)">
- <path d="M0 12Q0 0 12 0H154Q166 0 166 12V180H0Z" fill="url(#screen)" stroke="#1d4f73"/>
- <text x="18" y="34" fill="#7dd3fc" font-size="10" font-family="system-ui" font-weight="700">DEAL PIPELINE</text>
- <g font-family="system-ui" font-size="9" fill="#cbd5e1"><text x="18" y="66">SCOUTED</text><text x="18" y="100">SHORTLIST</text><text x="18" y="134">NEGOTIATION</text><text x="18" y="168">READY</text></g>
- <g><rect x="84" y="57" width="54" height="10" rx="5" fill="#1e3a5f"/><rect x="84" y="91" width="42" height="10" rx="5" fill="#0e7490"/><rect x="84" y="125" width="30" height="10" rx="5" fill="#2563eb"/><rect x="84" y="159" width="48" height="10" rx="5" fill="#10b981"/></g>
-</g>
-<!-- manager silhouette + table -->
-<ellipse cx="424" cy="322" rx="220" ry="42" fill="#0ea5e9" opacity=".18"/>
-<path d="M305 322L355 250H530L585 322Z" fill="#081827" stroke="#1d5678"/>
-<circle cx="446" cy="204" r="24" fill="#020617"/><path d="M408 322v-74c0-25 16-38 38-38s38 13 38 38v74" fill="#061426" stroke="#1e4664"/>
-<g fill="#34d399"><circle cx="360" cy="285" r="4"/><circle cx="495" cy="285" r="4"/></g>
-</svg>
-<div class="aurora-scene-chip" style="left:24px;bottom:24px"><small>Lead target</small><strong>TRIG</strong><span>Income route</span></div>
-<div class="aurora-scene-chip" style="right:24px;top:90px"><small>Scout status</small><strong>LIVE</strong><span>Market watch</span></div>
-</div></section>
+    <section class="aurora-home-hero" aria-label="Transfer Centre overview">
+    <div class="aurora-home-hero-card" style="--aurora-hero-image:url('assets/aurora-city-fc/transfer-center-war-room.png');--aurora-hero-mark:'TC';">
+      <div class="aurora-home-kicker"><span class="aurora-home-kicker-dot"></span> Live recruitment command</div>
+      <h1 class="aurora-home-hero-title">Transfer Centre</h1>
+      <p class="aurora-home-hero-sub">Scout the market, compare income routes, manage the transfer budget and complete the next Aurora City FC signing.</p>
+      <div class="aurora-home-hero-actions">
+        <span class="aurora-home-pill" id="lastUpdated">Last updated: loading…</span> <span class="aurora-home-pill">Window Objective: strongest income route</span> <span class="aurora-home-pill">Recruitment Rule: quality plus value</span>
+      </div>
+    </div>
+    <div class="aurora-home-scoreboard">
+      <div class="aurora-home-score-card">
+        <small>Lead Target</small>
+        <strong data-aurora-copy-from="headlineLead">Loading…</strong>
+        <span data-aurora-copy-from="headlineLeadNote">Scouting the market…</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Annual Income</small>
+        <strong data-aurora-copy-from="headlineIncome">—</strong>
+        <span data-aurora-copy-from="headlineMonthly">Projected monthly income</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Deal Status</small>
+        <strong data-aurora-copy-from="headlineStatus">Loading…</strong>
+        <span data-aurora-copy-from="headlineStatusNote">Checking the route…</span>
+      </div>
+    </div>
+  </section>
 
   <!-- ===================== SECTION: CONTROL STRIP ===================== -->
   <section class="section">
@@ -5649,5 +5814,50 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
 })();
 </script>
+
+<script id="aurora-home-hero-sync">
+(() => {
+  "use strict";
+
+  const targets = Array.from(document.querySelectorAll("[data-aurora-copy-from]"));
+  if (!targets.length) return;
+
+  const copyOne = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    if (!source || source === target) return;
+
+    const value = (source.textContent || "").trim();
+    if (value) target.textContent = value;
+  };
+
+  const connect = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    copyOne(target);
+    if (!source || source === target) return;
+
+    new MutationObserver(() => copyOne(target)).observe(source, {
+      subtree: true,
+      childList: true,
+      characterData: true
+    });
+  };
+
+  const start = () => {
+    targets.forEach(connect);
+    window.setTimeout(() => targets.forEach(copyOne), 250);
+    window.setTimeout(() => targets.forEach(copyOne), 1000);
+    window.setTimeout(() => targets.forEach(copyOne), 3000);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>

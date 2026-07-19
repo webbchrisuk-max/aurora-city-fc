@@ -3559,6 +3559,190 @@ body.player-drawer-open{overflow:hidden!important}
   }
 }
 
+
+/* ===================== AURORA HOME-STYLE HERO MASTER ===================== */
+.aurora-home-hero{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:14px;
+  margin:0 0 14px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.aurora-home-hero-card{
+  --aurora-hero-image:none;
+  --aurora-hero-mark:"AC";
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-width:0;
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  border:1px solid var(--line2,rgba(96,165,250,.22));
+  border-radius:calc(var(--radius,18px) + 4px);
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+  padding:20px;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.91) 0%,rgba(2,6,23,.72) 44%,rgba(2,6,23,.25) 100%),
+    radial-gradient(circle at 78% 18%,rgba(34,211,238,.18),transparent 36%),
+    var(--aurora-hero-image) center center/cover no-repeat,
+    linear-gradient(135deg,rgba(8,47,73,.72),rgba(15,23,42,.92));
+}
+.aurora-home-hero-card::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:auto -80px -115px auto;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  border:36px solid rgba(96,165,250,.08);
+  pointer-events:none;
+}
+.aurora-home-hero-card::after{
+  content:var(--aurora-hero-mark);
+  position:absolute;
+  z-index:-1;
+  right:22px;
+  bottom:14px;
+  color:rgba(226,232,240,.055);
+  font-size:clamp(70px,10vw,150px);
+  font-weight:1000;
+  letter-spacing:-.08em;
+  pointer-events:none;
+}
+.aurora-home-kicker{
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  gap:8px;
+  padding:6px 10px;
+  border:1px solid rgba(191,219,254,.18);
+  border-radius:999px;
+  background:rgba(15,23,42,.52);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-kicker-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:0 0 0 4px rgba(52,211,153,.14);
+}
+.aurora-home-hero-title{
+  max-width:780px;
+  margin:16px 0 10px;
+  color:var(--text,#eef7ff);
+  font-size:clamp(31px,7vw,64px);
+  line-height:.92;
+  letter-spacing:-.06em;
+}
+.aurora-home-hero-sub{
+  max-width:720px;
+  margin:0;
+  color:var(--muted,#9fb2c8);
+  font-size:15px;
+  line-height:1.45;
+}
+.aurora-home-hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.aurora-home-pill{
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:999px;
+  padding:9px 12px;
+  background:rgba(2,6,23,.58);
+  color:var(--soft,#d6e4f5);
+  font-size:12px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-scoreboard{
+  min-width:0;
+  display:grid;
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.aurora-home-score-card{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:var(--radius,18px);
+  padding:16px;
+  background:linear-gradient(180deg,rgba(15,23,42,.90),rgba(7,17,31,.90));
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+}
+.aurora-home-score-card small{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted,#9fb2c8);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.aurora-home-score-card strong{
+  display:block;
+  color:var(--text,#eef7ff);
+  font-size:clamp(20px,2.1vw,26px);
+  line-height:1.05;
+  letter-spacing:-.04em;
+  overflow-wrap:anywhere;
+}
+.aurora-home-score-card span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted,#9fb2c8);
+  font-size:12px;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.aurora-home-data-hooks{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  clip-path:inset(50%)!important;
+}
+@media(max-width:900px){
+  .aurora-home-hero{grid-template-columns:1fr}
+  .aurora-home-scoreboard{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none}
+}
+@media(max-width:760px){
+  .aurora-home-hero,
+  .aurora-home-scoreboard{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .aurora-home-hero{grid-template-columns:1fr!important}
+  .aurora-home-scoreboard{grid-template-columns:1fr!important}
+  .aurora-home-hero-card,
+  .aurora-home-score-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .aurora-home-hero-card{min-height:330px;background-position:center center}
+}
+
 </style>
 </head>
 <body>
@@ -3587,43 +3771,33 @@ body.player-drawer-open{overflow:hidden!important}
 
 <main class="app">
   <!-- ===================== SECTION: SQUAD HERO ===================== -->
-  <section class="aurora-dept-hero aurora-squad-hero">
-<div class="aurora-dept-copy">
-<div class="kicker"><span class="kicker-dot"></span> First-team department</div>
-<h2 class="aurora-dept-title">Squad <span>Hub</span></h2>
-<p class="aurora-dept-sub">Current holdings, squad form, buy strength, chemistry warnings, club legends and trophy cabinet progress.</p>
-<div class="hero-actions"><span class="pill" id="lastUpdated">Last updated: loading…</span><span class="pill">Squad Role: Income + Quality</span><span class="pill">Manager Rule: No hiding in the reserves</span></div>
-</div>
-<div class="aurora-dept-scene"><div class="aurora-scene-label">Tactical Locker Room</div><svg viewBox="0 0 720 336" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-<defs>
- <linearGradient id="sbg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071525"/><stop offset="1" stop-color="#0b3249"/></linearGradient>
- <linearGradient id="pitch" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#14532d"/><stop offset="1" stop-color="#052e16"/></linearGradient>
- <radialGradient id="sglow"><stop stop-color="#22d3ee" stop-opacity=".4"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
-</defs>
-<rect width="720" height="336" fill="url(#sbg)"/>
-<circle cx="540" cy="70" r="220" fill="url(#sglow)" opacity=".45"/>
-<!-- locker wall -->
-<g transform="translate(48 22)" fill="#07111f" stroke="#255273"><rect width="624" height="74" rx="10"/><path d="M104 0V74M208 0V74M312 0V74M416 0V74M520 0V74"/></g>
-<g fill="#7dd3fc" font-family="system-ui" font-weight="800" text-anchor="middle"><text x="100" y="54" font-size="18">09</text><text x="204" y="54" font-size="18">10</text><text x="308" y="54" font-size="18">08</text><text x="412" y="54" font-size="18">06</text><text x="516" y="54" font-size="18">04</text><text x="620" y="54" font-size="18">01</text></g>
-<g fill="#93a4bd" font-family="system-ui" font-size="7" text-anchor="middle"><text x="100" y="70">ST</text><text x="204" y="70">AM</text><text x="308" y="70">CM</text><text x="412" y="70">CM</text><text x="516" y="70">CB</text><text x="620" y="70">GK</text></g>
-<!-- tactical board -->
-<g transform="translate(96 108)"><rect width="528" height="204" rx="18" fill="url(#pitch)" stroke="#4ade80" stroke-opacity=".4"/><rect x="12" y="12" width="504" height="180" rx="13" fill="none" stroke="#d1fae5" stroke-opacity=".35"/><path d="M264 12V192" stroke="#d1fae5" stroke-opacity=".35"/><circle cx="264" cy="102" r="34" fill="none" stroke="#d1fae5" stroke-opacity=".35"/><rect x="12" y="56" width="74" height="92" fill="none" stroke="#d1fae5" stroke-opacity=".35"/><rect x="442" y="56" width="74" height="92" fill="none" stroke="#d1fae5" stroke-opacity=".35"/>
-<g fill="#2563eb" stroke="#dbeafe" stroke-width="2" font-family="system-ui" font-size="9" font-weight="900" text-anchor="middle">
- <g transform="translate(110 48)"><circle r="14"/><text y="3" fill="#fff" stroke="none">9</text></g>
- <g transform="translate(105 102)"><circle r="14"/><text y="3" fill="#fff" stroke="none">11</text></g>
- <g transform="translate(110 156)"><circle r="14"/><text y="3" fill="#fff" stroke="none">7</text></g>
- <g transform="translate(235 56)"><circle r="14"/><text y="3" fill="#fff" stroke="none">10</text></g>
- <g transform="translate(235 102)"><circle r="14"/><text y="3" fill="#fff" stroke="none">8</text></g>
- <g transform="translate(235 148)"><circle r="14"/><text y="3" fill="#fff" stroke="none">6</text></g>
- <g transform="translate(366 42)"><circle r="14"/><text y="3" fill="#fff" stroke="none">3</text></g>
- <g transform="translate(366 82)"><circle r="14"/><text y="3" fill="#fff" stroke="none">4</text></g>
- <g transform="translate(366 122)"><circle r="14"/><text y="3" fill="#fff" stroke="none">5</text></g>
- <g transform="translate(366 162)"><circle r="14"/><text y="3" fill="#fff" stroke="none">2</text></g>
- <g transform="translate(474 102)"><circle r="14"/><text y="3" fill="#fff" stroke="none">1</text></g>
-</g></g>
-</svg>
-<div class="aurora-scene-chip" style="right:24px;bottom:20px"><small>First-team shape</small><strong>4–3–3</strong><span>Balanced</span></div>
-</div></section>
+    <section class="aurora-home-hero" aria-label="Squad Hub overview">
+    <div class="aurora-home-hero-card" style="--aurora-hero-image:url('assets/aurora-city-fc/squad-hub-tactical-room.png');--aurora-hero-mark:'SH';">
+      <div class="aurora-home-kicker"><span class="aurora-home-kicker-dot"></span> First-team command live</div>
+      <h1 class="aurora-home-hero-title">Squad Hub</h1>
+      <p class="aurora-home-hero-sub">Review the active squad, tactical shape, team selection, income strength and every player competing for a place.</p>
+      <div class="aurora-home-hero-actions">
+        <span class="aurora-home-pill" id="lastUpdated">Last updated: loading…</span> <span class="aurora-home-pill">Squad Identity: income plus quality</span> <span class="aurora-home-pill">Selection Rule: earn the shirt</span>
+      </div>
+    </div>
+    <div class="aurora-home-scoreboard">
+      <div class="aurora-home-score-card">
+        <small>Active Squad</small>
+        <strong data-aurora-copy-from="squadSize">—</strong>
+        <span>Current first-team holdings</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Monthly Income</small>
+        <strong data-aurora-copy-from="monthlyIncome">—</strong>
+        <span data-aurora-copy-from="annualIncome">Annual squad income</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Current Division</small>
+        <strong data-aurora-copy-from="currentDivision">Loading…</strong>
+        <span data-aurora-copy-from="divisionNote">Checking league position…</span>
+      </div>
+    </div>
+  </section>
 
   <!-- ===================== SECTION: SQUAD KPI STRIP ===================== -->
   <section class="section">
@@ -4943,5 +5117,50 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
 })();
 </script>
+
+<script id="aurora-home-hero-sync">
+(() => {
+  "use strict";
+
+  const targets = Array.from(document.querySelectorAll("[data-aurora-copy-from]"));
+  if (!targets.length) return;
+
+  const copyOne = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    if (!source || source === target) return;
+
+    const value = (source.textContent || "").trim();
+    if (value) target.textContent = value;
+  };
+
+  const connect = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    copyOne(target);
+    if (!source || source === target) return;
+
+    new MutationObserver(() => copyOne(target)).observe(source, {
+      subtree: true,
+      childList: true,
+      characterData: true
+    });
+  };
+
+  const start = () => {
+    targets.forEach(connect);
+    window.setTimeout(() => targets.forEach(copyOne), 250);
+    window.setTimeout(() => targets.forEach(copyOne), 1000);
+    window.setTimeout(() => targets.forEach(copyOne), 3000);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>

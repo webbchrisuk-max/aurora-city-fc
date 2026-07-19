@@ -2571,6 +2571,190 @@ tr:hover td{background:rgba(96,165,250,.06)}
   }
 }
 
+
+/* ===================== AURORA HOME-STYLE HERO MASTER ===================== */
+.aurora-home-hero{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:14px;
+  margin:0 0 14px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.aurora-home-hero-card{
+  --aurora-hero-image:none;
+  --aurora-hero-mark:"AC";
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-width:0;
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  border:1px solid var(--line2,rgba(96,165,250,.22));
+  border-radius:calc(var(--radius,18px) + 4px);
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+  padding:20px;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.91) 0%,rgba(2,6,23,.72) 44%,rgba(2,6,23,.25) 100%),
+    radial-gradient(circle at 78% 18%,rgba(34,211,238,.18),transparent 36%),
+    var(--aurora-hero-image) center center/cover no-repeat,
+    linear-gradient(135deg,rgba(8,47,73,.72),rgba(15,23,42,.92));
+}
+.aurora-home-hero-card::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:auto -80px -115px auto;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  border:36px solid rgba(96,165,250,.08);
+  pointer-events:none;
+}
+.aurora-home-hero-card::after{
+  content:var(--aurora-hero-mark);
+  position:absolute;
+  z-index:-1;
+  right:22px;
+  bottom:14px;
+  color:rgba(226,232,240,.055);
+  font-size:clamp(70px,10vw,150px);
+  font-weight:1000;
+  letter-spacing:-.08em;
+  pointer-events:none;
+}
+.aurora-home-kicker{
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  gap:8px;
+  padding:6px 10px;
+  border:1px solid rgba(191,219,254,.18);
+  border-radius:999px;
+  background:rgba(15,23,42,.52);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-kicker-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:0 0 0 4px rgba(52,211,153,.14);
+}
+.aurora-home-hero-title{
+  max-width:780px;
+  margin:16px 0 10px;
+  color:var(--text,#eef7ff);
+  font-size:clamp(31px,7vw,64px);
+  line-height:.92;
+  letter-spacing:-.06em;
+}
+.aurora-home-hero-sub{
+  max-width:720px;
+  margin:0;
+  color:var(--muted,#9fb2c8);
+  font-size:15px;
+  line-height:1.45;
+}
+.aurora-home-hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.aurora-home-pill{
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:999px;
+  padding:9px 12px;
+  background:rgba(2,6,23,.58);
+  color:var(--soft,#d6e4f5);
+  font-size:12px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-scoreboard{
+  min-width:0;
+  display:grid;
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.aurora-home-score-card{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:var(--radius,18px);
+  padding:16px;
+  background:linear-gradient(180deg,rgba(15,23,42,.90),rgba(7,17,31,.90));
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+}
+.aurora-home-score-card small{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted,#9fb2c8);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.aurora-home-score-card strong{
+  display:block;
+  color:var(--text,#eef7ff);
+  font-size:clamp(20px,2.1vw,26px);
+  line-height:1.05;
+  letter-spacing:-.04em;
+  overflow-wrap:anywhere;
+}
+.aurora-home-score-card span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted,#9fb2c8);
+  font-size:12px;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.aurora-home-data-hooks{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  clip-path:inset(50%)!important;
+}
+@media(max-width:900px){
+  .aurora-home-hero{grid-template-columns:1fr}
+  .aurora-home-scoreboard{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none}
+}
+@media(max-width:760px){
+  .aurora-home-hero,
+  .aurora-home-scoreboard{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .aurora-home-hero{grid-template-columns:1fr!important}
+  .aurora-home-scoreboard{grid-template-columns:1fr!important}
+  .aurora-home-hero-card,
+  .aurora-home-score-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .aurora-home-hero-card{min-height:330px;background-position:center center}
+}
+
 </style>
 </head>
 <body>
@@ -2599,40 +2783,33 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 <main class="app">
   <!-- ===================== SECTION: BOARDROOM HERO ===================== -->
-  <section class="aurora-dept-hero aurora-board-hero">
-<div class="aurora-dept-copy">
-<div class="kicker"><span class="kicker-dot"></span> Executive department</div>
-<h2 class="aurora-dept-title">Board <span>Room</span></h2>
-<p class="aurora-dept-sub">Board confidence, supporter mood, job security, club objectives and the long-term Aurora City FC income mission.</p>
-<div class="hero-actions"><span class="pill" id="lastUpdated">Last updated: loading…</span><span class="pill">Season Objective: £500/month</span><span class="pill">Long-Term Mission: £2,000/month</span></div>
-</div>
-<div class="aurora-dept-scene"><div class="aurora-scene-label">Executive Strategy Chamber</div><svg viewBox="0 0 720 336" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-<defs>
- <linearGradient id="bbg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#102844"/><stop offset=".55" stop-color="#071524"/><stop offset="1" stop-color="#020611"/></linearGradient>
- <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#164e63" stop-opacity=".55"/><stop offset="1" stop-color="#1e3a8a" stop-opacity=".18"/></linearGradient>
- <radialGradient id="spot"><stop stop-color="#7dd3fc" stop-opacity=".35"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0"/></radialGradient>
-</defs>
-<rect width="720" height="336" fill="url(#bbg)"/>
-<circle cx="510" cy="40" r="240" fill="url(#spot)" opacity=".6"/>
-<!-- window wall -->
-<g stroke="#2a5e7e" fill="url(#glass)"><rect x="70" y="18" width="580" height="116" rx="10"/><path d="M166 18V134M262 18V134M358 18V134M454 18V134M550 18V134"/></g>
-<g fill="#7dd3fc" opacity=".13"><rect x="78" y="92" width="564" height="34"/><path d="M80 96l50-28 45 20 72-48 60 34 80-46 67 38 82-29 96 50v39H80Z"/></g>
-<!-- crest panel -->
-<g transform="translate(288 32)"><circle cx="70" cy="45" r="38" fill="#071426" stroke="#2dd4bf" opacity=".95"/><path d="M70 15l22 10v18c0 18-9 30-22 39-13-9-22-21-22-39V25Z" fill="#0e7490" stroke="#7dd3fc"/><text x="70" y="48" text-anchor="middle" fill="#e0f2fe" font-size="12" font-family="system-ui" font-weight="900">AFC</text><text x="70" y="99" text-anchor="middle" fill="#7dd3fc" font-size="11" font-family="system-ui" font-weight="800" letter-spacing="2">AURORA CITY FC</text></g>
-<!-- side strategy screens -->
-<g transform="translate(92 54)"><rect width="126" height="70" rx="12" fill="#030917" stroke="#245b7d"/><text x="14" y="22" fill="#93a4bd" font-size="8" font-family="system-ui" letter-spacing="1.5">STRATEGY</text><text x="14" y="49" fill="#86efac" font-size="17" font-family="system-ui" font-weight="800">GROWTH</text></g>
-<g transform="translate(504 54)"><rect width="126" height="70" rx="12" fill="#030917" stroke="#245b7d"/><text x="14" y="22" fill="#93a4bd" font-size="8" font-family="system-ui" letter-spacing="1.5">FINANCE</text><text x="14" y="49" fill="#86efac" font-size="17" font-family="system-ui" font-weight="800">STABLE</text></g>
-<!-- conference table -->
-<ellipse cx="360" cy="296" rx="250" ry="46" fill="#0d2238" stroke="#2a5e7e"/>
-<ellipse cx="360" cy="281" rx="215" ry="34" fill="#132f49" stroke="#315f7a"/>
-<rect x="335" y="276" width="50" height="9" rx="4.5" fill="#04101d" stroke="#2b5d7a"/>
-<!-- chairs -->
-<g fill="#08131f" stroke="#21455f"><rect x="104" y="223" width="36" height="83" rx="18"/><rect x="224" y="238" width="34" height="75" rx="17"/><rect x="462" y="238" width="34" height="75" rx="17"/><rect x="580" y="223" width="36" height="83" rx="18"/><rect x="342" y="216" width="36" height="78" rx="18"/></g>
-<g fill="#22d3ee" opacity=".55"><circle cx="180" cy="282" r="3"/><circle cx="285" cy="274" r="3"/><circle cx="435" cy="274" r="3"/><circle cx="540" cy="282" r="3"/></g>
-</svg>
-<div class="aurora-scene-chip" style="left:24px;bottom:24px"><small>Board confidence</small><strong>91%</strong><span>Excellent</span></div>
-<div class="aurora-scene-chip" style="right:24px;bottom:24px"><small>Club status</small><strong>STABLE</strong><span>Long-term plan</span></div>
-</div></section>
+    <section class="aurora-home-hero" aria-label="Boardroom overview">
+    <div class="aurora-home-hero-card" style="--aurora-hero-image:url('assets/aurora-city-fc/boardroom-executive-suite.png');--aurora-hero-mark:'BR';">
+      <div class="aurora-home-kicker"><span class="aurora-home-kicker-dot"></span> Executive control live</div>
+      <h1 class="aurora-home-hero-title">Boardroom</h1>
+      <p class="aurora-home-hero-sub">Board confidence, supporter mood, job security and the long-term strategy driving Aurora City FC towards promotion.</p>
+      <div class="aurora-home-hero-actions">
+        <span class="aurora-home-pill" id="lastUpdated">Last updated: loading…</span> <span class="aurora-home-pill">Season Objective: £500/month</span> <span class="aurora-home-pill">Long-Term Mission: £2,000/month</span>
+      </div>
+    </div>
+    <div class="aurora-home-scoreboard">
+      <div class="aurora-home-score-card">
+        <small>Board Confidence</small>
+        <strong data-aurora-copy-from="boardConfidence">Loading…</strong>
+        <span data-aurora-copy-from="boardConfidenceLabel">The board are entering…</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Supporter Mood</small>
+        <strong data-aurora-copy-from="supporterMood">Loading…</strong>
+        <span data-aurora-copy-from="supporterMoodLabel">Checking the stands…</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Job Security</small>
+        <strong data-aurora-copy-from="jobSecurity">Loading…</strong>
+        <span data-aurora-copy-from="clubReputationLabel">Executive position</span>
+      </div>
+    </div>
+  </section>
 
   <!-- ===================== SECTION: BOARD KPI STRIP ===================== -->
   <section class="section">
@@ -3653,5 +3830,50 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
 })();
 </script>
+
+<script id="aurora-home-hero-sync">
+(() => {
+  "use strict";
+
+  const targets = Array.from(document.querySelectorAll("[data-aurora-copy-from]"));
+  if (!targets.length) return;
+
+  const copyOne = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    if (!source || source === target) return;
+
+    const value = (source.textContent || "").trim();
+    if (value) target.textContent = value;
+  };
+
+  const connect = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    copyOne(target);
+    if (!source || source === target) return;
+
+    new MutationObserver(() => copyOne(target)).observe(source, {
+      subtree: true,
+      childList: true,
+      characterData: true
+    });
+  };
+
+  const start = () => {
+    targets.forEach(connect);
+    window.setTimeout(() => targets.forEach(copyOne), 250);
+    window.setTimeout(() => targets.forEach(copyOne), 1000);
+    window.setTimeout(() => targets.forEach(copyOne), 3000);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>

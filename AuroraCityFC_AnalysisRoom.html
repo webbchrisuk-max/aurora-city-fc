@@ -203,6 +203,190 @@ a{color:inherit;text-decoration:none}button,input{font:inherit}
   }
 }
 
+
+/* ===================== AURORA HOME-STYLE HERO MASTER ===================== */
+.aurora-home-hero{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:14px;
+  margin:0 0 14px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.aurora-home-hero-card{
+  --aurora-hero-image:none;
+  --aurora-hero-mark:"AC";
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-width:0;
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  border:1px solid var(--line2,rgba(96,165,250,.22));
+  border-radius:calc(var(--radius,18px) + 4px);
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+  padding:20px;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.91) 0%,rgba(2,6,23,.72) 44%,rgba(2,6,23,.25) 100%),
+    radial-gradient(circle at 78% 18%,rgba(34,211,238,.18),transparent 36%),
+    var(--aurora-hero-image) center center/cover no-repeat,
+    linear-gradient(135deg,rgba(8,47,73,.72),rgba(15,23,42,.92));
+}
+.aurora-home-hero-card::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:auto -80px -115px auto;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  border:36px solid rgba(96,165,250,.08);
+  pointer-events:none;
+}
+.aurora-home-hero-card::after{
+  content:var(--aurora-hero-mark);
+  position:absolute;
+  z-index:-1;
+  right:22px;
+  bottom:14px;
+  color:rgba(226,232,240,.055);
+  font-size:clamp(70px,10vw,150px);
+  font-weight:1000;
+  letter-spacing:-.08em;
+  pointer-events:none;
+}
+.aurora-home-kicker{
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  gap:8px;
+  padding:6px 10px;
+  border:1px solid rgba(191,219,254,.18);
+  border-radius:999px;
+  background:rgba(15,23,42,.52);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-kicker-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:0 0 0 4px rgba(52,211,153,.14);
+}
+.aurora-home-hero-title{
+  max-width:780px;
+  margin:16px 0 10px;
+  color:var(--text,#eef7ff);
+  font-size:clamp(31px,7vw,64px);
+  line-height:.92;
+  letter-spacing:-.06em;
+}
+.aurora-home-hero-sub{
+  max-width:720px;
+  margin:0;
+  color:var(--muted,#9fb2c8);
+  font-size:15px;
+  line-height:1.45;
+}
+.aurora-home-hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.aurora-home-pill{
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:999px;
+  padding:9px 12px;
+  background:rgba(2,6,23,.58);
+  color:var(--soft,#d6e4f5);
+  font-size:12px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-scoreboard{
+  min-width:0;
+  display:grid;
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.aurora-home-score-card{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:var(--radius,18px);
+  padding:16px;
+  background:linear-gradient(180deg,rgba(15,23,42,.90),rgba(7,17,31,.90));
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+}
+.aurora-home-score-card small{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted,#9fb2c8);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.aurora-home-score-card strong{
+  display:block;
+  color:var(--text,#eef7ff);
+  font-size:clamp(20px,2.1vw,26px);
+  line-height:1.05;
+  letter-spacing:-.04em;
+  overflow-wrap:anywhere;
+}
+.aurora-home-score-card span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted,#9fb2c8);
+  font-size:12px;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.aurora-home-data-hooks{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  clip-path:inset(50%)!important;
+}
+@media(max-width:900px){
+  .aurora-home-hero{grid-template-columns:1fr}
+  .aurora-home-scoreboard{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none}
+}
+@media(max-width:760px){
+  .aurora-home-hero,
+  .aurora-home-scoreboard{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .aurora-home-hero{grid-template-columns:1fr!important}
+  .aurora-home-scoreboard{grid-template-columns:1fr!important}
+  .aurora-home-hero-card,
+  .aurora-home-score-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .aurora-home-hero-card{min-height:330px;background-position:center center}
+}
+
 </style>
 <script src="AuroraFCData.js"></script>
 </head>
@@ -226,30 +410,42 @@ a{color:inherit;text-decoration:none}button,input{font:inherit}
   </div>
 </div>
 <main class="app" id="analysis">
-  <section class="hero aurora-analysis-photo-hero">
-    <div class="hero-inner">
-      <div>
-        <div class="kicker"><span class="dot"></span> Performance intelligence live</div>
-        <h2>Analysis Room<span>See the whole match.</span></h2>
-        <p class="hero-copy" id="heroCopy">Loading Aurora’s income form, squad contribution, risk shape and progression towards the next division.</p>
-        <div class="hero-tags">
-          <span class="hero-tag" id="dataFreshness">Aurora data: loading…</span>
-          <span class="hero-tag">Primary objective: £500/month</span>
-          <span class="hero-tag">Charts update from AuroraMaster.json</span>
-        </div>
+    <section class="aurora-home-hero" aria-label="Analysis Room overview">
+    <div class="aurora-home-hero-card" style="--aurora-hero-image:url('assets/aurora-city-fc/analysis-room-performance-lab.png');--aurora-hero-mark:'AR';">
+      <div class="aurora-home-kicker"><span class="aurora-home-kicker-dot"></span> Performance intelligence live</div>
+      <h1 class="aurora-home-hero-title">Analysis Room</h1>
+      <p class="aurora-home-hero-sub" id="heroCopy">See the whole match through income progression, squad contribution, portfolio shape, yield control and target tracking.</p>
+      <div class="aurora-home-hero-actions">
+        <span class="aurora-home-pill" id="dataFreshness">Aurora data: loading…</span> <span class="aurora-home-pill">Primary Objective: £500/month</span> <span class="aurora-home-pill">Source: AuroraMaster.json</span>
       </div>
-      <div class="tactics-board" aria-label="Aurora performance tactics board">
-        <div class="halfway"></div><div class="centre-circle"></div>
-        <div class="tactic-chip tc1"><small>Attack</small><strong id="boardIncome">Income</strong></div>
-        <div class="tactic-chip tc2"><small>Form</small><strong id="boardForm">Loading</strong></div>
-        <div class="tactic-chip tc3"><small>Shape</small><strong id="boardShape">Balanced?</strong></div>
-        <div class="tactic-chip tc4"><small>Control</small><strong id="boardYield">Yield</strong></div>
-        <div class="tactic-chip tc5"><small>Target</small><strong id="boardTarget">£500/m</strong></div>
+    <div class="aurora-home-data-hooks" aria-hidden="true">
+      <strong id="boardIncome">Income</strong>
+      <strong id="boardForm">Loading</strong>
+      <strong id="boardShape">Balanced?</strong>
+      <strong id="boardYield">Yield</strong>
+      <strong id="boardTarget">£500/m</strong>
+    </div>
+    </div>
+    <div class="aurora-home-scoreboard">
+      <div class="aurora-home-score-card">
+        <small>Annual Income</small>
+        <strong data-aurora-copy-from="annualIncome">—</strong>
+        <span data-aurora-copy-from="annualIncomeNote">Income engine</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Monthly Income</small>
+        <strong data-aurora-copy-from="monthlyIncome">—</strong>
+        <span data-aurora-copy-from="monthlyIncomeNote">Current run rate</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Target Gap</small>
+        <strong data-aurora-copy-from="targetGap">—</strong>
+        <span data-aurora-copy-from="targetGapNote">Distance to next division</span>
       </div>
     </div>
   </section>
 
-  <section class="score-strip">
+<section class="score-strip">
     <div class="score-card green"><div class="score-icon">⚽</div><small>Annual Income</small><strong id="annualIncome">—</strong><span id="annualIncomeNote">Current squad dividend run rate</span></div>
     <div class="score-card green"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span id="monthlyIncomeNote">Average monthly run rate</span></div>
     <div class="score-card"><div class="score-icon">🏟️</div><small>Club Value</small><strong id="clubValue">—</strong><span id="clubValueNote">All active holdings including Tesco</span></div>
@@ -514,5 +710,50 @@ $("refreshBtn").addEventListener("click",()=>loadData(true));
 loadData();
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
+
+<script id="aurora-home-hero-sync">
+(() => {
+  "use strict";
+
+  const targets = Array.from(document.querySelectorAll("[data-aurora-copy-from]"));
+  if (!targets.length) return;
+
+  const copyOne = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    if (!source || source === target) return;
+
+    const value = (source.textContent || "").trim();
+    if (value) target.textContent = value;
+  };
+
+  const connect = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    copyOne(target);
+    if (!source || source === target) return;
+
+    new MutationObserver(() => copyOne(target)).observe(source, {
+      subtree: true,
+      childList: true,
+      characterData: true
+    });
+  };
+
+  const start = () => {
+    targets.forEach(connect);
+    window.setTimeout(() => targets.forEach(copyOne), 250);
+    window.setTimeout(() => targets.forEach(copyOne), 1000);
+    window.setTimeout(() => targets.forEach(copyOne), 3000);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>

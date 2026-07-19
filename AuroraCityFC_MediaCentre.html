@@ -66,6 +66,190 @@
   display:none!important;
 }
 
+
+/* ===================== AURORA HOME-STYLE HERO MASTER ===================== */
+.aurora-home-hero{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:14px;
+  margin:0 0 14px;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.aurora-home-hero-card{
+  --aurora-hero-image:none;
+  --aurora-hero-mark:"AC";
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-width:0;
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  border:1px solid var(--line2,rgba(96,165,250,.22));
+  border-radius:calc(var(--radius,18px) + 4px);
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+  padding:20px;
+  background:
+    linear-gradient(90deg,rgba(2,6,23,.91) 0%,rgba(2,6,23,.72) 44%,rgba(2,6,23,.25) 100%),
+    radial-gradient(circle at 78% 18%,rgba(34,211,238,.18),transparent 36%),
+    var(--aurora-hero-image) center center/cover no-repeat,
+    linear-gradient(135deg,rgba(8,47,73,.72),rgba(15,23,42,.92));
+}
+.aurora-home-hero-card::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:auto -80px -115px auto;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  border:36px solid rgba(96,165,250,.08);
+  pointer-events:none;
+}
+.aurora-home-hero-card::after{
+  content:var(--aurora-hero-mark);
+  position:absolute;
+  z-index:-1;
+  right:22px;
+  bottom:14px;
+  color:rgba(226,232,240,.055);
+  font-size:clamp(70px,10vw,150px);
+  font-weight:1000;
+  letter-spacing:-.08em;
+  pointer-events:none;
+}
+.aurora-home-kicker{
+  display:inline-flex;
+  align-items:center;
+  align-self:flex-start;
+  gap:8px;
+  padding:6px 10px;
+  border:1px solid rgba(191,219,254,.18);
+  border-radius:999px;
+  background:rgba(15,23,42,.52);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-kicker-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:0 0 0 4px rgba(52,211,153,.14);
+}
+.aurora-home-hero-title{
+  max-width:780px;
+  margin:16px 0 10px;
+  color:var(--text,#eef7ff);
+  font-size:clamp(31px,7vw,64px);
+  line-height:.92;
+  letter-spacing:-.06em;
+}
+.aurora-home-hero-sub{
+  max-width:720px;
+  margin:0;
+  color:var(--muted,#9fb2c8);
+  font-size:15px;
+  line-height:1.45;
+}
+.aurora-home-hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.aurora-home-pill{
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:999px;
+  padding:9px 12px;
+  background:rgba(2,6,23,.58);
+  color:var(--soft,#d6e4f5);
+  font-size:12px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.aurora-home-scoreboard{
+  min-width:0;
+  display:grid;
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.aurora-home-score-card{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border:1px solid var(--line,rgba(148,163,184,.18));
+  border-radius:var(--radius,18px);
+  padding:16px;
+  background:linear-gradient(180deg,rgba(15,23,42,.90),rgba(7,17,31,.90));
+  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
+}
+.aurora-home-score-card small{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted,#9fb2c8);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.aurora-home-score-card strong{
+  display:block;
+  color:var(--text,#eef7ff);
+  font-size:clamp(20px,2.1vw,26px);
+  line-height:1.05;
+  letter-spacing:-.04em;
+  overflow-wrap:anywhere;
+}
+.aurora-home-score-card span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted,#9fb2c8);
+  font-size:12px;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.aurora-home-data-hooks{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  clip-path:inset(50%)!important;
+}
+@media(max-width:900px){
+  .aurora-home-hero{grid-template-columns:1fr}
+  .aurora-home-scoreboard{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none}
+}
+@media(max-width:760px){
+  .aurora-home-hero,
+  .aurora-home-scoreboard{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .aurora-home-hero{grid-template-columns:1fr!important}
+  .aurora-home-scoreboard{grid-template-columns:1fr!important}
+  .aurora-home-hero-card,
+  .aurora-home-score-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .aurora-home-hero-card{min-height:330px;background-position:center center}
+}
+
 </style>
 </head>
 <body>
@@ -81,7 +265,33 @@
       <button class="refresh-btn" id="refreshBtn">Refresh</button>
     </div></div></div>
 <main class="app">
-<section class="hero"><img class="media-banner" src="assets/aurora-city-fc/media-center-press-room.png" alt="Media Centre Hero"><div class="hero-content"><div class="kicker"><span class="kicker-dot"></span> Press department</div><h2>Media<span>Centre</span></h2><p>Dividend announcements, income received, market rumours, squad headlines and the manager's latest press conference.</p><div class="hero-actions"><span class="pill" id="lastUpdated">Last updated: loading…</span><span class="pill">News feed: AuroraMaster</span><span class="pill">Manager mode: Active</span></div></div></section>
+  <section class="aurora-home-hero" aria-label="Media Centre overview">
+    <div class="aurora-home-hero-card" style="--aurora-hero-image:url('assets/aurora-city-fc/media-center-press-room.png');--aurora-hero-mark:'MC';">
+      <div class="aurora-home-kicker"><span class="aurora-home-kicker-dot"></span> Press department live</div>
+      <h1 class="aurora-home-hero-title">Media Centre</h1>
+      <p class="aurora-home-hero-sub">Follow dividend announcements, club headlines, transfer rumours, match reports and the manager’s latest press conference.</p>
+      <div class="aurora-home-hero-actions">
+        <span class="aurora-home-pill" id="lastUpdated">Last updated: loading…</span> <span class="aurora-home-pill">News Feed: AuroraMaster</span> <span class="aurora-home-pill">Manager Mode: active</span>
+      </div>
+    </div>
+    <div class="aurora-home-scoreboard">
+      <div class="aurora-home-score-card">
+        <small>Dividend Wires</small>
+        <strong data-aurora-copy-from="dividendCount">—</strong>
+        <span>Tracked dividend records</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Rumour Mill</small>
+        <strong data-aurora-copy-from="rumourCount">—</strong>
+        <span>Watchlist and scout stories</span>
+      </div>
+      <div class="aurora-home-score-card">
+        <small>Press Mood</small>
+        <strong data-aurora-copy-from="pressMood">Loading…</strong>
+        <span data-aurora-copy-from="pressMoodNote">Reading the room…</span>
+      </div>
+    </div>
+  </section>
 <section class="section"><div class="grid"><div class="card w3"><div class="card-title"><h3>Top Headline</h3><span class="badge green">Live</span></div><div class="kpi"><strong id="topHeadline">—</strong><span id="topHeadlineNote">Loading newsroom…</span></div></div><div class="card w3"><div class="card-title"><h3>Dividend Wires</h3><span class="badge blue">Income</span></div><div class="kpi"><strong id="dividendCount">—</strong><span>tracked records</span></div></div><div class="card w3"><div class="card-title"><h3>Rumour Mill</h3><span class="badge amber">Targets</span></div><div class="kpi"><strong id="rumourCount">—</strong><span>watchlist/scout stories</span></div></div><div class="card w3"><div class="card-title"><h3>Press Mood</h3><span class="badge purple">Media</span></div><div class="kpi"><strong id="pressMood">—</strong><span id="pressMoodNote">Loading sentiment…</span></div></div></div></section>
 <section class="section"><div class="section-head"><div><h2>Manager's press conference</h2><p>Auto-generated club comments from the latest Aurora data.</p></div><span class="badge green">Gaffer notes</span></div><div class="press-card" id="pressConference" data-loading-target><div class="loading">Loading manager comments…</div></div></section>
 <section class="section"><div class="grid"><div class="card w6"><img class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_breaking_stories.PNG" alt="Breaking stories"><div class="card-title"><h3>Breaking stories</h3><span class="badge blue">Headlines</span></div><div class="list" id="breakingStories" data-loading-target><div class="loading">Loading headlines…</div></div></div><div class="card w6"><img class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_dividend_desk.PNG" alt="Dividend desk"><div class="card-title"><h3>Dividend desk</h3><span class="badge green">Income news</span></div><div class="list" id="dividendDesk" data-loading-target><div class="loading">Loading dividends…</div></div></div></div></section>
@@ -127,5 +337,50 @@ $('matchReport').innerHTML=[row('🏟️','Income match report',`Annual tracked 
 }
 $('refreshBtn')?.addEventListener('click',loadAuroraData);loadAuroraData();if(window.AuroraFC)AuroraFC.registerServiceWorker()
 </script>
+
+<script id="aurora-home-hero-sync">
+(() => {
+  "use strict";
+
+  const targets = Array.from(document.querySelectorAll("[data-aurora-copy-from]"));
+  if (!targets.length) return;
+
+  const copyOne = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    if (!source || source === target) return;
+
+    const value = (source.textContent || "").trim();
+    if (value) target.textContent = value;
+  };
+
+  const connect = target => {
+    const sourceId = target.getAttribute("data-aurora-copy-from");
+    const source = sourceId ? document.getElementById(sourceId) : null;
+    copyOne(target);
+    if (!source || source === target) return;
+
+    new MutationObserver(() => copyOne(target)).observe(source, {
+      subtree: true,
+      childList: true,
+      characterData: true
+    });
+  };
+
+  const start = () => {
+    targets.forEach(connect);
+    window.setTimeout(() => targets.forEach(copyOne), 250);
+    window.setTimeout(() => targets.forEach(copyOne), 1000);
+    window.setTimeout(() => targets.forEach(copyOne), 3000);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>
