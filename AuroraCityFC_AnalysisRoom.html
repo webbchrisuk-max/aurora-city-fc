@@ -260,6 +260,78 @@ a{color:inherit;text-decoration:none}button,input{font:inherit}
   .aurora-analysis-preserved .hero-inner{height:auto!important;grid-template-columns:1fr!important}
   .aurora-analysis-preserved .tactics-board{height:220px!important;min-height:220px!important}
 }
+
+/* ================= AURORA RELIABILITY REPAIR =================
+   Keeps the navigation tappable and the hero artwork visible.
+   ============================================================ */
+.topbar{
+  position:sticky!important;
+  top:0!important;
+  z-index:9999!important;
+  pointer-events:auto!important;
+  isolation:isolate!important;
+}
+.topbar-inner,
+.topbar .brand,
+.topbar .nav{
+  position:relative!important;
+  z-index:10000!important;
+  pointer-events:auto!important;
+}
+.topbar .nav a,
+.topbar .nav button{
+  position:relative!important;
+  z-index:10001!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+}
+
+/* The earlier negative z-index values placed the image behind the hero background. */
+.aurora-dept-hero{
+  isolation:isolate!important;
+}
+.aurora-dept-hero__image{
+  z-index:0!important;
+  pointer-events:none!important;
+  opacity:1!important;
+}
+.aurora-dept-hero__shade{
+  z-index:1!important;
+  pointer-events:none!important;
+}
+.aurora-dept-hero__grid{
+  z-index:2!important;
+  pointer-events:none!important;
+}
+.aurora-dept-hero__visual-space{
+  position:relative!important;
+  z-index:3!important;
+  pointer-events:none!important;
+}
+.aurora-dept-hero__copy,
+.aurora-dept-hero__rail{
+  position:relative!important;
+  z-index:4!important;
+}
+.aurora-dept-hero::after{
+  z-index:6!important;
+  pointer-events:none!important;
+}
+.aurora-media-ticker{
+  z-index:5!important;
+}
+
+/* Keep all decorative layers from intercepting taps. */
+.aurora-dept-hero::before,
+.aurora-dept-hero__image,
+.aurora-dept-hero__shade,
+.aurora-dept-hero__grid,
+.aurora-hero-tile::after{
+  pointer-events:none!important;
+}
+
 </style></head>
 <body>
 <div class="topbar">
@@ -563,5 +635,36 @@ $("refreshBtn").addEventListener("click",()=>loadData(true));
 loadData();
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
+
+<script id="aurora-navigation-repair">
+(() => {
+  "use strict";
+
+  function navigate(link) {
+    const target = link.getAttribute("href");
+    if (!target || target.startsWith("#")) return;
+    window.location.assign(target);
+  }
+
+  /* Capture the click before any large page-specific document handler. */
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest?.(".topbar .nav a[href]");
+    if (!link) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    navigate(link);
+  }, true);
+
+  /* Keyboard support for the installed web app. */
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const link = event.target.closest?.(".topbar .nav a[href]");
+    if (!link) return;
+    event.preventDefault();
+    navigate(link);
+  }, true);
+})();
+</script>
+
 </body>
 </html>
