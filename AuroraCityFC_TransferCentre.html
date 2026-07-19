@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: Embedded TRIG + GCP account restrictions • 19 Jul 2026 -->
+<!-- Build: AuroraData PlatformRules central source • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -3396,7 +3396,9 @@ tr:hover td{background:rgba(96,165,250,.06)}
 const AURORA_MASTER_URL = 'https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json';
 let AURORA_MASTER_CACHE = null;
 
-const PLATFORM_RULES = window.AURORA_PLATFORM_RULES || {TRIG:'Trade 212',FSFL:'Trade 212',UKW:'IG ISA',ARCC:'IG ISA',RGL:'Trade 212',GCP:'Trade 212',PHP:'IG ISA / Trade 212',FGEN:'IG ISA',SEQI:'Trade 212',TW:'IG ISA',OSB:'IG ISA'};
+let PLATFORM_RULES = {...(window.AURORA_PLATFORM_RULES || {TRIG:'Trade 212',FSFL:'Trade 212',UKW:'IG ISA',ARCC:'IG ISA',RGL:'Trade 212',GCP:'Trade 212',PHP:'IG ISA / Trade 212',FGEN:'IG ISA',SEQI:'Trade 212',TW:'IG ISA',OSB:'IG ISA'})};
+let PLATFORM_RULE_DETAILS = {};
+let PLATFORM_RULES_LOADED_AT = '';
 
 const PLAYER_BASE = 'https://webbchrisuk-max.github.io/aurora-city-fc/assets/aurora-city-fc/players/';
 const PLAYER_PORTRAITS = {
@@ -3511,28 +3513,36 @@ function currentHoldingForRegistration(ticker,account){
   const t=registrationShortTicker(ticker); const a=normalizeRegistrationAccount(account);
   return (state.holdings||[]).find(row=>registrationShortTicker(row.ticker)===t&&normalizeRegistrationAccount(row.account||row.platform||row.broker)===a)||null;
 }
+function platformRuleDetailsFor(ticker){
+  return PLATFORM_RULE_DETAILS[registrationShortTicker(ticker)] || null;
+}
 function registrationAccountOptions(ticker){
-  // Always let the manager choose between the two live investment accounts.
-  // The platform rule is placed first so the recommended/default account is selected automatically.
-  const rule=platformFor(ticker);
+  // Both live accounts remain selectable, while PlatformRules decides whether the selection can pass.
+  const detail=platformRuleDetailsFor(ticker);
+  const rule=detail?.preferredAccount||platformFor(ticker);
   const found=[];
   const add=account=>{
     const a=normalizeRegistrationAccount(account);
     if(a&&!a.includes('CHECK')&&!found.includes(a)) found.push(a);
   };
-  String(rule||'').split('/').forEach(add);
+  add(rule);
+  (detail?.allowedAccounts||[]).forEach(add);
   add('IG ISA');
   add('TRADE 212');
   (state.holdings||[]).filter(row=>registrationShortTicker(row.ticker)===registrationShortTicker(ticker)).forEach(row=>add(row.account||row.platform||row.broker));
   return found;
 }
 function registrationCurrency(row){
+  const detail=platformRuleDetailsFor(row?.ticker);
+  if(detail?.currency) return detail.currency;
   const t=registrationShortTicker(row?.ticker);
   const raw=String(row?.currency||row?.Currency||'').trim().toUpperCase();
   if(raw) return raw;
   return t==='ARCC'?'USD':'GBP';
 }
 function registrationUnitFor(row){
+  const detail=platformRuleDetailsFor(row?.ticker);
+  if(detail?.priceUnit) return detail.priceUnit;
   return registrationCurrency(row)==='USD'?'USD':(String(row?.ticker||'').toUpperCase().includes('LON:')?'PENCE':'GBP');
 }
 function registrationDateValue(){
@@ -3580,12 +3590,13 @@ function registrationSafety(form,p){
   const fees=parseNum(form.querySelector('[name="fees"]')?.value)||0;
   const tickerKey=registrationShortTicker(ticker);
   const normalizedAccount=normalizeRegistrationAccount(account);
-  const allowedAccounts=(window.AuroraFC&&typeof AuroraFC.allowedAccounts==='function')
-    ? AuroraFC.allowedAccounts(ticker)
-    : (['TRIG','GCP'].includes(tickerKey)?['TRADE 212']:['IG ISA','TRADE 212']);
-  const accountAllowed=(window.AuroraFC&&typeof AuroraFC.accountAllowed==='function')
-    ? AuroraFC.accountAllowed(ticker,account)
-    : allowedAccounts.includes(normalizedAccount);
+  const detail=platformRuleDetailsFor(ticker);
+  const allowedAccounts=detail?.allowedAccounts?.length
+    ? detail.allowedAccounts
+    : ((window.AuroraFC&&typeof AuroraFC.allowedAccounts==='function')
+      ? AuroraFC.allowedAccounts(ticker)
+      : (['TRIG','GCP'].includes(tickerKey)?['TRADE 212']:['IG ISA','TRADE 212']));
+  const accountAllowed=allowedAccounts.includes(normalizedAccount);
   if(!accountAllowed) blocking.push(`${tickerKey} is not available in ${account}. Select ${allowedAccounts.join(' or ')}.`);
   if(currency==='USD'&&unit!=='USD') blocking.push('USD purchases must use USD per share.');
   if(currency==='GBP'&&unit==='USD') blocking.push('GBP purchases cannot use USD per share.');
@@ -3637,6 +3648,44 @@ async function postRegistration(payload){
       return {ok:true,queued:true,transactionId:payload.transactionId,message:'Purchase submitted. Browser security prevented the confirmation response; check PurchaseLog or refresh Aurora after the export runs.'};
     }
     throw err;
+  }
+}
+
+function applyPlatformRules(result){
+  const rows=Array.isArray(result?.platformRules)?result.platformRules:[];
+  const details={};
+  rows.forEach(row=>{
+    const ticker=registrationShortTicker(row.ticker);
+    if(!ticker||row.active===false) return;
+    const allowed=(Array.isArray(row.allowedAccounts)?row.allowedAccounts:String(row.allowedAccounts||'').split(/[,;\/]+/))
+      .map(normalizeRegistrationAccount).filter(Boolean);
+    details[ticker]={
+      preferredAccount:normalizeRegistrationAccount(row.preferredAccount||''),
+      allowedAccounts:[...new Set(allowed)],
+      currency:String(row.currency||'').toUpperCase(),
+      priceUnit:String(row.priceUnit||'').toUpperCase(),
+      note:String(row.note||''),
+      updatedAt:String(row.updatedAt||'')
+    };
+    if(details[ticker].preferredAccount) PLATFORM_RULES[ticker]=details[ticker].preferredAccount.replace('TRADE 212','Trade 212');
+  });
+  PLATFORM_RULE_DETAILS=details;
+  PLATFORM_RULES_LOADED_AT=String(result?.updatedAt||result?.timestamp||'');
+  window.AURORA_PLATFORM_RULE_DETAILS=details;
+}
+async function loadPlatformRules(){
+  if(!registrationConnection.endpoint||!registrationConnection.token) return false;
+  try{
+    const result=await postRegistration({action:'getPlatformRules',transactionId:registrationId(),source:'Aurora City FC Transfer Centre'});
+    if(result.queued) return false;
+    applyPlatformRules(result);
+    if($('deskNote')) $('deskNote').textContent=`Platform rules loaded from AuroraData: ${result.count||Object.keys(PLATFORM_RULE_DETAILS).length} tickers.`;
+    if(state.holdings?.length||state.watchlist?.length||state.scout?.length) renderAll();
+    return true;
+  }catch(err){
+    console.warn('PlatformRules could not be loaded; using embedded emergency rules.',err);
+    if($('deskNote')) $('deskNote').textContent='PlatformRules unavailable — embedded emergency rules are active.';
+    return false;
   }
 }
 function applyRegistrationResult(result,payload){
@@ -3834,7 +3883,8 @@ function valuationBonus(row){
   return 0;
 }
 function platformFor(ticker){
-  return PLATFORM_RULES[shortTicker(ticker)] || 'Check platform';
+  const detail=PLATFORM_RULE_DETAILS[shortTicker(ticker)];
+  return detail?.preferredAccount || PLATFORM_RULES[shortTicker(ticker)] || 'Check platform';
 }
 function portraitFor(ticker){
   const s = shortTicker(ticker);
@@ -4714,7 +4764,7 @@ document.addEventListener('submit',async event=>{
     registrationBusy=false;if(submit){submit.disabled=false;submit.textContent=currentHoldingForRegistration(form.dataset.ticker,account)?'Confirm top-up':'Confirm new signing';}
   }
 });
-$('saveRegistrationConnection')?.addEventListener('click',()=>{persistRegistrationConnection();registrationMessage(registrationConnection.endpoint&&registrationConnection.token?'Connection saved in this browser. Use Test connection before the first live registration.':'Enter both the web-app URL and private token.');loadRegistrationHistory();});
+$('saveRegistrationConnection')?.addEventListener('click',async()=>{persistRegistrationConnection();registrationMessage(registrationConnection.endpoint&&registrationConnection.token?'Connection saved in this browser. Loading PlatformRules…':'Enter both the web-app URL and private token.');if(registrationConnection.endpoint&&registrationConnection.token)await loadPlatformRules();loadRegistrationHistory();});
 $('clearRegistrationConnection')?.addEventListener('click',()=>{localStorage.removeItem(REGISTRATION_CONNECTION_KEY);registrationConnection={endpoint:'',token:''};if($('registrationEndpoint'))$('registrationEndpoint').value='';if($('registrationToken'))$('registrationToken').value='';updateRegistrationConnectionStatus();registrationMessage('Connection removed from this browser.');});
 $('testRegistrationConnection')?.addEventListener('click',async()=>{
   persistRegistrationConnection();
@@ -4722,7 +4772,8 @@ $('testRegistrationConnection')?.addEventListener('click',async()=>{
   registrationMessage('Testing the AuroraData registration service…','pending');
   try{
     const result=await postRegistration({action:'test',transactionId:registrationId(),source:'Aurora City FC Transfer Centre'});
-    registrationMessage(result.queued?'Test request submitted, but the browser could not read the cross-site confirmation. The connection may still be working.':(result.message||'Registration service is ready.'),result.queued?'pending':'success');if(!result.queued)loadRegistrationHistory();
+    registrationMessage(result.queued?'Test request submitted, but the browser could not read the cross-site confirmation. The connection may still be working.':(result.message||'Registration service is ready.'),result.queued?'pending':'success');
+    if(!result.queued){await loadPlatformRules();loadRegistrationHistory();}
   }catch(err){registrationMessage(err.message||'Connection test failed.','error');}
 });
 
@@ -4746,6 +4797,7 @@ $('applyBestReturn')?.addEventListener('click',()=>{
 });
 restoreTransferSettings();
 restoreRegistrationConnection();
+loadPlatformRules();
 loadData();
 loadRegistrationHistory();
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
