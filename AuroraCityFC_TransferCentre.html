@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: Embedded TRIG account restriction fallback • 19 Jul 2026 -->
+<!-- Build: Embedded TRIG + GCP account restrictions • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -3582,7 +3582,7 @@ function registrationSafety(form,p){
   const normalizedAccount=normalizeRegistrationAccount(account);
   const allowedAccounts=(window.AuroraFC&&typeof AuroraFC.allowedAccounts==='function')
     ? AuroraFC.allowedAccounts(ticker)
-    : (tickerKey==='TRIG'?['TRADE 212']:['IG ISA','TRADE 212']);
+    : (['TRIG','GCP'].includes(tickerKey)?['TRADE 212']:['IG ISA','TRADE 212']);
   const accountAllowed=(window.AuroraFC&&typeof AuroraFC.accountAllowed==='function')
     ? AuroraFC.accountAllowed(ticker,account)
     : allowedAccounts.includes(normalizedAccount);

@@ -10,7 +10,8 @@
   });
 
   const ACCOUNT_AVAILABILITY = Object.freeze({
-    TRIG:Object.freeze(['TRADE 212'])
+    TRIG:Object.freeze(['TRADE 212']),
+    GCP:Object.freeze(['TRADE 212'])
   });
 
   function shortTicker(value){
