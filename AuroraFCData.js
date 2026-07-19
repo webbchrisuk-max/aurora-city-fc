@@ -87,7 +87,7 @@
     const style=document.createElement('style');
     style.id='aurora-shared-nav-styles';
     style.textContent=`
-      /* Aurora shared top navigation — identical on every club page */
+      /* Aurora shared top navigation — identical geometry on every club page */
       .topbar .nav,
       .nav{
         display:flex!important;
@@ -102,6 +102,12 @@
       .nav a,
       .nav button{
         box-sizing:border-box!important;
+        inline-size:96px!important;
+        min-inline-size:96px!important;
+        max-inline-size:96px!important;
+        block-size:40px!important;
+        min-block-size:40px!important;
+        max-block-size:40px!important;
         width:96px!important;
         min-width:96px!important;
         max-width:96px!important;
@@ -114,9 +120,14 @@
         justify-content:center!important;
         margin:0!important;
         padding:0 9px!important;
-        border-width:1px!important;
-        border-style:solid!important;
+        border:1px solid rgba(148,163,184,.20)!important;
         border-radius:999px!important;
+        background:rgba(15,23,42,.72)!important;
+        color:#dbeafe!important;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+        outline:0!important;
+        appearance:none!important;
+        -webkit-appearance:none!important;
         font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
         font-size:12px!important;
         font-weight:800!important;
@@ -127,18 +138,40 @@
         overflow:hidden!important;
         text-overflow:ellipsis!important;
         transform:none!important;
+        scale:1!important;
+        transition:
+          background-color .16s ease,
+          border-color .16s ease,
+          color .16s ease!important;
       }
 
       .topbar .nav a:hover,
       .topbar .nav button:hover,
-      .topbar .nav a:focus-visible,
-      .topbar .nav button:focus-visible,
       .nav a:hover,
-      .nav button:hover,
-      .nav a:focus-visible,
-      .nav button:focus-visible,
+      .nav button:hover{
+        inline-size:96px!important;
+        block-size:40px!important;
+        width:96px!important;
+        height:40px!important;
+        padding:0 9px!important;
+        border-color:rgba(34,211,238,.38)!important;
+        background:rgba(8,47,73,.58)!important;
+        color:#e0f2fe!important;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
+        transform:none!important;
+        scale:1!important;
+      }
+
       .topbar .nav a.active,
-      .nav a.active{
+      .topbar .nav a[aria-current="page"],
+      .nav a.active,
+      .nav a[aria-current="page"]{
+        inline-size:96px!important;
+        min-inline-size:96px!important;
+        max-inline-size:96px!important;
+        block-size:40px!important;
+        min-block-size:40px!important;
+        max-block-size:40px!important;
         width:96px!important;
         min-width:96px!important;
         max-width:96px!important;
@@ -146,14 +179,58 @@
         min-height:40px!important;
         max-height:40px!important;
         padding:0 9px!important;
+        border-color:rgba(34,211,238,.74)!important;
+        background:linear-gradient(180deg,rgba(8,70,92,.92),rgba(8,47,73,.86))!important;
+        color:#e6fbff!important;
+        box-shadow:
+          inset 0 0 0 1px rgba(103,232,249,.18),
+          inset 0 1px 0 rgba(255,255,255,.08)!important;
+        outline:0!important;
         transform:none!important;
+        scale:1!important;
+      }
+
+      .topbar .nav a:focus-visible,
+      .topbar .nav button:focus-visible,
+      .nav a:focus-visible,
+      .nav button:focus-visible{
+        inline-size:96px!important;
+        block-size:40px!important;
+        width:96px!important;
+        height:40px!important;
+        padding:0 9px!important;
+        border-color:rgba(125,211,252,.78)!important;
+        box-shadow:
+          inset 0 0 0 2px rgba(125,211,252,.24),
+          inset 0 1px 0 rgba(255,255,255,.07)!important;
+        outline:0!important;
+        transform:none!important;
+        scale:1!important;
       }
 
       @media(max-width:760px){
         .topbar .nav a,
         .topbar .nav button,
         .nav a,
-        .nav button{
+        .nav button,
+        .topbar .nav a:hover,
+        .topbar .nav button:hover,
+        .nav a:hover,
+        .nav button:hover,
+        .topbar .nav a.active,
+        .topbar .nav a[aria-current="page"],
+        .nav a.active,
+        .nav a[aria-current="page"],
+        .topbar .nav a:focus-visible,
+        .topbar .nav button:focus-visible,
+        .nav a:focus-visible,
+        .nav button:focus-visible{
+          inline-size:88px!important;
+          min-inline-size:88px!important;
+          max-inline-size:88px!important;
+          block-size:36px!important;
+          min-block-size:36px!important;
+          max-block-size:36px!important;
           width:88px!important;
           min-width:88px!important;
           max-width:88px!important;
@@ -163,29 +240,51 @@
           flex-basis:88px!important;
           padding:0 7px!important;
           font-size:11px!important;
-        }
-
-        .topbar .nav a:hover,
-        .topbar .nav button:hover,
-        .topbar .nav a:focus-visible,
-        .topbar .nav button:focus-visible,
-        .nav a:hover,
-        .nav button:hover,
-        .nav a:focus-visible,
-        .nav button:focus-visible,
-        .topbar .nav a.active,
-        .nav a.active{
-          width:88px!important;
-          min-width:88px!important;
-          max-width:88px!important;
-          height:36px!important;
-          min-height:36px!important;
-          max-height:36px!important;
-          padding:0 7px!important;
+          transform:none!important;
+          scale:1!important;
         }
       }
     `;
     document.head.appendChild(style);
+  }
+
+  function syncActiveNavigation(){
+    const currentFile=(window.location.pathname.split('/').pop() || 'AuroraCityFC_ManagerDashboard.html').toLowerCase();
+    const aliases=new Map([
+      ['index.html','auroracityfc_managerdashboard.html'],
+      ['','auroracityfc_managerdashboard.html']
+    ]);
+    const resolvedCurrent=aliases.get(currentFile) || currentFile;
+
+    document.querySelectorAll('.nav a[href]').forEach(link=>{
+      let linkFile='';
+      try{
+        linkFile=new URL(link.getAttribute('href'),window.location.href).pathname.split('/').pop().toLowerCase();
+      }catch(_){
+        linkFile=String(link.getAttribute('href') || '').split('/').pop().toLowerCase();
+      }
+
+      const isActive=linkFile===resolvedCurrent;
+      link.classList.toggle('active',isActive);
+
+      if(isActive){
+        link.setAttribute('aria-current','page');
+      }else{
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function installNavigationState(){
+    const apply=()=>syncActiveNavigation();
+
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded',apply,{once:true});
+    }else{
+      apply();
+    }
+
+    window.addEventListener('pageshow',apply);
   }
 
   function registerServiceWorker(){
@@ -195,6 +294,7 @@
 
   installFreshnessStyles();
   installNavigationStyles();
+  installNavigationState();
 
   window.AURORA_PLATFORM_RULES=PLATFORM_RULES;
   window.AURORA_ACCOUNT_AVAILABILITY=ACCOUNT_AVAILABILITY;
