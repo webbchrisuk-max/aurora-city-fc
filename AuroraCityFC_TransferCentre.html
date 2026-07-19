@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: Transfer Centre Section Navigation • 19 Jul 2026 -->
+<!-- Build: Auto-Hide Transfer Navigation • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -3743,46 +3743,129 @@ tr:hover td{background:rgba(96,165,250,.06)}
 
 
 
-/* ================= TRANSFER CENTRE INTERNAL NAVIGATION ================= */
-.transfer-section-nav{
+/* ================= TRANSFER CENTRE AUTO-HIDE COMMAND BAR ================= */
+.transfer-command-bar{
   position:sticky;
-  top:86px;
-  z-index:58;
+  top:0;
+  z-index:80;
+  transform:translateY(0);
   border-bottom:1px solid rgba(125,211,252,.16);
-  background:rgba(2,6,18,.92);
-  backdrop-filter:blur(18px);
-  box-shadow:0 12px 32px rgba(0,0,0,.20);
+  background:rgba(2,6,18,.95);
+  backdrop-filter:blur(20px);
+  box-shadow:0 12px 34px rgba(0,0,0,.24);
+  transition:transform .24s ease,box-shadow .24s ease;
+  will-change:transform;
 }
-.transfer-section-nav-inner{
+.transfer-command-bar.is-hidden{
+  transform:translateY(calc(-100% - 2px));
+  box-shadow:none;
+}
+.transfer-command-inner{
   width:min(1580px,100%);
+  min-height:72px;
   margin:0 auto;
   display:flex;
-  gap:7px;
-  padding:9px 16px;
-  overflow-x:auto;
-  scrollbar-width:none;
+  align-items:center;
+  gap:10px;
+  padding:9px 15px;
 }
-.transfer-section-nav-inner::-webkit-scrollbar{display:none}
-.transfer-section-nav a{
+.transfer-command-brand{
   flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:184px;
+}
+.transfer-command-crest{
+  width:42px;
+  height:42px;
+  flex:0 0 auto;
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.26);
+  border-radius:13px;
+  background:#020617;
+  box-shadow:0 0 22px rgba(34,211,238,.14);
+}
+.transfer-command-crest img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.transfer-command-brand strong{
+  display:block;
+  color:#f0f9ff;
+  font-size:14px;
+  letter-spacing:-.035em;
+}
+.transfer-command-brand span{
+  display:block;
+  margin-top:3px;
+  color:#67e8f9;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.transfer-home-button{
+  flex:0 0 auto;
+  min-height:38px;
   display:inline-flex;
   align-items:center;
   gap:7px;
+  padding:8px 12px;
+  border:1px solid rgba(34,211,238,.28);
+  border-radius:999px;
+  background:rgba(8,47,73,.56);
+  color:#dff8ff;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.transfer-home-button:hover{
+  border-color:rgba(34,211,238,.50);
+  background:rgba(14,116,144,.46);
+}
+.transfer-home-button span{
+  color:#67e8f9;
+  font-size:16px;
+  line-height:1;
+}
+.transfer-section-nav{
+  min-width:0;
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  overflow-x:auto;
+  padding:2px 0;
+  scrollbar-width:none;
+  scroll-behavior:smooth;
+}
+.transfer-section-nav::-webkit-scrollbar{display:none}
+.transfer-section-nav a{
+  flex:0 0 auto;
   min-height:36px;
-  padding:8px 11px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 10px;
   border:1px solid rgba(148,163,184,.15);
   border-radius:999px;
   background:rgba(15,23,42,.64);
   color:#cbd5e1;
-  font-size:10px;
+  font-size:9px;
   font-weight:900;
-  letter-spacing:.04em;
+  letter-spacing:.035em;
   text-transform:uppercase;
+  white-space:nowrap;
+  transition:border-color .18s,background .18s,color .18s;
 }
-.transfer-section-nav a:hover{
+.transfer-section-nav a:hover,
+.transfer-section-nav a.active{
   color:#ecfeff;
-  border-color:rgba(34,211,238,.40);
-  background:rgba(8,47,73,.66);
+  border-color:rgba(34,211,238,.42);
+  background:rgba(8,47,73,.72);
 }
 .transfer-nav-count{
   min-width:20px;
@@ -3791,6 +3874,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
   background:rgba(34,211,238,.13);
   color:#a5f3fc;
   font-size:8px;
+  line-height:1;
   text-align:center;
 }
 .transfer-operations-panel{
@@ -3843,56 +3927,66 @@ tr:hover td{background:rgba(96,165,250,.06)}
   font-size:9px;
   line-height:1.35;
 }
-#transfer-overview,#best-return-allocation,#top-transfer-board,#deal-sheet,
-#registration-desk,#incoming-offers,#sell-desk,#transfer-bench,#no-buy-watch{
-  scroll-margin-top:142px;
+#transfer-overview,
+#best-return-allocation,
+#top-transfer-board,
+#deal-sheet,
+#registration-desk,
+#incoming-offers,
+#sell-desk,
+#transfer-bench,
+#no-buy-watch{
+  scroll-margin-top:84px;
 }
 @media(max-width:1180px){
+  .transfer-command-inner{gap:8px;padding-left:10px;padding-right:10px}
+  .transfer-command-brand{min-width:156px}
+  .transfer-command-brand span{display:none}
+  .transfer-section-nav a{padding:8px 9px;font-size:8px}
   .transfer-operations-panel{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:760px){
-  .transfer-section-nav{top:66px}
+  .transfer-command-brand{min-width:auto}
+  .transfer-command-brand>div:last-child{display:none}
+  .transfer-command-crest{width:38px;height:38px}
+  .transfer-home-button{padding:8px 10px}
+  .transfer-section-nav a{font-size:8px}
   .transfer-operations-panel{grid-template-columns:1fr 1fr}
 }
 
 </style>
 </head>
 <body>
-<!-- ===================== SECTION: APP SHELL ===================== -->
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="crest"><img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC Badge"></div>
+<!-- ===================== SECTION: TRANSFER COMMAND BAR ===================== -->
+<header class="transfer-command-bar" id="transferCommandBar">
+  <div class="transfer-command-inner">
+    <div class="transfer-command-brand">
+      <div class="transfer-command-crest">
+        <img src="assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC Badge">
+      </div>
       <div>
-        <h1>Aurora City FC</h1>
-        <p>Transfer Centre • Recruitment HQ</p>
+        <strong>Transfer Centre</strong>
+        <span>Recruitment HQ</span>
       </div>
     </div>
-    <div class="nav">
-      <a href="AuroraCityFC_ManagerDashboard.html">Home</a>
-      <a class="active" href="AuroraCityFC_TransferCentre.html">Transfers</a>
-      <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
-      <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a href="AuroraCityFC_AnalysisRoom.html">Analysis</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
-      <button class="refresh-btn" id="refreshBtn">Refresh</button>
-    </div>
-  </div>
-</div>
 
-<nav class="transfer-section-nav" aria-label="Transfer Centre sections">
-  <div class="transfer-section-nav-inner">
-    <a href="#transfer-overview">Overview</a>
-    <a href="#incoming-offers">Incoming Offers <span class="transfer-nav-count" id="subnavIncomingCount">0</span></a>
-    <a href="#deal-sheet">Deal Sheet <span class="transfer-nav-count" id="subnavDealStatus">Sync</span></a>
-    <a href="#sell-desk">Sell Desk <span class="transfer-nav-count" id="subnavSellCount">0</span></a>
-    <a href="#best-return-allocation">Best Return</a>
-    <a href="#registration-desk">Registration</a>
-    <a href="#top-transfer-board">Transfer Board</a>
-    <a href="#transfer-bench">Bench</a>
+    <a class="transfer-home-button" href="AuroraCityFC_ManagerDashboard.html" aria-label="Return to Manager Dashboard">
+      <span>⌂</span>
+      Home
+    </a>
+
+    <nav class="transfer-section-nav" aria-label="Transfer Centre sections">
+      <a href="#transfer-overview">Overview</a>
+      <a href="#incoming-offers">Incoming Offers <span class="transfer-nav-count" id="subnavIncomingCount">0</span></a>
+      <a href="#deal-sheet">Deal Sheet <span class="transfer-nav-count" id="subnavDealStatus">Sync</span></a>
+      <a href="#sell-desk">Sell Desk <span class="transfer-nav-count" id="subnavSellCount">0</span></a>
+      <a href="#best-return-allocation">Best Return</a>
+      <a href="#registration-desk">Registration</a>
+      <a href="#top-transfer-board">Transfer Board</a>
+      <a href="#transfer-bench">Bench</a>
+    </nav>
   </div>
-</nav>
+</header>
 
 <main class="app">
 
@@ -6038,6 +6132,92 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   } else {
     start();
   }
+})();
+</script>
+
+
+<script id="transfer-command-navigation">
+(() => {
+  "use strict";
+
+  const bar = document.getElementById("transferCommandBar");
+  if (!bar) return;
+
+  const links = Array.from(
+    bar.querySelectorAll('.transfer-section-nav a[href^="#"]')
+  );
+  const sections = links
+    .map(link => {
+      const id = decodeURIComponent(link.getAttribute("href").slice(1));
+      return { link, section: document.getElementById(id) };
+    })
+    .filter(item => item.section);
+
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+  let revealLockUntil = 0;
+
+  const showBar = () => bar.classList.remove("is-hidden");
+  const hideBar = () => {
+    if (Date.now() < revealLockUntil) return;
+    if (window.scrollY > 130) bar.classList.add("is-hidden");
+  };
+
+  const updateActiveLink = () => {
+    const marker = window.scrollY + 120;
+    let active = sections[0];
+
+    for (const item of sections) {
+      if (item.section.offsetTop <= marker) active = item;
+    }
+
+    sections.forEach(item => {
+      const selected = item === active;
+      item.link.classList.toggle("active", selected);
+      item.link.setAttribute("aria-current", selected ? "location" : "false");
+    });
+  };
+
+  const onScroll = () => {
+    if (ticking) return;
+
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      const currentY = Math.max(0, window.scrollY);
+      const difference = currentY - lastScrollY;
+
+      if (currentY < 80) {
+        showBar();
+      } else if (difference > 8) {
+        hideBar();
+      } else if (difference < -6) {
+        showBar();
+      }
+
+      updateActiveLink();
+      lastScrollY = currentY;
+      ticking = false;
+    });
+  };
+
+  links.forEach(link => {
+    link.addEventListener("click", () => {
+      revealLockUntil = Date.now() + 900;
+      showBar();
+    });
+  });
+
+  bar.addEventListener("mouseenter", showBar);
+  bar.addEventListener("focusin", showBar);
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("hashchange", () => {
+    revealLockUntil = Date.now() + 900;
+    showBar();
+    updateActiveLink();
+  });
+
+  updateActiveLink();
 })();
 </script>
 
