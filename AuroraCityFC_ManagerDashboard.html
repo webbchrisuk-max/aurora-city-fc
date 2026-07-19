@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Manager Dashboard</title>
-<!-- Build: Clean Sidebar Dropdown • 19 Jul 2026 -->
+<!-- Build: Slide-Out Manager Sidebar • 19 Jul 2026 -->
 <style>
 :root{
   --bg:#020612;
@@ -1078,17 +1078,193 @@ body{
   }
 }
 
+
+
+/* ================= SLIDE-OUT MANAGER SIDEBAR ================= */
+.fm-shell{
+  display:block!important;
+  min-height:100vh;
+}
+
+.fm-sidebar{
+  position:fixed!important;
+  top:0!important;
+  left:0!important;
+  width:var(--fm-sidebar)!important;
+  height:100vh!important;
+  transform:translateX(0);
+  transition:transform .26s cubic-bezier(.2,.8,.2,1);
+  will-change:transform;
+  z-index:110!important;
+}
+
+.fm-workspace{
+  min-width:0;
+  margin-left:var(--fm-sidebar);
+  transition:margin-left .26s cubic-bezier(.2,.8,.2,1);
+}
+
+.bottom-ticker{
+  left:var(--fm-sidebar)!important;
+  transition:left .26s cubic-bezier(.2,.8,.2,1);
+}
+
+body.fm-sidebar-hidden .fm-sidebar{
+  transform:translateX(calc(-100% - 18px));
+}
+
+body.fm-sidebar-hidden .fm-workspace{
+  margin-left:0;
+}
+
+body.fm-sidebar-hidden .bottom-ticker{
+  left:0!important;
+}
+
+.fm-sidebar-collapse{
+  position:absolute;
+  top:50%;
+  right:-14px;
+  width:28px;
+  height:62px;
+  display:grid;
+  place-items:center;
+  transform:translateY(-50%);
+  border:1px solid rgba(34,211,238,.30);
+  border-left:0;
+  border-radius:0 12px 12px 0;
+  background:rgba(4,18,36,.97);
+  color:#67e8f9;
+  font-size:24px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:9px 0 24px rgba(0,0,0,.30);
+  z-index:3;
+}
+
+.fm-sidebar-collapse:hover{
+  color:#ecfeff;
+  background:rgba(8,47,73,.98);
+}
+
+.fm-sidebar-edge-zone{
+  position:fixed;
+  inset:0 auto 0 0;
+  width:24px;
+  z-index:109;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+  cursor:e-resize;
+  touch-action:pan-y;
+}
+
+body.fm-sidebar-hidden .fm-sidebar-edge-zone{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.fm-sidebar-edge-handle{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:18px;
+  height:92px;
+  display:grid;
+  place-items:center;
+  transform:translateY(-50%);
+  border:1px solid rgba(34,211,238,.34);
+  border-left:0;
+  border-radius:0 13px 13px 0;
+  background:linear-gradient(180deg,rgba(4,18,36,.98),rgba(8,47,73,.94));
+  color:#67e8f9;
+  font-size:21px;
+  font-weight:1000;
+  box-shadow:8px 0 28px rgba(0,0,0,.34),0 0 18px rgba(34,211,238,.08);
+}
+
+.fm-sidebar-edge-zone:hover .fm-sidebar-edge-handle,
+.fm-sidebar-edge-zone:focus .fm-sidebar-edge-handle{
+  color:#ecfeff;
+  border-color:rgba(34,211,238,.56);
+  background:linear-gradient(180deg,rgba(8,47,73,.98),rgba(14,116,144,.82));
+}
+
+.fm-sidebar,
+.fm-sidebar-edge-zone{
+  -webkit-tap-highlight-color:transparent;
+}
+
+@media(max-width:1180px){
+  .fm-sidebar{
+    width:var(--fm-sidebar-compact)!important;
+  }
+
+  .fm-workspace{
+    margin-left:var(--fm-sidebar-compact);
+  }
+
+  .bottom-ticker{
+    left:var(--fm-sidebar-compact)!important;
+  }
+}
+
+@media(max-width:900px){
+  .fm-sidebar{
+    width:198px!important;
+  }
+
+  .fm-workspace{
+    margin-left:198px;
+  }
+
+  .bottom-ticker{
+    left:198px!important;
+  }
+
+  body.fm-sidebar-hidden .fm-workspace{
+    margin-left:0;
+  }
+
+  body.fm-sidebar-hidden .bottom-ticker{
+    left:0!important;
+  }
+}
+
+@media(pointer:coarse){
+  .fm-sidebar-edge-zone{
+    width:30px;
+  }
+
+  .fm-sidebar-edge-handle{
+    width:21px;
+    height:104px;
+  }
+
+  .fm-sidebar-collapse{
+    width:31px;
+    height:68px;
+    right:-17px;
+  }
+}
+
 </style>
 <script src="AuroraFCData.js"></script>
 <script>
-window.AURORA_MANAGER_BUILD = "CLEAN-SIDEBAR-DROPDOWN-2026-07-19";
+window.AURORA_MANAGER_BUILD = "SLIDEOUT-SIDEBAR-2026-07-19";
 </script>
 </head>
 <body>
 
+<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" aria-label="Open navigation" role="button" tabindex="0">
+  <span class="fm-sidebar-edge-handle">›</span>
+</div>
+
+
 <div class="fm-shell">
   <aside class="fm-sidebar" aria-label="Aurora City FC manager navigation">
     <div class="fm-side-brand">
+      <button class="fm-sidebar-collapse" id="fmSidebarCollapse" type="button" aria-label="Hide navigation" title="Hide navigation">‹</button>
       <div class="fm-side-crest">
         <img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest">
       </div>
@@ -2136,6 +2312,145 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
       sessionStorage.setItem(key, menu.open ? "1" : "0");
     } catch (_) {}
   });
+})();
+</script>
+
+
+<script id="manager-sidebar-slideout">
+(() => {
+  "use strict";
+
+  const body = document.body;
+  const sidebar = document.querySelector(".fm-sidebar");
+  const workspace = document.querySelector(".fm-workspace");
+  const edgeZone = document.getElementById("fmSidebarEdgeZone");
+  const collapseButton = document.getElementById("fmSidebarCollapse");
+
+  if (!sidebar || !workspace || !edgeZone || !collapseButton) return;
+
+  const hiddenClass = "fm-sidebar-hidden";
+  const autoHideDelay = 2600;
+  let hideTimer = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchSource = "";
+  let gestureHandled = false;
+
+  const clearHideTimer = () => {
+    if (hideTimer) {
+      window.clearTimeout(hideTimer);
+      hideTimer = 0;
+    }
+  };
+
+  const isHidden = () => body.classList.contains(hiddenClass);
+
+  const showSidebar = () => {
+    clearHideTimer();
+    body.classList.remove(hiddenClass);
+    sidebar.setAttribute("aria-hidden", "false");
+    edgeZone.setAttribute("aria-hidden", "true");
+  };
+
+  const hideSidebar = () => {
+    clearHideTimer();
+    body.classList.add(hiddenClass);
+    sidebar.setAttribute("aria-hidden", "true");
+    edgeZone.setAttribute("aria-hidden", "false");
+  };
+
+  const scheduleHide = (delay = autoHideDelay) => {
+    clearHideTimer();
+    hideTimer = window.setTimeout(() => {
+      if (!sidebar.matches(":hover") && !sidebar.contains(document.activeElement)) {
+        hideSidebar();
+      }
+    }, delay);
+  };
+
+  collapseButton.addEventListener("click", hideSidebar);
+
+  edgeZone.addEventListener("pointerenter", showSidebar);
+  edgeZone.addEventListener("click", showSidebar);
+  edgeZone.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      showSidebar();
+    }
+  });
+
+  sidebar.addEventListener("pointerenter", clearHideTimer);
+  sidebar.addEventListener("pointerleave", () => scheduleHide(1200));
+  sidebar.addEventListener("focusin", clearHideTimer);
+  sidebar.addEventListener("focusout", () => scheduleHide(1500));
+
+  document.addEventListener("mousemove", event => {
+    if (isHidden() && event.clientX <= 18) showSidebar();
+  }, { passive: true });
+
+  workspace.addEventListener("pointerdown", event => {
+    if (!isHidden() && event.pointerType !== "mouse") {
+      hideSidebar();
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !isHidden()) hideSidebar();
+  });
+
+  const beginTouch = (event, source) => {
+    const touch = event.touches?.[0];
+    if (!touch) return;
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchSource = source;
+    gestureHandled = false;
+  };
+
+  const trackTouch = event => {
+    if (gestureHandled) return;
+
+    const touch = event.touches?.[0];
+    if (!touch) return;
+
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+
+    if (Math.abs(deltaY) > Math.abs(deltaX) * 1.15) return;
+
+    if (touchSource === "edge" && deltaX > 42) {
+      gestureHandled = true;
+      showSidebar();
+    }
+
+    if (touchSource === "sidebar" && deltaX < -42) {
+      gestureHandled = true;
+      hideSidebar();
+    }
+  };
+
+  edgeZone.addEventListener("touchstart", event => beginTouch(event, "edge"), {
+    passive: true
+  });
+  edgeZone.addEventListener("touchmove", trackTouch, {
+    passive: true
+  });
+
+  sidebar.addEventListener("touchstart", event => beginTouch(event, "sidebar"), {
+    passive: true
+  });
+  sidebar.addEventListener("touchmove", trackTouch, {
+    passive: true
+  });
+
+  window.addEventListener("pageshow", () => {
+    showSidebar();
+    scheduleHide(4200);
+  });
+
+  showSidebar();
+  scheduleHide(4200);
 })();
 </script>
 
