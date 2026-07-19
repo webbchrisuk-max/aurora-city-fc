@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 
 <title>Aurora City FC — Boardroom</title>
-<!-- Build: Universal Sidebar Footer Fix • 19 Jul 2026 -->
+<!-- Build: Compact Transfer Menu Footer • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -2940,6 +2940,41 @@ body.fm-sidebar-hidden .aurora-system-panel{
   }
 }
 
+
+
+/* ================= COMPACT TRANSFER MENU FOOTER ================= */
+body.fm-transfer-menu-open .fm-side-footer .fm-side-action,
+body.fm-transfer-menu-open .fm-side-footer .fm-side-clock{
+  display:none!important;
+}
+
+/* On every page except Home, collapse the footer completely while the
+   Transfer Centre submenu is open. Home keeps System Check available. */
+body.fm-transfer-menu-open:not(.fm-has-system-check) .fm-side-footer{
+  min-height:0!important;
+  height:0!important;
+  padding:0!important;
+  gap:0!important;
+  overflow:hidden!important;
+  border-top:0!important;
+  box-shadow:none!important;
+}
+
+/* Home retains a compact System Check-only footer while the menu is open. */
+body.fm-transfer-menu-open.fm-has-system-check .fm-side-footer{
+  padding-top:6px!important;
+}
+
+body.fm-transfer-menu-open.fm-has-system-check
+.fm-side-footer .aurora-system-button{
+  margin:0!important;
+}
+
+/* Give the navigation all remaining room immediately after the footer shrinks. */
+body.fm-transfer-menu-open .fm-side-scroll{
+  padding-bottom:10px!important;
+}
+
 </style>
 </head>
 <body>
@@ -3036,8 +3071,7 @@ body.fm-sidebar-hidden .aurora-system-panel{
 
     <div class="fm-side-footer">
       <button class="fm-side-action" id="refreshBtn" type="button">Refresh Data</button>
-      <button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>
-      <div class="fm-side-clock" id="fmClock">Manager session live</div>
+<div class="fm-side-clock" id="fmClock">Manager session live</div>
     </div>
   </aside>
 
@@ -4295,6 +4329,29 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   updateTransferActiveLink();
   showSidebar();
   scheduleHide(4200);
+})();
+</script>
+
+
+<script id="aurora-transfer-menu-footer-control">
+(() => {
+  "use strict";
+
+  const body = document.body;
+  const transferMenu = document.getElementById("transferSideMenu");
+  const systemButton = document.getElementById("auroraSystemButton");
+
+  body.classList.toggle("fm-has-system-check", Boolean(systemButton));
+
+  if (!transferMenu) return;
+
+  const updateFooter = () => {
+    body.classList.toggle("fm-transfer-menu-open", transferMenu.open);
+  };
+
+  transferMenu.addEventListener("toggle", updateFooter);
+  window.addEventListener("pageshow", updateFooter);
+  updateFooter();
 })();
 </script>
 
