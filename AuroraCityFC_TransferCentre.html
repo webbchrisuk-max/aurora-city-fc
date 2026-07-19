@@ -3795,19 +3795,19 @@ tr:hover td{background:rgba(96,165,250,.06)}
     </div>
     <div class="aurora-home-scoreboard">
       <div class="aurora-home-score-card">
-        <small>Lead Target</small>
-        <strong data-aurora-copy-from="headlineLead">Loading…</strong>
-        <span data-aurora-copy-from="headlineLeadNote">Scouting the market…</span>
+        <small>Transfer Budget</small>
+        <strong id="heroTransferBudget">£1,500.00</strong>
+        <span>Available for the current recruitment plan</span>
       </div>
       <div class="aurora-home-score-card">
-        <small>Annual Income</small>
-        <strong data-aurora-copy-from="headlineIncome">—</strong>
-        <span data-aurora-copy-from="headlineMonthly">Projected monthly income</span>
+        <small>Approved Signings</small>
+        <strong id="heroApprovedSignings">—</strong>
+        <span id="heroApprovedSigningsNote">Building the final route…</span>
       </div>
       <div class="aurora-home-score-card">
-        <small>Deal Status</small>
-        <strong data-aurora-copy-from="headlineStatus">Loading…</strong>
-        <span data-aurora-copy-from="headlineStatusNote">Checking the route…</span>
+        <small>Cash Remaining</small>
+        <strong id="heroCashRemaining">—</strong>
+        <span id="heroCashRemainingNote">Checking the current allocation…</span>
       </div>
     </div>
   </section>
@@ -5089,6 +5089,17 @@ function renderKpis(deal){
   const platformChecks = deal.rows?.filter(r=>platformFor(r.row.ticker).toLowerCase().includes('check')).length || 0;
   const blendedRate = allocated > 0 ? totalIncome / allocated : NaN;
   const incomePerThousand = allocated > 0 ? (totalIncome / allocated) * 1000 : NaN;
+  const remaining = Math.max(0,deal.holdback||0);
+
+  if($('heroTransferBudget')) $('heroTransferBudget').textContent = money(deal.budget || 0);
+  if($('heroApprovedSignings')) $('heroApprovedSignings').textContent = String(deal.rows?.length || 0);
+  if($('heroApprovedSigningsNote')) $('heroApprovedSigningsNote').textContent = deal.rows?.length
+    ? `${greenCount} green light • ${cautionCount} controlled`
+    : 'No targets currently clear the transfer gates';
+  if($('heroCashRemaining')) $('heroCashRemaining').textContent = money(remaining);
+  if($('heroCashRemainingNote')) $('heroCashRemainingNote').textContent = (deal.autoReduced||0)>0
+    ? `${money(deal.autoReduced)} automatically adjusted`
+    : remaining > 0 ? 'Still available to allocate' : 'Full transfer budget assigned';
 
   if($('headlineLead')) $('headlineLead').textContent = lead ? displayTicker(lead.row.ticker) : 'No signing';
   if($('headlineLeadNote')) $('headlineLeadNote').innerHTML = lead
@@ -5110,7 +5121,6 @@ function renderKpis(deal){
   if($('dealBudgetContext')) $('dealBudgetContext').textContent = deal.rows.length
     ? `${deal.rows.length} deals • Average allocation ${money(allocated/deal.rows.length)} • Projected ${money(totalIncome)}/year added`
     : 'No approved deals currently using the budget.';
-  const remaining = Math.max(0,deal.holdback||0);
   if($('allocatedTransferBudget')) $('allocatedTransferBudget').textContent = money(allocated);
   if($('remainingTransferBudget')) $('remainingTransferBudget').textContent = money(remaining);
   const remainingCard=$('remainingTransferBudgetCard');
