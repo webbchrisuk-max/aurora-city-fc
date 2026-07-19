@@ -516,7 +516,7 @@
     <iframe
       class="club-frame"
       id="clubFrame"
-      src="AuroraCityFC_ManagerDashboard.html"
+      src="about:blank"
       title="Aurora City FC club system"
       allow="fullscreen"
     ></iframe>
@@ -573,14 +573,38 @@
         "AuroraCityFC_AnalysisRoom.html": "Analysis Room"
       };
 
+      const allowedPages = new Set(Object.keys(routeLabels));
+      const requestedPage =
+        new URLSearchParams(window.location.search).get("page");
+      const initialPage = allowedPages.has(requestedPage)
+        ? requestedPage
+        : "AuroraCityFC_ManagerDashboard.html";
+
+      clubFrame.src = initialPage;
+      routeName.textContent = routeLabels[initialPage];
+      document.title = `Aurora City FC | ${routeLabels[initialPage]}`;
+
       let previousFocus = null;
       let loggingOut = false;
 
       function updateRouteLabel() {
         try {
-          const currentFile = clubFrame.contentWindow.location.pathname.split("/").pop();
-          routeName.textContent = routeLabels[currentFile] || "Aurora Club System";
-          document.title = `Aurora City FC | ${routeLabels[currentFile] || "Manager Session"}`;
+          const currentFile =
+            clubFrame.contentWindow.location.pathname.split("/").pop();
+
+          const currentLabel =
+            routeLabels[currentFile] || "Aurora Club System";
+
+          routeName.textContent = currentLabel;
+          document.title = `Aurora City FC | ${currentLabel}`;
+
+          if (allowedPages.has(currentFile)) {
+            const nextUrl =
+              "AuroraCityFC_GameShell.html?page=" +
+              encodeURIComponent(currentFile);
+
+            window.history.replaceState({}, "", nextUrl);
+          }
         } catch (error) {
           routeName.textContent = "Aurora Club System";
         }

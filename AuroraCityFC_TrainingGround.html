@@ -31,6 +31,31 @@ center center/cover no-repeat!important;
 }
 
 </style>
+
+<script id="aurora-manager-shell-guard">
+(() => {
+  "use strict";
+
+  const page = window.location.pathname.split("/").pop();
+
+  /*
+   * Older Aurora HTML files may be opened directly by the installed web app,
+   * a saved bookmark or browser history. Reopen them inside the permanent
+   * Manager Session shell so the Log Out control is always available.
+   */
+  if (
+    window.self === window.top &&
+    page &&
+    page !== "AuroraCityFC_GameShell.html"
+  ) {
+    const shellUrl =
+      "AuroraCityFC_GameShell.html?page=" + encodeURIComponent(page);
+
+    window.location.replace(shellUrl);
+  }
+})();
+</script>
+
 </head>
 <body>
 <!-- ===================== SECTION: APP SHELL ===================== -->
