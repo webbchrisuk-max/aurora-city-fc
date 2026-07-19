@@ -81,13 +81,134 @@
     document.head.appendChild(style);
   }
 
+  function installNavigationStyles(){
+    if(document.getElementById('aurora-shared-nav-styles')) return;
+
+    const style=document.createElement('style');
+    style.id='aurora-shared-nav-styles';
+    style.textContent=`
+      /* Aurora shared top navigation — identical on every club page */
+      .topbar .nav,
+      .nav{
+        display:flex!important;
+        align-items:center!important;
+        justify-content:flex-end!important;
+        gap:8px!important;
+        flex-wrap:wrap!important;
+      }
+
+      .topbar .nav a,
+      .topbar .nav button,
+      .nav a,
+      .nav button{
+        box-sizing:border-box!important;
+        width:96px!important;
+        min-width:96px!important;
+        max-width:96px!important;
+        height:40px!important;
+        min-height:40px!important;
+        max-height:40px!important;
+        flex:0 0 96px!important;
+        display:inline-flex!important;
+        align-items:center!important;
+        justify-content:center!important;
+        margin:0!important;
+        padding:0 9px!important;
+        border-width:1px!important;
+        border-style:solid!important;
+        border-radius:999px!important;
+        font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+        font-size:12px!important;
+        font-weight:800!important;
+        line-height:1!important;
+        letter-spacing:0!important;
+        text-align:center!important;
+        white-space:nowrap!important;
+        overflow:hidden!important;
+        text-overflow:ellipsis!important;
+        transform:none!important;
+      }
+
+      .topbar .nav a:hover,
+      .topbar .nav button:hover,
+      .topbar .nav a:focus-visible,
+      .topbar .nav button:focus-visible,
+      .nav a:hover,
+      .nav button:hover,
+      .nav a:focus-visible,
+      .nav button:focus-visible,
+      .topbar .nav a.active,
+      .nav a.active{
+        width:96px!important;
+        min-width:96px!important;
+        max-width:96px!important;
+        height:40px!important;
+        min-height:40px!important;
+        max-height:40px!important;
+        padding:0 9px!important;
+        transform:none!important;
+      }
+
+      @media(max-width:760px){
+        .topbar .nav a,
+        .topbar .nav button,
+        .nav a,
+        .nav button{
+          width:88px!important;
+          min-width:88px!important;
+          max-width:88px!important;
+          height:36px!important;
+          min-height:36px!important;
+          max-height:36px!important;
+          flex-basis:88px!important;
+          padding:0 7px!important;
+          font-size:11px!important;
+        }
+
+        .topbar .nav a:hover,
+        .topbar .nav button:hover,
+        .topbar .nav a:focus-visible,
+        .topbar .nav button:focus-visible,
+        .nav a:hover,
+        .nav button:hover,
+        .nav a:focus-visible,
+        .nav button:focus-visible,
+        .topbar .nav a.active,
+        .nav a.active{
+          width:88px!important;
+          min-width:88px!important;
+          max-width:88px!important;
+          height:36px!important;
+          min-height:36px!important;
+          max-height:36px!important;
+          padding:0 7px!important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   function registerServiceWorker(){
     if(!('serviceWorker' in navigator)) return;
     window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(err=>console.warn('Aurora City FC service worker registration failed:',err)),{once:true});
   }
 
   installFreshnessStyles();
+  installNavigationStyles();
+
   window.AURORA_PLATFORM_RULES=PLATFORM_RULES;
   window.AURORA_ACCOUNT_AVAILABILITY=ACCOUNT_AVAILABILITY;
-  window.AuroraFC=Object.freeze({PLATFORM_RULES,ACCOUNT_AVAILABILITY,shortTicker,normalizeAccount,platformFor,allowedAccounts,accountAllowed,generatedAt,freshness,setFreshness,registerServiceWorker});
+  window.AuroraFC=Object.freeze({
+    PLATFORM_RULES,
+    ACCOUNT_AVAILABILITY,
+    shortTicker,
+    normalizeAccount,
+    platformFor,
+    allowedAccounts,
+    accountAllowed,
+    generatedAt,
+    freshness,
+    setFreshness,
+    registerServiceWorker
+  });
 })();
