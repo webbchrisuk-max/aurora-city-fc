@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 
 <title>Aurora City FC — Boardroom</title>
-<!-- Build: Recruitment Dropdown Overview Only • 19 Jul 2026 -->
+<!-- Build: Boardroom Photographic Hero • 19 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -2799,7 +2799,128 @@ body.fm-sidebar-hidden .aurora-system-panel{
 
 
 
-/* ================= LOCKED SIDEBAR FOOTER FIX ================= */
+/* ================= BOARDROOM PHOTOGRAPHIC HERO ================= */
+.boardroom-photo-hero{
+  position:relative;
+  overflow:hidden;
+  min-height:380px;
+  margin:18px 0 16px;
+  padding:25px;
+  display:flex;
+  align-items:flex-end;
+  border:1px solid rgba(125,211,252,.24);
+  border-radius:30px;
+  background:#020617;
+  box-shadow:0 28px 64px rgba(0,0,0,.34);
+}
+.boardroom-photo-banner{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+}
+.boardroom-photo-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(2,6,23,.94) 0%,
+      rgba(2,6,23,.78) 37%,
+      rgba(2,6,23,.38) 69%,
+      rgba(2,6,23,.14) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(2,6,23,.08),
+      rgba(2,6,23,.14) 50%,
+      rgba(2,6,23,.62)
+    );
+}
+.boardroom-photo-hero:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:1;
+  height:2px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #22d3ee,
+      #60a5fa,
+      transparent
+    );
+}
+.boardroom-photo-content{
+  position:relative;
+  z-index:2;
+  max-width:760px;
+}
+.boardroom-photo-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 11px;
+  border:1px solid rgba(191,219,254,.20);
+  border-radius:999px;
+  background:rgba(15,23,42,.52);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:900;
+  backdrop-filter:blur(5px);
+}
+.boardroom-photo-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 12px rgba(34,197,94,.68);
+}
+.boardroom-photo-title{
+  margin:15px 0 0;
+  color:#f8fafc;
+  font-size:clamp(42px,7vw,92px);
+  line-height:.88;
+  letter-spacing:-.075em;
+  text-transform:uppercase;
+}
+.boardroom-photo-title span{
+  display:block;
+  color:#22d3ee;
+  text-shadow:0 0 25px rgba(34,211,238,.22);
+}
+.boardroom-photo-sub{
+  max-width:670px;
+  margin:15px 0 0;
+  color:#dbeafe;
+  font-size:15px;
+  line-height:1.5;
+}
+.boardroom-photo-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.boardroom-photo-pill{
+  padding:9px 12px;
+  border:1px solid rgba(148,163,184,.22);
+  border-radius:999px;
+  background:rgba(2,6,23,.60);
+  color:#cbd5e1;
+  font-size:12px;
+  white-space:nowrap;
+  backdrop-filter:blur(5px);
+}
+
+/* ================= CURRENT LOCKED SIDEBAR FOOTER ================= */
 .fm-sidebar{
   display:grid!important;
   grid-template-rows:auto minmax(0,1fr) auto!important;
@@ -2808,7 +2929,6 @@ body.fm-sidebar-hidden .aurora-system-panel{
   max-height:100dvh!important;
   overflow:hidden!important;
 }
-
 .fm-side-brand{
   grid-row:1!important;
   min-height:76px!important;
@@ -2816,7 +2936,6 @@ body.fm-sidebar-hidden .aurora-system-panel{
   position:relative!important;
   z-index:4!important;
 }
-
 .fm-side-scroll{
   grid-row:2!important;
   min-height:0!important;
@@ -2824,55 +2943,35 @@ body.fm-sidebar-hidden .aurora-system-panel{
   overflow-x:hidden!important;
   overflow-y:auto!important;
   overscroll-behavior:contain!important;
-  scroll-padding-bottom:18px!important;
   padding:10px 9px 18px!important;
   position:relative!important;
   z-index:1!important;
 }
-
-.fm-side-scroll:after{
-  content:"";
-  display:block;
-  height:8px;
-}
-
 .fm-side-footer{
   grid-row:3!important;
   position:relative!important;
   inset:auto!important;
-  left:auto!important;
-  right:auto!important;
-  bottom:auto!important;
-  flex:none!important;
   width:100%!important;
-  min-height:0!important;
-  max-height:none!important;
   margin:0!important;
   padding:8px 9px calc(10px + env(safe-area-inset-bottom))!important;
   overflow:visible!important;
   z-index:6!important;
   border-top:1px solid rgba(125,211,252,.22)!important;
-  background:linear-gradient(180deg,rgba(3,12,27,.99),rgba(2,7,18,1))!important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(3,12,27,.99),
+      rgba(2,7,18,1)
+    )!important;
   box-shadow:0 -14px 28px rgba(0,0,0,.34)!important;
 }
-
-.fm-side-footer .fm-side-action,
-.fm-side-footer .aurora-system-button{
+.fm-side-footer .fm-side-action{
   min-height:38px!important;
   height:38px!important;
   margin:0!important;
   padding:5px 8px!important;
   font-size:11px!important;
-  line-height:1!important;
 }
-
-.fm-side-footer .fm-side-action:before,
-.fm-side-footer .aurora-system-button:before{
-  width:25px!important;
-  height:25px!important;
-  border-radius:8px!important;
-}
-
 .fm-side-clock{
   min-height:18px!important;
   padding:4px 6px 0!important;
@@ -2880,77 +2979,12 @@ body.fm-sidebar-hidden .aurora-system-panel{
   line-height:1.2!important;
 }
 
-.fm-side-scroll .fm-nav-group:last-of-type{
-  margin-top:13px!important;
-}
-
-.fm-side-scroll .fm-side-link:last-child{
-  margin-bottom:4px!important;
-}
-
-@supports not (height:100dvh){
-  .fm-sidebar{
-    height:100vh!important;
-    max-height:100vh!important;
-  }
-}
-
-@media(max-height:720px){
-  .fm-side-brand{
-    min-height:64px!important;
-    padding-top:8px!important;
-    padding-bottom:8px!important;
-  }
-
-  .fm-side-crest{
-    width:42px!important;
-    height:42px!important;
-  }
-
-  .fm-side-scroll{
-    padding-top:7px!important;
-    padding-bottom:10px!important;
-  }
-
-  .fm-nav-group{
-    margin-top:8px!important;
-    margin-bottom:4px!important;
-  }
-
-  .fm-side-link,
-  .fm-side-folder summary{
-    min-height:37px!important;
-    padding-top:4px!important;
-    padding-bottom:4px!important;
-  }
-
-  .fm-side-footer{
-    gap:3px!important;
-    padding-top:6px!important;
-  }
-
-  .fm-side-footer .fm-side-action,
-  .fm-side-footer .aurora-system-button{
-    min-height:34px!important;
-    height:34px!important;
-  }
-
-  .fm-side-clock{
-    display:none!important;
-  }
-}
-
-
-
-/* ================= COMPACT TRANSFER MENU FOOTER ================= */
+/* Recruitment menu receives the full sidebar height when expanded. */
 body.fm-transfer-menu-open .fm-side-footer .fm-side-action,
 body.fm-transfer-menu-open .fm-side-footer .fm-side-clock{
   display:none!important;
 }
-
-/* On every page except Home, collapse the footer completely while the
-   Transfer Centre submenu is open. Home keeps System Check available. */
-body.fm-transfer-menu-open:not(.fm-has-system-check) .fm-side-footer{
+body.fm-transfer-menu-open .fm-side-footer{
   min-height:0!important;
   height:0!important;
   padding:0!important;
@@ -2959,20 +2993,47 @@ body.fm-transfer-menu-open:not(.fm-has-system-check) .fm-side-footer{
   border-top:0!important;
   box-shadow:none!important;
 }
-
-/* Home retains a compact System Check-only footer while the menu is open. */
-body.fm-transfer-menu-open.fm-has-system-check .fm-side-footer{
-  padding-top:6px!important;
-}
-
-body.fm-transfer-menu-open.fm-has-system-check
-.fm-side-footer .aurora-system-button{
-  margin:0!important;
-}
-
-/* Give the navigation all remaining room immediately after the footer shrinks. */
 body.fm-transfer-menu-open .fm-side-scroll{
   padding-bottom:10px!important;
+}
+
+@supports not (height:100dvh){
+  .fm-sidebar{
+    height:100vh!important;
+    max-height:100vh!important;
+  }
+}
+@media(max-width:760px){
+  .boardroom-photo-hero{
+    min-height:340px;
+    padding:18px;
+    border-radius:24px;
+  }
+  .boardroom-photo-title{
+    font-size:clamp(40px,13vw,66px);
+  }
+}
+@media(max-height:720px){
+  .fm-side-brand{
+    min-height:64px!important;
+    padding-top:8px!important;
+    padding-bottom:8px!important;
+  }
+  .fm-side-scroll{
+    padding-top:7px!important;
+    padding-bottom:10px!important;
+  }
+  .fm-side-footer{
+    gap:3px!important;
+    padding-top:6px!important;
+  }
+  .fm-side-footer .fm-side-action{
+    min-height:34px!important;
+    height:34px!important;
+  }
+  .fm-side-clock{
+    display:none!important;
+  }
 }
 
 </style>
@@ -3081,16 +3142,34 @@ body.fm-transfer-menu-open .fm-side-scroll{
 
 <main class="app">
   <!-- ===================== SECTION: BOARDROOM HERO ===================== -->
-  <section class="board-hero">
-    <div class="board-hero-content">
-      <div class="board-hero-logo"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
-      <div class="kicker"><span class="kicker-dot"></span> Executive department</div>
-      <h2>Board<span>Room</span></h2>
-      <p>Board confidence, supporter mood, job security, club objectives and the long-term Aurora City FC income mission.</p>
-      <div class="hero-actions">
-        <span class="pill" id="lastUpdated">Last updated: loading…</span>
-        <span class="pill">Season Objective: £500/month</span>
-        <span class="pill">Long-Term Mission: £2,000/month</span>
+  <section class="boardroom-photo-hero" aria-label="Boardroom executive suite">
+    <img class="boardroom-photo-banner"
+         src="assets/aurora-city-fc/boardroom-executive-suite.png"
+         alt="Aurora City FC executive boardroom meeting">
+
+    <div class="boardroom-photo-content">
+      <div class="boardroom-photo-kicker">
+        <span class="boardroom-photo-dot"></span>
+        Executive department
+      </div>
+
+      <h2 class="boardroom-photo-title">Board<span>Room</span></h2>
+
+      <p class="boardroom-photo-sub">
+        Board confidence, supporter mood, job security, club objectives
+        and the long-term Aurora City FC income mission.
+      </p>
+
+      <div class="boardroom-photo-actions">
+        <span class="boardroom-photo-pill" id="lastUpdated">
+          Last updated: loading…
+        </span>
+        <span class="boardroom-photo-pill">
+          Season Objective: £500/month
+        </span>
+        <span class="boardroom-photo-pill">
+          Long-Term Mission: £2,000/month
+        </span>
       </div>
     </div>
   </section>
@@ -4062,59 +4141,7 @@ setTimeout(()=>{
 <script>
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
-<aside class="aurora-system-panel" id="auroraSystemPanel" aria-hidden="true">
-  <div class="aurora-system-head"><h3>Aurora System Check</h3><button class="aurora-system-close" id="auroraSystemClose" type="button" aria-label="Close system check">×</button></div>
-  <div class="aurora-system-list" id="auroraSystemList"><div class="aurora-system-row"><i class="aurora-system-dot"></i><div><strong>Waiting for live data</strong><span>Open after the page has finished loading.</span></div></div></div>
-</aside>
-
-
-<script>
-(function(){
-  const button=document.getElementById('auroraSystemButton');
-  const panel=document.getElementById('auroraSystemPanel');
-  const close=document.getElementById('auroraSystemClose');
-  const list=document.getElementById('auroraSystemList');
-  if(!button||!panel||!list) return;
-  const parseDate=row=>{
-    const raw=row?.date??row?.Date??row?.timestamp??row?.Timestamp??row?.updated_at??row?.Updated??row?.time;
-    const d=raw?new Date(raw):null; return d&&!Number.isNaN(d.getTime())?d:null;
-  };
-  const ticker=row=>String(row?.ticker??row?.Ticker??'').trim().toUpperCase().replace('LON:','').replace('.L','');
-  const value=row=>{
-    const raw=row?.current_value??row?.market_value??row?.holding_value??row?.value??row?.Value;
-    const n=Number(String(raw??'').replace(/[£,%]/g,'')); return Number.isFinite(n)?n:0;
-  };
-  const qty=row=>{const n=Number(String(row?.shares??row?.quantity??row?.units??'').replace(/,/g,''));return Number.isFinite(n)?n:0;};
-  function build(){
-    const s=(typeof state!=='undefined'&&state)||{};
-    const holdings=Array.isArray(s.holdings)?s.holdings:[];
-    const active=holdings.filter(r=>qty(r)>0||value(r)>0);
-    const counts=new Map(); active.forEach(r=>{const t=ticker(r);if(t)counts.set(t,(counts.get(t)||0)+1);});
-    const duplicates=[...counts].filter(([,n])=>n>1);
-    const missingAccount=active.filter(r=>!String(r.account??r.Account??r.platform??r.broker??'').trim()).length;
-    const valuationRows=[...(s.watchlist||[]),...(s.scout||[]),...(s.globalWatchlist||[])];
-    const missingFair=valuationRows.filter(r=>ticker(r)&&!(r.fair_value??r['Fair Value']??r.target_price??r['Target Price'])).length;
-    const allRows=Object.values(s).flatMap(v=>Array.isArray(v)?v:[]);
-    const latest=allRows.map(parseDate).filter(Boolean).sort((a,b)=>b-a)[0];
-    const ageHours=latest?(Date.now()-latest.getTime())/36e5:NaN;
-    const extra=(typeof window.AURORA_PAGE_CHECKS==='function'?window.AURORA_PAGE_CHECKS():[])||[];
-    const checks=[
-      {level:active.length?'ok':'bad',title:`${active.length} active holding rows`,detail:active.length?'Holdings are available to the page.':'No active holdings were detected.'},
-      {level:missingAccount?'warn':'ok',title:missingAccount?`${missingAccount} holding rows missing an account`:'Account labels complete',detail:missingAccount?'Add IG ISA, Trade 212 or the correct platform to prevent scope errors.':'Account-scoped calculations can be applied safely.'},
-      {level:duplicates.length?'warn':'ok',title:duplicates.length?`${duplicates.length} tickers appear in multiple accounts`:'No unexpected duplicate tickers',detail:duplicates.length?duplicates.slice(0,6).map(([t,n])=>`${t} ×${n}`).join(' • '):'Unique-ticker and account totals can be separated deliberately.'},
-      {level:missingFair?'warn':'ok',title:missingFair?`${missingFair} valuation rows missing fair value`:'Fair-value fields available',detail:missingFair?'Those rows will show a neutral valuation until the sheet is completed.':'Transfer valuation indicators have source data.'},
-      {level:Number.isFinite(ageHours)&&ageHours>26?'bad':Number.isFinite(ageHours)&&ageHours>8?'warn':'ok',title:latest?`Latest dated row: ${latest.toLocaleString('en-GB')}`:'No dated data row found',detail:Number.isFinite(ageHours)?`${ageHours.toFixed(1)} hours old.`:'The page can still run, but true data freshness cannot be confirmed.'},
-      ...extra
-    ];
-    list.innerHTML=checks.map(c=>`<div class="aurora-system-row ${c.level==='ok'?'':c.level}"><i class="aurora-system-dot"></i><div><strong>${c.title}</strong><span>${c.detail}</span></div></div>`).join('');
-  }
-  function toggle(open){panel.classList.toggle('open',open);panel.setAttribute('aria-hidden',String(!open));if(open)build();}
-  button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
-})();
-</script>
-
-
-  </div>
+</div>
 </div>
 
 <script id="aurora-universal-sidebar">
@@ -4338,14 +4365,14 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 
   const body = document.body;
   const transferMenu = document.getElementById("transferSideMenu");
-  const systemButton = document.getElementById("auroraSystemButton");
-
-  body.classList.toggle("fm-has-system-check", Boolean(systemButton));
 
   if (!transferMenu) return;
 
   const updateFooter = () => {
-    body.classList.toggle("fm-transfer-menu-open", transferMenu.open);
+    body.classList.toggle(
+      "fm-transfer-menu-open",
+      transferMenu.open
+    );
   };
 
   transferMenu.addEventListener("toggle", updateFooter);
