@@ -5,11 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#030712" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Performance Analysis Room</title>
+<!-- Build: Universal Slide-Out Sidebar • 19 Jul 2026 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -52,400 +56,619 @@ a{color:inherit;text-decoration:none}button,input{font:inherit}
 @media(max-width:760px){.topbar-inner{align-items:flex-start}.brand h1{font-size:19px}.brand p{font-size:11px}.crest{width:48px;height:48px}.nav{gap:6px}.nav a,.nav button{padding:8px 10px;font-size:11px}.app{padding:0 11px 42px}.hero{border-radius:24px}.hero-inner{padding:20px}.hero h2{font-size:40px}.score-strip{grid-template-columns:1fr 1fr;gap:10px}.score-card{min-height:116px;padding:15px}.score-card strong{font-size:21px}.panel.span-8,.panel.span-7,.panel.span-6,.panel.span-5,.panel.span-4{grid-column:span 12}.chart-wrap,.chart-wrap.tall{height:300px}.verdict-grid{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.tactics-board{min-height:220px}.tactic-chip{min-width:70px;padding:7px 8px}.tactic-chip strong{font-size:11px}}
 @media(max-width:480px){.score-strip{grid-template-columns:1fr}.hero h2{font-size:35px}.hero-tags{display:grid}.hero-tag{text-align:center}.chart-wrap{height:280px}.tc1{left:24%}.tc2{left:73%}.tc4{left:25%}.tc5{left:75%}}
 
-/* ===================== AURORA PNG PHOTO HERO UPDATE ===================== */
-/* Matches the photographic Media Centre / Training Ground hero treatment. */
-.aurora-dept-hero.aurora-transfer-hero,
-.aurora-dept-hero.aurora-board-hero,
-.aurora-dept-hero.aurora-squad-hero{
-  position:relative!important;
-  isolation:isolate!important;
-  display:flex!important;
-  align-items:flex-end!important;
+
+/* ================= UNIVERSAL AURORA SLIDE-OUT SIDEBAR ================= */
+:root{
+  --fm-sidebar:238px;
+  --fm-sidebar-compact:214px;
+}
+
+html{scroll-behavior:smooth}
+body{overflow-x:hidden}
+
+.fm-shell{
+  display:block!important;
+  min-height:100vh;
+}
+
+.fm-sidebar{
+  position:fixed!important;
+  top:0!important;
+  left:0!important;
+  width:var(--fm-sidebar)!important;
+  height:100vh!important;
+  z-index:110!important;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  transform:translateX(0);
+  border-right:1px solid rgba(125,211,252,.18);
+  background:
+    radial-gradient(circle at 20% 0%,rgba(34,211,238,.12),transparent 30%),
+    linear-gradient(180deg,rgba(5,18,38,.99),rgba(2,7,18,.995));
+  box-shadow:18px 0 60px rgba(0,0,0,.30);
+  transition:transform .26s cubic-bezier(.2,.8,.2,1);
+  will-change:transform;
+}
+
+.fm-workspace{
+  position:relative;
+  min-width:0;
+  margin-left:var(--fm-sidebar);
+  transition:margin-left .26s cubic-bezier(.2,.8,.2,1);
+}
+
+body.fm-sidebar-hidden .fm-sidebar{
+  transform:translateX(calc(-100% - 18px));
+}
+
+body.fm-sidebar-hidden .fm-workspace{
+  margin-left:0;
+}
+
+.fm-side-brand{
+  position:relative;
+  flex:0 0 auto;
+  min-height:82px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 15px;
+  border-bottom:1px solid rgba(125,211,252,.14);
+  background:rgba(2,6,18,.34);
+}
+
+.fm-side-crest{
+  width:48px;
+  height:48px;
+  flex:0 0 auto;
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.28);
+  border-radius:15px;
+  box-shadow:0 0 26px rgba(34,211,238,.16);
+}
+
+.fm-side-crest img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.fm-side-brand strong{
+  display:block;
+  color:#f0f9ff;
+  font-size:15px;
+  letter-spacing:-.035em;
+}
+
+.fm-side-brand span{
+  display:block;
+  margin-top:4px;
+  color:#67e8f9;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.fm-side-scroll{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  padding:11px 9px 20px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(125,211,252,.25) transparent;
+}
+
+.fm-nav-group{
+  margin:13px 10px 7px;
+  color:#64748b;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+
+.fm-side-link{
+  min-height:42px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr);
+  align-items:center;
+  gap:7px;
+  margin:2px 0;
+  padding:7px 9px;
+  border:1px solid transparent;
+  border-radius:11px;
+  color:#cbd5e1;
+  background:transparent;
+  font-size:13px;
+  font-weight:750;
+  transition:background .18s,border-color .18s,color .18s,transform .18s;
+}
+
+.fm-side-link:hover{
+  color:#f0f9ff;
+  border-color:rgba(125,211,252,.16);
+  background:rgba(30,64,175,.18);
+  transform:translateX(2px);
+}
+
+.fm-side-link.active{
+  color:#fff;
+  border-color:rgba(34,211,238,.40);
+  background:linear-gradient(90deg,rgba(14,116,144,.62),rgba(30,64,175,.36));
+  box-shadow:inset 3px 0 0 #67e8f9,0 8px 22px rgba(2,132,199,.12);
+}
+
+.fm-side-icon{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:rgba(148,163,184,.08);
+  color:#7dd3fc;
+  font-size:15px;
+}
+
+.fm-side-link.active .fm-side-icon{
+  color:#ecfeff;
+  background:rgba(34,211,238,.18);
+}
+
+.fm-side-folder{
+  margin:2px 0;
+  overflow:hidden;
+  border:1px solid transparent;
+  border-radius:11px;
+}
+
+.fm-side-folder[open],
+.fm-side-folder.active{
+  border-color:rgba(125,211,252,.16);
+  background:rgba(8,47,73,.18);
+}
+
+.fm-side-folder summary{
+  min-height:42px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) 18px;
+  align-items:center;
+  gap:7px;
+  padding:7px 9px;
+  border-radius:11px;
+  color:#cbd5e1;
+  cursor:pointer;
+  list-style:none;
+  font-size:13px;
+  font-weight:750;
+  user-select:none;
+  transition:background .18s,color .18s;
+}
+
+.fm-side-folder summary::-webkit-details-marker{display:none}
+
+.fm-side-folder summary:hover,
+.fm-side-folder.active summary{
+  color:#f0f9ff;
+  background:rgba(30,64,175,.18);
+}
+
+.fm-folder-arrow{
+  color:#64748b;
+  font-size:17px;
+  text-align:center;
+  transition:transform .18s,color .18s;
+}
+
+.fm-side-folder[open] .fm-folder-arrow{
+  color:#67e8f9;
+  transform:rotate(90deg);
+}
+
+.fm-side-submenu{
+  display:grid;
+  gap:2px;
+  padding:2px 7px 9px 42px;
+}
+
+.fm-side-submenu a{
+  position:relative;
+  min-height:31px;
+  display:flex;
+  align-items:center;
+  padding:6px 9px;
+  border-radius:8px;
+  color:#8fa2ba;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.2;
+}
+
+.fm-side-submenu a:before{
+  content:"";
+  position:absolute;
+  left:-12px;
+  width:7px;
+  height:1px;
+  background:rgba(125,211,252,.28);
+}
+
+.fm-side-submenu a:hover,
+.fm-side-submenu a.active{
+  color:#e0f2fe;
+  background:rgba(30,64,175,.22);
+}
+
+.fm-side-footer{
+  flex:0 0 auto;
+  display:grid;
+  gap:5px;
+  padding:10px 9px 13px;
+  border-top:1px solid rgba(125,211,252,.14);
+  background:rgba(2,6,18,.54);
+}
+
+.fm-side-action,
+.fm-side-footer .aurora-system-button{
+  position:static!important;
+  right:auto!important;
+  bottom:auto!important;
+  z-index:auto!important;
   width:100%!important;
-  height:auto!important;
-  min-height:460px!important;
-  max-height:none!important;
-  margin:18px 0 16px!important;
-  overflow:hidden!important;
-  padding:24px!important;
-  border:1px solid rgba(125,211,252,.24)!important;
-  border-radius:28px!important;
-  box-shadow:var(--shadow)!important;
+  min-height:42px!important;
+  display:grid!important;
+  grid-template-columns:30px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:7px!important;
+  padding:7px 9px!important;
+  border:1px solid rgba(125,211,252,.13)!important;
+  border-radius:11px!important;
+  background:rgba(15,23,42,.46)!important;
+  color:#cbd5e1!important;
+  text-align:left!important;
+  font-size:13px!important;
+  font-weight:750!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+  box-shadow:none!important;
+  cursor:pointer;
 }
 
-.aurora-dept-hero.aurora-transfer-hero{
-  background:
-    linear-gradient(90deg,rgba(2,6,23,.90) 0%,rgba(2,6,23,.64) 46%,rgba(2,6,23,.20) 100%),
-    url("assets/aurora-city-fc/transfer-center-war-room.png")
-    center center/cover no-repeat!important;
+.fm-side-action:before,
+.fm-side-footer .aurora-system-button:before{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:rgba(148,163,184,.08);
+  color:#7dd3fc;
 }
 
-.aurora-dept-hero.aurora-board-hero{
-  background:
-    linear-gradient(90deg,rgba(2,6,23,.90) 0%,rgba(2,6,23,.62) 46%,rgba(2,6,23,.18) 100%),
-    url("assets/aurora-city-fc/boardroom-executive-suite.png")
-    center center/cover no-repeat!important;
+.fm-side-action:before{content:"↻"}
+.fm-side-footer .aurora-system-button:before{content:"✓"}
+
+.fm-side-action:hover,
+.fm-side-footer .aurora-system-button:hover{
+  color:#f0f9ff!important;
+  border-color:rgba(125,211,252,.24)!important;
+  background:rgba(30,64,175,.18)!important;
 }
 
-.aurora-dept-hero.aurora-squad-hero{
-  background:
-    linear-gradient(90deg,rgba(2,6,23,.90) 0%,rgba(2,6,23,.60) 46%,rgba(2,6,23,.16) 100%),
-    url("assets/aurora-city-fc/squad-hub-tactical-room.png")
-    center center/cover no-repeat!important;
+.fm-side-clock{
+  padding:6px 10px 2px;
+  color:#64748b;
+  font-size:10px;
+  letter-spacing:.05em;
+  text-align:center;
 }
 
-.aurora-dept-hero .aurora-dept-copy{
-  position:relative!important;
-  z-index:2!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:flex-end!important;
-  width:min(760px,100%)!important;
-  min-width:0!important;
-  min-height:0!important;
-  padding:0!important;
-  background:none!important;
+.fm-sidebar-collapse{
+  position:absolute;
+  top:50%;
+  right:-14px;
+  z-index:3;
+  width:28px;
+  height:62px;
+  display:grid;
+  place-items:center;
+  transform:translateY(-50%);
+  border:1px solid rgba(34,211,238,.30);
+  border-left:0;
+  border-radius:0 12px 12px 0;
+  background:rgba(4,18,36,.97);
+  color:#67e8f9;
+  font-size:24px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:9px 0 24px rgba(0,0,0,.30);
 }
 
-.aurora-dept-hero .aurora-dept-scene{
+.fm-sidebar-collapse:hover{
+  color:#ecfeff;
+  background:rgba(8,47,73,.98);
+}
+
+.fm-sidebar-edge-zone{
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:109;
+  width:24px;
+  opacity:0;
+  pointer-events:none;
+  cursor:e-resize;
+  touch-action:pan-y;
+  transition:opacity .18s ease;
+}
+
+body.fm-sidebar-hidden .fm-sidebar-edge-zone{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.fm-sidebar-edge-handle{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:18px;
+  height:92px;
+  display:grid;
+  place-items:center;
+  transform:translateY(-50%);
+  border:1px solid rgba(34,211,238,.34);
+  border-left:0;
+  border-radius:0 13px 13px 0;
+  background:linear-gradient(180deg,rgba(4,18,36,.98),rgba(8,47,73,.94));
+  color:#67e8f9;
+  font-size:21px;
+  font-weight:1000;
+  box-shadow:8px 0 28px rgba(0,0,0,.34),0 0 18px rgba(34,211,238,.08);
+}
+
+.fm-sidebar-edge-zone:hover .fm-sidebar-edge-handle,
+.fm-sidebar-edge-zone:focus .fm-sidebar-edge-handle{
+  color:#ecfeff;
+  border-color:rgba(34,211,238,.56);
+  background:linear-gradient(180deg,rgba(8,47,73,.98),rgba(14,116,144,.82));
+}
+
+.fm-sidebar,
+.fm-sidebar-edge-zone{
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* Remove old page-level navigation shells after the HTML is replaced. */
+.fm-workspace > .topbar,
+.fm-workspace > .transfer-command-bar{
   display:none!important;
 }
 
-.aurora-dept-hero .aurora-dept-title{
-  font-size:clamp(42px,8vw,92px)!important;
-  line-height:.9!important;
-  letter-spacing:-.07em!important;
-  margin:14px 0 0!important;
-  text-transform:uppercase!important;
+/* Fixed page utilities follow the sidebar width. */
+.bottom-ticker{
+  left:var(--fm-sidebar)!important;
+  transition:left .26s cubic-bezier(.2,.8,.2,1);
 }
 
-.aurora-dept-hero .aurora-dept-title span{
-  display:block!important;
+body.fm-sidebar-hidden .bottom-ticker{
+  left:0!important;
 }
 
-.aurora-dept-hero .aurora-dept-sub{
-  max-width:680px!important;
-  margin:14px 0 0!important;
-  color:var(--muted)!important;
-  font-size:16px!important;
-  line-height:1.5!important;
+/* The system-check popup remains usable from the shared sidebar. */
+.aurora-system-panel{
+  right:18px!important;
 }
 
-.aurora-dept-hero .hero-actions{
-  margin-top:18px!important;
+body.fm-sidebar-hidden .aurora-system-panel{
+  right:18px!important;
 }
 
-/* Analysis Room keeps all live IDs, but uses a clean photo hero. */
-.hero.aurora-analysis-photo-hero{
-  position:relative!important;
-  overflow:hidden!important;
-  min-height:460px!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  padding:24px!important;
-  border:1px solid rgba(125,211,252,.24)!important;
-  border-radius:28px!important;
-  margin:18px 0 16px!important;
-  box-shadow:var(--shadow)!important;
-  background:
-    linear-gradient(90deg,rgba(2,6,23,.90) 0%,rgba(2,6,23,.62) 46%,rgba(2,6,23,.18) 100%),
-    url("assets/aurora-city-fc/analysis-room-performance-lab.png")
-    center center/cover no-repeat!important;
+/* Transfer deep links no longer need to clear a top navigation bar. */
+#transfer-overview,
+#best-return-allocation,
+#top-transfer-board,
+#deal-sheet,
+#registration-desk,
+#incoming-offers,
+#sell-desk,
+#transfer-bench,
+#no-buy-watch{
+  scroll-margin-top:18px!important;
 }
 
-.hero.aurora-analysis-photo-hero .hero-inner{
-  position:relative!important;
-  z-index:2!important;
-  display:block!important;
-  width:min(760px,100%)!important;
-  padding:0!important;
-}
+@media(max-width:1180px){
+  .fm-sidebar{
+    width:var(--fm-sidebar-compact)!important;
+  }
 
-.hero.aurora-analysis-photo-hero .tactics-board{
-  position:absolute!important;
-  width:1px!important;
-  height:1px!important;
-  overflow:hidden!important;
-  opacity:0!important;
-  pointer-events:none!important;
-  clip-path:inset(50%)!important;
-}
+  .fm-workspace{
+    margin-left:var(--fm-sidebar-compact);
+  }
 
-.hero.aurora-analysis-photo-hero h2{
-  font-size:clamp(42px,8vw,92px)!important;
-  line-height:.9!important;
-  letter-spacing:-.07em!important;
-  margin:14px 0 0!important;
-  text-transform:uppercase!important;
-}
+  .bottom-ticker{
+    left:var(--fm-sidebar-compact)!important;
+  }
 
-.hero.aurora-analysis-photo-hero h2 span{
-  display:block!important;
-  color:var(--accent)!important;
-}
-
-.hero.aurora-analysis-photo-hero .hero-copy{
-  max-width:680px!important;
-  margin:14px 0 0!important;
-  color:var(--muted)!important;
-  font-size:16px!important;
-  line-height:1.5!important;
-}
-
-@media(max-width:760px){
-  .aurora-dept-hero.aurora-transfer-hero,
-  .aurora-dept-hero.aurora-board-hero,
-  .aurora-dept-hero.aurora-squad-hero,
-  .hero.aurora-analysis-photo-hero{
-    min-height:390px!important;
-    padding:18px!important;
-    background-position:center center!important;
+  .fm-side-link,
+  .fm-side-folder summary,
+  .fm-side-action,
+  .fm-side-footer .aurora-system-button{
+    font-size:12px!important;
   }
 }
 
-
-/* ===================== AURORA HOME-STYLE HERO MASTER ===================== */
-.aurora-home-hero{
-  display:grid;
-  grid-template-columns:1.25fr .75fr;
-  gap:14px;
-  margin:0 0 14px;
-  width:100%;
-  max-width:100%;
-  min-width:0;
-}
-.aurora-home-hero-card{
-  --aurora-hero-image:none;
-  --aurora-hero-mark:"AC";
-  position:relative;
-  isolation:isolate;
-  overflow:hidden;
-  min-width:0;
-  min-height:300px;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  border:1px solid var(--line2,rgba(96,165,250,.22));
-  border-radius:calc(var(--radius,18px) + 4px);
-  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
-  padding:20px;
-  background:
-    linear-gradient(90deg,rgba(2,6,23,.91) 0%,rgba(2,6,23,.72) 44%,rgba(2,6,23,.25) 100%),
-    radial-gradient(circle at 78% 18%,rgba(34,211,238,.18),transparent 36%),
-    var(--aurora-hero-image) center center/cover no-repeat,
-    linear-gradient(135deg,rgba(8,47,73,.72),rgba(15,23,42,.92));
-}
-.aurora-home-hero-card::before{
-  content:"";
-  position:absolute;
-  z-index:-1;
-  inset:auto -80px -115px auto;
-  width:260px;
-  height:260px;
-  border-radius:50%;
-  border:36px solid rgba(96,165,250,.08);
-  pointer-events:none;
-}
-.aurora-home-hero-card::after{
-  content:var(--aurora-hero-mark);
-  position:absolute;
-  z-index:-1;
-  right:22px;
-  bottom:14px;
-  color:rgba(226,232,240,.055);
-  font-size:clamp(70px,10vw,150px);
-  font-weight:1000;
-  letter-spacing:-.08em;
-  pointer-events:none;
-}
-.aurora-home-kicker{
-  display:inline-flex;
-  align-items:center;
-  align-self:flex-start;
-  gap:8px;
-  padding:6px 10px;
-  border:1px solid rgba(191,219,254,.18);
-  border-radius:999px;
-  background:rgba(15,23,42,.52);
-  color:#bfdbfe;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-}
-.aurora-home-kicker-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#34d399;
-  box-shadow:0 0 0 4px rgba(52,211,153,.14);
-}
-.aurora-home-hero-title{
-  max-width:780px;
-  margin:16px 0 10px;
-  color:var(--text,#eef7ff);
-  font-size:clamp(31px,7vw,64px);
-  line-height:.92;
-  letter-spacing:-.06em;
-}
-.aurora-home-hero-sub{
-  max-width:720px;
-  margin:0;
-  color:var(--muted,#9fb2c8);
-  font-size:15px;
-  line-height:1.45;
-}
-.aurora-home-hero-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-top:18px;
-}
-.aurora-home-pill{
-  border:1px solid var(--line,rgba(148,163,184,.18));
-  border-radius:999px;
-  padding:9px 12px;
-  background:rgba(2,6,23,.58);
-  color:var(--soft,#d6e4f5);
-  font-size:12px;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-}
-.aurora-home-scoreboard{
-  min-width:0;
-  display:grid;
-  grid-template-rows:repeat(3,minmax(0,1fr));
-  gap:12px;
-}
-.aurora-home-score-card{
-  min-width:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  border:1px solid var(--line,rgba(148,163,184,.18));
-  border-radius:var(--radius,18px);
-  padding:16px;
-  background:linear-gradient(180deg,rgba(15,23,42,.90),rgba(7,17,31,.90));
-  box-shadow:var(--shadow,0 24px 70px rgba(0,0,0,.42));
-}
-.aurora-home-score-card small{
-  display:block;
-  margin-bottom:5px;
-  color:var(--muted,#9fb2c8);
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.aurora-home-score-card strong{
-  display:block;
-  color:var(--text,#eef7ff);
-  font-size:clamp(20px,2.1vw,26px);
-  line-height:1.05;
-  letter-spacing:-.04em;
-  overflow-wrap:anywhere;
-}
-.aurora-home-score-card span{
-  display:block;
-  margin-top:4px;
-  color:var(--muted,#9fb2c8);
-  font-size:12px;
-  line-height:1.3;
-  overflow-wrap:anywhere;
-}
-.aurora-home-data-hooks{
-  position:absolute!important;
-  width:1px!important;
-  height:1px!important;
-  overflow:hidden!important;
-  opacity:0!important;
-  pointer-events:none!important;
-  clip-path:inset(50%)!important;
-}
 @media(max-width:900px){
-  .aurora-home-hero{grid-template-columns:1fr}
-  .aurora-home-scoreboard{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:none}
+  .fm-sidebar{
+    width:198px!important;
+  }
+
+  .fm-workspace{
+    margin-left:198px;
+  }
+
+  .bottom-ticker{
+    left:198px!important;
+  }
+
+  body.fm-sidebar-hidden .fm-workspace{
+    margin-left:0;
+  }
+
+  body.fm-sidebar-hidden .bottom-ticker{
+    left:0!important;
+  }
+
+  .fm-side-brand{
+    padding-left:10px;
+    padding-right:10px;
+  }
 }
-@media(max-width:760px){
-  .aurora-home-hero,
-  .aurora-home-scoreboard{
-    width:100%!important;
-    max-width:100%!important;
-    min-width:0!important;
+
+@media(pointer:coarse){
+  .fm-sidebar-edge-zone{width:30px}
+
+  .fm-sidebar-edge-handle{
+    width:21px;
+    height:104px;
   }
-  .aurora-home-hero{grid-template-columns:1fr!important}
-  .aurora-home-scoreboard{grid-template-columns:1fr!important}
-  .aurora-home-hero-card,
-  .aurora-home-score-card{
-    width:100%!important;
-    max-width:100%!important;
-    min-width:0!important;
-    overflow:hidden!important;
+
+  .fm-sidebar-collapse{
+    width:31px;
+    height:68px;
+    right:-17px;
   }
-  .aurora-home-hero-card{min-height:330px;background-position:center center}
 }
 
 </style>
 <script src="AuroraFCData.js"></script>
 </head>
 <body>
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
-      <div><h1>Aurora City FC</h1><p>Performance Analysis Room • Data & Tactics</p></div>
-    </div>
-    <div class="nav">
-      <a href="AuroraCityFC_ManagerDashboard.html">Home</a>
-      <a href="AuroraCityFC_TransferCentre.html">Transfers</a>
-      <a href="AuroraCityFC_Boardroom.html">Boardroom</a>
-      <a href="AuroraCityFC_SquadHub.html">Squad Hub</a>
-      <a class="active" href="AuroraCityFC_AnalysisRoom.html">Analysis</a>
-      <a href="AuroraCityFC_MediaCentre.html">Media</a>
-      <a href="AuroraCityFC_TrainingGround.html">Training</a>
-      <button class="refresh-btn" id="refreshBtn">Refresh</button>
-    </div>
-  </div>
+
+<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone"
+     aria-label="Open navigation" role="button" tabindex="0">
+  <span class="fm-sidebar-edge-handle">›</span>
 </div>
+
+<div class="fm-shell">
+  <aside class="fm-sidebar" aria-label="Aurora City FC navigation">
+    <div class="fm-side-brand">
+      <button class="fm-sidebar-collapse" id="fmSidebarCollapse"
+              type="button" aria-label="Hide navigation"
+              title="Hide navigation">‹</button>
+
+      <div class="fm-side-crest">
+        <img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"
+             alt="Aurora City FC crest">
+      </div>
+
+      <div>
+        <strong>Aurora City FC</strong>
+        <span>Club HQ</span>
+      </div>
+    </div>
+
+    <nav class="fm-side-scroll">
+      <div class="fm-nav-group">Navigation</div>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_ManagerDashboard.html">
+        <span class="fm-side-icon">⌂</span>
+        <span>Home</span>
+      </a>
+
+      <div class="fm-nav-group">Performance</div>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_SquadHub.html">
+        <span class="fm-side-icon">♟</span>
+        <span>Squad Hub</span>
+      </a>
+
+      <a class="fm-side-link active"
+         href="AuroraCityFC_AnalysisRoom.html">
+        <span class="fm-side-icon">⌁</span>
+        <span>Analysis Room</span>
+      </a>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_TrainingGround.html">
+        <span class="fm-side-icon">▲</span>
+        <span>Training Ground</span>
+      </a>
+
+      <div class="fm-nav-group">Recruitment</div>
+
+      <details class="fm-side-folder"
+               id="transferSideMenu">
+        <summary>
+          <span class="fm-side-icon">⇄</span>
+          <span>Transfer Centre</span>
+          <span class="fm-folder-arrow">›</span>
+        </summary>
+
+        <div class="fm-side-submenu">
+          <a href="AuroraCityFC_TransferCentre.html">Transfer Centre Home</a>
+          <a href="AuroraCityFC_TransferCentre.html#transfer-overview">Overview</a>
+          <a href="AuroraCityFC_TransferCentre.html#incoming-offers">Incoming Offers</a>
+          <a href="AuroraCityFC_TransferCentre.html#deal-sheet">Deal Sheet</a>
+          <a href="AuroraCityFC_TransferCentre.html#sell-desk">Sell Desk</a>
+          <a href="AuroraCityFC_TransferCentre.html#best-return-allocation">Best Return</a>
+          <a href="AuroraCityFC_TransferCentre.html#registration-desk">Registration</a>
+          <a href="AuroraCityFC_TransferCentre.html#top-transfer-board">Transfer Board</a>
+          <a href="AuroraCityFC_TransferCentre.html#transfer-bench">Bench</a>
+        </div>
+      </details>
+
+      <div class="fm-nav-group">Club</div>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_Boardroom.html">
+        <span class="fm-side-icon">♜</span>
+        <span>Boardroom</span>
+      </a>
+
+      <a class="fm-side-link"
+         href="AuroraCityFC_MediaCentre.html">
+        <span class="fm-side-icon">●</span>
+        <span>Media Centre</span>
+      </a>
+    </nav>
+
+    <div class="fm-side-footer">
+      <button class="fm-side-action" id="refreshBtn" type="button">Refresh Data</button>
+      
+      <div class="fm-side-clock" id="fmClock">Manager session live</div>
+    </div>
+  </aside>
+
+  <div class="fm-workspace">
+
+
 <main class="app" id="analysis">
-    <section class="aurora-home-hero" aria-label="Analysis Room overview">
-    <div class="aurora-home-hero-card" style="--aurora-hero-image:url('assets/aurora-city-fc/analysis-room-performance-lab.png');--aurora-hero-mark:'AR';">
-      <div class="aurora-home-kicker"><span class="aurora-home-kicker-dot"></span> Performance intelligence live</div>
-      <h1 class="aurora-home-hero-title">Analysis Room</h1>
-      <p class="aurora-home-hero-sub" id="heroCopy">See the whole match through income progression, squad contribution, portfolio shape, yield control and target tracking.</p>
-      <div class="aurora-home-hero-actions">
-        <span class="aurora-home-pill" id="dataFreshness">Aurora data: loading…</span> <span class="aurora-home-pill">Primary Objective: £500/month</span> <span class="aurora-home-pill">Source: AuroraMaster.json</span>
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="kicker"><span class="dot"></span> Performance intelligence live</div>
+        <h2>Analysis Room<span>See the whole match.</span></h2>
+        <p class="hero-copy" id="heroCopy">Loading Aurora’s income form, squad contribution, risk shape and progression towards the next division.</p>
+        <div class="hero-tags">
+          <span class="hero-tag" id="dataFreshness">Aurora data: loading…</span>
+          <span class="hero-tag">Primary objective: £500/month</span>
+          <span class="hero-tag">Charts update from AuroraMaster.json</span>
+        </div>
       </div>
-    <div class="aurora-home-data-hooks" aria-hidden="true">
-      <strong id="boardIncome">Income</strong>
-      <strong id="boardForm">Loading</strong>
-      <strong id="boardShape">Balanced?</strong>
-      <strong id="boardYield">Yield</strong>
-      <strong id="boardTarget">£500/m</strong>
-    </div>
-    </div>
-    <div class="aurora-home-scoreboard">
-      <div class="aurora-home-score-card">
-        <small>Annual Income</small>
-        <strong data-aurora-copy-from="annualIncome">—</strong>
-        <span data-aurora-copy-from="annualIncomeNote">Income engine</span>
-      </div>
-      <div class="aurora-home-score-card">
-        <small>Monthly Income</small>
-        <strong data-aurora-copy-from="monthlyIncome">—</strong>
-        <span data-aurora-copy-from="monthlyIncomeNote">Current run rate</span>
-      </div>
-      <div class="aurora-home-score-card">
-        <small>Target Gap</small>
-        <strong data-aurora-copy-from="targetGap">—</strong>
-        <span data-aurora-copy-from="targetGapNote">Distance to next division</span>
+      <div class="tactics-board" aria-label="Aurora performance tactics board">
+        <div class="halfway"></div><div class="centre-circle"></div>
+        <div class="tactic-chip tc1"><small>Attack</small><strong id="boardIncome">Income</strong></div>
+        <div class="tactic-chip tc2"><small>Form</small><strong id="boardForm">Loading</strong></div>
+        <div class="tactic-chip tc3"><small>Shape</small><strong id="boardShape">Balanced?</strong></div>
+        <div class="tactic-chip tc4"><small>Control</small><strong id="boardYield">Yield</strong></div>
+        <div class="tactic-chip tc5"><small>Target</small><strong id="boardTarget">£500/m</strong></div>
       </div>
     </div>
   </section>
 
-<section class="score-strip">
+  <section class="score-strip">
     <div class="score-card green"><div class="score-icon">⚽</div><small>Annual Income</small><strong id="annualIncome">—</strong><span id="annualIncomeNote">Current squad dividend run rate</span></div>
     <div class="score-card green"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span id="monthlyIncomeNote">Average monthly run rate</span></div>
     <div class="score-card"><div class="score-icon">🏟️</div><small>Club Value</small><strong id="clubValue">—</strong><span id="clubValueNote">All active holdings including Tesco</span></div>
@@ -711,47 +934,220 @@ loadData();
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
 
-<script id="aurora-home-hero-sync">
+  </div>
+</div>
+
+<script id="aurora-universal-sidebar">
 (() => {
   "use strict";
 
-  const targets = Array.from(document.querySelectorAll("[data-aurora-copy-from]"));
-  if (!targets.length) return;
+  const body = document.body;
+  const sidebar = document.querySelector(".fm-sidebar");
+  const workspace = document.querySelector(".fm-workspace");
+  const edgeZone = document.getElementById("fmSidebarEdgeZone");
+  const collapseButton = document.getElementById("fmSidebarCollapse");
+  const transferMenu = document.getElementById("transferSideMenu");
+  const clock = document.getElementById("fmClock");
 
-  const copyOne = target => {
-    const sourceId = target.getAttribute("data-aurora-copy-from");
-    const source = sourceId ? document.getElementById(sourceId) : null;
-    if (!source || source === target) return;
+  if (!sidebar || !workspace || !edgeZone || !collapseButton) return;
 
-    const value = (source.textContent || "").trim();
-    if (value) target.textContent = value;
+  const hiddenClass = "fm-sidebar-hidden";
+  const transferStateKey = "aurora_transfer_sidebar_open";
+  const autoHideDelay = 2600;
+
+  let hideTimer = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchSource = "";
+  let gestureHandled = false;
+
+  const clearHideTimer = () => {
+    if (!hideTimer) return;
+    window.clearTimeout(hideTimer);
+    hideTimer = 0;
   };
 
-  const connect = target => {
-    const sourceId = target.getAttribute("data-aurora-copy-from");
-    const source = sourceId ? document.getElementById(sourceId) : null;
-    copyOne(target);
-    if (!source || source === target) return;
+  const isHidden = () => body.classList.contains(hiddenClass);
 
-    new MutationObserver(() => copyOne(target)).observe(source, {
-      subtree: true,
-      childList: true,
-      characterData: true
+  const showSidebar = () => {
+    clearHideTimer();
+    body.classList.remove(hiddenClass);
+    sidebar.setAttribute("aria-hidden", "false");
+    edgeZone.setAttribute("aria-hidden", "true");
+  };
+
+  const hideSidebar = () => {
+    clearHideTimer();
+    body.classList.add(hiddenClass);
+    sidebar.setAttribute("aria-hidden", "true");
+    edgeZone.setAttribute("aria-hidden", "false");
+  };
+
+  const scheduleHide = (delay = autoHideDelay) => {
+    clearHideTimer();
+    hideTimer = window.setTimeout(() => {
+      if (!sidebar.matches(":hover") &&
+          !sidebar.contains(document.activeElement)) {
+        hideSidebar();
+      }
+    }, delay);
+  };
+
+  const updateClock = () => {
+    if (!clock) return;
+    const now = new Date();
+
+    clock.textContent =
+      now.toLocaleDateString("en-GB", {
+        weekday:"short",
+        day:"2-digit",
+        month:"short"
+      }) +
+      " • " +
+      now.toLocaleTimeString("en-GB", {
+        hour:"2-digit",
+        minute:"2-digit"
+      });
+  };
+
+  const updateTransferActiveLink = () => {
+    if (!transferMenu) return;
+
+    const currentFile =
+      window.location.pathname.split("/").pop() ||
+      "AuroraCityFC_ManagerDashboard.html";
+    const currentHash = window.location.hash || "";
+
+    transferMenu.querySelectorAll(".fm-side-submenu a").forEach(link => {
+      const url = new URL(link.href, window.location.href);
+      const linkFile = url.pathname.split("/").pop();
+      const linkHash = url.hash || "";
+
+      const selected =
+        currentFile === "AuroraCityFC_TransferCentre.html" &&
+        linkFile === currentFile &&
+        (
+          (currentHash && linkHash === currentHash) ||
+          (!currentHash && !linkHash)
+        );
+
+      link.classList.toggle("active", selected);
     });
   };
 
-  const start = () => {
-    targets.forEach(connect);
-    window.setTimeout(() => targets.forEach(copyOne), 250);
-    window.setTimeout(() => targets.forEach(copyOne), 1000);
-    window.setTimeout(() => targets.forEach(copyOne), 3000);
+  collapseButton.addEventListener("click", hideSidebar);
+
+  edgeZone.addEventListener("pointerenter", showSidebar);
+  edgeZone.addEventListener("click", showSidebar);
+  edgeZone.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    showSidebar();
+  });
+
+  sidebar.addEventListener("pointerenter", clearHideTimer);
+  sidebar.addEventListener("pointerleave", () => scheduleHide(1200));
+  sidebar.addEventListener("focusin", clearHideTimer);
+  sidebar.addEventListener("focusout", () => scheduleHide(1500));
+
+  document.addEventListener("mousemove", event => {
+    if (isHidden() && event.clientX <= 18) showSidebar();
+  }, { passive:true });
+
+  workspace.addEventListener("pointerdown", event => {
+    if (!isHidden() && event.pointerType !== "mouse") hideSidebar();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !isHidden()) hideSidebar();
+  });
+
+  const beginTouch = (event, source) => {
+    const touch = event.touches?.[0];
+    if (!touch) return;
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchSource = source;
+    gestureHandled = false;
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start, { once: true });
-  } else {
-    start();
+  const trackTouch = event => {
+    if (gestureHandled) return;
+
+    const touch = event.touches?.[0];
+    if (!touch) return;
+
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+
+    if (Math.abs(deltaY) > Math.abs(deltaX) * 1.15) return;
+
+    if (touchSource === "edge" && deltaX > 42) {
+      gestureHandled = true;
+      showSidebar();
+    }
+
+    if (touchSource === "sidebar" && deltaX < -42) {
+      gestureHandled = true;
+      hideSidebar();
+    }
+  };
+
+  edgeZone.addEventListener(
+    "touchstart",
+    event => beginTouch(event, "edge"),
+    { passive:true }
+  );
+  edgeZone.addEventListener("touchmove", trackTouch, { passive:true });
+
+  sidebar.addEventListener(
+    "touchstart",
+    event => beginTouch(event, "sidebar"),
+    { passive:true }
+  );
+  sidebar.addEventListener("touchmove", trackTouch, { passive:true });
+
+  if (transferMenu) {
+    const currentFile = window.location.pathname.split("/").pop();
+
+    try {
+      if (currentFile === "AuroraCityFC_TransferCentre.html") {
+        transferMenu.open = true;
+      } else {
+        transferMenu.open =
+          sessionStorage.getItem(transferStateKey) === "1";
+      }
+    } catch (_) {}
+
+    transferMenu.addEventListener("toggle", () => {
+      try {
+        sessionStorage.setItem(
+          transferStateKey,
+          transferMenu.open ? "1" : "0"
+        );
+      } catch (_) {}
+    });
   }
+
+  window.addEventListener("hashchange", updateTransferActiveLink);
+  window.addEventListener("pageshow", () => {
+    showSidebar();
+    updateTransferActiveLink();
+    scheduleHide(4200);
+  });
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then(registrations => registrations.forEach(item => item.update()))
+      .catch(() => {});
+  }
+
+  updateClock();
+  window.setInterval(updateClock, 30000);
+  updateTransferActiveLink();
+  showSidebar();
+  scheduleHide(4200);
 })();
 </script>
 
