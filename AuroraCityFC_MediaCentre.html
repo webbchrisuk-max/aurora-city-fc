@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Media Centre</title>
-<!-- Build: Universal Slide-Out Sidebar • 19 Jul 2026 -->
+<!-- Build: Universal Sidebar Footer Fix • 19 Jul 2026 -->
 <style>
 /* ===================== SECTION: ROOT THEME ===================== */
 :root{--bg:#030712;--panel:#07111f;--card:#0d1b34;--line:rgba(148,163,184,.18);--line2:rgba(96,165,250,.26);--txt:#e5eefc;--muted:#93a4bd;--soft:#cbd5e1;--blue:#60a5fa;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--red:#fb7185;--purple:#a78bfa;--shadow:0 18px 55px rgba(0,0,0,.35);--radius:22px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(34,211,238,.18),transparent 34%),radial-gradient(circle at top right,rgba(96,165,250,.18),transparent 36%),linear-gradient(180deg,#020617 0%,#030712 48%,#020617 100%);color:var(--txt);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,100%);margin:0 auto;padding:18px 14px 90px}.topbar{position:sticky;top:0;z-index:20;margin:-18px -14px 18px;padding:12px 14px;backdrop-filter:blur(18px);background:rgba(3,7,18,.88);border-bottom:1px solid var(--line)}.topbar-inner{width:min(1540px,100%);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px;min-width:0}.crest{width:42px;height:42px;background:transparent!important;border:none!important;box-shadow:none!important}.crest img{width:100%;height:100%;object-fit:contain;display:block}.brand h1{font-size:15px;margin:0;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand p{font-size:11px;color:var(--muted);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nav{display:flex;gap:7px;overflow:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nav::-webkit-scrollbar{display:none}.nav a,.refresh-btn{border:1px solid var(--line);background:rgba(15,23,42,.72);color:var(--soft);padding:8px 10px;border-radius:999px;font-size:12px;white-space:nowrap}.refresh-btn{cursor:pointer;color:var(--cyan)}
@@ -551,6 +551,149 @@ body.fm-sidebar-hidden .aurora-system-panel{
     width:31px;
     height:68px;
     right:-17px;
+  }
+}
+
+
+
+/* ================= LOCKED SIDEBAR FOOTER FIX ================= */
+.fm-sidebar{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  height:100dvh!important;
+  min-height:100svh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+}
+
+.fm-side-brand{
+  grid-row:1!important;
+  min-height:76px!important;
+  flex:none!important;
+  position:relative!important;
+  z-index:4!important;
+}
+
+.fm-side-scroll{
+  grid-row:2!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  scroll-padding-bottom:18px!important;
+  padding:10px 9px 18px!important;
+  position:relative!important;
+  z-index:1!important;
+}
+
+.fm-side-scroll:after{
+  content:"";
+  display:block;
+  height:8px;
+}
+
+.fm-side-footer{
+  grid-row:3!important;
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  flex:none!important;
+  width:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:8px 9px calc(10px + env(safe-area-inset-bottom))!important;
+  overflow:visible!important;
+  z-index:6!important;
+  border-top:1px solid rgba(125,211,252,.22)!important;
+  background:linear-gradient(180deg,rgba(3,12,27,.99),rgba(2,7,18,1))!important;
+  box-shadow:0 -14px 28px rgba(0,0,0,.34)!important;
+}
+
+.fm-side-footer .fm-side-action,
+.fm-side-footer .aurora-system-button{
+  min-height:38px!important;
+  height:38px!important;
+  margin:0!important;
+  padding:5px 8px!important;
+  font-size:11px!important;
+  line-height:1!important;
+}
+
+.fm-side-footer .fm-side-action:before,
+.fm-side-footer .aurora-system-button:before{
+  width:25px!important;
+  height:25px!important;
+  border-radius:8px!important;
+}
+
+.fm-side-clock{
+  min-height:18px!important;
+  padding:4px 6px 0!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+}
+
+.fm-side-scroll .fm-nav-group:last-of-type{
+  margin-top:13px!important;
+}
+
+.fm-side-scroll .fm-side-link:last-child{
+  margin-bottom:4px!important;
+}
+
+@supports not (height:100dvh){
+  .fm-sidebar{
+    height:100vh!important;
+    max-height:100vh!important;
+  }
+}
+
+@media(max-height:720px){
+  .fm-side-brand{
+    min-height:64px!important;
+    padding-top:8px!important;
+    padding-bottom:8px!important;
+  }
+
+  .fm-side-crest{
+    width:42px!important;
+    height:42px!important;
+  }
+
+  .fm-side-scroll{
+    padding-top:7px!important;
+    padding-bottom:10px!important;
+  }
+
+  .fm-nav-group{
+    margin-top:8px!important;
+    margin-bottom:4px!important;
+  }
+
+  .fm-side-link,
+  .fm-side-folder summary{
+    min-height:37px!important;
+    padding-top:4px!important;
+    padding-bottom:4px!important;
+  }
+
+  .fm-side-footer{
+    gap:3px!important;
+    padding-top:6px!important;
+  }
+
+  .fm-side-footer .fm-side-action,
+  .fm-side-footer .aurora-system-button{
+    min-height:34px!important;
+    height:34px!important;
+  }
+
+  .fm-side-clock{
+    display:none!important;
   }
 }
 

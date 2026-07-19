@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Performance Analysis Room</title>
-<!-- Build: Universal Slide-Out Sidebar • 19 Jul 2026 -->
+<!-- Build: Universal Sidebar Footer Fix • 19 Jul 2026 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -536,6 +536,149 @@ body.fm-sidebar-hidden .aurora-system-panel{
     width:31px;
     height:68px;
     right:-17px;
+  }
+}
+
+
+
+/* ================= LOCKED SIDEBAR FOOTER FIX ================= */
+.fm-sidebar{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  height:100dvh!important;
+  min-height:100svh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+}
+
+.fm-side-brand{
+  grid-row:1!important;
+  min-height:76px!important;
+  flex:none!important;
+  position:relative!important;
+  z-index:4!important;
+}
+
+.fm-side-scroll{
+  grid-row:2!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  scroll-padding-bottom:18px!important;
+  padding:10px 9px 18px!important;
+  position:relative!important;
+  z-index:1!important;
+}
+
+.fm-side-scroll:after{
+  content:"";
+  display:block;
+  height:8px;
+}
+
+.fm-side-footer{
+  grid-row:3!important;
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  flex:none!important;
+  width:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:8px 9px calc(10px + env(safe-area-inset-bottom))!important;
+  overflow:visible!important;
+  z-index:6!important;
+  border-top:1px solid rgba(125,211,252,.22)!important;
+  background:linear-gradient(180deg,rgba(3,12,27,.99),rgba(2,7,18,1))!important;
+  box-shadow:0 -14px 28px rgba(0,0,0,.34)!important;
+}
+
+.fm-side-footer .fm-side-action,
+.fm-side-footer .aurora-system-button{
+  min-height:38px!important;
+  height:38px!important;
+  margin:0!important;
+  padding:5px 8px!important;
+  font-size:11px!important;
+  line-height:1!important;
+}
+
+.fm-side-footer .fm-side-action:before,
+.fm-side-footer .aurora-system-button:before{
+  width:25px!important;
+  height:25px!important;
+  border-radius:8px!important;
+}
+
+.fm-side-clock{
+  min-height:18px!important;
+  padding:4px 6px 0!important;
+  font-size:9px!important;
+  line-height:1.2!important;
+}
+
+.fm-side-scroll .fm-nav-group:last-of-type{
+  margin-top:13px!important;
+}
+
+.fm-side-scroll .fm-side-link:last-child{
+  margin-bottom:4px!important;
+}
+
+@supports not (height:100dvh){
+  .fm-sidebar{
+    height:100vh!important;
+    max-height:100vh!important;
+  }
+}
+
+@media(max-height:720px){
+  .fm-side-brand{
+    min-height:64px!important;
+    padding-top:8px!important;
+    padding-bottom:8px!important;
+  }
+
+  .fm-side-crest{
+    width:42px!important;
+    height:42px!important;
+  }
+
+  .fm-side-scroll{
+    padding-top:7px!important;
+    padding-bottom:10px!important;
+  }
+
+  .fm-nav-group{
+    margin-top:8px!important;
+    margin-bottom:4px!important;
+  }
+
+  .fm-side-link,
+  .fm-side-folder summary{
+    min-height:37px!important;
+    padding-top:4px!important;
+    padding-bottom:4px!important;
+  }
+
+  .fm-side-footer{
+    gap:3px!important;
+    padding-top:6px!important;
+  }
+
+  .fm-side-footer .fm-side-action,
+  .fm-side-footer .aurora-system-button{
+    min-height:34px!important;
+    height:34px!important;
+  }
+
+  .fm-side-clock{
+    display:none!important;
   }
 }
 
