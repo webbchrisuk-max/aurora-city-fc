@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Performance Analysis Room</title>
-<!-- Build: Distinct Department KPIs • 20 Jul 2026 -->
+<!-- Build: Analysis Room Sector Chart Colour Fix • 20 Jul 2026 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -1458,7 +1458,62 @@ function barChart(id,labels,data,label){
 }
 function doughnutChart(id,labels,data){
   destroyChart(id);const ctx=$(id);if(!ctx)return;
-  charts[id]=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data,borderColor:"rgba(3,7,18,.9)",borderWidth:4,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:"63%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,padding:14,usePointStyle:true}},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.parsed)}`}}}}});
+  const fills=[
+    "rgba(34,211,238,.88)",
+    "rgba(96,165,250,.86)",
+    "rgba(168,85,247,.84)",
+    "rgba(52,211,153,.84)",
+    "rgba(251,191,36,.84)",
+    "rgba(244,114,182,.82)",
+    "rgba(248,113,113,.82)",
+    "rgba(45,212,191,.82)"
+  ];
+  const strokes=[
+    "rgba(103,232,249,.98)",
+    "rgba(147,197,253,.98)",
+    "rgba(196,181,253,.98)",
+    "rgba(134,239,172,.98)",
+    "rgba(253,224,71,.98)",
+    "rgba(251,207,232,.98)",
+    "rgba(254,202,202,.98)",
+    "rgba(153,246,228,.98)"
+  ];
+  const backgroundColor=labels.map((_,i)=>fills[i%fills.length]);
+  const borderColor=labels.map((_,i)=>strokes[i%strokes.length]);
+  charts[id]=new Chart(ctx,{
+    type:"doughnut",
+    data:{
+      labels,
+      datasets:[{
+        data,
+        backgroundColor,
+        borderColor,
+        borderWidth:3,
+        hoverOffset:8,
+        spacing:2
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      cutout:"63%",
+      plugins:{
+        legend:{
+          position:"bottom",
+          labels:{
+            boxWidth:11,
+            padding:14,
+            usePointStyle:true,
+            pointStyle:"circle",
+            color:"#cdd7e5"
+          }
+        },
+        tooltip:{
+          callbacks:{label:c=>`${c.label}: ${money(c.parsed)}`}
+        }
+      }
+    }
+  });
 }
 function targetChart(current){
   destroyChart("targetChart");const remaining=Math.max(0,MONTHLY_TARGET-current);charts.targetChart=new Chart($("targetChart"),{type:"doughnut",data:{labels:["Current monthly income","Gap remaining"],datasets:[{data:[Math.min(current,MONTHLY_TARGET),remaining],backgroundColor:["rgba(52,211,153,.82)","rgba(251,191,36,.28)"],borderColor:["rgba(134,239,172,.95)","rgba(251,191,36,.45)"],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:"70%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,padding:14,usePointStyle:true}},tooltip:{callbacks:{label:c=>`${c.label}: ${money(c.parsed)}/month`}}}}});
@@ -1849,6 +1904,10 @@ document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_AnalysisRoom.
 
 <script id="distinct-kpi-marker">
 document.documentElement.dataset.departmentKpis = "distinct-v29";
+</script>
+
+<script id="sector-chart-colour-marker">
+document.documentElement.dataset.sectorChartBuild = "colour-fix-v30";
 </script>
 </body>
 </html>
