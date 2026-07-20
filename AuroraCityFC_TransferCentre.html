@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: Clean 6 Percent Release Clause • 20 Jul 2026 -->
+<!-- Build: Release Clause Exact Match Fix • 20 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -7067,10 +7067,17 @@ function incomingOfferClauseHtml(offer,clause){
   }
 
   const difference=Number(clause.differenceGbp);
-  const direction=clause.met?'above':'below';
-  const differenceText=Number.isFinite(difference)
-    ? `${money(Math.abs(difference))} ${direction} the 6% target`
-    : `${(clause.premiumRate*100).toFixed(1)}% premium versus a 6% requirement`;
+  const exactMatch=Number.isFinite(difference)&&Math.abs(difference)<0.005;
+
+  let differenceText;
+  if(exactMatch){
+    differenceText='Offer matches the 6% target exactly';
+  }else if(Number.isFinite(difference)){
+    const direction=clause.met?'above':'below';
+    differenceText=`${money(Math.abs(difference))} ${direction} the 6% target`;
+  }else{
+    differenceText=`${(clause.premiumRate*100).toFixed(1)}% premium versus a 6% requirement`;
+  }
 
   return `<div class="offer-clause-result ${clause.met?'met':'short'}">
     <div>
@@ -7593,6 +7600,10 @@ document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_TransferCentr
 
 <script id="release-clause-cleanup-marker">
 document.documentElement.dataset.releaseClauseBuild = "six-percent-clean-v26";
+</script>
+
+<script id="release-clause-exact-marker">
+document.documentElement.dataset.releaseClauseExactBuild = "v27";
 </script>
 </body>
 </html>
