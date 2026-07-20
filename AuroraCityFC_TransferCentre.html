@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: Release Clause Exact Match Fix • 20 Jul 2026 -->
+<!-- Build: Offers Activate At Live Target • 20 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -5042,6 +5042,157 @@ body.fm-transfer-menu-open .fm-side-scroll{
   }
 }
 
+
+
+/* ================= OFFERS ACTIVATE AT LIVE TARGET ================= */
+.offer-card.target-locked{
+  border-color:rgba(251,113,133,.28);
+  filter:saturate(.88);
+}
+.offer-card.target-locked .offer-letterhead,
+.offer-card.target-locked .offer-player-block,
+.offer-card.target-locked .offer-metrics,
+.offer-card.target-locked .offer-reason,
+.offer-card.target-locked .offer-verdict,
+.offer-card.target-locked .offer-expiry{
+  opacity:.88;
+}
+
+.offer-live-target{
+  margin-top:12px;
+  padding:13px 14px;
+  border-radius:17px;
+  border:1px solid rgba(148,163,184,.18);
+  background:rgba(2,8,23,.52);
+}
+.offer-live-target.met{
+  border-color:rgba(52,211,153,.43);
+  background:linear-gradient(135deg,rgba(6,78,59,.38),rgba(2,8,23,.52));
+  box-shadow:inset 3px 0 0 #34d399;
+}
+.offer-live-target.waiting{
+  border-color:rgba(251,113,133,.42);
+  background:linear-gradient(135deg,rgba(127,29,29,.34),rgba(2,8,23,.52));
+  box-shadow:inset 3px 0 0 #fb7185;
+}
+.offer-live-target.unknown{
+  border-color:rgba(251,191,36,.35);
+  background:linear-gradient(135deg,rgba(120,53,15,.28),rgba(2,8,23,.52));
+  box-shadow:inset 3px 0 0 #fbbf24;
+}
+.offer-live-target-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.offer-live-target small{
+  display:block;
+  margin-bottom:4px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.offer-live-target strong{
+  display:block;
+  font-size:16px;
+  line-height:1.15;
+}
+.offer-live-target.met strong{color:#86efac}
+.offer-live-target.waiting strong{color:#fda4af}
+.offer-live-target.unknown strong{color:#fde68a}
+.offer-live-target p{
+  margin:5px 0 0;
+  color:var(--soft);
+  font-size:11px;
+  line-height:1.45;
+}
+.offer-live-target-pill{
+  flex:0 0 auto;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.offer-live-target.met .offer-live-target-pill{
+  color:#bbf7d0;
+  border:1px solid rgba(74,222,128,.35);
+  background:rgba(20,83,45,.40);
+}
+.offer-live-target.waiting .offer-live-target-pill{
+  color:#fecdd3;
+  border:1px solid rgba(251,113,133,.35);
+  background:rgba(127,29,29,.38);
+}
+.offer-live-target.unknown .offer-live-target-pill{
+  color:#fde68a;
+  border:1px solid rgba(251,191,36,.32);
+  background:rgba(120,53,15,.34);
+}
+.offer-target-track{
+  height:8px;
+  margin-top:11px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(15,23,42,.92);
+  border:1px solid rgba(148,163,184,.14);
+}
+.offer-target-fill{
+  display:block;
+  height:100%;
+  min-width:2px;
+  border-radius:inherit;
+  transition:width .3s ease;
+}
+.offer-live-target.met .offer-target-fill{
+  background:linear-gradient(90deg,#10b981,#4ade80);
+}
+.offer-live-target.waiting .offer-target-fill{
+  background:linear-gradient(90deg,#e11d48,#fb7185);
+}
+.offer-live-target.unknown .offer-target-fill{
+  background:linear-gradient(90deg,#d97706,#fbbf24);
+}
+.offer-target-numbers{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:7px;
+  color:var(--muted);
+  font-size:10px;
+}
+.offer-target-numbers b{
+  color:var(--soft);
+}
+
+.offer-action-lock{
+  margin-top:12px;
+  padding:11px 13px;
+  border-radius:15px;
+  border:1px solid rgba(251,113,133,.30);
+  background:rgba(127,29,29,.20);
+  color:#fecdd3;
+  font-size:11px;
+  font-weight:850;
+  line-height:1.45;
+  text-align:center;
+}
+.offer-market-count{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:850;
+}
+
+@media(max-width:620px){
+  .offer-live-target-head{
+    flex-direction:column;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -5493,7 +5644,7 @@ const SECTOR_LIMITS = {
   single_holding: 0.22
 };
 
-let state = { holdings:[], watchlist:[], scout:[], auroraTimes:[] };
+let state = { holdings:[], watchlist:[], scout:[], auroraTimes:[], fxRates:[] };
 const excludedTickers = new Set();
 const manualAmounts = new Map();
 const TRANSFER_SETTINGS_KEY = 'aurora_transfer_settings_v2';
@@ -6733,15 +6884,21 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, auroraTimes] = await Promise.all([
+    const [holdings, watchlist, scout, auroraTimes, fxRates] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
       fetchTab('AuroraScout').catch(()=>[]),
-      fetchTab('AuroraTimes').catch(()=>[])
+      fetchTab('AuroraTimes').catch(()=>[]),
+      fetchTab('FXRates').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout, auroraTimes };
+    state = { holdings, watchlist, scout, auroraTimes, fxRates };
     renderAll();
     renderSellDeskHoldings();
+
+    // Incoming offers are loaded separately from the Registration Desk.
+    // Re-render them after live holdings arrive so the fixed target can be
+    // checked against the current market price.
+    if(incomingOffers.length) renderIncomingOffers();
   }catch(err){
     console.error(err);
     const fail = `<div class="loading error">${err.message || 'Unable to load AuroraData'}</div>`;
@@ -7003,10 +7160,64 @@ function offerPriceLabel(value,unit,currency){
   return `£${number.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 }
 
+function incomingOfferHolding(offer){
+  const target=registrationShortTicker(offer?.ticker);
+  return (state.holdings||[]).find(row=>
+    registrationShortTicker(row?.ticker)===target &&
+    !['SOLD','EXITED'].includes(String(row?.status||'').toUpperCase())
+  ) || (state.holdings||[]).find(row=>
+    registrationShortTicker(row?.ticker)===target
+  ) || null;
+}
+
+function fxRateToGbp(currency){
+  const code=String(currency||'GBP').trim().toUpperCase();
+  if(code==='GBP') return 1;
+
+  const row=(state.fxRates||[]).find(item=>
+    String(item?.Currency??item?.currency??'').trim().toUpperCase()===code
+  );
+  const rate=parseNum(row?.Rate_to_GBP??row?.rate_to_gbp??row?.rate);
+  return Number.isFinite(rate)&&rate>0?rate:NaN;
+}
+
+function currentOfferLivePrice(offer){
+  const holding=incomingOfferHolding(offer);
+  if(!holding) return NaN;
+
+  const raw=parseNum(
+    holding.live_price ??
+    holding['Live Price'] ??
+    holding.price ??
+    holding.Price
+  );
+  if(!Number.isFinite(raw)||raw<=0) return NaN;
+
+  const unit=String(offer?.priceUnit||'').toUpperCase();
+  const currency=String(offer?.currency||'GBP').toUpperCase();
+
+  // Aurora Holdings stores portfolio live prices in GBP.
+  if(unit==='PENCE') return raw*100;
+
+  if(unit==='USD'||currency==='USD'){
+    const rate=fxRateToGbp('USD');
+    return Number.isFinite(rate)&&rate>0?raw/rate:NaN;
+  }
+
+  if(currency&&currency!=='GBP'){
+    const rate=fxRateToGbp(currency);
+    return Number.isFinite(rate)&&rate>0?raw/rate:NaN;
+  }
+
+  return raw;
+}
+
 function incomingOfferClauseData(offer){
   const premiumRate=Number(offer?.premiumPct);
   const offerPrice=Number(offer?.offerPrice);
   const offerValue=Number(offer?.offerValueGbp);
+  const requestedShares=Number(offer?.requestedShares);
+  const currentLivePrice=currentOfferLivePrice(offer);
 
   if(
     !Number.isFinite(premiumRate) ||
@@ -7017,16 +7228,20 @@ function incomingOfferClauseData(offer){
     return {
       known:false,
       met:false,
+      referencePrice:NaN,
       releasePrice:NaN,
+      currentLivePrice,
+      currentLiveValue:NaN,
       releaseValue:NaN,
+      differencePrice:NaN,
       differenceGbp:NaN,
+      progressPct:NaN,
       premiumRate:Number.isFinite(premiumRate)?premiumRate:NaN
     };
   }
 
-  // The offer premium is measured against the market snapshot used when
-  // the bid was generated. Rebuild that reference price, then apply the
-  // universal Aurora release threshold of +6%.
+  // The snapshot and its +6% target stay fixed for the life of this bid.
+  // The target does not move when the current live price changes.
   const referencePrice=offerPrice/(1+premiumRate);
   const releasePrice=referencePrice*1.06;
 
@@ -7037,55 +7252,124 @@ function incomingOfferClauseData(offer){
     ? referenceValue*1.06
     : NaN;
 
-  const differenceGbp=Number.isFinite(offerValue)&&Number.isFinite(releaseValue)
-    ? offerValue-releaseValue
+  const currentLiveValue=(
+    Number.isFinite(currentLivePrice) &&
+    Number.isFinite(requestedShares) &&
+    requestedShares>0
+  )
+    ? (
+        String(offer?.priceUnit||'').toUpperCase()==='PENCE'
+          ? currentLivePrice/100
+          : currentLivePrice
+      ) * requestedShares *
+      (
+        String(offer?.currency||'GBP').toUpperCase()==='GBP'
+          ? 1
+          : (fxRateToGbp(offer?.currency)||1)
+      )
     : NaN;
 
-  // Tiny tolerance avoids a 6.0% rounded offer being marked short.
-  const met=premiumRate>=(0.06-0.00005);
+  const differencePrice=Number.isFinite(currentLivePrice)
+    ? currentLivePrice-releasePrice
+    : NaN;
+
+  const differenceGbp=(
+    Number.isFinite(currentLiveValue) &&
+    Number.isFinite(releaseValue)
+  )
+    ? currentLiveValue-releaseValue
+    : NaN;
+
+  const tolerance=Math.max(0.00005,releasePrice*0.000005);
+  const met=Number.isFinite(currentLivePrice)
+    ? currentLivePrice>=(releasePrice-tolerance)
+    : false;
+
+  const progressPct=(
+    Number.isFinite(currentLivePrice) &&
+    Number.isFinite(releasePrice) &&
+    releasePrice>0
+  )
+    ? Math.max(0,Math.min(100,(currentLivePrice/releasePrice)*100))
+    : NaN;
 
   return {
-    known:true,
+    known:Number.isFinite(currentLivePrice),
     met,
+    referencePrice,
     releasePrice,
+    currentLivePrice,
+    currentLiveValue,
     releaseValue,
+    differencePrice,
     differenceGbp,
+    progressPct,
     premiumRate
   };
 }
 
 function incomingOfferClauseHtml(offer,clause){
   if(!clause.known){
-    return `<div class="offer-clause-result unknown">
-      <div>
-        <small>6% release-clause check</small>
-        <strong>Awaiting market reference</strong>
-        <p>The offer does not contain enough snapshot data to test the clause.</p>
+    return `<div class="offer-live-target unknown">
+      <div class="offer-live-target-head">
+        <div>
+          <small>Live 6% target check</small>
+          <strong>Waiting for live market data</strong>
+          <p>The fixed target is stored, but Aurora has not yet loaded a current price for this holding.</p>
+        </div>
+        <span class="offer-live-target-pill">Checking</span>
       </div>
-      <span class="offer-clause-pill">Review</span>
+      <div class="offer-target-track"><span class="offer-target-fill" style="width:3%"></span></div>
     </div>`;
   }
 
-  const difference=Number(clause.differenceGbp);
-  const exactMatch=Number.isFinite(difference)&&Math.abs(difference)<0.005;
+  const current=offerPriceLabel(
+    clause.currentLivePrice,
+    offer.priceUnit,
+    offer.currency
+  );
+  const target=offerPriceLabel(
+    clause.releasePrice,
+    offer.priceUnit,
+    offer.currency
+  );
+  const priceGap=Math.abs(clause.differencePrice);
+  const gapLabel=offerPriceLabel(priceGap,offer.priceUnit,offer.currency);
+  const remainingPct=(
+    Number.isFinite(clause.currentLivePrice) &&
+    clause.currentLivePrice>0
+  )
+    ? Math.max(0,((clause.releasePrice/clause.currentLivePrice)-1)*100)
+    : NaN;
 
-  let differenceText;
-  if(exactMatch){
-    differenceText='Offer matches the 6% target exactly';
-  }else if(Number.isFinite(difference)){
-    const direction=clause.met?'above':'below';
-    differenceText=`${money(Math.abs(difference))} ${direction} the 6% target`;
-  }else{
-    differenceText=`${(clause.premiumRate*100).toFixed(1)}% premium versus a 6% requirement`;
-  }
+  const detail=clause.met
+    ? (
+        Math.abs(clause.differencePrice)<0.005
+          ? 'The actual live price has matched the fixed target.'
+          : `The actual live price is ${gapLabel} above the fixed target.`
+      )
+    : `${gapLabel} still required${
+        Number.isFinite(remainingPct)
+          ? ` (${remainingPct.toFixed(2)}%)`
+          : ''
+      }.`;
 
-  return `<div class="offer-clause-result ${clause.met?'met':'short'}">
-    <div>
-      <small>6% release-clause check</small>
-      <strong>${clause.met?'Release clause met':'Below release clause'}</strong>
-      <p>${differenceText}. The comparison uses the market snapshot taken when this bid was generated.</p>
+  return `<div class="offer-live-target ${clause.met?'met':'waiting'}">
+    <div class="offer-live-target-head">
+      <div>
+        <small>Live 6% target check</small>
+        <strong>${clause.met?'Offer activated':'Offer waiting — target not reached'}</strong>
+        <p>${detail} This target remains tied to the original market snapshot.</p>
+      </div>
+      <span class="offer-live-target-pill">${clause.met?'Live target met':'Offer locked'}</span>
     </div>
-    <span class="offer-clause-pill">${clause.met?'Target met':'Target short'}</span>
+    <div class="offer-target-track">
+      <span class="offer-target-fill" style="width:${Number.isFinite(clause.progressPct)?clause.progressPct.toFixed(2):3}%"></span>
+    </div>
+    <div class="offer-target-numbers">
+      <span>Current live: <b>${current}</b></span>
+      <span>Fixed target: <b>${target}</b></span>
+    </div>
   </div>`;
 }
 
@@ -7101,9 +7385,16 @@ function offerStatusRank(status){
 function renderIncomingOffers(){
   const grid=$('incomingOfferGrid');if(!grid)return;
   const ordered=[...incomingOffers].sort((a,b)=>offerStatusRank(a.status)-offerStatusRank(b.status)||new Date(b.createdAt||0)-new Date(a.createdAt||0));
-  const live=ordered.filter(o=>['OPEN','COUNTERED'].includes(String(o.status||'').toUpperCase())).length;
-  if($('incomingOfferCount'))$('incomingOfferCount').textContent=`${live} live offer${live===1?'':'s'}`;
-  if($('subnavIncomingCount')) $('subnavIncomingCount').textContent=live;
+  const storedOpen=ordered.filter(o=>['OPEN','COUNTERED'].includes(String(o.status||'').toUpperCase()));
+  const activeOffers=storedOpen.filter(o=>incomingOfferClauseData(o).met);
+  const waitingOffers=storedOpen.filter(o=>!incomingOfferClauseData(o).met);
+
+  if($('incomingOfferCount')){
+    $('incomingOfferCount').innerHTML=
+      `${activeOffers.length} active offer${activeOffers.length===1?'':'s'}`+
+      `<span class="offer-market-count"> • ${waitingOffers.length} waiting for target</span>`;
+  }
+  if($('subnavIncomingCount')) $('subnavIncomingCount').textContent=activeOffers.length;
   if(!ordered.length){
     grid.innerHTML='<div class="offer-empty">No offers are on the chairman’s desk. Open a new market round to generate football-style bids from the live portfolio.</div>';
     return;
@@ -7112,12 +7403,14 @@ function renderIncomingOffers(){
     const authenticity=String(offer.authenticity||'AURORA SCENARIO').toUpperCase();
     const verified=authenticity==='VERIFIED OFFER';
     const status=String(offer.status||'OPEN').toUpperCase();
-    const open=['OPEN','COUNTERED'].includes(status);
+    const storedOpen=['OPEN','COUNTERED'].includes(status);
     const premium=Number(offer.premiumPct||0)*100;
     const gain=Number(offer.estimatedGainLossGbp||0);
     const clause=incomingOfferClauseData(offer);
+    const active=storedOpen&&clause.met;
+    const waiting=storedOpen&&!clause.met;
     const source=verified&&offer.sourceUrl?`<a href="${escapeHtml(offer.sourceUrl)}" target="_blank" rel="noopener">Open official source</a>`:escapeHtml(offer.source||'Aurora Incoming Offers Engine');
-    return `<article class="offer-card ${verified?'verified':''} ${open?'':'closed'}" data-offer-card="${escapeHtml(offer.offerId)}">
+    return `<article class="offer-card ${verified?'verified':''} ${storedOpen?'':'closed'} ${waiting?'target-locked':''}" data-offer-card="${escapeHtml(offer.offerId)}">
       <div class="offer-letterhead">
         <div class="offer-club-crest">${escapeHtml(offer.bidderBadge||'AFC')}</div>
         <div><small>${verified?'Official corporate approach':'Rival club approach'}</small><strong>${escapeHtml(offer.bidderName||'Aurora Market')}</strong></div>
@@ -7130,18 +7423,19 @@ function renderIncomingOffers(){
       </div>
       <div class="offer-metrics">
         <div class="offer-metric"><small>Shares requested</small><strong>${Number(offer.requestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})}</strong></div>
-        <div class="offer-metric"><small>Offer per share</small><strong class="good">${offerPriceLabel(offer.offerPrice,offer.priceUnit,offer.currency)}</strong></div>
-        <div class="offer-metric"><small>Premium vs market snapshot</small><strong class="${premium>=6?'good':'warn'}">${premium>=0?'+':''}${premium.toFixed(1)}%</strong></div>
-        <div class="offer-metric clause-target"><small>6% clause price</small><strong class="${clause.met?'good':'warn'}">${clause.known?offerPriceLabel(clause.releasePrice,offer.priceUnit,offer.currency):'—'}</strong></div>
-        <div class="offer-metric"><small>Offer value</small><strong>${money(Number(offer.offerValueGbp||0))}</strong></div>
-        <div class="offer-metric"><small>Estimated gain / loss</small><strong class="${gain>=0?'good':'warn'}">${gain>=0?'+':''}${money(gain)}</strong></div>
+        <div class="offer-metric"><small>Offer activation price</small><strong class="good">${offerPriceLabel(offer.offerPrice,offer.priceUnit,offer.currency)}</strong></div>
+        <div class="offer-metric"><small>Fixed target uplift</small><strong class="${premium>=6?'good':'warn'}">${premium>=0?'+':''}${premium.toFixed(1)}%</strong></div>
+        <div class="offer-metric clause-target"><small>Fixed 6% live target</small><strong class="${clause.met?'good':'warn'}">${clause.known?offerPriceLabel(clause.releasePrice,offer.priceUnit,offer.currency):'—'}</strong></div>
+        <div class="offer-metric"><small>Current live price</small><strong class="${clause.met?'good':'warn'}">${Number.isFinite(clause.currentLivePrice)?offerPriceLabel(clause.currentLivePrice,offer.priceUnit,offer.currency):'—'}</strong></div>
+        <div class="offer-metric"><small>Value when activated</small><strong>${money(Number(offer.offerValueGbp||0))}</strong></div>
+        <div class="offer-metric"><small>Gain / loss at target</small><strong class="${gain>=0?'good':'warn'}">${gain>=0?'+':''}${money(gain)}</strong></div>
         <div class="offer-metric"><small>Income surrendered</small><strong class="warn">${money(Number(offer.annualIncomeLostGbp||0))}/yr</strong></div>
       </div>
       ${incomingOfferClauseHtml(offer,clause)}
       <div class="offer-reason">${escapeHtml(offer.reason||'No offer explanation recorded.')}</div>
       <div class="offer-verdict"><b>Director of Football verdict</b>${escapeHtml(offer.directorVerdict||'Review the fee, income impact and replacement options.')}</div>
       <div class="offer-expiry"><span>Expires: <b>${offerDateLabel(offer.expiresAt)}</b></span><span>${verified?source:`Source: ${source}`}</span></div>
-      ${open?`<div class="offer-card-actions">
+      ${active?`<div class="offer-card-actions">
         <button class="offer-action accept" type="button" data-offer-response="ACCEPT" data-offer-id="${escapeHtml(offer.offerId)}">Accept in principle</button>
         <button class="offer-action counter" type="button" data-offer-counter-toggle="${escapeHtml(offer.offerId)}">Counter-offer</button>
         <button class="offer-action reject" type="button" data-offer-response="REJECT" data-offer-id="${escapeHtml(offer.offerId)}">Reject</button>
@@ -7150,7 +7444,11 @@ function renderIncomingOffers(){
         <label>Counter price<input name="counterPrice" type="number" min="0" step="any" value="${Number(offer.offerPrice||0).toFixed(4)}" required></label>
         <label>Shares offered<input name="counterShares" type="number" min="0" step="any" value="${Number(offer.requestedShares||0)}" required></label>
         <button class="offer-action counter" type="submit">Submit counter</button>
-      </form>`:`<div class="offer-status-line">Offer status: ${escapeHtml(status)}${offer.linkedSellTicket?` • Sell Desk ticket ${escapeHtml(offer.linkedSellTicket)}`:''}</div>`}
+      </form>`:waiting?`
+        <div class="offer-action-lock">
+          🔒 Offer actions unlock only when the actual live price reaches the fixed 6% target.
+        </div>
+      `:`<div class="offer-status-line">Offer status: ${escapeHtml(status)}${offer.linkedSellTicket?` • Sell Desk ticket ${escapeHtml(offer.linkedSellTicket)}`:''}</div>`}
     </article>`;
   }).join('');
 }
@@ -7203,6 +7501,25 @@ async function respondToIncomingOffer(offerId,response,button,extra={}){
   }catch(err){if(msg){msg.textContent=err.message||'Offer response failed.';msg.className='registration-message error';}if(button)button.disabled=false;}
   finally{incomingOfferBusy=false;}
 }
+
+
+let incomingOfferLiveTimer=null;
+function startIncomingOfferLiveChecks(){
+  if(incomingOfferLiveTimer) clearInterval(incomingOfferLiveTimer);
+  incomingOfferLiveTimer=setInterval(()=>{
+    if(incomingOffers.length){
+      AURORA_MASTER_CACHE=null;
+      loadData();
+    }
+  },300000);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden&&incomingOffers.length){
+    AURORA_MASTER_CACHE=null;
+    loadData();
+  }
+});
+startIncomingOfferLiveChecks();
 
 $('refreshIncomingOffers')?.addEventListener('click',()=>loadIncomingOffers(false));
 $('generateIncomingOffers')?.addEventListener('click',()=>generateOfferRound(true));
@@ -7604,6 +7921,10 @@ document.documentElement.dataset.releaseClauseBuild = "six-percent-clean-v26";
 
 <script id="release-clause-exact-marker">
 document.documentElement.dataset.releaseClauseExactBuild = "v27";
+</script>
+
+<script id="live-target-offers-marker">
+document.documentElement.dataset.incomingOfferBuild = "live-target-v28";
 </script>
 </body>
 </html>
