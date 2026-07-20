@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Performance Analysis Room</title>
-<!-- Build: Analysis Room Sector Chart Colour Fix • 20 Jul 2026 -->
+<!-- Build: £1500 Monthly Income Forecast • 20 Jul 2026 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -1100,6 +1100,118 @@ body.fm-transfer-menu-open .fm-side-scroll{
   }
 }
 
+
+
+/* ================= £1,500 MONTHLY INCOME FORECAST ================= */
+.forecast-checkpoints{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin-top:13px;
+}
+.forecast-card{
+  overflow:hidden;
+  position:relative;
+  min-height:104px;
+  padding:13px;
+  border-radius:17px;
+  border:1px solid rgba(52,211,153,.23);
+  background:
+    linear-gradient(145deg,rgba(6,78,59,.24),rgba(2,8,23,.48));
+}
+.forecast-card:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:3px;
+  background:linear-gradient(90deg,#22c55e,#22d3ee);
+}
+.forecast-card small{
+  display:block;
+  color:#94a3b8;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+.forecast-card strong{
+  display:block;
+  margin-top:9px;
+  color:#86efac;
+  font-size:21px;
+  line-height:1.05;
+  letter-spacing:-.035em;
+}
+.forecast-card span{
+  display:block;
+  margin-top:6px;
+  color:#c5d3e6;
+  font-size:10px;
+  line-height:1.35;
+}
+.forecast-card em{
+  display:block;
+  margin-top:6px;
+  color:#7dd3fc;
+  font-size:9px;
+  font-style:normal;
+  font-weight:850;
+}
+.forecast-assumptions{
+  position:relative;
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,.14);
+  background:rgba(2,6,23,.34);
+  color:#8395ad;
+  font-size:10px;
+  line-height:1.5;
+}
+.forecast-assumptions b{
+  color:#cbd5e1;
+}
+.forecast-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:9px;
+  color:#9fb0c7;
+  font-size:10px;
+}
+.forecast-legend span{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.forecast-legend i{
+  width:18px;
+  height:3px;
+  border-radius:999px;
+}
+.forecast-legend .reinvest i{
+  background:#34d399;
+}
+.forecast-legend .contributions i{
+  background:#60a5fa;
+}
+.forecast-legend .current i{
+  background:#fbbf24;
+}
+@media(max-width:980px){
+  .forecast-checkpoints{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media(max-width:480px){
+  .forecast-checkpoints{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 <script src="AuroraFCData.js"></script>
 </head>
@@ -1235,11 +1347,54 @@ body.fm-transfer-menu-open .fm-side-scroll{
     <div class="score-card"><div class="score-icon">🧠</div><small>Average Buy Strength</small><strong id="averageBuyStrength">—</strong><span id="averageBuyStrengthNote">Squad opportunity score</span></div>
   </section>
 
-  <div class="section-head"><div><h2>Match Analysis</h2><p>Progression, contribution and portfolio shape in one live review.</p></div><span class="badge blue" id="analysisStatus">Loading data</span></div>
+  <div class="section-head"><div><h2>Match Analysis</h2><p>Future income, player contribution and portfolio shape in one live review.</p></div><span class="badge blue" id="analysisStatus">Loading data</span></div>
   <section class="chart-grid">
     <article class="panel span-8">
-      <div class="panel-head"><div><h3>Annual Income Progression</h3><p>Estimated run-rate progression reconstructed from logged income changes.</p></div><span class="badge green" id="incomeTrendBadge">Form line</span></div>
-      <div class="chart-wrap"><canvas id="incomeProgressChart"></canvas><div class="chart-empty" id="incomeProgressEmpty">No dated income events are available yet.</div></div>
+      <div class="panel-head">
+        <div>
+          <h3>£1,500 Monthly Income Forecast</h3>
+          <p>Projected annual dividend run rate at 6 months, 12 months, 2 years and 5 years using the portfolio’s current yield.</p>
+          <div class="forecast-legend">
+            <span class="reinvest"><i></i>£1,500/month + dividends reinvested</span>
+            <span class="contributions"><i></i>£1,500/month only</span>
+            <span class="current"><i></i>Current annual income</span>
+          </div>
+        </div>
+        <span class="badge green" id="incomeTrendBadge">Forecast loading</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="incomeProgressChart"></canvas>
+        <div class="chart-empty" id="incomeProgressEmpty">Income forecast unavailable until current income and yield data load.</div>
+      </div>
+      <div class="forecast-checkpoints">
+        <div class="forecast-card">
+          <small>6 months</small>
+          <strong id="forecast6Annual">—</strong>
+          <span id="forecast6Monthly">Monthly equivalent loading…</span>
+          <em id="forecast6Added">Contribution impact loading…</em>
+        </div>
+        <div class="forecast-card">
+          <small>12 months</small>
+          <strong id="forecast12Annual">—</strong>
+          <span id="forecast12Monthly">Monthly equivalent loading…</span>
+          <em id="forecast12Added">Contribution impact loading…</em>
+        </div>
+        <div class="forecast-card">
+          <small>2 years</small>
+          <strong id="forecast24Annual">—</strong>
+          <span id="forecast24Monthly">Monthly equivalent loading…</span>
+          <em id="forecast24Added">Contribution impact loading…</em>
+        </div>
+        <div class="forecast-card">
+          <small>5 years</small>
+          <strong id="forecast60Annual">—</strong>
+          <span id="forecast60Monthly">Monthly equivalent loading…</span>
+          <em id="forecast60Added">Contribution impact loading…</em>
+        </div>
+      </div>
+      <div class="forecast-assumptions" id="forecastAssumptions">
+        <b>Forecast assumptions:</b> £1,500 invested monthly, current portfolio yield held constant, and dividends reinvested monthly for the green forecast. It excludes share-price growth, dividend increases or cuts, fees and tax.
+      </div>
     </article>
     <article class="panel span-4">
       <div class="panel-head"><div><h3>Income Target</h3><p>Current monthly run rate against the £500 target.</p></div><span class="badge amber">Promotion race</span></div>
@@ -1435,6 +1590,200 @@ function incomeProgression(){
   if(pts.length&&Math.abs(pts[pts.length-1].value-current)>.01)pts.push({date:new Date(),value:current});
   return pts.slice(-24);
 }
+
+const MONTHLY_INVESTMENT_PLAN=1500;
+const FORECAST_CHECKPOINTS=[
+  {months:6,label:"6 months"},
+  {months:12,label:"12 months"},
+  {months:24,label:"2 years"},
+  {months:60,label:"5 years"}
+];
+
+function incomeForecastPoint(months,reinvestDividends=true){
+  const currentIncome=annualTotal();
+  const currentYield=portfolioYield();
+
+  if(
+    !Number.isFinite(currentIncome) ||
+    currentIncome<0 ||
+    !Number.isFinite(currentYield) ||
+    currentYield<=0
+  ){
+    return {
+      months,
+      annualIncome:NaN,
+      monthlyIncome:NaN,
+      addedIncome:NaN,
+      contributions:MONTHLY_INVESTMENT_PLAN*months
+    };
+  }
+
+  // Convert the current income stream back to an income-producing
+  // capital base so the forecast starts exactly at today's run rate.
+  let capital=currentIncome/currentYield;
+  const monthlyYield=currentYield/12;
+
+  for(let month=0;month<months;month++){
+    capital+=MONTHLY_INVESTMENT_PLAN;
+    if(reinvestDividends){
+      capital+=capital*monthlyYield;
+    }
+  }
+
+  const annualIncome=capital*currentYield;
+
+  return {
+    months,
+    annualIncome,
+    monthlyIncome:annualIncome/12,
+    addedIncome:annualIncome-currentIncome,
+    contributions:MONTHLY_INVESTMENT_PLAN*months
+  };
+}
+
+function incomeForecastSeries(reinvestDividends=true){
+  const points=[0,6,12,24,36,48,60];
+  return points.map(months=>{
+    if(months===0){
+      const currentIncome=annualTotal();
+      return {
+        months,
+        annualIncome:currentIncome,
+        monthlyIncome:currentIncome/12,
+        addedIncome:0,
+        contributions:0
+      };
+    }
+    return incomeForecastPoint(months,reinvestDividends);
+  });
+}
+
+function renderIncomeForecastCards(){
+  const currentIncome=annualTotal();
+  const currentYield=portfolioYield();
+
+  FORECAST_CHECKPOINTS.forEach(point=>{
+    const forecast=incomeForecastPoint(point.months,true);
+    const annual=$(`forecast${point.months}Annual`);
+    const monthly=$(`forecast${point.months}Monthly`);
+    const added=$(`forecast${point.months}Added`);
+
+    if(annual){
+      annual.textContent=Number.isFinite(forecast.annualIncome)
+        ? money(forecast.annualIncome)
+        : "—";
+    }
+    if(monthly){
+      monthly.textContent=Number.isFinite(forecast.monthlyIncome)
+        ? `${money(forecast.monthlyIncome)} per month`
+        : "Forecast unavailable";
+    }
+    if(added){
+      added.textContent=Number.isFinite(forecast.addedIncome)
+        ? `+${money(forecast.addedIncome)}/yr from ${money0(forecast.contributions)} contributed`
+        : "Waiting for current yield";
+    }
+  });
+
+  const assumptions=$("forecastAssumptions");
+  if(assumptions){
+    assumptions.innerHTML=Number.isFinite(currentYield)&&currentYield>0
+      ? `<b>Forecast assumptions:</b> £1,500 invested monthly at the current portfolio yield of ${(currentYield*100).toFixed(2)}%. The green forecast reinvests dividends monthly; the blue forecast shows contributions only. It excludes share-price growth, dividend increases or cuts, fees and tax.`
+      : `<b>Forecast assumptions:</b> Waiting for a valid portfolio yield before projecting the £1,500 monthly plan.`;
+  }
+
+  return {currentIncome,currentYield};
+}
+
+function incomeForecastChart(){
+  destroyChart("incomeProgressChart");
+  const canvas=$("incomeProgressChart");
+  if(!canvas)return false;
+
+  const reinvested=incomeForecastSeries(true);
+  const contributionsOnly=incomeForecastSeries(false);
+
+  if(
+    reinvested.some(point=>!Number.isFinite(point.annualIncome)) ||
+    contributionsOnly.some(point=>!Number.isFinite(point.annualIncome))
+  ){
+    return false;
+  }
+
+  const labels=["Today","6m","12m","2y","3y","4y","5y"];
+  const currentIncome=annualTotal();
+
+  charts.incomeProgressChart=new Chart(canvas,{
+    type:"line",
+    data:{
+      labels,
+      datasets:[
+        {
+          label:"£1,500/month + dividends reinvested",
+          data:reinvested.map(point=>point.annualIncome),
+          borderColor:"#34d399",
+          backgroundColor:"rgba(52,211,153,.12)",
+          fill:true,
+          tension:.34,
+          pointRadius:4,
+          pointHoverRadius:6,
+          borderWidth:3
+        },
+        {
+          label:"£1,500/month only",
+          data:contributionsOnly.map(point=>point.annualIncome),
+          borderColor:"#60a5fa",
+          backgroundColor:"rgba(96,165,250,0)",
+          fill:false,
+          tension:.30,
+          pointRadius:3,
+          pointHoverRadius:5,
+          borderWidth:2.5,
+          borderDash:[7,5]
+        },
+        {
+          label:"Current annual income",
+          data:labels.map(()=>currentIncome),
+          borderColor:"#fbbf24",
+          backgroundColor:"rgba(251,191,36,0)",
+          fill:false,
+          tension:0,
+          pointRadius:0,
+          borderWidth:1.5,
+          borderDash:[3,5]
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{
+          display:false
+        },
+        tooltip:{
+          callbacks:{
+            label:context=>
+              `${context.dataset.label}: ${money(context.parsed.y)}/yr (${money(context.parsed.y/12)}/month)`
+          }
+        }
+      },
+      scales:{
+        x:{
+          grid:{display:false}
+        },
+        y:{
+          beginAtZero:false,
+          ticks:{callback:value=>money0(value)}
+        }
+      }
+    }
+  });
+
+  return true;
+}
+
 function valueProgression(){
   const combined=combinedHoldings();const shares=new Map(combined.map(x=>[x.ticker,x.shares]));
   const rows=(state.priceLog||[]).map(r=>({date:toDate(rowDate(r)),ticker:rowTicker(r),price:parseNum(r?.price??r?.close_price??r?.Price??r?.Close_Price)})).filter(x=>x.date&&x.ticker&&Number.isFinite(x.price));
@@ -1531,7 +1880,19 @@ function renderCharts(){
     $("analysisStatus").textContent="Chart library unavailable";$("analysisStatus").className="badge red";return;
   }
   chartBase();const combined=combinedHoldings();const currentIncome=annualTotal(),monthly=currentIncome/12;
-  const incPts=incomeProgression();if(incPts.length){showCanvas("incomeProgressChart","incomeProgressEmpty");lineChart("incomeProgressChart",incPts.map(x=>dateLabel(x.date)),incPts.map(x=>x.value),"Annual income");const delta=incPts.at(-1).value-incPts[0].value;$("incomeTrendBadge").textContent=`${delta>=0?"▲":"▼"} ${money(Math.abs(delta))}`;$("incomeTrendBadge").className=`badge ${delta>=0?"green":"red"}`;}else showEmpty("incomeProgressChart","incomeProgressEmpty");
+  const forecastState=renderIncomeForecastCards();
+  const forecastReady=incomeForecastChart();
+  if(forecastReady){
+    showCanvas("incomeProgressChart","incomeProgressEmpty");
+    const fiveYear=incomeForecastPoint(60,true);
+    $("incomeTrendBadge").textContent=
+      `5Y: ${money(fiveYear.annualIncome)}/yr`;
+    $("incomeTrendBadge").className="badge green";
+  }else{
+    showEmpty("incomeProgressChart","incomeProgressEmpty");
+    $("incomeTrendBadge").textContent="Forecast unavailable";
+    $("incomeTrendBadge").className="badge amber";
+  }
   showCanvas("targetChart","targetEmpty");targetChart(monthly);
   const incomeRows=combined.filter(x=>x.income>0).sort((a,b)=>b.income-a.income).slice(0,10);if(incomeRows.length){showCanvas("incomeContributionChart","incomeContributionEmpty");barChart("incomeContributionChart",incomeRows.map(x=>x.ticker),incomeRows.map(x=>x.income),"Annual income");$("topIncomeBadge").textContent=`Top scorer: ${incomeRows[0].ticker}`;}else showEmpty("incomeContributionChart","incomeContributionEmpty");
   const sectors=combinedSectorData();if(sectors.length){showCanvas("sectorChart","sectorEmpty");doughnutChart("sectorChart",sectors.map(x=>x.sector),sectors.map(x=>x.value));const total=sectors.reduce((s,x)=>s+x.value,0),top=sectors[0];$("sectorBadge").textContent=`${top.sector}: ${total?((top.value/total)*100).toFixed(1):0}%`;$("sectorBadge").className=`badge ${(top.value/total)>.35?"amber":"blue"}`;}else showEmpty("sectorChart","sectorEmpty");
@@ -1908,6 +2269,10 @@ document.documentElement.dataset.departmentKpis = "distinct-v29";
 
 <script id="sector-chart-colour-marker">
 document.documentElement.dataset.sectorChartBuild = "colour-fix-v30";
+</script>
+
+<script id="income-forecast-marker">
+document.documentElement.dataset.incomeForecastBuild = "monthly-1500-v31";
 </script>
 </body>
 </html>
