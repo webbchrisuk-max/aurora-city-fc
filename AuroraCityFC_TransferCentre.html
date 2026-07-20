@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: Universal Department Colour Sidebar • 20 Jul 2026 -->
+<!-- Build: Clean 6 Percent Release Clause • 20 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -4950,6 +4950,98 @@ body.fm-transfer-menu-open .fm-side-scroll{
   }
 }
 
+
+
+/* ================= CLEAN 6% RELEASE CLAUSE ================= */
+.offer-clause-result{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid rgba(148,163,184,.18);
+  background:rgba(2,8,23,.48);
+}
+.offer-clause-result > div{
+  min-width:0;
+}
+.offer-clause-result small{
+  display:block;
+  margin-bottom:3px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.offer-clause-result strong{
+  display:block;
+  font-size:15px;
+  line-height:1.1;
+}
+.offer-clause-result p{
+  margin:4px 0 0;
+  color:var(--soft);
+  font-size:11px;
+  line-height:1.45;
+}
+.offer-clause-result .offer-clause-pill{
+  flex:0 0 auto;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.offer-clause-result.met{
+  border-color:rgba(52,211,153,.42);
+  background:
+    linear-gradient(135deg,rgba(6,78,59,.36),rgba(2,8,23,.48));
+  box-shadow:inset 3px 0 0 #34d399;
+}
+.offer-clause-result.met strong{color:#86efac}
+.offer-clause-result.met .offer-clause-pill{
+  color:#bbf7d0;
+  border:1px solid rgba(74,222,128,.35);
+  background:rgba(20,83,45,.38);
+}
+.offer-clause-result.short{
+  border-color:rgba(251,113,133,.42);
+  background:
+    linear-gradient(135deg,rgba(127,29,29,.34),rgba(2,8,23,.48));
+  box-shadow:inset 3px 0 0 #fb7185;
+}
+.offer-clause-result.short strong{color:#fda4af}
+.offer-clause-result.short .offer-clause-pill{
+  color:#fecdd3;
+  border:1px solid rgba(251,113,133,.35);
+  background:rgba(127,29,29,.36);
+}
+.offer-clause-result.unknown{
+  border-color:rgba(251,191,36,.34);
+  background:
+    linear-gradient(135deg,rgba(120,53,15,.28),rgba(2,8,23,.48));
+  box-shadow:inset 3px 0 0 #fbbf24;
+}
+.offer-clause-result.unknown strong{color:#fde68a}
+.offer-clause-result.unknown .offer-clause-pill{
+  color:#fde68a;
+  border:1px solid rgba(251,191,36,.32);
+  background:rgba(120,53,15,.32);
+}
+.offer-metric.clause-target strong.good{color:#86efac}
+.offer-metric.clause-target strong.warn{color:#fda4af}
+
+@media(max-width:620px){
+  .offer-clause-result{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -6910,6 +7002,86 @@ function offerPriceLabel(value,unit,currency){
   if(String(currency||'').toUpperCase()==='USD'||String(unit||'').toUpperCase()==='USD') return `$${number.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
   return `£${number.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 }
+
+function incomingOfferClauseData(offer){
+  const premiumRate=Number(offer?.premiumPct);
+  const offerPrice=Number(offer?.offerPrice);
+  const offerValue=Number(offer?.offerValueGbp);
+
+  if(
+    !Number.isFinite(premiumRate) ||
+    premiumRate<=-1 ||
+    !Number.isFinite(offerPrice) ||
+    offerPrice<=0
+  ){
+    return {
+      known:false,
+      met:false,
+      releasePrice:NaN,
+      releaseValue:NaN,
+      differenceGbp:NaN,
+      premiumRate:Number.isFinite(premiumRate)?premiumRate:NaN
+    };
+  }
+
+  // The offer premium is measured against the market snapshot used when
+  // the bid was generated. Rebuild that reference price, then apply the
+  // universal Aurora release threshold of +6%.
+  const referencePrice=offerPrice/(1+premiumRate);
+  const releasePrice=referencePrice*1.06;
+
+  const referenceValue=Number.isFinite(offerValue)&&offerValue>0
+    ? offerValue/(1+premiumRate)
+    : NaN;
+  const releaseValue=Number.isFinite(referenceValue)
+    ? referenceValue*1.06
+    : NaN;
+
+  const differenceGbp=Number.isFinite(offerValue)&&Number.isFinite(releaseValue)
+    ? offerValue-releaseValue
+    : NaN;
+
+  // Tiny tolerance avoids a 6.0% rounded offer being marked short.
+  const met=premiumRate>=(0.06-0.00005);
+
+  return {
+    known:true,
+    met,
+    releasePrice,
+    releaseValue,
+    differenceGbp,
+    premiumRate
+  };
+}
+
+function incomingOfferClauseHtml(offer,clause){
+  if(!clause.known){
+    return `<div class="offer-clause-result unknown">
+      <div>
+        <small>6% release-clause check</small>
+        <strong>Awaiting market reference</strong>
+        <p>The offer does not contain enough snapshot data to test the clause.</p>
+      </div>
+      <span class="offer-clause-pill">Review</span>
+    </div>`;
+  }
+
+  const difference=Number(clause.differenceGbp);
+  const direction=clause.met?'above':'below';
+  const differenceText=Number.isFinite(difference)
+    ? `${money(Math.abs(difference))} ${direction} the 6% target`
+    : `${(clause.premiumRate*100).toFixed(1)}% premium versus a 6% requirement`;
+
+  return `<div class="offer-clause-result ${clause.met?'met':'short'}">
+    <div>
+      <small>6% release-clause check</small>
+      <strong>${clause.met?'Release clause met':'Below release clause'}</strong>
+      <p>${differenceText}. The comparison uses the market snapshot taken when this bid was generated.</p>
+    </div>
+    <span class="offer-clause-pill">${clause.met?'Target met':'Target short'}</span>
+  </div>`;
+}
+
 function offerDateLabel(value){
   if(!value)return 'No expiry recorded';
   const date=new Date(value);if(Number.isNaN(date.getTime()))return String(value);
@@ -6936,6 +7108,7 @@ function renderIncomingOffers(){
     const open=['OPEN','COUNTERED'].includes(status);
     const premium=Number(offer.premiumPct||0)*100;
     const gain=Number(offer.estimatedGainLossGbp||0);
+    const clause=incomingOfferClauseData(offer);
     const source=verified&&offer.sourceUrl?`<a href="${escapeHtml(offer.sourceUrl)}" target="_blank" rel="noopener">Open official source</a>`:escapeHtml(offer.source||'Aurora Incoming Offers Engine');
     return `<article class="offer-card ${verified?'verified':''} ${open?'':'closed'}" data-offer-card="${escapeHtml(offer.offerId)}">
       <div class="offer-letterhead">
@@ -6951,11 +7124,13 @@ function renderIncomingOffers(){
       <div class="offer-metrics">
         <div class="offer-metric"><small>Shares requested</small><strong>${Number(offer.requestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})}</strong></div>
         <div class="offer-metric"><small>Offer per share</small><strong class="good">${offerPriceLabel(offer.offerPrice,offer.priceUnit,offer.currency)}</strong></div>
-        <div class="offer-metric"><small>Premium</small><strong class="${premium>=0?'good':'warn'}">${premium>=0?'+':''}${premium.toFixed(1)}%</strong></div>
+        <div class="offer-metric"><small>Premium vs market snapshot</small><strong class="${premium>=6?'good':'warn'}">${premium>=0?'+':''}${premium.toFixed(1)}%</strong></div>
+        <div class="offer-metric clause-target"><small>6% clause price</small><strong class="${clause.met?'good':'warn'}">${clause.known?offerPriceLabel(clause.releasePrice,offer.priceUnit,offer.currency):'—'}</strong></div>
         <div class="offer-metric"><small>Offer value</small><strong>${money(Number(offer.offerValueGbp||0))}</strong></div>
         <div class="offer-metric"><small>Estimated gain / loss</small><strong class="${gain>=0?'good':'warn'}">${gain>=0?'+':''}${money(gain)}</strong></div>
         <div class="offer-metric"><small>Income surrendered</small><strong class="warn">${money(Number(offer.annualIncomeLostGbp||0))}/yr</strong></div>
       </div>
+      ${incomingOfferClauseHtml(offer,clause)}
       <div class="offer-reason">${escapeHtml(offer.reason||'No offer explanation recorded.')}</div>
       <div class="offer-verdict"><b>Director of Football verdict</b>${escapeHtml(offer.directorVerdict||'Review the fee, income impact and replacement options.')}</div>
       <div class="offer-expiry"><span>Expires: <b>${offerDateLabel(offer.expiresAt)}</b></span><span>${verified?source:`Source: ${source}`}</span></div>
@@ -7415,5 +7590,9 @@ document.documentElement.dataset.colourSidebarBuild = "universal-v24";
 document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_TransferCentre.html";
 </script>
 
+
+<script id="release-clause-cleanup-marker">
+document.documentElement.dataset.releaseClauseBuild = "six-percent-clean-v26";
+</script>
 </body>
 </html>

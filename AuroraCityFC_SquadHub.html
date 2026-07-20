@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 
 <title>Aurora City FC — Squad Hub</title>
-<!-- Build: Colour Player Profiles • 20 Jul 2026 -->
+<!-- Build: Clean 6 Percent Release Clause • 20 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -5408,7 +5408,9 @@ function transferValuationData(row){
   const upsideMillions = Number.isFinite(estimatedMillions) && Number.isFinite(currentMillions)
     ? estimatedMillions - currentMillions
     : NaN;
-  const releaseClauseMillions = Number.isFinite(estimatedMillions) ? estimatedMillions * 1.10 : NaN;
+  // Clean club rule: a release clause is 6% above the live market value.
+  // Estimated transfer value remains a separate fair-value calculation.
+  const releaseClauseMillions = Number.isFinite(currentMillions) ? currentMillions * 1.06 : NaN;
   return { ...valuation, currentMillions, estimatedMillions, upsideMillions, releaseClauseMillions };
 }
 function transferMoney(millions){
@@ -5490,40 +5492,12 @@ function ratingTone(score){
   if(score>=55) return 'rating-amber';
   return 'rating-red';
 }
-function releaseClauseDecision(row,valuation,recommendation){
-  const recommendationText=String(recommendation||'').toLowerCase();
-  const statusText=String(valuation?.status||'').toLowerCase();
-  const gap=valuation?.gapPct;
-
-  const explicitSell=/\b(sell|exit|reduce|trim|take profit)\b/.test(recommendationText);
-  const clearlyOvervalued=/overvalued|premium|expensive|above fair/.test(statusText);
-
-  if(explicitSell||clearlyOvervalued||(Number.isFinite(gap)&&gap<=-2)){
-    return {
-      tone:'metric-green',
-      badge:'green',
-      label:'Available to sell',
-      note:'Release clause active — offers can be considered'
-    };
-  }
-
-  if(
-    /neutral|fair|review|near/.test(statusText)||
-    (Number.isFinite(gap)&&gap>-2&&gap<=3)
-  ){
-    return {
-      tone:'metric-amber',
-      badge:'amber',
-      label:'Review offers',
-      note:'Close to fair value — manager decision required'
-    };
-  }
-
+function releaseClauseDecision(){
   return {
-    tone:'metric-red',
-    badge:'red',
-    label:'Not for sale',
-    note:'Below fair value — keep the player in the squad'
+    tone:'metric-amber',
+    badge:'amber',
+    label:'Open to offers',
+    note:'A bid must be at least 6% above the live market value'
   };
 }
 function profileBadge(label,tone){
@@ -5789,10 +5763,10 @@ function openPlayerDrawer(ticker){
           </div>
 
           <div class="player-profile-metric ${releaseDecision.tone}">
-            <small>Release Clause</small>
+            <small>6% Release Clause</small>
             <strong>${transferMoney(valuation.releaseClauseMillions)}</strong>
             ${profileBadge(releaseDecision.label,releaseDecision.badge)}
-            <span>${releaseDecision.note}</span>
+            <span>${releaseDecision.note} — check Incoming Offers for met/not met</span>
           </div>
 
           <div class="player-profile-metric ${valuationCardTone}">
@@ -6703,6 +6677,10 @@ document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_SquadHub.html
 
 <script id="player-profile-colour-marker">
 document.documentElement.dataset.playerProfileBuild = "colour-signals-v25";
+</script>
+
+<script id="release-clause-cleanup-marker">
+document.documentElement.dataset.releaseClauseBuild = "six-percent-clean-v26";
 </script>
 </body>
 </html>
