@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Performance Analysis Room</title>
-<!-- Build: Universal Department Colour Sidebar • 20 Jul 2026 -->
+<!-- Build: Distinct Department KPIs • 20 Jul 2026 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -1211,28 +1211,28 @@ body.fm-transfer-menu-open .fm-side-scroll{
     <div class="aurora-photo-content">
       <div class="aurora-photo-kicker"><span class="aurora-photo-kicker-dot"></span> Performance intelligence live</div>
       <h2 class="aurora-photo-title">Analysis <span>Room</span></h2>
-      <p class="aurora-photo-sub" id="heroCopy">Loading Aurora’s income form, squad contribution, risk shape and progression towards the next division.</p>
+      <p class="aurora-photo-sub" id="heroCopy">Loading live player form, market momentum, portfolio concentration and squad-quality signals.</p>
       <div class="aurora-photo-actions">
         <span class="aurora-photo-pill" id="dataFreshness">Aurora data: loading…</span>
         <span class="aurora-photo-pill">Primary objective: £500/month</span>
         <span class="aurora-photo-pill">Charts update from AuroraMaster.json</span>
       </div>
       <div class="aurora-photo-meta analysis-meta">
-        <div class="aurora-photo-stat"><small>Income</small><strong id="boardIncome">Income</strong><span>Attack lane</span></div>
+        <div class="aurora-photo-stat"><small>Coverage</small><strong id="boardCoverage">Players</strong><span>Active holdings analysed</span></div>
         <div class="aurora-photo-stat"><small>Form</small><strong id="boardForm">Loading</strong><span>Current squad momentum</span></div>
-        <div class="aurora-photo-stat"><small>Shape</small><strong id="boardShape">Balanced?</strong><span>Portfolio structure</span></div>
-        <div class="aurora-photo-stat"><small>Control</small><strong id="boardYield">Yield</strong><span>Quality and discipline</span></div>
-        <div class="aurora-photo-stat"><small>Target</small><strong id="boardTarget">£500/m</strong><span>Promotion objective</span></div>
+        <div class="aurora-photo-stat"><small>Shape</small><strong id="boardShape">Balanced?</strong><span>Portfolio concentration</span></div>
+        <div class="aurora-photo-stat"><small>Control</small><strong id="boardYield">Yield</strong><span>Income efficiency</span></div>
+        <div class="aurora-photo-stat"><small>Quality</small><strong id="boardQuality">Score</strong><span>Average buy strength</span></div>
       </div>
     </div>
   </section>
 
   <section class="score-strip">
-    <div class="score-card green"><div class="score-icon">⚽</div><small>Annual Income</small><strong id="annualIncome">—</strong><span id="annualIncomeNote">Current squad dividend run rate</span></div>
-    <div class="score-card green"><div class="score-icon">🗓️</div><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span id="monthlyIncomeNote">Average monthly run rate</span></div>
-    <div class="score-card"><div class="score-icon">🏟️</div><small>Club Value</small><strong id="clubValue">—</strong><span id="clubValueNote">All active holdings including Tesco</span></div>
-    <div class="score-card"><div class="score-icon">%</div><small>Income Yield</small><strong id="portfolioYield">—</strong><span>IG ISA + Trade 212 only</span></div>
-    <div class="score-card amber"><div class="score-icon">🎯</div><small>Gap to £500/month</small><strong id="targetGap">—</strong><span id="targetGapNote">Promotion distance</span></div>
+    <div class="score-card green"><div class="score-icon">▲</div><small>Positive Movers</small><strong id="positiveMovers">—</strong><span id="positiveMoversNote">Players rising today</span></div>
+    <div class="score-card red"><div class="score-icon">▼</div><small>Negative Movers</small><strong id="negativeMovers">—</strong><span id="negativeMoversNote">Players falling today</span></div>
+    <div class="score-card green"><div class="score-icon">⭐</div><small>Best Performer</small><strong id="bestPerformer">—</strong><span id="bestPerformerNote">Strongest live move</span></div>
+    <div class="score-card amber"><div class="score-icon">◉</div><small>Sector Concentration</small><strong id="sectorConcentration">—</strong><span id="sectorConcentrationNote">Largest portfolio sector</span></div>
+    <div class="score-card"><div class="score-icon">🧠</div><small>Average Buy Strength</small><strong id="averageBuyStrength">—</strong><span id="averageBuyStrengthNote">Squad opportunity score</span></div>
   </section>
 
   <div class="section-head"><div><h2>Match Analysis</h2><p>Progression, contribution and portfolio shape in one live review.</p></div><span class="badge blue" id="analysisStatus">Loading data</span></div>
@@ -1366,6 +1366,41 @@ function combinedHoldings(){
   });
   return [...map.values()].map(x=>({...x,accounts:[...x.accounts],yield:x.value>0?x.income/x.value:0,incomeShare:0}));
 }
+
+function latestRowForTicker(rows,ticker){
+  const target=shortTicker(ticker);
+  const matches=(rows||[]).filter(row=>rowTicker(row)===target);
+  return matches.sort((a,b)=>{
+    const da=toDate(rowDate(a))?.getTime()||0;
+    const db=toDate(rowDate(b))?.getTime()||0;
+    return db-da;
+  })[0]||null;
+}
+function movementPercentFromRow(row){
+  if(!row) return NaN;
+  const value=parseNum(
+    row?.change_pct ??
+    row?.change_percent ??
+    row?.percentage_change ??
+    row?.daily_change_pct ??
+    row?.['Change %'] ??
+    row?.['Daily Change %']
+  );
+  if(!Number.isFinite(value)) return NaN;
+  return Math.abs(value)<=1 ? value*100 : value;
+}
+function currentMovement(ticker){
+  const live=latestRowForTicker(state.livePrices,ticker);
+  const liveMove=movementPercentFromRow(live);
+  if(Number.isFinite(liveMove)) return liveMove;
+
+  const summary=latestRowForTicker(state.dailyPriceSummary,ticker);
+  const summaryMove=movementPercentFromRow(summary);
+  if(Number.isFinite(summaryMove)) return summaryMove;
+
+  return 0;
+}
+
 function annualTotal(){return activeHoldings().reduce((s,r)=>s+annualIncome(r),0);}
 function clubValue(){return activeHoldings().reduce((s,r)=>s+holdingValue(r),0);}
 function incomePortfolio(){return activeHoldings().filter(isIncomeAccount);}
@@ -1449,14 +1484,86 @@ function renderCharts(){
   showCanvas("yieldStrengthChart","yieldStrengthEmpty");scatterChart(combined);
 }
 function renderKpis(){
-  const income=annualTotal(),monthly=income/12,value=clubValue(),y=portfolioYield(),gap=Math.max(0,MONTHLY_TARGET-monthly),progress=Math.min(1,monthly/MONTHLY_TARGET);
-  $("annualIncome").textContent=money(income);$("monthlyIncome").textContent=money(monthly);$("clubValue").textContent=money(value);$("portfolioYield").textContent=pct(y);$("targetGap").textContent=money(gap);
-  $("annualIncomeNote").textContent=`${money(income/365)} per day on an annualised basis`;$("monthlyIncomeNote").textContent=`${(progress*100).toFixed(1)}% of the £500 target`;$("targetGapNote").textContent=gap>0?`${money(gap*12)} more annual income needed`:"Top target reached";
-  $("boardIncome").textContent=money0(income)+"/yr";$("boardYield").textContent=pct(y);$("boardTarget").textContent=`${(progress*100).toFixed(0)}% complete`;
-  const valPts=valueProgression();const form=valPts.length>1?valPts.at(-1).value-valPts[0].value:NaN;$("boardForm").textContent=Number.isFinite(form)?`${form>=0?"▲":"▼"} ${money0(Math.abs(form))}`:"Building";
-  const sectors=combinedSectorData(),sectorTotal=sectors.reduce((s,x)=>s+x.value,0),topSector=sectors[0];$("boardShape").textContent=topSector&&sectorTotal?`${((topSector.value/sectorTotal)*100).toFixed(0)}% ${topSector.sector}`:"Loading";
-  $("heroCopy").textContent=`Aurora is producing ${money(monthly)} per month in annualised dividend income, with ${money(gap)} still required for promotion to the £500/month objective.`;
-  const stamp=latestTimestamp();if(window.AuroraFC)AuroraFC.setFreshness("dataFreshness",AURORA_MASTER_CACHE,{prefix:"Aurora generated"});else $("dataFreshness").textContent=stamp?`Aurora data: ${stamp.toLocaleString("en-GB")}`:"Aurora generated: unavailable";
+  const combined=combinedHoldings();
+  const movements=combined.map(row=>({
+    ...row,
+    movement:currentMovement(row.ticker)
+  }));
+  const positive=movements.filter(row=>row.movement>0);
+  const negative=movements.filter(row=>row.movement<0);
+  const flat=movements.length-positive.length-negative.length;
+  const best=[...movements].sort((a,b)=>b.movement-a.movement)[0]||null;
+
+  const sectors=combinedSectorData();
+  const sectorTotal=sectors.reduce((sum,row)=>sum+row.value,0);
+  const topSector=sectors[0]||null;
+  const concentration=topSector&&sectorTotal?topSector.value/sectorTotal:NaN;
+
+  const strengthRows=combined.filter(row=>Number.isFinite(row.buyStrength)&&row.buyStrength>0);
+  const averageStrength=strengthRows.length
+    ? strengthRows.reduce((sum,row)=>sum+row.buyStrength,0)/strengthRows.length
+    : NaN;
+
+  $("positiveMovers").textContent=positive.length;
+  $("positiveMoversNote").textContent=
+    `${flat} flat • ${movements.length} players checked`;
+
+  $("negativeMovers").textContent=negative.length;
+  $("negativeMoversNote").textContent=
+    negative.length?"Players requiring a form check":"No players currently falling";
+
+  $("bestPerformer").textContent=best?best.ticker:"—";
+  $("bestPerformerNote").textContent=best
+    ? `${best.movement>=0?"+":""}${best.movement.toFixed(2)}% today`
+    : "Waiting for movement data";
+
+  $("sectorConcentration").textContent=Number.isFinite(concentration)
+    ? `${(concentration*100).toFixed(1)}%`
+    : "—";
+  $("sectorConcentrationNote").textContent=topSector
+    ? `${topSector.sector} is the largest sector`
+    : "Sector data unavailable";
+
+  $("averageBuyStrength").textContent=Number.isFinite(averageStrength)
+    ? `${Math.round(averageStrength)}/100`
+    : "—";
+  $("averageBuyStrengthNote").textContent=Number.isFinite(averageStrength)
+    ? averageStrength>=75?"Strong opportunity quality"
+      :averageStrength>=55?"Balanced opportunity quality"
+      :"Opportunity quality needs work"
+    :"Buy-strength data unavailable";
+
+  const y=portfolioYield();
+  const valPts=valueProgression();
+  const form=valPts.length>1?valPts.at(-1).value-valPts[0].value:NaN;
+
+  $("boardCoverage").textContent=`${combined.length} players`;
+  $("boardForm").textContent=Number.isFinite(form)
+    ? `${form>=0?"▲":"▼"} ${money0(Math.abs(form))}`
+    : "Building";
+  $("boardShape").textContent=topSector&&sectorTotal
+    ? `${(concentration*100).toFixed(0)}% ${topSector.sector}`
+    : "Loading";
+  $("boardYield").textContent=pct(y);
+  $("boardQuality").textContent=Number.isFinite(averageStrength)
+    ? `${Math.round(averageStrength)}/100`
+    : "Building";
+
+  $("heroCopy").textContent=
+    `${positive.length} players are rising, ${negative.length} are falling and ${
+      topSector&&Number.isFinite(concentration)
+        ? `${topSector.sector} carries ${(concentration*100).toFixed(1)}% of the portfolio`
+        : "sector shape is still loading"
+    }.`;
+
+  const stamp=latestTimestamp();
+  if(window.AuroraFC){
+    AuroraFC.setFreshness("dataFreshness",AURORA_MASTER_CACHE,{prefix:"Aurora generated"});
+  }else{
+    $("dataFreshness").textContent=stamp
+      ? `Aurora data: ${stamp.toLocaleString("en-GB")}`
+      : "Aurora generated: unavailable";
+  }
 }
 function renderVerdict(){
   const combined=combinedHoldings().sort((a,b)=>b.income-a.income),income=annualTotal(),monthly=income/12,gap=Math.max(0,MONTHLY_TARGET-monthly),y=portfolioYield(),sectors=combinedSectorData(),sectorTotal=sectors.reduce((s,x)=>s+x.value,0),topSector=sectors[0],topIncome=combined.find(x=>x.income>0),topProfit=[...combined].sort((a,b)=>b.profit-a.profit)[0];
@@ -1739,5 +1846,9 @@ document.documentElement.dataset.colourSidebarBuild = "universal-v24";
 document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_AnalysisRoom.html";
 </script>
 
+
+<script id="distinct-kpi-marker">
+document.documentElement.dataset.departmentKpis = "distinct-v29";
+</script>
 </body>
 </html>

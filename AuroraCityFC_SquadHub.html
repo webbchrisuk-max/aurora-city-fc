@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 
 <title>Aurora City FC — Squad Hub</title>
-<!-- Build: Clean 6 Percent Release Clause • 20 Jul 2026 -->
+<!-- Build: Distinct Department KPIs • 20 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -4751,7 +4751,7 @@ body.fm-transfer-menu-open .fm-side-scroll{
     <div class="aurora-photo-content">
       <div class="aurora-photo-kicker"><span class="aurora-photo-kicker-dot"></span> First-team department</div>
       <h2 class="aurora-photo-title">Squad <span>Hub</span></h2>
-      <p class="aurora-photo-sub">Current holdings, squad form, buy strength, chemistry warnings, club legends and trophy cabinet progress.</p>
+      <p class="aurora-photo-sub">Starting XI selection, live player form, squad strength, bench depth, chemistry warnings and positional cover.</p>
       <div class="aurora-photo-actions">
         <span class="aurora-photo-pill" id="lastUpdated">Last updated: loading…</span>
         <span class="aurora-photo-pill">Squad Role: Income + Quality</span>
@@ -4772,12 +4772,12 @@ body.fm-transfer-menu-open .fm-side-scroll{
         <div class="squad-kpi"><strong id="squadStrength">—</strong><span id="squadStrengthLabel">Loading strength…</span></div>
       </div>
       <div class="squad-card w3">
-        <div class="card-title"><h3>Annual Income</h3><span class="badge amber">Cashflow</span></div>
-        <div class="squad-kpi"><strong id="annualIncome">—</strong><span id="monthlyIncome">monthly loading…</span></div>
+        <div class="card-title"><h3>Starting XI Form</h3><span class="badge green">Live</span></div>
+        <div class="squad-kpi"><strong id="firstTeamForm">—</strong><span id="firstTeamFormNote">Setting the team up…</span></div>
       </div>
       <div class="squad-card w3">
-        <div class="card-title"><h3>Current Division</h3><span class="badge purple">Status</span></div>
-        <div class="squad-kpi"><strong id="currentDivision">—</strong><span id="divisionNote">Checking league table…</span></div>
+        <div class="card-title"><h3>Bench Depth</h3><span class="badge purple">Depth</span></div>
+        <div class="squad-kpi"><strong id="benchDepth">—</strong><span id="benchDepthNote">Checking reserves…</span></div>
       </div>
     </div>
   </section>
@@ -6333,19 +6333,39 @@ function renderAll(){
 
   const rows = uniqueByTicker(state.holdings).sort((a,b)=>squadScore(b)-squadScore(a));
   const annualIncome = portfolioAnnualIncome();
-  const monthly = annualIncome / 12;
   const avg = rows.length ? rows.reduce((s,r)=>s+squadScore(r),0)/rows.length : 0;
-  const [division, divisionNote] = currentDivision(annualIncome);
+
+  // Build the team before the headline strip so the form and depth cards
+  // describe the actual selected XI rather than the full portfolio totals.
+  renderFormation(rows,'firstTeamPitch');
+
+  const selected = currentTeamPlan.filter(slot=>slot.row).map(slot=>slot.row);
+  const selectedMoves = selected.map(row=>dailyMove(row)).filter(Number.isFinite);
+  const firstTeamAverage = selectedMoves.length
+    ? selectedMoves.reduce((sum,value)=>sum+value,0)/selectedMoves.length
+    : 0;
+  const rising = selectedMoves.filter(value=>value>0).length;
+  const falling = selectedMoves.filter(value=>value<0).length;
+  const flat = selectedMoves.length-rising-falling;
+  const benchCount = Math.max(0,rows.length-selected.length);
 
   $('squadSize').textContent = rows.length;
   $('squadStrength').textContent = `${Math.round(avg)}/100`;
   $('squadStrengthLabel').textContent = scoreLabel(avg);
-  $('annualIncome').textContent = money(annualIncome);
-  $('monthlyIncome').textContent = `${money(monthly)} monthly`;
-  $('currentDivision').textContent = division;
-  $('divisionNote').textContent = divisionNote;
 
-  renderFormation(rows,'firstTeamPitch');
+  $('firstTeamForm').textContent =
+    `${firstTeamAverage>0?'+':''}${firstTeamAverage.toFixed(2)}%`;
+  $('firstTeamForm').className =
+    firstTeamAverage>0?'positive':firstTeamAverage<0?'negative':'neutral';
+  $('firstTeamFormNote').textContent =
+    `${rising} rising • ${falling} falling • ${flat} flat`;
+
+  $('benchDepth').textContent = benchCount;
+  $('benchDepthNote').textContent =
+    benchCount
+      ? `${benchCount} squad player${benchCount===1?'':'s'} outside the starting XI`
+      : 'Starting XI currently uses the full active squad';
+
   renderBench(rows,'benchList');
   renderBackupTeam(rows,'relegationWatch');
   renderChemistry(rows);
@@ -6681,6 +6701,10 @@ document.documentElement.dataset.playerProfileBuild = "colour-signals-v25";
 
 <script id="release-clause-cleanup-marker">
 document.documentElement.dataset.releaseClauseBuild = "six-percent-clean-v26";
+</script>
+
+<script id="distinct-kpi-marker">
+document.documentElement.dataset.departmentKpis = "distinct-v29";
 </script>
 </body>
 </html>
