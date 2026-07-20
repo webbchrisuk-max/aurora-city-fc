@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 
 <title>Aurora City FC — Squad Hub</title>
-<!-- Build: Universal Department Colour Sidebar • 20 Jul 2026 -->
+<!-- Build: Colour Player Profiles • 20 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -4489,6 +4489,156 @@ body.fm-transfer-menu-open .fm-side-scroll{
   }
 }
 
+
+
+/* ================= COLOUR-CODED PLAYER PROFILES ================= */
+.player-profile-metric{
+  position:relative;
+  overflow:hidden;
+  min-height:112px;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.player-profile-metric:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:3px;
+  opacity:.95;
+}
+.player-profile-metric:hover{transform:translateY(-2px)}
+
+.player-profile-metric.metric-green{
+  border-color:rgba(74,222,128,.42);
+  background:linear-gradient(145deg,rgba(20,83,45,.31),rgba(2,8,23,.42));
+  box-shadow:inset 0 0 22px rgba(34,197,94,.055),0 9px 24px rgba(20,83,45,.08);
+}
+.player-profile-metric.metric-green:before{background:linear-gradient(90deg,#22c55e,#4ade80)}
+.player-profile-metric.metric-green strong{color:#86efac}
+
+.player-profile-metric.metric-red{
+  border-color:rgba(251,113,133,.42);
+  background:linear-gradient(145deg,rgba(127,29,29,.30),rgba(2,8,23,.42));
+  box-shadow:inset 0 0 22px rgba(244,63,94,.05),0 9px 24px rgba(127,29,29,.08);
+}
+.player-profile-metric.metric-red:before{background:linear-gradient(90deg,#e11d48,#fb7185)}
+.player-profile-metric.metric-red strong{color:#fda4af}
+
+.player-profile-metric.metric-amber{
+  border-color:rgba(251,191,36,.40);
+  background:linear-gradient(145deg,rgba(120,53,15,.28),rgba(2,8,23,.42));
+  box-shadow:inset 0 0 22px rgba(245,158,11,.05),0 9px 24px rgba(120,53,15,.08);
+}
+.player-profile-metric.metric-amber:before{background:linear-gradient(90deg,#f59e0b,#facc15)}
+.player-profile-metric.metric-amber strong{color:#fde68a}
+
+.player-profile-metric.metric-blue{
+  border-color:rgba(96,165,250,.37);
+  background:linear-gradient(145deg,rgba(30,64,175,.23),rgba(2,8,23,.42));
+}
+.player-profile-metric.metric-blue:before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.player-profile-metric.metric-blue strong{color:#bfdbfe}
+
+.player-profile-metric.metric-purple{
+  border-color:rgba(167,139,250,.38);
+  background:linear-gradient(145deg,rgba(76,29,149,.23),rgba(2,8,23,.42));
+}
+.player-profile-metric.metric-purple:before{background:linear-gradient(90deg,#8b5cf6,#c4b5fd)}
+.player-profile-metric.metric-purple strong{color:#ddd6fe}
+
+.player-profile-metric.metric-cyan{
+  border-color:rgba(34,211,238,.34);
+  background:linear-gradient(145deg,rgba(8,69,84,.25),rgba(2,8,23,.42));
+}
+.player-profile-metric.metric-cyan:before{background:linear-gradient(90deg,#06b6d4,#67e8f9)}
+.player-profile-metric.metric-cyan strong{color:#a5f3fc}
+
+.player-profile-metric.metric-neutral{
+  border-color:rgba(148,163,184,.20);
+  background:rgba(2,8,23,.42);
+}
+.player-profile-metric.metric-neutral:before{background:linear-gradient(90deg,#64748b,#94a3b8)}
+
+.profile-decision-badge{
+  display:inline-flex!important;
+  width:max-content;
+  align-items:center;
+  gap:6px;
+  margin-top:8px!important;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:9px!important;
+  font-weight:1000;
+  letter-spacing:.06em;
+  line-height:1;
+  text-transform:uppercase;
+}
+.profile-decision-badge.green{
+  color:#bbf7d0!important;
+  border:1px solid rgba(74,222,128,.34);
+  background:rgba(20,83,45,.35);
+}
+.profile-decision-badge.red{
+  color:#fecdd3!important;
+  border:1px solid rgba(251,113,133,.34);
+  background:rgba(127,29,29,.34);
+}
+.profile-decision-badge.amber{
+  color:#fde68a!important;
+  border:1px solid rgba(251,191,36,.32);
+  background:rgba(120,53,15,.32);
+}
+.profile-decision-badge.neutral{
+  color:#cbd5e1!important;
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(30,41,59,.36);
+}
+
+.player-profile-line.report-green strong{color:#86efac}
+.player-profile-line.report-red strong{color:#fda4af}
+.player-profile-line.report-amber strong{color:#fde68a}
+.player-profile-line.report-blue strong{color:#bfdbfe}
+
+.rating-part.rating-green{
+  border-color:rgba(74,222,128,.31);
+  background:rgba(20,83,45,.19);
+}
+.rating-part.rating-green strong{color:#86efac}
+.rating-part.rating-amber{
+  border-color:rgba(251,191,36,.29);
+  background:rgba(120,53,15,.18);
+}
+.rating-part.rating-amber strong{color:#fde68a}
+.rating-part.rating-red{
+  border-color:rgba(251,113,133,.29);
+  background:rgba(127,29,29,.18);
+}
+.rating-part.rating-red strong{color:#fda4af}
+
+.player-profile-metric .move-up{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:#86efac;
+}
+.player-profile-metric .move-down{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:#fda4af;
+}
+.player-profile-metric .move-flat{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:#fde68a;
+}
+
+@media(max-width:560px){
+  .player-profile-metric{min-height:104px}
+}
+
 </style>
 </head>
 <body>
@@ -5314,6 +5464,72 @@ let currentTeamPlan=[];
 function roleClass(role){ return role==='Captain'?'captain':role==='Vice-Captain'?'vice':''; }
 function formatPrice(row){ const p=latestPrice(row); return Number.isFinite(p)?money(p):'—'; }
 function movementHtml(row){ const m=dailyMove(row); const cls=m>0?'move-up':m<0?'move-down':'move-flat'; const icon=m>0?'▲':m<0?'▼':'•'; return `<span class="${cls}">${icon} ${m>0?'+':''}${m.toFixed(2)}%</span>`; }
+
+function metricToneFromNumber(value,positiveIsGreen=true){
+  if(!Number.isFinite(value)||Math.abs(value)<0.0001) return 'metric-amber';
+  const positive=value>0;
+  return positive===positiveIsGreen?'metric-green':'metric-red';
+}
+function valuationTone(status){
+  const text=String(status||'').toLowerCase();
+  if(/undervalued|discount|cheap|below fair/.test(text)) return 'metric-green';
+  if(/overvalued|premium|expensive|above fair/.test(text)) return 'metric-red';
+  if(/neutral|fair|review|near/.test(text)) return 'metric-amber';
+  return 'metric-neutral';
+}
+function recommendationTone(recommendation){
+  const text=String(recommendation||'').toLowerCase();
+  if(/\b(buy|accumulate|add|strong sign|sign)\b/.test(text)) return 'report-green';
+  if(/\b(sell|exit|reduce|trim|take profit)\b/.test(text)) return 'report-red';
+  if(/\b(hold|review|monitor|wait)\b/.test(text)) return 'report-amber';
+  return 'report-blue';
+}
+function ratingTone(score){
+  if(!Number.isFinite(score)) return 'rating-amber';
+  if(score>=75) return 'rating-green';
+  if(score>=55) return 'rating-amber';
+  return 'rating-red';
+}
+function releaseClauseDecision(row,valuation,recommendation){
+  const recommendationText=String(recommendation||'').toLowerCase();
+  const statusText=String(valuation?.status||'').toLowerCase();
+  const gap=valuation?.gapPct;
+
+  const explicitSell=/\b(sell|exit|reduce|trim|take profit)\b/.test(recommendationText);
+  const clearlyOvervalued=/overvalued|premium|expensive|above fair/.test(statusText);
+
+  if(explicitSell||clearlyOvervalued||(Number.isFinite(gap)&&gap<=-2)){
+    return {
+      tone:'metric-green',
+      badge:'green',
+      label:'Available to sell',
+      note:'Release clause active — offers can be considered'
+    };
+  }
+
+  if(
+    /neutral|fair|review|near/.test(statusText)||
+    (Number.isFinite(gap)&&gap>-2&&gap<=3)
+  ){
+    return {
+      tone:'metric-amber',
+      badge:'amber',
+      label:'Review offers',
+      note:'Close to fair value — manager decision required'
+    };
+  }
+
+  return {
+    tone:'metric-red',
+    badge:'red',
+    label:'Not for sale',
+    note:'Below fair value — keep the player in the squad'
+  };
+}
+function profileBadge(label,tone){
+  return `<span class="profile-decision-badge ${tone}">${label}</span>`;
+}
+
 function squadImageForTicker(ticker){
   const t=cleanTicker(ticker).replace('LON:','').replace('.L','');
   // Squad images are currently uploaded beside the HTML in the GitHub repo.
@@ -5505,7 +5721,167 @@ function openPlayerDrawer(ticker){
       const upsideLabel=Number.isFinite(valuation.upsideMillions)
         ? `${valuation.upsideMillions>=0?'+':''}${transferMoney(valuation.upsideMillions)}`
         : '—';
-      content.innerHTML=`<div class="player-profile-head"><div class="player-profile-shirt"><img src="${playerProfileImageForTicker(r.ticker)}" data-fallback-src="${squadImageFallbackForTicker(r.ticker)}" alt="${displayTicker(r.ticker)} player portrait" onerror="if(this.dataset.fallbackSrc&&!this.dataset.retried){this.dataset.retried='1';this.src=this.dataset.fallbackSrc;}else{this.remove();this.parentElement.textContent='${displayTicker(r.ticker)}';}"></div><div><h2>${displayName(r)}</h2><p>No. ${slot.number} • ${slot.pos} • ${slot.role}</p><div class="player-profile-badges"><span class="role-chip ${roleClass(slot.role)}">${slot.role}</span><span class="position-chip">Rating ${score}</span></div></div></div><div class="player-profile-grid"><div class="player-profile-metric"><small>Last Share Price</small><strong>${formatPrice(r)}</strong><span>Latest Aurora market feed</span></div><div class="player-profile-metric"><small>Today's Movement</small><strong>${movementHtml(r)}</strong><span>Live price versus latest completed session close</span></div><div class="player-profile-metric"><small>Current Market Value</small><strong>${transferMoney(valuation.currentMillions)}</strong><span>£1,000 holding value = £1m football value</span></div><div class="player-profile-metric"><small>Estimated Transfer Value</small><strong>${transferMoney(valuation.estimatedMillions)}</strong><span>Adjusted using Aurora fair value</span></div><div class="player-profile-metric"><small>Transfer Upside</small><strong>${upsideLabel}</strong><span>${Number.isFinite(valuation.gapPct)?(valuation.gapPct>=0?'+':'')+valuation.gapPct.toFixed(1)+'% versus fair value':'Awaiting valuation data'}</span></div><div class="player-profile-metric"><small>Release Clause</small><strong>${transferMoney(valuation.releaseClauseMillions)}</strong><span>10% above estimated transfer value</span></div><div class="player-profile-metric"><small>Valuation Status</small><strong>${valuation.status}</strong><span>Aurora transfer-market indicator</span></div><div class="player-profile-metric"><small>Annual Dividend</small><strong>${money(annual)}</strong><span>${money(annual/12)} per month</span></div><div class="player-profile-metric"><small>Dividend Yield</small><strong>${Number.isFinite(y)?(y*100).toFixed(2)+'%':'—'}</strong><span>Current income yield</span></div></div><div class="player-profile-section"><h3>Manager's Player Report</h3><div class="player-profile-line"><span>Squad position</span><strong>No. ${slot.number} ${slot.pos}</strong></div><div class="player-profile-line"><span>Aurora rating</span><strong>${score}/100 • ${scoreLabel(score)}</strong></div><div class="player-profile-line"><span>Current role</span><strong>${slot.role}</strong></div><div class="player-profile-line"><span>Recommendation</span><strong>${recommendation}</strong></div><div class="player-profile-line"><span>Company / player</span><strong>${displayName(r)}</strong></div><div class="player-profile-line"><span>Accounts</span><strong>${accountSummary(r.ticker)}</strong></div><div class="player-profile-line"><span>Book cost</span><strong>${money(totalBookCost(r.ticker))}</strong></div><div class="player-profile-line"><span>Unrealised gain / loss</span><strong>${money(holdingValue(r)-totalBookCost(r.ticker))}</strong></div><div class="rating-breakdown">${Object.entries(ratingBreakdown(r)).map(([label,value])=>`<div class="rating-part"><small>${label}</small><strong>${Math.round(value)}/100</strong></div>`).join('')}</div></div>`;
+      const movement=dailyMove(r);
+      const movementTone=movement>0?'metric-green':movement<0?'metric-red':'metric-amber';
+      const releaseDecision=releaseClauseDecision(r,valuation,recommendation);
+      const valuationCardTone=valuationTone(valuation.status);
+      const upsideTone=metricToneFromNumber(valuation.upsideMillions,true);
+      const unrealised=holdingValue(r)-totalBookCost(r.ticker);
+      const unrealisedTone=unrealised>0?'report-green':unrealised<0?'report-red':'report-amber';
+      const recommendationClass=recommendationTone(recommendation);
+      const overallRatingTone=score>=75?'report-green':score>=55?'report-amber':'report-red';
+      const yieldText=Number.isFinite(y)?(y*100).toFixed(2)+'%':'—';
+
+      content.innerHTML=`
+        <div class="player-profile-head">
+          <div class="player-profile-shirt">
+            <img
+              src="${playerProfileImageForTicker(r.ticker)}"
+              data-fallback-src="${squadImageFallbackForTicker(r.ticker)}"
+              alt="${displayTicker(r.ticker)} player portrait"
+              onerror="if(this.dataset.fallbackSrc&&!this.dataset.retried){this.dataset.retried='1';this.src=this.dataset.fallbackSrc;}else{this.remove();this.parentElement.textContent='${displayTicker(r.ticker)}';}"
+            >
+          </div>
+          <div>
+            <h2>${displayName(r)}</h2>
+            <p>No. ${slot.number} • ${slot.pos} • ${slot.role}</p>
+            <div class="player-profile-badges">
+              <span class="role-chip ${roleClass(slot.role)}">${slot.role}</span>
+              <span class="position-chip">Rating ${score}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-profile-grid">
+          <div class="player-profile-metric metric-blue">
+            <small>Last Share Price</small>
+            <strong>${formatPrice(r)}</strong>
+            <span>Latest Aurora market feed</span>
+          </div>
+
+          <div class="player-profile-metric ${movementTone}">
+            <small>Today's Movement</small>
+            <strong>${movementHtml(r)}</strong>
+            <span>Live price versus latest completed session close</span>
+          </div>
+
+          <div class="player-profile-metric metric-blue">
+            <small>Current Market Value</small>
+            <strong>${transferMoney(valuation.currentMillions)}</strong>
+            <span>£1,000 holding value = £1m football value</span>
+          </div>
+
+          <div class="player-profile-metric metric-purple">
+            <small>Estimated Transfer Value</small>
+            <strong>${transferMoney(valuation.estimatedMillions)}</strong>
+            <span>Adjusted using Aurora fair value</span>
+          </div>
+
+          <div class="player-profile-metric ${upsideTone}">
+            <small>Transfer Upside</small>
+            <strong>${upsideLabel}</strong>
+            <span>${
+              Number.isFinite(valuation.gapPct)
+                ? (valuation.gapPct>=0?'+':'')+
+                  valuation.gapPct.toFixed(1)+'% versus fair value'
+                : 'Awaiting valuation data'
+            }</span>
+          </div>
+
+          <div class="player-profile-metric ${releaseDecision.tone}">
+            <small>Release Clause</small>
+            <strong>${transferMoney(valuation.releaseClauseMillions)}</strong>
+            ${profileBadge(releaseDecision.label,releaseDecision.badge)}
+            <span>${releaseDecision.note}</span>
+          </div>
+
+          <div class="player-profile-metric ${valuationCardTone}">
+            <small>Valuation Status</small>
+            <strong>${valuation.status}</strong>
+            ${profileBadge(
+              valuationCardTone==='metric-green'
+                ? 'Value opportunity'
+                : valuationCardTone==='metric-red'
+                  ? 'Valuation warning'
+                  : valuationCardTone==='metric-amber'
+                    ? 'Fair-value zone'
+                    : 'Awaiting data',
+              valuationCardTone==='metric-green'
+                ? 'green'
+                : valuationCardTone==='metric-red'
+                  ? 'red'
+                  : valuationCardTone==='metric-amber'
+                    ? 'amber'
+                    : 'neutral'
+            )}
+            <span>Aurora transfer-market indicator</span>
+          </div>
+
+          <div class="player-profile-metric metric-cyan">
+            <small>Annual Dividend</small>
+            <strong>${money(annual)}</strong>
+            <span>${money(annual/12)} per month</span>
+          </div>
+
+          <div class="player-profile-metric metric-cyan">
+            <small>Dividend Yield</small>
+            <strong>${yieldText}</strong>
+            <span>Current income yield</span>
+          </div>
+        </div>
+
+        <div class="player-profile-section">
+          <h3>Manager's Player Report</h3>
+
+          <div class="player-profile-line">
+            <span>Squad position</span>
+            <strong>No. ${slot.number} ${slot.pos}</strong>
+          </div>
+
+          <div class="player-profile-line ${overallRatingTone}">
+            <span>Aurora rating</span>
+            <strong>${score}/100 • ${scoreLabel(score)}</strong>
+          </div>
+
+          <div class="player-profile-line">
+            <span>Current role</span>
+            <strong>${slot.role}</strong>
+          </div>
+
+          <div class="player-profile-line ${recommendationClass}">
+            <span>Recommendation</span>
+            <strong>${recommendation}</strong>
+          </div>
+
+          <div class="player-profile-line">
+            <span>Company / player</span>
+            <strong>${displayName(r)}</strong>
+          </div>
+
+          <div class="player-profile-line">
+            <span>Accounts</span>
+            <strong>${accountSummary(r.ticker)}</strong>
+          </div>
+
+          <div class="player-profile-line">
+            <span>Book cost</span>
+            <strong>${money(totalBookCost(r.ticker))}</strong>
+          </div>
+
+          <div class="player-profile-line ${unrealisedTone}">
+            <span>Unrealised gain / loss</span>
+            <strong>${unrealised>0?'+':''}${money(unrealised)}</strong>
+          </div>
+
+          <div class="rating-breakdown">
+            ${Object.entries(ratingBreakdown(r)).map(([label,value])=>`
+              <div class="rating-part ${ratingTone(value)}">
+                <small>${label}</small>
+                <strong>${Math.round(value)}/100</strong>
+              </div>
+            `).join('')}
+          </div>
+        </div>`;
     }catch(err){
       console.error('Player profile render failed:',err);
       content.innerHTML='<div class="player-profile-section"><h3>Player profile could not load</h3><p style="color:var(--muted);margin:0">The squad remains available, but one of this player’s data fields could not be read. Refresh to retry.</p></div>';
@@ -6324,5 +6700,9 @@ document.documentElement.dataset.colourSidebarBuild = "universal-v24";
 document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_SquadHub.html";
 </script>
 
+
+<script id="player-profile-colour-marker">
+document.documentElement.dataset.playerProfileBuild = "colour-signals-v25";
+</script>
 </body>
 </html>
