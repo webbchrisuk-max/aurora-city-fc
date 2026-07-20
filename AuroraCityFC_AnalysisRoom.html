@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Performance Analysis Room</title>
-<!-- Build: Photographic Analysis Hero Refresh • 19 Jul 2026 -->
+<!-- Build: Universal Department Colour Sidebar • 20 Jul 2026 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -878,6 +878,228 @@ body.fm-transfer-menu-open .fm-side-scroll{
   }
 }
 
+
+
+/* ================= UNIVERSAL DEPARTMENT COLOUR SIDEBAR ================= */
+
+/* Department colour identities */
+.fm-side-link[href$="AuroraCityFC_ManagerDashboard.html"]{
+  --dept-colour:#60a5fa;
+  --dept-rgb:96,165,250;
+}
+.fm-side-link[href$="AuroraCityFC_SquadHub.html"]{
+  --dept-colour:#22d3ee;
+  --dept-rgb:34,211,238;
+}
+.fm-side-link[href$="AuroraCityFC_AnalysisRoom.html"]{
+  --dept-colour:#a78bfa;
+  --dept-rgb:167,139,250;
+}
+.fm-side-link[href$="AuroraCityFC_TrainingGround.html"]{
+  --dept-colour:#34d399;
+  --dept-rgb:52,211,153;
+}
+#transferSideMenu{
+  --dept-colour:#f59e0b;
+  --dept-rgb:245,158,11;
+}
+.fm-side-link[href$="AuroraCityFC_Boardroom.html"]{
+  --dept-colour:#f472b6;
+  --dept-rgb:244,114,182;
+}
+.fm-side-link[href$="AuroraCityFC_MediaCentre.html"]{
+  --dept-colour:#facc15;
+  --dept-rgb:250,204,21;
+}
+
+/* A subtle department trail on every page */
+.fm-side-scroll .fm-side-link{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(var(--dept-rgb),.12);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(var(--dept-rgb),.10),
+      rgba(var(--dept-rgb),.025) 62%,
+      transparent
+    );
+}
+
+.fm-side-scroll .fm-side-link:before{
+  content:"";
+  position:absolute;
+  top:8px;
+  bottom:8px;
+  left:0;
+  width:3px;
+  border-radius:0 4px 4px 0;
+  background:var(--dept-colour);
+  opacity:.58;
+  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
+}
+
+.fm-side-scroll .fm-side-link .fm-side-icon{
+  color:var(--dept-colour);
+  background:rgba(var(--dept-rgb),.11);
+  border:1px solid rgba(var(--dept-rgb),.12);
+}
+
+.fm-side-scroll .fm-side-link:hover{
+  color:#f8fafc;
+  border-color:rgba(var(--dept-rgb),.38);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(var(--dept-rgb),.23),
+      rgba(var(--dept-rgb),.07) 72%,
+      transparent
+    );
+  box-shadow:0 7px 20px rgba(var(--dept-rgb),.09);
+}
+
+.fm-side-scroll .fm-side-link:hover:before{
+  opacity:1;
+}
+
+/* The current page has the strongest identity */
+.fm-side-scroll .fm-side-link.active{
+  color:#fff;
+  border-color:rgba(var(--dept-rgb),.62);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(var(--dept-rgb),.38),
+      rgba(var(--dept-rgb),.16) 68%,
+      rgba(var(--dept-rgb),.05)
+    );
+  box-shadow:
+    inset 3px 0 0 var(--dept-colour),
+    0 9px 25px rgba(var(--dept-rgb),.17),
+    0 0 18px rgba(var(--dept-rgb),.08);
+}
+
+.fm-side-scroll .fm-side-link.active:before{
+  width:4px;
+  opacity:1;
+  box-shadow:0 0 17px rgba(var(--dept-rgb),.65);
+}
+
+.fm-side-scroll .fm-side-link.active .fm-side-icon{
+  color:#fff;
+  background:rgba(var(--dept-rgb),.26);
+  border-color:rgba(var(--dept-rgb),.38);
+  box-shadow:0 0 15px rgba(var(--dept-rgb),.20);
+}
+
+/* Transfer Centre is a folder, so it gets its own amber treatment */
+#transferSideMenu{
+  position:relative;
+  border-color:rgba(var(--dept-rgb),.12);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(var(--dept-rgb),.09),
+      rgba(var(--dept-rgb),.02) 66%,
+      transparent
+    );
+}
+
+#transferSideMenu:before{
+  content:"";
+  position:absolute;
+  top:8px;
+  bottom:8px;
+  left:0;
+  width:3px;
+  z-index:1;
+  border-radius:0 4px 4px 0;
+  background:var(--dept-colour);
+  opacity:.58;
+  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
+}
+
+#transferSideMenu summary{
+  position:relative;
+  z-index:2;
+}
+
+#transferSideMenu summary .fm-side-icon,
+#transferSideMenu .fm-folder-arrow{
+  color:var(--dept-colour);
+}
+
+#transferSideMenu summary .fm-side-icon{
+  background:rgba(var(--dept-rgb),.11);
+  border:1px solid rgba(var(--dept-rgb),.12);
+}
+
+#transferSideMenu:hover,
+#transferSideMenu[open],
+#transferSideMenu.active{
+  border-color:rgba(var(--dept-rgb),.44);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(var(--dept-rgb),.25),
+      rgba(var(--dept-rgb),.08) 72%,
+      transparent
+    );
+  box-shadow:
+    inset 3px 0 0 var(--dept-colour),
+    0 8px 22px rgba(var(--dept-rgb),.10);
+}
+
+#transferSideMenu:hover:before,
+#transferSideMenu[open]:before,
+#transferSideMenu.active:before{
+  width:4px;
+  opacity:1;
+  box-shadow:0 0 17px rgba(var(--dept-rgb),.62);
+}
+
+#transferSideMenu[open] .fm-side-submenu a:before{
+  background:rgba(var(--dept-rgb),.48);
+}
+
+#transferSideMenu[open] .fm-side-submenu a:hover,
+#transferSideMenu[open] .fm-side-submenu a.active{
+  color:#fff7ed;
+  background:rgba(var(--dept-rgb),.15);
+}
+
+.fm-side-scroll .fm-side-link > span:last-child,
+#transferSideMenu summary > span:nth-child(2){
+  position:relative;
+  z-index:2;
+}
+
+/* Small colour-coded section labels reinforce the department map */
+.fm-nav-group{
+  position:relative;
+  padding-left:9px;
+}
+
+.fm-nav-group:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:50%;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:#475569;
+  transform:translateY(-50%);
+}
+
+@media(max-height:720px){
+  .fm-side-scroll .fm-side-link:before,
+  #transferSideMenu:before{
+    top:6px;
+    bottom:6px;
+  }
+}
+
 </style>
 <script src="AuroraFCData.js"></script>
 </head>
@@ -985,7 +1207,7 @@ body.fm-transfer-menu-open .fm-side-scroll{
 <main class="app" id="analysis">
 
   <section class="aurora-photo-hero" aria-label="Analysis Room hero">
-    <img class="aurora-photo-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/analysis-room-performance-lab.png" alt="Analysis Room performance lab hero">
+    <img class="aurora-photo-banner" src="assets/aurora-city-fc/analysis-room-performance-lab.png" alt="Analysis Room performance lab hero">
     <div class="aurora-photo-content">
       <div class="aurora-photo-kicker"><span class="aurora-photo-kicker-dot"></span> Performance intelligence live</div>
       <h2 class="aurora-photo-title">Analysis <span>Room</span></h2>
@@ -1509,6 +1731,12 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   window.addEventListener("pageshow", updateFooter);
   updateFooter();
 })();
+</script>
+
+
+<script id="universal-colour-sidebar-marker">
+document.documentElement.dataset.colourSidebarBuild = "universal-v24";
+document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_AnalysisRoom.html";
 </script>
 
 </body>
