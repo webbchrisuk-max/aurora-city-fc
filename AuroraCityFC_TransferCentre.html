@@ -13,8 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
-<!-- Build: Universal Scouting Navigation • 23 Jul 2026 -->
-<!-- Build: Offers Activate At Live Target • 20 Jul 2026 -->
+<!-- Build: Monthly Portfolio Logic • 23 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -5194,6 +5193,71 @@ body.fm-transfer-menu-open .fm-side-scroll{
   }
 }
 
+
+
+/* ===================== MONTHLY PORTFOLIO LOGIC ===================== */
+.monthly-plan-panel,.route-compare-panel{
+  border:1px solid rgba(96,165,250,.22);
+  background:
+    radial-gradient(circle at top right,rgba(34,211,238,.10),transparent 34%),
+    linear-gradient(180deg,rgba(7,17,31,.96),rgba(4,12,27,.96));
+  border-radius:24px;
+  padding:16px;
+  box-shadow:0 18px 50px rgba(0,0,0,.28);
+}
+.monthly-plan-head,.route-choice-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.monthly-plan-head h3,.route-compare-panel h3{margin:4px 0 0;font-size:22px;color:#f8fafc}
+.monthly-plan-head p,.route-compare-panel .best-return-head p{margin:6px 0 0;color:#9fb0c8;font-size:12px;line-height:1.55;max-width:900px}
+.monthly-plan-kicker{display:block;color:#67e8f9;font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:1000}
+.monthly-plan-controls{display:grid;grid-template-columns:repeat(5,minmax(125px,1fr)) auto;gap:9px;margin-top:14px;align-items:end}
+.monthly-plan-field{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:5px;border:1px solid rgba(148,163,184,.18);background:rgba(2,8,20,.58);border-radius:15px;padding:9px 10px;min-height:64px}
+.monthly-plan-field span{grid-column:1/-1;color:#93a4bd;font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+.monthly-plan-field b{color:#67e8f9;font-size:13px}
+.monthly-plan-field input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#f8fafc;font-size:16px;font-weight:1000}
+.monthly-plan-field.compact input{max-width:68px}
+.monthly-plan-apply,.route-choice-button{border:1px solid rgba(52,211,153,.34);background:linear-gradient(135deg,rgba(5,150,105,.38),rgba(6,78,59,.42));color:#d1fae5;border-radius:15px;padding:12px 15px;font-weight:1000;min-height:64px;cursor:pointer}
+.monthly-plan-apply:hover,.route-choice-button:hover{filter:brightness(1.12)}
+.monthly-plan-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}
+.monthly-plan-stat{border:1px solid rgba(148,163,184,.16);background:rgba(2,8,20,.48);border-radius:17px;padding:12px;min-height:96px}
+.monthly-plan-stat.featured{border-color:rgba(52,211,153,.30);background:linear-gradient(135deg,rgba(6,78,59,.20),rgba(2,8,20,.50))}
+.monthly-plan-stat small{display:block;color:#93a4bd;font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+.monthly-plan-stat strong{display:block;color:#f8fafc;font-size:20px;margin-top:7px}
+.monthly-plan-stat.featured strong{color:#86efac}
+.monthly-plan-stat span{display:block;color:#9fb0c8;font-size:10px;line-height:1.4;margin-top:6px}
+.monthly-schedule-grid{display:grid;grid-template-columns:repeat(8,minmax(105px,1fr));gap:7px;margin-top:12px;overflow-x:auto;padding-bottom:3px}
+.month-card{min-width:105px;border:1px solid rgba(148,163,184,.15);background:rgba(2,8,20,.44);border-radius:14px;padding:10px;position:relative}
+.month-card.active{border-color:rgba(34,211,238,.48);background:linear-gradient(180deg,rgba(8,47,73,.48),rgba(2,8,20,.55));box-shadow:0 0 22px rgba(34,211,238,.08)}
+.month-card.done{opacity:.55}
+.month-card small{display:block;color:#93a4bd;font-size:8px;text-transform:uppercase;letter-spacing:.08em}
+.month-card strong{display:block;color:#f8fafc;font-size:15px;margin-top:5px}
+.month-card span{display:block;color:#9fb0c8;font-size:8px;line-height:1.35;margin-top:4px}
+.month-card i{position:absolute;right:8px;top:8px;width:7px;height:7px;border-radius:50%;background:#334155}
+.month-card.active i{background:#22d3ee;box-shadow:0 0 12px #22d3ee}
+.route-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.route-choice-card{border:1px solid rgba(148,163,184,.18);background:rgba(2,8,20,.50);border-radius:20px;padding:14px;transition:.18s ease}
+.route-choice-card.active{border-color:rgba(52,211,153,.42);box-shadow:0 0 28px rgba(52,211,153,.08)}
+.route-choice-card.maximum.active{border-color:rgba(251,191,36,.45);box-shadow:0 0 28px rgba(251,191,36,.08)}
+.route-choice-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:rgba(34,211,238,.12);color:#67e8f9;border:1px solid rgba(34,211,238,.22);font-size:18px;font-weight:1000}
+.route-choice-card.maximum .route-choice-icon{background:rgba(251,191,36,.12);color:#fde68a;border-color:rgba(251,191,36,.24)}
+.route-choice-top{justify-content:flex-start}
+.route-choice-top small{display:block;color:#93a4bd;font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+.route-choice-top h4{margin:3px 0 0;color:#f8fafc;font-size:16px}
+.route-choice-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}
+.route-choice-metrics div{border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.50);border-radius:13px;padding:9px}
+.route-choice-metrics small{display:block;color:#93a4bd;font-size:8px;text-transform:uppercase;letter-spacing:.07em}
+.route-choice-metrics strong{display:block;color:#bbf7d0;font-size:16px;margin-top:5px}
+.route-choice-card.maximum .route-choice-metrics strong{color:#fde68a}
+.route-choice-card>p{color:#9fb0c8;font-size:10px;line-height:1.45;min-height:30px;margin:10px 0}
+.route-choice-button{width:100%;min-height:44px;padding:10px}
+.route-choice-button.maximum{border-color:rgba(251,191,36,.30);background:linear-gradient(135deg,rgba(180,83,9,.38),rgba(120,53,15,.38));color:#fef3c7}
+.route-choice-button:disabled{opacity:.48;cursor:not-allowed}
+.data-confidence{display:inline-flex;align-items:center;gap:5px;margin-left:5px;color:#bae6fd;font-weight:900}
+.data-confidence i{width:7px;height:7px;border-radius:50%;background:#22c55e}
+.data-confidence.review i{background:#f59e0b}
+.data-confidence.block i{background:#f43f5e}
+@media(max-width:1100px){.monthly-plan-controls{grid-template-columns:repeat(3,minmax(150px,1fr))}.monthly-plan-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.monthly-schedule-grid{grid-template-columns:repeat(4,minmax(120px,1fr))}}
+@media(max-width:760px){.monthly-plan-controls,.monthly-plan-summary,.route-choice-grid{grid-template-columns:1fr}.monthly-plan-head{flex-direction:column}.monthly-schedule-grid{grid-template-columns:repeat(2,minmax(125px,1fr))}.route-choice-metrics{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -5251,12 +5315,12 @@ body.fm-transfer-menu-open .fm-side-scroll{
       </a>
 
       <div class="fm-nav-group">Recruitment</div>
+
       <a class="fm-side-link"
          href="AuroraCityFC_ScoutingCentre.html">
-        <span class="fm-side-icon">⌕</span>
+        <span class="fm-side-icon">◎</span>
         <span>Scouting Centre</span>
       </a>
-
 
       <details class="fm-side-folder active"
                id="transferSideMenu" open>
@@ -5268,6 +5332,7 @@ body.fm-transfer-menu-open .fm-side-scroll{
 
         <div class="fm-side-submenu">
 <a href="AuroraCityFC_TransferCentre.html#transfer-overview">Overview</a>
+          <a href="AuroraCityFC_TransferCentre.html#investment-release-plan">Monthly Plan</a>
           <a href="AuroraCityFC_TransferCentre.html#incoming-offers">Incoming Offers</a>
           <a href="AuroraCityFC_TransferCentre.html#deal-sheet">Deal Sheet</a>
           <a href="AuroraCityFC_TransferCentre.html#sell-desk">Sell Desk</a>
@@ -5330,14 +5395,14 @@ body.fm-transfer-menu-open .fm-side-scroll{
       <p class="aurora-photo-sub">Scout the market, compare income routes, manage the transfer budget and complete the next Aurora City FC signing.</p>
       <div class="aurora-photo-actions">
         <span class="aurora-photo-pill" id="lastUpdated">Last updated: loading…</span>
-        <span class="aurora-photo-pill">Window Objective: strongest income route</span>
-        <span class="aurora-photo-pill">Recruitment Rule: quality plus value</span>
+        <span class="aurora-photo-pill">Window Objective: best verified monthly route</span>
+        <span class="aurora-photo-pill">Recruitment Rule: income • safety • balance</span>
       </div>
       <div class="aurora-photo-meta">
         <div class="aurora-photo-stat">
           <small>Transfer Budget</small>
-          <strong id="heroTransferBudget">£1,500.00</strong>
-          <span>Available for the current recruitment plan</span>
+          <strong id="heroTransferBudget">£3,500.00</strong>
+          <span>Released from the two investment pots this month</span>
         </div>
         <div class="aurora-photo-stat">
           <small>Approved Signings</small>
@@ -5379,23 +5444,69 @@ body.fm-transfer-menu-open .fm-side-scroll{
     </div>
   </section>
 
-  <!-- ===================== SECTION: BEST RETURN ALLOCATION ===================== -->
+  <!-- ===================== SECTION: MONTHLY INVESTMENT RELEASE PLAN ===================== -->
+  <section class="section" id="investment-release-plan">
+    <div class="monthly-plan-panel">
+      <div class="monthly-plan-head">
+        <div>
+          <span class="monthly-plan-kicker">Eight-month deployment programme</span>
+          <h3>Monthly Investment Release Plan</h3>
+          <p>Aurora releases money from the existing share pot and the ETF-sale pot each month, then reruns the whole transfer market. Today’s targets are never locked in for future months.</p>
+        </div>
+        <span class="badge blue" id="monthlyPlanBadge">Month 1 of 8</span>
+      </div>
+      <div class="monthly-plan-controls">
+        <label class="monthly-plan-field"><span>Existing share pot</span><b>£</b><input id="corePotInput" type="number" min="0" step="100" value="10000" inputmode="decimal"></label>
+        <label class="monthly-plan-field"><span>Monthly release</span><b>£</b><input id="coreMonthlyInput" type="number" min="0" step="100" value="2500" inputmode="decimal"></label>
+        <label class="monthly-plan-field"><span>ETF-sale pot</span><b>£</b><input id="etfPotInput" type="number" min="0" step="100" value="8000" inputmode="decimal"></label>
+        <label class="monthly-plan-field"><span>Monthly release</span><b>£</b><input id="etfMonthlyInput" type="number" min="0" step="100" value="1000" inputmode="decimal"></label>
+        <label class="monthly-plan-field compact"><span>Plan month</span><b>#</b><input id="deploymentMonthInput" type="number" min="1" max="24" step="1" value="1" inputmode="numeric"></label>
+        <button class="monthly-plan-apply" id="applyMonthlyBudget" type="button">Use this month’s budget</button>
+      </div>
+      <div class="monthly-plan-summary">
+        <div class="monthly-plan-stat featured"><small>This month</small><strong id="monthlyReleaseTotal">£3,500.00</strong><span id="monthlyReleaseSplit">£2,500 core + £1,000 ETF pot</span></div>
+        <div class="monthly-plan-stat"><small>Remaining after month</small><strong id="monthlyRemainingTotal">£14,500.00</strong><span id="monthlyRemainingSplit">£7,500 core + £7,000 ETF pot</span></div>
+        <div class="monthly-plan-stat"><small>Programme remaining</small><strong id="monthlyMonthsRemaining">7 months</strong><span id="monthlyEndNote">Temporary pots finish after month 8</span></div>
+        <div class="monthly-plan-stat"><small>Selection rule</small><strong>Rerun monthly</strong><span>Verified data • post-buy sector limits • cash holdback allowed</span></div>
+      </div>
+      <div class="monthly-schedule-grid" id="monthlyScheduleGrid"><div class="loading">Building the eight-month schedule…</div></div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: ROUTE COMPARISON ===================== -->
   <section class="section" id="best-return-allocation">
-    <div class="best-return-panel">
+    <div class="route-compare-panel">
       <div class="best-return-head">
         <div>
-          <h3>Best Return Allocation</h3>
-          <p>The highest projected annual income available from the same approved four. Every signing keeps a minimum place in the plan, then the spare budget moves to the strongest income rate while Aurora respects yellow-risk sizing.</p>
+          <h3>Monthly Route Comparison</h3>
+          <p>The final deal sheet defaults to the balanced route. Maximum income remains available, but it must pass the same verified-data, single-holding and post-purchase concentration rules.</p>
         </div>
-        <span class="badge green">Income maximised</span>
+        <span class="badge green" id="routeModeBadge">Balanced route active</span>
       </div>
-      <div class="best-return-summary">
-        <div class="best-return-stat"><small>Best yearly income</small><strong id="bestReturnIncome">—</strong><span id="bestReturnMonthly">Calculating monthly boost…</span></div>
-        <div class="best-return-stat"><small>Versus current allocation</small><strong id="bestReturnUplift">—</strong><span id="bestReturnSpend">Calculating full-budget use…</span></div>
-        <button class="best-return-apply" id="applyBestReturn" type="button" disabled>Apply best-return amounts</button>
+      <div class="route-choice-grid">
+        <article class="route-choice-card balanced active" id="balancedRouteCard">
+          <div class="route-choice-top"><span class="route-choice-icon">⚖</span><div><small>Default recommendation</small><h4>Balanced Monthly Route</h4></div></div>
+          <div class="route-choice-metrics">
+            <div><small>Yearly income</small><strong id="balancedRouteIncome">—</strong></div>
+            <div><small>Monthly income</small><strong id="balancedRouteMonthly">—</strong></div>
+            <div><small>Portfolio score</small><strong id="balancedRouteScore">—</strong></div>
+          </div>
+          <p id="balancedRouteWarnings">Calculating verified income, valuation, safety and diversification.</p>
+          <button class="route-choice-button" id="applyBalancedRoute" type="button">Use balanced route</button>
+        </article>
+        <article class="route-choice-card maximum" id="maximumRouteCard">
+          <div class="route-choice-top"><span class="route-choice-icon">£</span><div><small>Higher-income alternative</small><h4>Maximum Income Route</h4></div></div>
+          <div class="route-choice-metrics">
+            <div><small>Yearly income</small><strong id="bestReturnIncome">—</strong></div>
+            <div><small>Monthly income</small><strong id="bestReturnMonthly">—</strong></div>
+            <div><small>Extra vs balanced</small><strong id="bestReturnUplift">—</strong></div>
+          </div>
+          <p id="bestReturnSpend">Calculating permitted allocation…</p>
+          <button class="route-choice-button maximum" id="applyBestReturn" type="button" disabled>Use maximum-income route</button>
+        </article>
       </div>
-      <div class="best-return-grid" id="bestReturnGrid"><div class="loading">Optimising the four approved transfers…</div></div>
-      <span class="best-return-note" id="bestReturnNote">This is the income-maximised version, not the most evenly diversified version. The standard 40/30/20/10 route remains Aurora’s balanced recommendation.</span>
+      <div class="best-return-grid" id="bestReturnGrid"><div class="loading">Comparing the permitted maximum-income route…</div></div>
+      <span class="best-return-note" id="bestReturnNote">Meaningless £150 token purchases have been removed. A company must receive a meaningful allocation or stay on the bench.</span>
     </div>
   </section>
 
@@ -5423,7 +5534,7 @@ body.fm-transfer-menu-open .fm-side-scroll{
         <div class="broadcast-head">
           <div>
             <div class="broadcast-title"><span class="broadcast-live">Breaking</span><h3>Transfer Centre Final Deal Sheet</h3></div>
-            <p>Highest approved income route. One transfer fee in, one final deal sheet out.</p>
+            <p>Balanced monthly recruitment route by default, with a separate maximum-income option for comparison.</p>
           </div>
           <span class="badge green" id="dealSheetBadge">Syncing</span>
         </div>
@@ -5431,30 +5542,30 @@ body.fm-transfer-menu-open .fm-side-scroll{
         <div class="transfer-verdict-box">
           <small>Gaffer’s Call</small>
           <strong id="gafferCall">Checking the market…</strong>
-          <span id="gafferCallText">Aurora is ranking the green-light names by yearly income added, then checking risk and platform fit.</span>
+          <span id="gafferCallText">Aurora is balancing income, valuation, dividend safety, verified data and post-purchase portfolio fit.</span>
         </div>
 
         <div class="deal-budget-panel">
           <div class="deal-budget-head">
             <div>
               <div class="broadcast-title"><span class="broadcast-live">Budget</span><h3>Final Deal Allocation</h3></div>
-              <p>Change the transfer budget or any individual buy amount here. The remaining balance updates instantly against the final £1,500 route.</p>
+              <p>Use the monthly release plan or change any individual buy amount here. Aurora will not force unallocated cash into a weak or concentrated deal.</p>
             </div>
             <button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset recommendation</button>
           </div>
           <div class="deal-budget-grid">
             <label class="payday-input-line deal-budget-input">
               <span>Transfer budget £</span>
-              <input id="transferBudgetInput" type="number" min="0" step="25" value="1500" inputmode="decimal" aria-label="Transfer budget">
+              <input id="transferBudgetInput" type="number" min="0" step="25" value="3500" inputmode="decimal" aria-label="Transfer budget">
             </label>
             <div class="allocation-budget-summary" aria-live="polite">
               <div class="allocation-budget-stat"><small>Allocated</small><strong id="allocatedTransferBudget">£0.00</strong></div>
-              <div class="allocation-budget-stat remaining" id="remainingTransferBudgetCard"><small>Still Available</small><strong id="remainingTransferBudget">£1,500.00</strong></div>
+              <div class="allocation-budget-stat remaining" id="remainingTransferBudgetCard"><small>Still Available</small><strong id="remainingTransferBudget">£3,500.00</strong></div>
             </div>
           </div>
           <div class="allocation-budget-progress"><i id="allocationBudgetProgress"></i></div>
           <div class="deal-budget-footer">
-            <span class="allocation-budget-note" id="allocationBudgetNote">£0.00 of £1,500.00 allocated.</span>
+            <span class="allocation-budget-note" id="allocationBudgetNote">£0.00 of £3,500.00 allocated.</span>
             <span class="deal-budget-context" id="dealBudgetContext">Waiting for the final route…</span>
           </div>
         </div>
@@ -5645,16 +5756,20 @@ const DIVIDEND_DPS_OVERRIDES = {
 
 const SECTOR_LIMITS = {
   reit_property: 0.30,
-  infrastructure_renewable: 0.34,
+  infrastructure_renewable: 0.30,
   financials: 0.35,
-  high_yield_forward: 0.16,
-  single_holding: 0.22
+  credit_income: 0.15,
+  high_yield_forward: 0.10,
+  single_holding: 0.25
 };
 
 let state = { holdings:[], watchlist:[], scout:[], auroraTimes:[], fxRates:[] };
 const excludedTickers = new Set();
 const manualAmounts = new Map();
-const TRANSFER_SETTINGS_KEY = 'aurora_transfer_settings_v2';
+const TRANSFER_SETTINGS_KEY = 'aurora_transfer_settings_v3';
+const DEPLOYMENT_PLAN_KEY = 'aurora_monthly_deployment_v1';
+let routeMode = 'balanced';
+let deploymentPlan = {corePot:10000,coreMonthly:2500,etfPot:8000,etfMonthly:1000,currentMonth:1};
 const TRANSFER_PLAN_KEY = 'aurora_transfer_plan_v2';
 const REGISTRATION_CONNECTION_KEY = 'aurora_registration_connection_v1';
 const REGISTRATION_LAST_KEY = 'aurora_registration_last_v1';
@@ -5945,12 +6060,53 @@ function shortTicker(t){ return displayTicker(t).replace('.GB','').replace('.L',
 function displayName(row){
   return row.name || row.company_name || row.company || row.Company || row.Name || row.security_name || row.stock_name || row["Company Name"] || row["Security Name"] || displayTicker(row.ticker) || '—';
 }
+function deploymentReleaseForMonth(month,plan=deploymentPlan){
+  const m=Math.max(1,Math.floor(parseNum(month)||1));
+  const core=Math.max(0,Math.min(plan.coreMonthly,plan.corePot-((m-1)*plan.coreMonthly)));
+  const etf=Math.max(0,Math.min(plan.etfMonthly,plan.etfPot-((m-1)*plan.etfMonthly)));
+  return {month:m,core,etf,total:core+etf};
+}
+function deploymentProgrammeMonths(plan=deploymentPlan){
+  const coreMonths=plan.coreMonthly>0?Math.ceil(plan.corePot/plan.coreMonthly):0;
+  const etfMonths=plan.etfMonthly>0?Math.ceil(plan.etfPot/plan.etfMonthly):0;
+  return Math.max(1,coreMonths,etfMonths);
+}
+function readDeploymentInputs(){
+  deploymentPlan={
+    corePot:Math.max(0,parseNum($('corePotInput')?.value)||0),
+    coreMonthly:Math.max(0,parseNum($('coreMonthlyInput')?.value)||0),
+    etfPot:Math.max(0,parseNum($('etfPotInput')?.value)||0),
+    etfMonthly:Math.max(0,parseNum($('etfMonthlyInput')?.value)||0),
+    currentMonth:Math.max(1,Math.floor(parseNum($('deploymentMonthInput')?.value)||1))
+  };
+  return deploymentPlan;
+}
+function restoreDeploymentPlan(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(DEPLOYMENT_PLAN_KEY)||'{}');
+    deploymentPlan={
+      corePot:Number.isFinite(parseNum(saved.corePot))?Math.max(0,parseNum(saved.corePot)):10000,
+      coreMonthly:Number.isFinite(parseNum(saved.coreMonthly))?Math.max(0,parseNum(saved.coreMonthly)):2500,
+      etfPot:Number.isFinite(parseNum(saved.etfPot))?Math.max(0,parseNum(saved.etfPot)):8000,
+      etfMonthly:Number.isFinite(parseNum(saved.etfMonthly))?Math.max(0,parseNum(saved.etfMonthly)):1000,
+      currentMonth:Number.isFinite(parseNum(saved.currentMonth))?Math.max(1,Math.floor(parseNum(saved.currentMonth))):1
+    };
+  }catch(err){console.warn('Monthly deployment plan could not be restored',err);}
+  const map={corePotInput:'corePot',coreMonthlyInput:'coreMonthly',etfPotInput:'etfPot',etfMonthlyInput:'etfMonthly',deploymentMonthInput:'currentMonth'};
+  Object.entries(map).forEach(([id,key])=>{if($(id)) $(id).value=deploymentPlan[key];});
+}
+function persistDeploymentPlan(){
+  try{localStorage.setItem(DEPLOYMENT_PLAN_KEY,JSON.stringify({...deploymentPlan,updatedAt:new Date().toISOString()}));}
+  catch(err){console.warn('Monthly deployment plan could not be saved',err);}
+}
 function restoreTransferSettings(){
   try{
     const saved = JSON.parse(localStorage.getItem(TRANSFER_SETTINGS_KEY) || '{}');
+    routeMode=saved.routeMode==='maximum'?'maximum':'balanced';
+    const release=deploymentReleaseForMonth(deploymentPlan.currentMonth);
     const budget = parseNum(saved.budget);
     const budgetInput = $('transferBudgetInput');
-    if(budgetInput && Number.isFinite(budget) && budget >= 0) budgetInput.value = budget;
+    if(budgetInput) budgetInput.value = Number.isFinite(budget) && budget >= 0 ? budget : release.total;
     excludedTickers.clear();
     (Array.isArray(saved.excludedTickers) ? saved.excludedTickers : []).forEach(ticker => excludedTickers.add(cleanTicker(ticker)));
     manualAmounts.clear();
@@ -5965,7 +6121,7 @@ function persistTransferSettings(){
   try{
     const budget = Math.max(0,parseNum($('transferBudgetInput')?.value)||0);
     localStorage.setItem(TRANSFER_SETTINGS_KEY,JSON.stringify({
-      budget,
+      budget,routeMode,
       excludedTickers:[...excludedTickers],
       manualAmounts:Object.fromEntries(manualAmounts),
       updatedAt:new Date().toISOString()
@@ -5974,8 +6130,10 @@ function persistTransferSettings(){
 }
 function serialiseTransferPlan(deal){
   return {
-    version:2,
-    source:'Transfer Centre final deal sheet',
+    version:3,
+    source:'Transfer Centre monthly portfolio logic',
+    routeMode:deal?.mode||routeMode,
+    deploymentPlan:{...deploymentPlan},
     budget:Number(deal?.budget)||0,
     allocated:(deal?.rows||[]).reduce((sum,item)=>sum+(Number(item.amount)||0),0),
     holdback:Number(deal?.holdback)||0,
@@ -5993,7 +6151,9 @@ function serialiseTransferPlan(deal){
       income:Number(item.income)||0,
       incomeRate:Number(incomeRate(item.row))||0,
       gateStatus:item.gate?.status||'pass',
-      gateReason:item.gate?.reasons?.[0]||''
+      gateReason:item.gate?.reasons?.[0]||'',
+      dataConfidence:item.gate?.data?.score||0,
+      dataStatus:item.gate?.data?.status||'review'
     })),
     updatedAt:new Date().toISOString()
   };
@@ -6167,27 +6327,106 @@ function marketFitScore(row){
   if(Number.isFinite(incomeRate(row)) && incomeRate(row) >= 0.10) score += 2;
   return Math.max(0, Math.min(100, Math.round(score)));
 }
-function candidateScore(row){
-  const y = incomeRate(row);
-  const incomePart = Number.isFinite(y) ? Math.min(y,0.13) * 520 : 0;
-  const impactPart = (impact(row) || 0) * 0.80;
-  const strengthPart = (buyStrength(row) || 0) * 0.65;
-  const marketPart = marketFitScore(row) * 0.42;
-  const valuePart = valuationBonus(row);
-  const riskPenalty = isHighYield(row) ? 5 : 0;
-  return incomePart + impactPart + strengthPart + marketPart + valuePart - riskPenalty;
+function parseCheckedDate(value){
+  if(!value) return NaN;
+  if(value instanceof Date) return value.getTime();
+  const s=String(value).trim();
+  const uk=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(uk) return new Date(Number(uk[3]),Number(uk[2])-1,Number(uk[1])).getTime();
+  const t=Date.parse(s); return Number.isFinite(t)?t:NaN;
 }
+function dataConfidence(row){
+  let score=100;
+  const reasons=[];
+  const blocking=[];
+  const price=parseNum(row.live_price??row.price??row.Price);
+  const yieldRate=incomeRate(row);
+  const dps=parseNum(row.annual_dps??row.Annual_DPS);
+  const low=parseNum(row.low_52w??row.low52w??row['52w_low']);
+  const high=parseNum(row.high_52w??row.high52w??row['52w_high']);
+  const currency=String(row.currency??row.Currency??'GBP').toUpperCase();
+  const notes=String(row.notes??row.manager_note??'');
+  if(!(price>0)){score-=70;blocking.push('Live price missing or invalid.');}
+  if(!(yieldRate>0)){score-=70;blocking.push('Recurring income rate missing.');}
+  else if(yieldRate>0.20){score-=65;blocking.push('Income rate above 20% needs a manual audit.');}
+  else if(yieldRate>0.12){score-=18;reasons.push('Very high yield needs extra verification.');}
+  if(Number.isFinite(dps)&&dps>0&&price>0&&currency==='GBP'){
+    const calculated=dps/price;
+    const difference=Math.abs(calculated-yieldRate)/Math.max(yieldRate,.001);
+    if(difference>.60){score-=55;blocking.push('Dividend and displayed yield do not reconcile.');}
+    else if(difference>.25){score-=22;reasons.push('Dividend/yield reconciliation needs review.');}
+  }
+  if(low>0&&high>0){
+    if(low>high){score-=50;blocking.push('52-week low is above the high.');}
+    else if(price>0&&(price<low*.40||price>high*1.60)){score-=45;blocking.push('Live price is inconsistent with the 52-week range.');}
+  }
+  const checked=parseCheckedDate(row.date_checked??row.last_updated??row.updated_at);
+  if(Number.isFinite(checked)){
+    const ageDays=(Date.now()-checked)/86400000;
+    if(ageDays>180){score-=45;blocking.push('Data is more than six months old.');}
+    else if(ageDays>60){score-=18;reasons.push('Data is older than 60 days.');}
+  }else{score-=8;reasons.push('No verified data date.');}
+  if(/special dividend|one[- ]off/i.test(notes)&&!/excluded from recurring|regular/i.test(notes)){score-=18;reasons.push('Possible special dividend in the income figure.');}
+  if(/audited|corrected/i.test(notes)) score=Math.min(100,score+5);
+  const status=blocking.length?'block':score>=80?'verified':score>=60?'review':'block';
+  if(!blocking.length&&status==='review'&&!reasons.length) reasons.push('One or more data points need review.');
+  if(status==='verified'&&!reasons.length) reasons.push('Price, income and range checks verified.');
+  return {score:Math.max(0,Math.min(100,Math.round(score))),status,reasons:[...blocking,...reasons]};
+}
+function valuationQualityScore(row){
+  const v=String(row.valuation_status??row.valuation??'').toLowerCase();
+  if(v.includes('undervalued')||v.includes('discount')) return 100;
+  if(v.includes('neutral')||v.includes('fair')) return 70;
+  if(v.includes('overvalued')) return 25;
+  return 50;
+}
+function dividendSafetyScore(row){
+  const risk=String(row.payout_risk??'').toLowerCase();
+  if(risk.includes('very high')) return 5;
+  if(risk.includes('high')) return 25;
+  if(risk.includes('check')||risk.includes('review')) return 45;
+  if(risk.includes('medium')) return 65;
+  if(risk.includes('low')) return 90;
+  return 58;
+}
+function qualityScore(row){
+  const values=[buyStrength(row),impact(row),marketFitScore(row)].filter(Number.isFinite);
+  return values.length?Math.max(0,Math.min(100,values.reduce((a,b)=>a+b,0)/values.length)):50;
+}
+function diversificationScore(row,snapshot=exposureSnapshot(),amount=0){
+  const bucket=sectorBucket(row);
+  const limit=SECTOR_LIMITS[bucket];
+  const total=snapshot.totalAfter+amount;
+  const share=total>0?((snapshot.buckets[bucket]||0)+amount)/total:0;
+  let score=75;
+  if(limit){
+    const ratio=share/limit;
+    score=ratio>=1?5:ratio>=.90?25:ratio>=.75?52:ratio>=.55?72:92;
+  }
+  const ticker=cleanTicker(row.ticker);
+  const tickerShare=total>0?((snapshot.tickers[ticker]||0)+amount)/total:0;
+  if(tickerShare>.20) score-=35; else if(tickerShare>.15) score-=18;
+  return Math.max(0,Math.min(100,score));
+}
+function balancedPriorityScore(row,snapshot=exposureSnapshot(),amount=0){
+  const y=incomeRate(row);
+  const incomeScore=Number.isFinite(y)?Math.max(0,Math.min(100,(y/.10)*100)):0;
+  const data=dataConfidence(row);
+  const raw=(incomeScore*.30)+(valuationQualityScore(row)*.25)+(dividendSafetyScore(row)*.20)+(diversificationScore(row,snapshot,amount)*.15)+(qualityScore(row)*.10);
+  return raw*(data.score/100);
+}
+function candidateScore(row){return balancedPriorityScore(row,exposureSnapshot(),0);}
 function incomePriorityScore(row){
   const y = incomeRate(row);
   if(!Number.isFinite(y) || y <= 0) return -9999;
+  const data=dataConfidence(row);
   const incomePart = Math.min(y,0.145) * 1000;
-  const marketPart = marketFitScore(row) * 0.22;
-  const strengthPart = (buyStrength(row) || 0) * 0.14;
-  const impactPart = (impact(row) || 0) * 0.10;
-  const valuePart = valuationBonus(row) * 0.35;
-  const payoutRisk = String(row.payout_risk ?? '').toLowerCase();
-  const riskPenalty = payoutRisk.includes('check') ? 8 : payoutRisk.includes('very high') ? 50 : 0;
-  return incomePart + marketPart + strengthPart + impactPart + valuePart - riskPenalty;
+  const marketPart = marketFitScore(row) * 0.18;
+  const strengthPart = (buyStrength(row) || 0) * 0.12;
+  const impactPart = (impact(row) || 0) * 0.08;
+  const valuePart = valuationBonus(row) * 0.30;
+  const riskPenalty = (100-dividendSafetyScore(row))*.22;
+  return (incomePart + marketPart + strengthPart + impactPart + valuePart - riskPenalty)*(data.score/100);
 }
 function exposureSnapshot(extra = []){
   const current = activeHoldings();
@@ -6223,16 +6462,22 @@ function gateCandidate(row, amount = 0, snapshot = exposureSnapshot()) {
   const y = incomeRate(row);
   const payoutRisk = String(row.payout_risk ?? '').toLowerCase();
   const valuation = String(row.valuation_status ?? row.valuation ?? '').toLowerCase();
+  const data=dataConfidence(row);
 
   function caution(msg){ if(status !== 'block') status = 'caution'; reasons.push(msg); }
   function block(msg){ status = 'block'; reasons.push(msg); }
 
-  if(payoutRisk.includes('very high')) block('Payout risk flagged very high.');
-  else if(payoutRisk.includes('check')) caution('Payout/cashflow needs a check.');
+  if(data.status==='block') block(data.reasons[0]||'Data confidence failed.');
+  else if(data.status==='review') caution(data.reasons[0]||'Data needs review.');
+  else reasons.push(`Verified data ${data.score}% confidence.`);
 
-  if(valuation.includes('overvalued')) caution('Valuation not a clean discount.');
-  if(Number.isFinite(y) && y >= 0.135) caution('Very high income rate, keep sizing controlled.');
-  else if(Number.isFinite(y) && y >= 0.10) reasons.push('Strong income rate; approved with sizing check.');
+  if(payoutRisk.includes('very high')) block('Payout risk flagged very high.');
+  else if(payoutRisk.includes('high')) caution('Payout risk is high.');
+  else if(payoutRisk.includes('check')||payoutRisk.includes('review')) caution('Payout/cashflow needs a check.');
+
+  if(valuation.includes('overvalued')) caution('Valuation is above Aurora fair value.');
+  if(Number.isFinite(y) && y >= 0.12) caution('Very high income rate; controlled sizing only.');
+  else if(Number.isFinite(y) && y >= 0.10) caution('Double-digit yield; controlled sizing only.');
 
   const afterTotal = snapshot.totalAfter + amount;
   const bucketAfter = (snapshot.buckets[bucket] || 0) + amount;
@@ -6243,14 +6488,24 @@ function gateCandidate(row, amount = 0, snapshot = exposureSnapshot()) {
   const highYieldShare = afterTotal > 0 ? highYieldAfter / afterTotal : NaN;
 
   const bucketLimit = SECTOR_LIMITS[bucket];
-  if(bucketLimit && Number.isFinite(bucketShare) && bucketShare > bucketLimit) caution(`${bucketLabel(bucket)} exposure near cap.`);
-  if(Number.isFinite(tickerShare) && tickerShare > SECTOR_LIMITS.single_holding) caution('Already a large squad position.');
-  if(isHighYield(row) && Number.isFinite(highYieldShare) && highYieldShare > SECTOR_LIMITS.high_yield_forward) caution('High-yield bucket is getting heavy.');
+  if(bucketLimit && Number.isFinite(bucketShare)){
+    if(bucketShare > bucketLimit) block(`${bucketLabel(bucket)} would exceed the ${(bucketLimit*100).toFixed(0)}% post-buy limit.`);
+    else if(bucketShare > bucketLimit*.90) caution(`${bucketLabel(bucket)} would be within 10% of its limit.`);
+  }
+  if(Number.isFinite(tickerShare)){
+    if(tickerShare > SECTOR_LIMITS.single_holding) block('This holding would exceed the 25% single-position limit.');
+    else if(tickerShare > SECTOR_LIMITS.single_holding*.90) caution('This holding would be close to the single-position limit.');
+  }
+  if(isHighYield(row) && Number.isFinite(highYieldShare)){
+    if(highYieldShare > SECTOR_LIMITS.high_yield_forward) block('The high-yield bucket would exceed the 10% control limit.');
+    else if(highYieldShare > SECTOR_LIMITS.high_yield_forward*.90) caution('High-yield exposure would be close to its limit.');
+  }
 
-  if(!Number.isFinite(y) || y <= 0) block('Income rate missing.');
-  if(!reasons.length) reasons.push('Passes the transfer desk checks.');
+  if(!Number.isFinite(y) || y <= 0) block('Recurring income rate missing.');
+  if(platformFor(row.ticker).toLowerCase().includes('check')) caution('Platform availability still needs confirmation.');
+  if(!reasons.length) reasons.push('Passes verified-data and post-purchase portfolio checks.');
 
-  return {status,reasons,bucket,bucketShare,tickerShare};
+  return {status,reasons,bucket,bucketShare,tickerShare,data};
 }
 function candidatePool(){
   const rows = uniqueByTicker([...(state.watchlist || []), ...(state.scout || []), ...activeHoldings()]);
@@ -6262,178 +6517,235 @@ function candidatePool(){
 function roundTo25(n){
   return Math.max(0, Math.round(n / 25) * 25);
 }
-function buildDealSheet(){
-  const budget = Math.max(0, parseNum($('transferBudgetInput')?.value) || 0);
-  const snapshot = exposureSnapshot();
-  const pool = candidatePool();
-  const gated = pool.map(row => {
-    const gate = gateCandidate(row, Math.min(125,budget), snapshot);
-    return {row, gate, score:candidateScore(row)};
-  });
-
-  const minimumIncomeRate = budget >= 1000 ? 0.06 : 0.055;
-  const available = gated
-    .filter(x => x.gate.status !== 'block')
-    .filter(x => !excludedTickers.has(cleanTicker(x.row.ticker)))
-    .filter(x => {
-      const y = incomeRate(x.row);
-      return Number.isFinite(y) && y >= minimumIncomeRate;
-    })
-    .sort((a,b) => incomePriorityScore(b.row) - incomePriorityScore(a.row));
-  const clean = available.filter(x => x.gate.status === 'pass');
-  const caution = available.filter(x => x.gate.status === 'caution');
-
-  let chosen = [];
-  if(clean.length >= 4) chosen = clean.slice(0,4);
-  else chosen = [...clean, ...caution].slice(0,4);
-
-  if(!chosen.length){
-    return {budget, chosen:[], rows:[], holdback:budget, requestedSpent:0, autoReduced:0, status:'No buy', statusClass:'bad', route:'Hold cash', reason:'No candidate has passed the transfer desk today.', bench:gated.slice(0,5), watch:gated.filter(x=>x.gate.status === 'block').slice(0,5)};
-  }
-
-  const weightsByCount = {
-    1:[1.00],
-    2:[0.60,0.40],
-    3:[0.50,0.30,0.20],
-    4:[0.40,0.30,0.20,0.10]
-  };
-  const weights = weightsByCount[chosen.length] || weightsByCount[4];
-
-  let rows = chosen.map((item,i) => {
-    let amount = roundTo25(budget * weights[i]);
-    const manualAmount = manualAmounts.get(cleanTicker(item.row.ticker));
-    if(Number.isFinite(manualAmount)) amount = roundTo25(Math.max(0,manualAmount));
-    if(item.gate.status === 'caution') amount = Math.min(amount, roundTo25(budget * 0.25));
-    if(budget >= 200 && amount < 50) amount = 50;
-    return {
-      row:item.row,
-      gate:item.gate,
-      amount,
-      score:item.score,
-      income:annualIncomeForAmount(item.row, amount)
-    };
-  }).filter(item => item.amount > 0);
-
-  let spent = rows.reduce((s,r)=>s+r.amount,0);
-  const requestedSpent = spent;
-  if(spent > budget){
-    let over = spent - budget;
-    for(let i=rows.length-1; i>=0 && over>0; i--){
-      const cut = Math.min(over, rows[i].amount);
-      rows[i].amount -= cut;
-      over -= cut;
-    }
-    rows = rows.filter(r=>r.amount > 0);
-  }
-  spent = rows.reduce((s,r)=>s+r.amount,0);
-  rows.forEach(r => r.income = annualIncomeForAmount(r.row, r.amount));
-
-  const holdback = Math.max(0, budget - spent);
-  const cautionCount = rows.filter(r=>r.gate.status === 'caution').length;
-  const totalIncome = rows.reduce((s,r)=>s+r.income,0);
-  const route = rows.length >= 4 ? 'Highest Income Four' : rows.length === 1 ? 'Best Income Signing' : `Best Income ${rows.length}`;
-  const status = cautionCount ? 'Income approved with caution' : 'Income green light';
-  const statusClass = cautionCount ? 'warn' : 'good';
-  const reason = cautionCount
-    ? 'Income-first deal sheet: Aurora has picked the highest yearly income available from approved names, with controlled sizing where the risk gate shows yellow.'
-    : 'Income-first deal sheet: Aurora has picked the highest yearly income available from green-light names after valuation, platform and concentration checks.';
-
-  const selected = new Set(rows.map(r=>cleanTicker(r.row.ticker)));
-  const bench = gated.filter(x=>!selected.has(cleanTicker(x.row.ticker)) && x.gate.status !== 'block').slice(0,5);
-  const watch = [
-    ...gated.filter(x=>x.gate.status === 'block'),
-    ...gated.filter(x=>!selected.has(cleanTicker(x.row.ticker)) && x.gate.status === 'caution')
-  ].slice(0,5);
-
-  return {budget, chosen, rows, holdback, requestedSpent, autoReduced:Math.max(0,requestedSpent-budget), status, statusClass, route, reason, totalIncome, bench, watch};
+function meaningfulMinimum(budget){
+  if(budget>=3000) return 250;
+  if(budget>=1500) return 150;
+  if(budget>=750) return 100;
+  return budget>=200?50:25;
 }
+function analyseTransferCandidates(budget){
+  const snapshot=exposureSnapshot();
+  const pool=candidatePool();
+  const minimum=meaningfulMinimum(budget);
+  const gated=pool.map(row=>{
+    const gate=gateCandidate(row,Math.min(minimum,budget),snapshot);
+    return {row,gate,score:balancedPriorityScore(row,snapshot,Math.min(minimum,budget)),incomeScore:incomePriorityScore(row)};
+  });
+  const minimumIncomeRate=budget>=1000?0.035:0.03;
+  const available=gated
+    .filter(item=>item.gate.status!=='block')
+    .filter(item=>!excludedTickers.has(cleanTicker(item.row.ticker)))
+    .filter(item=>Number.isFinite(incomeRate(item.row))&&incomeRate(item.row)>=minimumIncomeRate)
+    .filter(item=>item.gate.data?.score>=60);
+  return {snapshot,gated,available,minimum,minimumIncomeRate};
+}
+function selectRouteCandidates(mode,available,budget,snapshot,minimum){
+  const selected=[];
+  const remaining=[...available];
+  while(selected.length<4&&remaining.length){
+    let bestIndex=-1,bestScore=-Infinity;
+    for(let i=0;i<remaining.length;i++){
+      const item=remaining[i];
+      const bucketCount=selected.filter(x=>x.gate.bucket===item.gate.bucket).length;
+      if(bucketCount>=2) continue;
+      const provisional=selected.map(x=>({row:x.row,amount:minimum}));
+      const gate=gateCandidate(item.row,minimum,exposureSnapshot(provisional));
+      if(gate.status==='block') continue;
+      let score=mode==='maximum'?incomePriorityScore(item.row):balancedPriorityScore(item.row,exposureSnapshot(provisional),minimum);
+      if(mode==='balanced') score-=bucketCount*18;
+      if(gate.status==='caution') score-=12;
+      if(score>bestScore){bestScore=score;bestIndex=i;}
+    }
+    if(bestIndex<0) break;
+    selected.push(remaining.splice(bestIndex,1)[0]);
+  }
+  while(selected.length&&selected.length*minimum>budget) selected.pop();
+  return selected;
+}
+function sanitiseManualAmounts(selected,budget,mode){
+  const amounts=new Map();
+  selected.forEach(item=>{
+    const requested=manualAmounts.get(cleanTicker(item.row.ticker));
+    if(Number.isFinite(requested)) amounts.set(cleanTicker(item.row.ticker),roundTo25(Math.max(0,requested)));
+  });
+  let spent=[...amounts.values()].reduce((a,b)=>a+b,0);
+  if(spent>budget){
+    const ranked=[...selected].sort((a,b)=>(mode==='maximum'?incomePriorityScore(a.row):a.score)-(mode==='maximum'?incomePriorityScore(b.row):b.score));
+    let over=spent-budget;
+    for(const item of ranked){
+      const ticker=cleanTicker(item.row.ticker);
+      while(over>0&&(amounts.get(ticker)||0)>=25){amounts.set(ticker,(amounts.get(ticker)||0)-25);over-=25;}
+    }
+  }
+  return amounts;
+}
+function allocateRoute(mode,budget,available,snapshot,options={}){
+  const minimum=meaningfulMinimum(budget);
+  const selected=selectRouteCandidates(mode,available,budget,snapshot,minimum);
+  if(!selected.length) return {selected:[],rows:[],spent:0,holdback:budget,totalIncome:0,minimumEach:minimum,balanceScore:0};
+  const maxStockShare=mode==='maximum'?.40:.35;
+  const maxSectorShare=mode==='maximum'?.50:.45;
+  const fixedTickers=new Set();
+  const amounts=new Map();
 
+  if(!options.ignoreManual){
+    selected.forEach(item=>{
+      const ticker=cleanTicker(item.row.ticker);
+      const requested=manualAmounts.get(ticker);
+      if(!Number.isFinite(requested)) return;
+      const stockCap=roundTo25(budget*(item.gate.status==='caution'?.20:maxStockShare));
+      amounts.set(ticker,Math.min(stockCap,roundTo25(Math.max(0,requested))));
+      fixedTickers.add(ticker);
+    });
+  }
 
-function buildBestReturnAllocation(deal){
-  const chosen=(deal.chosen||[]).map(item=>({row:item.row,gate:item.gate,score:item.score}));
-  const budget=roundTo25(Math.max(0,deal.budget||0));
-  if(!chosen.length||budget<=0) return {rows:[],totalIncome:0,spent:0,holdback:budget};
+  let spent=[...amounts.values()].reduce((a,b)=>a+b,0);
+  if(spent>budget){
+    let over=spent-budget;
+    const fixedByLowestPriority=[...selected].filter(item=>fixedTickers.has(cleanTicker(item.row.ticker))).sort((a,b)=>(mode==='maximum'?incomePriorityScore(a.row):a.score)-(mode==='maximum'?incomePriorityScore(b.row):b.score));
+    for(const item of fixedByLowestPriority){
+      const ticker=cleanTicker(item.row.ticker);
+      while(over>0&&(amounts.get(ticker)||0)>=25){amounts.set(ticker,(amounts.get(ticker)||0)-25);over-=25;}
+    }
+    spent=[...amounts.values()].reduce((a,b)=>a+b,0);
+  }
 
-  const count=chosen.length;
-  const affordableBase=Math.floor((budget/count)/25)*25;
-  const minimumEach=Math.max(0,Math.min(150,affordableBase));
-  const amounts=new Map(chosen.map(item=>[cleanTicker(item.row.ticker),minimumEach]));
-  let spent=minimumEach*count;
+  for(const item of selected){
+    const ticker=cleanTicker(item.row.ticker);
+    if(fixedTickers.has(ticker)) continue;
+    const other=selected.filter(x=>cleanTicker(x.row.ticker)!==ticker).map(x=>({row:x.row,amount:amounts.get(cleanTicker(x.row.ticker))||0}));
+    const sectorAllocated=selected.filter(x=>x.gate.bucket===item.gate.bucket).reduce((sum,x)=>sum+(amounts.get(cleanTicker(x.row.ticker))||0),0);
+    const gate=gateCandidate(item.row,minimum,exposureSnapshot(other));
+    if(gate.status!=='block'&&spent+minimum<=budget&&sectorAllocated+minimum<=roundTo25(budget*maxSectorShare)){
+      amounts.set(ticker,minimum);spent+=minimum;
+    }
+  }
+
   let remaining=Math.max(0,budget-spent);
-  const normalMaxShare=count>=4?.70:count===3?.75:count===2?.85:1;
-
   while(remaining>=25){
     let best=null;
-    for(const item of chosen){
+    for(const item of selected){
       const ticker=cleanTicker(item.row.ticker);
+      if(fixedTickers.has(ticker)) continue;
       const current=amounts.get(ticker)||0;
-      const hardMax=item.gate.status==='caution'
-        ? roundTo25(budget*.25)
-        : roundTo25(budget*normalMaxShare);
-      if(current+25>hardMax) continue;
-
-      const otherAllocations=chosen
-        .filter(other=>cleanTicker(other.row.ticker)!==ticker)
-        .map(other=>({row:other.row,amount:amounts.get(cleanTicker(other.row.ticker))||0}));
-      const snapshot=exposureSnapshot(otherAllocations);
-      const proposedGate=gateCandidate(item.row,current+25,snapshot);
+      const stockCap=roundTo25(budget*(item.gate.status==='caution'?.20:maxStockShare));
+      if(current+25>stockCap) continue;
+      const bucket=item.gate.bucket;
+      const sectorAllocated=selected.filter(x=>x.gate.bucket===bucket).reduce((sum,x)=>sum+(amounts.get(cleanTicker(x.row.ticker))||0),0);
+      if(sectorAllocated+25>roundTo25(budget*maxSectorShare)) continue;
+      const other=selected.filter(x=>cleanTicker(x.row.ticker)!==ticker).map(x=>({row:x.row,amount:amounts.get(cleanTicker(x.row.ticker))||0}));
+      const proposedGate=gateCandidate(item.row,current+25,exposureSnapshot(other));
       if(proposedGate.status==='block') continue;
-      if(item.gate.status==='pass'&&proposedGate.status==='caution') continue;
-
-      const rate=incomeRate(item.row);
-      if(!Number.isFinite(rate)||rate<=0) continue;
-      const rank=(rate*100000)+(incomePriorityScore(item.row)||0);
-      if(!best||rank>best.rank) best={item,ticker,rank};
+      let score=mode==='maximum'?incomePriorityScore(item.row):balancedPriorityScore(item.row,exposureSnapshot(other),current+25);
+      if(proposedGate.status==='caution') score-=14;
+      if(!best||score>best.score) best={item,ticker,score,gate:proposedGate};
     }
     if(!best) break;
     amounts.set(best.ticker,(amounts.get(best.ticker)||0)+25);
     remaining-=25;
   }
 
-  const rows=chosen.map(item=>{
-    const amount=amounts.get(cleanTicker(item.row.ticker))||0;
-    return {...item,amount,income:annualIncomeForAmount(item.row,amount)};
-  }).filter(item=>item.amount>0);
+  const rows=selected.map(item=>{
+    const ticker=cleanTicker(item.row.ticker);
+    let amount=amounts.get(ticker)||0;
+    const other=selected.filter(x=>cleanTicker(x.row.ticker)!==ticker).map(x=>({row:x.row,amount:amounts.get(cleanTicker(x.row.ticker))||0}));
+    let gate=gateCandidate(item.row,amount,exposureSnapshot(other));
+    while(amount>0&&gate.status==='block'){
+      amount=Math.max(0,amount-25);
+      amounts.set(ticker,amount);
+      gate=gateCandidate(item.row,amount,exposureSnapshot(other));
+    }
+    return {...item,gate,amount,income:annualIncomeForAmount(item.row,amount)};
+  }).filter(item=>item.amount>=minimum||fixedTickers.has(cleanTicker(item.row.ticker))&&item.amount>0);
+
   spent=rows.reduce((sum,item)=>sum+item.amount,0);
-  return {
-    rows,
-    totalIncome:rows.reduce((sum,item)=>sum+item.income,0),
-    spent,
-    holdback:Math.max(0,budget-spent),
-    minimumEach
-  };
+  const balanceScore=rows.length?rows.reduce((sum,item)=>sum+balancedPriorityScore(item.row,exposureSnapshot(rows.filter(x=>x!==item).map(x=>({row:x.row,amount:x.amount}))),item.amount),0)/rows.length:0;
+  return {selected:rows.map(({row,gate,score,incomeScore})=>({row,gate,score,incomeScore})),rows,spent,holdback:Math.max(0,budget-spent),totalIncome:rows.reduce((sum,item)=>sum+item.income,0),minimumEach:minimum,balanceScore};
 }
-
+function buildDealSheet(){
+  const budget=Math.max(0,parseNum($('transferBudgetInput')?.value)||0);
+  const analysis=analyseTransferCandidates(budget);
+  const mode=routeMode==='maximum'?'maximum':'balanced';
+  const plan=allocateRoute(mode,budget,analysis.available,analysis.snapshot);
+  if(!plan.rows.length){
+    return {budget,chosen:[],rows:[],holdback:budget,requestedSpent:0,autoReduced:0,status:'No buy',statusClass:'bad',route:'Hold cash',reason:'No verified candidate clears the post-purchase portfolio gates today.',bench:analysis.gated.filter(x=>x.gate.status!=='block').slice(0,5),watch:analysis.gated.filter(x=>x.gate.status==='block').slice(0,5),eligibleCandidates:analysis.available,mode,totalIncome:0,balanceScore:0};
+  }
+  const cautionCount=plan.rows.filter(item=>item.gate.status==='caution').length;
+  const status=cautionCount?`${mode==='maximum'?'Maximum income':'Balanced'} route controlled`:`${mode==='maximum'?'Maximum income':'Balanced'} route ready`;
+  const statusClass=cautionCount?'warn':'good';
+  const route=mode==='maximum'?'Maximum Income Route':'Balanced Monthly Route';
+  const reason=mode==='maximum'
+    ?'Maximum-income route selected. Aurora is maximising verified recurring income while still enforcing hard post-purchase sector, high-yield and single-holding limits.'
+    :'Balanced route selected. Aurora weights income 30%, valuation 25%, dividend safety 20%, diversification 15% and business quality 10%, with cash holdback allowed.';
+  const selected=new Set(plan.rows.map(item=>cleanTicker(item.row.ticker)));
+  const bench=analysis.gated.filter(item=>!selected.has(cleanTicker(item.row.ticker))&&item.gate.status!=='block').sort((a,b)=>b.score-a.score).slice(0,5);
+  const watch=analysis.gated.filter(item=>item.gate.status==='block'||(!selected.has(cleanTicker(item.row.ticker))&&item.gate.status==='caution')).slice(0,5);
+  return {budget,chosen:plan.selected,rows:plan.rows,holdback:plan.holdback,requestedSpent:plan.spent,autoReduced:0,status,statusClass,route,reason,totalIncome:plan.totalIncome,bench,watch,eligibleCandidates:analysis.available,mode,balanceScore:plan.balanceScore,minimumEach:plan.minimumEach};
+}
+function buildBestReturnAllocation(deal){
+  const budget=roundTo25(Math.max(0,deal.budget||0));
+  const analysis=analyseTransferCandidates(budget);
+  return allocateRoute('maximum',budget,analysis.available,analysis.snapshot,{ignoreManual:true});
+}
+function buildBalancedComparison(deal){
+  const budget=roundTo25(Math.max(0,deal.budget||0));
+  const analysis=analyseTransferCandidates(budget);
+  return allocateRoute('balanced',budget,analysis.available,analysis.snapshot,{ignoreManual:true});
+}
+function renderDeploymentPlan(){
+  readDeploymentInputs();
+  persistDeploymentPlan();
+  const months=deploymentProgrammeMonths();
+  deploymentPlan.currentMonth=Math.min(Math.max(1,deploymentPlan.currentMonth),Math.max(months,1));
+  if($('deploymentMonthInput')) $('deploymentMonthInput').value=deploymentPlan.currentMonth;
+  const release=deploymentReleaseForMonth(deploymentPlan.currentMonth);
+  const coreUsed=Math.min(deploymentPlan.corePot,deploymentPlan.currentMonth*deploymentPlan.coreMonthly);
+  const etfUsed=Math.min(deploymentPlan.etfPot,deploymentPlan.currentMonth*deploymentPlan.etfMonthly);
+  const coreRemaining=Math.max(0,deploymentPlan.corePot-coreUsed);
+  const etfRemaining=Math.max(0,deploymentPlan.etfPot-etfUsed);
+  if($('monthlyPlanBadge')) $('monthlyPlanBadge').textContent=`Month ${deploymentPlan.currentMonth} of ${months}`;
+  if($('monthlyReleaseTotal')) $('monthlyReleaseTotal').textContent=money(release.total);
+  if($('monthlyReleaseSplit')) $('monthlyReleaseSplit').textContent=`${money(release.core)} core + ${money(release.etf)} ETF pot`;
+  if($('monthlyRemainingTotal')) $('monthlyRemainingTotal').textContent=money(coreRemaining+etfRemaining);
+  if($('monthlyRemainingSplit')) $('monthlyRemainingSplit').textContent=`${money(coreRemaining)} core + ${money(etfRemaining)} ETF pot`;
+  const monthsRemaining=Math.max(0,months-deploymentPlan.currentMonth);
+  if($('monthlyMonthsRemaining')) $('monthlyMonthsRemaining').textContent=`${monthsRemaining} month${monthsRemaining===1?'':'s'}`;
+  if($('monthlyEndNote')) $('monthlyEndNote').textContent=monthsRemaining?`Temporary pots finish after month ${months}`:'Temporary pots fully deployed after this month';
+  const grid=$('monthlyScheduleGrid');
+  if(grid) grid.innerHTML=Array.from({length:months},(_,index)=>{
+    const month=index+1;const item=deploymentReleaseForMonth(month);const cls=month===deploymentPlan.currentMonth?'active':month<deploymentPlan.currentMonth?'done':'';
+    return `<article class="month-card ${cls}"><i></i><small>Month ${month}</small><strong>${money(item.total)}</strong><span>${money(item.core)} core<br>${money(item.etf)} ETF pot</span></article>`;
+  }).join('');
+}
 function renderBestReturnAllocation(deal){
-  const plan=buildBestReturnAllocation(deal);
-  window.AURORA_BEST_RETURN_PLAN=plan;
-  const button=$('applyBestReturn');
-  if(button) button.disabled=!plan.rows.length;
-  if($('bestReturnIncome')) $('bestReturnIncome').textContent=plan.rows.length?`${money(plan.totalIncome)}/yr`:'—';
-  if($('bestReturnMonthly')) $('bestReturnMonthly').textContent=plan.rows.length?`${money(plan.totalIncome/12)}/month estimated`:'No approved route available.';
-  const uplift=plan.totalIncome-(deal.totalIncome||0);
-  if($('bestReturnUplift')){
-    $('bestReturnUplift').textContent=plan.rows.length?`${uplift>=0?'+':''}${money(uplift)}/yr`:'—';
-    $('bestReturnUplift').style.color=uplift>0?'#86efac':uplift<0?'#fb7185':'#cbd5e1';
-  }
-  if($('bestReturnSpend')) $('bestReturnSpend').textContent=plan.rows.length
-    ? `${money(plan.spent)} allocated${plan.holdback>0?` • ${money(plan.holdback)} held back`:''}`
-    : 'Waiting for approved targets.';
-
+  const maxPlan=buildBestReturnAllocation(deal);
+  const balancedPlan=buildBalancedComparison(deal);
+  window.AURORA_BEST_RETURN_PLAN=maxPlan;
+  window.AURORA_BALANCED_ROUTE_PLAN=balancedPlan;
+  const maxButton=$('applyBestReturn');if(maxButton) maxButton.disabled=!maxPlan.rows.length;
+  const balancedButton=$('applyBalancedRoute');if(balancedButton) balancedButton.disabled=!balancedPlan.rows.length;
+  if($('routeModeBadge')) $('routeModeBadge').textContent=routeMode==='maximum'?'Maximum-income route active':'Balanced route active';
+  $('balancedRouteCard')?.classList.toggle('active',routeMode!=='maximum');
+  $('maximumRouteCard')?.classList.toggle('active',routeMode==='maximum');
+  if($('balancedRouteIncome')) $('balancedRouteIncome').textContent=balancedPlan.rows.length?`${money(balancedPlan.totalIncome)}/yr`:'—';
+  if($('balancedRouteMonthly')) $('balancedRouteMonthly').textContent=balancedPlan.rows.length?`${money(balancedPlan.totalIncome/12)}/mo`:'—';
+  if($('balancedRouteScore')) $('balancedRouteScore').textContent=balancedPlan.rows.length?`${Math.round(balancedPlan.balanceScore)}/100`:'—';
+  if($('balancedRouteWarnings')) $('balancedRouteWarnings').textContent=balancedPlan.rows.length
+    ?`${balancedPlan.rows.length} meaningful signings • ${money(balancedPlan.spent)} allocated${balancedPlan.holdback?` • ${money(balancedPlan.holdback)} held back`:''}.`
+    :'No balanced route currently clears the verified-data and concentration gates.';
+  if($('bestReturnIncome')) $('bestReturnIncome').textContent=maxPlan.rows.length?`${money(maxPlan.totalIncome)}/yr`:'—';
+  if($('bestReturnMonthly')) $('bestReturnMonthly').textContent=maxPlan.rows.length?`${money(maxPlan.totalIncome/12)}/mo`:'—';
+  const uplift=maxPlan.totalIncome-balancedPlan.totalIncome;
+  if($('bestReturnUplift')){$('bestReturnUplift').textContent=maxPlan.rows.length?`${uplift>=0?'+':''}${money(uplift)}/yr`:'—';$('bestReturnUplift').style.color=uplift>0?'#fde68a':'#cbd5e1';}
+  if($('bestReturnSpend')) $('bestReturnSpend').textContent=maxPlan.rows.length?`${money(maxPlan.spent)} allocated${maxPlan.holdback?` • ${money(maxPlan.holdback)} held back`:''}`:'No permitted maximum-income route.';
   const grid=$('bestReturnGrid');
-  if(grid){
-    grid.innerHTML=plan.rows.length?plan.rows.map((item,index)=>{
-      const rate=incomeRate(item.row);
-      return `<div class="best-return-card">
-        <div class="best-return-card-top"><strong>#${index+1} ${displayTicker(item.row.ticker)}</strong><b>${money(item.amount)}</b></div>
-        <span>${displayName(item.row)} • ${Number.isFinite(rate)?(rate*100).toFixed(2)+'% income rate':'income check'}</span>
-        <span>Projected income: <strong style="display:inline;color:#86efac">${money(item.income)}/yr</strong></span>
-      </div>`;
-    }).join(''):'<div class="loading">No approved four-player route is available to optimise.</div>';
-  }
-  if($('bestReturnNote')) $('bestReturnNote').textContent=plan.rows.length
-    ? `All ${plan.rows.length} approved names remain in the plan with at least ${money(plan.minimumEach)} each. Remaining £25 blocks go to the highest projected income rate until a sizing or concentration guard is reached. This maximises projected dividend income; it does not guarantee investment returns or capital growth.`
-    : 'The best-return plan will appear once Aurora has approved at least one transfer target.';
+  if(grid) grid.innerHTML=maxPlan.rows.length?maxPlan.rows.map((item,index)=>{
+    const rate=incomeRate(item.row);const data=item.gate.data||dataConfidence(item.row);
+    return `<div class="best-return-card"><div class="best-return-card-top"><strong>#${index+1} ${displayTicker(item.row.ticker)}</strong><b>${money(item.amount)}</b></div><span>${displayName(item.row)} • ${Number.isFinite(rate)?(rate*100).toFixed(2)+'% income rate':'income check'}</span><span>Projected income: <strong style="display:inline;color:#86efac">${money(item.income)}/yr</strong> <em class="data-confidence ${data.status}"><i></i>${data.score}% verified</em></span></div>`;
+  }).join(''):'<div class="loading">No verified maximum-income route is available.</div>';
+  if($('bestReturnNote')) $('bestReturnNote').textContent=maxPlan.rows.length
+    ?`Maximum income still respects a 40% monthly cap per company, 50% monthly cap per sector, hard portfolio limits and a minimum meaningful allocation of ${money(maxPlan.minimumEach)}. Cash remains unallocated when no safe £25 block is available.`
+    :'The maximum-income comparison will appear when at least one verified candidate clears every hard gate.';
 }
 
 function visualThemeFor(row){
@@ -6755,7 +7067,7 @@ function renderDealSheet(deal){
         <div class="deal-rank">${i+1}</div>
         <div class="deal-main">
           <strong>${ticker} — ${displayName(item.row)}</strong>
-          <span><span class="status-chip ${gateClass}">${gateText}</span> &nbsp; ${platformFor(item.row.ticker)} • ${Number.isFinite(y) ? (y*100).toFixed(2)+'% income rate' : 'income check'} • ${item.gate.reasons[0] || 'Passes desk checks'}</span>
+          <span><span class="status-chip ${gateClass}">${gateText}</span> &nbsp; ${platformFor(item.row.ticker)} • ${Number.isFinite(y) ? (y*100).toFixed(2)+'% income rate' : 'income check'} • ${item.gate.reasons[0] || 'Passes desk checks'} <em class="data-confidence ${item.gate.data?.status||'verified'}"><i></i>${item.gate.data?.score||dataConfidence(item.row).score}% data</em></span>
         </div>
         <div class="deal-money"><small>Buy allocation</small><input class="allocation-input" data-allocation-ticker="${cleanTicker(item.row.ticker)}" type="number" min="0" step="25" value="${item.amount}" aria-label="Allocation for ${ticker}"><div class="deal-control-line"><button class="deal-exclude-btn" data-exclude-ticker="${cleanTicker(item.row.ticker)}" type="button">Exclude</button></div></div>
         <div class="deal-income"><small>Est. income</small><strong>${money(item.income)}/yr</strong><div class="deal-execution-note">${executionDetail(item,deal)}</div></div>
@@ -6765,7 +7077,7 @@ function renderDealSheet(deal){
   if($('holdbackNote')) {
     $('holdbackNote').textContent = deal.holdback > 0
       ? `Transfer holdback: ${money(deal.holdback)} stays in cash. The desk does not force spare budget into one name just because it is available.`
-      : 'No holdback. The transfer desk has assigned the full fee to the highest green-light income route.';
+      : 'No holdback. The selected route has assigned the full monthly release without breaching a hard portfolio gate.';
   }
 }
 function renderRegistrationDesk(deal){
@@ -6861,6 +7173,7 @@ function renderWatch(deal){
 }
 function renderAll(){
   if($('lastUpdated')) { if(window.AuroraFC) AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'}); else $('lastUpdated').textContent='Aurora generated: unavailable'; }
+  renderDeploymentPlan();
   const deal = buildDealSheet();
   persistTransferSettings();
   publishTransferPlan(deal);
@@ -6876,7 +7189,8 @@ function renderAll(){
   renderBestReturnAllocation(deal);
   window.AURORA_PAGE_CHECKS=()=>[
     {level:deal.rows.length?'ok':'warn',title:`${deal.rows.length} approved signings`,detail:deal.rows.length?`${money(deal.totalIncome||0)}/year estimated income added.`:'No target currently clears the transfer gates.'},
-    {level:excludedTickers.size?'warn':'ok',title:excludedTickers.size?`${excludedTickers.size} manually excluded`:'No manual exclusions',detail:excludedTickers.size?[...excludedTickers].join(' • '):'Automatic route is using the full eligible pool.'}
+    {level:excludedTickers.size?'warn':'ok',title:excludedTickers.size?`${excludedTickers.size} manually excluded`:'No manual exclusions',detail:excludedTickers.size?[...excludedTickers].join(' • '):'Automatic route is using the full eligible pool.'},
+    {level:deal.mode==='maximum'?'warn':'ok',title:deal.mode==='maximum'?'Maximum-income mode':'Balanced route mode',detail:deal.mode==='maximum'?'Higher income selected; hard concentration gates remain active.':'Income, valuation, safety and diversification are all weighted.'}
   ];
 }
 async function fetchTab(tab){
@@ -6919,7 +7233,9 @@ $('refreshBtn')?.addEventListener('click', () => {
   AURORA_MASTER_CACHE = null;
   loadData();
 });
-$('transferBudgetInput')?.addEventListener('input', renderAll);
+$('transferBudgetInput')?.addEventListener('input',()=>{manualAmounts.clear();renderAll();});
+['corePotInput','coreMonthlyInput','etfPotInput','etfMonthlyInput','deploymentMonthInput'].forEach(id=>$(id)?.addEventListener('input',renderDeploymentPlan));
+$('applyMonthlyBudget')?.addEventListener('click',()=>{readDeploymentInputs();const release=deploymentReleaseForMonth(deploymentPlan.currentMonth);if($('transferBudgetInput'))$('transferBudgetInput').value=release.total;routeMode='balanced';manualAmounts.clear();excludedTickers.clear();persistDeploymentPlan();renderAll();document.getElementById('best-return-allocation')?.scrollIntoView({behavior:'smooth',block:'start'});});
 document.addEventListener('change',event=>{
   const input=event.target.closest?.('[data-allocation-ticker]'); if(!input) return;
   manualAmounts.set(cleanTicker(input.dataset.allocationTicker),Math.max(0,parseNum(input.value)||0)); renderAll();
@@ -7011,14 +7327,14 @@ document.addEventListener('click',async event=>{
   try{const result=await postRegistration({action:'undoRegistration',transactionId,newTransactionId:`UNDO-${Date.now()}`,source:'Aurora City FC Transfer Centre',userAgent:navigator.userAgent});registrationMessage(result.message||'Registration was undone.','success');AURORA_MASTER_CACHE=null;await loadData();await loadRegistrationHistory();}
   catch(err){registrationMessage(err.message||'Undo failed.','error');button.disabled=false;button.textContent='Undo';}
 });
-$('resetTransferPlan')?.addEventListener('click',()=>{excludedTickers.clear();manualAmounts.clear();if($('transferBudgetInput'))$('transferBudgetInput').value=1500;renderAll();});
+$('resetTransferPlan')?.addEventListener('click',()=>{excludedTickers.clear();manualAmounts.clear();routeMode='balanced';const release=deploymentReleaseForMonth(deploymentPlan.currentMonth);if($('transferBudgetInput'))$('transferBudgetInput').value=release.total;renderAll();});
+$('applyBalancedRoute')?.addEventListener('click',()=>{
+  routeMode='balanced';manualAmounts.clear();renderAll();
+  document.getElementById('deal-sheet')?.scrollIntoView({behavior:'smooth',block:'start'});
+});
 $('applyBestReturn')?.addEventListener('click',()=>{
-  const plan=window.AURORA_BEST_RETURN_PLAN;
-  if(!plan?.rows?.length) return;
-  manualAmounts.clear();
-  plan.rows.forEach(item=>manualAmounts.set(cleanTicker(item.row.ticker),item.amount));
-  renderAll();
-  if(!new URLSearchParams(location.search).has('sync')) document.getElementById('finalDealSheet')?.scrollIntoView({behavior:'smooth',block:'start'});
+  routeMode='maximum';manualAmounts.clear();renderAll();
+  document.getElementById('deal-sheet')?.scrollIntoView({behavior:'smooth',block:'start'});
 });
 
 
@@ -7563,6 +7879,7 @@ window.addEventListener('load',forcePostTransferImpactPlacement,{once:true});
 setTimeout(forcePostTransferImpactPlacement,250);
 setTimeout(forcePostTransferImpactPlacement,1500);
 
+restoreDeploymentPlan();
 restoreTransferSettings();
 restoreRegistrationConnection();
 loadPlatformRules();
@@ -7928,6 +8245,10 @@ document.documentElement.dataset.releaseClauseBuild = "six-percent-clean-v26";
 
 <script id="release-clause-exact-marker">
 document.documentElement.dataset.releaseClauseExactBuild = "v27";
+</script>
+
+<script id="monthly-portfolio-logic-marker">
+document.documentElement.dataset.monthlyPortfolioLogic = "v29";
 </script>
 
 <script id="live-target-offers-marker">
