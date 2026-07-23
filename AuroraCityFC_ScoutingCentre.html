@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#090703" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+<title>Aurora City FC — Scouting Centre</title>
+<!-- Build: Live Aurora Scouting Centre • 23 Jul 2026 -->
+<style>
+:root{
+  --bg:#060503;
+  --panel:#100c06;
+  --panel2:#171006;
+  --card:#1a1208;
+  --card2:#24170a;
+  --line:rgba(251,191,36,.17);
+  --line-strong:rgba(251,191,36,.32);
+  --text:#fff7df;
+  --soft:#f6e8bf;
+  --muted:#a99b7c;
+  --amber:#fbbf24;
+  --gold:#f59e0b;
+  --orange:#fb923c;
+  --green:#34d399;
+  --cyan:#22d3ee;
+  --blue:#60a5fa;
+  --red:#fb7185;
+  --purple:#c084fc;
+  --shadow:0 20px 60px rgba(0,0,0,.42);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 20% -5%,rgba(245,158,11,.18),transparent 31%),
+    radial-gradient(circle at 95% 10%,rgba(251,191,36,.10),transparent 26%),
+    linear-gradient(180deg,#090703 0%,#060503 48%,#020202 100%);
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select{font:inherit}
+button{color:inherit}
+a{color:inherit;text-decoration:none}
+body.drawer-open{overflow:hidden}
+.app{
+  width:min(1560px,100%);
+  margin:0 auto;
+  padding:18px 14px 100px;
+}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:40;
+  margin:-18px -14px 18px;
+  padding:11px 14px;
+  border-bottom:1px solid rgba(251,191,36,.13);
+  background:rgba(6,5,3,.88);
+  backdrop-filter:blur(18px);
+}
+.topbar-inner{
+  width:min(1560px,100%);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.brand{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+.brand img{
+  width:43px;
+  height:43px;
+  border-radius:14px;
+  object-fit:cover;
+  box-shadow:0 0 28px rgba(251,191,36,.17);
+}
+.brand-copy{min-width:0}
+.brand h1{
+  margin:0;
+  font-size:15px;
+  line-height:1.05;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.brand p{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:11px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.icon-btn,.top-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(36,23,10,.65);
+  color:var(--soft);
+  cursor:pointer;
+}
+.icon-btn{width:40px;padding:0}
+.top-link{padding:8px 12px;font-size:12px}
+.icon-btn:hover,.top-link:hover{border-color:var(--line-strong);background:rgba(61,39,13,.78)}
+.hero{
+  position:relative;
+  overflow:hidden;
+  min-height:286px;
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) minmax(310px,.75fr);
+  gap:14px;
+  border:1px solid var(--line-strong);
+  border-radius:28px;
+  padding:23px;
+  background:
+    linear-gradient(115deg,rgba(39,23,5,.93),rgba(12,8,4,.78)),
+    radial-gradient(circle at 75% 20%,rgba(251,191,36,.22),transparent 29%);
+  box-shadow:var(--shadow);
+}
+.hero:after{
+  content:"SCOUT";
+  position:absolute;
+  right:22px;
+  bottom:-20px;
+  color:rgba(255,247,223,.035);
+  font-size:clamp(84px,12vw,190px);
+  font-weight:1000;
+  letter-spacing:-.09em;
+  pointer-events:none;
+}
+.hero-copy{position:relative;z-index:2;align-self:center}
+.kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border:1px solid rgba(251,191,36,.25);
+  border-radius:999px;
+  color:#fde68a;
+  background:rgba(120,53,15,.19);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+.kicker-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px var(--green);
+}
+.hero h2{
+  max-width:850px;
+  margin:16px 0 11px;
+  font-size:clamp(38px,7vw,76px);
+  line-height:.88;
+  letter-spacing:-.07em;
+}
+.hero p{
+  max-width:760px;
+  margin:0;
+  color:#cfc1a1;
+  font-size:15px;
+  line-height:1.55;
+}
+.hero-path{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:17px;
+}
+.path-node,.path-arrow{
+  font-size:11px;
+  font-weight:850;
+}
+.path-node{
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(251,191,36,.22);
+  background:rgba(25,15,5,.72);
+}
+.path-node.active{color:#1b1102;background:linear-gradient(135deg,#fbbf24,#f59e0b);border-color:transparent}
+.path-arrow{color:#8e8064}
+.hero-command{
+  position:relative;
+  z-index:2;
+  align-self:stretch;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:12px;
+  padding:17px;
+  border:1px solid rgba(251,191,36,.18);
+  border-radius:22px;
+  background:
+    linear-gradient(180deg,rgba(20,13,5,.86),rgba(8,6,3,.88)),
+    radial-gradient(circle at 50% 0,rgba(251,191,36,.12),transparent 42%);
+}
+.command-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.command-head small,.eyebrow{
+  display:block;
+  color:#c9af75;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.command-head strong{display:block;margin-top:5px;font-size:18px}
+.live-pill{
+  flex:0 0 auto;
+  padding:6px 8px;
+  border-radius:999px;
+  border:1px solid rgba(52,211,153,.28);
+  color:#a7f3d0;
+  background:rgba(6,78,59,.22);
+  font-size:9px;
+  font-weight:900;
+}
+.command-radar{
+  position:relative;
+  width:min(240px,80%);
+  aspect-ratio:1;
+  margin:0 auto;
+  border:1px solid rgba(251,191,36,.27);
+  border-radius:50%;
+  background:
+    linear-gradient(90deg,transparent 49.5%,rgba(251,191,36,.11) 50%,transparent 50.5%),
+    linear-gradient(0deg,transparent 49.5%,rgba(251,191,36,.11) 50%,transparent 50.5%),
+    repeating-radial-gradient(circle,transparent 0 22%,rgba(251,191,36,.10) 22.5% 23%,transparent 23.5% 45%);
+  overflow:hidden;
+}
+.command-radar:before{
+  content:"";
+  position:absolute;
+  inset:50% 50% 0 0;
+  transform-origin:100% 0;
+  background:conic-gradient(from 255deg,rgba(251,191,36,.34),rgba(251,191,36,0) 62deg);
+  animation:sweep 5s linear infinite;
+}
+.command-radar:after{
+  content:"";
+  position:absolute;
+  inset:49%;
+  border-radius:50%;
+  background:#fde68a;
+  box-shadow:0 0 14px #fbbf24;
+}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.command-footer{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  color:var(--muted);
+  font-size:10px;
+}
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+.kpi{
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:13px;
+  background:linear-gradient(180deg,rgba(26,18,8,.92),rgba(11,8,4,.95));
+}
+.kpi small{
+  display:block;
+  min-height:24px;
+  color:#a99b7c;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.kpi strong{
+  display:block;
+  margin-top:5px;
+  font-size:25px;
+  line-height:1;
+  letter-spacing:-.04em;
+}
+.kpi span{display:block;margin-top:5px;color:#8f836b;font-size:10px}
+.section{margin-top:17px;scroll-margin-top:90px}
+.section-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 2px 10px;
+}
+.section-head h3{
+  margin:4px 0 0;
+  font-size:24px;
+  line-height:1;
+  letter-spacing:-.04em;
+}
+.section-head p{margin:5px 0 0;color:var(--muted);font-size:12px}
+.section-badge{
+  flex:0 0 auto;
+  padding:6px 9px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:#e8d6a5;
+  background:rgba(36,23,10,.65);
+  font-size:10px;
+}
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(330px,.95fr);
+  gap:12px;
+}
+.panel{
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:15px;
+  background:linear-gradient(180deg,rgba(26,18,8,.91),rgba(9,7,4,.96));
+  box-shadow:0 14px 42px rgba(0,0,0,.24);
+}
+.panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.panel-head h4{margin:0;font-size:16px;letter-spacing:-.03em}
+.radar-field{
+  position:relative;
+  min-height:390px;
+  overflow:hidden;
+  border:1px solid rgba(251,191,36,.13);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(251,191,36,.08),transparent 18%),
+    linear-gradient(90deg,transparent 49.8%,rgba(251,191,36,.07) 50%,transparent 50.2%),
+    linear-gradient(0deg,transparent 49.8%,rgba(251,191,36,.07) 50%,transparent 50.2%),
+    repeating-radial-gradient(circle at 50% 50%,transparent 0 16%,rgba(251,191,36,.085) 16.4% 16.8%,transparent 17.2% 33%);
+}
+.radar-axis{
+  position:absolute;
+  color:#8d7b58;
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.radar-axis.top{top:13px;left:50%;transform:translateX(-50%)}
+.radar-axis.bottom{bottom:13px;left:50%;transform:translateX(-50%)}
+.radar-axis.left{left:13px;top:50%;transform:translateY(-50%) rotate(-90deg)}
+.radar-axis.right{right:13px;top:50%;transform:translateY(-50%) rotate(90deg)}
+.radar-blip{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  border:1px solid rgba(251,191,36,.34);
+  border-radius:50%;
+  color:#1d1201;
+  background:linear-gradient(135deg,#fde68a,#f59e0b);
+  box-shadow:0 0 0 5px rgba(251,191,36,.07),0 10px 28px rgba(0,0,0,.32);
+  font-size:10px;
+  font-weight:1000;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.radar-blip:hover{transform:translate(-50%,-50%) scale(1.12);z-index:4}
+.radar-blip.low{background:linear-gradient(135deg,#fecdd3,#fb7185)}
+.radar-blip.medium{background:linear-gradient(135deg,#bfdbfe,#60a5fa)}
+.radar-legend{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:9px;
+  color:var(--muted);
+  font-size:9px;
+}
+.radar-legend span{display:flex;align-items:center;gap:5px}
+.legend-dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.legend-dot.medium{background:var(--blue)}
+.legend-dot.low{background:var(--red)}
+.recommend-list{display:grid;gap:8px}
+.recommend-card{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  padding:11px;
+  border:1px solid rgba(251,191,36,.13);
+  border-radius:16px;
+  background:rgba(24,16,7,.7);
+  cursor:pointer;
+}
+.recommend-card:hover{border-color:rgba(251,191,36,.34);background:rgba(39,25,8,.78)}
+.rank{
+  display:grid;
+  place-items:center;
+  width:34px;height:34px;
+  border-radius:12px;
+  color:#231501;
+  background:linear-gradient(135deg,#fde68a,#f59e0b);
+  font-size:13px;
+  font-weight:1000;
+}
+.recommend-main{min-width:0}
+.recommend-main strong{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.recommend-main span{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+.recommend-score{text-align:right}
+.recommend-score strong{color:#fde68a}
+.recommend-score span{display:block;color:var(--muted);font-size:9px}
+.assignments{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.assignment{
+  min-width:0;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(26,18,8,.9),rgba(10,7,4,.95));
+}
+.assignment-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:8px;
+}
+.assignment-icon{
+  display:grid;
+  place-items:center;
+  width:38px;height:38px;
+  border-radius:13px;
+  border:1px solid rgba(251,191,36,.18);
+  background:rgba(120,53,15,.17);
+  font-size:18px;
+}
+.assignment small{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:850;
+  text-transform:uppercase;
+}
+.assignment h4{margin:10px 0 4px;font-size:14px}
+.assignment p{margin:0;color:var(--muted);font-size:10px;line-height:1.4}
+.assignment-best{
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid rgba(251,191,36,.1);
+}
+.assignment-best strong{display:block;font-size:12px}
+.assignment-best span{display:block;color:#b7a77f;font-size:9px;margin-top:2px}
+.pipeline{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+}
+.pipeline-stage{
+  position:relative;
+  min-width:0;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(25,16,7,.76);
+}
+.pipeline-stage:not(:last-child):after{
+  content:"›";
+  position:absolute;
+  z-index:3;
+  right:-8px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#fbbf24;
+  font-size:22px;
+}
+.pipeline-stage small{color:#a99770;font-size:8px;font-weight:900;text-transform:uppercase}
+.pipeline-stage strong{display:block;margin-top:5px;font-size:23px}
+.pipeline-stage span{display:block;margin-top:4px;color:var(--muted);font-size:9px}
+.toolbar{
+  display:grid;
+  grid-template-columns:minmax(210px,1.3fr) repeat(4,minmax(130px,.7fr));
+  gap:8px;
+  margin-bottom:10px;
+}
+.field{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:42px;
+  padding:0 11px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(20,13,6,.9);
+}
+.field input,.field select{
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:0;
+  color:var(--soft);
+  background:transparent;
+  font-size:11px;
+}
+.field select option{color:#111;background:#fff}
+.field-icon{color:#d7bc77;font-size:13px}
+.report-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.report-card{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  border:1px solid var(--line);
+  border-radius:19px;
+  overflow:hidden;
+  background:linear-gradient(180deg,rgba(29,19,7,.94),rgba(10,7,4,.98));
+  transition:.2s ease;
+}
+.report-card:hover{transform:translateY(-2px);border-color:var(--line-strong)}
+.report-banner{
+  position:relative;
+  min-height:80px;
+  padding:13px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 90% 10%,rgba(251,191,36,.24),transparent 32%),
+    linear-gradient(135deg,rgba(82,44,8,.65),rgba(24,15,5,.88));
+}
+.report-banner:after{
+  content:attr(data-ticker);
+  position:absolute;
+  right:8px;
+  bottom:-16px;
+  color:rgba(255,255,255,.06);
+  font-size:64px;
+  font-weight:1000;
+  letter-spacing:-.08em;
+}
+.report-title{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:9px;
+}
+.report-title h4{margin:0;font-size:18px}
+.report-title p{margin:3px 0 0;color:#d0bd90;font-size:10px}
+.status-chip,.risk-chip,.value-chip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px 7px;
+  border-radius:999px;
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.status-chip{border:1px solid rgba(251,191,36,.25);color:#fde68a;background:rgba(120,53,15,.25)}
+.risk-chip.low{color:#a7f3d0;background:rgba(6,78,59,.25)}
+.risk-chip.medium{color:#fde68a;background:rgba(120,53,15,.25)}
+.risk-chip.high,.risk-chip.dividend-check{color:#fecdd3;background:rgba(127,29,29,.27)}
+.value-chip.undervalued{color:#a7f3d0;background:rgba(6,78,59,.24)}
+.value-chip.neutral{color:#bfdbfe;background:rgba(30,64,175,.22)}
+.value-chip.overvalued{color:#fecdd3;background:rgba(127,29,29,.24)}
+.report-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:12px;
+}
+.report-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+.report-metric{
+  min-width:0;
+  padding:8px;
+  border:1px solid rgba(251,191,36,.09);
+  border-radius:12px;
+  background:rgba(5,4,2,.31);
+}
+.report-metric small{
+  display:block;
+  color:#978968;
+  font-size:8px;
+  font-weight:850;
+  text-transform:uppercase;
+}
+.report-metric strong{
+  display:block;
+  margin-top:4px;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.score-bar{
+  margin-top:10px;
+}
+.score-bar-head{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  color:#b7a77f;
+  font-size:9px;
+}
+.score-track{
+  height:8px;
+  margin-top:5px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+}
+.score-fill{
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#f59e0b,#fde68a);
+}
+.verdict{
+  min-height:42px;
+  margin-top:10px;
+  padding:9px;
+  border-left:3px solid #fbbf24;
+  border-radius:0 10px 10px 0;
+  color:#c9b995;
+  background:rgba(120,53,15,.13);
+  font-size:10px;
+  line-height:1.4;
+}
+.report-actions{
+  display:flex;
+  gap:7px;
+  margin-top:auto;
+  padding-top:11px;
+}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:36px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:7px 10px;
+  background:rgba(35,23,9,.78);
+  color:#f3e5bd;
+  font-size:10px;
+  font-weight:850;
+  cursor:pointer;
+}
+.btn:hover{border-color:var(--line-strong);background:rgba(56,36,11,.9)}
+.btn.primary{
+  border-color:transparent;
+  color:#241601;
+  background:linear-gradient(135deg,#fde68a,#f59e0b);
+}
+.btn.flex{flex:1}
+.btn.active{
+  color:#a7f3d0;
+  border-color:rgba(52,211,153,.3);
+  background:rgba(6,78,59,.22);
+}
+.empty{
+  grid-column:1/-1;
+  padding:32px 15px;
+  border:1px dashed var(--line);
+  border-radius:18px;
+  text-align:center;
+  color:var(--muted);
+}
+.meeting-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;
+}
+.meeting-card{
+  min-width:0;
+  padding:12px;
+  border:1px solid rgba(251,191,36,.16);
+  border-radius:16px;
+  background:rgba(27,17,6,.76);
+}
+.meeting-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:8px;
+}
+.meeting-card h4{margin:0;font-size:15px}
+.meeting-card p{margin:4px 0 0;color:var(--muted);font-size:9px}
+.meeting-card .meeting-verdict{margin-top:10px;color:#dac99f;font-size:10px;line-height:1.4}
+.meeting-card .btn{width:100%;margin-top:10px}
+.footer-note{
+  margin-top:12px;
+  padding:10px 12px;
+  border:1px solid rgba(96,165,250,.14);
+  border-radius:14px;
+  color:#9cacbd;
+  background:rgba(15,23,42,.32);
+  font-size:9px;
+  line-height:1.5;
+}
+.sidebar-overlay{
+  position:fixed;
+  inset:0;
+  z-index:69;
+  opacity:0;
+  pointer-events:none;
+  background:rgba(0,0,0,.64);
+  backdrop-filter:blur(3px);
+  transition:.2s ease;
+}
+.sidebar{
+  position:fixed;
+  z-index:70;
+  top:0;
+  right:0;
+  width:min(390px,92vw);
+  height:100%;
+  padding:18px;
+  transform:translateX(102%);
+  border-left:1px solid rgba(251,191,36,.18);
+  background:#090704;
+  box-shadow:-28px 0 70px rgba(0,0,0,.52);
+  transition:.24s ease;
+  overflow:auto;
+}
+body.drawer-open .sidebar-overlay{opacity:1;pointer-events:auto}
+body.drawer-open .sidebar{transform:translateX(0)}
+.sidebar-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:16px;
+}
+.sidebar-title{display:flex;align-items:center;gap:10px}
+.sidebar-title img{width:42px;height:42px;border-radius:14px}
+.sidebar-title h3{margin:0;font-size:15px}
+.sidebar-title p{margin:3px 0 0;color:var(--muted);font-size:10px}
+.close-btn{
+  width:38px;height:38px;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:rgba(32,21,8,.7);
+  cursor:pointer;
+}
+.department-list{display:grid;gap:7px}
+.department-link{
+  --dept:#fbbf24;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  min-height:62px;
+  padding:10px;
+  border:1px solid rgba(148,163,184,.13);
+  border-radius:16px;
+  background:rgba(17,13,8,.84);
+}
+.department-link:before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;width:4px;
+  background:var(--dept);
+}
+.department-link.active{
+  border-color:rgba(251,191,36,.37);
+  background:rgba(67,40,8,.35);
+}
+.dept-icon{
+  display:grid;
+  place-items:center;
+  width:38px;height:38px;
+  border-radius:12px;
+  color:#fff;
+  background:color-mix(in srgb,var(--dept) 22%,transparent);
+  border:1px solid color-mix(in srgb,var(--dept) 34%,transparent);
+}
+.department-link strong{display:block;font-size:12px}
+.department-link span{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+.department-link b{color:var(--dept);font-size:17px}
+.detail-overlay{
+  position:fixed;
+  inset:0;
+  z-index:79;
+  opacity:0;
+  pointer-events:none;
+  background:rgba(0,0,0,.66);
+  backdrop-filter:blur(4px);
+  transition:.2s ease;
+}
+.detail-drawer{
+  position:fixed;
+  z-index:80;
+  top:0;
+  right:0;
+  width:min(520px,96vw);
+  height:100%;
+  overflow:auto;
+  padding:18px;
+  transform:translateX(102%);
+  border-left:1px solid var(--line-strong);
+  background:linear-gradient(180deg,#140d05,#070503);
+  box-shadow:-30px 0 80px rgba(0,0,0,.58);
+  transition:.25s ease;
+}
+body.detail-open{overflow:hidden}
+body.detail-open .detail-overlay{opacity:1;pointer-events:auto}
+body.detail-open .detail-drawer{transform:translateX(0)}
+.detail-hero{
+  position:relative;
+  overflow:hidden;
+  min-height:170px;
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 90% 10%,rgba(251,191,36,.24),transparent 35%),
+    linear-gradient(135deg,rgba(77,43,8,.75),rgba(20,13,5,.93));
+}
+.detail-hero:after{
+  content:attr(data-ticker);
+  position:absolute;
+  right:7px;
+  bottom:-28px;
+  color:rgba(255,255,255,.055);
+  font-size:92px;
+  font-weight:1000;
+  letter-spacing:-.1em;
+}
+.detail-close{
+  position:absolute;
+  z-index:3;
+  top:12px;right:12px;
+  width:36px;height:36px;
+  border:1px solid rgba(251,191,36,.2);
+  border-radius:50%;
+  background:rgba(10,7,3,.65);
+  cursor:pointer;
+}
+.detail-hero small{position:relative;z-index:2;color:#d6be84;font-size:9px;font-weight:900;text-transform:uppercase}
+.detail-hero h3{position:relative;z-index:2;margin:10px 50px 4px 0;font-size:29px;line-height:1;letter-spacing:-.05em}
+.detail-hero p{position:relative;z-index:2;margin:0;color:#c4b185;font-size:11px}
+.detail-score{
+  position:relative;
+  z-index:2;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:15px;
+  padding:8px 10px;
+  border-radius:999px;
+  color:#261700;
+  background:linear-gradient(135deg,#fde68a,#f59e0b);
+  font-size:10px;
+  font-weight:900;
+}
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:10px;
+}
+.detail-stat{
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:rgba(25,16,7,.72);
+}
+.detail-stat small{display:block;color:var(--muted);font-size:8px;font-weight:900;text-transform:uppercase}
+.detail-stat strong{display:block;margin-top:5px;font-size:15px}
+.detail-section{
+  margin-top:11px;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:rgba(22,14,6,.78);
+}
+.detail-section h4{margin:0 0 8px;font-size:13px}
+.detail-section p{margin:0;color:#b9aa88;font-size:10px;line-height:1.55}
+.detail-actions{display:flex;gap:8px;margin-top:12px}
+.toast{
+  position:fixed;
+  z-index:100;
+  left:50%;
+  bottom:28px;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  padding:10px 13px;
+  border:1px solid rgba(52,211,153,.26);
+  border-radius:999px;
+  color:#d1fae5;
+  background:rgba(6,78,59,.92);
+  box-shadow:0 14px 45px rgba(0,0,0,.4);
+  font-size:11px;
+  transition:.2s ease;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1180px){
+  .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .assignments{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .meeting-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .toolbar{grid-template-columns:1fr 1fr 1fr}
+  .toolbar .field:first-child{grid-column:span 2}
+}
+@media(max-width:880px){
+  .hero{grid-template-columns:1fr}
+  .hero-command{min-height:300px}
+  .command-radar{width:210px}
+  .dashboard-grid{grid-template-columns:1fr}
+  .pipeline{grid-template-columns:1fr 1fr}
+  .pipeline-stage:not(:last-child):after{display:none}
+}
+@media(max-width:650px){
+  .app{padding-left:10px;padding-right:10px}
+  .topbar{margin-left:-10px;margin-right:-10px}
+  .top-link{display:none}
+  .hero{padding:17px}
+  .hero h2{font-size:44px}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .assignments,.report-grid,.meeting-grid{grid-template-columns:1fr}
+  .toolbar{grid-template-columns:1fr}
+  .toolbar .field:first-child{grid-column:auto}
+  .pipeline{grid-template-columns:1fr}
+  .report-metrics{grid-template-columns:1fr 1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="assets/aurora-city-fc/icons/icon-192.png" alt="Aurora City FC crest" />
+        <div class="brand-copy">
+          <h1>Aurora City FC</h1>
+          <p>Scouting Centre • Live recruitment intelligence</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <a class="top-link" href="AuroraCityFC_TransferCentre.html">Transfer Centre</a>
+        <button class="icon-btn" id="refreshBtn" type="button" aria-label="Refresh scouting data">↻</button>
+        <button class="icon-btn" id="menuBtn" type="button" aria-label="Open department menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="kicker"><i class="kicker-dot"></i>Global Recruitment Network</span>
+      <h2>Find the next Aurora signing.</h2>
+      <p>
+        Discover, investigate and rank potential investments before they reach the Transfer Centre.
+        Every report is powered by the live <strong>AuroraScout</strong> squad in AuroraMaster.
+      </p>
+      <div class="hero-path">
+        <span class="path-node active">Scouting Centre</span>
+        <span class="path-arrow">→</span>
+        <span class="path-node">Transfer Centre</span>
+        <span class="path-arrow">→</span>
+        <span class="path-node">Squad Hub</span>
+      </div>
+    </div>
+    <aside class="hero-command">
+      <div class="command-head">
+        <div>
+          <small>Chief Scout Command</small>
+          <strong id="commandTitle">Scanning Aurora network</strong>
+        </div>
+        <span class="live-pill" id="livePill">CONNECTING</span>
+      </div>
+      <div class="command-radar" aria-label="Animated scouting radar"></div>
+      <div class="command-footer">
+        <span id="sourceLabel">AuroraMaster loading…</span>
+        <span id="updatedLabel">—</span>
+      </div>
+    </aside>
+  </section>
+
+  <section class="kpi-grid" aria-label="Scouting key performance indicators">
+    <article class="kpi"><small>Players Scouted</small><strong id="kpiScouted">—</strong><span>Live AuroraScout pool</span></article>
+    <article class="kpi"><small>Top Prospects</small><strong id="kpiProspects">—</strong><span>Buy strength 65+</span></article>
+    <article class="kpi"><small>Hidden Gems</small><strong id="kpiGems">—</strong><span>Strong and undervalued</span></article>
+    <article class="kpi"><small>Low-Risk Reports</small><strong id="kpiLowRisk">—</strong><span>Payout risk marked low</span></article>
+    <article class="kpi"><small>Best Income Scout</small><strong id="kpiIncome">—</strong><span id="kpiIncomeSub">Highest forecast yield</span></article>
+    <article class="kpi"><small>Recruitment Meeting</small><strong id="kpiMeeting">0</strong><span>Locally shortlisted</span></article>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Chief Scout Overview</span>
+        <h3>Scouting radar</h3>
+        <p>High strength moves right; better valuation moves upward.</p>
+      </div>
+      <span class="section-badge" id="radarCount">Top 12 reports</span>
+    </div>
+    <div class="dashboard-grid">
+      <article class="panel">
+        <div class="panel-head">
+          <h4>Opportunity radar</h4>
+          <span class="section-badge">Click a ticker</span>
+        </div>
+        <div class="radar-field" id="radarField">
+          <span class="radar-axis top">More undervalued</span>
+          <span class="radar-axis bottom">Expensive / neutral</span>
+          <span class="radar-axis left">Lower strength</span>
+          <span class="radar-axis right">Higher strength</span>
+        </div>
+        <div class="radar-legend">
+          <span><i class="legend-dot"></i> Strong report</span>
+          <span><i class="legend-dot medium"></i> Development report</span>
+          <span><i class="legend-dot low"></i> Caution</span>
+        </div>
+      </article>
+      <article class="panel">
+        <div class="panel-head">
+          <h4>Chief scout recommendations</h4>
+          <span class="section-badge">Composite ranking</span>
+        </div>
+        <div class="recommend-list" id="recommendList"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Recruitment Network</span>
+        <h3>Scout assignments</h3>
+        <p>Specialist desks grouped from each company’s live Aurora role.</p>
+      </div>
+      <span class="section-badge" id="assignmentCount">— assignments</span>
+    </div>
+    <div class="assignments" id="assignmentGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Report Workflow</span>
+        <h3>Scouting pipeline</h3>
+        <p>From first discovery through to recruitment-meeting consideration.</p>
+      </div>
+    </div>
+    <div class="pipeline" id="pipelineGrid"></div>
+  </section>
+
+  <section class="section" id="reports">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Player Database</span>
+        <h3>Full scout reports</h3>
+        <p>Search and filter every live candidate in AuroraScout.</p>
+      </div>
+      <span class="section-badge" id="resultCount">— reports</span>
+    </div>
+    <div class="toolbar">
+      <label class="field"><span class="field-icon">⌕</span><input id="searchInput" type="search" placeholder="Search ticker, company, sector or role…" /></label>
+      <label class="field"><span class="field-icon">🏆</span><select id="leagueFilter"><option value="">All leagues</option></select></label>
+      <label class="field"><span class="field-icon">🧭</span><select id="roleFilter"><option value="">All assignments</option></select></label>
+      <label class="field"><span class="field-icon">🛡</span><select id="riskFilter"><option value="">All risk levels</option></select></label>
+      <label class="field"><span class="field-icon">↕</span><select id="sortFilter">
+        <option value="rank">Chief scout ranking</option>
+        <option value="strength">Buy strength</option>
+        <option value="yield">Dividend yield</option>
+        <option value="upside">Valuation upside</option>
+        <option value="impact">Promotion impact</option>
+      </select></label>
+    </div>
+    <div class="report-grid" id="reportGrid"></div>
+  </section>
+
+  <section class="section" id="meeting">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Decision Room</span>
+        <h3>Recruitment meeting</h3>
+        <p>Your local shortlist before a candidate is considered for the Transfer Centre.</p>
+      </div>
+      <button class="btn" id="clearMeetingBtn" type="button">Clear shortlist</button>
+    </div>
+    <div class="meeting-grid" id="meetingGrid"></div>
+    <p class="footer-note">
+      Shortlisting is saved on this device only and does not write back to Google Sheets.
+      The live scouting reports themselves continue to come from AuroraMaster.json.
+    </p>
+  </section>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar" id="sidebar" aria-label="Aurora departments">
+  <div class="sidebar-head">
+    <div class="sidebar-title">
+      <img src="assets/aurora-city-fc/icons/icon-192.png" alt="" />
+      <div><h3>Aurora City FC</h3><p>Department navigation</p></div>
+    </div>
+    <button class="close-btn" id="closeMenuBtn" type="button" aria-label="Close department menu">×</button>
+  </div>
+  <nav class="department-list">
+    <a class="department-link" style="--dept:#60a5fa" href="AuroraCityFC_ManagerDashboard.html">
+      <span class="dept-icon">⌂</span><span><strong>Manager Dashboard</strong><span>Club command centre</span></span><b>›</b>
+    </a>
+    <a class="department-link" style="--dept:#34d399" href="AuroraCityFC_SquadHub.html">
+      <span class="dept-icon">⚽</span><span><strong>Squad Hub</strong><span>Owned holdings and player profiles</span></span><b>›</b>
+    </a>
+    <a class="department-link" style="--dept:#c084fc" href="AuroraCityFC_AnalysisRoom.html">
+      <span class="dept-icon">◫</span><span><strong>Analysis Room</strong><span>Portfolio shape and long-term forecast</span></span><b>›</b>
+    </a>
+    <a class="department-link" style="--dept:#22d3ee" href="AuroraCityFC_TrainingGround.html">
+      <span class="dept-icon">↗</span><span><strong>Training Ground</strong><span>Owned-player development</span></span><b>›</b>
+    </a>
+    <a class="department-link active" style="--dept:#fbbf24" href="AuroraCityFC_ScoutingCentre.html">
+      <span class="dept-icon">⌕</span><span><strong>Scouting Centre</strong><span>Discover and investigate candidates</span></span><b>›</b>
+    </a>
+    <a class="department-link" style="--dept:#fb923c" href="AuroraCityFC_TransferCentre.html">
+      <span class="dept-icon">⇄</span><span><strong>Transfer Centre</strong><span>Approved targets and allocations</span></span><b>›</b>
+    </a>
+    <a class="department-link" style="--dept:#f472b6" href="AuroraCityFC_Boardroom.html">
+      <span class="dept-icon">♛</span><span><strong>Boardroom</strong><span>Budgets, objectives and strategy</span></span><b>›</b>
+    </a>
+    <a class="department-link" style="--dept:#ef4444" href="AuroraCityFC_MediaCentre.html">
+      <span class="dept-icon">◉</span><span><strong>Media Centre</strong><span>Newsroom and club stories</span></span><b>›</b>
+    </a>
+  </nav>
+</aside>
+
+<div class="detail-overlay" id="detailOverlay"></div>
+<aside class="detail-drawer" id="detailDrawer" aria-label="Scout report details">
+  <div id="detailContent"></div>
+</aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DATA_URLS=[
+  `AuroraMaster.json?v=${Date.now()}`,
+  `https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json?v=${Date.now()}`
+];
+const SHORTLIST_KEY="auroraScoutingRecruitmentMeeting";
+const FALLBACK_SCOUTS=[
+  {ticker:"RAT",company_name:"Rathbones Group",buy_strength:"70",league:"FTSE 250",sector:"Financial services",role:"Financial Scout",live_price:"£16.80",dividend_yield:"5.89%",annual_dps:"£0.99",fair_value:"£20.40",valuation_status:"Undervalued",payout_risk:"MEDIUM",income_from_500:"£29.46",income_from_2000:"£117.86",scout_rating:"★★★",promotion_impact_score:"60",trial_status:"Scout Candidate",trial_verdict:"Keep Scouting",manager_note:"Solid scout. Needs more evidence.",squad_balance_note:"No major chemistry issue.",last_updated:"23/07/2026"},
+  {ticker:"WIX",company_name:"Wickes Group",buy_strength:"69",league:"FTSE 250",sector:"Retailers",role:"Quality Defensive Scout",live_price:"£1.92",dividend_yield:"5.67%",annual_dps:"£0.11",fair_value:"£2.12",valuation_status:"Undervalued",payout_risk:"MEDIUM",income_from_500:"£28.36",income_from_2000:"£113.42",scout_rating:"★★★",promotion_impact_score:"59",trial_status:"Development Watch",trial_verdict:"Development Watch",manager_note:"Development watch only.",squad_balance_note:"Could improve balance if promoted.",last_updated:"23/07/2026"},
+  {ticker:"PSN",company_name:"Persimmon",buy_strength:"68",league:"FTSE 100",sector:"Household goods & home construction",role:"Cyclical Scout",live_price:"£10.94",dividend_yield:"5.49%",annual_dps:"£0.60",fair_value:"£12.50",valuation_status:"Undervalued",payout_risk:"MEDIUM",income_from_500:"£27.43",income_from_2000:"£109.74",scout_rating:"★★★",promotion_impact_score:"58",trial_status:"Development Watch",trial_verdict:"Development Watch",manager_note:"Development watch only.",squad_balance_note:"No major chemistry issue.",last_updated:"23/07/2026"},
+  {ticker:"CNA",company_name:"Centrica",buy_strength:"67",league:"FTSE 100",sector:"Multiline utilities",role:"Commodity / Utility Scout",live_price:"£1.75",dividend_yield:"4.86%",annual_dps:"£0.09",fair_value:"£1.87",valuation_status:"Undervalued",payout_risk:"MEDIUM",income_from_500:"£24.32",income_from_2000:"£97.28",scout_rating:"★★★",promotion_impact_score:"57",trial_status:"Development Watch",trial_verdict:"Development Watch",manager_note:"Development watch only.",squad_balance_note:"No major chemistry issue.",last_updated:"23/07/2026"},
+  {ticker:"OSB",company_name:"OSB Group",buy_strength:"61",league:"FTSE 250",sector:"Banks",role:"Financial Scout",live_price:"£5.60",dividend_yield:"6.31%",annual_dps:"£0.35",fair_value:"£5.63",valuation_status:"Neutral",payout_risk:"MEDIUM",income_from_500:"£31.54",income_from_2000:"£126.15",scout_rating:"★★★",promotion_impact_score:"50",trial_status:"Development Watch",trial_verdict:"Development Watch",manager_note:"Development watch only.",squad_balance_note:"No major chemistry issue.",last_updated:"23/07/2026"},
+  {ticker:"BME",company_name:"B&M European Value Retail",buy_strength:"63",league:"FTSE 250",sector:"Retailers",role:"Value Retail Scout",live_price:"£2.14",dividend_yield:"4.49%",annual_dps:"£0.10",fair_value:"£2.05",valuation_status:"Neutral",payout_risk:"LOW",income_from_500:"£22.47",income_from_2000:"£89.89",scout_rating:"★★★",promotion_impact_score:"52",trial_status:"Development Watch",trial_verdict:"Development Watch",manager_note:"Development watch only.",squad_balance_note:"Could improve balance if promoted.",last_updated:"23/07/2026"}
+];
+
+let state={
+  scouts:[],
+  meta:{},
+  source:"Fallback preview",
+  shortlist:new Set(loadShortlist()),
+  selected:null
+};
+
+const $=id=>document.getElementById(id);
+const esc=value=>String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[char]));
+const text=value=>String(value??"").trim();
+const num=value=>{
+  if(typeof value==="number") return Number.isFinite(value)?value:0;
+  const cleaned=String(value??"").replace(/,/g,"").replace(/[^\d.-]/g,"");
+  const parsed=parseFloat(cleaned);
+  return Number.isFinite(parsed)?parsed:0;
+};
+const pct=value=>num(value);
+const money=value=>{
+  const n=num(value);
+  return new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+};
+const money0=value=>{
+  const n=num(value);
+  return new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
+};
+const unique=values=>[...new Set(values.filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+
+function loadShortlist(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(SHORTLIST_KEY)||"[]");
+    return Array.isArray(raw)?raw:[];
+  }catch(error){
+    return [];
+  }
+}
+function saveShortlist(){
+  localStorage.setItem(SHORTLIST_KEY,JSON.stringify([...state.shortlist]));
+  $("kpiMeeting").textContent=state.shortlist.size;
+}
+function toast(message){
+  const node=$("toast");
+  node.textContent=message;
+  node.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer=setTimeout(()=>node.classList.remove("show"),1800);
+}
+function normaliseScout(row){
+  const live=num(row.live_price);
+  const fair=num(row.fair_value);
+  const upside=fair>0?((fair-live)/fair)*100:0;
+  const strength=num(row.buy_strength);
+  const impact=num(row.promotion_impact_score);
+  const yieldPct=pct(row.dividend_yield);
+  const risk=text(row.payout_risk||"Unknown").toUpperCase();
+  const valuation=text(row.valuation_status||"Unknown");
+  let ranking=strength*.56+impact*.24+Math.min(yieldPct*2.2,16);
+  if(valuation.toLowerCase().includes("undervalued")) ranking+=8;
+  if(risk==="LOW") ranking+=5;
+  if(risk.includes("HIGH")||risk.includes("DIVIDEND")) ranking-=10;
+  return {...row,live,fair,upside,strength,impact,yieldPct,risk,valuation,ranking};
+}
+async function fetchAurora(){
+  let lastError=null;
+  for(const url of DATA_URLS){
+    try{
+      const response=await fetch(url,{cache:"no-store"});
+      if(!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data=await response.json();
+      const rows=Array.isArray(data.AuroraScout)?data.AuroraScout:[];
+      if(!rows.length) throw new Error("AuroraScout is empty");
+      state.scouts=rows.map(normaliseScout);
+      state.meta=data.meta||{};
+      state.source=url.startsWith("http")?"GitHub AuroraMaster":"Local AuroraMaster";
+      return;
+    }catch(error){
+      lastError=error;
+    }
+  }
+  state.scouts=FALLBACK_SCOUTS.map(normaliseScout);
+  state.meta={generated_at:new Date().toISOString()};
+  state.source="Embedded preview";
+  console.warn("Scouting Centre fallback used:",lastError);
+}
+function riskClass(value){
+  const key=text(value).toLowerCase();
+  if(key.includes("low")) return "low";
+  if(key.includes("high")) return "high";
+  if(key.includes("dividend")) return "dividend-check";
+  return "medium";
+}
+function valuationClass(value){
+  const key=text(value).toLowerCase();
+  if(key.includes("under")) return "undervalued";
+  if(key.includes("over")) return "overvalued";
+  return "neutral";
+}
+function scoutGroup(row){
+  const role=text(row.role||row.squad_role||"General Scout");
+  if(/income|reit|property|dividend/i.test(role)) return "Income & Property";
+  if(/financial|bank/i.test(role)) return "Financials";
+  if(/quality|defensive|retail/i.test(role)) return "Quality & Defensive";
+  if(/cyclical|commodity|utility|construction/i.test(role)) return "Cyclical & Utilities";
+  return "General Recruitment";
+}
+function groupIcon(group){
+  return ({
+    "Income & Property":"£",
+    "Financials":"▦",
+    "Quality & Defensive":"◆",
+    "Cyclical & Utilities":"↻",
+    "General Recruitment":"⌕"
+  })[group]||"⌕";
+}
+function hiddenGem(row){
+  return row.strength>=65&&row.valuation.toLowerCase().includes("under")&&!row.risk.includes("HIGH")&&!row.risk.includes("DIVIDEND");
+}
+function topSorted(){
+  return [...state.scouts].sort((a,b)=>b.ranking-a.ranking);
+}
+function populateFilters(){
+  const leagues=unique(state.scouts.map(row=>text(row.league)));
+  const roles=unique(state.scouts.map(scoutGroup));
+  const risks=unique(state.scouts.map(row=>text(row.risk)));
+  $("leagueFilter").innerHTML=`<option value="">All leagues</option>${leagues.map(value=>`<option>${esc(value)}</option>`).join("")}`;
+  $("roleFilter").innerHTML=`<option value="">All assignments</option>${roles.map(value=>`<option>${esc(value)}</option>`).join("")}`;
+  $("riskFilter").innerHTML=`<option value="">All risk levels</option>${risks.map(value=>`<option>${esc(value)}</option>`).join("")}`;
+}
+function renderHeader(){
+  const generated=state.meta.generated_at?new Date(state.meta.generated_at):null;
+  $("sourceLabel").textContent=state.source;
+  $("updatedLabel").textContent=generated&&!Number.isNaN(generated.getTime())
+    ?generated.toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})
+    :"Updated now";
+  $("livePill").textContent=state.source==="Embedded preview"?"PREVIEW":"LIVE DATA";
+  $("commandTitle").textContent=`${state.scouts.length} candidates under observation`;
+}
+function renderKpis(){
+  const rows=state.scouts;
+  const prospects=rows.filter(row=>row.strength>=65);
+  const gems=rows.filter(hiddenGem);
+  const lowRisk=rows.filter(row=>row.risk==="LOW");
+  const bestIncome=[...rows].sort((a,b)=>b.yieldPct-a.yieldPct)[0];
+  $("kpiScouted").textContent=rows.length;
+  $("kpiProspects").textContent=prospects.length;
+  $("kpiGems").textContent=gems.length;
+  $("kpiLowRisk").textContent=lowRisk.length;
+  $("kpiIncome").textContent=bestIncome?bestIncome.ticker:"—";
+  $("kpiIncomeSub").textContent=bestIncome?`${bestIncome.yieldPct.toFixed(2)}% forecast yield`:"Highest forecast yield";
+  $("kpiMeeting").textContent=state.shortlist.size;
+}
+function renderRadar(){
+  const field=$("radarField");
+  field.querySelectorAll(".radar-blip").forEach(node=>node.remove());
+  const rows=topSorted().slice(0,12);
+  $("radarCount").textContent=`Top ${rows.length} reports`;
+  rows.forEach(row=>{
+    const x=10+Math.max(0,Math.min(100,row.strength))*0.80;
+    const y=84-Math.max(-20,Math.min(35,row.upside))*1.45;
+    const button=document.createElement("button");
+    button.type="button";
+    button.className=`radar-blip ${row.strength<55?"low":row.strength<65?"medium":""}`;
+    button.style.left=`${Math.max(7,Math.min(93,x))}%`;
+    button.style.top=`${Math.max(8,Math.min(92,y))}%`;
+    button.textContent=row.ticker;
+    button.title=`${row.company_name} • strength ${row.strength} • upside ${row.upside.toFixed(1)}%`;
+    button.addEventListener("click",()=>openDetail(row.ticker));
+    field.appendChild(button);
+  });
+}
+function renderRecommendations(){
+  const rows=topSorted().slice(0,6);
+  $("recommendList").innerHTML=rows.map((row,index)=>`
+    <button class="recommend-card" type="button" data-open="${esc(row.ticker)}">
+      <span class="rank">${index+1}</span>
+      <span class="recommend-main">
+        <strong>${esc(row.ticker)} • ${esc(row.company_name)}</strong>
+        <span>${esc(row.valuation)} • ${row.yieldPct.toFixed(2)}% yield • ${esc(scoutGroup(row))}</span>
+      </span>
+      <span class="recommend-score"><strong>${Math.round(row.ranking)}</strong><span>Scout rank</span></span>
+    </button>
+  `).join("");
+}
+function renderAssignments(){
+  const groups={};
+  state.scouts.forEach(row=>{
+    const group=scoutGroup(row);
+    (groups[group]??=[]).push(row);
+  });
+  const entries=Object.entries(groups).sort((a,b)=>b[1].length-a[1].length);
+  $("assignmentCount").textContent=`${entries.length} assignments`;
+  $("assignmentGrid").innerHTML=entries.map(([group,rows])=>{
+    const best=[...rows].sort((a,b)=>b.ranking-a.ranking)[0];
+    return `
+      <article class="assignment">
+        <div class="assignment-top">
+          <span class="assignment-icon">${groupIcon(group)}</span>
+          <small>${rows.length} report${rows.length===1?"":"s"}</small>
+        </div>
+        <h4>${esc(group)}</h4>
+        <p>${assignmentDescription(group)}</p>
+        <div class="assignment-best">
+          <strong>Lead report: ${esc(best.ticker)}</strong>
+          <span>${esc(best.company_name)} • score ${Math.round(best.ranking)}</span>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+function assignmentDescription(group){
+  return ({
+    "Income & Property":"Search for sustainable distributions, REIT value and dependable cash generation.",
+    "Financials":"Assess banks, asset managers and financial businesses for income and balance-sheet strength.",
+    "Quality & Defensive":"Identify resilient companies that can improve squad stability and sector balance.",
+    "Cyclical & Utilities":"Track recovery candidates, utilities and economically sensitive opportunities.",
+    "General Recruitment":"Cover candidates that need broader investigation before specialist assignment."
+  })[group]||"General candidate assessment.";
+}
+function pipelineBucket(row){
+  const value=`${row.trial_status||""} ${row.trial_verdict||""}`.toLowerCase();
+  if(state.shortlist.has(row.ticker)) return "Recruitment Meeting";
+  if(value.includes("do not")||value.includes("reject")) return "Rejected / Hold";
+  if(value.includes("deep")) return "Deep Scout";
+  if(value.includes("development")) return "Development Watch";
+  if(value.includes("candidate")||value.includes("keep scouting")) return "Full Report";
+  return "New Discovery";
+}
+function renderPipeline(){
+  const stages=["New Discovery","Development Watch","Deep Scout","Full Report","Recruitment Meeting"];
+  const counts=Object.fromEntries(stages.map(stage=>[stage,0]));
+  state.scouts.forEach(row=>{
+    const bucket=pipelineBucket(row);
+    if(bucket in counts) counts[bucket]+=1;
+  });
+  $("pipelineGrid").innerHTML=stages.map((stage,index)=>`
+    <article class="pipeline-stage">
+      <small>Stage ${index+1}</small>
+      <strong>${counts[stage]}</strong>
+      <span>${esc(stage)}</span>
+    </article>
+  `).join("");
+}
+function filteredRows(){
+  const query=$("searchInput").value.trim().toLowerCase();
+  const league=$("leagueFilter").value;
+  const role=$("roleFilter").value;
+  const risk=$("riskFilter").value;
+  const sort=$("sortFilter").value;
+  let rows=state.scouts.filter(row=>{
+    const haystack=[
+      row.ticker,row.company_name,row.sector,row.role,row.squad_role,row.league,row.country,row.valuation,row.trial_status,row.trial_verdict
+    ].join(" ").toLowerCase();
+    return (!query||haystack.includes(query))
+      &&(!league||text(row.league)===league)
+      &&(!role||scoutGroup(row)===role)
+      &&(!risk||text(row.risk)===risk);
+  });
+  const sorters={
+    rank:(a,b)=>b.ranking-a.ranking,
+    strength:(a,b)=>b.strength-a.strength,
+    yield:(a,b)=>b.yieldPct-a.yieldPct,
+    upside:(a,b)=>b.upside-a.upside,
+    impact:(a,b)=>b.impact-a.impact
+  };
+  return rows.sort(sorters[sort]||sorters.rank);
+}
+function renderReports(){
+  const rows=filteredRows();
+  $("resultCount").textContent=`${rows.length} report${rows.length===1?"":"s"}`;
+  $("reportGrid").innerHTML=rows.length?rows.map(reportCard).join(""):`<div class="empty">No scout reports match those filters.</div>`;
+}
+function reportCard(row){
+  const shortlisted=state.shortlist.has(row.ticker);
+  const verdict=text(row.trial_verdict||row.manager_note||"Continue monitoring");
+  return `
+    <article class="report-card">
+      <div class="report-banner" data-ticker="${esc(row.ticker)}">
+        <div class="report-title">
+          <div>
+            <h4>${esc(row.ticker)}</h4>
+            <p>${esc(row.company_name)}</p>
+          </div>
+          <span class="status-chip">${esc(row.trial_status||"Scout")}</span>
+        </div>
+      </div>
+      <div class="report-body">
+        <div class="report-metrics">
+          <div class="report-metric"><small>Live price</small><strong>${money(row.live)}</strong></div>
+          <div class="report-metric"><small>Yield</small><strong>${row.yieldPct.toFixed(2)}%</strong></div>
+          <div class="report-metric"><small>£500 income</small><strong>${money(row.income_from_500)}</strong></div>
+        </div>
+        <div class="score-bar">
+          <div class="score-bar-head"><span>Buy strength</span><strong>${Math.round(row.strength)}/100</strong></div>
+          <div class="score-track"><div class="score-fill" style="width:${Math.max(0,Math.min(100,row.strength))}%"></div></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">
+          <span class="value-chip ${valuationClass(row.valuation)}">${esc(row.valuation)}</span>
+          <span class="risk-chip ${riskClass(row.risk)}">${esc(row.risk)} risk</span>
+          <span class="status-chip">${esc(scoutGroup(row))}</span>
+        </div>
+        <div class="verdict">${esc(verdict)}</div>
+        <div class="report-actions">
+          <button class="btn flex" type="button" data-open="${esc(row.ticker)}">Full report</button>
+          <button class="btn flex ${shortlisted?"active":"primary"}" type="button" data-shortlist="${esc(row.ticker)}">${shortlisted?"Shortlisted":"Add to meeting"}</button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+function renderMeeting(){
+  const rows=[...state.shortlist].map(ticker=>state.scouts.find(row=>row.ticker===ticker)).filter(Boolean);
+  $("meetingGrid").innerHTML=rows.length?rows.map(row=>`
+    <article class="meeting-card">
+      <div class="meeting-card-head">
+        <div><h4>${esc(row.ticker)}</h4><p>${esc(row.company_name)}</p></div>
+        <span class="status-chip">${Math.round(row.ranking)}</span>
+      </div>
+      <div class="meeting-verdict">${esc(row.manager_note||row.trial_verdict||"Continue investigation.")}</div>
+      <button class="btn" type="button" data-remove="${esc(row.ticker)}">Remove from meeting</button>
+    </article>
+  `).join(""):`<div class="empty">No candidates shortlisted yet. Add the strongest reports to prepare your recruitment meeting.</div>`;
+}
+function toggleShortlist(ticker){
+  if(state.shortlist.has(ticker)){
+    state.shortlist.delete(ticker);
+    toast(`${ticker} removed from recruitment meeting`);
+  }else{
+    state.shortlist.add(ticker);
+    toast(`${ticker} added to recruitment meeting`);
+  }
+  saveShortlist();
+  renderReports();
+  renderMeeting();
+  renderPipeline();
+  if(state.selected===ticker) openDetail(ticker,true);
+}
+function openDetail(ticker,refreshOnly=false){
+  const row=state.scouts.find(item=>item.ticker===ticker);
+  if(!row) return;
+  state.selected=ticker;
+  const shortlisted=state.shortlist.has(ticker);
+  $("detailContent").innerHTML=`
+    <div class="detail-hero" data-ticker="${esc(row.ticker)}">
+      <button class="detail-close" id="detailCloseBtn" type="button" aria-label="Close report">×</button>
+      <small>${esc(row.league||"Aurora Scout")} • ${esc(row.country||"UK")}</small>
+      <h3>${esc(row.ticker)} — ${esc(row.company_name)}</h3>
+      <p>${esc(row.sector||"Sector unavailable")} • ${esc(scoutGroup(row))}</p>
+      <span class="detail-score">Chief scout score ${Math.round(row.ranking)}</span>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-stat"><small>Live price</small><strong>${money(row.live)}</strong></div>
+      <div class="detail-stat"><small>Fair value</small><strong>${money(row.fair)}</strong></div>
+      <div class="detail-stat"><small>Valuation upside</small><strong>${row.upside>=0?"+":""}${row.upside.toFixed(1)}%</strong></div>
+      <div class="detail-stat"><small>Dividend yield</small><strong>${row.yieldPct.toFixed(2)}%</strong></div>
+      <div class="detail-stat"><small>Income from £500</small><strong>${money(row.income_from_500)}</strong></div>
+      <div class="detail-stat"><small>Income from £2,000</small><strong>${money(row.income_from_2000)}</strong></div>
+      <div class="detail-stat"><small>Buy strength</small><strong>${Math.round(row.strength)}/100</strong></div>
+      <div class="detail-stat"><small>Promotion impact</small><strong>${Math.round(row.impact)}/100</strong></div>
+    </div>
+    <div class="detail-section">
+      <h4>Scout verdict</h4>
+      <p>${esc(row.trial_verdict||"Continue monitoring")}</p>
+    </div>
+    <div class="detail-section">
+      <h4>Manager note</h4>
+      <p>${esc(row.manager_note||row.notes||"No manager note supplied.")}</p>
+    </div>
+    <div class="detail-section">
+      <h4>Squad-balance assessment</h4>
+      <p>${esc(row.squad_balance_note||"No squad-balance note supplied.")}</p>
+    </div>
+    <div class="detail-section">
+      <h4>Risk and chemistry</h4>
+      <p>${esc(row.payout_risk||"Unknown")} payout risk • ${esc(row.chemistry_risk||"Normal")} chemistry status • ${esc(row.chemistry_role||row.role||"General scout role")}</p>
+    </div>
+    <div class="detail-actions">
+      <button class="btn flex ${shortlisted?"active":"primary"}" id="detailShortlistBtn" type="button">${shortlisted?"Remove from meeting":"Add to recruitment meeting"}</button>
+      <a class="btn flex" href="AuroraCityFC_TransferCentre.html">Open Transfer Centre</a>
+    </div>
+  `;
+  $("detailCloseBtn").addEventListener("click",closeDetail);
+  $("detailShortlistBtn").addEventListener("click",()=>toggleShortlist(ticker));
+  if(!refreshOnly) document.body.classList.add("detail-open");
+}
+function closeDetail(){
+  document.body.classList.remove("detail-open");
+  state.selected=null;
+}
+function bindEvents(){
+  ["searchInput","leagueFilter","roleFilter","riskFilter","sortFilter"].forEach(id=>{
+    $(id).addEventListener(id==="searchInput"?"input":"change",renderReports);
+  });
+  document.addEventListener("click",event=>{
+    const open=event.target.closest("[data-open]");
+    if(open) openDetail(open.dataset.open);
+    const shortlist=event.target.closest("[data-shortlist]");
+    if(shortlist) toggleShortlist(shortlist.dataset.shortlist);
+    const remove=event.target.closest("[data-remove]");
+    if(remove) toggleShortlist(remove.dataset.remove);
+  });
+  $("clearMeetingBtn").addEventListener("click",()=>{
+    state.shortlist.clear();
+    saveShortlist();
+    renderReports();
+    renderMeeting();
+    renderPipeline();
+    toast("Recruitment meeting cleared");
+  });
+  $("menuBtn").addEventListener("click",()=>document.body.classList.add("drawer-open"));
+  $("closeMenuBtn").addEventListener("click",()=>document.body.classList.remove("drawer-open"));
+  $("sidebarOverlay").addEventListener("click",()=>document.body.classList.remove("drawer-open"));
+  $("detailOverlay").addEventListener("click",closeDetail);
+  $("refreshBtn").addEventListener("click",init);
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"){
+      document.body.classList.remove("drawer-open");
+      closeDetail();
+    }
+  });
+}
+function renderAll(){
+  renderHeader();
+  renderKpis();
+  populateFilters();
+  renderRadar();
+  renderRecommendations();
+  renderAssignments();
+  renderPipeline();
+  renderReports();
+  renderMeeting();
+}
+async function init(){
+  $("refreshBtn").textContent="…";
+  await fetchAurora();
+  renderAll();
+  $("refreshBtn").textContent="↻";
+}
+bindEvents();
+init();
+</script>
+</body>
+</html>
