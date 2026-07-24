@@ -18,6 +18,7 @@
 <!-- Build: Universal Scouting Navigation • 23 Jul 2026 -->
 <!-- Build: Colour Player Profiles • 20 Jul 2026 -->
 <!-- Build: Aurora M3 Squad Tactics Upgrade • 24 Jul 2026 -->
+<!-- Hotfix: M3 loading loop repair • 24 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -6890,16 +6891,22 @@ document.documentElement.dataset.playerProfileBuild = "colour-signals-v25";
   function renderFormer(){
     const list=id("m3FormerPlayerList");if(!list||typeof state==="undefined")return;
     const former=[...new Set((state.holdings||[]).filter(row=>!isActiveHolding(row)).map(row=>clean(row.ticker)).filter(Boolean))];
-    list.innerHTML=former.length?former.map(ticker=>`<span>${ticker}</span>`).join(""):"<span>No sold holdings are currently recorded</span>";
+    const html=former.length?former.map(ticker=>`<span>${ticker}</span>`).join(""):"<span>No sold holdings are currently recorded</span>";
+    // Do not rewrite identical markup: doing so retriggers the page-wide MutationObserver
+    // and can starve Aurora's fetch/render promises on iPad Safari.
+    if(list.innerHTML!==html) list.innerHTML=html;
   }
 
   function init(){
     installToolbar();
+    renderFormer();
     document.addEventListener("click",event=>{
       const player=event.target.closest("[data-player-ticker]");
       if(player)setTimeout(()=>appendAccountBreakdown(player.dataset.playerTicker),50);
     });
-    const observer=new MutationObserver(()=>{installToolbar();renderFormer();});
+    // The observer is only needed to install the toolbar after the native squad markup appears.
+    // Former-player content is refreshed separately without creating a mutation loop.
+    const observer=new MutationObserver(()=>installToolbar());
     observer.observe(document.body,{childList:true,subtree:true});
     window.setInterval(()=>{renderFormer();renderToolbarLeaders();},1600);
     if(Array.isArray(state?.holdings)&&state.holdings.length)renderAll();
