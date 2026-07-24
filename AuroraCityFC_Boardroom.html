@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#030712" />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 
+<html lang="en">
+<head><!-- Build: Universal Page Section Navigation • 24 Jul 2026 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
+<link href="manifest.json" rel="manifest"/>
+<meta content="#030712" name="theme-color"/>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<meta content="yes" name="mobile-web-app-capable">
+<meta content="yes" name="apple-mobile-web-app-capable">
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
+<meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Boardroom</title>
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
 <!-- Build: Boardroom Photographic Hero • 19 Jul 2026 -->
-
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
 
@@ -3039,336 +3038,484 @@ body.fm-transfer-menu-open .fm-side-scroll{
 }
 
 </style>
-
 <!-- Hotfix: Ten-month income mission is displayed only in Transfer Centre • 24 Jul 2026 -->
 <style id="aurora-m4-transfer-only-hotfix">
 /* Keep the shared M4 logic available without duplicating the large mission panel on this page. */
 #auroraM4Mission{display:none!important}
 </style>
+<!-- Build: Universal Sidebar Department Colours Fix • 24 Jul 2026 -->
+<style id="aurora-universal-sidebar-colours-v2">
+/* One consistent department colour map on every Aurora page. */
+.fm-side-link[href$="AuroraCityFC_ManagerDashboard.html"]{
+  --dept-colour:#60a5fa;
+  --dept-rgb:96,165,250;
+}
+.fm-side-link[href$="AuroraCityFC_SquadHub.html"]{
+  --dept-colour:#22d3ee;
+  --dept-rgb:34,211,238;
+}
+.fm-side-link[href$="AuroraCityFC_AnalysisRoom.html"]{
+  --dept-colour:#a78bfa;
+  --dept-rgb:167,139,250;
+}
+.fm-side-link[href$="AuroraCityFC_TrainingGround.html"]{
+  --dept-colour:#34d399;
+  --dept-rgb:52,211,153;
+}
+.fm-side-link[href$="AuroraCityFC_ScoutingCentre.html"]{
+  --dept-colour:#4ade80;
+  --dept-rgb:74,222,128;
+}
+#transferSideMenu,
+.fm-side-link[href$="AuroraCityFC_TransferCentre.html"]{
+  --dept-colour:#f59e0b;
+  --dept-rgb:245,158,11;
+}
+.fm-side-link[href$="AuroraCityFC_Boardroom.html"]{
+  --dept-colour:#f472b6;
+  --dept-rgb:244,114,182;
+}
+.fm-side-link[href$="AuroraCityFC_MediaCentre.html"]{
+  --dept-colour:#facc15;
+  --dept-rgb:250,204,21;
+}
 
-</head>
+/* Subtle colour identity remains visible before the page is selected. */
+body .fm-side-scroll .fm-side-link{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(var(--dept-rgb),.12);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.10),rgba(var(--dept-rgb),.025) 62%,transparent);
+}
+body .fm-side-scroll .fm-side-link:before{
+  content:"";
+  position:absolute;
+  top:8px;
+  bottom:8px;
+  left:0;
+  width:3px;
+  border-radius:0 4px 4px 0;
+  background:var(--dept-colour);
+  opacity:.58;
+  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
+}
+body .fm-side-scroll .fm-side-link .fm-side-icon{
+  color:var(--dept-colour);
+  background:rgba(var(--dept-rgb),.11);
+  border:1px solid rgba(var(--dept-rgb),.12);
+}
+body .fm-side-scroll .fm-side-link:hover{
+  color:#f8fafc;
+  border-color:rgba(var(--dept-rgb),.38);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.23),rgba(var(--dept-rgb),.07) 72%,transparent);
+  box-shadow:0 7px 20px rgba(var(--dept-rgb),.09);
+}
+body .fm-side-scroll .fm-side-link:hover:before{opacity:1}
+
+/* Selected page: the same strong department-colour treatment on every HTML. */
+body .fm-side-scroll .fm-side-link.active,
+body[data-beast-theme] .fm-side-scroll .fm-side-link.active{
+  color:#fff!important;
+  border-color:rgba(var(--dept-rgb),.62)!important;
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.38),rgba(var(--dept-rgb),.16) 68%,rgba(var(--dept-rgb),.05))!important;
+  box-shadow:inset 3px 0 0 var(--dept-colour),0 9px 25px rgba(var(--dept-rgb),.17),0 0 18px rgba(var(--dept-rgb),.08)!important;
+}
+body .fm-side-scroll .fm-side-link.active:before{
+  width:4px;
+  opacity:1;
+  box-shadow:0 0 17px rgba(var(--dept-rgb),.65);
+}
+body .fm-side-scroll .fm-side-link.active .fm-side-icon{
+  color:#fff!important;
+  background:rgba(var(--dept-rgb),.26)!important;
+  border-color:rgba(var(--dept-rgb),.38)!important;
+  box-shadow:0 0 15px rgba(var(--dept-rgb),.20)!important;
+}
+
+/* Transfer Centre folder receives the same amber identity. */
+#transferSideMenu{
+  position:relative;
+  border-color:rgba(var(--dept-rgb),.12);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.09),rgba(var(--dept-rgb),.02) 66%,transparent);
+}
+#transferSideMenu:before{
+  content:"";
+  position:absolute;
+  top:8px;
+  bottom:8px;
+  left:0;
+  width:3px;
+  z-index:1;
+  border-radius:0 4px 4px 0;
+  background:var(--dept-colour);
+  opacity:.58;
+  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
+}
+#transferSideMenu summary{position:relative;z-index:2}
+#transferSideMenu summary .fm-side-icon,
+#transferSideMenu .fm-folder-arrow{color:var(--dept-colour)}
+#transferSideMenu summary .fm-side-icon{
+  background:rgba(var(--dept-rgb),.11);
+  border:1px solid rgba(var(--dept-rgb),.12);
+}
+#transferSideMenu:hover,
+#transferSideMenu[open],
+#transferSideMenu.active{
+  border-color:rgba(var(--dept-rgb),.44);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.25),rgba(var(--dept-rgb),.08) 72%,transparent);
+  box-shadow:inset 3px 0 0 var(--dept-colour),0 8px 22px rgba(var(--dept-rgb),.10);
+}
+#transferSideMenu:hover:before,
+#transferSideMenu[open]:before,
+#transferSideMenu.active:before{
+  width:4px;
+  opacity:1;
+  box-shadow:0 0 17px rgba(var(--dept-rgb),.62);
+}
+#transferSideMenu[open] .fm-side-submenu a:before{background:rgba(var(--dept-rgb),.48)}
+#transferSideMenu[open] .fm-side-submenu a:hover,
+#transferSideMenu[open] .fm-side-submenu a.active{
+  color:#fff7ed;
+  background:rgba(var(--dept-rgb),.15);
+}
+.fm-side-scroll .fm-side-link > span:last-child,
+#transferSideMenu summary > span:nth-child(2){position:relative;z-index:2}
+
+@media(max-height:720px){
+  body .fm-side-scroll .fm-side-link:before,
+  #transferSideMenu:before{top:6px;bottom:6px}
+}
+</style>
+</meta></meta></meta><style id="aurora-page-section-navigation-styles">
+/* ================= AURORA PAGE SECTION NAVIGATION ================= */
+.aurora-page-folder{
+  --page-accent:#60a5fa;
+  --page-accent-rgb:96,165,250;
+  margin:2px 0;
+  overflow:hidden;
+  border:1px solid rgba(var(--page-accent-rgb),.32)!important;
+  border-radius:12px;
+  background:rgba(var(--page-accent-rgb),.10)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+.aurora-page-folder summary{
+  min-height:43px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) 18px;
+  align-items:center;
+  gap:7px;
+  padding:7px 9px;
+  border-radius:11px;
+  color:#fff!important;
+  cursor:pointer;
+  list-style:none;
+  font-size:13px;
+  font-weight:800;
+  user-select:none;
+  background:linear-gradient(90deg,rgba(var(--page-accent-rgb),.48),rgba(var(--page-accent-rgb),.16))!important;
+  box-shadow:inset 3px 0 0 var(--page-accent),0 8px 22px rgba(var(--page-accent-rgb),.10);
+}
+.aurora-page-folder summary::-webkit-details-marker{display:none}
+.aurora-page-folder summary .fm-side-icon{
+  color:#fff!important;
+  background:rgba(var(--page-accent-rgb),.20)!important;
+  border:1px solid rgba(var(--page-accent-rgb),.24);
+}
+.aurora-page-folder .fm-folder-arrow{
+  color:var(--page-accent)!important;
+  font-size:17px;
+  text-align:center;
+  transition:transform .18s ease;
+}
+.aurora-page-folder[open] .fm-folder-arrow{transform:rotate(90deg)}
+.aurora-page-folder .fm-side-submenu{
+  display:grid;
+  gap:2px;
+  padding:5px 7px 10px 42px;
+}
+.aurora-page-folder .fm-side-submenu a{
+  position:relative;
+  min-height:31px;
+  display:flex;
+  align-items:center;
+  padding:6px 9px;
+  border-radius:8px;
+  color:#93a4bd;
+  font-size:11px;
+  font-weight:760;
+  line-height:1.2;
+  transition:color .16s,background .16s,transform .16s;
+}
+.aurora-page-folder .fm-side-submenu a:before{
+  content:"";
+  position:absolute;
+  left:-12px;
+  width:7px;
+  height:1px;
+  background:rgba(var(--page-accent-rgb),.34);
+}
+.aurora-page-folder .fm-side-submenu a:hover,
+.aurora-page-folder .fm-side-submenu a.active{
+  color:#fff;
+  background:rgba(var(--page-accent-rgb),.20);
+  transform:translateX(2px);
+}
+.aurora-page-folder .fm-side-submenu a.active:before{
+  width:9px;
+  height:2px;
+  background:var(--page-accent);
+  box-shadow:0 0 10px rgba(var(--page-accent-rgb),.55);
+}
+.aurora-section-anchor{scroll-margin-top:96px}
+@media(max-width:900px){
+  .aurora-page-folder summary{font-size:12px;grid-template-columns:28px minmax(0,1fr) 16px;padding-left:7px;padding-right:7px}
+  .aurora-page-folder .fm-side-submenu{padding-left:36px}
+  .aurora-page-folder .fm-side-submenu a{font-size:10px}
+}
+</style></head>
 <body>
-
-<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone"
-     aria-label="Open navigation" role="button" tabindex="0">
-  <span class="fm-sidebar-edge-handle">›</span>
+<div aria-label="Open navigation" class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" role="button" tabindex="0">
+<span class="fm-sidebar-edge-handle">›</span>
 </div>
-
 <div class="fm-shell">
-  <aside class="fm-sidebar" aria-label="Aurora City FC navigation">
-    <div class="fm-side-brand">
-      <button class="fm-sidebar-collapse" id="fmSidebarCollapse"
-              type="button" aria-label="Hide navigation"
-              title="Hide navigation">‹</button>
-
-      <div class="fm-side-crest">
-        <img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"
-             alt="Aurora City FC crest">
-      </div>
-
-      <div>
-        <strong>Aurora City FC</strong>
-        <span>Club HQ</span>
-      </div>
-    </div>
-
-    <nav class="fm-side-scroll">
-      <div class="fm-nav-group">Navigation</div>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_ManagerDashboard.html">
-        <span class="fm-side-icon">⌂</span>
-        <span>Home</span>
-      </a>
-
-      <div class="fm-nav-group">Performance</div>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_SquadHub.html">
-        <span class="fm-side-icon">♟</span>
-        <span>Squad Hub</span>
-      </a>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_AnalysisRoom.html">
-        <span class="fm-side-icon">⌁</span>
-        <span>Analysis Room</span>
-      </a>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_TrainingGround.html">
-        <span class="fm-side-icon">▲</span>
-        <span>Training Ground</span>
-      </a>
-
-      <div class="fm-nav-group">Recruitment</div>
-      <a class="fm-side-link"
-         href="AuroraCityFC_ScoutingCentre.html">
-        <span class="fm-side-icon">⌕</span>
-        <span>Scouting Centre</span>
-      </a>
-
-
-      <details class="fm-side-folder"
-               id="transferSideMenu">
-        <summary>
-          <span class="fm-side-icon">⇄</span>
-          <span>Transfer Centre</span>
-          <span class="fm-folder-arrow">›</span>
-        </summary>
-
-        <div class="fm-side-submenu">
-<a href="AuroraCityFC_TransferCentre.html#transfer-overview">Overview</a>
-          <a href="AuroraCityFC_TransferCentre.html#incoming-offers">Incoming Offers</a>
-          <a href="AuroraCityFC_TransferCentre.html#deal-sheet">Deal Sheet</a>
-          <a href="AuroraCityFC_TransferCentre.html#sell-desk">Sell Desk</a>
-          <a href="AuroraCityFC_TransferCentre.html#best-return-allocation">Best Return</a>
-          <a href="AuroraCityFC_TransferCentre.html#registration-desk">Registration</a>
-          <a href="AuroraCityFC_TransferCentre.html#top-transfer-board">Transfer Board</a>
-          <a href="AuroraCityFC_TransferCentre.html#transfer-bench">Bench</a>
-        </div>
-      </details>
-
-      <div class="fm-nav-group">Club</div>
-
-      <a class="fm-side-link active"
-         href="AuroraCityFC_Boardroom.html">
-        <span class="fm-side-icon">♜</span>
-        <span>Boardroom</span>
-      </a>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_MediaCentre.html">
-        <span class="fm-side-icon">●</span>
-        <span>Media Centre</span>
-      </a>
-    </nav>
-
-    <div class="fm-side-footer">
-      <button class="fm-side-action" id="refreshBtn" type="button">Refresh Data</button>
+<aside aria-label="Aurora City FC navigation" class="fm-sidebar">
+<div class="fm-side-brand">
+<button aria-label="Hide navigation" class="fm-sidebar-collapse" id="fmSidebarCollapse" title="Hide navigation" type="button">‹</button>
+<div class="fm-side-crest">
+<img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/>
+</div>
+<div>
+<strong>Aurora City FC</strong>
+<span>Club HQ</span>
+</div>
+</div>
+<nav class="fm-side-scroll">
+<div class="fm-nav-group">Navigation</div>
+<a class="fm-side-link" href="AuroraCityFC_ManagerDashboard.html">
+<span class="fm-side-icon">⌂</span>
+<span>Home</span>
+</a>
+<div class="fm-nav-group">Performance</div>
+<a class="fm-side-link" href="AuroraCityFC_SquadHub.html">
+<span class="fm-side-icon">♟</span>
+<span>Squad Hub</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_AnalysisRoom.html">
+<span class="fm-side-icon">⌁</span>
+<span>Analysis Room</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_TrainingGround.html">
+<span class="fm-side-icon">▲</span>
+<span>Training Ground</span>
+</a>
+<div class="fm-nav-group">Recruitment</div>
+<a class="fm-side-link" href="AuroraCityFC_ScoutingCentre.html">
+<span class="fm-side-icon">⌕</span>
+<span>Scouting Centre</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_TransferCentre.html"><span class="fm-side-icon">⇄</span><span>Transfer Centre</span></a>
+<div class="fm-nav-group">Club</div>
+<details class="fm-side-folder active aurora-page-folder" id="boardroomSideMenu" open="" style="--page-accent:#f472b6;--page-accent-rgb:244,114,182;"><summary aria-label="Boardroom page sections"><span class="fm-side-icon">♜</span><span>Boardroom</span><span aria-hidden="true" class="fm-folder-arrow">›</span></summary><div class="fm-side-submenu fm-page-submenu"><a href="#boardroom-overview">Overview</a><a href="#board-summary">Board Summary</a><a href="#confidence-objectives">Confidence &amp; Objectives</a><a href="#executive-control-room">Executive Control</a><a href="#board-agenda-risk">Agenda &amp; Risk</a><a href="#financial-oversight">Financial Oversight</a><a href="#board-decision-log">Decision Log</a><a href="#boardroom-briefing">Boardroom Briefing</a><a href="#aurora-honours-cabinet">Honours Cabinet</a></div></details>
+<a class="fm-side-link" href="AuroraCityFC_MediaCentre.html">
+<span class="fm-side-icon">●</span>
+<span>Media Centre</span>
+</a>
+</nav>
+<div class="fm-side-footer">
+<button class="fm-side-action" id="refreshBtn" type="button">Refresh Data</button>
 <div class="fm-side-clock" id="fmClock">Manager session live</div>
-    </div>
-  </aside>
-
-  <div class="fm-workspace">
-
+</div>
+</aside>
+<div class="fm-workspace">
 <!-- ===================== SECTION: APP SHELL ===================== -->
-
-
 <main class="app">
-  <!-- ===================== SECTION: BOARDROOM HERO ===================== -->
-  <section class="boardroom-photo-hero" aria-label="Boardroom executive suite">
-    <img class="boardroom-photo-banner"
-         src="assets/aurora-city-fc/boardroom-executive-suite.png"
-         alt="Aurora City FC executive boardroom meeting">
-
-    <div class="boardroom-photo-content">
-      <div class="boardroom-photo-kicker">
-        <span class="boardroom-photo-dot"></span>
+<!-- ===================== SECTION: BOARDROOM HERO ===================== -->
+<section aria-label="Boardroom executive suite" class="boardroom-photo-hero aurora-section-anchor" id="boardroom-overview">
+<img alt="Aurora City FC executive boardroom meeting" class="boardroom-photo-banner" src="assets/aurora-city-fc/boardroom-executive-suite.png"/>
+<div class="boardroom-photo-content">
+<div class="boardroom-photo-kicker">
+<span class="boardroom-photo-dot"></span>
         Executive department
       </div>
-
-      <h2 class="boardroom-photo-title">Board<span>Room</span></h2>
-
-      <p class="boardroom-photo-sub">
+<h2 class="boardroom-photo-title">Board<span>Room</span></h2>
+<p class="boardroom-photo-sub">
         Board confidence, supporter mood, job security, club objectives
         and the long-term Aurora City FC income mission.
       </p>
-
-      <div class="boardroom-photo-actions">
-        <span class="boardroom-photo-pill" id="lastUpdated">
+<div class="boardroom-photo-actions">
+<span class="boardroom-photo-pill" id="lastUpdated">
           Last updated: loading…
         </span>
-        <span class="boardroom-photo-pill">
+<span class="boardroom-photo-pill">
           Season Objective: £625/month
         </span>
-        <span class="boardroom-photo-pill">
+<span class="boardroom-photo-pill">
           Long-Term Mission: £2,000/month
         </span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: BOARD KPI STRIP ===================== -->
-  <section class="section">
-    <div class="board-grid">
-      <div class="board-card w3">
-        <div class="card-title"><h3>Board Confidence</h3><span class="badge green">Live</span></div>
-        <div class="board-kpi"><strong id="boardConfidence">—</strong><span id="boardConfidenceLabel">Loading board mood…</span></div>
-      </div>
-      <div class="board-card w3">
-        <div class="card-title"><h3>Supporter Mood</h3><span class="badge blue">Fans</span></div>
-        <div class="board-kpi"><strong id="supporterMood">—</strong><span id="supporterMoodLabel">Checking terraces…</span></div>
-      </div>
-      <div class="board-card w3">
-        <div class="card-title"><h3>Job Security</h3><span class="badge purple">Manager</span></div>
-        <div class="board-kpi"><strong id="jobSecurity">—</strong><span>gaffer status</span></div>
-      </div>
-      <div class="board-card w3">
-        <div class="card-title"><h3>Club Reputation</h3><span class="badge amber">League</span></div>
-        <div class="board-kpi"><strong id="clubReputation">—</strong><span id="clubReputationLabel">Loading division…</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: BOARD CONFIDENCE + OBJECTIVES ===================== -->
-  <section class="section">
-    <div class="board-grid">
-      <div class="board-card w5">
-        <div class="card-title"><h3>Board confidence meter</h3><span class="badge green">Chairman view</span></div>
-        <div class="confidence-gauge" id="confidenceGauge" style="--score:91">
-          <div>
-            <strong id="confidenceGaugeScore">91%</strong>
-            <span id="confidenceGaugeText">Excellent</span>
-          </div>
-        </div>
-        <p class="note" id="boardVerdict">The board are waiting for the Finance Director to stop hiding in the spreadsheet cupboard.</p>
-      </div>
-      <div class="board-card w7">
-        <div class="card-title"><h3>Season objectives</h3><span class="badge blue">Targets</span></div>
-        <div class="board-list" id="objectiveList">
-          <div class="loading">Loading objectives…</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="board-priority-strip">
-    <div class="priority-card"><small>Dividend Sustainability</small><strong id="prioritySustainability">—</strong><span>Income quality and yield control</span></div>
-    <div class="priority-card green"><small>Financial Health</small><strong id="priorityHealth">—</strong><span>Income engine status</span></div>
-    <div class="priority-card amber"><small>Next Objective</small><strong id="priorityObjective">—</strong><span>Board-approved target</span></div>
-    <div class="priority-card red"><small>Principal Risk</small><strong id="priorityRisk">—</strong><span>What needs watching</span></div>
-  </section>
-
-  <!-- ===================== SECTION: EXECUTIVE CONTROL ROOM ===================== -->
-  <section class="section" id="executive-control-room">
-    <div class="section-head">
-      <div>
-        <h2>Executive control room</h2>
-        <p>Chairman’s verdict, live board agenda, risk register and next board decision.</p>
-      </div>
-      <span class="badge green">Board minutes</span>
-    </div>
-
-    <div class="executive-grid">
-      <div class="chairman-verdict">
-        <small>Chairman’s Verdict</small>
-        <strong id="chairmanVerdictTitle">Loading chairman view…</strong>
-        <p id="chairmanVerdictText">The board are reviewing the income engine, transfer discipline and supporter mood.</p>
-        <div class="chairman-stats">
-          <div class="chairman-stat"><span>Confidence</span><b id="chairmanConfidence">—</b></div>
-          <div class="chairman-stat"><span>Supporters</span><b id="chairmanSupporters">—</b></div>
-          <div class="chairman-stat"><span>Next target</span><b id="chairmanNextTarget">—</b></div>
-        </div>
-      </div>
-
-      <div class="board-decision-card">
-        <small>Next Board Decision</small>
-        <strong id="nextBoardDecisionTitle">Loading decision…</strong>
-        <p id="nextBoardDecisionText">Waiting for the board pack to finish loading.</p>
-        <div class="board-decision-actions">
-          <button type="button" data-board-id="decision">Open decision pack</button>
-          <button type="button" data-board-id="chairman">Chairman notes</button>
-          <button type="button" data-board-id="risk-summary">Risk summary</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: BOARD AGENDA + RISK REGISTER ===================== -->
-  <section class="section" id="board-agenda-risk">
-    <div class="board-grid">
-      <div class="board-card w6">
-        <div class="card-title"><h3>Board meeting agenda</h3><span class="badge blue">Interactive</span></div>
-        <div class="board-agenda-list" id="boardAgendaList">
-          <div class="loading">Loading board agenda…</div>
-        </div>
-      </div>
-
-      <div class="board-card w6">
-        <div class="card-title"><h3>Risk register</h3><span class="badge amber">Governance</span></div>
-        <div class="risk-register" id="riskRegister">
-          <div class="loading">Loading risk register…</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: FINANCIAL OVERSIGHT + CLUB HEALTH ===================== -->
-  <section class="section">
-    <div class="board-grid">
-      <div class="board-card w6">
-        <div class="card-title"><h3>Financial oversight</h3><span class="badge purple">Discipline</span></div>
-        <div class="board-list" id="financeOversight"><div class="loading">Loading financial oversight…</div></div>
-      </div>
-      <div class="board-card w6">
-        <div class="card-title"><h3>Club health</h3><span class="badge green">Status</span></div>
-        <div class="board-list" id="clubHealth"><div class="loading">Loading club health…</div></div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ===================== SECTION: BOARD DECISION LOG ===================== -->
-  <section class="section" id="board-decision-log">
-    <div class="board-grid">
-      <div class="board-card w8"><div class="card-title"><h3>Board Decision Log</h3><span class="badge blue">Accountability</span></div><div class="decision-log" id="boardDecisionLog"><div class="loading">Preparing decision register…</div></div></div>
-      <div class="board-card w4"><div class="card-title"><h3>90-Day Direction</h3><span class="badge green">Trend</span></div><div class="board-trend-grid" id="boardTrendGrid"><div class="loading">Building trend record…</div></div></div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: BOARDROOM NEWS ===================== -->
-  <section class="section">
-    <div class="board-grid">
-      <div class="board-card w12">
-        <div class="card-title"><h3>Aurora Times — Boardroom Briefing</h3><span class="badge amber">Club news</span></div>
-        <div class="news-board" id="boardNews"><div class="loading">Loading boardroom news…</div></div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ===================== SECTION: AURORA HONOURS CABINET ===================== -->
-  <section class="section" id="aurora-honours-cabinet">
-    <div class="honours-cabinet-shell">
-      <div class="honours-header">
-        <div>
-          <h3>Aurora Honours Cabinet</h3>
-          <p>Boardroom trophy cabinet tracking the income milestones that unlock each club honour.</p>
-        </div>
-        <span class="badge amber" id="trophyCount">Loading honours…</span>
-      </div>
-
-      <div class="honours-summary">
-        <div class="honours-summary-card">
-          <small>Monthly Income</small>
-          <strong id="honoursMonthlyIncome">—</strong>
-        </div>
-        <div class="honours-summary-card">
-          <small>Next Honour</small>
-          <strong id="honoursNextUnlock">—</strong>
-        </div>
-        <div class="honours-summary-card">
-          <small>Amount Left</small>
-          <strong id="honoursAmountLeft">—</strong>
-        </div>
-      </div>
-
-      <div class="honours-trophy-grid" id="trophyGrid">
-        <div class="loading">Loading Aurora honours cabinet…</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: FOOTER ===================== -->
-  <footer class="footer">
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: BOARD KPI STRIP ===================== -->
+<section class="section aurora-section-anchor" id="board-summary">
+<div class="board-grid">
+<div class="board-card w3">
+<div class="card-title"><h3>Board Confidence</h3><span class="badge green">Live</span></div>
+<div class="board-kpi"><strong id="boardConfidence">—</strong><span id="boardConfidenceLabel">Loading board mood…</span></div>
+</div>
+<div class="board-card w3">
+<div class="card-title"><h3>Supporter Mood</h3><span class="badge blue">Fans</span></div>
+<div class="board-kpi"><strong id="supporterMood">—</strong><span id="supporterMoodLabel">Checking terraces…</span></div>
+</div>
+<div class="board-card w3">
+<div class="card-title"><h3>Job Security</h3><span class="badge purple">Manager</span></div>
+<div class="board-kpi"><strong id="jobSecurity">—</strong><span>gaffer status</span></div>
+</div>
+<div class="board-card w3">
+<div class="card-title"><h3>Club Reputation</h3><span class="badge amber">League</span></div>
+<div class="board-kpi"><strong id="clubReputation">—</strong><span id="clubReputationLabel">Loading division…</span></div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: BOARD CONFIDENCE + OBJECTIVES ===================== -->
+<section class="section aurora-section-anchor" id="confidence-objectives">
+<div class="board-grid">
+<div class="board-card w5">
+<div class="card-title"><h3>Board confidence meter</h3><span class="badge green">Chairman view</span></div>
+<div class="confidence-gauge" id="confidenceGauge" style="--score:91">
+<div>
+<strong id="confidenceGaugeScore">91%</strong>
+<span id="confidenceGaugeText">Excellent</span>
+</div>
+</div>
+<p class="note" id="boardVerdict">The board are waiting for the Finance Director to stop hiding in the spreadsheet cupboard.</p>
+</div>
+<div class="board-card w7">
+<div class="card-title"><h3>Season objectives</h3><span class="badge blue">Targets</span></div>
+<div class="board-list" id="objectiveList">
+<div class="loading">Loading objectives…</div>
+</div>
+</div>
+</div>
+</section>
+<section class="board-priority-strip">
+<div class="priority-card"><small>Dividend Sustainability</small><strong id="prioritySustainability">—</strong><span>Income quality and yield control</span></div>
+<div class="priority-card green"><small>Financial Health</small><strong id="priorityHealth">—</strong><span>Income engine status</span></div>
+<div class="priority-card amber"><small>Next Objective</small><strong id="priorityObjective">—</strong><span>Board-approved target</span></div>
+<div class="priority-card red"><small>Principal Risk</small><strong id="priorityRisk">—</strong><span>What needs watching</span></div>
+</section>
+<!-- ===================== SECTION: EXECUTIVE CONTROL ROOM ===================== -->
+<section class="section aurora-section-anchor" id="executive-control-room">
+<div class="section-head">
+<div>
+<h2>Executive control room</h2>
+<p>Chairman’s verdict, live board agenda, risk register and next board decision.</p>
+</div>
+<span class="badge green">Board minutes</span>
+</div>
+<div class="executive-grid">
+<div class="chairman-verdict">
+<small>Chairman’s Verdict</small>
+<strong id="chairmanVerdictTitle">Loading chairman view…</strong>
+<p id="chairmanVerdictText">The board are reviewing the income engine, transfer discipline and supporter mood.</p>
+<div class="chairman-stats">
+<div class="chairman-stat"><span>Confidence</span><b id="chairmanConfidence">—</b></div>
+<div class="chairman-stat"><span>Supporters</span><b id="chairmanSupporters">—</b></div>
+<div class="chairman-stat"><span>Next target</span><b id="chairmanNextTarget">—</b></div>
+</div>
+</div>
+<div class="board-decision-card">
+<small>Next Board Decision</small>
+<strong id="nextBoardDecisionTitle">Loading decision…</strong>
+<p id="nextBoardDecisionText">Waiting for the board pack to finish loading.</p>
+<div class="board-decision-actions">
+<button data-board-id="decision" type="button">Open decision pack</button>
+<button data-board-id="chairman" type="button">Chairman notes</button>
+<button data-board-id="risk-summary" type="button">Risk summary</button>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: BOARD AGENDA + RISK REGISTER ===================== -->
+<section class="section aurora-section-anchor" id="board-agenda-risk">
+<div class="board-grid">
+<div class="board-card w6">
+<div class="card-title"><h3>Board meeting agenda</h3><span class="badge blue">Interactive</span></div>
+<div class="board-agenda-list" id="boardAgendaList">
+<div class="loading">Loading board agenda…</div>
+</div>
+</div>
+<div class="board-card w6">
+<div class="card-title"><h3>Risk register</h3><span class="badge amber">Governance</span></div>
+<div class="risk-register" id="riskRegister">
+<div class="loading">Loading risk register…</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: FINANCIAL OVERSIGHT + CLUB HEALTH ===================== -->
+<section class="section aurora-section-anchor" id="financial-oversight">
+<div class="board-grid">
+<div class="board-card w6">
+<div class="card-title"><h3>Financial oversight</h3><span class="badge purple">Discipline</span></div>
+<div class="board-list" id="financeOversight"><div class="loading">Loading financial oversight…</div></div>
+</div>
+<div class="board-card w6">
+<div class="card-title"><h3>Club health</h3><span class="badge green">Status</span></div>
+<div class="board-list" id="clubHealth"><div class="loading">Loading club health…</div></div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: BOARD DECISION LOG ===================== -->
+<section class="section aurora-section-anchor" id="board-decision-log">
+<div class="board-grid">
+<div class="board-card w8"><div class="card-title"><h3>Board Decision Log</h3><span class="badge blue">Accountability</span></div><div class="decision-log" id="boardDecisionLog"><div class="loading">Preparing decision register…</div></div></div>
+<div class="board-card w4"><div class="card-title"><h3>90-Day Direction</h3><span class="badge green">Trend</span></div><div class="board-trend-grid" id="boardTrendGrid"><div class="loading">Building trend record…</div></div></div>
+</div>
+</section>
+<!-- ===================== SECTION: BOARDROOM NEWS ===================== -->
+<section class="section aurora-section-anchor" id="boardroom-briefing">
+<div class="board-grid">
+<div class="board-card w12">
+<div class="card-title"><h3>Aurora Times — Boardroom Briefing</h3><span class="badge amber">Club news</span></div>
+<div class="news-board" id="boardNews"><div class="loading">Loading boardroom news…</div></div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: AURORA HONOURS CABINET ===================== -->
+<section class="section aurora-section-anchor" id="aurora-honours-cabinet">
+<div class="honours-cabinet-shell">
+<div class="honours-header">
+<div>
+<h3>Aurora Honours Cabinet</h3>
+<p>Boardroom trophy cabinet tracking the income milestones that unlock each club honour.</p>
+</div>
+<span class="badge amber" id="trophyCount">Loading honours…</span>
+</div>
+<div class="honours-summary">
+<div class="honours-summary-card">
+<small>Monthly Income</small>
+<strong id="honoursMonthlyIncome">—</strong>
+</div>
+<div class="honours-summary-card">
+<small>Next Honour</small>
+<strong id="honoursNextUnlock">—</strong>
+</div>
+<div class="honours-summary-card">
+<small>Amount Left</small>
+<strong id="honoursAmountLeft">—</strong>
+</div>
+</div>
+<div class="honours-trophy-grid" id="trophyGrid">
+<div class="loading">Loading Aurora honours cabinet…</div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: FOOTER ===================== -->
+<footer class="footer">
     Aurora City FC • Boardroom • Sheet engine: AuroraData
   </footer>
 </main>
-
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
-
 <!-- ===================== SECTION: SHARED AURORA FC DATA ===================== -->
 <script src="AuroraFCData.js"></script>
 <script>
@@ -4123,42 +4270,38 @@ setTimeout(()=>{
 }, 900);
 
 </script>
-
 <!-- ===================== SECTION: BOARD MINUTES MODAL ===================== -->
-<div class="board-minutes-modal" id="boardMinutesModal" aria-hidden="true">
-  <div class="board-minutes-card" role="dialog" aria-modal="true" aria-labelledby="boardMinutesSubject">
-    <div class="board-minutes-header">
-      <div class="board-minutes-from">
-        <div class="board-minutes-avatar" id="boardMinutesAvatar">👔</div>
-        <div>
-          <h3 id="boardMinutesSubject">Board minutes</h3>
-          <p id="boardMinutesFrom">From: Aurora City FC Board</p>
-        </div>
-      </div>
-      <button class="board-minutes-close" id="boardMinutesClose" type="button">×</button>
-    </div>
-    <div class="board-minutes-body">
-      <div class="board-minutes-subject">
-        <small id="boardMinutesCategory">Board Pack</small>
-        <strong id="boardMinutesHeadline">Opening board pack…</strong>
-      </div>
-      <div class="board-minutes-copy" id="boardMinutesCopy">Loading board notes…</div>
-      <div class="board-minutes-actions" id="boardMinutesActions"></div>
-    </div>
-    <div class="board-minutes-footer">
-      <button class="board-minutes-btn" id="boardMinutesDone" type="button">Close board pack</button>
-    </div>
-  </div>
+<div aria-hidden="true" class="board-minutes-modal" id="boardMinutesModal">
+<div aria-labelledby="boardMinutesSubject" aria-modal="true" class="board-minutes-card" role="dialog">
+<div class="board-minutes-header">
+<div class="board-minutes-from">
+<div class="board-minutes-avatar" id="boardMinutesAvatar">👔</div>
+<div>
+<h3 id="boardMinutesSubject">Board minutes</h3>
+<p id="boardMinutesFrom">From: Aurora City FC Board</p>
 </div>
-
-
+</div>
+<button class="board-minutes-close" id="boardMinutesClose" type="button">×</button>
+</div>
+<div class="board-minutes-body">
+<div class="board-minutes-subject">
+<small id="boardMinutesCategory">Board Pack</small>
+<strong id="boardMinutesHeadline">Opening board pack…</strong>
+</div>
+<div class="board-minutes-copy" id="boardMinutesCopy">Loading board notes…</div>
+<div class="board-minutes-actions" id="boardMinutesActions"></div>
+</div>
+<div class="board-minutes-footer">
+<button class="board-minutes-btn" id="boardMinutesDone" type="button">Close board pack</button>
+</div>
+</div>
+</div>
 <!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
 <script>
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
 </div>
 </div>
-
 <script id="aurora-universal-sidebar">
 (() => {
   "use strict";
@@ -4372,8 +4515,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   scheduleHide(4200);
 })();
 </script>
-
-
 <script id="aurora-transfer-menu-footer-control">
 (() => {
   "use strict";
@@ -4395,8 +4536,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   updateFooter();
 })();
 </script>
-
-
 <style id="aurora-m4-integration-styles">
 /* ===================== AURORA M4 INTEGRATED MISSION CONTROL ===================== */
 #auroraM4Mission{margin:14px 0 18px;border:1px solid rgba(34,211,238,.28);border-radius:24px;background:linear-gradient(135deg,rgba(5,18,36,.94),rgba(7,29,47,.88));box-shadow:0 18px 55px rgba(0,0,0,.28);overflow:hidden;color:#eaf4ff}
@@ -4415,7 +4554,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 @media(max-width:700px){#auroraM4Mission{border-radius:19px}.m4-mission-head{flex-direction:column}.m4-mission-grid{grid-template-columns:1fr 1fr;padding:11px}.m4-lifecycle{padding:0 11px 11px}.m4-lifecycle-steps{grid-template-columns:1fr}.m4-mission-details{padding:0 11px}.m4-editor-grid{grid-template-columns:1fr 1fr}.m4-system-chip{white-space:normal}.m4-stat{min-height:84px}.m4-stat strong{font-size:16px}}
 @media(prefers-reduced-motion:reduce){#auroraM4Mission *{scroll-behavior:auto!important;transition:none!important}}
 </style>
-
 <script id="aurora-m4-integration">
 (()=>{
   'use strict';
@@ -4584,6 +4722,67 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
+<script id="aurora-page-section-navigation-script">
+(() => {
+  "use strict";
+  const menu = document.querySelector('.aurora-page-folder');
+  if (!menu) return;
+  const links = [...menu.querySelectorAll('.fm-page-submenu a[href^="#"]')];
+  const pairs = links.map(link => ({link, target:document.getElementById(link.getAttribute('href').slice(1))})).filter(x => x.target);
+  if (!pairs.length) return;
 
-</body>
+  const mark = id => {
+    links.forEach(link => {
+      const active = link.getAttribute('href') === `#${id}`;
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current','location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  const scrollToHash = hash => {
+    const target = document.getElementById(String(hash || '').replace(/^#/,''));
+    if (!target) return false;
+    menu.open = true;
+    target.scrollIntoView({behavior:'smooth',block:'start'});
+    mark(target.id);
+    return true;
+  };
+
+  links.forEach(link => link.addEventListener('click', event => {
+    const hash = link.getAttribute('href');
+    if (!hash || !scrollToHash(hash)) return;
+    event.preventDefault();
+    try { history.replaceState(null,'',hash); } catch (_) {}
+  }));
+
+  let ticking = false;
+  const syncActive = () => {
+    ticking = false;
+    const guide = Math.max(110, window.innerHeight * .28);
+    let current = pairs[0];
+    for (const pair of pairs) {
+      if (pair.target.getBoundingClientRect().top <= guide) current = pair;
+      else break;
+    }
+    mark(current.target.id);
+  };
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(syncActive);
+  }, {passive:true});
+  window.addEventListener('resize', syncActive, {passive:true});
+  window.addEventListener('hashchange', () => {
+    if (location.hash) scrollToHash(location.hash);
+    else syncActive();
+  });
+
+  if (location.hash && document.getElementById(location.hash.slice(1))) {
+    window.setTimeout(() => scrollToHash(location.hash), 80);
+  } else {
+    syncActive();
+  }
+})();
+</script></body>
 </html>

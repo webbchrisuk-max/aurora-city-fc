@@ -1,18 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<head><!-- Build: Universal Page Section Navigation • 24 Jul 2026 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#030712" />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+<link href="manifest.json" rel="manifest"/>
+<meta content="#030712" name="theme-color"/>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<meta content="yes" name="mobile-web-app-capable">
+<meta content="yes" name="apple-mobile-web-app-capable">
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
+<meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Media Centre</title>
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
@@ -557,129 +558,302 @@ body.fm-sidebar-hidden .aurora-system-panel{
 }
 
 </style>
-
 <!-- Hotfix: Ten-month income mission is displayed only in Transfer Centre • 24 Jul 2026 -->
 <style id="aurora-m4-transfer-only-hotfix">
 /* Keep the shared M4 logic available without duplicating the large mission panel on this page. */
 #auroraM4Mission{display:none!important}
 </style>
+<!-- Build: Universal Sidebar Department Colours Fix • 24 Jul 2026 -->
+<style id="aurora-universal-sidebar-colours-v2">
+/* One consistent department colour map on every Aurora page. */
+.fm-side-link[href$="AuroraCityFC_ManagerDashboard.html"]{
+  --dept-colour:#60a5fa;
+  --dept-rgb:96,165,250;
+}
+.fm-side-link[href$="AuroraCityFC_SquadHub.html"]{
+  --dept-colour:#22d3ee;
+  --dept-rgb:34,211,238;
+}
+.fm-side-link[href$="AuroraCityFC_AnalysisRoom.html"]{
+  --dept-colour:#a78bfa;
+  --dept-rgb:167,139,250;
+}
+.fm-side-link[href$="AuroraCityFC_TrainingGround.html"]{
+  --dept-colour:#34d399;
+  --dept-rgb:52,211,153;
+}
+.fm-side-link[href$="AuroraCityFC_ScoutingCentre.html"]{
+  --dept-colour:#4ade80;
+  --dept-rgb:74,222,128;
+}
+#transferSideMenu,
+.fm-side-link[href$="AuroraCityFC_TransferCentre.html"]{
+  --dept-colour:#f59e0b;
+  --dept-rgb:245,158,11;
+}
+.fm-side-link[href$="AuroraCityFC_Boardroom.html"]{
+  --dept-colour:#f472b6;
+  --dept-rgb:244,114,182;
+}
+.fm-side-link[href$="AuroraCityFC_MediaCentre.html"]{
+  --dept-colour:#facc15;
+  --dept-rgb:250,204,21;
+}
 
-</head>
+/* Subtle colour identity remains visible before the page is selected. */
+body .fm-side-scroll .fm-side-link{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(var(--dept-rgb),.12);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.10),rgba(var(--dept-rgb),.025) 62%,transparent);
+}
+body .fm-side-scroll .fm-side-link:before{
+  content:"";
+  position:absolute;
+  top:8px;
+  bottom:8px;
+  left:0;
+  width:3px;
+  border-radius:0 4px 4px 0;
+  background:var(--dept-colour);
+  opacity:.58;
+  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
+}
+body .fm-side-scroll .fm-side-link .fm-side-icon{
+  color:var(--dept-colour);
+  background:rgba(var(--dept-rgb),.11);
+  border:1px solid rgba(var(--dept-rgb),.12);
+}
+body .fm-side-scroll .fm-side-link:hover{
+  color:#f8fafc;
+  border-color:rgba(var(--dept-rgb),.38);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.23),rgba(var(--dept-rgb),.07) 72%,transparent);
+  box-shadow:0 7px 20px rgba(var(--dept-rgb),.09);
+}
+body .fm-side-scroll .fm-side-link:hover:before{opacity:1}
+
+/* Selected page: the same strong department-colour treatment on every HTML. */
+body .fm-side-scroll .fm-side-link.active,
+body[data-beast-theme] .fm-side-scroll .fm-side-link.active{
+  color:#fff!important;
+  border-color:rgba(var(--dept-rgb),.62)!important;
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.38),rgba(var(--dept-rgb),.16) 68%,rgba(var(--dept-rgb),.05))!important;
+  box-shadow:inset 3px 0 0 var(--dept-colour),0 9px 25px rgba(var(--dept-rgb),.17),0 0 18px rgba(var(--dept-rgb),.08)!important;
+}
+body .fm-side-scroll .fm-side-link.active:before{
+  width:4px;
+  opacity:1;
+  box-shadow:0 0 17px rgba(var(--dept-rgb),.65);
+}
+body .fm-side-scroll .fm-side-link.active .fm-side-icon{
+  color:#fff!important;
+  background:rgba(var(--dept-rgb),.26)!important;
+  border-color:rgba(var(--dept-rgb),.38)!important;
+  box-shadow:0 0 15px rgba(var(--dept-rgb),.20)!important;
+}
+
+/* Transfer Centre folder receives the same amber identity. */
+#transferSideMenu{
+  position:relative;
+  border-color:rgba(var(--dept-rgb),.12);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.09),rgba(var(--dept-rgb),.02) 66%,transparent);
+}
+#transferSideMenu:before{
+  content:"";
+  position:absolute;
+  top:8px;
+  bottom:8px;
+  left:0;
+  width:3px;
+  z-index:1;
+  border-radius:0 4px 4px 0;
+  background:var(--dept-colour);
+  opacity:.58;
+  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
+}
+#transferSideMenu summary{position:relative;z-index:2}
+#transferSideMenu summary .fm-side-icon,
+#transferSideMenu .fm-folder-arrow{color:var(--dept-colour)}
+#transferSideMenu summary .fm-side-icon{
+  background:rgba(var(--dept-rgb),.11);
+  border:1px solid rgba(var(--dept-rgb),.12);
+}
+#transferSideMenu:hover,
+#transferSideMenu[open],
+#transferSideMenu.active{
+  border-color:rgba(var(--dept-rgb),.44);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.25),rgba(var(--dept-rgb),.08) 72%,transparent);
+  box-shadow:inset 3px 0 0 var(--dept-colour),0 8px 22px rgba(var(--dept-rgb),.10);
+}
+#transferSideMenu:hover:before,
+#transferSideMenu[open]:before,
+#transferSideMenu.active:before{
+  width:4px;
+  opacity:1;
+  box-shadow:0 0 17px rgba(var(--dept-rgb),.62);
+}
+#transferSideMenu[open] .fm-side-submenu a:before{background:rgba(var(--dept-rgb),.48)}
+#transferSideMenu[open] .fm-side-submenu a:hover,
+#transferSideMenu[open] .fm-side-submenu a.active{
+  color:#fff7ed;
+  background:rgba(var(--dept-rgb),.15);
+}
+.fm-side-scroll .fm-side-link > span:last-child,
+#transferSideMenu summary > span:nth-child(2){position:relative;z-index:2}
+
+@media(max-height:720px){
+  body .fm-side-scroll .fm-side-link:before,
+  #transferSideMenu:before{top:6px;bottom:6px}
+}
+</style>
+</meta></meta></meta><style id="aurora-page-section-navigation-styles">
+/* ================= AURORA PAGE SECTION NAVIGATION ================= */
+.aurora-page-folder{
+  --page-accent:#60a5fa;
+  --page-accent-rgb:96,165,250;
+  margin:2px 0;
+  overflow:hidden;
+  border:1px solid rgba(var(--page-accent-rgb),.32)!important;
+  border-radius:12px;
+  background:rgba(var(--page-accent-rgb),.10)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+.aurora-page-folder summary{
+  min-height:43px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) 18px;
+  align-items:center;
+  gap:7px;
+  padding:7px 9px;
+  border-radius:11px;
+  color:#fff!important;
+  cursor:pointer;
+  list-style:none;
+  font-size:13px;
+  font-weight:800;
+  user-select:none;
+  background:linear-gradient(90deg,rgba(var(--page-accent-rgb),.48),rgba(var(--page-accent-rgb),.16))!important;
+  box-shadow:inset 3px 0 0 var(--page-accent),0 8px 22px rgba(var(--page-accent-rgb),.10);
+}
+.aurora-page-folder summary::-webkit-details-marker{display:none}
+.aurora-page-folder summary .fm-side-icon{
+  color:#fff!important;
+  background:rgba(var(--page-accent-rgb),.20)!important;
+  border:1px solid rgba(var(--page-accent-rgb),.24);
+}
+.aurora-page-folder .fm-folder-arrow{
+  color:var(--page-accent)!important;
+  font-size:17px;
+  text-align:center;
+  transition:transform .18s ease;
+}
+.aurora-page-folder[open] .fm-folder-arrow{transform:rotate(90deg)}
+.aurora-page-folder .fm-side-submenu{
+  display:grid;
+  gap:2px;
+  padding:5px 7px 10px 42px;
+}
+.aurora-page-folder .fm-side-submenu a{
+  position:relative;
+  min-height:31px;
+  display:flex;
+  align-items:center;
+  padding:6px 9px;
+  border-radius:8px;
+  color:#93a4bd;
+  font-size:11px;
+  font-weight:760;
+  line-height:1.2;
+  transition:color .16s,background .16s,transform .16s;
+}
+.aurora-page-folder .fm-side-submenu a:before{
+  content:"";
+  position:absolute;
+  left:-12px;
+  width:7px;
+  height:1px;
+  background:rgba(var(--page-accent-rgb),.34);
+}
+.aurora-page-folder .fm-side-submenu a:hover,
+.aurora-page-folder .fm-side-submenu a.active{
+  color:#fff;
+  background:rgba(var(--page-accent-rgb),.20);
+  transform:translateX(2px);
+}
+.aurora-page-folder .fm-side-submenu a.active:before{
+  width:9px;
+  height:2px;
+  background:var(--page-accent);
+  box-shadow:0 0 10px rgba(var(--page-accent-rgb),.55);
+}
+.aurora-section-anchor{scroll-margin-top:96px}
+@media(max-width:900px){
+  .aurora-page-folder summary{font-size:12px;grid-template-columns:28px minmax(0,1fr) 16px;padding-left:7px;padding-right:7px}
+  .aurora-page-folder .fm-side-submenu{padding-left:36px}
+  .aurora-page-folder .fm-side-submenu a{font-size:10px}
+}
+</style></head>
 <body>
-
-<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone"
-     aria-label="Open navigation" role="button" tabindex="0">
-  <span class="fm-sidebar-edge-handle">›</span>
+<div aria-label="Open navigation" class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" role="button" tabindex="0">
+<span class="fm-sidebar-edge-handle">›</span>
 </div>
-
 <div class="fm-shell">
-  <aside class="fm-sidebar" aria-label="Aurora City FC navigation">
-    <div class="fm-side-brand">
-      <button class="fm-sidebar-collapse" id="fmSidebarCollapse"
-              type="button" aria-label="Hide navigation"
-              title="Hide navigation">‹</button>
-
-      <div class="fm-side-crest">
-        <img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"
-             alt="Aurora City FC crest">
-      </div>
-
-      <div>
-        <strong>Aurora City FC</strong>
-        <span>Club HQ</span>
-      </div>
-    </div>
-
-    <nav class="fm-side-scroll">
-      <div class="fm-nav-group">Navigation</div>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_ManagerDashboard.html">
-        <span class="fm-side-icon">⌂</span>
-        <span>Home</span>
-      </a>
-
-      <div class="fm-nav-group">Performance</div>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_SquadHub.html">
-        <span class="fm-side-icon">♟</span>
-        <span>Squad Hub</span>
-      </a>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_AnalysisRoom.html">
-        <span class="fm-side-icon">⌁</span>
-        <span>Analysis Room</span>
-      </a>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_TrainingGround.html">
-        <span class="fm-side-icon">▲</span>
-        <span>Training Ground</span>
-      </a>
-
-      <div class="fm-nav-group">Recruitment</div>
-      <a class="fm-side-link"
-         href="AuroraCityFC_ScoutingCentre.html">
-        <span class="fm-side-icon">⌕</span>
-        <span>Scouting Centre</span>
-      </a>
-
-
-      <details class="fm-side-folder"
-               id="transferSideMenu">
-        <summary>
-          <span class="fm-side-icon">⇄</span>
-          <span>Transfer Centre</span>
-          <span class="fm-folder-arrow">›</span>
-        </summary>
-
-        <div class="fm-side-submenu">
-          <a href="AuroraCityFC_TransferCentre.html">Transfer Centre Home</a>
-          <a href="AuroraCityFC_TransferCentre.html#transfer-overview">Overview</a>
-          <a href="AuroraCityFC_TransferCentre.html#incoming-offers">Incoming Offers</a>
-          <a href="AuroraCityFC_TransferCentre.html#deal-sheet">Deal Sheet</a>
-          <a href="AuroraCityFC_TransferCentre.html#sell-desk">Sell Desk</a>
-          <a href="AuroraCityFC_TransferCentre.html#best-return-allocation">Best Return</a>
-          <a href="AuroraCityFC_TransferCentre.html#registration-desk">Registration</a>
-          <a href="AuroraCityFC_TransferCentre.html#top-transfer-board">Transfer Board</a>
-          <a href="AuroraCityFC_TransferCentre.html#transfer-bench">Bench</a>
-        </div>
-      </details>
-
-      <div class="fm-nav-group">Club</div>
-
-      <a class="fm-side-link"
-         href="AuroraCityFC_Boardroom.html">
-        <span class="fm-side-icon">♜</span>
-        <span>Boardroom</span>
-      </a>
-
-      <a class="fm-side-link active"
-         href="AuroraCityFC_MediaCentre.html">
-        <span class="fm-side-icon">●</span>
-        <span>Media Centre</span>
-      </a>
-    </nav>
-
-    <div class="fm-side-footer">
-      <button class="fm-side-action" id="refreshBtn" type="button">Refresh Data</button>
-      
-      <div class="fm-side-clock" id="fmClock">Manager session live</div>
-    </div>
-  </aside>
-
-  <div class="fm-workspace">
-
+<aside aria-label="Aurora City FC navigation" class="fm-sidebar">
+<div class="fm-side-brand">
+<button aria-label="Hide navigation" class="fm-sidebar-collapse" id="fmSidebarCollapse" title="Hide navigation" type="button">‹</button>
+<div class="fm-side-crest">
+<img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/>
+</div>
+<div>
+<strong>Aurora City FC</strong>
+<span>Club HQ</span>
+</div>
+</div>
+<nav class="fm-side-scroll">
+<div class="fm-nav-group">Navigation</div>
+<a class="fm-side-link" href="AuroraCityFC_ManagerDashboard.html">
+<span class="fm-side-icon">⌂</span>
+<span>Home</span>
+</a>
+<div class="fm-nav-group">Performance</div>
+<a class="fm-side-link" href="AuroraCityFC_SquadHub.html">
+<span class="fm-side-icon">♟</span>
+<span>Squad Hub</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_AnalysisRoom.html">
+<span class="fm-side-icon">⌁</span>
+<span>Analysis Room</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_TrainingGround.html">
+<span class="fm-side-icon">▲</span>
+<span>Training Ground</span>
+</a>
+<div class="fm-nav-group">Recruitment</div>
+<a class="fm-side-link" href="AuroraCityFC_ScoutingCentre.html">
+<span class="fm-side-icon">⌕</span>
+<span>Scouting Centre</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_TransferCentre.html"><span class="fm-side-icon">⇄</span><span>Transfer Centre</span></a>
+<div class="fm-nav-group">Club</div>
+<a class="fm-side-link" href="AuroraCityFC_Boardroom.html">
+<span class="fm-side-icon">♜</span>
+<span>Boardroom</span>
+</a>
+<details class="fm-side-folder active aurora-page-folder" id="mediaSideMenu" open="" style="--page-accent:#fbbf24;--page-accent-rgb:251,191,36;"><summary aria-label="Media Centre page sections"><span class="fm-side-icon">●</span><span>Media Centre</span><span aria-hidden="true" class="fm-folder-arrow">›</span></summary><div class="fm-side-submenu fm-page-submenu"><a href="#media-overview">Overview</a><a href="#newsroom-summary">Newsroom Summary</a><a href="#press-conference">Manager’s Press Conference</a><a href="#breaking-stories">Breaking Stories</a><a href="#dividend-desk">Dividend Desk</a><a href="#transfer-rumours">Transfer Rumours</a><a href="#dividend-match-report">Dividend Match Report</a></div></details>
+</nav>
+<div class="fm-side-footer">
+<button class="fm-side-action" id="refreshBtn" type="button">Refresh Data</button>
+<div class="fm-side-clock" id="fmClock">Manager session live</div>
+</div>
+</aside>
+<div class="fm-workspace">
 <!-- ===================== SECTION: APP SHELL ===================== -->
-
 <main class="app">
-<section class="hero"><img class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_hero_press_room.PNG" alt="Media Centre Hero"><div class="hero-content"><div class="kicker"><span class="kicker-dot"></span> Press department</div><h2>Media<span>Centre</span></h2><p>Dividend announcements, income received, market rumours, squad headlines and the manager's latest press conference.</p><div class="hero-actions"><span class="pill" id="lastUpdated">Last updated: loading…</span><span class="pill">News feed: AuroraMaster</span><span class="pill">Manager mode: Active</span></div></div></section>
-<section class="section"><div class="grid"><div class="card w3"><div class="card-title"><h3>Top Headline</h3><span class="badge green">Live</span></div><div class="kpi"><strong id="topHeadline">—</strong><span id="topHeadlineNote">Loading newsroom…</span></div></div><div class="card w3"><div class="card-title"><h3>Dividend Wires</h3><span class="badge blue">Income</span></div><div class="kpi"><strong id="dividendCount">—</strong><span>tracked records</span></div></div><div class="card w3"><div class="card-title"><h3>Rumour Mill</h3><span class="badge amber">Targets</span></div><div class="kpi"><strong id="rumourCount">—</strong><span>watchlist/scout stories</span></div></div><div class="card w3"><div class="card-title"><h3>Press Mood</h3><span class="badge purple">Media</span></div><div class="kpi"><strong id="pressMood">—</strong><span id="pressMoodNote">Loading sentiment…</span></div></div></div></section>
-<section class="section"><div class="section-head"><div><h2>Manager's press conference</h2><p>Auto-generated club comments from the latest Aurora data.</p></div><span class="badge green">Gaffer notes</span></div><div class="press-card" id="pressConference" data-loading-target><div class="loading">Loading manager comments…</div></div></section>
-<section class="section"><div class="grid"><div class="card w6"><img class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_breaking_stories.PNG" alt="Breaking stories"><div class="card-title"><h3>Breaking stories</h3><span class="badge blue">Headlines</span></div><div class="list" id="breakingStories" data-loading-target><div class="loading">Loading headlines…</div></div></div><div class="card w6"><img class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_dividend_desk.PNG" alt="Dividend desk"><div class="card-title"><h3>Dividend desk</h3><span class="badge green">Income news</span></div><div class="list" id="dividendDesk" data-loading-target><div class="loading">Loading dividends…</div></div></div></div></section>
-<section class="section"><div class="grid"><div class="card w6"><img class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_transfer_rumours.PNG" alt="Transfer rumours"><div class="card-title"><h3>Transfer rumours</h3><span class="badge amber">Scout wires</span></div><div class="list" id="rumourMill" data-loading-target><div class="loading">Loading rumour mill…</div></div></div><div class="card w6"><img class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_dividend_match_report.PNG" alt="Dividend match report"><div class="card-title"><h3>Dividend match report</h3><span class="badge purple">Monthly review</span></div><div class="list" id="matchReport" data-loading-target><div class="loading">Loading match report…</div></div></div></div></section>
+<section class="hero aurora-section-anchor" id="media-overview"><img alt="Media Centre Hero" class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_hero_press_room.PNG"/><div class="hero-content"><div class="kicker"><span class="kicker-dot"></span> Press department</div><h2>Media<span>Centre</span></h2><p>Dividend announcements, income received, market rumours, squad headlines and the manager's latest press conference.</p><div class="hero-actions"><span class="pill" id="lastUpdated">Last updated: loading…</span><span class="pill">News feed: AuroraMaster</span><span class="pill">Manager mode: Active</span></div></div></section>
+<section class="section aurora-section-anchor" id="newsroom-summary"><div class="grid"><div class="card w3"><div class="card-title"><h3>Top Headline</h3><span class="badge green">Live</span></div><div class="kpi"><strong id="topHeadline">—</strong><span id="topHeadlineNote">Loading newsroom…</span></div></div><div class="card w3"><div class="card-title"><h3>Dividend Wires</h3><span class="badge blue">Income</span></div><div class="kpi"><strong id="dividendCount">—</strong><span>tracked records</span></div></div><div class="card w3"><div class="card-title"><h3>Rumour Mill</h3><span class="badge amber">Targets</span></div><div class="kpi"><strong id="rumourCount">—</strong><span>watchlist/scout stories</span></div></div><div class="card w3"><div class="card-title"><h3>Press Mood</h3><span class="badge purple">Media</span></div><div class="kpi"><strong id="pressMood">—</strong><span id="pressMoodNote">Loading sentiment…</span></div></div></div></section>
+<section class="section aurora-section-anchor" id="press-conference"><div class="section-head"><div><h2>Manager's press conference</h2><p>Auto-generated club comments from the latest Aurora data.</p></div><span class="badge green">Gaffer notes</span></div><div class="press-card" data-loading-target="" id="pressConference"><div class="loading">Loading manager comments…</div></div></section>
+<section class="section"><div class="grid"><div class="card w6 aurora-section-anchor" id="breaking-stories"><img alt="Breaking stories" class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_breaking_stories.PNG"/><div class="card-title"><h3>Breaking stories</h3><span class="badge blue">Headlines</span></div><div class="list" data-loading-target="" id="breakingStories"><div class="loading">Loading headlines…</div></div></div><div class="card w6 aurora-section-anchor" id="dividend-desk"><img alt="Dividend desk" class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_dividend_desk.PNG"/><div class="card-title"><h3>Dividend desk</h3><span class="badge green">Income news</span></div><div class="list" data-loading-target="" id="dividendDesk"><div class="loading">Loading dividends…</div></div></div></div></section>
+<section class="section"><div class="grid"><div class="card w6 aurora-section-anchor" id="transfer-rumours"><img alt="Transfer rumours" class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_transfer_rumours.PNG"/><div class="card-title"><h3>Transfer rumours</h3><span class="badge amber">Scout wires</span></div><div class="list" data-loading-target="" id="rumourMill"><div class="loading">Loading rumour mill…</div></div></div><div class="card w6 aurora-section-anchor" id="dividend-match-report"><img alt="Dividend match report" class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_dividend_match_report.PNG"/><div class="card-title"><h3>Dividend match report</h3><span class="badge purple">Monthly review</span></div><div class="list" data-loading-target="" id="matchReport"><div class="loading">Loading match report…</div></div></div></div></section>
 <footer class="footer">Aurora City FC • Media Centre • Sheet engine: AuroraData</footer>
 </main>
 <!-- ===================== SECTION: DATA + LOGIC ===================== -->
@@ -721,10 +895,8 @@ $('matchReport').innerHTML=[row('🏟️','Income match report',`Annual tracked 
 }
 $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuroraData();});loadAuroraData();if(window.AuroraFC)AuroraFC.registerServiceWorker()
 </script>
-
-  </div>
 </div>
-
+</div>
 <script id="aurora-universal-sidebar">
 (() => {
   "use strict";
@@ -938,8 +1110,6 @@ $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuro
   scheduleHide(4200);
 })();
 </script>
-
-
 <style id="aurora-m4-integration-styles">
 /* ===================== AURORA M4 INTEGRATED MISSION CONTROL ===================== */
 #auroraM4Mission{margin:14px 0 18px;border:1px solid rgba(34,211,238,.28);border-radius:24px;background:linear-gradient(135deg,rgba(5,18,36,.94),rgba(7,29,47,.88));box-shadow:0 18px 55px rgba(0,0,0,.28);overflow:hidden;color:#eaf4ff}
@@ -958,7 +1128,6 @@ $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuro
 @media(max-width:700px){#auroraM4Mission{border-radius:19px}.m4-mission-head{flex-direction:column}.m4-mission-grid{grid-template-columns:1fr 1fr;padding:11px}.m4-lifecycle{padding:0 11px 11px}.m4-lifecycle-steps{grid-template-columns:1fr}.m4-mission-details{padding:0 11px}.m4-editor-grid{grid-template-columns:1fr 1fr}.m4-system-chip{white-space:normal}.m4-stat{min-height:84px}.m4-stat strong{font-size:16px}}
 @media(prefers-reduced-motion:reduce){#auroraM4Mission *{scroll-behavior:auto!important;transition:none!important}}
 </style>
-
 <script id="aurora-m4-integration">
 (()=>{
   'use strict';
@@ -1127,6 +1296,67 @@ $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuro
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
+<script id="aurora-page-section-navigation-script">
+(() => {
+  "use strict";
+  const menu = document.querySelector('.aurora-page-folder');
+  if (!menu) return;
+  const links = [...menu.querySelectorAll('.fm-page-submenu a[href^="#"]')];
+  const pairs = links.map(link => ({link, target:document.getElementById(link.getAttribute('href').slice(1))})).filter(x => x.target);
+  if (!pairs.length) return;
 
-</body>
+  const mark = id => {
+    links.forEach(link => {
+      const active = link.getAttribute('href') === `#${id}`;
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current','location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  const scrollToHash = hash => {
+    const target = document.getElementById(String(hash || '').replace(/^#/,''));
+    if (!target) return false;
+    menu.open = true;
+    target.scrollIntoView({behavior:'smooth',block:'start'});
+    mark(target.id);
+    return true;
+  };
+
+  links.forEach(link => link.addEventListener('click', event => {
+    const hash = link.getAttribute('href');
+    if (!hash || !scrollToHash(hash)) return;
+    event.preventDefault();
+    try { history.replaceState(null,'',hash); } catch (_) {}
+  }));
+
+  let ticking = false;
+  const syncActive = () => {
+    ticking = false;
+    const guide = Math.max(110, window.innerHeight * .28);
+    let current = pairs[0];
+    for (const pair of pairs) {
+      if (pair.target.getBoundingClientRect().top <= guide) current = pair;
+      else break;
+    }
+    mark(current.target.id);
+  };
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(syncActive);
+  }, {passive:true});
+  window.addEventListener('resize', syncActive, {passive:true});
+  window.addEventListener('hashchange', () => {
+    if (location.hash) scrollToHash(location.hash);
+    else syncActive();
+  });
+
+  if (location.hash && document.getElementById(location.hash.slice(1))) {
+    window.setTimeout(() => scrollToHash(location.hash), 80);
+  } else {
+    syncActive();
+  }
+})();
+</script></body>
 </html>

@@ -1,19 +1,21 @@
 <!DOCTYPE html>
+
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#030712" />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Aurora City FC" />
+<head><!-- Build: Universal Page Section Navigation • 24 Jul 2026 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#030712" name="theme-color"/>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Manager Dashboard BEAST V2</title>
 <!-- Build: BEAST V2 Decision Queue + Manager Action Log • 24 Jul 2026 -->
+<!-- Hotfix: Decision Queue modal + native navigation links • 24 Jul 2026 -->
 <!-- Build: Aurora Beast Command Centre • 24 Jul 2026 -->
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
@@ -481,7 +483,6 @@ body{
 <script>
 window.AURORA_MANAGER_BUILD = "MANAGER-COMMAND-CENTRE-2026-07-19";
 </script>
-
 <style id="aurora-m3-manager-styles">
 /* ===================== AURORA M3 — DAILY MANAGER BRIEFING ===================== */
 .m3-manager-brief{
@@ -520,17 +521,12 @@ window.AURORA_MANAGER_BUILD = "MANAGER-COMMAND-CENTRE-2026-07-19";
 @media(max-width:1180px){.m3-daily-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.m3-income-road{grid-template-columns:1fr}}
 @media(max-width:680px){.m3-manager-head{flex-direction:column}.m3-daily-grid{grid-template-columns:1fr 1fr}}
 </style>
-
-
 <!-- Hotfix: Ten-month income mission is displayed only in Transfer Centre • 24 Jul 2026 -->
 <!-- Build: Aurora M5 Manager Visual Polish • 24 Jul 2026 -->
 <style id="aurora-m4-transfer-only-hotfix">
 /* Keep the shared M4 logic available without duplicating the large mission panel on this page. */
 #auroraM4Mission{display:none!important}
 </style>
-
-
-
 <style id="aurora-m5-manager-visual-polish">
 /* ================= AURORA M5 — MANAGER VISUAL POLISH ================= */
 :root{
@@ -795,8 +791,6 @@ body:after{
   @keyframes m5Pulse{0%,100%{box-shadow:0 0 0 5px rgba(52,211,153,.10)}50%{box-shadow:0 0 0 9px rgba(52,211,153,.02)}}
 }
 </style>
-
-
 <style id="aurora-beast-command-styles">
 /* ===================== AURORA BEAST COMMAND CENTRE ===================== */
 :root{
@@ -877,262 +871,503 @@ body.beast-compact .beast-decision-list{padding:11px 14px 14px}body.beast-compac
 @media(max-width:760px){.beast-log-compose{grid-template-columns:1fr}.beast-log-compose button{min-height:40px}.beast-log-row{grid-template-columns:38px minmax(0,1fr)}.beast-log-time{grid-column:2}.beast-decision{grid-template-columns:40px minmax(0,1fr)}.beast-decision-icon{width:40px;height:40px}}
 
 </style>
+<style id="beast-v2-decision-queue-hotfix">
+/* Decision Queue now opens as a reliable fixed drawer on iPad and desktop. */
+.beast-decision-overlay{
+  position:fixed;inset:0;z-index:990;
+  background:rgba(1,5,15,.72);backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;transition:opacity .22s ease;
+}
+.beast-decision-close{
+  display:none;flex:0 0 auto;width:38px;height:38px;border-radius:12px;
+  border:1px solid rgba(251,191,36,.22);background:rgba(120,53,15,.22);
+  color:#fde68a;font-size:25px;line-height:1;cursor:pointer;
+}
+body.beast-decision-open{overflow:hidden!important}
+body.beast-decision-open .beast-decision-overlay{opacity:1;pointer-events:auto}
+body.beast-decision-open #beastDecisionQueue{
+  display:flex!important;position:fixed!important;z-index:991!important;
+  top:max(16px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));
+  bottom:max(16px,env(safe-area-inset-bottom));
+  width:min(720px,calc(100vw - 32px));max-height:none!important;
+  margin:0!important;grid-column:auto!important;
+  border-color:rgba(251,191,36,.34)!important;
+  box-shadow:0 34px 110px rgba(0,0,0,.72)!important;
+  animation:beastDecisionSlide .24s ease-out both;
+}
+body.beast-decision-open #beastDecisionQueue .command-panel-head{
+  position:sticky;top:0;z-index:4;padding:18px 18px 14px;
+  background:linear-gradient(180deg,rgba(19,22,38,.99),rgba(10,15,31,.96));
+  border-bottom:1px solid rgba(251,191,36,.15);
+}
+body.beast-decision-open #beastDecisionQueue .beast-decision-list{
+  overflow:auto;overscroll-behavior:contain;padding-bottom:28px;
+  -webkit-overflow-scrolling:touch;
+}
+body.beast-decision-open #beastDecisionQueue .beast-decision-close{display:grid;place-items:center}
+body.beast-decision-open #beastDecisionButton{border-color:rgba(251,191,36,.55);color:#fde68a;background:rgba(120,53,15,.30)}
+.beast-decision-btn[href]{display:inline-flex;align-items:center;text-decoration:none}
+@keyframes beastDecisionSlide{from{opacity:0;transform:translateX(34px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:760px){
+  body.beast-decision-open #beastDecisionQueue{
+    top:max(8px,env(safe-area-inset-top));right:8px;bottom:max(8px,env(safe-area-inset-bottom));
+    width:calc(100vw - 16px);border-radius:22px;
+  }
+  body.beast-decision-open #beastDecisionQueue .command-panel-head{padding:15px 14px 12px}
+  body.beast-decision-open #beastDecisionQueue .beast-panel-counter{display:none}
+}
+</style>
+<!-- Hotfix: Manager Dashboard secondary intro removed • 24 Jul 2026 -->
+<!-- Build: Universal Sidebar Department Colours Fix • 24 Jul 2026 -->
+<style id="aurora-universal-sidebar-colours-v2">
+/* One consistent department colour map on every Aurora page. */
+.fm-side-link[href$="AuroraCityFC_ManagerDashboard.html"]{
+  --dept-colour:#60a5fa;
+  --dept-rgb:96,165,250;
+}
+.fm-side-link[href$="AuroraCityFC_SquadHub.html"]{
+  --dept-colour:#22d3ee;
+  --dept-rgb:34,211,238;
+}
+.fm-side-link[href$="AuroraCityFC_AnalysisRoom.html"]{
+  --dept-colour:#a78bfa;
+  --dept-rgb:167,139,250;
+}
+.fm-side-link[href$="AuroraCityFC_TrainingGround.html"]{
+  --dept-colour:#34d399;
+  --dept-rgb:52,211,153;
+}
+.fm-side-link[href$="AuroraCityFC_ScoutingCentre.html"]{
+  --dept-colour:#4ade80;
+  --dept-rgb:74,222,128;
+}
+#transferSideMenu,
+.fm-side-link[href$="AuroraCityFC_TransferCentre.html"]{
+  --dept-colour:#f59e0b;
+  --dept-rgb:245,158,11;
+}
+.fm-side-link[href$="AuroraCityFC_Boardroom.html"]{
+  --dept-colour:#f472b6;
+  --dept-rgb:244,114,182;
+}
+.fm-side-link[href$="AuroraCityFC_MediaCentre.html"]{
+  --dept-colour:#facc15;
+  --dept-rgb:250,204,21;
+}
 
-</head>
+/* Subtle colour identity remains visible before the page is selected. */
+body .fm-side-scroll .fm-side-link{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(var(--dept-rgb),.12);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.10),rgba(var(--dept-rgb),.025) 62%,transparent);
+}
+body .fm-side-scroll .fm-side-link:before{
+  content:"";
+  position:absolute;
+  top:8px;
+  bottom:8px;
+  left:0;
+  width:3px;
+  border-radius:0 4px 4px 0;
+  background:var(--dept-colour);
+  opacity:.58;
+  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
+}
+body .fm-side-scroll .fm-side-link .fm-side-icon{
+  color:var(--dept-colour);
+  background:rgba(var(--dept-rgb),.11);
+  border:1px solid rgba(var(--dept-rgb),.12);
+}
+body .fm-side-scroll .fm-side-link:hover{
+  color:#f8fafc;
+  border-color:rgba(var(--dept-rgb),.38);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.23),rgba(var(--dept-rgb),.07) 72%,transparent);
+  box-shadow:0 7px 20px rgba(var(--dept-rgb),.09);
+}
+body .fm-side-scroll .fm-side-link:hover:before{opacity:1}
+
+/* Selected page: the same strong department-colour treatment on every HTML. */
+body .fm-side-scroll .fm-side-link.active,
+body[data-beast-theme] .fm-side-scroll .fm-side-link.active{
+  color:#fff!important;
+  border-color:rgba(var(--dept-rgb),.62)!important;
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.38),rgba(var(--dept-rgb),.16) 68%,rgba(var(--dept-rgb),.05))!important;
+  box-shadow:inset 3px 0 0 var(--dept-colour),0 9px 25px rgba(var(--dept-rgb),.17),0 0 18px rgba(var(--dept-rgb),.08)!important;
+}
+body .fm-side-scroll .fm-side-link.active:before{
+  width:4px;
+  opacity:1;
+  box-shadow:0 0 17px rgba(var(--dept-rgb),.65);
+}
+body .fm-side-scroll .fm-side-link.active .fm-side-icon{
+  color:#fff!important;
+  background:rgba(var(--dept-rgb),.26)!important;
+  border-color:rgba(var(--dept-rgb),.38)!important;
+  box-shadow:0 0 15px rgba(var(--dept-rgb),.20)!important;
+}
+
+/* Transfer Centre folder receives the same amber identity. */
+#transferSideMenu{
+  position:relative;
+  border-color:rgba(var(--dept-rgb),.12);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.09),rgba(var(--dept-rgb),.02) 66%,transparent);
+}
+#transferSideMenu:before{
+  content:"";
+  position:absolute;
+  top:8px;
+  bottom:8px;
+  left:0;
+  width:3px;
+  z-index:1;
+  border-radius:0 4px 4px 0;
+  background:var(--dept-colour);
+  opacity:.58;
+  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
+}
+#transferSideMenu summary{position:relative;z-index:2}
+#transferSideMenu summary .fm-side-icon,
+#transferSideMenu .fm-folder-arrow{color:var(--dept-colour)}
+#transferSideMenu summary .fm-side-icon{
+  background:rgba(var(--dept-rgb),.11);
+  border:1px solid rgba(var(--dept-rgb),.12);
+}
+#transferSideMenu:hover,
+#transferSideMenu[open],
+#transferSideMenu.active{
+  border-color:rgba(var(--dept-rgb),.44);
+  background:linear-gradient(90deg,rgba(var(--dept-rgb),.25),rgba(var(--dept-rgb),.08) 72%,transparent);
+  box-shadow:inset 3px 0 0 var(--dept-colour),0 8px 22px rgba(var(--dept-rgb),.10);
+}
+#transferSideMenu:hover:before,
+#transferSideMenu[open]:before,
+#transferSideMenu.active:before{
+  width:4px;
+  opacity:1;
+  box-shadow:0 0 17px rgba(var(--dept-rgb),.62);
+}
+#transferSideMenu[open] .fm-side-submenu a:before{background:rgba(var(--dept-rgb),.48)}
+#transferSideMenu[open] .fm-side-submenu a:hover,
+#transferSideMenu[open] .fm-side-submenu a.active{
+  color:#fff7ed;
+  background:rgba(var(--dept-rgb),.15);
+}
+.fm-side-scroll .fm-side-link > span:last-child,
+#transferSideMenu summary > span:nth-child(2){position:relative;z-index:2}
+
+@media(max-height:720px){
+  body .fm-side-scroll .fm-side-link:before,
+  #transferSideMenu:before{top:6px;bottom:6px}
+}
+</style>
+<style id="aurora-page-section-navigation-styles">
+/* ================= AURORA PAGE SECTION NAVIGATION ================= */
+.aurora-page-folder{
+  --page-accent:#60a5fa;
+  --page-accent-rgb:96,165,250;
+  margin:2px 0;
+  overflow:hidden;
+  border:1px solid rgba(var(--page-accent-rgb),.32)!important;
+  border-radius:12px;
+  background:rgba(var(--page-accent-rgb),.10)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+.aurora-page-folder summary{
+  min-height:43px;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) 18px;
+  align-items:center;
+  gap:7px;
+  padding:7px 9px;
+  border-radius:11px;
+  color:#fff!important;
+  cursor:pointer;
+  list-style:none;
+  font-size:13px;
+  font-weight:800;
+  user-select:none;
+  background:linear-gradient(90deg,rgba(var(--page-accent-rgb),.48),rgba(var(--page-accent-rgb),.16))!important;
+  box-shadow:inset 3px 0 0 var(--page-accent),0 8px 22px rgba(var(--page-accent-rgb),.10);
+}
+.aurora-page-folder summary::-webkit-details-marker{display:none}
+.aurora-page-folder summary .fm-side-icon{
+  color:#fff!important;
+  background:rgba(var(--page-accent-rgb),.20)!important;
+  border:1px solid rgba(var(--page-accent-rgb),.24);
+}
+.aurora-page-folder .fm-folder-arrow{
+  color:var(--page-accent)!important;
+  font-size:17px;
+  text-align:center;
+  transition:transform .18s ease;
+}
+.aurora-page-folder[open] .fm-folder-arrow{transform:rotate(90deg)}
+.aurora-page-folder .fm-side-submenu{
+  display:grid;
+  gap:2px;
+  padding:5px 7px 10px 42px;
+}
+.aurora-page-folder .fm-side-submenu a{
+  position:relative;
+  min-height:31px;
+  display:flex;
+  align-items:center;
+  padding:6px 9px;
+  border-radius:8px;
+  color:#93a4bd;
+  font-size:11px;
+  font-weight:760;
+  line-height:1.2;
+  transition:color .16s,background .16s,transform .16s;
+}
+.aurora-page-folder .fm-side-submenu a:before{
+  content:"";
+  position:absolute;
+  left:-12px;
+  width:7px;
+  height:1px;
+  background:rgba(var(--page-accent-rgb),.34);
+}
+.aurora-page-folder .fm-side-submenu a:hover,
+.aurora-page-folder .fm-side-submenu a.active{
+  color:#fff;
+  background:rgba(var(--page-accent-rgb),.20);
+  transform:translateX(2px);
+}
+.aurora-page-folder .fm-side-submenu a.active:before{
+  width:9px;
+  height:2px;
+  background:var(--page-accent);
+  box-shadow:0 0 10px rgba(var(--page-accent-rgb),.55);
+}
+.aurora-section-anchor{scroll-margin-top:96px}
+@media(max-width:900px){
+  .aurora-page-folder summary{font-size:12px;grid-template-columns:28px minmax(0,1fr) 16px;padding-left:7px;padding-right:7px}
+  .aurora-page-folder .fm-side-submenu{padding-left:36px}
+  .aurora-page-folder .fm-side-submenu a{font-size:10px}
+}
+</style></head>
 <body>
-
 <div class="fm-shell">
-  <aside class="fm-sidebar" aria-label="Aurora City FC manager navigation">
-    <div class="fm-side-brand">
-      <div class="fm-side-crest">
-        <img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest">
-      </div>
-      <div>
-        <strong>Aurora City FC</strong>
-        <span>Manager Office</span>
-      </div>
-    </div>
-
-
-
-    <nav class="fm-side-scroll">
-      <div class="fm-nav-group">Manager</div>
-      <a class="fm-side-link active" href="AuroraCityFC_ManagerDashboard.html" aria-current="page">
-        <span class="fm-side-icon">⌂</span><span>Home</span><span class="fm-side-status">HQ</span>
-      </a>
-
-      <div class="fm-nav-group">Performance</div>
-      <a class="fm-side-link" href="AuroraCityFC_SquadHub.html">
-        <span class="fm-side-icon">♟</span><span>Squad Hub</span><span class="fm-side-status" id="sideSquadBadge">—</span>
-      </a>
-      <a class="fm-side-link" href="AuroraCityFC_AnalysisRoom.html">
-        <span class="fm-side-icon">⌁</span><span>Analysis Room</span><span class="fm-side-status live">Live</span>
-      </a>
-      <a class="fm-side-link" href="AuroraCityFC_TrainingGround.html">
-        <span class="fm-side-icon">▲</span><span>Training Ground</span><span class="fm-side-status" id="sideTrainingBadge">—</span>
-      </a>
-
-      <div class="fm-nav-group">Recruitment</div>
-      <a class="fm-side-link"
-         href="AuroraCityFC_ScoutingCentre.html">
-        <span class="fm-side-icon">⌕</span>
-        <span>Scouting Centre</span>
-      </a>
-
-      <a class="fm-side-link" href="AuroraCityFC_TransferCentre.html">
-        <span class="fm-side-icon">⇄</span><span>Transfer Centre</span><span class="fm-side-status" id="sideTransferBadge">Sync</span>
-      </a>
-
-      <div class="fm-nav-group">Club</div>
-      <a class="fm-side-link" href="AuroraCityFC_Boardroom.html">
-        <span class="fm-side-icon">♜</span><span>Boardroom</span><span class="fm-side-status" id="sideBoardBadge">—</span>
-      </a>
-      <a class="fm-side-link" href="AuroraCityFC_MediaCentre.html">
-        <span class="fm-side-icon">●</span><span>Media Centre</span><span class="fm-side-status" id="sideMediaBadge">—</span>
-      </a>
-    </nav>
-
-    <div class="fm-side-footer">
-      <button class="fm-side-action" id="refreshBtn" type="button"><span class="fm-side-icon">↻</span><span>Refresh Data</span></button>
-      <button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>
-      <div class="fm-side-clock" id="fmClock">Manager session live</div>
-    </div>
-  </aside>
-
-  <div class="fm-workspace">
-
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div>
-      <div>
-        <h1>Aurora City FC</h1>
-        <p>Manager Dashboard • Club HQ</p>
-      </div>
-    </div>
-    <div class="fm-top-context">
-      <span class="fm-page-path">Home / Manager Command Centre</span>
-
-      <div class="beast-top-actions" aria-label="Aurora command controls">
-        <button class="beast-icon-button" id="beastDecisionButton" type="button" title="Decision Queue" aria-label="Open decision queue">📋<span class="beast-count" id="beastDecisionCount" hidden>0</span></button>
-        <button class="beast-icon-button" id="beastLogButton" type="button" title="Manager Action Log" aria-label="Open manager action log">🕘</button>
-        <button class="beast-icon-button" id="beastNotificationButton" type="button" title="Notifications" aria-label="Open notifications">🔔<span class="beast-count" id="beastNotificationCount" hidden>0</span></button>
-        <button class="beast-icon-button" id="beastLayoutButton" type="button" title="Dashboard controls" aria-label="Open dashboard controls">⚙</button>
-        <button class="beast-icon-button" id="beastPresentationButton" type="button" title="Presentation mode" aria-label="Toggle presentation mode">▣</button>
-      </div>
-      <span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
-    </div>
-  </div>
+<aside aria-label="Aurora City FC manager navigation" class="fm-sidebar">
+<div class="fm-side-brand">
+<div class="fm-side-crest">
+<img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/>
 </div>
-
-
+<div>
+<strong>Aurora City FC</strong>
+<span>Manager Office</span>
+</div>
+</div>
+<nav class="fm-side-scroll">
+<div class="fm-nav-group">Manager</div>
+<details class="fm-side-folder active aurora-page-folder" id="managerSideMenu" open="" style="--page-accent:#60a5fa;--page-accent-rgb:96,165,250;"><summary aria-label="Home page sections"><span class="fm-side-icon">⌂</span><span>Home</span><span aria-hidden="true" class="fm-folder-arrow">›</span></summary><div class="fm-side-submenu fm-page-submenu"><a href="#club-overview">Overview</a><a href="#beastTargetJourney">Road to £625</a><a href="#m3DailyManagerBrief">Daily Briefing</a><a href="#manager-transfer-desk">Transfer Desk</a><a href="#beastSquadRadar">Portfolio Form</a><a href="#beastDecisionQueue">Decision Queue</a><a href="#beastActionLog">Manager Action Log</a><a href="#schedule-panel">Upcoming Schedule</a></div></details>
+<div class="fm-nav-group">Performance</div>
+<a class="fm-side-link" href="AuroraCityFC_SquadHub.html">
+<span class="fm-side-icon">♟</span><span>Squad Hub</span><span class="fm-side-status" id="sideSquadBadge">—</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_AnalysisRoom.html">
+<span class="fm-side-icon">⌁</span><span>Analysis Room</span><span class="fm-side-status live">Live</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_TrainingGround.html">
+<span class="fm-side-icon">▲</span><span>Training Ground</span><span class="fm-side-status" id="sideTrainingBadge">—</span>
+</a>
+<div class="fm-nav-group">Recruitment</div>
+<a class="fm-side-link" href="AuroraCityFC_ScoutingCentre.html">
+<span class="fm-side-icon">⌕</span>
+<span>Scouting Centre</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_TransferCentre.html">
+<span class="fm-side-icon">⇄</span><span>Transfer Centre</span><span class="fm-side-status" id="sideTransferBadge">Sync</span>
+</a>
+<div class="fm-nav-group">Club</div>
+<a class="fm-side-link" href="AuroraCityFC_Boardroom.html">
+<span class="fm-side-icon">♜</span><span>Boardroom</span><span class="fm-side-status" id="sideBoardBadge">—</span>
+</a>
+<a class="fm-side-link" href="AuroraCityFC_MediaCentre.html">
+<span class="fm-side-icon">●</span><span>Media Centre</span><span class="fm-side-status" id="sideMediaBadge">—</span>
+</a>
+</nav>
+<div class="fm-side-footer">
+<button class="fm-side-action" id="refreshBtn" type="button"><span class="fm-side-icon">↻</span><span>Refresh Data</span></button>
+<button class="aurora-system-button" id="auroraSystemButton" type="button">System Check</button>
+<div class="fm-side-clock" id="fmClock">Manager session live</div>
+</div>
+</aside>
+<div class="fm-workspace">
+<div class="topbar">
+<div class="topbar-inner">
+<div class="brand">
+<div class="crest"><img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/></div>
+<div>
+<h1>Aurora City FC</h1>
+<p>Manager Dashboard • Club HQ</p>
+</div>
+</div>
+<div class="fm-top-context">
+<span class="fm-page-path">Home / Manager Command Centre</span>
+<div aria-label="Aurora command controls" class="beast-top-actions">
+<button aria-label="Open decision queue" class="beast-icon-button" id="beastDecisionButton" title="Decision Queue" type="button">📋<span class="beast-count" hidden="" id="beastDecisionCount">0</span></button>
+<button aria-label="Open manager action log" class="beast-icon-button" id="beastLogButton" title="Manager Action Log" type="button">🕘</button>
+<button aria-label="Open notifications" class="beast-icon-button" id="beastNotificationButton" title="Notifications" type="button">🔔<span class="beast-count" hidden="" id="beastNotificationCount">0</span></button>
+<button aria-label="Open dashboard controls" class="beast-icon-button" id="beastLayoutButton" title="Dashboard controls" type="button">⚙</button>
+<button aria-label="Toggle presentation mode" class="beast-icon-button" id="beastPresentationButton" title="Presentation mode" type="button">▣</button>
+</div>
+<span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
+</div>
+</div>
+</div>
 <main class="app fm-command-app">
-  <section class="manager-command-header" id="club-overview">
-    <div class="command-identity">
-      <div class="hero-kicker"><span class="hero-dot"></span> Live manager command centre</div>
-      <h2>Aurora City FC <span>Manager Dashboard</span></h2>
-      <p id="heroSub">Loading the latest club position, recruitment route and income target.</p>
-      <div class="command-meta">
-        <span id="lastUpdated">Last updated: loading…</span>
-        <span><b id="currentDivision">Loading…</b></span>
-        <span id="divisionProgress">Next promotion loading…</span>
-      </div>
-    </div>
-
-    <div class="command-metric-grid">
-      <article class="command-metric"><small>Club Value</small><strong id="heroClubValue">—</strong><span class="hero-detail neutral" id="clubValueTrend">Waiting for previous snapshot…</span></article>
-      <article class="command-metric green"><small>Annual Income</small><strong id="heroAnnualIncome">—</strong><span class="hero-detail neutral" id="annualIncomeTrend">Waiting for latest purchase…</span></article>
-      <article class="command-metric green"><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span>Current passive-income run rate</span><span id="heroMonthlyIncome" hidden>—</span></article>
-      <article class="command-metric amber"><small>Gap to £625/month</small><strong id="heroTargetGap">—</strong><span id="targetProgressText">Progress loading…</span><div class="hero-progress"><div class="hero-progress-fill" id="targetProgressFill"></div></div></article>
-      <article class="command-metric"><small>Portfolio Yield</small><strong id="portfolioYield">—</strong><span>IG ISA and Trading 212 holdings</span></article>
-      <article class="command-metric"><small>Board Confidence</small><strong id="portfolioStrength">—</strong><span>Overall club-health rating</span></article>
-    </div>
-  </section>
-
-  <section class="manager-verdict">
-    <div class="verdict-copy">
-      <span class="badge green" id="briefingStatus">Loading</span>
-      <h3 id="briefingTitle">Loading club briefing…</h3>
-      <p id="briefingText">The coaching staff are preparing the latest manager report.</p>
-    </div>
-    <div class="verdict-stats">
-      <div><small>Financial Health</small><strong id="briefHealth">—</strong></div>
-      <div><small>Team Morale</small><strong id="briefMorale">—</strong></div>
-      <div><small>Active Squad</small><strong id="activeSquadCount">—</strong></div>
-      <div><small>Board View</small><strong id="briefBoard">—</strong></div>
-    </div>
-  </section>
-
-
-
-  <section class="beast-journey" id="beastTargetJourney" aria-label="Income target journey">
-    <div class="beast-target-ring" id="beastTargetRing">
-      <div class="beast-ring-copy"><small>Monthly income</small><strong id="beastCurrentMonthly">—</strong><span id="beastTargetPercent">— of £625</span></div>
-    </div>
-    <div class="beast-journey-copy">
-      <span class="panel-kicker">Income promotion race</span>
-      <h3>Road to £625 per month</h3>
-      <p id="beastJourneySummary">Aurora is calculating the current position, next transfer impact and remaining target gap.</p>
-      <div class="beast-milestones" id="beastMilestones"></div>
-    </div>
-    <div class="beast-rating-card">
-      <small>Manager rating</small><strong id="beastManagerRating">—</strong><h4 id="beastManagerTitle">Assessment loading</h4><p id="beastManagerNote">Income growth, yield, board confidence and data readiness.</p><div class="beast-rating-stars" id="beastRatingStars">★★★★★</div>
-    </div>
-  </section>
-
-
-  <!-- ===================== AURORA M3: DAILY MANAGER BRIEFING ===================== -->
-  <section class="m3-manager-brief" id="m3DailyManagerBrief">
-    <div class="m3-manager-head">
-      <div>
-        <span class="panel-kicker">M3 command intelligence</span>
-        <h3>Daily Manager Briefing</h3>
-        <p>Today’s portfolio move, the best and weakest performers, income milestones, data health and one clear manager instruction.</p>
-      </div>
-      <span class="m3-manager-build">Current dashboard upgraded • 24 Jul 2026</span>
-    </div>
-    <div class="m3-data-lights" id="m3DataLights">
-      <span class="m3-data-light"><i></i>Waiting for AuroraData</span>
-    </div>
-    <div class="m3-daily-grid">
-      <div class="m3-daily-card"><small>Today’s portfolio move</small><strong id="m3TodayMove">—</strong><span id="m3TodayMovePct">Awaiting session figures</span></div>
-      <div class="m3-daily-card green"><small>Man of the match</small><strong id="m3Winner">—</strong><span id="m3WinnerMove">Awaiting movement</span></div>
-      <div class="m3-daily-card red"><small>Under review</small><strong id="m3Loser">—</strong><span id="m3LoserMove">Awaiting movement</span></div>
-      <div class="m3-daily-card green"><small>Monthly income</small><strong id="m3MonthlyIncome">—</strong><span id="m3AnnualIncome">Annual run-rate</span></div>
-      <div class="m3-daily-card amber"><small>Next milestone</small><strong id="m3NextMilestone">—</strong><span id="m3MilestoneGap">Calculating gap</span></div>
-      <div class="m3-daily-card"><small>Payday readiness</small><strong id="m3PaydayReady">—</strong><span id="m3PaydayNote">Syncing Transfer Centre</span></div>
-    </div>
-    <div class="m3-income-road">
-      <div class="m3-road-box">
-        <h4>Income journey</h4>
-        <div class="m3-target-row" id="m3IncomeTargets"></div>
-      </div>
-      <div class="m3-decision-box">
-        <h4>Manager decision today</h4>
-        <strong id="m3DecisionTitle">Hold — no action required</strong>
-        <p id="m3DecisionText">The staff are waiting for the latest AuroraData refresh.</p>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="manager-command-grid">
-
-    <article class="command-panel command-span-12 beast-radar" id="beastSquadRadar" data-beast-key="portfolio-radar">
-      <div class="command-panel-head"><div><span class="panel-kicker">First Team Radar</span><h3>Live Portfolio Form</h3><p>Click any holding for valuation, income, recent form and the manager verdict.</p></div><div class="beast-radar-tools"><button class="beast-mini-btn active" data-beast-sort="income" type="button">Income</button><button class="beast-mini-btn" data-beast-sort="value" type="button">Value</button><button class="beast-mini-btn" data-beast-sort="yield" type="button">Yield</button></div></div>
-      <div class="beast-holding-strip" id="beastHoldingStrip"><div class="loading">Building the live squad radar…</div></div>
-    </article>
-    <article class="command-panel command-span-7 beast-decision-panel" id="beastDecisionQueue" data-beast-key="decision-queue">
-      <div class="command-panel-head"><div><span class="panel-kicker">Manager Office</span><h3>Decision Queue</h3><p>Persistent actions that remain here until completed, resolved or dismissed.</p></div><span class="beast-panel-counter" id="beastDecisionPanelCount">0 pending</span></div>
-      <div class="beast-decision-list" id="beastDecisionList"><div class="loading">Building the manager decision queue…</div></div>
-      <div id="actionList" hidden aria-hidden="true"></div>
-    </article>
-
-    <article class="command-panel command-span-5 beast-action-log-panel" id="beastActionLog" data-beast-key="manager-action-log">
-      <div class="command-panel-head"><div><span class="panel-kicker">Club History</span><h3>Manager Action Log</h3><p>What you changed, reviewed, completed and recorded across Aurora.</p></div><span class="badge blue" id="beastActionLogBadge">Live</span></div>
-      <form class="beast-log-compose" id="beastActionLogForm"><input id="beastActionLogInput" type="text" maxlength="120" autocomplete="off" placeholder="Record a manual manager action…"><button type="submit">Add entry</button></form>
-      <div class="beast-action-log-list" id="beastActionLogList"><div class="loading">Loading manager history…</div></div>
-      <div class="beast-log-footer"><span id="beastActionLogCount">0 recorded actions</span><button class="beast-log-clear" id="beastActionLogClear" type="button">Clear history</button></div>
-    </article>
-
-    <article class="command-panel command-span-6 media-command-panel">
-      <div class="command-panel-head"><div><span class="panel-kicker">Aurora Times</span><h3>Latest Media Story</h3><p><span id="deptMedia">Loading</span> newsroom • <b id="deptNewsCount">—</b> stories</p></div><span class="badge blue" id="latestMediaBadge">News</span></div>
-      <div class="media-feature">
-        <div class="media-feature-icon">AFC</div>
-        <div><span class="media-feature-meta" id="latestMediaMeta">Newsroom loading…</span><h4 id="latestMediaHeadline">Waiting for the latest headline…</h4><p id="latestMediaSummary">Aurora Times is checking the live newsroom feed.</p></div>
-      </div>
-      <a class="panel-open-link" href="AuroraCityFC_MediaCentre.html">Open Media Centre <span>→</span></a>
-    </article>
-
-    <article class="command-panel command-span-6">
-      <div class="command-panel-head"><div><span class="panel-kicker">Recruitment</span><h3>Transfer Desk</h3><p>The current payday route from the exact Transfer Centre deal sheet.</p></div><span class="badge green" id="topTransferBadge">Loading</span></div>
-      <div class="panel-stat-row">
-        <div><small>Lead Target</small><strong id="deptTopTarget">—</strong></div>
-        <div><small>Approved Deals</small><strong id="deptTransfers">—</strong></div>
-        <div><small>Annual Added</small><strong id="paydayBoost">—</strong><span id="paydayBoostNote">Syncing route…</span></div>
-      </div>
-      <div class="preview-list compact-preview" id="topTransferPreview"><div class="loading">Loading transfer route…</div></div>
-      <a class="panel-open-link" href="AuroraCityFC_TransferCentre.html">Open Transfer Centre <span>→</span></a>
-    </article>
-
-    <article class="command-panel command-span-6">
-      <div class="command-panel-head"><div><span class="panel-kicker">First Team</span><h3>Squad Report</h3><p>Income leaders and players requiring development attention.</p></div><span class="badge blue" id="squadBadge">Loading</span></div>
-      <div class="panel-stat-row">
-        <div><small>Squad Status</small><strong id="deptSquad">—</strong></div>
-        <div><small>Watch Player</small><strong id="deptCaptain">—</strong></div>
-        <div><small>Training Focus</small><strong id="deptTraining">—</strong></div>
-      </div>
-      <div class="preview-list compact-preview" id="squadPreview"><div class="loading">Loading squad report…</div></div>
-      <a class="panel-open-link" href="AuroraCityFC_SquadHub.html">Open Squad Hub <span>→</span></a>
-    </article>
-
-    <article class="command-panel command-span-6">
-      <div class="command-panel-head"><div><span class="panel-kicker">Club Leadership</span><h3>Board Update</h3><p>Confidence, risk and the board’s current view of the rebuild.</p></div><span class="badge green" id="deptBoard">Loading</span></div>
-      <div class="board-command-grid">
-        <div class="board-command-score"><small>Board Confidence</small><strong id="boardCommandScore">—</strong><span id="boardCommandVerdict">Loading board verdict…</span></div>
-        <div class="board-command-list">
-          <div><span>Financial health</span><strong id="boardFinancialHealth">—</strong></div>
-          <div><span>Current risk</span><strong id="deptRisk">—</strong></div>
-          <div><span>Squad morale</span><strong id="boardMorale">—</strong></div>
-        </div>
-      </div>
-      <a class="panel-open-link" href="AuroraCityFC_Boardroom.html">Open Boardroom <span>→</span></a>
-    </article>
-
-    <article class="command-panel command-span-12" id="schedule-panel">
-      <div class="command-panel-head"><div><span class="panel-kicker">Calendar</span><h3>Upcoming Schedule</h3><p>The next financial and club-management events.</p></div><span class="badge amber">Next Up</span></div>
-      <div class="schedule-list">
-        <div class="schedule-row"><span class="schedule-icon">💷</span><div><small>Next Dividend</small><strong id="nextDividendTicker">—</strong><p id="nextDividendNote">Checking payment calendar…</p></div></div>
-        <div class="schedule-row"><span class="schedule-icon">⇄</span><div><small>Transfer Route</small><strong id="scheduleTransferStatus">Syncing…</strong><p id="scheduleTransferNote">Waiting for the final deal sheet.</p></div></div>
-        <div class="schedule-row"><span class="schedule-icon">🎯</span><div><small>Income Objective</small><strong id="scheduleTargetStatus">—</strong><p id="scheduleTargetNote">Checking progress to £625/month.</p></div></div>
-        <div class="schedule-row"><span class="schedule-icon">↻</span><div><small>Data Status</small><strong id="scheduleDataStatus">Loading…</strong><p id="scheduleDataNote">Checking the latest Aurora update.</p></div></div>
-      </div>
-    </article>
-  </section>
+<section class="manager-command-header aurora-section-anchor" id="club-overview">
+<div class="command-identity">
+<div class="hero-kicker"><span class="hero-dot"></span> Live manager command centre</div>
+<h2>Aurora City FC <span>Manager Dashboard</span></h2>
+<p id="heroSub">Loading the latest club position, recruitment route and income target.</p>
+<div class="command-meta">
+<span id="lastUpdated">Last updated: loading…</span>
+<span><b id="currentDivision">Loading…</b></span>
+<span id="divisionProgress">Next promotion loading…</span>
+</div>
+</div>
+<div class="command-metric-grid">
+<article class="command-metric"><small>Club Value</small><strong id="heroClubValue">—</strong><span class="hero-detail neutral" id="clubValueTrend">Waiting for previous snapshot…</span></article>
+<article class="command-metric green"><small>Annual Income</small><strong id="heroAnnualIncome">—</strong><span class="hero-detail neutral" id="annualIncomeTrend">Waiting for latest purchase…</span></article>
+<article class="command-metric green"><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span>Current passive-income run rate</span><span hidden="" id="heroMonthlyIncome">—</span></article>
+<article class="command-metric amber"><small>Gap to £625/month</small><strong id="heroTargetGap">—</strong><span id="targetProgressText">Progress loading…</span><div class="hero-progress"><div class="hero-progress-fill" id="targetProgressFill"></div></div></article>
+<article class="command-metric"><small>Portfolio Yield</small><strong id="portfolioYield">—</strong><span>IG ISA and Trading 212 holdings</span></article>
+<article class="command-metric"><small>Board Confidence</small><strong id="portfolioStrength">—</strong><span>Overall club-health rating</span></article>
+</div>
+</section>
+<section class="manager-verdict">
+<div class="verdict-copy">
+<span class="badge green" id="briefingStatus">Loading</span>
+<h3 id="briefingTitle">Loading club briefing…</h3>
+<p id="briefingText">The coaching staff are preparing the latest manager report.</p>
+</div>
+<div class="verdict-stats">
+<div><small>Financial Health</small><strong id="briefHealth">—</strong></div>
+<div><small>Team Morale</small><strong id="briefMorale">—</strong></div>
+<div><small>Active Squad</small><strong id="activeSquadCount">—</strong></div>
+<div><small>Board View</small><strong id="briefBoard">—</strong></div>
+</div>
+</section>
+<section aria-label="Income target journey" class="beast-journey aurora-section-anchor" id="beastTargetJourney">
+<div class="beast-target-ring" id="beastTargetRing">
+<div class="beast-ring-copy"><small>Monthly income</small><strong id="beastCurrentMonthly">—</strong><span id="beastTargetPercent">— of £625</span></div>
+</div>
+<div class="beast-journey-copy">
+<span class="panel-kicker">Income promotion race</span>
+<h3>Road to £625 per month</h3>
+<p id="beastJourneySummary">Aurora is calculating the current position, next transfer impact and remaining target gap.</p>
+<div class="beast-milestones" id="beastMilestones"></div>
+</div>
+<div class="beast-rating-card">
+<small>Manager rating</small><strong id="beastManagerRating">—</strong><h4 id="beastManagerTitle">Assessment loading</h4><p id="beastManagerNote">Income growth, yield, board confidence and data readiness.</p><div class="beast-rating-stars" id="beastRatingStars">★★★★★</div>
+</div>
+</section>
+<!-- ===================== AURORA M3: DAILY MANAGER BRIEFING ===================== -->
+<section class="m3-manager-brief aurora-section-anchor" id="m3DailyManagerBrief">
+<div class="m3-manager-head">
+<div>
+<span class="panel-kicker">M3 command intelligence</span>
+<h3>Daily Manager Briefing</h3>
+<p>Today’s portfolio move, the best and weakest performers, income milestones, data health and one clear manager instruction.</p>
+</div>
+<span class="m3-manager-build">Current dashboard upgraded • 24 Jul 2026</span>
+</div>
+<div class="m3-data-lights" id="m3DataLights">
+<span class="m3-data-light"><i></i>Waiting for AuroraData</span>
+</div>
+<div class="m3-daily-grid">
+<div class="m3-daily-card"><small>Today’s portfolio move</small><strong id="m3TodayMove">—</strong><span id="m3TodayMovePct">Awaiting session figures</span></div>
+<div class="m3-daily-card green"><small>Man of the match</small><strong id="m3Winner">—</strong><span id="m3WinnerMove">Awaiting movement</span></div>
+<div class="m3-daily-card red"><small>Under review</small><strong id="m3Loser">—</strong><span id="m3LoserMove">Awaiting movement</span></div>
+<div class="m3-daily-card green"><small>Monthly income</small><strong id="m3MonthlyIncome">—</strong><span id="m3AnnualIncome">Annual run-rate</span></div>
+<div class="m3-daily-card amber"><small>Next milestone</small><strong id="m3NextMilestone">—</strong><span id="m3MilestoneGap">Calculating gap</span></div>
+<div class="m3-daily-card"><small>Payday readiness</small><strong id="m3PaydayReady">—</strong><span id="m3PaydayNote">Syncing Transfer Centre</span></div>
+</div>
+<div class="m3-income-road">
+<div class="m3-road-box">
+<h4>Income journey</h4>
+<div class="m3-target-row" id="m3IncomeTargets"></div>
+</div>
+<div class="m3-decision-box">
+<h4>Manager decision today</h4>
+<strong id="m3DecisionTitle">Hold — no action required</strong>
+<p id="m3DecisionText">The staff are waiting for the latest AuroraData refresh.</p>
+</div>
+</div>
+</section>
+<section class="manager-command-grid">
+<article class="command-panel command-span-12 beast-radar aurora-section-anchor" data-beast-key="portfolio-radar" id="beastSquadRadar">
+<div class="command-panel-head"><div><span class="panel-kicker">First Team Radar</span><h3>Live Portfolio Form</h3><p>Click any holding for valuation, income, recent form and the manager verdict.</p></div><div class="beast-radar-tools"><button class="beast-mini-btn active" data-beast-sort="income" type="button">Income</button><button class="beast-mini-btn" data-beast-sort="value" type="button">Value</button><button class="beast-mini-btn" data-beast-sort="yield" type="button">Yield</button></div></div>
+<div class="beast-holding-strip" id="beastHoldingStrip"><div class="loading">Building the live squad radar…</div></div>
+</article>
+<article class="command-panel command-span-7 beast-decision-panel aurora-section-anchor" data-beast-key="decision-queue" id="beastDecisionQueue">
+<div class="command-panel-head"><div><span class="panel-kicker">Manager Office</span><h3>Decision Queue</h3><p>Persistent actions that remain here until completed, resolved or dismissed.</p></div><span class="beast-panel-counter" id="beastDecisionPanelCount">0 pending</span><button aria-label="Close decision queue" class="beast-decision-close" id="beastDecisionClose" type="button">×</button></div>
+<div class="beast-decision-list" id="beastDecisionList"><div class="loading">Building the manager decision queue…</div></div>
+<div aria-hidden="true" hidden="" id="actionList"></div>
+</article>
+<article class="command-panel command-span-5 beast-action-log-panel aurora-section-anchor" data-beast-key="manager-action-log" id="beastActionLog">
+<div class="command-panel-head"><div><span class="panel-kicker">Club History</span><h3>Manager Action Log</h3><p>What you changed, reviewed, completed and recorded across Aurora.</p></div><span class="badge blue" id="beastActionLogBadge">Live</span></div>
+<form class="beast-log-compose" id="beastActionLogForm"><input autocomplete="off" id="beastActionLogInput" maxlength="120" placeholder="Record a manual manager action…" type="text"/><button type="submit">Add entry</button></form>
+<div class="beast-action-log-list" id="beastActionLogList"><div class="loading">Loading manager history…</div></div>
+<div class="beast-log-footer"><span id="beastActionLogCount">0 recorded actions</span><button class="beast-log-clear" id="beastActionLogClear" type="button">Clear history</button></div>
+</article>
+<article class="command-panel command-span-6 media-command-panel">
+<div class="command-panel-head"><div><span class="panel-kicker">Aurora Times</span><h3>Latest Media Story</h3><p><span id="deptMedia">Loading</span> newsroom • <b id="deptNewsCount">—</b> stories</p></div><span class="badge blue" id="latestMediaBadge">News</span></div>
+<div class="media-feature">
+<div class="media-feature-icon">AFC</div>
+<div><span class="media-feature-meta" id="latestMediaMeta">Newsroom loading…</span><h4 id="latestMediaHeadline">Waiting for the latest headline…</h4><p id="latestMediaSummary">Aurora Times is checking the live newsroom feed.</p></div>
+</div>
+<a class="panel-open-link" href="AuroraCityFC_MediaCentre.html">Open Media Centre <span>→</span></a>
+</article>
+<article class="command-panel command-span-6 aurora-section-anchor" id="manager-transfer-desk">
+<div class="command-panel-head"><div><span class="panel-kicker">Recruitment</span><h3>Transfer Desk</h3><p>The current payday route from the exact Transfer Centre deal sheet.</p></div><span class="badge green" id="topTransferBadge">Loading</span></div>
+<div class="panel-stat-row">
+<div><small>Lead Target</small><strong id="deptTopTarget">—</strong></div>
+<div><small>Approved Deals</small><strong id="deptTransfers">—</strong></div>
+<div><small>Annual Added</small><strong id="paydayBoost">—</strong><span id="paydayBoostNote">Syncing route…</span></div>
+</div>
+<div class="preview-list compact-preview" id="topTransferPreview"><div class="loading">Loading transfer route…</div></div>
+<a class="panel-open-link" href="AuroraCityFC_TransferCentre.html">Open Transfer Centre <span>→</span></a>
+</article>
+<article class="command-panel command-span-6">
+<div class="command-panel-head"><div><span class="panel-kicker">First Team</span><h3>Squad Report</h3><p>Income leaders and players requiring development attention.</p></div><span class="badge blue" id="squadBadge">Loading</span></div>
+<div class="panel-stat-row">
+<div><small>Squad Status</small><strong id="deptSquad">—</strong></div>
+<div><small>Watch Player</small><strong id="deptCaptain">—</strong></div>
+<div><small>Training Focus</small><strong id="deptTraining">—</strong></div>
+</div>
+<div class="preview-list compact-preview" id="squadPreview"><div class="loading">Loading squad report…</div></div>
+<a class="panel-open-link" href="AuroraCityFC_SquadHub.html">Open Squad Hub <span>→</span></a>
+</article>
+<article class="command-panel command-span-6">
+<div class="command-panel-head"><div><span class="panel-kicker">Club Leadership</span><h3>Board Update</h3><p>Confidence, risk and the board’s current view of the rebuild.</p></div><span class="badge green" id="deptBoard">Loading</span></div>
+<div class="board-command-grid">
+<div class="board-command-score"><small>Board Confidence</small><strong id="boardCommandScore">—</strong><span id="boardCommandVerdict">Loading board verdict…</span></div>
+<div class="board-command-list">
+<div><span>Financial health</span><strong id="boardFinancialHealth">—</strong></div>
+<div><span>Current risk</span><strong id="deptRisk">—</strong></div>
+<div><span>Squad morale</span><strong id="boardMorale">—</strong></div>
+</div>
+</div>
+<a class="panel-open-link" href="AuroraCityFC_Boardroom.html">Open Boardroom <span>→</span></a>
+</article>
+<article class="command-panel command-span-12 aurora-section-anchor" id="schedule-panel">
+<div class="command-panel-head"><div><span class="panel-kicker">Calendar</span><h3>Upcoming Schedule</h3><p>The next financial and club-management events.</p></div><span class="badge amber">Next Up</span></div>
+<div class="schedule-list">
+<div class="schedule-row"><span class="schedule-icon">💷</span><div><small>Next Dividend</small><strong id="nextDividendTicker">—</strong><p id="nextDividendNote">Checking payment calendar…</p></div></div>
+<div class="schedule-row"><span class="schedule-icon">⇄</span><div><small>Transfer Route</small><strong id="scheduleTransferStatus">Syncing…</strong><p id="scheduleTransferNote">Waiting for the final deal sheet.</p></div></div>
+<div class="schedule-row"><span class="schedule-icon">🎯</span><div><small>Income Objective</small><strong id="scheduleTargetStatus">—</strong><p id="scheduleTargetNote">Checking progress to £625/month.</p></div></div>
+<div class="schedule-row"><span class="schedule-icon">↻</span><div><small>Data Status</small><strong id="scheduleDataStatus">Loading…</strong><p id="scheduleDataNote">Checking the latest Aurora update.</p></div></div>
+</div>
+</article>
+</section>
 </main>
-
 <div class="bottom-ticker"><div class="ticker-inner"><span class="live-chip">LIVE</span><span id="tickerTime">--:--</span><span class="ticker-scroll" id="tickerText">Aurora City FC news ticker loading…</span></div></div>
-  </div>
+</div>
 </div>
 <script>
 
@@ -1715,14 +1950,10 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) $("tickerTime").textCont
 
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
-
-
-<aside class="aurora-system-panel" id="auroraSystemPanel" aria-hidden="true">
-  <div class="aurora-system-head"><h3>Aurora System Check</h3><button class="aurora-system-close" id="auroraSystemClose" type="button" aria-label="Close system check">×</button></div>
-  <div class="aurora-system-list" id="auroraSystemList"><div class="aurora-system-row"><i class="aurora-system-dot"></i><div><strong>Waiting for live data</strong><span>Open after the page has finished loading.</span></div></div></div>
+<aside aria-hidden="true" class="aurora-system-panel" id="auroraSystemPanel">
+<div class="aurora-system-head"><h3>Aurora System Check</h3><button aria-label="Close system check" class="aurora-system-close" id="auroraSystemClose" type="button">×</button></div>
+<div class="aurora-system-list" id="auroraSystemList"><div class="aurora-system-row"><i class="aurora-system-dot"></i><div><strong>Waiting for live data</strong><span>Open after the page has finished loading.</span></div></div></div>
 </aside>
-
-
 <script>
 (function(){
   const button=document.getElementById('auroraSystemButton');
@@ -1767,8 +1998,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   button.addEventListener('click',()=>toggle(!panel.classList.contains('open'))); close?.addEventListener('click',()=>toggle(false));
 })();
 </script>
-
-
 <script>
 (function(){
   const el=document.getElementById('fmClock');
@@ -1785,8 +2014,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   setInterval(update,30000);
 })();
 </script>
-
-
 <script id="aurora-m3-manager-upgrade">
 (() => {
   "use strict";
@@ -1925,8 +2152,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
 </script>
-
-
 <style id="aurora-m4-integration-styles">
 /* ===================== AURORA M4 INTEGRATED MISSION CONTROL ===================== */
 #auroraM4Mission{margin:14px 0 18px;border:1px solid rgba(34,211,238,.28);border-radius:24px;background:linear-gradient(135deg,rgba(5,18,36,.94),rgba(7,29,47,.88));box-shadow:0 18px 55px rgba(0,0,0,.28);overflow:hidden;color:#eaf4ff}
@@ -1945,7 +2170,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 @media(max-width:700px){#auroraM4Mission{border-radius:19px}.m4-mission-head{flex-direction:column}.m4-mission-grid{grid-template-columns:1fr 1fr;padding:11px}.m4-lifecycle{padding:0 11px 11px}.m4-lifecycle-steps{grid-template-columns:1fr}.m4-mission-details{padding:0 11px}.m4-editor-grid{grid-template-columns:1fr 1fr}.m4-system-chip{white-space:normal}.m4-stat{min-height:84px}.m4-stat strong{font-size:16px}}
 @media(prefers-reduced-motion:reduce){#auroraM4Mission *{scroll-behavior:auto!important;transition:none!important}}
 </style>
-
 <script id="aurora-m4-integration">
 (()=>{
   'use strict';
@@ -2114,36 +2338,29 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
-
-
-<div class="beast-panel beast-notification-panel" id="beastNotificationPanel" role="dialog" aria-label="Aurora notifications">
-  <div class="beast-panel-head"><div><h3>Command Notifications</h3><p>Only items that can affect the next manager decision.</p></div><button class="beast-close" id="beastNotificationClose" type="button" aria-label="Close notifications">×</button></div>
-  <div class="beast-alert-list" id="beastAlertList"><div class="beast-empty">Waiting for AuroraData…</div></div>
+<div aria-label="Aurora notifications" class="beast-panel beast-notification-panel" id="beastNotificationPanel" role="dialog">
+<div class="beast-panel-head"><div><h3>Command Notifications</h3><p>Only items that can affect the next manager decision.</p></div><button aria-label="Close notifications" class="beast-close" id="beastNotificationClose" type="button">×</button></div>
+<div class="beast-alert-list" id="beastAlertList"><div class="beast-empty">Waiting for AuroraData…</div></div>
 </div>
-<div class="beast-layout-panel" id="beastLayoutPanel" role="dialog" aria-label="Dashboard controls">
-  <div class="beast-panel-head"><div><h3>Dashboard Controls</h3><p>Save the command centre exactly how you like it.</p></div><button class="beast-close" id="beastLayoutClose" type="button" aria-label="Close controls">×</button></div>
-  <div class="beast-setting-list">
-    <label class="beast-setting"><span><strong>Compact panels</strong><span>Fit more command information on screen.</span></span><span class="beast-switch"><input id="beastCompactToggle" type="checkbox"><i></i></span></label>
-    <label class="beast-setting"><span><strong>Daily briefing</strong><span>Show the M3 session intelligence block.</span></span><span class="beast-switch"><input id="beastM3Toggle" type="checkbox" checked><i></i></span></label>
-    <label class="beast-setting"><span><strong>Portfolio radar</strong><span>Show live holding cards and form.</span></span><span class="beast-switch"><input id="beastRadarToggle" type="checkbox" checked><i></i></span></label>
-    <label class="beast-setting"><span><strong>Decision queue</strong><span>Keep persistent manager decisions on the dashboard.</span></span><span class="beast-switch"><input id="beastDecisionToggle" type="checkbox" checked><i></i></span></label>
-    <label class="beast-setting"><span><strong>Manager action log</strong><span>Show the saved history of completed actions.</span></span><span class="beast-switch"><input id="beastLogToggle" type="checkbox" checked><i></i></span></label>
-    <label class="beast-setting"><span><strong>Media story</strong><span>Keep the latest Aurora Times panel.</span></span><span class="beast-switch"><input id="beastMediaToggle" type="checkbox" checked><i></i></span></label>
-    <label class="beast-setting"><span><strong>Upcoming schedule</strong><span>Show dividends, transfers and data status.</span></span><span class="beast-switch"><input id="beastScheduleToggle" type="checkbox" checked><i></i></span></label>
-  </div>
-  <div class="beast-theme-grid" aria-label="Dashboard theme"><button class="beast-theme-button active" data-beast-theme="night" type="button">Aurora Night</button><button class="beast-theme-button" data-beast-theme="deadline" type="button">Deadline Day</button><button class="beast-theme-button" data-beast-theme="gold" type="button">Boardroom Gold</button></div>
-  <button class="beast-reset" id="beastResetLayout" type="button">Reset dashboard layout and theme</button>
+<div aria-label="Dashboard controls" class="beast-layout-panel" id="beastLayoutPanel" role="dialog">
+<div class="beast-panel-head"><div><h3>Dashboard Controls</h3><p>Save the command centre exactly how you like it.</p></div><button aria-label="Close controls" class="beast-close" id="beastLayoutClose" type="button">×</button></div>
+<div class="beast-setting-list">
+<label class="beast-setting"><span><strong>Compact panels</strong><span>Fit more command information on screen.</span></span><span class="beast-switch"><input id="beastCompactToggle" type="checkbox"/><i></i></span></label>
+<label class="beast-setting"><span><strong>Daily briefing</strong><span>Show the M3 session intelligence block.</span></span><span class="beast-switch"><input checked="" id="beastM3Toggle" type="checkbox"/><i></i></span></label>
+<label class="beast-setting"><span><strong>Portfolio radar</strong><span>Show live holding cards and form.</span></span><span class="beast-switch"><input checked="" id="beastRadarToggle" type="checkbox"/><i></i></span></label>
+<label class="beast-setting"><span><strong>Decision queue</strong><span>Keep persistent manager decisions on the dashboard.</span></span><span class="beast-switch"><input checked="" id="beastDecisionToggle" type="checkbox"/><i></i></span></label>
+<label class="beast-setting"><span><strong>Manager action log</strong><span>Show the saved history of completed actions.</span></span><span class="beast-switch"><input checked="" id="beastLogToggle" type="checkbox"/><i></i></span></label>
+<label class="beast-setting"><span><strong>Media story</strong><span>Keep the latest Aurora Times panel.</span></span><span class="beast-switch"><input checked="" id="beastMediaToggle" type="checkbox"/><i></i></span></label>
+<label class="beast-setting"><span><strong>Upcoming schedule</strong><span>Show dividends, transfers and data status.</span></span><span class="beast-switch"><input checked="" id="beastScheduleToggle" type="checkbox"/><i></i></span></label>
+</div>
+<div aria-label="Dashboard theme" class="beast-theme-grid"><button class="beast-theme-button active" data-beast-theme="night" type="button">Aurora Night</button><button class="beast-theme-button" data-beast-theme="deadline" type="button">Deadline Day</button><button class="beast-theme-button" data-beast-theme="gold" type="button">Boardroom Gold</button></div>
+<button class="beast-reset" id="beastResetLayout" type="button">Reset dashboard layout and theme</button>
 </div>
 <div class="beast-drawer-overlay" id="beastDrawerOverlay"></div>
-<aside class="beast-drawer" id="beastHoldingDrawer" aria-label="Holding profile drawer">
-  <div class="beast-panel-head"><div><h3>Player Profile</h3><p>Live portfolio holding analysis.</p></div><button class="beast-close" id="beastDrawerClose" type="button" aria-label="Close holding profile">×</button></div>
-  <div id="beastDrawerContent"><div class="beast-empty">Select a holding from the portfolio radar.</div></div>
+<aside aria-label="Holding profile drawer" class="beast-drawer" id="beastHoldingDrawer">
+<div class="beast-panel-head"><div><h3>Player Profile</h3><p>Live portfolio holding analysis.</p></div><button aria-label="Close holding profile" class="beast-close" id="beastDrawerClose" type="button">×</button></div>
+<div id="beastDrawerContent"><div class="beast-empty">Select a holding from the portfolio radar.</div></div>
 </aside>
-<div class="beast-intro" id="beastIntro" aria-label="Aurora Command Centre loading">
-  <div class="beast-intro-card"><div class="beast-intro-crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div><h1>Aurora City FC</h1><p>Beast Command Centre</p><div class="beast-loader"><i></i></div><div class="beast-intro-status" id="beastIntroStatus">Connecting manager systems…</div><button class="beast-intro-skip" id="beastIntroSkip" type="button">Skip intro</button></div>
-</div>
-
-
 <script id="aurora-beast-command-script">
 (()=>{
   'use strict';
@@ -2236,9 +2453,16 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     return items.slice(0,6);
   }
   function visibleDecisions(){const closed=decisionState();return decisionCandidates().filter(item=>closed[item.id]?.fingerprint!==item.fingerprint)}
+  function decisionPrimaryAction(item){
+    if(!item.actionLabel)return '';
+    if(item.href){
+      return `<a class="beast-decision-btn" href="${esc(item.href)}" data-decision-link="true" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)}</a>`;
+    }
+    return `<button class="beast-decision-btn" type="button" data-decision-action="${esc(item.action||'open')}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)}</button>`;
+  }
   function renderDecisions(){
     const box=q('beastDecisionList');if(!box)return;const items=visibleDecisions();
-    box.innerHTML=items.length?items.map(item=>`<div class="beast-decision ${item.priority}"><span class="beast-decision-icon">${esc(item.icon)}</span><div class="beast-decision-copy"><div class="beast-decision-top"><strong>${esc(item.title)}</strong><span class="beast-decision-priority">${esc(item.priority)}</span></div><p>${esc(item.detail)}</p><div class="beast-decision-meta"><span>${esc(item.meta)}</span><span>•</span><span>Persists until resolved</span></div><div class="beast-decision-actions">${item.actionLabel?`<button class="beast-decision-btn" type="button" data-decision-action="${esc(item.action||'open')}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)}</button>`:''}<button class="beast-decision-btn complete" type="button" data-decision-action="complete" data-decision-id="${esc(item.id)}">Complete</button><button class="beast-decision-btn dismiss" type="button" data-decision-action="dismiss" data-decision-id="${esc(item.id)}">Dismiss</button></div></div></div>`).join(''):'<div class="beast-empty-state"><strong>Decision queue clear</strong><p>No unresolved manager decisions are waiting. Aurora will add new items automatically when the data or transfer lifecycle changes.</p></div>';
+    box.innerHTML=items.length?items.map(item=>`<div class="beast-decision ${item.priority}"><span class="beast-decision-icon">${esc(item.icon)}</span><div class="beast-decision-copy"><div class="beast-decision-top"><strong>${esc(item.title)}</strong><span class="beast-decision-priority">${esc(item.priority)}</span></div><p>${esc(item.detail)}</p><div class="beast-decision-meta"><span>${esc(item.meta)}</span><span>•</span><span>Persists until resolved</span></div><div class="beast-decision-actions">${decisionPrimaryAction(item)}<button class="beast-decision-btn complete" type="button" data-decision-action="complete" data-decision-id="${esc(item.id)}">Complete</button><button class="beast-decision-btn dismiss" type="button" data-decision-action="dismiss" data-decision-id="${esc(item.id)}">Dismiss</button></div></div></div>`).join(''):'<div class="beast-empty-state"><strong>Decision queue clear</strong><p>No unresolved manager decisions are waiting. Aurora will add new items automatically when the data or transfer lifecycle changes.</p></div>';
     const count=items.length;if(q('beastDecisionPanelCount'))q('beastDecisionPanelCount').textContent=`${count} pending`;const badge=q('beastDecisionCount');if(badge){badge.hidden=count===0;badge.textContent=String(count)}
   }
   function findDecision(id){return decisionCandidates().find(item=>item.id===id)}
@@ -2336,10 +2560,29 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     if(signature===lastRenderSignature&&q('beastHoldingStrip')?.children.length>1)return;
     renderJourney();renderRadar();renderAlerts();renderDecisions();renderActionLog();startTicker();lastRenderSignature=signature;
   }
-  function intro(){const overlay=q('beastIntro');if(!overlay)return;const close=()=>{overlay.classList.add('hide');sessionStorage.setItem('aurora_beast_intro_seen','1');setTimeout(()=>overlay.remove(),550)};q('beastIntroSkip')?.addEventListener('click',close);if(sessionStorage.getItem('aurora_beast_intro_seen')){overlay.remove();return}setTimeout(()=>{if(q('beastIntroStatus'))q('beastIntroStatus').textContent='AuroraMaster connected • manager systems ready'},900);setTimeout(close,1750)}
+  function openDecisionQueue(){
+    const s=settings();if(!s.decisions)saveSettings({...s,decisions:true});
+    renderDecisions();
+    document.body.classList.add('beast-decision-open');
+    q('beastDecisionOverlay')?.setAttribute('aria-hidden','false');
+    q('beastDecisionButton')?.setAttribute('aria-expanded','true');
+    q('beastDecisionQueue')?.setAttribute('role','dialog');
+    q('beastDecisionQueue')?.setAttribute('aria-modal','true');
+    setTimeout(()=>q('beastDecisionClose')?.focus(),40);
+  }
+  function closeDecisionQueue(){
+    document.body.classList.remove('beast-decision-open');
+    q('beastDecisionOverlay')?.setAttribute('aria-hidden','true');
+    q('beastDecisionButton')?.setAttribute('aria-expanded','false');
+    q('beastDecisionQueue')?.removeAttribute('aria-modal');
+  }
   function bind(){
     const revealAndScroll=(key,id)=>{const s=settings();if(!s[key])saveSettings({...s,[key]:true});setTimeout(()=>q(id)?.scrollIntoView({behavior:'smooth',block:'start'}),40)};
-    q('beastDecisionButton')?.addEventListener('click',()=>revealAndScroll('decisions','beastDecisionQueue'));q('beastLogButton')?.addEventListener('click',()=>revealAndScroll('log','beastActionLog'));
+    q('beastDecisionButton')?.setAttribute('aria-expanded','false');
+    q('beastDecisionButton')?.addEventListener('click',openDecisionQueue);
+    q('beastDecisionClose')?.addEventListener('click',closeDecisionQueue);
+    q('beastDecisionOverlay')?.addEventListener('click',closeDecisionQueue);
+    q('beastLogButton')?.addEventListener('click',()=>revealAndScroll('log','beastActionLog'));
     q('beastNotificationButton')?.addEventListener('click',()=>togglePanel('beastNotificationPanel','beastNotificationButton'));q('beastNotificationClose')?.addEventListener('click',()=>{q('beastNotificationPanel')?.classList.remove('open');q('beastNotificationButton')?.classList.remove('active')});
     q('beastLayoutButton')?.addEventListener('click',()=>togglePanel('beastLayoutPanel','beastLayoutButton'));q('beastLayoutClose')?.addEventListener('click',()=>{q('beastLayoutPanel')?.classList.remove('open');q('beastLayoutButton')?.classList.remove('active')});
     q('beastNotificationPanel')?.addEventListener('click',()=>{if(latestAlertSignature){localStorage.setItem(READ_KEY,latestAlertSignature);q('beastNotificationCount').hidden=true}});
@@ -2350,16 +2593,83 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     q('refreshBtn')?.addEventListener('click',()=>addLog('Aurora data refresh requested','The Manager Dashboard requested a new AuroraMaster snapshot.','data','↻','data-refresh-click',45000));
     q('beastActionLogForm')?.addEventListener('submit',event=>{event.preventDefault();const input=q('beastActionLogInput'),value=input?.value?.trim();if(!value)return;addLog(value,'Manual manager note.','manual','✎','',0);input.value='';});
     q('beastActionLogClear')?.addEventListener('click',()=>{if(window.confirm('Clear the saved Manager Action Log?')){writeJson(ACTION_LOG_KEY,[]);renderActionLog();}});
-    q('beastDecisionList')?.addEventListener('click',event=>{const button=event.target.closest('[data-decision-action]');if(button)handleDecision(button.dataset.decisionAction,button.dataset.decisionId);});
+    q('beastDecisionList')?.addEventListener('click',event=>{
+      const link=event.target.closest('[data-decision-link]');
+      if(link){const item=findDecision(link.dataset.decisionId);if(item)addLog(`Opened: ${item.title}`,item.meta,'navigation','→',`open-${item.id}`,60000);closeDecisionQueue();return;}
+      const button=event.target.closest('[data-decision-action]');
+      if(button){event.preventDefault();event.stopPropagation();handleDecision(button.dataset.decisionAction,button.dataset.decisionId);}
+    });
     document.addEventListener('click',e=>{const sort=e.target.closest('[data-beast-sort]');if(sort){sortMode=sort.dataset.beastSort;document.querySelectorAll('[data-beast-sort]').forEach(x=>x.classList.toggle('active',x===sort));renderRadar()}const card=e.target.closest('[data-beast-ticker]');if(card)openDrawer(card.dataset.beastTicker);const preview=e.target.closest('.preview-row');if(preview){const t=preview.querySelector('strong')?.textContent;if(t&&findRow(t))openDrawer(t)}});
     q('beastDrawerClose')?.addEventListener('click',closeDrawer);q('beastDrawerOverlay')?.addEventListener('click',closeDrawer);
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();q('beastNotificationPanel')?.classList.remove('open');q('beastLayoutPanel')?.classList.remove('open')}if(e.key.toLowerCase()==='p'&&!/input|textarea|select/i.test(e.target.tagName)){const s=settings(),next=!s.presentation;saveSettings({...s,presentation:next});addLog(`Presentation mode ${next?'enabled':'disabled'}`,'Keyboard shortcut P used.','system','▣','presentation-'+next,30000)}});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeDecisionQueue();q('beastNotificationPanel')?.classList.remove('open');q('beastLayoutPanel')?.classList.remove('open')}if(e.key.toLowerCase()==='p'&&!/input|textarea|select/i.test(e.target.tagName)){const s=settings(),next=!s.presentation;saveSettings({...s,presentation:next});addLog(`Presentation mode ${next?'enabled':'disabled'}`,'Keyboard shortcut P used.','system','▣','presentation-'+next,30000)}});
     window.addEventListener('storage',e=>{if(['aurora_transfer_plan_v2','aurora_registration_last_v1','aurora_payday_execution_v1','aurora_m4_signing_lifecycle_v1',DECISION_KEY,ACTION_LOG_KEY].includes(e.key))setTimeout(refreshBeast,250)});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshBeast()});
   }
-  function start(){applySettings();assignPanelKeys();applyOrder();bindDrag();bind();intro();refreshBeast();setTimeout(refreshBeast,1600);setTimeout(refreshBeast,5200);setInterval(()=>{if(!document.hidden)refreshBeast()},30000);const observer=new MutationObserver(()=>{clearTimeout(window.__auroraBeastMut);window.__auroraBeastMut=setTimeout(refreshBeast,180)});['heroAnnualIncome','lastUpdated','actionList','topTransferPreview'].forEach(id=>q(id)&&observer.observe(q(id),{childList:true,subtree:true,characterData:true}))}
+  function start(){applySettings();assignPanelKeys();applyOrder();bindDrag();bind();refreshBeast();setTimeout(refreshBeast,1600);setTimeout(refreshBeast,5200);setInterval(()=>{if(!document.hidden)refreshBeast()},30000);const observer=new MutationObserver(()=>{clearTimeout(window.__auroraBeastMut);window.__auroraBeastMut=setTimeout(refreshBeast,180)});['heroAnnualIncome','lastUpdated','actionList','topTransferPreview'].forEach(id=>q(id)&&observer.observe(q(id),{childList:true,subtree:true,characterData:true}))}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
+<div aria-hidden="true" class="beast-decision-overlay" id="beastDecisionOverlay"></div>
+<script id="aurora-page-section-navigation-script">
+(() => {
+  "use strict";
+  const menu = document.querySelector('.aurora-page-folder');
+  if (!menu) return;
+  const links = [...menu.querySelectorAll('.fm-page-submenu a[href^="#"]')];
+  const pairs = links.map(link => ({link, target:document.getElementById(link.getAttribute('href').slice(1))})).filter(x => x.target);
+  if (!pairs.length) return;
 
-</body>
+  const mark = id => {
+    links.forEach(link => {
+      const active = link.getAttribute('href') === `#${id}`;
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current','location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  const scrollToHash = hash => {
+    const target = document.getElementById(String(hash || '').replace(/^#/,''));
+    if (!target) return false;
+    menu.open = true;
+    target.scrollIntoView({behavior:'smooth',block:'start'});
+    mark(target.id);
+    return true;
+  };
+
+  links.forEach(link => link.addEventListener('click', event => {
+    const hash = link.getAttribute('href');
+    if (!hash || !scrollToHash(hash)) return;
+    event.preventDefault();
+    try { history.replaceState(null,'',hash); } catch (_) {}
+  }));
+
+  let ticking = false;
+  const syncActive = () => {
+    ticking = false;
+    const guide = Math.max(110, window.innerHeight * .28);
+    let current = pairs[0];
+    for (const pair of pairs) {
+      if (pair.target.getBoundingClientRect().top <= guide) current = pair;
+      else break;
+    }
+    mark(current.target.id);
+  };
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(syncActive);
+  }, {passive:true});
+  window.addEventListener('resize', syncActive, {passive:true});
+  window.addEventListener('hashchange', () => {
+    if (location.hash) scrollToHash(location.hash);
+    else syncActive();
+  });
+
+  if (location.hash && document.getElementById(location.hash.slice(1))) {
+    window.setTimeout(() => scrollToHash(location.hash), 80);
+  } else {
+    syncActive();
+  }
+})();
+</script></body>
 </html>
