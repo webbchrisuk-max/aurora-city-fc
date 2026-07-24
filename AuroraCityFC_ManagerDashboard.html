@@ -12,7 +12,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
-<title>Aurora City FC — Manager Dashboard BEAST</title>
+<title>Aurora City FC — Manager Dashboard BEAST V2</title>
+<!-- Build: BEAST V2 Decision Queue + Manager Action Log • 24 Jul 2026 -->
 <!-- Build: Aurora Beast Command Centre • 24 Jul 2026 -->
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
@@ -855,6 +856,26 @@ body.beast-compact .manager-command-grid{gap:12px}body.beast-compact .command-pa
 @media(max-width:900px){.beast-top-actions{gap:5px}.beast-icon-button{width:36px;height:36px}.beast-journey{grid-template-columns:1fr}.beast-target-ring{margin:0 auto}.beast-rating-card{display:block;text-align:center}.beast-milestones{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.beast-top-actions{position:fixed;right:10px;bottom:56px;z-index:180;padding:6px;border:1px solid rgba(125,211,252,.18);border-radius:16px;background:rgba(2,6,18,.92);box-shadow:0 16px 44px rgba(0,0,0,.42)}.beast-notification-panel,.beast-layout-panel{top:auto;right:10px;bottom:108px;width:calc(100vw - 20px);max-height:64vh}.beast-journey{padding:17px;border-radius:23px}.beast-target-ring{width:150px;height:150px}.beast-milestones{grid-template-columns:1fr}.beast-drawer{width:100vw;border-radius:0;padding:16px}.beast-holding-strip{grid-auto-columns:82vw}.beast-presentation .fm-workspace .app{padding:12px 10px 86px}}
 @media(prefers-reduced-motion:reduce){.beast-intro,.beast-drawer,.beast-drawer-overlay,.beast-holding-card,.beast-icon-button{transition:none!important}.beast-loader i{animation:none;width:100%}}
+
+/* ===================== BEAST V2 — DECISION QUEUE + MANAGER ACTION LOG ===================== */
+.beast-decision-panel{border-color:rgba(251,191,36,.22);background:radial-gradient(circle at 92% 0%,rgba(251,191,36,.11),transparent 30%),linear-gradient(180deg,rgba(19,22,38,.94),rgba(5,11,24,.97))}
+.beast-action-log-panel{border-color:rgba(167,139,250,.22);background:radial-gradient(circle at 92% 0%,rgba(167,139,250,.12),transparent 31%),linear-gradient(180deg,rgba(15,18,40,.94),rgba(5,10,24,.97))}
+.beast-panel-counter{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:29px;padding:0 9px;border:1px solid rgba(251,191,36,.25);border-radius:999px;background:rgba(120,53,15,.25);color:#fde68a;font-size:10px;font-weight:1000;letter-spacing:.06em}
+.beast-decision-list{display:grid;gap:9px;padding:15px 18px 18px}
+.beast-decision{position:relative;overflow:hidden;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:13px;border:1px solid rgba(148,163,184,.14);border-radius:18px;background:rgba(2,6,23,.31)}
+.beast-decision:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#60a5fa}
+.beast-decision.high:before{background:#fb7185}.beast-decision.medium:before{background:#fbbf24}.beast-decision.low:before{background:#60a5fa}
+.beast-decision-icon{width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(125,211,252,.18);border-radius:14px;background:rgba(8,47,73,.38);font-size:19px}
+.beast-decision.high .beast-decision-icon{border-color:rgba(251,113,133,.22);background:rgba(127,29,29,.18)}.beast-decision.medium .beast-decision-icon{border-color:rgba(251,191,36,.22);background:rgba(120,53,15,.18)}
+.beast-decision-copy{min-width:0}.beast-decision-top{display:flex;justify-content:space-between;gap:10px;align-items:start}.beast-decision-top strong{color:#f0f9ff;font-size:13px}.beast-decision-priority{flex:0 0 auto;padding:4px 7px;border:1px solid rgba(148,163,184,.14);border-radius:999px;background:rgba(15,23,42,.48);color:#94a3b8;font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.08em}.beast-decision.high .beast-decision-priority{color:#fecdd3}.beast-decision.medium .beast-decision-priority{color:#fde68a}
+.beast-decision-copy p{margin:5px 0 0;color:#93a4bd;font-size:11px;line-height:1.45}.beast-decision-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;color:#718096;font-size:9px}.beast-decision-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.beast-decision-btn{padding:7px 9px;border:1px solid rgba(125,211,252,.18);border-radius:10px;background:rgba(8,47,73,.30);color:#bae6fd;font-size:9px;font-weight:950;cursor:pointer}.beast-decision-btn:hover{border-color:var(--beast-accent);color:#ecfeff}.beast-decision-btn.complete{border-color:rgba(52,211,153,.24);background:rgba(20,83,45,.20);color:#bbf7d0}.beast-decision-btn.dismiss{border-color:rgba(148,163,184,.13);background:rgba(15,23,42,.32);color:#94a3b8}
+.beast-empty-state{margin:15px 18px 18px;padding:22px;border:1px dashed rgba(52,211,153,.25);border-radius:18px;background:rgba(20,83,45,.10);text-align:center}.beast-empty-state strong{display:block;color:#bbf7d0;font-size:14px}.beast-empty-state p{margin:6px 0 0;color:#7f91a9;font-size:10px;line-height:1.45}
+.beast-log-compose{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:14px 18px 7px}.beast-log-compose input{min-width:0;border:1px solid rgba(167,139,250,.20);border-radius:13px;background:rgba(2,6,23,.42);color:#e9d5ff;padding:11px 12px;outline:none}.beast-log-compose input:focus{border-color:#a78bfa;box-shadow:0 0 0 4px rgba(167,139,250,.10)}.beast-log-compose button{border:1px solid rgba(167,139,250,.28);border-radius:13px;background:rgba(88,28,135,.25);color:#e9d5ff;padding:0 14px;font-size:10px;font-weight:1000;cursor:pointer}
+.beast-action-log-list{display:grid;gap:8px;max-height:430px;overflow:auto;padding:8px 18px 12px;scrollbar-width:thin;scrollbar-color:rgba(167,139,250,.25) transparent}.beast-log-row{display:grid;grid-template-columns:39px minmax(0,1fr) auto;gap:10px;align-items:start;padding:11px;border:1px solid rgba(148,163,184,.13);border-radius:16px;background:rgba(2,6,23,.29)}.beast-log-icon{width:39px;height:39px;display:grid;place-items:center;border:1px solid rgba(167,139,250,.20);border-radius:13px;background:rgba(88,28,135,.20);font-size:16px}.beast-log-row strong{display:block;color:#f3e8ff;font-size:12px}.beast-log-row p{margin:4px 0 0;color:#8495ad;font-size:10px;line-height:1.42}.beast-log-time{color:#64748b;font-size:8px;white-space:nowrap}.beast-log-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding:11px 18px 15px;border-top:1px solid rgba(167,139,250,.11);color:#718096;font-size:9px}.beast-log-clear{border:1px solid rgba(251,113,133,.18);border-radius:10px;background:rgba(127,29,29,.13);color:#fda4af;padding:7px 9px;font-size:8px;font-weight:950;cursor:pointer}
+.beast-hide-decisions #beastDecisionQueue{display:none!important}.beast-hide-log #beastActionLog{display:none!important}
+body.beast-compact .beast-decision-list{padding:11px 14px 14px}body.beast-compact .beast-action-log-list{max-height:330px;padding-left:14px;padding-right:14px}
+@media(max-width:760px){.beast-log-compose{grid-template-columns:1fr}.beast-log-compose button{min-height:40px}.beast-log-row{grid-template-columns:38px minmax(0,1fr)}.beast-log-time{grid-column:2}.beast-decision{grid-template-columns:40px minmax(0,1fr)}.beast-decision-icon{width:40px;height:40px}}
+
 </style>
 
 </head>
@@ -933,6 +954,8 @@ body.beast-compact .manager-command-grid{gap:12px}body.beast-compact .command-pa
       <span class="fm-page-path">Home / Manager Command Centre</span>
 
       <div class="beast-top-actions" aria-label="Aurora command controls">
+        <button class="beast-icon-button" id="beastDecisionButton" type="button" title="Decision Queue" aria-label="Open decision queue">📋<span class="beast-count" id="beastDecisionCount" hidden>0</span></button>
+        <button class="beast-icon-button" id="beastLogButton" type="button" title="Manager Action Log" aria-label="Open manager action log">🕘</button>
         <button class="beast-icon-button" id="beastNotificationButton" type="button" title="Notifications" aria-label="Open notifications">🔔<span class="beast-count" id="beastNotificationCount" hidden>0</span></button>
         <button class="beast-icon-button" id="beastLayoutButton" type="button" title="Dashboard controls" aria-label="Open dashboard controls">⚙</button>
         <button class="beast-icon-button" id="beastPresentationButton" type="button" title="Presentation mode" aria-label="Toggle presentation mode">▣</button>
@@ -1039,12 +1062,20 @@ body.beast-compact .manager-command-grid{gap:12px}body.beast-compact .command-pa
       <div class="command-panel-head"><div><span class="panel-kicker">First Team Radar</span><h3>Live Portfolio Form</h3><p>Click any holding for valuation, income, recent form and the manager verdict.</p></div><div class="beast-radar-tools"><button class="beast-mini-btn active" data-beast-sort="income" type="button">Income</button><button class="beast-mini-btn" data-beast-sort="value" type="button">Value</button><button class="beast-mini-btn" data-beast-sort="yield" type="button">Yield</button></div></div>
       <div class="beast-holding-strip" id="beastHoldingStrip"><div class="loading">Building the live squad radar…</div></div>
     </article>
-    <article class="command-panel command-span-7">
-      <div class="command-panel-head"><div><span class="panel-kicker">Manager Office</span><h3>Action Centre</h3><p>The live items that need your attention now.</p></div><span class="badge green">Live</span></div>
-      <div class="action-list manager-actions" id="actionList"><div class="loading">Loading manager actions…</div></div>
+    <article class="command-panel command-span-7 beast-decision-panel" id="beastDecisionQueue" data-beast-key="decision-queue">
+      <div class="command-panel-head"><div><span class="panel-kicker">Manager Office</span><h3>Decision Queue</h3><p>Persistent actions that remain here until completed, resolved or dismissed.</p></div><span class="beast-panel-counter" id="beastDecisionPanelCount">0 pending</span></div>
+      <div class="beast-decision-list" id="beastDecisionList"><div class="loading">Building the manager decision queue…</div></div>
+      <div id="actionList" hidden aria-hidden="true"></div>
     </article>
 
-    <article class="command-panel command-span-5 media-command-panel">
+    <article class="command-panel command-span-5 beast-action-log-panel" id="beastActionLog" data-beast-key="manager-action-log">
+      <div class="command-panel-head"><div><span class="panel-kicker">Club History</span><h3>Manager Action Log</h3><p>What you changed, reviewed, completed and recorded across Aurora.</p></div><span class="badge blue" id="beastActionLogBadge">Live</span></div>
+      <form class="beast-log-compose" id="beastActionLogForm"><input id="beastActionLogInput" type="text" maxlength="120" autocomplete="off" placeholder="Record a manual manager action…"><button type="submit">Add entry</button></form>
+      <div class="beast-action-log-list" id="beastActionLogList"><div class="loading">Loading manager history…</div></div>
+      <div class="beast-log-footer"><span id="beastActionLogCount">0 recorded actions</span><button class="beast-log-clear" id="beastActionLogClear" type="button">Clear history</button></div>
+    </article>
+
+    <article class="command-panel command-span-6 media-command-panel">
       <div class="command-panel-head"><div><span class="panel-kicker">Aurora Times</span><h3>Latest Media Story</h3><p><span id="deptMedia">Loading</span> newsroom • <b id="deptNewsCount">—</b> stories</p></div><span class="badge blue" id="latestMediaBadge">News</span></div>
       <div class="media-feature">
         <div class="media-feature-icon">AFC</div>
@@ -1088,7 +1119,7 @@ body.beast-compact .manager-command-grid{gap:12px}body.beast-compact .command-pa
       <a class="panel-open-link" href="AuroraCityFC_Boardroom.html">Open Boardroom <span>→</span></a>
     </article>
 
-    <article class="command-panel command-span-6" id="schedule-panel">
+    <article class="command-panel command-span-12" id="schedule-panel">
       <div class="command-panel-head"><div><span class="panel-kicker">Calendar</span><h3>Upcoming Schedule</h3><p>The next financial and club-management events.</p></div><span class="badge amber">Next Up</span></div>
       <div class="schedule-list">
         <div class="schedule-row"><span class="schedule-icon">💷</span><div><small>Next Dividend</small><strong id="nextDividendTicker">—</strong><p id="nextDividendNote">Checking payment calendar…</p></div></div>
@@ -2095,6 +2126,8 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     <label class="beast-setting"><span><strong>Compact panels</strong><span>Fit more command information on screen.</span></span><span class="beast-switch"><input id="beastCompactToggle" type="checkbox"><i></i></span></label>
     <label class="beast-setting"><span><strong>Daily briefing</strong><span>Show the M3 session intelligence block.</span></span><span class="beast-switch"><input id="beastM3Toggle" type="checkbox" checked><i></i></span></label>
     <label class="beast-setting"><span><strong>Portfolio radar</strong><span>Show live holding cards and form.</span></span><span class="beast-switch"><input id="beastRadarToggle" type="checkbox" checked><i></i></span></label>
+    <label class="beast-setting"><span><strong>Decision queue</strong><span>Keep persistent manager decisions on the dashboard.</span></span><span class="beast-switch"><input id="beastDecisionToggle" type="checkbox" checked><i></i></span></label>
+    <label class="beast-setting"><span><strong>Manager action log</strong><span>Show the saved history of completed actions.</span></span><span class="beast-switch"><input id="beastLogToggle" type="checkbox" checked><i></i></span></label>
     <label class="beast-setting"><span><strong>Media story</strong><span>Keep the latest Aurora Times panel.</span></span><span class="beast-switch"><input id="beastMediaToggle" type="checkbox" checked><i></i></span></label>
     <label class="beast-setting"><span><strong>Upcoming schedule</strong><span>Show dividends, transfers and data status.</span></span><span class="beast-switch"><input id="beastScheduleToggle" type="checkbox" checked><i></i></span></label>
   </div>
@@ -2117,6 +2150,11 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   const SETTINGS_KEY='aurora_beast_dashboard_settings_v1';
   const ORDER_KEY='aurora_beast_dashboard_order_v1';
   const READ_KEY='aurora_beast_alerts_read_v1';
+  const DECISION_KEY='aurora_beast_decision_state_v1';
+  const ACTION_LOG_KEY='aurora_beast_action_log_v1';
+  const AUTO_PLAN_KEY='aurora_beast_last_logged_plan_v1';
+  const AUTO_STAGE_KEY='aurora_beast_last_logged_stage_v1';
+  const V2_SEED_KEY='aurora_beast_v2_seeded';
   const q=id=>document.getElementById(id);
   const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
   const num=value=>{if(value===null||value===undefined||String(value).trim()==='')return NaN;const n=Number(String(value).replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:NaN};
@@ -2130,18 +2168,20 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   let latestAlertSignature='';
 
   function settings(){
-    try{return {...{compact:false,m3:true,radar:true,media:true,schedule:true,theme:'night',presentation:false},...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}}catch(_){return {compact:false,m3:true,radar:true,media:true,schedule:true,theme:'night',presentation:false}}
+    try{return {...{compact:false,m3:true,radar:true,decisions:true,log:true,media:true,schedule:true,theme:'night',presentation:false},...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}}catch(_){return {compact:false,m3:true,radar:true,decisions:true,log:true,media:true,schedule:true,theme:'night',presentation:false}}
   }
   function saveSettings(next){localStorage.setItem(SETTINGS_KEY,JSON.stringify(next));applySettings(next);}
   function applySettings(s=settings()){
     document.body.classList.toggle('beast-compact',!!s.compact);
     document.body.classList.toggle('beast-hide-m3',!s.m3);
     document.body.classList.toggle('beast-hide-radar',!s.radar);
+    document.body.classList.toggle('beast-hide-decisions',!s.decisions);
+    document.body.classList.toggle('beast-hide-log',!s.log);
     document.body.classList.toggle('beast-hide-media',!s.media);
     document.body.classList.toggle('beast-hide-schedule',!s.schedule);
     document.body.classList.toggle('beast-presentation',!!s.presentation);
     document.body.dataset.beastTheme=s.theme||'night';
-    [['beastCompactToggle',s.compact],['beastM3Toggle',s.m3],['beastRadarToggle',s.radar],['beastMediaToggle',s.media],['beastScheduleToggle',s.schedule]].forEach(([id,val])=>{if(q(id))q(id).checked=!!val});
+    [['beastCompactToggle',s.compact],['beastM3Toggle',s.m3],['beastRadarToggle',s.radar],['beastDecisionToggle',s.decisions],['beastLogToggle',s.log],['beastMediaToggle',s.media],['beastScheduleToggle',s.schedule]].forEach(([id,val])=>{if(q(id))q(id).checked=!!val});
     q('beastPresentationButton')?.classList.toggle('active',!!s.presentation);
     document.querySelectorAll('[data-beast-theme]').forEach(btn=>btn.classList.toggle('active',btn.dataset.beastTheme===(s.theme||'night')));
   }
@@ -2167,6 +2207,54 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     const s=strength(row);return Number.isFinite(s)?s>=75?'Strong value':s>=60?'Fair value':'Under review':'Live holding';
   }
   function rowStatus(row){const s=strength(row),v=valuation(row).toLowerCase();if(/above|review|weak/.test(v)||(Number.isFinite(s)&&s<55))return ['Under review','review'];if(/below|strong/.test(v)||(Number.isFinite(s)&&s>=72))return ['Strong','strong'];return ['Stable','watch']}
+  function readJson(key,fallback){try{const value=JSON.parse(localStorage.getItem(key)||'null');return value===null?fallback:value}catch(_){return fallback}}
+  function writeJson(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}}
+  function esc(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+  function logEntries(){const rows=readJson(ACTION_LOG_KEY,[]);return Array.isArray(rows)?rows:[]}
+  function addLog(title,detail='',type='system',icon='•',dedupeKey='',dedupeMs=300000){
+    const rows=logEntries(),now=Date.now();
+    if(dedupeKey&&rows.some(row=>row.dedupeKey===dedupeKey&&now-Number(row.at||0)<dedupeMs))return;
+    rows.unshift({id:`${now}-${Math.random().toString(36).slice(2,7)}`,title:String(title||'Manager action'),detail:String(detail||''),type,icon,at:now,dedupeKey});
+    writeJson(ACTION_LOG_KEY,rows.slice(0,60));renderActionLog();
+  }
+  function renderActionLog(){
+    const box=q('beastActionLogList'),rows=logEntries();if(!box)return;
+    box.innerHTML=rows.length?rows.map(row=>{const d=new Date(Number(row.at)||Date.now());return `<div class="beast-log-row"><span class="beast-log-icon">${esc(row.icon||'•')}</span><span><strong>${esc(row.title)}</strong>${row.detail?`<p>${esc(row.detail)}</p>`:''}</span><time class="beast-log-time" datetime="${d.toISOString()}">${d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}<br>${d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</time></div>`}).join(''):'<div class="beast-empty-state"><strong>No actions recorded yet</strong><p>Complete a decision, open a holding, refresh Aurora or add a manual note.</p></div>';
+    if(q('beastActionLogCount'))q('beastActionLogCount').textContent=`${rows.length} recorded action${rows.length===1?'':'s'}`;
+  }
+  function decisionState(){const value=readJson(DECISION_KEY,{});return value&&typeof value==='object'?value:{}}
+  function lifecycleSnapshot(){try{return window.AuroraM4?.lifecycle?.()||{}}catch(_){return {}}}
+  function decisionCandidates(){
+    const m=journeyMetrics(),items=[];
+    if(m.latest){const age=(Date.now()-m.latest.getTime())/36e5;if(age>8)items.push({id:'refresh-data',fingerprint:String(m.latest.getTime()),priority:'high',icon:'↻',title:'Refresh Aurora data',detail:`The newest dated row is ${age.toFixed(1)} hours old. Refresh before making a price-sensitive decision.`,meta:'Data confidence',action:'refresh',actionLabel:'Refresh now'});}
+    const life=lifecycleSnapshot(),route=(life.routeTickers||[]).join(' / ');
+    if(Number(life.stage||1)===1)items.push({id:'signing-stage-1',fingerprint:'stage-1',priority:'high',icon:'⇄',title:'Build the next deal sheet',detail:'No active transfer route is synced. Finalise the allocation before the next payday window.',meta:'Transfer Centre',href:'AuroraCityFC_TransferCentre.html',actionLabel:'Open Transfer Centre'});
+    if(Number(life.stage)===2)items.push({id:'signing-stage-2',fingerprint:`${route}|${life.purchasedAt||''}`,priority:'high',icon:'💷',title:'Execute the payday purchases',detail:`The approved route${route?` is ${route}`:''} is ready for the broker purchase stage.`,meta:'Payday execution',href:'AuroraCityFC_TransferCentre.html#payday-execution',actionLabel:'Open execution'});
+    if(Number(life.stage)===3)items.push({id:'signing-stage-3',fingerprint:String(life.purchasedAt||route),priority:'high',icon:'✓',title:'Register the completed purchases',detail:'The broker purchase has been recorded but the signing still needs to pass through registration.',meta:'Registration pending',href:'AuroraCityFC_TransferCentre.html#registration',actionLabel:'Open registration'});
+    if(Number(life.stage)===4)items.push({id:'signing-stage-4',fingerprint:`${life.registeredAt||''}|${life.ticker||''}`,priority:'medium',icon:'♟',title:'Confirm the signing in the squad',detail:`${life.ticker||'The registered purchase'} has passed registration. Confirm it appears correctly in Squad Hub after the next data export.`,meta:'Squad confirmation',href:'AuroraCityFC_SquadHub.html',actionLabel:'Open Squad Hub'});
+    activeRows().filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60}).sort((a,b)=>strength(a)-strength(b)).slice(0,2).forEach(row=>items.push({id:`review-${ticker(row)}`,fingerprint:`${Math.round(strength(row))}|${valuation(row)}`,priority:'medium',icon:'⚠',title:`Review ${ticker(row)} before adding funds`,detail:`Buy-strength is ${Math.round(strength(row))}. Current valuation status: ${valuation(row)}.`,meta:'Portfolio review',action:'holding',ticker:ticker(row),actionLabel:'Open profile'}));
+    return items.slice(0,6);
+  }
+  function visibleDecisions(){const closed=decisionState();return decisionCandidates().filter(item=>closed[item.id]?.fingerprint!==item.fingerprint)}
+  function renderDecisions(){
+    const box=q('beastDecisionList');if(!box)return;const items=visibleDecisions();
+    box.innerHTML=items.length?items.map(item=>`<div class="beast-decision ${item.priority}"><span class="beast-decision-icon">${esc(item.icon)}</span><div class="beast-decision-copy"><div class="beast-decision-top"><strong>${esc(item.title)}</strong><span class="beast-decision-priority">${esc(item.priority)}</span></div><p>${esc(item.detail)}</p><div class="beast-decision-meta"><span>${esc(item.meta)}</span><span>•</span><span>Persists until resolved</span></div><div class="beast-decision-actions">${item.actionLabel?`<button class="beast-decision-btn" type="button" data-decision-action="${esc(item.action||'open')}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)}</button>`:''}<button class="beast-decision-btn complete" type="button" data-decision-action="complete" data-decision-id="${esc(item.id)}">Complete</button><button class="beast-decision-btn dismiss" type="button" data-decision-action="dismiss" data-decision-id="${esc(item.id)}">Dismiss</button></div></div></div>`).join(''):'<div class="beast-empty-state"><strong>Decision queue clear</strong><p>No unresolved manager decisions are waiting. Aurora will add new items automatically when the data or transfer lifecycle changes.</p></div>';
+    const count=items.length;if(q('beastDecisionPanelCount'))q('beastDecisionPanelCount').textContent=`${count} pending`;const badge=q('beastDecisionCount');if(badge){badge.hidden=count===0;badge.textContent=String(count)}
+  }
+  function findDecision(id){return decisionCandidates().find(item=>item.id===id)}
+  function closeDecision(item,outcome){if(!item)return;const state=decisionState();state[item.id]={fingerprint:item.fingerprint,outcome,at:Date.now()};writeJson(DECISION_KEY,state);addLog(`${outcome==='completed'?'Completed':'Dismissed'}: ${item.title}`,item.detail,'decision',outcome==='completed'?'✓':'×',`decision-${outcome}-${item.id}-${item.fingerprint}`,0);renderDecisions()}
+  function handleDecision(action,id){
+    const item=findDecision(id);if(!item)return;
+    if(action==='complete'||action==='dismiss'){closeDecision(item,action==='complete'?'completed':'dismissed');return;}
+    if(action==='refresh'){q('refreshBtn')?.click();return;}
+    if(action==='holding'&&item.ticker){openDrawer(item.ticker);return;}
+    if(item.href){addLog(`Opened: ${item.title}`,item.meta,'navigation','→',`open-${item.id}`,60000);window.location.href=item.href;}
+  }
+  function syncAutomaticLog(){
+    if(!localStorage.getItem(V2_SEED_KEY)){localStorage.setItem(V2_SEED_KEY,'1');addLog('BEAST V2 command tools activated','Decision Queue and Manager Action Log are now live.','system','🔥','beast-v2-seed',0);}
+    const plan=transferPlan();if(plan?.rows?.length){const sig=JSON.stringify({rows:plan.rows.map(r=>r.displayTicker||r.ticker),income:num(plan.totalIncome),budget:num(plan.totalBudget??plan.budget)}),prev=localStorage.getItem(AUTO_PLAN_KEY);if(prev!==sig){addLog(prev?'Transfer deal sheet updated':'Transfer deal sheet connected',`${plan.rows.map(r=>r.displayTicker||r.ticker).join(' / ')} • ${cash(num(plan.totalIncome))}/year estimated income.`,'transfer','⇄','plan-'+sig,0);localStorage.setItem(AUTO_PLAN_KEY,sig)}}
+    const life=lifecycleSnapshot(),stage=Number(life.stage||1),stageSig=`${stage}|${(life.routeTickers||[]).join(',')}|${life.purchasedAt||''}|${life.registeredAt||''}|${life.ticker||''}`,prevStage=localStorage.getItem(AUTO_STAGE_KEY);if(prevStage&&prevStage!==stageSig){const titles={1:'Transfer lifecycle reset to planning',2:'Deal sheet moved to funds-ready',3:'Payday purchase marked complete',4:'Purchase registration completed',5:'New signing confirmed in squad'};addLog(titles[stage]||'Transfer lifecycle updated',stage===2?(life.routeTickers||[]).join(' / '):life.ticker||'Aurora transfer workflow advanced.','transfer',stage>=4?'✓':'⇄','stage-'+stageSig,0)}localStorage.setItem(AUTO_STAGE_KEY,stageSig);
+  }
   function historyFor(t){
     const target=String(t||'').replace('.L','').replace('LON:','').toUpperCase();
     const rows=[...(state?.dailyPriceSummary||[]),...(state?.priceLog||[]),...(state?.livePrices||[])];
@@ -2232,7 +2320,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function findRow(t){const wanted=String(t||'').replace('.L','').replace('LON:','').toUpperCase();return activeRows().find(r=>ticker(r).replace('.L','').replace('LON:','').toUpperCase()===wanted)}
   function managerVerdict(row){const [status]=rowStatus(row),y=rate(row),s=strength(row),v=valuation(row);if(status==='Under review')return `${ticker(row)} needs monitoring before further funds are committed. ${Number.isFinite(s)?`Buy-strength is ${Math.round(s)}.`:''}`;if(status==='Strong')return `${ticker(row)} is performing as a strong income-squad member. ${Number.isFinite(y)?`Current portfolio yield contribution is ${percent(y*100)}.`:''}`;return `${ticker(row)} remains a stable member of the income squad. Valuation status: ${v}.`}
   function openDrawer(t){
-    const row=findRow(t);if(!row)return;const [status,cls]=rowStatus(row),y=rate(row),move=dayMove(row),form=historyFor(ticker(row));q('beastDrawerContent').innerHTML=`<div class="beast-drawer-hero"><small>${account(row)}</small><h2>${ticker(row)}</h2><p>${name(row)}</p><span class="beast-drawer-status beast-status-${cls}">${status} • ${valuation(row)}</span></div><div class="beast-drawer-metrics"><div class="beast-drawer-metric"><small>Market value</small><strong>${cash(value(row))}</strong></div><div class="beast-drawer-metric green"><small>Annual income</small><strong>${cash(annual(row))}</strong></div><div class="beast-drawer-metric"><small>Shares / units</small><strong>${Number.isFinite(shares(row))?shares(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Live price</small><strong>${Number.isFinite(price(row))?price(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Portfolio yield</small><strong>${Number.isFinite(y)?percent(y*100):'—'}</strong></div><div class="beast-drawer-metric ${Number.isFinite(move)&&move>=0?'green':''}"><small>Day move</small><strong>${Number.isFinite(move)?`${move>=0?'+':''}${move.toFixed(2)}%`:'—'}</strong></div></div><div class="beast-drawer-section"><h4>Recent form</h4><p>Five latest usable price sessions. W = positive, D = flat, L = negative.</p><div class="beast-drawer-form">${formMarkup(form,'span')}</div></div><div class="beast-drawer-section"><h4>Manager verdict</h4><p>${managerVerdict(row)}</p></div><div class="beast-drawer-links"><a href="AuroraCityFC_SquadHub.html">Open Squad Hub</a><a href="AuroraCityFC_AnalysisRoom.html">Open Analysis Room</a></div>`;
+    const row=findRow(t);if(!row)return;addLog(`Reviewed holding: ${ticker(row)}`,`${name(row)} • ${cash(value(row))} market value • ${cash(annual(row))}/year income.`,'portfolio','♟',`holding-${ticker(row)}`,300000);const [status,cls]=rowStatus(row),y=rate(row),move=dayMove(row),form=historyFor(ticker(row));q('beastDrawerContent').innerHTML=`<div class="beast-drawer-hero"><small>${account(row)}</small><h2>${ticker(row)}</h2><p>${name(row)}</p><span class="beast-drawer-status beast-status-${cls}">${status} • ${valuation(row)}</span></div><div class="beast-drawer-metrics"><div class="beast-drawer-metric"><small>Market value</small><strong>${cash(value(row))}</strong></div><div class="beast-drawer-metric green"><small>Annual income</small><strong>${cash(annual(row))}</strong></div><div class="beast-drawer-metric"><small>Shares / units</small><strong>${Number.isFinite(shares(row))?shares(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Live price</small><strong>${Number.isFinite(price(row))?price(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Portfolio yield</small><strong>${Number.isFinite(y)?percent(y*100):'—'}</strong></div><div class="beast-drawer-metric ${Number.isFinite(move)&&move>=0?'green':''}"><small>Day move</small><strong>${Number.isFinite(move)?`${move>=0?'+':''}${move.toFixed(2)}%`:'—'}</strong></div></div><div class="beast-drawer-section"><h4>Recent form</h4><p>Five latest usable price sessions. W = positive, D = flat, L = negative.</p><div class="beast-drawer-form">${formMarkup(form,'span')}</div></div><div class="beast-drawer-section"><h4>Manager verdict</h4><p>${managerVerdict(row)}</p></div><div class="beast-drawer-links"><a href="AuroraCityFC_SquadHub.html">Open Squad Hub</a><a href="AuroraCityFC_AnalysisRoom.html">Open Analysis Room</a></div>`;
     q('beastDrawerOverlay').classList.add('open');q('beastHoldingDrawer').classList.add('open');document.body.style.overflow='hidden';
   }
   function closeDrawer(){q('beastDrawerOverlay')?.classList.remove('open');q('beastHoldingDrawer')?.classList.remove('open');document.body.style.overflow=''}
@@ -2242,24 +2330,31 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function saveOrder(){const grid=document.querySelector('.manager-command-grid');if(grid)localStorage.setItem(ORDER_KEY,JSON.stringify([...grid.children].map(x=>x.dataset?.beastKey).filter(Boolean)))}
   function bindDrag(){let dragging=null;document.addEventListener('dragstart',e=>{const panel=e.target.closest('.manager-command-grid>.command-panel');if(!panel)return;dragging=panel;panel.classList.add('beast-dragging');e.dataTransfer.effectAllowed='move'});document.addEventListener('dragend',()=>{dragging?.classList.remove('beast-dragging');document.querySelectorAll('.beast-drag-over').forEach(x=>x.classList.remove('beast-drag-over'));dragging=null;saveOrder()});document.addEventListener('dragover',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.add('beast-drag-over')});document.addEventListener('dragleave',e=>e.target.closest('.command-panel')?.classList.remove('beast-drag-over'));document.addEventListener('drop',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.remove('beast-drag-over');const rect=target.getBoundingClientRect();target.parentNode.insertBefore(dragging,e.clientY<rect.top+rect.height/2?target:target.nextSibling);saveOrder()})}
   function refreshBeast(){
+    syncAutomaticLog();renderDecisions();renderActionLog();
     if(!Array.isArray(state?.holdings)||!state.holdings.length)return;
     const signature=`${state.holdings.length}|${activeRows().length}|${q('heroAnnualIncome')?.textContent}|${q('lastUpdated')?.textContent}|${localStorage.getItem('aurora_transfer_plan_v2')||''}`;
     if(signature===lastRenderSignature&&q('beastHoldingStrip')?.children.length>1)return;
-    renderJourney();renderRadar();renderAlerts();startTicker();lastRenderSignature=signature;
+    renderJourney();renderRadar();renderAlerts();renderDecisions();renderActionLog();startTicker();lastRenderSignature=signature;
   }
   function intro(){const overlay=q('beastIntro');if(!overlay)return;const close=()=>{overlay.classList.add('hide');sessionStorage.setItem('aurora_beast_intro_seen','1');setTimeout(()=>overlay.remove(),550)};q('beastIntroSkip')?.addEventListener('click',close);if(sessionStorage.getItem('aurora_beast_intro_seen')){overlay.remove();return}setTimeout(()=>{if(q('beastIntroStatus'))q('beastIntroStatus').textContent='AuroraMaster connected • manager systems ready'},900);setTimeout(close,1750)}
   function bind(){
+    const revealAndScroll=(key,id)=>{const s=settings();if(!s[key])saveSettings({...s,[key]:true});setTimeout(()=>q(id)?.scrollIntoView({behavior:'smooth',block:'start'}),40)};
+    q('beastDecisionButton')?.addEventListener('click',()=>revealAndScroll('decisions','beastDecisionQueue'));q('beastLogButton')?.addEventListener('click',()=>revealAndScroll('log','beastActionLog'));
     q('beastNotificationButton')?.addEventListener('click',()=>togglePanel('beastNotificationPanel','beastNotificationButton'));q('beastNotificationClose')?.addEventListener('click',()=>{q('beastNotificationPanel')?.classList.remove('open');q('beastNotificationButton')?.classList.remove('active')});
     q('beastLayoutButton')?.addEventListener('click',()=>togglePanel('beastLayoutPanel','beastLayoutButton'));q('beastLayoutClose')?.addEventListener('click',()=>{q('beastLayoutPanel')?.classList.remove('open');q('beastLayoutButton')?.classList.remove('active')});
     q('beastNotificationPanel')?.addEventListener('click',()=>{if(latestAlertSignature){localStorage.setItem(READ_KEY,latestAlertSignature);q('beastNotificationCount').hidden=true}});
-    q('beastPresentationButton')?.addEventListener('click',()=>{const s=settings();saveSettings({...s,presentation:!s.presentation})});
-    [['beastCompactToggle','compact'],['beastM3Toggle','m3'],['beastRadarToggle','radar'],['beastMediaToggle','media'],['beastScheduleToggle','schedule']].forEach(([id,key])=>q(id)?.addEventListener('change',e=>saveSettings({...settings(),[key]:e.target.checked})));
-    document.querySelectorAll('.beast-theme-button').forEach(btn=>btn.addEventListener('click',()=>saveSettings({...settings(),theme:btn.dataset.beastTheme})));
-    q('beastResetLayout')?.addEventListener('click',()=>{localStorage.removeItem(SETTINGS_KEY);localStorage.removeItem(ORDER_KEY);location.reload()});
+    q('beastPresentationButton')?.addEventListener('click',()=>{const s=settings(),next=!s.presentation;saveSettings({...s,presentation:next});addLog(`Presentation mode ${next?'enabled':'disabled'}`,'Dashboard display mode changed.','system','▣','presentation-'+next,30000)});
+    [['beastCompactToggle','compact'],['beastM3Toggle','m3'],['beastRadarToggle','radar'],['beastDecisionToggle','decisions'],['beastLogToggle','log'],['beastMediaToggle','media'],['beastScheduleToggle','schedule']].forEach(([id,key])=>q(id)?.addEventListener('change',e=>saveSettings({...settings(),[key]:e.target.checked})));
+    document.querySelectorAll('.beast-theme-button').forEach(btn=>btn.addEventListener('click',()=>{saveSettings({...settings(),theme:btn.dataset.beastTheme});addLog('Dashboard theme changed',btn.textContent.trim(),'system','◈','theme-'+btn.dataset.beastTheme,30000)}));
+    q('beastResetLayout')?.addEventListener('click',()=>{addLog('Dashboard layout reset','Panels, theme and visibility settings returned to defaults.','system','⚙','layout-reset',0);localStorage.removeItem(SETTINGS_KEY);localStorage.removeItem(ORDER_KEY);location.reload()});
+    q('refreshBtn')?.addEventListener('click',()=>addLog('Aurora data refresh requested','The Manager Dashboard requested a new AuroraMaster snapshot.','data','↻','data-refresh-click',45000));
+    q('beastActionLogForm')?.addEventListener('submit',event=>{event.preventDefault();const input=q('beastActionLogInput'),value=input?.value?.trim();if(!value)return;addLog(value,'Manual manager note.','manual','✎','',0);input.value='';});
+    q('beastActionLogClear')?.addEventListener('click',()=>{if(window.confirm('Clear the saved Manager Action Log?')){writeJson(ACTION_LOG_KEY,[]);renderActionLog();}});
+    q('beastDecisionList')?.addEventListener('click',event=>{const button=event.target.closest('[data-decision-action]');if(button)handleDecision(button.dataset.decisionAction,button.dataset.decisionId);});
     document.addEventListener('click',e=>{const sort=e.target.closest('[data-beast-sort]');if(sort){sortMode=sort.dataset.beastSort;document.querySelectorAll('[data-beast-sort]').forEach(x=>x.classList.toggle('active',x===sort));renderRadar()}const card=e.target.closest('[data-beast-ticker]');if(card)openDrawer(card.dataset.beastTicker);const preview=e.target.closest('.preview-row');if(preview){const t=preview.querySelector('strong')?.textContent;if(t&&findRow(t))openDrawer(t)}});
     q('beastDrawerClose')?.addEventListener('click',closeDrawer);q('beastDrawerOverlay')?.addEventListener('click',closeDrawer);
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();q('beastNotificationPanel')?.classList.remove('open');q('beastLayoutPanel')?.classList.remove('open')}if(e.key.toLowerCase()==='p'&&!/input|textarea|select/i.test(e.target.tagName)){const s=settings();saveSettings({...s,presentation:!s.presentation})}});
-    window.addEventListener('storage',e=>{if(['aurora_transfer_plan_v2','aurora_registration_last_v1','aurora_payday_execution_v1'].includes(e.key))setTimeout(refreshBeast,250)});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshBeast()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();q('beastNotificationPanel')?.classList.remove('open');q('beastLayoutPanel')?.classList.remove('open')}if(e.key.toLowerCase()==='p'&&!/input|textarea|select/i.test(e.target.tagName)){const s=settings(),next=!s.presentation;saveSettings({...s,presentation:next});addLog(`Presentation mode ${next?'enabled':'disabled'}`,'Keyboard shortcut P used.','system','▣','presentation-'+next,30000)}});
+    window.addEventListener('storage',e=>{if(['aurora_transfer_plan_v2','aurora_registration_last_v1','aurora_payday_execution_v1','aurora_m4_signing_lifecycle_v1',DECISION_KEY,ACTION_LOG_KEY].includes(e.key))setTimeout(refreshBeast,250)});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshBeast()});
   }
   function start(){applySettings();assignPanelKeys();applyOrder();bindDrag();bind();intro();refreshBeast();setTimeout(refreshBeast,1600);setTimeout(refreshBeast,5200);setInterval(()=>{if(!document.hidden)refreshBeast()},30000);const observer=new MutationObserver(()=>{clearTimeout(window.__auroraBeastMut);window.__auroraBeastMut=setTimeout(refreshBeast,180)});['heroAnnualIncome','lastUpdated','actionList','topTransferPreview'].forEach(id=>q(id)&&observer.observe(q(id),{childList:true,subtree:true,characterData:true}))}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
