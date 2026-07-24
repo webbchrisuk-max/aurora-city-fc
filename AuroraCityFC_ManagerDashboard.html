@@ -12,7 +12,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
-<title>Aurora City FC — Manager Dashboard</title>
+<title>Aurora City FC — Manager Dashboard BEAST</title>
+<!-- Build: Aurora Beast Command Centre • 24 Jul 2026 -->
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
 <!-- Build: Universal Scouting Navigation • 23 Jul 2026 -->
@@ -794,6 +795,68 @@ body:after{
 }
 </style>
 
+
+<style id="aurora-beast-command-styles">
+/* ===================== AURORA BEAST COMMAND CENTRE ===================== */
+:root{
+  --beast-accent:#22d3ee;
+  --beast-accent-2:#60a5fa;
+  --beast-success:#34d399;
+  --beast-warning:#fbbf24;
+  --beast-danger:#fb7185;
+  --beast-panel:rgba(5,15,31,.95);
+}
+body[data-beast-theme="deadline"]{--beast-accent:#fb7185;--beast-accent-2:#f97316;--beast-success:#fbbf24}
+body[data-beast-theme="gold"]{--beast-accent:#fbbf24;--beast-accent-2:#f59e0b;--beast-success:#fde68a}
+body[data-beast-theme="deadline"] .fm-sidebar,
+body[data-beast-theme="deadline"] .topbar{background:linear-gradient(180deg,rgba(24,5,14,.98),rgba(8,4,12,.98))}
+body[data-beast-theme="gold"] .fm-sidebar,
+body[data-beast-theme="gold"] .topbar{background:linear-gradient(180deg,rgba(24,18,5,.98),rgba(7,7,10,.98))}
+body[data-beast-theme] .fm-side-link.active{border-color:color-mix(in srgb,var(--beast-accent) 55%,transparent);box-shadow:inset 3px 0 0 var(--beast-accent),0 8px 22px rgba(0,0,0,.2)}
+
+.beast-top-actions{display:flex;align-items:center;gap:7px}
+.beast-icon-button{position:relative;width:39px;height:39px;display:grid;place-items:center;border:1px solid rgba(125,211,252,.18);border-radius:13px;background:rgba(2,6,23,.46);color:#bae6fd;cursor:pointer;transition:.18s transform,.18s border-color,.18s background;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.beast-icon-button:hover{transform:translateY(-2px);border-color:var(--beast-accent);background:rgba(8,47,73,.65)}
+.beast-icon-button.active{color:#fff;border-color:var(--beast-accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--beast-accent) 12%,transparent)}
+.beast-count{position:absolute;right:-5px;top:-6px;min-width:19px;height:19px;display:grid;place-items:center;padding:0 5px;border:2px solid #020612;border-radius:999px;background:var(--beast-danger);color:#fff;font-size:9px;font-weight:1000;box-shadow:0 7px 16px rgba(0,0,0,.35)}
+.beast-count[hidden]{display:none}
+
+.beast-journey{position:relative;overflow:hidden;display:grid;grid-template-columns:200px minmax(0,1fr) 230px;gap:22px;align-items:center;padding:22px;border:1px solid rgba(125,211,252,.21);border-radius:28px;background:radial-gradient(circle at 8% 20%,color-mix(in srgb,var(--beast-accent) 18%,transparent),transparent 35%),radial-gradient(circle at 92% 0%,color-mix(in srgb,var(--beast-accent-2) 16%,transparent),transparent 32%),linear-gradient(180deg,rgba(8,25,47,.92),rgba(3,11,24,.97));box-shadow:0 20px 60px rgba(0,0,0,.34)}
+.beast-journey:after{content:"TARGET RUN";position:absolute;right:18px;bottom:-23px;color:rgba(255,255,255,.025);font-size:82px;font-weight:1000;letter-spacing:-.08em;pointer-events:none}
+.beast-target-ring{--progress:0deg;position:relative;width:176px;height:176px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--beast-accent) var(--progress),rgba(148,163,184,.13) 0);box-shadow:0 0 46px color-mix(in srgb,var(--beast-accent) 16%,transparent)}
+.beast-target-ring:before{content:"";position:absolute;inset:12px;border-radius:inherit;background:radial-gradient(circle at 45% 22%,rgba(30,64,175,.25),transparent 34%),#040e1e;border:1px solid rgba(125,211,252,.16)}
+.beast-ring-copy{position:relative;text-align:center;z-index:1}.beast-ring-copy small{display:block;color:#93a4bd;font-size:9px;font-weight:1000;letter-spacing:.13em;text-transform:uppercase}.beast-ring-copy strong{display:block;margin-top:7px;color:#f0f9ff;font-size:30px;letter-spacing:-.065em}.beast-ring-copy span{display:block;margin-top:4px;color:#7dd3fc;font-size:10px;font-weight:850}
+.beast-journey-copy{position:relative;z-index:1;min-width:0}.beast-journey-copy .panel-kicker{color:var(--beast-accent)}.beast-journey-copy h3{margin:5px 0 8px;font-size:27px;letter-spacing:-.055em}.beast-journey-copy>p{margin:0;color:#aebed2;font-size:13px;line-height:1.48}
+.beast-milestones{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px}.beast-milestone{position:relative;padding:11px;border:1px solid rgba(148,163,184,.13);border-radius:15px;background:rgba(2,6,23,.30)}.beast-milestone:before{content:"";position:absolute;left:12px;right:12px;top:0;height:2px;border-radius:999px;background:rgba(148,163,184,.18)}.beast-milestone.hit:before{background:var(--beast-success);box-shadow:0 0 12px color-mix(in srgb,var(--beast-success) 50%,transparent)}.beast-milestone.current{border-color:color-mix(in srgb,var(--beast-accent) 45%,transparent);background:color-mix(in srgb,var(--beast-accent) 9%,rgba(2,6,23,.45))}.beast-milestone small{display:block;color:#718096;font-size:8px;font-weight:1000;letter-spacing:.1em;text-transform:uppercase}.beast-milestone strong{display:block;margin-top:6px;color:#dbeafe;font-size:14px}.beast-milestone.hit strong{color:#86efac}.beast-milestone span{display:block;margin-top:3px;color:#718096;font-size:9px}
+.beast-rating-card{position:relative;z-index:1;padding:18px;border:1px solid rgba(251,191,36,.22);border-radius:22px;background:radial-gradient(circle at 50% 0%,rgba(251,191,36,.13),transparent 46%),rgba(2,6,23,.35);text-align:center}.beast-rating-card small{display:block;color:#fde68a;font-size:9px;font-weight:1000;letter-spacing:.13em;text-transform:uppercase}.beast-rating-card strong{display:block;margin-top:7px;color:#fff7d6;font-size:47px;line-height:1;letter-spacing:-.08em}.beast-rating-card h4{margin:7px 0 0;color:#fef3c7;font-size:15px}.beast-rating-card p{margin:8px 0 0;color:#9eaaB9;font-size:10px;line-height:1.4}.beast-rating-stars{margin-top:10px;color:#fbbf24;font-size:15px;letter-spacing:2px}
+
+.command-span-12{grid-column:span 12}.beast-radar{min-height:0}.beast-radar-tools{display:flex;gap:7px;flex-wrap:wrap}.beast-mini-btn{border:1px solid rgba(125,211,252,.17);border-radius:999px;background:rgba(2,6,23,.34);color:#b7c8db;padding:7px 10px;font-size:9px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.beast-mini-btn:hover,.beast-mini-btn.active{color:#ecfeff;border-color:var(--beast-accent);background:color-mix(in srgb,var(--beast-accent) 13%,rgba(2,6,23,.5))}
+.beast-holding-strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(205px,1fr);gap:10px;overflow-x:auto;padding:15px 18px 20px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:rgba(125,211,252,.25) transparent}.beast-holding-card{position:relative;overflow:hidden;scroll-snap-align:start;min-height:150px;padding:14px;border:1px solid rgba(148,163,184,.14);border-radius:19px;background:linear-gradient(180deg,rgba(9,26,47,.84),rgba(2,8,19,.94));cursor:pointer;transition:.18s transform,.18s border-color,.18s box-shadow}.beast-holding-card:hover{transform:translateY(-3px);border-color:var(--beast-accent);box-shadow:0 16px 36px rgba(0,0,0,.28)}.beast-holding-card:after{content:"";position:absolute;right:-34px;top:-36px;width:100px;height:100px;border-radius:50%;background:color-mix(in srgb,var(--beast-accent) 10%,transparent)}.beast-holding-top{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px}.beast-holding-id{display:flex;align-items:center;gap:9px}.beast-holding-badge{width:38px;height:38px;display:grid;place-items:center;border:1px solid rgba(125,211,252,.22);border-radius:12px;background:rgba(8,47,73,.52);color:#a5f3fc;font-size:10px;font-weight:1000}.beast-holding-id strong{display:block;color:#f0f9ff;font-size:14px}.beast-holding-id span{display:block;max-width:120px;margin-top:2px;overflow:hidden;color:#7f91a9;font-size:9px;text-overflow:ellipsis;white-space:nowrap}.beast-form{display:flex;gap:3px}.beast-form i{width:17px;height:17px;display:grid;place-items:center;border-radius:5px;background:rgba(148,163,184,.12);color:#94a3b8;font-style:normal;font-size:8px;font-weight:1000}.beast-form i.w{background:rgba(52,211,153,.18);color:#86efac}.beast-form i.l{background:rgba(251,113,133,.16);color:#fda4af}.beast-form i.d{background:rgba(96,165,250,.16);color:#bfdbfe}.beast-holding-main{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:end;gap:12px;margin-top:18px}.beast-holding-main small{display:block;color:#718096;font-size:8px;font-weight:1000;letter-spacing:.1em;text-transform:uppercase}.beast-holding-main strong{display:block;margin-top:5px;color:#e0f2fe;font-size:21px;letter-spacing:-.05em}.beast-holding-income{text-align:right}.beast-holding-income strong{color:#86efac;font-size:17px}.beast-holding-footer{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;margin-top:11px;padding-top:10px;border-top:1px solid rgba(148,163,184,.11);color:#718096;font-size:9px}.beast-status-strong{color:#86efac}.beast-status-watch{color:#fde68a}.beast-status-review{color:#fda4af}
+
+.beast-panel,.beast-drawer,.beast-layout-panel{position:fixed;z-index:190;border:1px solid rgba(96,165,250,.28);background:radial-gradient(circle at 95% 0%,color-mix(in srgb,var(--beast-accent) 12%,transparent),transparent 35%),linear-gradient(180deg,rgba(7,20,40,.99),rgba(2,7,18,.995));box-shadow:0 30px 90px rgba(0,0,0,.64);backdrop-filter:blur(22px)}
+.beast-notification-panel{right:18px;top:78px;width:min(430px,calc(100vw - 36px));max-height:72vh;overflow:auto;border-radius:24px;padding:16px;display:none}.beast-notification-panel.open{display:block;animation:beastDrop .2s ease-out}.beast-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}.beast-panel-head h3{margin:0;font-size:20px;letter-spacing:-.045em}.beast-panel-head p{margin:4px 0 0;color:#8495ad;font-size:10px}.beast-close{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(148,163,184,.14);border-radius:11px;background:rgba(2,6,23,.36);color:#cbd5e1;font-size:20px;cursor:pointer}.beast-alert-list{display:grid;gap:8px}.beast-alert{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:start;padding:11px;border:1px solid rgba(148,163,184,.13);border-radius:16px;background:rgba(2,6,23,.31)}.beast-alert-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:rgba(96,165,250,.12);font-size:16px}.beast-alert.warn .beast-alert-icon{background:rgba(251,191,36,.13)}.beast-alert.bad .beast-alert-icon{background:rgba(251,113,133,.13)}.beast-alert strong{display:block;color:#e5eefc;font-size:12px}.beast-alert p{margin:4px 0 0;color:#8999af;font-size:10px;line-height:1.4}.beast-alert-time{color:#64748b;font-size:8px;font-weight:900;text-transform:uppercase}.beast-empty{padding:24px;text-align:center;color:#8192aa;font-size:12px}
+
+.beast-drawer-overlay{position:fixed;inset:0;z-index:195;background:rgba(0,0,0,.58);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:.22s opacity}.beast-drawer-overlay.open{opacity:1;pointer-events:auto}.beast-drawer{right:0;top:0;bottom:0;width:min(500px,100vw);transform:translateX(104%);transition:.28s transform;border-radius:28px 0 0 28px;overflow:auto;padding:22px}.beast-drawer.open{transform:translateX(0)}.beast-drawer-hero{position:relative;overflow:hidden;margin-top:10px;padding:20px;border:1px solid rgba(125,211,252,.18);border-radius:24px;background:radial-gradient(circle at 82% 0%,color-mix(in srgb,var(--beast-accent) 22%,transparent),transparent 40%),rgba(2,6,23,.42)}.beast-drawer-hero small{display:block;color:#7dd3fc;font-size:9px;font-weight:1000;letter-spacing:.13em;text-transform:uppercase}.beast-drawer-hero h2{margin:8px 0 2px;color:#f0f9ff;font-size:38px;letter-spacing:-.07em}.beast-drawer-hero p{margin:0;color:#9aabc0;font-size:12px}.beast-drawer-status{display:inline-flex;margin-top:13px;padding:7px 9px;border:1px solid rgba(52,211,153,.23);border-radius:999px;background:rgba(20,83,45,.22);color:#bbf7d0;font-size:9px;font-weight:1000;text-transform:uppercase;letter-spacing:.08em}.beast-drawer-metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.beast-drawer-metric{padding:13px;border:1px solid rgba(148,163,184,.13);border-radius:16px;background:rgba(2,6,23,.30)}.beast-drawer-metric small{display:block;color:#718096;font-size:8px;font-weight:1000;letter-spacing:.1em;text-transform:uppercase}.beast-drawer-metric strong{display:block;margin-top:6px;color:#e0f2fe;font-size:18px}.beast-drawer-metric.green strong{color:#86efac}.beast-drawer-section{margin-top:14px;padding:15px;border:1px solid rgba(148,163,184,.13);border-radius:19px;background:rgba(2,6,23,.28)}.beast-drawer-section h4{margin:0 0 10px;font-size:13px}.beast-drawer-section p{margin:0;color:#a2b1c5;font-size:11px;line-height:1.5}.beast-drawer-form{display:flex;gap:6px;margin-top:12px}.beast-drawer-form span{flex:1;padding:9px;text-align:center;border-radius:10px;background:rgba(148,163,184,.10);color:#94a3b8;font-size:10px;font-weight:1000}.beast-drawer-form span.w{background:rgba(52,211,153,.18);color:#86efac}.beast-drawer-form span.l{background:rgba(251,113,133,.16);color:#fda4af}.beast-drawer-form span.d{background:rgba(96,165,250,.16);color:#bfdbfe}.beast-drawer-links{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}.beast-drawer-links a{padding:11px;border:1px solid rgba(34,211,238,.20);border-radius:14px;background:rgba(8,47,73,.34);color:#a5f3fc;text-align:center;font-size:10px;font-weight:900}
+
+.beast-layout-panel{right:18px;top:78px;width:min(360px,calc(100vw - 36px));max-height:76vh;overflow:auto;border-radius:24px;padding:16px;display:none}.beast-layout-panel.open{display:block;animation:beastDrop .2s ease-out}.beast-setting-list{display:grid;gap:8px}.beast-setting{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px;border:1px solid rgba(148,163,184,.13);border-radius:15px;background:rgba(2,6,23,.30)}.beast-setting strong{display:block;font-size:11px}.beast-setting span{display:block;margin-top:3px;color:#718096;font-size:9px}.beast-switch{position:relative;width:42px;height:23px;flex:0 0 auto}.beast-switch input{position:absolute;opacity:0}.beast-switch i{position:absolute;inset:0;border-radius:999px;background:#1e293b;border:1px solid rgba(148,163,184,.18);transition:.2s}.beast-switch i:after{content:"";position:absolute;width:17px;height:17px;left:2px;top:2px;border-radius:50%;background:#94a3b8;transition:.2s}.beast-switch input:checked+i{background:color-mix(in srgb,var(--beast-accent) 32%,#0f172a);border-color:var(--beast-accent)}.beast-switch input:checked+i:after{transform:translateX(19px);background:#ecfeff}.beast-theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.beast-theme-button{padding:10px 6px;border:1px solid rgba(148,163,184,.13);border-radius:13px;background:rgba(2,6,23,.31);color:#9fb0c5;font-size:9px;font-weight:1000;cursor:pointer}.beast-theme-button.active{border-color:var(--beast-accent);color:#fff;background:color-mix(in srgb,var(--beast-accent) 13%,rgba(2,6,23,.5))}.beast-reset{width:100%;margin-top:10px;padding:10px;border:1px solid rgba(251,113,133,.22);border-radius:13px;background:rgba(127,29,29,.18);color:#fecdd3;font-size:10px;font-weight:900;cursor:pointer}
+
+.beast-intro{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:radial-gradient(circle at 50% 25%,rgba(34,211,238,.18),transparent 35%),linear-gradient(180deg,#020612,#030712);transition:.45s opacity,.45s visibility}.beast-intro.hide{opacity:0;visibility:hidden;pointer-events:none}.beast-intro-card{text-align:center}.beast-intro-crest{width:118px;height:118px;margin:0 auto;border-radius:30px;overflow:hidden;border:1px solid rgba(125,211,252,.30);box-shadow:0 0 70px rgba(34,211,238,.22)}.beast-intro-crest img{width:100%;height:100%;object-fit:cover}.beast-intro h1{margin:20px 0 4px;color:#f0f9ff;font-size:34px;letter-spacing:-.06em}.beast-intro p{margin:0;color:#7dd3fc;font-size:10px;font-weight:1000;letter-spacing:.18em;text-transform:uppercase}.beast-loader{width:260px;height:5px;margin:22px auto 0;overflow:hidden;border-radius:999px;background:rgba(148,163,184,.13)}.beast-loader i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--beast-accent),var(--beast-success));animation:beastLoad 1.45s ease-out forwards}.beast-intro-status{margin-top:10px;color:#64748b;font-size:9px}.beast-intro-skip{margin-top:16px;border:0;background:transparent;color:#64748b;font-size:9px;cursor:pointer}
+
+body.beast-presentation .fm-shell{display:block}.beast-presentation .fm-sidebar{display:none}.beast-presentation .bottom-ticker{left:0}.beast-presentation .fm-workspace .app{max-width:1740px;margin:0 auto;padding:20px 28px 90px}.beast-presentation .topbar{background:rgba(1,6,17,.92)}.beast-presentation .command-identity h2{font-size:clamp(48px,6vw,90px)}.beast-presentation .manager-command-header{min-height:360px}.beast-presentation .command-panel{box-shadow:0 25px 75px rgba(0,0,0,.52)}
+body.beast-compact .manager-command-grid{gap:12px}body.beast-compact .command-panel-head{padding:15px 16px 0}body.beast-compact .panel-stat-row{padding:11px 14px 3px}body.beast-compact .schedule-list{padding:12px 14px 15px}body.beast-compact .media-feature{padding:15px}
+.command-panel[draggable="true"]{cursor:grab}.command-panel.beast-dragging{opacity:.45;transform:scale(.985)}.command-panel.beast-drag-over{outline:2px dashed var(--beast-accent);outline-offset:4px}
+.beast-hide-m3 #m3DailyManagerBrief{display:none!important}.beast-hide-media .media-command-panel{display:none!important}.beast-hide-schedule #schedule-panel{display:none!important}.beast-hide-radar #beastSquadRadar{display:none!important}
+.ticker-scroll.beast-ticker-change{animation:beastTicker .44s ease}
+@keyframes beastTicker{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes beastDrop{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes beastLoad{to{width:100%}}
+
+@media(max-width:1280px){.beast-journey{grid-template-columns:176px minmax(0,1fr)}.beast-rating-card{grid-column:1/-1;display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:14px;text-align:left}.beast-rating-card strong{font-size:38px}.beast-rating-card h4,.beast-rating-card p,.beast-rating-stars{margin:0}}
+@media(max-width:900px){.beast-top-actions{gap:5px}.beast-icon-button{width:36px;height:36px}.beast-journey{grid-template-columns:1fr}.beast-target-ring{margin:0 auto}.beast-rating-card{display:block;text-align:center}.beast-milestones{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.beast-top-actions{position:fixed;right:10px;bottom:56px;z-index:180;padding:6px;border:1px solid rgba(125,211,252,.18);border-radius:16px;background:rgba(2,6,18,.92);box-shadow:0 16px 44px rgba(0,0,0,.42)}.beast-notification-panel,.beast-layout-panel{top:auto;right:10px;bottom:108px;width:calc(100vw - 20px);max-height:64vh}.beast-journey{padding:17px;border-radius:23px}.beast-target-ring{width:150px;height:150px}.beast-milestones{grid-template-columns:1fr}.beast-drawer{width:100vw;border-radius:0;padding:16px}.beast-holding-strip{grid-auto-columns:82vw}.beast-presentation .fm-workspace .app{padding:12px 10px 86px}}
+@media(prefers-reduced-motion:reduce){.beast-intro,.beast-drawer,.beast-drawer-overlay,.beast-holding-card,.beast-icon-button{transition:none!important}.beast-loader i{animation:none;width:100%}}
+</style>
+
 </head>
 <body>
 
@@ -868,6 +931,12 @@ body:after{
     </div>
     <div class="fm-top-context">
       <span class="fm-page-path">Home / Manager Command Centre</span>
+
+      <div class="beast-top-actions" aria-label="Aurora command controls">
+        <button class="beast-icon-button" id="beastNotificationButton" type="button" title="Notifications" aria-label="Open notifications">🔔<span class="beast-count" id="beastNotificationCount" hidden>0</span></button>
+        <button class="beast-icon-button" id="beastLayoutButton" type="button" title="Dashboard controls" aria-label="Open dashboard controls">⚙</button>
+        <button class="beast-icon-button" id="beastPresentationButton" type="button" title="Presentation mode" aria-label="Toggle presentation mode">▣</button>
+      </div>
       <span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
     </div>
   </div>
@@ -912,6 +981,23 @@ body:after{
   </section>
 
 
+
+  <section class="beast-journey" id="beastTargetJourney" aria-label="Income target journey">
+    <div class="beast-target-ring" id="beastTargetRing">
+      <div class="beast-ring-copy"><small>Monthly income</small><strong id="beastCurrentMonthly">—</strong><span id="beastTargetPercent">— of £625</span></div>
+    </div>
+    <div class="beast-journey-copy">
+      <span class="panel-kicker">Income promotion race</span>
+      <h3>Road to £625 per month</h3>
+      <p id="beastJourneySummary">Aurora is calculating the current position, next transfer impact and remaining target gap.</p>
+      <div class="beast-milestones" id="beastMilestones"></div>
+    </div>
+    <div class="beast-rating-card">
+      <small>Manager rating</small><strong id="beastManagerRating">—</strong><h4 id="beastManagerTitle">Assessment loading</h4><p id="beastManagerNote">Income growth, yield, board confidence and data readiness.</p><div class="beast-rating-stars" id="beastRatingStars">★★★★★</div>
+    </div>
+  </section>
+
+
   <!-- ===================== AURORA M3: DAILY MANAGER BRIEFING ===================== -->
   <section class="m3-manager-brief" id="m3DailyManagerBrief">
     <div class="m3-manager-head">
@@ -948,6 +1034,11 @@ body:after{
 
 
   <section class="manager-command-grid">
+
+    <article class="command-panel command-span-12 beast-radar" id="beastSquadRadar" data-beast-key="portfolio-radar">
+      <div class="command-panel-head"><div><span class="panel-kicker">First Team Radar</span><h3>Live Portfolio Form</h3><p>Click any holding for valuation, income, recent form and the manager verdict.</p></div><div class="beast-radar-tools"><button class="beast-mini-btn active" data-beast-sort="income" type="button">Income</button><button class="beast-mini-btn" data-beast-sort="value" type="button">Value</button><button class="beast-mini-btn" data-beast-sort="yield" type="button">Yield</button></div></div>
+      <div class="beast-holding-strip" id="beastHoldingStrip"><div class="loading">Building the live squad radar…</div></div>
+    </article>
     <article class="command-panel command-span-7">
       <div class="command-panel-head"><div><span class="panel-kicker">Manager Office</span><h3>Action Centre</h3><p>The live items that need your attention now.</p></div><span class="badge green">Live</span></div>
       <div class="action-list manager-actions" id="actionList"><div class="loading">Loading manager actions…</div></div>
@@ -1834,7 +1925,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   const REFRESH_KEY='aurora_m4_last_refresh_v1';
   const defaults={corePot:25000,coreMonthly:2500,etfPot:8000,etfMonthly:1000,paydayMonthly:1500,months:10,currentMonth:1,monthlyTarget:625,startingIncome:4220,version:4};
   const q=id=>document.getElementById(id);
-  const num=value=>{const n=Number(String(value??'').replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:NaN};
+  const num=value=>{if(value===null||value===undefined||String(value).trim()==='')return NaN;const n=Number(String(value).replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:NaN};
   const money=value=>Number.isFinite(value)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(value):'—';
   const read=(key,fallback={})=>{try{return JSON.parse(localStorage.getItem(key)||'null')||fallback}catch(_){return fallback}};
   const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}};
@@ -1989,6 +2080,188 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   }
   function start(){migrate();inject();bind();syncNative(plan(),true);update();setTimeout(update,1800);setTimeout(update,5500);}
   window.AuroraM4={plan,savePlan,update,metrics,lifecycle};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+
+
+<div class="beast-panel beast-notification-panel" id="beastNotificationPanel" role="dialog" aria-label="Aurora notifications">
+  <div class="beast-panel-head"><div><h3>Command Notifications</h3><p>Only items that can affect the next manager decision.</p></div><button class="beast-close" id="beastNotificationClose" type="button" aria-label="Close notifications">×</button></div>
+  <div class="beast-alert-list" id="beastAlertList"><div class="beast-empty">Waiting for AuroraData…</div></div>
+</div>
+<div class="beast-layout-panel" id="beastLayoutPanel" role="dialog" aria-label="Dashboard controls">
+  <div class="beast-panel-head"><div><h3>Dashboard Controls</h3><p>Save the command centre exactly how you like it.</p></div><button class="beast-close" id="beastLayoutClose" type="button" aria-label="Close controls">×</button></div>
+  <div class="beast-setting-list">
+    <label class="beast-setting"><span><strong>Compact panels</strong><span>Fit more command information on screen.</span></span><span class="beast-switch"><input id="beastCompactToggle" type="checkbox"><i></i></span></label>
+    <label class="beast-setting"><span><strong>Daily briefing</strong><span>Show the M3 session intelligence block.</span></span><span class="beast-switch"><input id="beastM3Toggle" type="checkbox" checked><i></i></span></label>
+    <label class="beast-setting"><span><strong>Portfolio radar</strong><span>Show live holding cards and form.</span></span><span class="beast-switch"><input id="beastRadarToggle" type="checkbox" checked><i></i></span></label>
+    <label class="beast-setting"><span><strong>Media story</strong><span>Keep the latest Aurora Times panel.</span></span><span class="beast-switch"><input id="beastMediaToggle" type="checkbox" checked><i></i></span></label>
+    <label class="beast-setting"><span><strong>Upcoming schedule</strong><span>Show dividends, transfers and data status.</span></span><span class="beast-switch"><input id="beastScheduleToggle" type="checkbox" checked><i></i></span></label>
+  </div>
+  <div class="beast-theme-grid" aria-label="Dashboard theme"><button class="beast-theme-button active" data-beast-theme="night" type="button">Aurora Night</button><button class="beast-theme-button" data-beast-theme="deadline" type="button">Deadline Day</button><button class="beast-theme-button" data-beast-theme="gold" type="button">Boardroom Gold</button></div>
+  <button class="beast-reset" id="beastResetLayout" type="button">Reset dashboard layout and theme</button>
+</div>
+<div class="beast-drawer-overlay" id="beastDrawerOverlay"></div>
+<aside class="beast-drawer" id="beastHoldingDrawer" aria-label="Holding profile drawer">
+  <div class="beast-panel-head"><div><h3>Player Profile</h3><p>Live portfolio holding analysis.</p></div><button class="beast-close" id="beastDrawerClose" type="button" aria-label="Close holding profile">×</button></div>
+  <div id="beastDrawerContent"><div class="beast-empty">Select a holding from the portfolio radar.</div></div>
+</aside>
+<div class="beast-intro" id="beastIntro" aria-label="Aurora Command Centre loading">
+  <div class="beast-intro-card"><div class="beast-intro-crest"><img src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png" alt="Aurora City FC crest"></div><h1>Aurora City FC</h1><p>Beast Command Centre</p><div class="beast-loader"><i></i></div><div class="beast-intro-status" id="beastIntroStatus">Connecting manager systems…</div><button class="beast-intro-skip" id="beastIntroSkip" type="button">Skip intro</button></div>
+</div>
+
+
+<script id="aurora-beast-command-script">
+(()=>{
+  'use strict';
+  const SETTINGS_KEY='aurora_beast_dashboard_settings_v1';
+  const ORDER_KEY='aurora_beast_dashboard_order_v1';
+  const READ_KEY='aurora_beast_alerts_read_v1';
+  const q=id=>document.getElementById(id);
+  const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+  const num=value=>{if(value===null||value===undefined||String(value).trim()==='')return NaN;const n=Number(String(value).replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:NaN};
+  const cash=value=>Number.isFinite(value)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:value>=1000?0:2}).format(value):'—';
+  const percent=value=>Number.isFinite(value)?`${value.toFixed(2)}%`:'—';
+  let sortMode='income';
+  let tickerIndex=0;
+  let tickerTimer=null;
+  let latestAlerts=[];
+  let lastRenderSignature='';
+  let latestAlertSignature='';
+
+  function settings(){
+    try{return {...{compact:false,m3:true,radar:true,media:true,schedule:true,theme:'night',presentation:false},...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}}catch(_){return {compact:false,m3:true,radar:true,media:true,schedule:true,theme:'night',presentation:false}}
+  }
+  function saveSettings(next){localStorage.setItem(SETTINGS_KEY,JSON.stringify(next));applySettings(next);}
+  function applySettings(s=settings()){
+    document.body.classList.toggle('beast-compact',!!s.compact);
+    document.body.classList.toggle('beast-hide-m3',!s.m3);
+    document.body.classList.toggle('beast-hide-radar',!s.radar);
+    document.body.classList.toggle('beast-hide-media',!s.media);
+    document.body.classList.toggle('beast-hide-schedule',!s.schedule);
+    document.body.classList.toggle('beast-presentation',!!s.presentation);
+    document.body.dataset.beastTheme=s.theme||'night';
+    [['beastCompactToggle',s.compact],['beastM3Toggle',s.m3],['beastRadarToggle',s.radar],['beastMediaToggle',s.media],['beastScheduleToggle',s.schedule]].forEach(([id,val])=>{if(q(id))q(id).checked=!!val});
+    q('beastPresentationButton')?.classList.toggle('active',!!s.presentation);
+    document.querySelectorAll('[data-beast-theme]').forEach(btn=>btn.classList.toggle('active',btn.dataset.beastTheme===(s.theme||'night')));
+  }
+  function activeRows(){try{return typeof activeHoldings==='function'?activeHoldings():[]}catch(_){return []}}
+  function annual(row){try{return annualIncomeFromRow(row)}catch(_){return 0}}
+  function value(row){try{return holdingValue(row)}catch(_){return 0}}
+  function rate(row){try{return incomeRate(row)}catch(_){return NaN}}
+  function ticker(row){try{return displayTicker(row?.ticker)}catch(_){return String(row?.ticker||'—')}}
+  function name(row){try{return displayName(row)}catch(_){return row?.name||ticker(row)}}
+  function account(row){return String(row?.account??row?.platform??row?.broker??row?.Account??'Account unconfirmed')}
+  function shares(row){return num(row?.shares??row?.quantity??row?.units??row?.Shares)}
+  function price(row){return num(row?.live_price_gbp??row?.live_price??row?.current_price??row?.price_gbp??row?.price)}
+  function dayMove(row){
+    let n=num(row?.day_change_pct??row?.daily_change_pct??row?.change_pct??row?.price_change_pct??row?.day_move_pct);
+    if(Number.isFinite(n)&&Math.abs(n)<1&&String(row?.day_change_pct??'').includes('.')===false)n*=100;
+    return n;
+  }
+  function strength(row){try{return buyStrength(row)}catch(_){return NaN}}
+  function valuation(row){
+    const explicit=String(row?.valuation_status??row?.value_status??row?.valuation??row?.price_status??'').trim();if(explicit)return explicit;
+    const live=price(row),target=num(row?.target_price??row?.buy_price??row?.fair_value??row?.entry_price);
+    if(Number.isFinite(live)&&Number.isFinite(target)&&target>0){const diff=(live-target)/target;if(diff<=-.04)return 'Below target';if(diff<=.03)return 'Fair value';if(diff>=.08)return 'Above target';return 'Near target'}
+    const s=strength(row);return Number.isFinite(s)?s>=75?'Strong value':s>=60?'Fair value':'Under review':'Live holding';
+  }
+  function rowStatus(row){const s=strength(row),v=valuation(row).toLowerCase();if(/above|review|weak/.test(v)||(Number.isFinite(s)&&s<55))return ['Under review','review'];if(/below|strong/.test(v)||(Number.isFinite(s)&&s>=72))return ['Strong','strong'];return ['Stable','watch']}
+  function historyFor(t){
+    const target=String(t||'').replace('.L','').replace('LON:','').toUpperCase();
+    const rows=[...(state?.dailyPriceSummary||[]),...(state?.priceLog||[]),...(state?.livePrices||[])];
+    const parsed=rows.map((r,i)=>{
+      const rt=String(r?.ticker??r?.Ticker??r?.symbol??r?.Symbol??'').replace('.L','').replace('LON:','').toUpperCase();if(rt!==target)return null;
+      const change=num(r?.day_change_pct??r?.change_pct??r?.daily_change_pct??r?.pct_change??r?.percent_change);
+      const dt=new Date(r?.timestamp??r?.date_time??r?.datetime??r?.date??r?.Date??0).getTime();return Number.isFinite(change)?{change,time:Number.isFinite(dt)?dt:i}:null;
+    }).filter(Boolean).sort((a,b)=>b.time-a.time).slice(0,5).reverse();
+    if(parsed.length)return parsed.map(x=>x.change>.05?'W':x.change<-.05?'L':'D');
+    return ['D','D','D','D','D'];
+  }
+  function formMarkup(form,tag='i'){return form.map(x=>`<${tag} class="${x.toLowerCase()}">${x}</${tag}>`).join('')}
+  function sortedRows(){
+    const rows=[...activeRows()];
+    if(sortMode==='value')rows.sort((a,b)=>value(b)-value(a));
+    else if(sortMode==='yield')rows.sort((a,b)=>(rate(b)||0)-(rate(a)||0));
+    else rows.sort((a,b)=>annual(b)-annual(a));
+    return rows;
+  }
+  function renderRadar(){
+    const box=q('beastHoldingStrip');if(!box)return;
+    const rows=sortedRows();
+    box.innerHTML=rows.length?rows.map(row=>{const [status,cls]=rowStatus(row);const y=rate(row);const move=dayMove(row);return `<button class="beast-holding-card" type="button" data-beast-ticker="${ticker(row)}"><div class="beast-holding-top"><div class="beast-holding-id"><span class="beast-holding-badge">${ticker(row).slice(0,5)}</span><span><strong>${ticker(row)}</strong><span>${name(row)}</span></span></div><span class="beast-form">${formMarkup(historyFor(ticker(row)))}</span></div><div class="beast-holding-main"><span><small>Market value</small><strong>${cash(value(row))}</strong></span><span class="beast-holding-income"><small>Annual income</small><strong>${cash(annual(row))}</strong></span></div><div class="beast-holding-footer"><span>${Number.isFinite(y)?percent(y*100)+' yield':'Yield —'}</span><span class="beast-status-${cls}">${status}${Number.isFinite(move)?` • ${move>=0?'+':''}${move.toFixed(2)}%`:''}</span></div></button>`}).join(''):'<div class="loading">No active holdings found.</div>';
+  }
+  function transferPlan(){try{return typeof readTransferPlanSnapshot==='function'?readTransferPlanSnapshot():null}catch(_){return null}}
+  function journeyMetrics(){
+    const rows=activeRows(),income=rows.reduce((s,r)=>s+annual(r),0),monthly=income/12,val=rows.reduce((s,r)=>s+value(r),0),yieldRate=val>0?income/val:NaN,plan=transferPlan(),boost=Number.isFinite(num(plan?.totalIncome))?num(plan.totalIncome):0,projected=monthly+boost/12;
+    let board=75;try{board=boardScore(monthly,val,yieldRate)}catch(_){}
+    const latest=(()=>{try{return latestDataTimestamp()}catch(_){return null}})();const fresh=!latest||((Date.now()-latest.getTime())/36e5)<8;
+    const rating=clamp(5.5+(monthly/625)*2.1+(board/100)*1.15+(Number.isFinite(yieldRate)?clamp(yieldRate/.08,0,1)*.7:.35)+(plan?.rows?.length?.45:0)+(fresh?.25:0),5.5,9.9);
+    return {income,monthly,val,yieldRate,plan,boost,projected,board,rating,latest};
+  }
+  function renderJourney(){
+    const m=journeyMetrics(),progress=clamp(m.monthly/625*100,0,100),gap=Math.max(0,625-m.monthly);q('beastCurrentMonthly').textContent=cash(m.monthly);q('beastTargetPercent').textContent=`${progress.toFixed(1)}% of £625`;q('beastTargetRing').style.setProperty('--progress',`${progress*3.6}deg`);
+    const projectedText=m.boost>0?`The synced deal sheet adds ${cash(m.boost)}/year, lifting the projected run rate to ${cash(m.projected)} per month.`:'The next deal-sheet impact will appear here when the Transfer Centre route is synced.';
+    q('beastJourneySummary').textContent=`Current gap: ${cash(gap)} per month. ${projectedText}`;
+    const milestones=[350,425,500,625];let currentMarked=false;q('beastMilestones').innerHTML=milestones.map((target,index)=>{const hit=m.monthly>=target;const current=!hit&&!currentMarked?(currentMarked=true,true):false;return `<div class="beast-milestone ${hit?'hit':current?'current':''}"><small>${hit?'Promoted':current?'Next division':'Future division'}</small><strong>${cash(target)}/m</strong><span>${hit?'Milestone achieved':cash(Math.max(0,target-m.monthly))+' remaining'}</span></div>`}).join('');
+    q('beastManagerRating').textContent=m.rating.toFixed(1);const title=m.rating>=9.2?'Elite Income Architect':m.rating>=8.5?'Outstanding Rebuild':m.rating>=7.7?'Strong Manager Performance':m.rating>=6.8?'Steady Progress':'Rebuild in Development';q('beastManagerTitle').textContent=title;q('beastManagerNote').textContent=`Board ${m.board}/100 • ${Number.isFinite(m.yieldRate)?percent(m.yieldRate*100):'Yield building'} • ${m.plan?.rows?.length?'Deal sheet synced':'Route awaiting sync'}`;q('beastRatingStars').textContent='★'.repeat(Math.round(m.rating/2))+'☆'.repeat(5-Math.round(m.rating/2));
+  }
+  function alertData(){
+    const m=journeyMetrics(),alerts=[];const now='Now';
+    if(m.latest){const age=(Date.now()-m.latest.getTime())/36e5;if(age>8)alerts.push({level:age>26?'bad':'warn',icon:'↻',title:'Aurora data needs a refresh',text:`The newest dated row is ${age.toFixed(1)} hours old.`,time:'Data'});}
+    if(m.plan?.rows?.length)alerts.push({level:'ok',icon:'⇄',title:'Payday route is synced',text:`${m.plan.rows.map(r=>r.displayTicker||r.ticker).join(' / ')} • ${cash(num(m.plan.totalIncome))}/year estimated income.`,time:'Transfer'});else alerts.push({level:'warn',icon:'⇄',title:'Transfer deal sheet not synced',text:'Open the Transfer Centre before payday so the dashboard can read the final allocation.',time:'Transfer'});
+    try{const d=nextDividendPayment();if(d)alerts.push({level:'ok',icon:'💷',title:`${d.ticker} dividend is next`,text:`Due ${d.date.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}${d.amountKnown?` • ${cash(d.amount)}`:''}.`,time:'Income'})}catch(_){}
+    const weak=activeRows().filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60}).sort((a,b)=>strength(a)-strength(b)).slice(0,2);weak.forEach(r=>alerts.push({level:'warn',icon:'⚠',title:`${ticker(r)} is under review`,text:`Buy-strength score ${Math.round(strength(r))}. Open the player profile before adding more.`,time:'Squad'}));
+    activeRows().forEach(r=>{const live=price(r),target=num(r?.target_price??r?.buy_price??r?.fair_value);if(Number.isFinite(live)&&Number.isFinite(target)&&live<=target)alerts.push({level:'ok',icon:'🎯',title:`${ticker(r)} has reached its target zone`,text:`Live ${live.toFixed(2)} versus target ${target.toFixed(2)}.`,time:'Price'})});
+    const gap=Math.max(0,625-m.monthly);alerts.push({level:gap<=0?'ok':'info',icon:'🏆',title:gap<=0?'£625 monthly objective achieved':`${cash(gap)} per month to the target`,text:gap<=0?'Aurora has reached the primary income objective.':'The target journey updates automatically after registered purchases.',time:'Objective'});
+    return alerts.slice(0,9);
+  }
+  function renderAlerts(){
+    latestAlerts=alertData();const box=q('beastAlertList');if(box)box.innerHTML=latestAlerts.length?latestAlerts.map(a=>`<div class="beast-alert ${a.level==='info'?'':a.level}"><span class="beast-alert-icon">${a.icon}</span><span><strong>${a.title}</strong><p>${a.text}</p></span><span class="beast-alert-time">${a.time}</span></div>`).join(''):'<div class="beast-empty">No manager alerts right now.</div>';
+    const signature=JSON.stringify(latestAlerts.map(a=>[a.title,a.text]));latestAlertSignature=signature;const read=localStorage.getItem(READ_KEY);const count=read===signature?0:latestAlerts.length;const badge=q('beastNotificationCount');if(badge){badge.hidden=count===0;badge.textContent=String(count)}
+  }
+  function tickerMessages(){
+    const m=journeyMetrics(),items=[];items.push(`Manager Rating ${m.rating.toFixed(1)} • ${cash(m.monthly)}/month • ${cash(Math.max(0,625-m.monthly))} to the main objective`);
+    const rows=sortedRows();if(rows[0])items.push(`Captain of income: ${ticker(rows[0])} • ${cash(annual(rows[0]))}/year • ${Number.isFinite(rate(rows[0]))?percent(rate(rows[0])*100)+' yield':'yield loading'}`);
+    const movers=rows.filter(r=>Number.isFinite(dayMove(r))).sort((a,b)=>dayMove(b)-dayMove(a));if(movers[0])items.push(`Man of the match: ${ticker(movers[0])} ${dayMove(movers[0])>=0?'+':''}${dayMove(movers[0]).toFixed(2)}% today`);
+    if(m.plan?.rows?.length)items.push(`Transfer route ready: ${m.plan.rows.map(r=>r.displayTicker||r.ticker).join(' / ')} • ${cash(m.boost)}/year expected income`);
+    try{const d=nextDividendPayment();if(d)items.push(`Next dividend: ${d.ticker} on ${d.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}${d.amountKnown?` • ${cash(d.amount)}`:''}`)}catch(_){}
+    items.push(`Aurora system: ${activeRows().length} active holdings • Board confidence ${m.board}/100`);return items;
+  }
+  function startTicker(){clearInterval(tickerTimer);const tick=()=>{const el=q('tickerText'),items=tickerMessages();if(!el||!items.length)return;el.classList.remove('beast-ticker-change');void el.offsetWidth;el.textContent=items[tickerIndex%items.length];el.classList.add('beast-ticker-change');tickerIndex++};tick();tickerTimer=setInterval(tick,6500)}
+  function findRow(t){const wanted=String(t||'').replace('.L','').replace('LON:','').toUpperCase();return activeRows().find(r=>ticker(r).replace('.L','').replace('LON:','').toUpperCase()===wanted)}
+  function managerVerdict(row){const [status]=rowStatus(row),y=rate(row),s=strength(row),v=valuation(row);if(status==='Under review')return `${ticker(row)} needs monitoring before further funds are committed. ${Number.isFinite(s)?`Buy-strength is ${Math.round(s)}.`:''}`;if(status==='Strong')return `${ticker(row)} is performing as a strong income-squad member. ${Number.isFinite(y)?`Current portfolio yield contribution is ${percent(y*100)}.`:''}`;return `${ticker(row)} remains a stable member of the income squad. Valuation status: ${v}.`}
+  function openDrawer(t){
+    const row=findRow(t);if(!row)return;const [status,cls]=rowStatus(row),y=rate(row),move=dayMove(row),form=historyFor(ticker(row));q('beastDrawerContent').innerHTML=`<div class="beast-drawer-hero"><small>${account(row)}</small><h2>${ticker(row)}</h2><p>${name(row)}</p><span class="beast-drawer-status beast-status-${cls}">${status} • ${valuation(row)}</span></div><div class="beast-drawer-metrics"><div class="beast-drawer-metric"><small>Market value</small><strong>${cash(value(row))}</strong></div><div class="beast-drawer-metric green"><small>Annual income</small><strong>${cash(annual(row))}</strong></div><div class="beast-drawer-metric"><small>Shares / units</small><strong>${Number.isFinite(shares(row))?shares(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Live price</small><strong>${Number.isFinite(price(row))?price(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Portfolio yield</small><strong>${Number.isFinite(y)?percent(y*100):'—'}</strong></div><div class="beast-drawer-metric ${Number.isFinite(move)&&move>=0?'green':''}"><small>Day move</small><strong>${Number.isFinite(move)?`${move>=0?'+':''}${move.toFixed(2)}%`:'—'}</strong></div></div><div class="beast-drawer-section"><h4>Recent form</h4><p>Five latest usable price sessions. W = positive, D = flat, L = negative.</p><div class="beast-drawer-form">${formMarkup(form,'span')}</div></div><div class="beast-drawer-section"><h4>Manager verdict</h4><p>${managerVerdict(row)}</p></div><div class="beast-drawer-links"><a href="AuroraCityFC_SquadHub.html">Open Squad Hub</a><a href="AuroraCityFC_AnalysisRoom.html">Open Analysis Room</a></div>`;
+    q('beastDrawerOverlay').classList.add('open');q('beastHoldingDrawer').classList.add('open');document.body.style.overflow='hidden';
+  }
+  function closeDrawer(){q('beastDrawerOverlay')?.classList.remove('open');q('beastHoldingDrawer')?.classList.remove('open');document.body.style.overflow=''}
+  function togglePanel(id,buttonId){['beastNotificationPanel','beastLayoutPanel'].forEach(pid=>{if(pid!==id)q(pid)?.classList.remove('open')});const panel=q(id);panel?.classList.toggle('open');q(buttonId)?.classList.toggle('active',panel?.classList.contains('open'));}
+  function assignPanelKeys(){document.querySelectorAll('.manager-command-grid>.command-panel').forEach((panel,i)=>{if(!panel.dataset.beastKey){const h=panel.querySelector('h3')?.textContent?.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');panel.dataset.beastKey=h||`panel-${i}`}panel.draggable=true})}
+  function applyOrder(){try{const order=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]'),grid=document.querySelector('.manager-command-grid');if(!grid||!Array.isArray(order))return;order.forEach(key=>{const node=[...grid.children].find(x=>x.dataset?.beastKey===key);if(node)grid.appendChild(node)})}catch(_){}}
+  function saveOrder(){const grid=document.querySelector('.manager-command-grid');if(grid)localStorage.setItem(ORDER_KEY,JSON.stringify([...grid.children].map(x=>x.dataset?.beastKey).filter(Boolean)))}
+  function bindDrag(){let dragging=null;document.addEventListener('dragstart',e=>{const panel=e.target.closest('.manager-command-grid>.command-panel');if(!panel)return;dragging=panel;panel.classList.add('beast-dragging');e.dataTransfer.effectAllowed='move'});document.addEventListener('dragend',()=>{dragging?.classList.remove('beast-dragging');document.querySelectorAll('.beast-drag-over').forEach(x=>x.classList.remove('beast-drag-over'));dragging=null;saveOrder()});document.addEventListener('dragover',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.add('beast-drag-over')});document.addEventListener('dragleave',e=>e.target.closest('.command-panel')?.classList.remove('beast-drag-over'));document.addEventListener('drop',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.remove('beast-drag-over');const rect=target.getBoundingClientRect();target.parentNode.insertBefore(dragging,e.clientY<rect.top+rect.height/2?target:target.nextSibling);saveOrder()})}
+  function refreshBeast(){
+    if(!Array.isArray(state?.holdings)||!state.holdings.length)return;
+    const signature=`${state.holdings.length}|${activeRows().length}|${q('heroAnnualIncome')?.textContent}|${q('lastUpdated')?.textContent}|${localStorage.getItem('aurora_transfer_plan_v2')||''}`;
+    if(signature===lastRenderSignature&&q('beastHoldingStrip')?.children.length>1)return;
+    renderJourney();renderRadar();renderAlerts();startTicker();lastRenderSignature=signature;
+  }
+  function intro(){const overlay=q('beastIntro');if(!overlay)return;const close=()=>{overlay.classList.add('hide');sessionStorage.setItem('aurora_beast_intro_seen','1');setTimeout(()=>overlay.remove(),550)};q('beastIntroSkip')?.addEventListener('click',close);if(sessionStorage.getItem('aurora_beast_intro_seen')){overlay.remove();return}setTimeout(()=>{if(q('beastIntroStatus'))q('beastIntroStatus').textContent='AuroraMaster connected • manager systems ready'},900);setTimeout(close,1750)}
+  function bind(){
+    q('beastNotificationButton')?.addEventListener('click',()=>togglePanel('beastNotificationPanel','beastNotificationButton'));q('beastNotificationClose')?.addEventListener('click',()=>{q('beastNotificationPanel')?.classList.remove('open');q('beastNotificationButton')?.classList.remove('active')});
+    q('beastLayoutButton')?.addEventListener('click',()=>togglePanel('beastLayoutPanel','beastLayoutButton'));q('beastLayoutClose')?.addEventListener('click',()=>{q('beastLayoutPanel')?.classList.remove('open');q('beastLayoutButton')?.classList.remove('active')});
+    q('beastNotificationPanel')?.addEventListener('click',()=>{if(latestAlertSignature){localStorage.setItem(READ_KEY,latestAlertSignature);q('beastNotificationCount').hidden=true}});
+    q('beastPresentationButton')?.addEventListener('click',()=>{const s=settings();saveSettings({...s,presentation:!s.presentation})});
+    [['beastCompactToggle','compact'],['beastM3Toggle','m3'],['beastRadarToggle','radar'],['beastMediaToggle','media'],['beastScheduleToggle','schedule']].forEach(([id,key])=>q(id)?.addEventListener('change',e=>saveSettings({...settings(),[key]:e.target.checked})));
+    document.querySelectorAll('.beast-theme-button').forEach(btn=>btn.addEventListener('click',()=>saveSettings({...settings(),theme:btn.dataset.beastTheme})));
+    q('beastResetLayout')?.addEventListener('click',()=>{localStorage.removeItem(SETTINGS_KEY);localStorage.removeItem(ORDER_KEY);location.reload()});
+    document.addEventListener('click',e=>{const sort=e.target.closest('[data-beast-sort]');if(sort){sortMode=sort.dataset.beastSort;document.querySelectorAll('[data-beast-sort]').forEach(x=>x.classList.toggle('active',x===sort));renderRadar()}const card=e.target.closest('[data-beast-ticker]');if(card)openDrawer(card.dataset.beastTicker);const preview=e.target.closest('.preview-row');if(preview){const t=preview.querySelector('strong')?.textContent;if(t&&findRow(t))openDrawer(t)}});
+    q('beastDrawerClose')?.addEventListener('click',closeDrawer);q('beastDrawerOverlay')?.addEventListener('click',closeDrawer);
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();q('beastNotificationPanel')?.classList.remove('open');q('beastLayoutPanel')?.classList.remove('open')}if(e.key.toLowerCase()==='p'&&!/input|textarea|select/i.test(e.target.tagName)){const s=settings();saveSettings({...s,presentation:!s.presentation})}});
+    window.addEventListener('storage',e=>{if(['aurora_transfer_plan_v2','aurora_registration_last_v1','aurora_payday_execution_v1'].includes(e.key))setTimeout(refreshBeast,250)});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshBeast()});
+  }
+  function start(){applySettings();assignPanelKeys();applyOrder();bindDrag();bind();intro();refreshBeast();setTimeout(refreshBeast,1600);setTimeout(refreshBeast,5200);setInterval(()=>{if(!document.hidden)refreshBeast()},30000);const observer=new MutationObserver(()=>{clearTimeout(window.__auroraBeastMut);window.__auroraBeastMut=setTimeout(refreshBeast,180)});['heroAnnualIncome','lastUpdated','actionList','topTransferPreview'].forEach(id=>q(id)&&observer.observe(q(id),{childList:true,subtree:true,characterData:true}))}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
