@@ -13,8 +13,9 @@
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
-<title>Aurora City FC — Manager Dashboard BEAST V2</title>
+<title>Aurora City FC — Manager Dashboard BEAST V3</title>
 <!-- Build: Aurora Motion Attention System • 24 Jul 2026 -->
+<!-- Build: BEAST V3 Click-Safe Decision Queue + Department Broadcast Panels • 24 Jul 2026 -->
 <!-- Build: BEAST V2 Decision Queue + Manager Action Log • 24 Jul 2026 -->
 <!-- Hotfix: Decision Queue modal + native navigation links • 24 Jul 2026 -->
 <!-- Build: Aurora Beast Command Centre • 24 Jul 2026 -->
@@ -1353,6 +1354,65 @@ html[data-aurora-motion="subtle"] .aurora-refresh-wave{height:2px;filter:none}
 html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[data-aurora-motion="off"] *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 @media(prefers-reduced-motion:reduce){html:not([data-aurora-motion="full"]) *,html:not([data-aurora-motion="full"]) *:before,html:not([data-aurora-motion="full"]) *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+
+<style id="aurora-beast-v3-panel-themes">
+/* ================= BEAST V3 • CLICK-SAFE QUEUE + DEPARTMENT BROADCAST THEMES ================= */
+#beastDecisionQueue,[data-decision-action],.beast-decision-actions{touch-action:manipulation}
+#beastDecisionQueue{user-select:text;-webkit-user-select:text}
+#beastDecisionQueue .beast-decision-btn{position:relative;z-index:8;min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 13px;pointer-events:auto!important;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease}
+#beastDecisionQueue .beast-decision-btn.primary{border-color:rgba(34,211,238,.34);background:linear-gradient(135deg,rgba(8,145,178,.28),rgba(30,64,175,.28));color:#e0f2fe;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+#beastDecisionQueue .beast-decision-btn.primary:hover,#beastDecisionQueue .beast-decision-btn.primary:focus-visible{transform:translateY(-1px);border-color:#67e8f9;box-shadow:0 0 0 4px rgba(34,211,238,.10),0 10px 24px rgba(0,0,0,.24);outline:none}
+#beastDecisionQueue .beast-decision-btn:active{transform:scale(.97)}
+#beastDecisionQueue .beast-decision-actions{position:relative;z-index:7}
+body.beast-decision-open .beast-drawer-overlay{z-index:1100}
+body.beast-decision-open .beast-drawer{z-index:1101}
+
+.beast-broadcast-panel{isolation:isolate;overflow:hidden;--panel-accent:96,165,250;--panel-accent-solid:#60a5fa}
+.beast-broadcast-panel:before{background:radial-gradient(circle at 92% 0%,rgba(var(--panel-accent),.17),transparent 31%),linear-gradient(125deg,transparent 0 58%,rgba(var(--panel-accent),.035) 58% 59%,transparent 59% 100%)!important}
+.beast-broadcast-panel:after{content:"";position:absolute;z-index:0;left:-35%;top:0;width:28%;height:100%;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(var(--panel-accent),.08),transparent);pointer-events:none;opacity:0}
+.beast-broadcast-panel>*{position:relative;z-index:1}
+.beast-theme-media{--panel-accent:250,204,21;--panel-accent-solid:#facc15;border-color:rgba(250,204,21,.25);background:radial-gradient(circle at 88% 0%,rgba(250,204,21,.11),transparent 33%),linear-gradient(180deg,rgba(28,23,8,.92),rgba(7,12,24,.97))}
+.beast-theme-transfer{--panel-accent:245,158,11;--panel-accent-solid:#f59e0b;border-color:rgba(245,158,11,.26);background:radial-gradient(circle at 90% 0%,rgba(245,158,11,.11),transparent 32%),linear-gradient(180deg,rgba(31,21,7,.92),rgba(7,12,24,.97))}
+.beast-theme-squad{--panel-accent:34,211,238;--panel-accent-solid:#22d3ee;border-color:rgba(34,211,238,.24);background:radial-gradient(circle at 90% 0%,rgba(34,211,238,.11),transparent 32%),linear-gradient(180deg,rgba(5,27,38,.92),rgba(6,12,25,.97))}
+.beast-theme-board{--panel-accent:244,114,182;--panel-accent-solid:#f472b6;border-color:rgba(244,114,182,.26);background:radial-gradient(circle at 90% 0%,rgba(244,114,182,.13),transparent 33%),linear-gradient(180deg,rgba(30,12,31,.94),rgba(8,10,24,.98))}
+.beast-theme-schedule{--panel-accent:167,139,250;--panel-accent-solid:#a78bfa;border-color:rgba(167,139,250,.24);background:radial-gradient(circle at 94% 0%,rgba(167,139,250,.12),transparent 30%),linear-gradient(180deg,rgba(17,15,39,.93),rgba(6,11,24,.98))}
+.beast-broadcast-panel .panel-kicker{color:rgb(var(--panel-accent))}
+.beast-broadcast-panel .panel-open-link{color:rgb(var(--panel-accent));border-top-color:rgba(var(--panel-accent),.16);background:linear-gradient(90deg,rgba(var(--panel-accent),.055),transparent)}
+.beast-broadcast-panel .panel-open-link:hover{background:rgba(var(--panel-accent),.12);color:#fff}
+.beast-broadcast-panel.beast-panel-updated{box-shadow:0 0 0 1px rgba(var(--panel-accent),.38),0 20px 70px rgba(0,0,0,.38),0 0 34px rgba(var(--panel-accent),.13)}
+
+.beast-broadcast-strip{display:flex;align-items:center;gap:8px;margin:13px 18px 0;padding:8px 10px;border:1px solid rgba(250,204,21,.16);border-radius:12px;background:rgba(66,49,4,.16);color:#fde68a;font-size:9px;letter-spacing:.09em;text-transform:uppercase}.beast-broadcast-strip span:last-child{margin-left:auto;color:#9b8e66;letter-spacing:0;text-transform:none}.beast-signal-dot{width:8px;height:8px;border-radius:50%;background:#facc15;box-shadow:0 0 0 5px rgba(250,204,21,.08)}
+.media-feature-icon{position:relative;overflow:visible}.media-feature-icon span{position:relative;z-index:2}.media-feature-icon i{position:absolute;inset:-7px;border:1px solid rgba(250,204,21,.24);border-radius:27px;opacity:.55}.beast-theme-media .media-feature h4{color:#fff7cc;text-shadow:0 0 20px rgba(250,204,21,.08)}
+
+.beast-route-wire{height:20px;margin:11px 30px -5px;display:grid;grid-template-columns:repeat(3,1fr);align-items:center;position:relative}.beast-route-wire:before{content:"";position:absolute;left:16.5%;right:16.5%;top:9px;height:2px;background:linear-gradient(90deg,rgba(245,158,11,.18),#f59e0b,rgba(245,158,11,.18))}.beast-route-wire i{position:relative;z-index:1;justify-self:center;width:12px;height:12px;border-radius:50%;border:2px solid #f59e0b;background:#241707;box-shadow:0 0 0 5px rgba(245,158,11,.08)}.beast-theme-transfer .panel-stat-row>div{border-color:rgba(245,158,11,.14)}.beast-theme-transfer #topTransferPreview .preview-row:first-child{border-color:rgba(245,158,11,.28);background:rgba(120,53,15,.16)}
+
+.beast-squad-formation{position:absolute;right:20px;top:62px;width:120px;height:76px;border:1px solid rgba(34,211,238,.13);border-radius:14px;background:linear-gradient(rgba(34,211,238,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.035) 1px,transparent 1px);background-size:20px 20px;opacity:.65;pointer-events:none}.beast-squad-formation:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid rgba(34,211,238,.12)}.beast-squad-formation span{position:absolute;width:8px;height:8px;border-radius:50%;background:#22d3ee;box-shadow:0 0 11px rgba(34,211,238,.55)}.beast-squad-formation span:nth-child(1){left:10px;top:34px}.beast-squad-formation span:nth-child(2){left:36px;top:13px}.beast-squad-formation span:nth-child(3){left:36px;bottom:13px}.beast-squad-formation span:nth-child(4){right:38px;top:13px}.beast-squad-formation span:nth-child(5){right:38px;bottom:13px}.beast-squad-formation span:nth-child(6){right:10px;top:34px}.beast-theme-squad .preview-row:first-child{border-color:rgba(34,211,238,.28);background:rgba(8,47,73,.24)}
+
+.board-command-score{position:relative;overflow:hidden;padding-top:76px}.beast-board-seal{position:absolute;right:14px;top:13px;width:58px;height:58px;display:grid;place-items:center;border:1px solid rgba(244,114,182,.25);border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.15),rgba(88,28,135,.07));box-shadow:0 0 24px rgba(244,114,182,.10)}.beast-board-seal:before,.beast-board-seal:after{content:"";position:absolute;border-radius:50%;inset:6px;border:1px dashed rgba(244,114,182,.28)}.beast-board-seal:after{inset:13px;border-style:solid;opacity:.55}.beast-board-seal span{font-size:8px;font-weight:1000;letter-spacing:.08em;color:#fbcfe8}.beast-board-meter{height:7px;margin-top:13px;border-radius:999px;background:rgba(148,163,184,.13);overflow:hidden}.beast-board-meter i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#a78bfa,#f472b6,#fbbf24);box-shadow:0 0 14px rgba(244,114,182,.35);transition:width .65s cubic-bezier(.2,.8,.2,1)}.beast-theme-board .board-command-list div{border-color:rgba(244,114,182,.13)}
+
+.beast-schedule-track{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:13px 39px 0;position:relative}.beast-schedule-track:before{content:"";position:absolute;left:12.5%;right:12.5%;top:7px;height:2px;background:linear-gradient(90deg,#a78bfa,#60a5fa,#34d399,#fbbf24);opacity:.55}.beast-schedule-track span{position:relative;z-index:1;justify-self:center;width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:#11162f;box-shadow:0 0 0 5px rgba(167,139,250,.07)}.beast-theme-schedule .schedule-row{position:relative;overflow:hidden;border-color:rgba(167,139,250,.14)}.beast-theme-schedule .schedule-row:first-child{border-color:rgba(251,191,36,.28);background:linear-gradient(90deg,rgba(120,53,15,.18),rgba(2,6,23,.28))}.beast-theme-schedule .schedule-row:after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(167,139,250,.5)}.beast-theme-schedule .schedule-row:first-child:after{background:#fbbf24}
+
+html[data-aurora-motion="full"] .beast-broadcast-panel:after{animation:beastPanelSweep 8s ease-in-out infinite}
+html[data-aurora-motion="full"] .beast-theme-media .beast-signal-dot{animation:beastNewsPulse 2.4s ease-in-out infinite}
+html[data-aurora-motion="full"] .beast-theme-media .media-feature-icon i{animation:beastNewsOrbit 7s linear infinite}
+html[data-aurora-motion="full"] .beast-theme-transfer .beast-route-wire i{animation:beastRouteNode 2.6s ease-in-out infinite}
+html[data-aurora-motion="full"] .beast-theme-transfer .beast-route-wire i:nth-child(2){animation-delay:.35s}html[data-aurora-motion="full"] .beast-theme-transfer .beast-route-wire i:nth-child(3){animation-delay:.7s}
+html[data-aurora-motion="full"] .beast-theme-squad .beast-squad-formation span{animation:beastSquadSignal 3s ease-in-out infinite}html[data-aurora-motion="full"] .beast-theme-squad .beast-squad-formation span:nth-child(2n){animation-delay:.45s}
+html[data-aurora-motion="full"] .beast-theme-board .beast-board-seal{animation:beastBoardSeal 7.5s linear infinite}html[data-aurora-motion="full"] .beast-theme-board .board-command-score strong{animation:beastBoardScore 3.8s ease-in-out infinite}
+html[data-aurora-motion="full"] .beast-theme-schedule .beast-schedule-track span{animation:beastScheduleNode 3.2s ease-in-out infinite}html[data-aurora-motion="full"] .beast-theme-schedule .beast-schedule-track span:nth-child(2){animation-delay:.25s}html[data-aurora-motion="full"] .beast-theme-schedule .beast-schedule-track span:nth-child(3){animation-delay:.5s}html[data-aurora-motion="full"] .beast-theme-schedule .beast-schedule-track span:nth-child(4){animation-delay:.75s}
+html[data-aurora-motion="subtle"] .beast-broadcast-panel:after{animation:beastPanelSweep 14s ease-in-out infinite;opacity:.5}
+html[data-aurora-motion="subtle"] .beast-theme-board .beast-board-seal{animation:beastBoardSeal 14s linear infinite}
+@keyframes beastPanelSweep{0%,72%,100%{left:-35%;opacity:0}78%{opacity:.7}90%{left:115%;opacity:0}}
+@keyframes beastNewsPulse{0%,100%{box-shadow:0 0 0 5px rgba(250,204,21,.08)}50%{box-shadow:0 0 0 10px rgba(250,204,21,0),0 0 16px rgba(250,204,21,.45)}}
+@keyframes beastNewsOrbit{to{transform:rotate(360deg)}}
+@keyframes beastRouteNode{0%,100%{transform:scale(.9);box-shadow:0 0 0 5px rgba(245,158,11,.06)}50%{transform:scale(1.08);box-shadow:0 0 0 9px rgba(245,158,11,0),0 0 14px rgba(245,158,11,.35)}}
+@keyframes beastSquadSignal{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}}
+@keyframes beastBoardSeal{to{transform:rotate(360deg)}}
+@keyframes beastBoardScore{0%,100%{text-shadow:0 0 0 rgba(244,114,182,0)}50%{text-shadow:0 0 24px rgba(244,114,182,.36)}}
+@keyframes beastScheduleNode{0%,100%{transform:translateY(0);box-shadow:0 0 0 5px rgba(167,139,250,.07)}50%{transform:translateY(-2px);box-shadow:0 0 0 9px rgba(167,139,250,0),0 0 14px rgba(167,139,250,.3)}}
+@media(max-width:760px){.beast-broadcast-strip span:last-child{display:none}.beast-squad-formation{display:none}.board-command-score{padding-top:64px}.beast-route-wire{margin-left:20px;margin-right:20px}.beast-schedule-track{margin-left:24px;margin-right:24px}}
+</style>
+
 </head>
 <body>
 <div class="fm-shell">
@@ -1521,16 +1581,18 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <div class="beast-action-log-list" id="beastActionLogList"><div class="loading">Loading manager history…</div></div>
 <div class="beast-log-footer"><span id="beastActionLogCount">0 recorded actions</span><button class="beast-log-clear" id="beastActionLogClear" type="button">Clear history</button></div>
 </article>
-<article class="command-panel command-span-6 media-command-panel">
+<article class="command-panel command-span-6 media-command-panel beast-broadcast-panel beast-theme-media" id="manager-media-story">
 <div class="command-panel-head"><div><span class="panel-kicker">Aurora Times</span><h3>Latest Media Story</h3><p><span id="deptMedia">Loading</span> newsroom • <b id="deptNewsCount">—</b> stories</p></div><span class="badge blue" id="latestMediaBadge">News</span></div>
+<div class="beast-broadcast-strip"><span class="beast-signal-dot"></span><b>LIVE NEWSROOM FEED</b><span>Latest verified club story</span></div>
 <div class="media-feature">
-<div class="media-feature-icon">AFC</div>
+<div class="media-feature-icon"><span>AFC</span><i></i></div>
 <div><span class="media-feature-meta" id="latestMediaMeta">Newsroom loading…</span><h4 id="latestMediaHeadline">Waiting for the latest headline…</h4><p id="latestMediaSummary">Aurora Times is checking the live newsroom feed.</p></div>
 </div>
 <a class="panel-open-link" href="AuroraCityFC_MediaCentre.html">Open Media Centre <span>→</span></a>
 </article>
-<article class="command-panel command-span-6 aurora-section-anchor" id="manager-transfer-desk">
+<article class="command-panel command-span-6 aurora-section-anchor beast-broadcast-panel beast-theme-transfer" id="manager-transfer-desk">
 <div class="command-panel-head"><div><span class="panel-kicker">Recruitment</span><h3>Transfer Desk</h3><p>The current payday route from the exact Transfer Centre deal sheet.</p></div><span class="badge green" id="topTransferBadge">Loading</span></div>
+<div class="beast-route-wire" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="panel-stat-row">
 <div><small>Lead Target</small><strong id="deptTopTarget">—</strong></div>
 <div><small>Approved Deals</small><strong id="deptTransfers">—</strong></div>
@@ -1539,8 +1601,9 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <div class="preview-list compact-preview" id="topTransferPreview"><div class="loading">Loading transfer route…</div></div>
 <a class="panel-open-link" href="AuroraCityFC_TransferCentre.html">Open Transfer Centre <span>→</span></a>
 </article>
-<article class="command-panel command-span-6">
+<article class="command-panel command-span-6 beast-broadcast-panel beast-theme-squad" id="manager-squad-report">
 <div class="command-panel-head"><div><span class="panel-kicker">First Team</span><h3>Squad Report</h3><p>Income leaders and players requiring development attention.</p></div><span class="badge blue" id="squadBadge">Loading</span></div>
+<div class="beast-squad-formation" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
 <div class="panel-stat-row">
 <div><small>Squad Status</small><strong id="deptSquad">—</strong></div>
 <div><small>Watch Player</small><strong id="deptCaptain">—</strong></div>
@@ -1549,10 +1612,10 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <div class="preview-list compact-preview" id="squadPreview"><div class="loading">Loading squad report…</div></div>
 <a class="panel-open-link" href="AuroraCityFC_SquadHub.html">Open Squad Hub <span>→</span></a>
 </article>
-<article class="command-panel command-span-6">
+<article class="command-panel command-span-6 beast-broadcast-panel beast-theme-board" id="manager-board-update">
 <div class="command-panel-head"><div><span class="panel-kicker">Club Leadership</span><h3>Board Update</h3><p>Confidence, risk and the board’s current view of the rebuild.</p></div><span class="badge green" id="deptBoard">Loading</span></div>
 <div class="board-command-grid">
-<div class="board-command-score"><small>Board Confidence</small><strong id="boardCommandScore">—</strong><span id="boardCommandVerdict">Loading board verdict…</span></div>
+<div class="board-command-score"><div class="beast-board-seal" aria-hidden="true"><span>ACFC</span></div><small>Board Confidence</small><strong id="boardCommandScore">—</strong><span id="boardCommandVerdict">Loading board verdict…</span><div class="beast-board-meter" aria-label="Board confidence meter"><i id="beastBoardMeterFill"></i></div></div>
 <div class="board-command-list">
 <div><span>Financial health</span><strong id="boardFinancialHealth">—</strong></div>
 <div><span>Current risk</span><strong id="deptRisk">—</strong></div>
@@ -1561,8 +1624,9 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 </div>
 <a class="panel-open-link" href="AuroraCityFC_Boardroom.html">Open Boardroom <span>→</span></a>
 </article>
-<article class="command-panel command-span-12 aurora-section-anchor" id="schedule-panel">
+<article class="command-panel command-span-12 aurora-section-anchor beast-broadcast-panel beast-theme-schedule" id="schedule-panel">
 <div class="command-panel-head"><div><span class="panel-kicker">Calendar</span><h3>Upcoming Schedule</h3><p>The next financial and club-management events.</p></div><span class="badge amber">Next Up</span></div>
+<div class="beast-schedule-track" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 <div class="schedule-list">
 <div class="schedule-row"><span class="schedule-icon">💷</span><div><small>Next Dividend</small><strong id="nextDividendTicker">—</strong><p id="nextDividendNote">Checking payment calendar…</p></div></div>
 <div class="schedule-row"><span class="schedule-icon">⇄</span><div><small>Transfer Route</small><strong id="scheduleTransferStatus">Syncing…</strong><p id="scheduleTransferNote">Waiting for the final deal sheet.</p></div></div>
@@ -2662,9 +2726,9 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function decisionPrimaryAction(item){
     if(!item.actionLabel)return '';
     if(item.href){
-      return `<a class="beast-decision-btn" href="${esc(item.href)}" data-decision-link="true" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)}</a>`;
+      return `<button class="beast-decision-btn primary" type="button" data-decision-action="navigate" data-decision-href="${esc(item.href)}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)} <span aria-hidden="true">→</span></button>`;
     }
-    return `<button class="beast-decision-btn" type="button" data-decision-action="${esc(item.action||'open')}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)}</button>`;
+    return `<button class="beast-decision-btn primary" type="button" data-decision-action="${esc(item.action||'open')}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)} <span aria-hidden="true">→</span></button>`;
   }
   function renderDecisions(){
     const box=q('beastDecisionList');if(!box)return;const items=visibleDecisions();
@@ -2673,12 +2737,27 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   }
   function findDecision(id){return decisionCandidates().find(item=>item.id===id)}
   function closeDecision(item,outcome){if(!item)return;const state=decisionState();state[item.id]={fingerprint:item.fingerprint,outcome,at:Date.now()};writeJson(DECISION_KEY,state);addLog(`${outcome==='completed'?'Completed':'Dismissed'}: ${item.title}`,item.detail,'decision',outcome==='completed'?'✓':'×',`decision-${outcome}-${item.id}-${item.fingerprint}`,0);renderDecisions()}
-  function handleDecision(action,id){
+  function handleDecision(action,id,source){
     const item=findDecision(id);if(!item)return;
     if(action==='complete'||action==='dismiss'){closeDecision(item,action==='complete'?'completed':'dismissed');return;}
-    if(action==='refresh'){q('refreshBtn')?.click();return;}
-    if(action==='holding'&&item.ticker){openDrawer(item.ticker);return;}
-    if(item.href){addLog(`Opened: ${item.title}`,item.meta,'navigation','→',`open-${item.id}`,60000);window.location.href=item.href;}
+    if(action==='refresh'){closeDecisionQueue();setTimeout(()=>q('refreshBtn')?.click(),80);return;}
+    if(action==='holding'&&item.ticker){
+      closeDecisionQueue();
+      setTimeout(()=>openDrawer(item.ticker),180);
+      return;
+    }
+    const href=source?.dataset?.decisionHref||item.href;
+    if(action==='navigate'&&href){
+      addLog(`Opened: ${item.title}`,item.meta,'navigation','→',`open-${item.id}`,60000);
+      closeDecisionQueue();
+      setTimeout(()=>window.location.assign(href),90);
+      return;
+    }
+    if(item.href){
+      addLog(`Opened: ${item.title}`,item.meta,'navigation','→',`open-${item.id}`,60000);
+      closeDecisionQueue();
+      setTimeout(()=>window.location.assign(item.href),90);
+    }
   }
   function syncAutomaticLog(){
     if(!localStorage.getItem(V2_SEED_KEY)){localStorage.setItem(V2_SEED_KEY,'1');addLog('BEAST V2 command tools activated','Decision Queue and Manager Action Log are now live.','system','🔥','beast-v2-seed',0);}
@@ -2755,10 +2834,10 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   }
   function closeDrawer(){q('beastDrawerOverlay')?.classList.remove('open');q('beastHoldingDrawer')?.classList.remove('open');document.body.style.overflow=''}
   function togglePanel(id,buttonId){['beastNotificationPanel','beastLayoutPanel'].forEach(pid=>{if(pid!==id)q(pid)?.classList.remove('open')});const panel=q(id);panel?.classList.toggle('open');q(buttonId)?.classList.toggle('active',panel?.classList.contains('open'));}
-  function assignPanelKeys(){document.querySelectorAll('.manager-command-grid>.command-panel').forEach((panel,i)=>{if(!panel.dataset.beastKey){const h=panel.querySelector('h3')?.textContent?.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');panel.dataset.beastKey=h||`panel-${i}`}panel.draggable=true})}
+  function assignPanelKeys(){document.querySelectorAll('.manager-command-grid>.command-panel').forEach((panel,i)=>{if(!panel.dataset.beastKey){const h=panel.querySelector('h3')?.textContent?.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');panel.dataset.beastKey=h||`panel-${i}`}panel.draggable=panel.id!=='beastDecisionQueue'})}
   function applyOrder(){try{const order=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]'),grid=document.querySelector('.manager-command-grid');if(!grid||!Array.isArray(order))return;order.forEach(key=>{const node=[...grid.children].find(x=>x.dataset?.beastKey===key);if(node)grid.appendChild(node)})}catch(_){}}
   function saveOrder(){const grid=document.querySelector('.manager-command-grid');if(grid)localStorage.setItem(ORDER_KEY,JSON.stringify([...grid.children].map(x=>x.dataset?.beastKey).filter(Boolean)))}
-  function bindDrag(){let dragging=null;document.addEventListener('dragstart',e=>{const panel=e.target.closest('.manager-command-grid>.command-panel');if(!panel)return;dragging=panel;panel.classList.add('beast-dragging');e.dataTransfer.effectAllowed='move'});document.addEventListener('dragend',()=>{dragging?.classList.remove('beast-dragging');document.querySelectorAll('.beast-drag-over').forEach(x=>x.classList.remove('beast-drag-over'));dragging=null;saveOrder()});document.addEventListener('dragover',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.add('beast-drag-over')});document.addEventListener('dragleave',e=>e.target.closest('.command-panel')?.classList.remove('beast-drag-over'));document.addEventListener('drop',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.remove('beast-drag-over');const rect=target.getBoundingClientRect();target.parentNode.insertBefore(dragging,e.clientY<rect.top+rect.height/2?target:target.nextSibling);saveOrder()})}
+  function bindDrag(){let dragging=null;document.addEventListener('dragstart',e=>{if(e.target.closest('a,button,input,textarea,select,[role="button"],#beastDecisionQueue')){e.preventDefault();return}const panel=e.target.closest('.manager-command-grid>.command-panel');if(!panel||panel.draggable===false)return;dragging=panel;panel.classList.add('beast-dragging');e.dataTransfer.effectAllowed='move'});document.addEventListener('dragend',()=>{dragging?.classList.remove('beast-dragging');document.querySelectorAll('.beast-drag-over').forEach(x=>x.classList.remove('beast-drag-over'));dragging=null;saveOrder()});document.addEventListener('dragover',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.add('beast-drag-over')});document.addEventListener('dragleave',e=>e.target.closest('.command-panel')?.classList.remove('beast-drag-over'));document.addEventListener('drop',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.remove('beast-drag-over');const rect=target.getBoundingClientRect();target.parentNode.insertBefore(dragging,e.clientY<rect.top+rect.height/2?target:target.nextSibling);saveOrder()})}
   function refreshBeast(){
     syncAutomaticLog();renderDecisions();renderActionLog();
     if(!Array.isArray(state?.holdings)||!state.holdings.length)return;
@@ -2773,6 +2852,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     q('beastDecisionOverlay')?.setAttribute('aria-hidden','false');
     q('beastDecisionButton')?.setAttribute('aria-expanded','true');
     q('beastDecisionQueue')?.setAttribute('role','dialog');
+    if(q('beastDecisionQueue'))q('beastDecisionQueue').draggable=false;
     q('beastDecisionQueue')?.setAttribute('aria-modal','true');
     setTimeout(()=>q('beastDecisionClose')?.focus(),40);
   }
@@ -2800,17 +2880,42 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     q('beastActionLogForm')?.addEventListener('submit',event=>{event.preventDefault();const input=q('beastActionLogInput'),value=input?.value?.trim();if(!value)return;addLog(value,'Manual manager note.','manual','✎','',0);input.value='';});
     q('beastActionLogClear')?.addEventListener('click',()=>{if(window.confirm('Clear the saved Manager Action Log?')){writeJson(ACTION_LOG_KEY,[]);renderActionLog();}});
     q('beastDecisionList')?.addEventListener('click',event=>{
-      const link=event.target.closest('[data-decision-link]');
-      if(link){const item=findDecision(link.dataset.decisionId);if(item)addLog(`Opened: ${item.title}`,item.meta,'navigation','→',`open-${item.id}`,60000);closeDecisionQueue();return;}
       const button=event.target.closest('[data-decision-action]');
-      if(button){event.preventDefault();event.stopPropagation();handleDecision(button.dataset.decisionAction,button.dataset.decisionId);}
+      if(!button)return;
+      event.preventDefault();
+      event.stopPropagation();
+      handleDecision(button.dataset.decisionAction,button.dataset.decisionId,button);
     });
     document.addEventListener('click',e=>{const sort=e.target.closest('[data-beast-sort]');if(sort){sortMode=sort.dataset.beastSort;document.querySelectorAll('[data-beast-sort]').forEach(x=>x.classList.toggle('active',x===sort));renderRadar()}const card=e.target.closest('[data-beast-ticker]');if(card)openDrawer(card.dataset.beastTicker);const preview=e.target.closest('.preview-row');if(preview){const t=preview.querySelector('strong')?.textContent;if(t&&findRow(t))openDrawer(t)}});
     q('beastDrawerClose')?.addEventListener('click',closeDrawer);q('beastDrawerOverlay')?.addEventListener('click',closeDrawer);
     document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeDecisionQueue();q('beastNotificationPanel')?.classList.remove('open');q('beastLayoutPanel')?.classList.remove('open')}if(e.key.toLowerCase()==='p'&&!/input|textarea|select/i.test(e.target.tagName)){const s=settings(),next=!s.presentation;saveSettings({...s,presentation:next});addLog(`Presentation mode ${next?'enabled':'disabled'}`,'Keyboard shortcut P used.','system','▣','presentation-'+next,30000)}});
     window.addEventListener('storage',e=>{if(['aurora_transfer_plan_v2','aurora_registration_last_v1','aurora_payday_execution_v1','aurora_m4_signing_lifecycle_v1',DECISION_KEY,ACTION_LOG_KEY].includes(e.key))setTimeout(refreshBeast,250)});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshBeast()});
   }
-  function start(){applySettings();assignPanelKeys();applyOrder();bindDrag();bind();refreshBeast();setTimeout(refreshBeast,1600);setTimeout(refreshBeast,5200);setInterval(()=>{if(!document.hidden)refreshBeast()},30000);const observer=new MutationObserver(()=>{clearTimeout(window.__auroraBeastMut);window.__auroraBeastMut=setTimeout(refreshBeast,180)});['heroAnnualIncome','lastUpdated','actionList','topTransferPreview'].forEach(id=>q(id)&&observer.observe(q(id),{childList:true,subtree:true,characterData:true}))}
+
+  function enhanceBroadcastPanels(){
+    const ids=['manager-media-story','manager-transfer-desk','manager-squad-report','manager-board-update','schedule-panel'];
+    ids.forEach(id=>{
+      const panel=q(id);if(!panel||panel.dataset.broadcastObserved)return;
+      panel.dataset.broadcastObserved='1';
+      let timer;
+      new MutationObserver(()=>{
+        clearTimeout(timer);
+        panel.classList.remove('beast-panel-updated');
+        void panel.offsetWidth;
+        panel.classList.add('beast-panel-updated');
+        timer=setTimeout(()=>panel.classList.remove('beast-panel-updated'),1100);
+        if(id==='manager-board-update')updateBoardMeter();
+      }).observe(panel,{childList:true,subtree:true,characterData:true});
+    });
+    updateBoardMeter();
+  }
+  function updateBoardMeter(){
+    const value=parseFloat(String(q('boardCommandScore')?.textContent||'').replace(/[^0-9.]/g,''));
+    const fill=q('beastBoardMeterFill');
+    if(fill)fill.style.width=`${Math.max(0,Math.min(100,Number.isFinite(value)?value:0))}%`;
+  }
+
+  function start(){applySettings();assignPanelKeys();applyOrder();bindDrag();bind();enhanceBroadcastPanels();refreshBeast();setTimeout(refreshBeast,1600);setTimeout(refreshBeast,5200);setInterval(()=>{if(!document.hidden)refreshBeast()},30000);const observer=new MutationObserver(()=>{clearTimeout(window.__auroraBeastMut);window.__auroraBeastMut=setTimeout(refreshBeast,180)});['heroAnnualIncome','lastUpdated','actionList','topTransferPreview'].forEach(id=>q(id)&&observer.observe(q(id),{childList:true,subtree:true,characterData:true}))}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
