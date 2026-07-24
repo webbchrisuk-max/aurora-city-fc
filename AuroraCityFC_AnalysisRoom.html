@@ -2410,6 +2410,8 @@ html[data-aurora-motion="off"] .analysis-player-node{animation:none!important;tr
 <div class="m5-control"><label>Dividend reinvestment <output id="m5ReinvestOut">100%</output></label><input id="m5Reinvest" type="range" min="0" max="100" step="5" value="100"></div>
 <div class="m5-control"><label>Annual ISA planning capacity <output id="m5IsaOut">£20,000</output></label><input id="m5Isa" type="range" min="5000" max="30000" step="1000" value="20000"></div>
 <div class="m5-control"><label>Tesco event year <output id="m5TescoYearOut">2029</output></label><input id="m5TescoYear" type="range" min="2027" max="2032" step="1" value="2029"></div>
+<div class="m5-control"><label>Contribution pause starts <output id="m5PauseStartOut">2028</output></label><input id="m5PauseStart" type="range" min="2027" max="2033" step="1" value="2028"></div>
+<div class="m5-control"><label>Contributions resume <output id="m5ResumeYearOut">2030</output></label><input id="m5ResumeYear" type="range" min="2028" max="2035" step="1" value="2030"></div>
 <div class="m5-control"><label>Selected annual target</label><input id="m5TargetInput" type="number" min="6000" max="100000" step="1000" value="24000"></div>
 </div>
 <div class="m5-sim-results">
@@ -2418,7 +2420,7 @@ html[data-aurora-motion="off"] .analysis-player-node{animation:none!important;tr
 <div class="m5-result"><small>Cash still queued</small><strong id="m5QueueEnd">—</strong><span>After ten-year deployment</span></div>
 </div>
 <div class="m5-manager" id="m5ManagerVerdict"><h4>Aurora AI Manager Briefing</h4><div class="m5-brief-grid"><div class="m5-brief strength"><b>Strengths</b><span>Preparing analysis…</span></div><div class="m5-brief watch"><b>Watch</b><span>Preparing analysis…</span></div><div class="m5-brief recommend"><b>Recommendation</b><span>Preparing analysis…</span></div></div></div>
-<p class="m5-note">Planning model only. This is a general cash-deployment plan, not an assumption that Tesco SAYE can be transferred across several ISA years. Any direct SAYE-to-ISA transfer must meet the rules and timing in force when the scheme matures.</p>
+<p class="m5-note">Planning model only. New ISA subscriptions are paused for the selected window, while dividends already inside the ISA may continue to be reinvested. Tesco SAYE remains a separate maturity-year decision and any direct SAYE-to-ISA transfer must meet the rules and timing in force at maturity.</p>
 </article>
 <aside class="m5-panel">
 <div class="m5-panel-head"><div><span class="analysis-kicker">Cash deployment centre</span><h3>Capital Deployment Plan</h3><p>See where the money comes from, the deployment order and what remains locked.</p></div></div>
@@ -4533,21 +4535,22 @@ document.documentElement.dataset.tescoForecastBuild = "tesco-2029-v32";
   const byId=id=>document.getElementById(id);
   const gbp=(n,d=0)=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:d,maximumFractionDigits:d}).format(Number.isFinite(n)?n:0);
   const milestones=[6000,12000,18000,24000,30000,36000,40000,50000];
-  const fields=["m5Monthly","m5StartPot","m5Tesco","m5Yield","m5Reinvest","m5Isa","m5TescoYear","m5TargetInput"];
+  const fields=["m5Monthly","m5StartPot","m5Tesco","m5Yield","m5Reinvest","m5Isa","m5TescoYear","m5PauseStart","m5ResumeYear","m5TargetInput"];
   const currentAnnual=()=>{try{const n=typeof annualTotal==="function"?annualTotal():NaN;return Number.isFinite(n)&&n>0?n:4220;}catch(_){return 4220;}};
   const currentYield=()=>{try{const n=typeof portfolioYield==="function"?portfolioYield():NaN;return Number.isFinite(n)&&n>0?n:NaN;}catch(_){return NaN;}};
   function val(id){return Number(byId(id)?.value||0)}
-  function simulation(baseIncome,monthly,startPot,tesco,yieldRate,reinvest,isaCap,tescoYear,years=10){
+  function simulation(baseIncome,monthly,startPot,tesco,yieldRate,reinvest,isaCap,tescoYear,pauseStart,resumeYear,years=10){
     let capital=yieldRate>0?baseIncome/yieldRate:0,queue=startPot,annualIncome=baseIncome;
     const now=new Date().getFullYear(),timeline=[];
     for(let year=now;year<now+years;year++){
-      const wages=monthly*12;
+      const paused=year>=pauseStart&&year<resumeYear;
+      const wages=paused?0:monthly*12;
       queue+=wages;
       if(year===tescoYear)queue+=tesco;
       const deploy=Math.min(queue,isaCap); queue-=deploy; capital+=deploy;
       annualIncome=capital*yieldRate;
       const reinvestCash=annualIncome*reinvest; capital+=reinvestCash; annualIncome=capital*yieldRate;
-      timeline.push({year,income:annualIncome,deploy,queue,event:year===tescoYear,reinvest:reinvestCash,wages});
+      timeline.push({year,income:annualIncome,deploy,queue,event:year===tescoYear,reinvest:reinvestCash,wages,paused});
     }
     return {timeline,annualIncome,queue};
   }
@@ -4556,21 +4559,21 @@ document.documentElement.dataset.tescoForecastBuild = "tesco-2029-v32";
     const hit=timeline.find(r=>r.income>=milestone);
     return hit?String(hit.year):"10y+";
   }
-  function renderDeployment(startPot,monthly,tesco,tescoYear,isaCap,queueEnd){
+  function renderDeployment(startPot,monthly,tesco,tescoYear,pauseStart,resumeYear,isaCap,queueEnd){
     const existingCash=Math.min(startPot,10000);
     const etfSale=Math.min(Math.max(0,startPot-existingCash),8000);
     const other=Math.max(0,startPot-existingCash-etfSale);
     const sources=[
       {name:"Existing cash",value:existingCash,note:"Available now",colour:"#34d399"},
       {name:"ETF sale",value:etfSale,note:etfSale?"Deployable capital":"Not included",colour:"#22d3ee"},
-      {name:"Monthly contributions",value:monthly,note:"Added every month",colour:"#60a5fa"},
+      {name:"Monthly contributions",value:monthly,note:`Paused ${pauseStart}–${resumeYear-1}`,colour:"#60a5fa"},
       {name:"Tesco SAYE",value:tesco,note:`Locked until ${tescoYear}`,colour:"#c084fc"}
     ];
     if(other>0)sources.splice(2,0,{name:"Other starting capital",value:other,note:"Included in starting pot",colour:"#fbbf24"});
     const order=[
       {name:"Existing cash",detail:"Deploy first from funds already available",value:existingCash,status:existingCash?"Ready":"None"},
       {name:"ETF sale",detail:"Deploy after the planned ETF disposal",value:etfSale,status:etfSale?"Planned":"None"},
-      {name:"Monthly contributions",detail:`Continue at ${gbp(monthly)}/month`,value:monthly*12,status:"Ongoing"},
+      {name:"Monthly contributions",detail:`${gbp(monthly)}/month except the ${pauseStart}–${resumeYear-1} ISA pause`,value:monthly*12,status:`Pause ${pauseStart}`},
       {name:"Tesco SAYE",detail:`Capital event in ${tescoYear}; eligibility checked at maturity`,value:tesco,status:"Locked",locked:true}
     ];
     byId("m5Queue").innerHTML=`
@@ -4582,12 +4585,13 @@ document.documentElement.dataset.tescoForecastBuild = "tesco-2029-v32";
   }
   function simulate(){
     const baseIncome=currentAnnual();
-    const monthly=val("m5Monthly"),startPot=val("m5StartPot"),tesco=val("m5Tesco"),yieldRate=val("m5Yield")/100,reinvest=val("m5Reinvest")/100,isaCap=val("m5Isa"),tescoYear=val("m5TescoYear"),target=val("m5TargetInput");
-    byId("m5MonthlyOut").textContent=gbp(monthly);byId("m5StartPotOut").textContent=gbp(startPot);byId("m5TescoOut").textContent=gbp(tesco);byId("m5YieldOut").textContent=`${(yieldRate*100).toFixed(2)}%`;byId("m5ReinvestOut").textContent=`${Math.round(reinvest*100)}%`;byId("m5IsaOut").textContent=gbp(isaCap);byId("m5TescoYearOut").textContent=tescoYear;byId("m5TargetBadge").textContent=`Target ${gbp(target)}`;
+    let monthly=val("m5Monthly"),startPot=val("m5StartPot"),tesco=val("m5Tesco"),yieldRate=val("m5Yield")/100,reinvest=val("m5Reinvest")/100,isaCap=val("m5Isa"),tescoYear=val("m5TescoYear"),pauseStart=val("m5PauseStart"),resumeYear=val("m5ResumeYear"),target=val("m5TargetInput");
+    if(resumeYear<=pauseStart){resumeYear=pauseStart+1;byId("m5ResumeYear").value=resumeYear;}
+    byId("m5MonthlyOut").textContent=gbp(monthly);byId("m5StartPotOut").textContent=gbp(startPot);byId("m5TescoOut").textContent=gbp(tesco);byId("m5YieldOut").textContent=`${(yieldRate*100).toFixed(2)}%`;byId("m5ReinvestOut").textContent=`${Math.round(reinvest*100)}%`;byId("m5IsaOut").textContent=gbp(isaCap);byId("m5TescoYearOut").textContent=tescoYear;byId("m5PauseStartOut").textContent=pauseStart;byId("m5ResumeYearOut").textContent=resumeYear;byId("m5TargetBadge").textContent=`Target ${gbp(target)}`;
     byId("m5AnnualIncome").textContent=gbp(baseIncome,2);byId("m5MonthlyIncome").textContent=gbp(baseIncome/12,2);byId("m5DailyIncome").textContent=gbp(baseIncome/365,2);byId("m5HourlyIncome").textContent=gbp(baseIncome/8760,2);
     const liveYield=currentYield();byId("m5CurrentYield").textContent=Number.isFinite(liveYield)?`${(liveYield*100).toFixed(2)}%`:`${(yieldRate*100).toFixed(2)}%`;
 
-    const result=simulation(baseIncome,monthly,startPot,tesco,yieldRate,reinvest,isaCap,tescoYear,10);
+    const result=simulation(baseIncome,monthly,startPot,tesco,yieldRate,reinvest,isaCap,tescoYear,pauseStart,resumeYear,10);
     const {timeline,annualIncome,queue}=result;
     const targetHit=baseIncome>=target?"Reached":completionYearFor(target,baseIncome,timeline);
     const targetYear=targetHit!=="Reached"&&targetHit!=="10y+"?targetHit:null;
@@ -4597,13 +4601,13 @@ document.documentElement.dataset.tescoForecastBuild = "tesco-2029-v32";
     roadmap.querySelectorAll("[data-m5-target]").forEach(b=>b.addEventListener("click",()=>{byId("m5TargetInput").value=b.dataset.m5Target;simulate();}));
 
     byId("m5ProjectedAnnual").textContent=gbp(annualIncome,0);byId("m5ProjectionYears").textContent=`${gbp(annualIncome/12,0)}/month after 10 years`;byId("m5TargetFinish").textContent=targetHit;byId("m5TargetGapText").textContent=baseIncome>=target?"Target already achieved":`${gbp(Math.max(0,target-baseIncome),0)} annual gap today`;byId("m5QueueEnd").textContent=gbp(queue,0);
-    renderDeployment(startPot,monthly,tesco,tescoYear,isaCap,queue);
+    renderDeployment(startPot,monthly,tesco,tescoYear,pauseStart,resumeYear,isaCap,queue);
 
-    byId("m5Timeline").innerHTML=timeline.map(r=>{const hit=milestones.filter(m=>r.income>=m).at(-1);return `<div class="m5-year ${r.event?'event':''}"><small>${r.year}${r.event?' • Tesco event':''}</small><strong>${gbp(r.income,0)}/yr</strong><span>${gbp(r.income/12,0)}/month<br>Planned ISA deployment ${gbp(r.deploy)}<br>General cash backlog ${gbp(r.queue)}${hit?`<br>🏆 ${gbp(hit)} milestone`:''}</span></div>`}).join("");
+    byId("m5Timeline").innerHTML=timeline.map(r=>{const hit=milestones.filter(m=>r.income>=m).at(-1);return `<div class="m5-year ${r.event?'event':''}"><small>${r.year}${r.event?' • Tesco event':''}${r.paused?' • Contributions paused':''}</small><strong>${gbp(r.income,0)}/yr</strong><span>${gbp(r.income/12,0)}/month<br>New cash contributions ${gbp(r.wages)}<br>Planned ISA deployment ${gbp(r.deploy)}<br>General cash backlog ${gbp(r.queue)}${hit?`<br>🏆 ${gbp(hit)} milestone`:''}</span></div>`}).join("");
 
-    const strength=`${gbp(monthly)}/month contributions and ${Math.round(reinvest*100)}% dividend reinvestment create consistent compounding.`;
+    const strength=`${gbp(monthly)}/month contributions operate outside the ${pauseStart}–${resumeYear-1} pause, while ${Math.round(reinvest*100)}% dividend reinvestment continues inside the ISA.`;
     const watch=queue>isaCap?`Investable cash can exceed the annual planning capacity; ${gbp(queue)} remains after the ten-year model.`:`The projected backlog is controlled, but yield and dividend concentration still need monitoring.`;
-    const recommendation=baseIncome>=target?`The ${gbp(target)} target is already secured. Prioritise quality and diversification.`:targetYear?`Stay with the current plan; the model reaches ${gbp(target)} around ${targetYear}. Treat Tesco as a separate 2029 decision, not a guaranteed multi-year ISA transfer.`:`The target remains beyond ten years. Increase capital gradually or use a nearer milestone without forcing an unrealistic yield.`;
+    const recommendation=baseIncome>=target?`The ${gbp(target)} target is already secured. Prioritise quality and diversification.`:targetYear?`Stay with the current plan; the model reaches ${gbp(target)} around ${targetYear}. The contribution pause is included, and Tesco remains a separate maturity-year decision rather than a guaranteed multi-year ISA transfer.`:`The target remains beyond ten years. Increase capital gradually or use a nearer milestone without forcing an unrealistic yield.`;
     byId("m5ManagerVerdict").innerHTML=`<h4>Aurora AI Manager Briefing</h4><div class="m5-brief-grid"><div class="m5-brief strength"><b>Strengths</b><span>${strength}</span></div><div class="m5-brief watch"><b>Watch</b><span>${watch}</span></div><div class="m5-brief recommend"><b>Recommendation</b><span>${recommendation}</span></div></div>`;
   }
   function bind(){fields.forEach(id=>byId(id)?.addEventListener("input",simulate));simulate();}
