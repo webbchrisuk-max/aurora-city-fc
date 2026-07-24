@@ -14,6 +14,7 @@
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Scouting Centre</title>
+<!-- Build: Aurora Motion Attention System • 24 Jul 2026 -->
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
 <!-- Build: Scouting Centre FM Refresh • 23 Jul 2026 -->
@@ -2443,7 +2444,172 @@ body{
 .fm-side-link[href*="AuroraCityFC_TransferCentre.html"] .fm-side-icon{color:#f59e0b!important;background:rgba(245,158,11,.11)!important;border-color:rgba(245,158,11,.15)!important}
 .fm-side-link[href*="AuroraCityFC_ScoutingCentre.html"]:hover{border-color:rgba(74,222,128,.42)!important;background:linear-gradient(90deg,rgba(74,222,128,.25),rgba(74,222,128,.08) 72%,transparent)!important}
 .fm-side-link[href*="AuroraCityFC_TransferCentre.html"]:hover{border-color:rgba(245,158,11,.42)!important;background:linear-gradient(90deg,rgba(245,158,11,.25),rgba(245,158,11,.08) 72%,transparent)!important}
-</style></head>
+</style><style id="aurora-motion-system-styles">
+/* ================= AURORA MOTION SYSTEM • 24 JUL 2026 =================
+   Purposeful attention animation shared by all Aurora departments.
+   Modes: Full, Subtle, Off. The choice is stored on this device. */
+:root{
+  --aurora-motion-accent:#22d3ee;
+  --aurora-motion-success:#34d399;
+  --aurora-motion-warning:#fbbf24;
+  --aurora-motion-danger:#fb7185;
+  --aurora-radar-speed:4.4s;
+}
+html[data-aurora-page="manager"]{--aurora-motion-accent:#22d3ee}
+html[data-aurora-page="squad"]{--aurora-motion-accent:#22d3ee}
+html[data-aurora-page="analysis"]{--aurora-motion-accent:#a78bfa}
+html[data-aurora-page="training"]{--aurora-motion-accent:#34d399}
+html[data-aurora-page="scouting"]{--aurora-motion-accent:#4ade80}
+html[data-aurora-page="transfer"]{--aurora-motion-accent:#f59e0b}
+html[data-aurora-page="boardroom"]{--aurora-motion-accent:#f472b6}
+html[data-aurora-page="media"]{--aurora-motion-accent:#facc15}
+
+.aurora-motion-toggle{position:relative!important;overflow:hidden!important}
+.aurora-motion-toggle .fm-side-icon{color:#e9d5ff!important;background:rgba(167,139,250,.12)!important;border:1px solid rgba(167,139,250,.18)!important}
+.aurora-motion-toggle b{color:#e9d5ff;font-weight:1000}
+.aurora-motion-toggle:after{content:"";position:absolute;left:-70%;top:0;width:45%;height:100%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent);opacity:0}
+html[data-aurora-motion="full"] .aurora-motion-toggle:after{animation:auroraControlSheen 7s ease-in-out infinite}
+
+.aurora-refresh-wave{position:fixed;z-index:9998;left:0;right:0;top:0;height:3px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--aurora-motion-accent),#e0f2fe,var(--aurora-motion-accent),transparent);transform:translateX(-110%);filter:drop-shadow(0 0 8px var(--aurora-motion-accent));animation:auroraRefreshWave .95s ease-out both}
+.aurora-value-updated{animation:auroraValuePop .72s cubic-bezier(.2,.85,.25,1) both!important}
+.aurora-row-flash-positive{animation:auroraPositiveFlash 1.15s ease-out both!important}
+.aurora-row-flash-negative{animation:auroraNegativeFlash 1.15s ease-out both!important}
+
+/* MANAGER DASHBOARD */
+html[data-aurora-page="manager"] .beast-target-ring{isolation:isolate}
+html[data-aurora-page="manager"] .beast-target-ring:after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid transparent;border-top-color:rgba(103,232,249,.82);border-right-color:rgba(52,211,153,.22);filter:drop-shadow(0 0 8px rgba(34,211,238,.55));pointer-events:none;z-index:-1}
+html[data-aurora-page="manager"][data-aurora-motion="full"] .beast-target-ring{animation:auroraTargetBreath 3.15s ease-in-out infinite}
+html[data-aurora-page="manager"][data-aurora-motion="full"] .beast-target-ring:after{animation:auroraOrbit 6.5s linear infinite}
+html[data-aurora-page="manager"][data-aurora-motion="subtle"] .beast-target-ring{animation:auroraTargetBreathSubtle 6s ease-in-out infinite}
+html[data-aurora-page="manager"][data-aurora-motion="subtle"] .beast-target-ring:after{animation:auroraOrbit 13s linear infinite;opacity:.55}
+html[data-aurora-page="manager"] #beastCurrentMonthly{text-shadow:0 0 18px color-mix(in srgb,var(--beast-accent) 30%,transparent)}
+html[data-aurora-page="manager"][data-aurora-motion="full"] .beast-milestone.current{animation:auroraCurrentMilestone 2.5s ease-in-out infinite}
+html[data-aurora-page="manager"][data-aurora-motion="full"] .beast-rating-stars{animation:auroraGoldShimmer 3.8s ease-in-out infinite}
+html[data-aurora-page="manager"] #beastNotificationButton.aurora-alert-arrival{animation:auroraBellArrival 1.05s cubic-bezier(.2,.85,.25,1) both!important;border-color:rgba(251,113,133,.62)!important;box-shadow:0 0 0 5px rgba(251,113,133,.12),0 0 24px rgba(251,113,133,.28)!important}
+html[data-aurora-page="manager"] .beast-holding-card.aurora-form-strong{border-color:rgba(52,211,153,.28);box-shadow:inset 0 0 0 1px rgba(52,211,153,.04)}
+html[data-aurora-page="manager"][data-aurora-motion="full"] .beast-holding-card.aurora-form-review{animation:auroraWarningBreath 3.2s ease-in-out infinite}
+
+/* SCOUTING CENTRE */
+html[data-aurora-page="scouting"] .command-radar:before{animation-duration:var(--aurora-radar-speed)!important}
+html[data-aurora-page="scouting"] .command-radar{box-shadow:0 0 34px rgba(74,222,128,.10),inset 0 0 38px rgba(74,222,128,.04)}
+html[data-aurora-page="scouting"] .aurora-command-blip{position:absolute;width:7px;height:7px;border-radius:50%;background:#bbf7d0;box-shadow:0 0 0 0 rgba(74,222,128,.56),0 0 12px rgba(74,222,128,.9);z-index:3;animation:auroraBlipPing 2.9s ease-out infinite;animation-delay:var(--delay,0s)}
+html[data-aurora-page="scouting"] .radar-field:before{content:"";position:absolute;inset:-36%;z-index:1;pointer-events:none;background:conic-gradient(from 10deg,transparent 0 292deg,rgba(74,222,128,.02) 303deg,rgba(74,222,128,.28) 337deg,transparent 360deg);transform-origin:center;animation:auroraRadarSweep var(--aurora-radar-speed) linear infinite}
+html[data-aurora-page="scouting"] .radar-field:after{content:"";position:absolute;left:50%;top:50%;z-index:1;width:8px;height:8px;margin:-4px;border-radius:50%;background:#ecfdf5;box-shadow:0 0 0 5px rgba(74,222,128,.08),0 0 15px rgba(74,222,128,.72);animation:auroraBeacon 2.2s ease-in-out infinite}
+html[data-aurora-page="scouting"] .radar-axis,html[data-aurora-page="scouting"] .radar-blip{z-index:2}
+html[data-aurora-page="scouting"][data-aurora-motion="full"] .radar-blip{animation:auroraBlipFloat 3.4s ease-in-out infinite;animation-delay:var(--aurora-blip-delay,0s)}
+html[data-aurora-page="scouting"][data-aurora-motion="full"] .radar-blip.aurora-priority-blip{animation:auroraPriorityBlip 2.15s ease-in-out infinite;z-index:4}
+html[data-aurora-page="scouting"][data-aurora-motion="subtle"] .radar-blip.aurora-priority-blip{animation:auroraPriorityBlipSubtle 5s ease-in-out infinite;z-index:4}
+html[data-aurora-page="scouting"].aurora-scan-boost{--aurora-radar-speed:1.65s}
+html[data-aurora-page="scouting"][data-aurora-motion="full"] .rumour-bar{background-size:220% 100%;animation:auroraBreakingSweep 6s linear infinite}
+
+/* TRANSFER CENTRE */
+html[data-aurora-page="transfer"] #auroraM4Mission{position:relative;isolation:isolate}
+html[data-aurora-page="transfer"] #auroraM4Mission:before{content:"";position:absolute;z-index:0;left:-35%;top:0;width:28%;height:2px;background:linear-gradient(90deg,transparent,#67e8f9,#34d399,transparent);filter:drop-shadow(0 0 7px rgba(34,211,238,.6));pointer-events:none}
+html[data-aurora-page="transfer"][data-aurora-motion="full"] #auroraM4Mission:before{animation:auroraMissionSweep 6.4s ease-in-out infinite}
+html[data-aurora-page="transfer"] #auroraM4Mission>*{position:relative;z-index:1}
+html[data-aurora-page="transfer"][data-aurora-motion="full"] .m4-step.current{animation:auroraStagePulse 2.25s ease-in-out infinite}
+html[data-aurora-page="transfer"][data-aurora-motion="subtle"] .m4-step.current{animation:auroraStagePulseSubtle 4.8s ease-in-out infinite}
+html[data-aurora-page="transfer"] .m4-step.aurora-stage-change{animation:auroraStageArrival .75s cubic-bezier(.2,.9,.25,1) both!important}
+html[data-aurora-page="transfer"] .m4-target-track i{position:relative;overflow:hidden}
+html[data-aurora-page="transfer"] .m4-target-track i:after{content:"";position:absolute;inset:0;width:34%;transform:translateX(-160%) skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent)}
+html[data-aurora-page="transfer"][data-aurora-motion="full"] .m4-target-track i:after{animation:auroraProgressSheen 3.1s ease-in-out infinite}
+html[data-aurora-page="transfer"] .m4-system-chip i{animation:auroraBeacon 2.3s ease-in-out infinite}
+html[data-aurora-page="transfer"][data-aurora-motion="full"] .m4-stat:nth-child(5){animation:auroraTargetCard 3.6s ease-in-out infinite}
+html[data-aurora-page="transfer"] .aurora-current-plan-row td{background:rgba(34,211,238,.065);border-top:1px solid rgba(34,211,238,.22);border-bottom:1px solid rgba(34,211,238,.22)}
+html[data-aurora-page="transfer"] .aurora-current-plan-row td:first-child{box-shadow:inset 3px 0 0 #22d3ee;color:#a5f3fc}
+html[data-aurora-page="transfer"][data-aurora-motion="full"] .registration-message.pending{animation:auroraWarningBreath 3s ease-in-out infinite}
+html[data-aurora-page="transfer"] .registration-message.success.aurora-value-updated{box-shadow:0 0 24px rgba(52,211,153,.18)}
+html[data-aurora-page="transfer"][data-aurora-motion="full"] .month-card.active{animation:auroraCurrentMilestone 2.5s ease-in-out infinite}
+
+/* SQUAD HUB */
+html[data-aurora-page="squad"] .squad-card.aurora-income-card{border-color:rgba(52,211,153,.30);background:radial-gradient(circle at 88% 0%,rgba(52,211,153,.12),transparent 33%),linear-gradient(180deg,rgba(13,31,58,.88),rgba(5,14,28,.94))}
+html[data-aurora-page="squad"][data-aurora-motion="full"] .squad-card.aurora-income-card{animation:auroraIncomeBreath 4.2s ease-in-out infinite}
+html[data-aurora-page="squad"] #monthlyIncome{color:#86efac;text-shadow:0 0 15px rgba(52,211,153,.23)}
+html[data-aurora-page="squad"][data-aurora-motion="full"] .pitch-player.star-player .pitch-player-core{animation:auroraStarSpotlight 3.25s ease-in-out infinite}
+html[data-aurora-page="squad"] .player-row.aurora-positive-row{box-shadow:inset 3px 0 0 rgba(52,211,153,.55)}
+html[data-aurora-page="squad"] .player-row.aurora-negative-row{box-shadow:inset 3px 0 0 rgba(251,113,133,.48)}
+
+/* ANALYSIS ROOM */
+html[data-aurora-page="analysis"][data-aurora-motion="full"] .score-card.aurora-best-card{animation:auroraBestPerformer 3.25s ease-in-out infinite}
+html[data-aurora-page="analysis"] .mini-bar i{position:relative;overflow:hidden;transform-origin:left;animation:auroraBarGrow .8s ease-out both}
+html[data-aurora-page="analysis"] .mini-bar i:after{content:"";position:absolute;inset:0;width:38%;transform:translateX(-160%) skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent)}
+html[data-aurora-page="analysis"][data-aurora-motion="full"] .mini-bar i:after{animation:auroraProgressSheen 3.6s ease-in-out infinite}
+html[data-aurora-page="analysis"] #income-runway .forecast-card:first-child{border-color:rgba(52,211,153,.25);box-shadow:0 0 28px rgba(52,211,153,.055)}
+html[data-aurora-page="analysis"][data-aurora-motion="full"] #manager-review + .analysis-grid .verdict-card:first-child,html[data-aurora-page="analysis"][data-aurora-motion="full"] #manager-review~.analysis-grid .verdict-card:first-child{animation:auroraManagerReview 5.5s ease-in-out infinite}
+
+/* TRAINING GROUND */
+html[data-aurora-page="training"] #training-summary .card:first-child{border-color:rgba(52,211,153,.30);background:radial-gradient(circle at 88% 0%,rgba(52,211,153,.14),transparent 34%),linear-gradient(180deg,rgba(13,27,52,.88),rgba(7,17,31,.94))}
+html[data-aurora-page="training"][data-aurora-motion="full"] #training-summary .card:first-child{animation:auroraTrainingLeader 3.5s ease-in-out infinite}
+html[data-aurora-page="training"][data-aurora-motion="full"] #risingStars .row:first-child{animation:auroraRisingStar 3s ease-in-out infinite}
+html[data-aurora-page="training"][data-aurora-motion="full"] #medicalRoom .row.aurora-medical-watch{animation:auroraWarningBreath 3.7s ease-in-out infinite}
+html[data-aurora-page="training"] #training-focus{border-color:rgba(167,139,250,.24)}
+html[data-aurora-page="training"][data-aurora-motion="full"] #training-focus{animation:auroraFocusBreath 5s ease-in-out infinite}
+
+/* BOARDROOM */
+html[data-aurora-page="boardroom"] .confidence-gauge{position:relative;isolation:isolate}
+html[data-aurora-page="boardroom"] .confidence-gauge:after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;border-top-color:rgba(244,114,182,.75);border-right-color:rgba(251,191,36,.22);filter:drop-shadow(0 0 8px rgba(244,114,182,.42));pointer-events:none}
+html[data-aurora-page="boardroom"][data-aurora-motion="full"] .confidence-gauge{animation:auroraGaugeBreath 4s ease-in-out infinite}
+html[data-aurora-page="boardroom"][data-aurora-motion="full"] .confidence-gauge:after{animation:auroraOrbit 9s linear infinite}
+html[data-aurora-page="boardroom"] .progress-fill,html[data-aurora-page="boardroom"] .honours-progress span{position:relative;overflow:hidden}
+html[data-aurora-page="boardroom"] .progress-fill:after,html[data-aurora-page="boardroom"] .honours-progress span:after{content:"";position:absolute;inset:0;width:38%;transform:translateX(-160%) skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.58),transparent)}
+html[data-aurora-page="boardroom"][data-aurora-motion="full"] .progress-fill:after,html[data-aurora-page="boardroom"][data-aurora-motion="full"] .honours-progress span:after{animation:auroraProgressSheen 4s ease-in-out infinite}
+html[data-aurora-page="boardroom"][data-aurora-motion="full"] .board-decision-card{animation:auroraBoardDecision 5s ease-in-out infinite}
+
+/* MEDIA CENTRE */
+html[data-aurora-page="media"] #breaking-stories{position:relative;isolation:isolate;border-color:rgba(250,204,21,.25)}
+html[data-aurora-page="media"] #breaking-stories:before{content:"";position:absolute;z-index:3;left:-40%;top:0;width:35%;height:2px;background:linear-gradient(90deg,transparent,#facc15,#fff7ae,transparent);filter:drop-shadow(0 0 7px rgba(250,204,21,.55));pointer-events:none}
+html[data-aurora-page="media"][data-aurora-motion="full"] #breaking-stories:before{animation:auroraMissionSweep 5.5s ease-in-out infinite}
+html[data-aurora-page="media"][data-aurora-motion="full"] #breakingStories .row:first-child{animation:auroraBreakingLead 3.4s ease-in-out infinite}
+html[data-aurora-page="media"][data-aurora-motion="full"] #dividendDesk .row:first-child{animation:auroraDividendGold 4.1s ease-in-out infinite}
+html[data-aurora-page="media"] #newsroom-summary .badge.green{position:relative}
+html[data-aurora-page="media"][data-aurora-motion="full"] #newsroom-summary .badge.green{animation:auroraBeaconBadge 2.8s ease-in-out infinite}
+
+@keyframes auroraControlSheen{0%,76%{left:-70%;opacity:0}82%{opacity:1}94%{left:130%;opacity:.7}100%{left:130%;opacity:0}}
+@keyframes auroraRefreshWave{0%{transform:translateX(-110%);opacity:0}18%{opacity:1}100%{transform:translateX(110%);opacity:0}}
+@keyframes auroraValuePop{0%{opacity:.65;transform:translateY(5px) scale(.96);filter:brightness(1)}55%{transform:translateY(-1px) scale(1.055);filter:brightness(1.35)}100%{opacity:1;transform:none;filter:none}}
+@keyframes auroraTargetBreath{0%,100%{transform:scale(1);box-shadow:0 0 42px rgba(34,211,238,.14)}50%{transform:scale(1.025);box-shadow:0 0 64px rgba(34,211,238,.27),0 0 88px rgba(52,211,153,.10)}}
+@keyframes auroraTargetBreathSubtle{0%,100%{box-shadow:0 0 40px rgba(34,211,238,.13)}50%{box-shadow:0 0 55px rgba(34,211,238,.21)}}
+@keyframes auroraOrbit{to{transform:rotate(360deg)}}
+@keyframes auroraCurrentMilestone{0%,100%{box-shadow:0 0 0 rgba(34,211,238,0)}50%{box-shadow:0 0 0 4px rgba(34,211,238,.07),0 0 27px rgba(34,211,238,.13)}}
+@keyframes auroraGoldShimmer{0%,100%{filter:brightness(1);text-shadow:0 0 0 transparent}50%{filter:brightness(1.28);text-shadow:0 0 14px rgba(251,191,36,.34)}}
+@keyframes auroraBellArrival{0%{transform:rotate(0) scale(1)}18%{transform:rotate(-15deg) scale(1.08)}36%{transform:rotate(12deg)}54%{transform:rotate(-9deg)}72%{transform:rotate(5deg)}100%{transform:none}}
+@keyframes auroraWarningBreath{0%,100%{border-color:rgba(251,191,36,.24);box-shadow:0 0 0 rgba(251,191,36,0)}50%{border-color:rgba(251,191,36,.48);box-shadow:0 0 24px rgba(251,191,36,.11)}}
+@keyframes auroraBlipPing{0%,100%{transform:scale(.78);opacity:.55;box-shadow:0 0 0 0 rgba(74,222,128,.42),0 0 10px rgba(74,222,128,.7)}45%{transform:scale(1);opacity:1;box-shadow:0 0 0 11px rgba(74,222,128,0),0 0 16px rgba(74,222,128,.95)}}
+@keyframes auroraRadarSweep{to{transform:rotate(360deg)}}
+@keyframes auroraBeacon{0%,100%{transform:scale(.82);opacity:.7;box-shadow:0 0 0 3px rgba(52,211,153,.07),0 0 11px currentColor}50%{transform:scale(1.15);opacity:1;box-shadow:0 0 0 7px rgba(52,211,153,0),0 0 19px currentColor}}
+@keyframes auroraBlipFloat{0%,100%{filter:brightness(1);box-shadow:0 0 0 5px rgba(134,239,172,.07),0 10px 28px rgba(0,0,0,.32)}50%{filter:brightness(1.12);box-shadow:0 0 0 9px rgba(134,239,172,.025),0 14px 32px rgba(0,0,0,.36)}}
+@keyframes auroraPriorityBlip{0%,100%{box-shadow:0 0 0 5px rgba(74,222,128,.10),0 0 18px rgba(74,222,128,.42),0 10px 28px rgba(0,0,0,.32)}50%{box-shadow:0 0 0 14px rgba(74,222,128,0),0 0 31px rgba(74,222,128,.72),0 12px 32px rgba(0,0,0,.36);filter:brightness(1.18)}}
+@keyframes auroraPriorityBlipSubtle{0%,100%{box-shadow:0 0 14px rgba(74,222,128,.25)}50%{box-shadow:0 0 24px rgba(74,222,128,.42)}}
+@keyframes auroraBreakingSweep{to{background-position:-220% 0}}
+@keyframes auroraMissionSweep{0%,8%{left:-35%;opacity:0}20%{opacity:1}72%{left:107%;opacity:1}84%,100%{left:107%;opacity:0}}
+@keyframes auroraStagePulse{0%,100%{box-shadow:inset 0 0 0 1px rgba(34,211,238,.08),0 0 0 rgba(34,211,238,0)}50%{box-shadow:inset 0 0 0 1px rgba(34,211,238,.20),0 0 23px rgba(34,211,238,.14)}}
+@keyframes auroraStagePulseSubtle{0%,100%{border-color:rgba(34,211,238,.30)}50%{border-color:rgba(34,211,238,.48)}}
+@keyframes auroraStageArrival{0%{opacity:.55;transform:translateY(7px) scale(.97)}60%{transform:translateY(-2px) scale(1.02)}100%{opacity:1;transform:none}}
+@keyframes auroraProgressSheen{0%,50%{transform:translateX(-160%) skewX(-18deg)}82%,100%{transform:translateX(360%) skewX(-18deg)}}
+@keyframes auroraTargetCard{0%,100%{border-color:rgba(148,163,184,.14);box-shadow:none}50%{border-color:rgba(52,211,153,.35);box-shadow:0 0 27px rgba(52,211,153,.08)}}
+@keyframes auroraIncomeBreath{0%,100%{box-shadow:0 12px 38px rgba(0,0,0,.22)}50%{box-shadow:0 12px 38px rgba(0,0,0,.22),0 0 31px rgba(52,211,153,.10)}}
+@keyframes auroraStarSpotlight{0%,100%{filter:drop-shadow(0 0 5px rgba(34,211,238,.20))}50%{filter:drop-shadow(0 0 17px rgba(34,211,238,.52)) brightness(1.08)}}
+@keyframes auroraBestPerformer{0%,100%{box-shadow:0 14px 44px rgba(0,0,0,.26)}50%{box-shadow:0 14px 44px rgba(0,0,0,.26),0 0 31px rgba(52,211,153,.12)}}
+@keyframes auroraBarGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes auroraManagerReview{0%,100%{box-shadow:var(--shadow)}50%{box-shadow:var(--shadow),0 0 33px rgba(167,139,250,.09)}}
+@keyframes auroraTrainingLeader{0%,100%{box-shadow:0 12px 38px rgba(0,0,0,.22)}50%{box-shadow:0 12px 38px rgba(0,0,0,.22),0 0 29px rgba(52,211,153,.12)}}
+@keyframes auroraRisingStar{0%,100%{transform:translateY(0);box-shadow:none}50%{transform:translateY(-2px);box-shadow:0 0 24px rgba(52,211,153,.10)}}
+@keyframes auroraFocusBreath{0%,100%{box-shadow:0 12px 38px rgba(0,0,0,.22)}50%{box-shadow:0 12px 38px rgba(0,0,0,.22),0 0 30px rgba(167,139,250,.10)}}
+@keyframes auroraGaugeBreath{0%,100%{filter:drop-shadow(0 0 5px rgba(244,114,182,.15))}50%{filter:drop-shadow(0 0 17px rgba(244,114,182,.34)) brightness(1.05)}}
+@keyframes auroraBoardDecision{0%,100%{box-shadow:none}50%{box-shadow:0 0 31px rgba(244,114,182,.08)}}
+@keyframes auroraBreakingLead{0%,100%{border-color:var(--line);box-shadow:none}50%{border-color:rgba(250,204,21,.32);box-shadow:0 0 26px rgba(250,204,21,.09)}}
+@keyframes auroraDividendGold{0%,100%{box-shadow:none}50%{box-shadow:0 0 26px rgba(251,191,36,.10);filter:brightness(1.07)}}
+@keyframes auroraBeaconBadge{0%,100%{box-shadow:0 0 0 rgba(52,211,153,0)}50%{box-shadow:0 0 0 5px rgba(52,211,153,.06),0 0 16px rgba(52,211,153,.15)}}
+@keyframes auroraPositiveFlash{0%{background:rgba(52,211,153,.16);box-shadow:inset 4px 0 0 #34d399}100%{background:transparent;box-shadow:inset 3px 0 0 rgba(52,211,153,.35)}}
+@keyframes auroraNegativeFlash{0%{background:rgba(251,113,133,.15);box-shadow:inset 4px 0 0 #fb7185}100%{background:transparent;box-shadow:inset 3px 0 0 rgba(251,113,133,.32)}}
+
+html[data-aurora-motion="subtle"]{--aurora-radar-speed:7.5s}
+html[data-aurora-motion="subtle"] .aurora-command-blip{animation-duration:5.5s;opacity:.72}
+html[data-aurora-motion="subtle"] .aurora-refresh-wave{height:2px;filter:none}
+html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[data-aurora-motion="off"] *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+@media(prefers-reduced-motion:reduce){html:not([data-aurora-motion="full"]) *,html:not([data-aurora-motion="full"]) *:before,html:not([data-aurora-motion="full"]) *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
 <body>
 <div aria-label="Open navigation" class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" role="button" tabindex="0">
 <span class="fm-sidebar-edge-handle">›</span>
@@ -3819,5 +3985,89 @@ init();
     new MutationObserver(cleanScoutingDuplicate).observe(nav,{childList:true,subtree:true});
   }
 })();
-</script></body>
+</script><script id="aurora-motion-system">
+(function(){
+  'use strict';
+  const root=document.documentElement;
+  const title=(document.title||'').toLowerCase();
+  const page=title.includes('manager dashboard')?'manager':title.includes('squad hub')?'squad':title.includes('analysis')?'analysis':title.includes('training')?'training':title.includes('scouting')?'scouting':title.includes('transfer')?'transfer':title.includes('boardroom')?'boardroom':title.includes('media')?'media':'aurora';
+  const MOTION_KEY='aurora_motion_level_v1';
+  const levels=['full','subtle','off'];
+  root.dataset.auroraPage=page;
+
+  function savedLevel(){
+    try{const value=localStorage.getItem(MOTION_KEY);if(levels.includes(value))return value}catch(_){}
+    return window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches?'off':'full';
+  }
+  function label(level){return level==='full'?'Full':level==='subtle'?'Subtle':'Off'}
+  function applyLevel(level,announce=false){
+    const next=levels.includes(level)?level:'full';root.dataset.auroraMotion=next;
+    try{localStorage.setItem(MOTION_KEY,next)}catch(_){}
+    const btn=document.getElementById('auroraMotionToggle');
+    if(btn){const value=btn.querySelector('[data-motion-value]');if(value)value.textContent=label(next);btn.title=`Aurora animations: ${label(next)}`;btn.setAttribute('aria-label',`Aurora animations ${label(next)}. Tap to change.`)}
+    if(announce) flashValue(btn);
+  }
+  function installToggle(){
+    if(document.getElementById('auroraMotionToggle'))return;
+    const footer=document.querySelector('.fm-side-footer');if(!footer)return;
+    const btn=document.createElement('button');btn.type='button';btn.id='auroraMotionToggle';btn.className='fm-side-action aurora-motion-toggle';btn.innerHTML='<span class="fm-side-icon">✦</span><span>Motion: <b data-motion-value>Full</b></span>';
+    const clock=footer.querySelector('.fm-side-clock');footer.insertBefore(btn,clock||null);
+    btn.addEventListener('click',()=>{const current=root.dataset.auroraMotion||'full';applyLevel(levels[(levels.indexOf(current)+1)%levels.length],true)});
+    applyLevel(root.dataset.auroraMotion||savedLevel());
+  }
+  function flashValue(el){if(!el)return;el.classList.remove('aurora-value-updated');void el.offsetWidth;el.classList.add('aurora-value-updated');setTimeout(()=>el.classList.remove('aurora-value-updated'),900)}
+  function observeValue(selector){
+    const el=document.querySelector(selector);if(!el)return;
+    let last=el.textContent;
+    new MutationObserver(()=>{const now=el.textContent;if(now!==last&&now.trim()&&now.trim()!=='—'){last=now;flashValue(el)}}).observe(el,{childList:true,subtree:true,characterData:true});
+  }
+  function refreshWave(){
+    document.querySelector('.aurora-refresh-wave')?.remove();const wave=document.createElement('div');wave.className='aurora-refresh-wave';wave.setAttribute('aria-hidden','true');document.body.appendChild(wave);setTimeout(()=>wave.remove(),1200);
+    if(page==='scouting'){root.classList.add('aurora-scan-boost');setTimeout(()=>root.classList.remove('aurora-scan-boost'),3200)}
+  }
+  function bindRefresh(){document.addEventListener('click',event=>{if(event.target.closest?.('#refreshBtn,.refresh-btn,[data-refresh]'))refreshWave()},true)}
+  function decorateManager(){
+    ['#beastCurrentMonthly','#beastTargetPercent','#beastRating','#monthlyIncome','#heroAnnualIncome'].forEach(observeValue);
+    const badge=document.getElementById('beastNotificationCount'),button=document.getElementById('beastNotificationButton');
+    if(badge&&button){let previous=Number(badge.textContent)||0;const alert=()=>{const current=badge.hidden?0:(Number(badge.textContent)||0);if(current>previous&&current>0){button.classList.remove('aurora-alert-arrival');void button.offsetWidth;button.classList.add('aurora-alert-arrival');setTimeout(()=>button.classList.remove('aurora-alert-arrival'),1400)}previous=current};new MutationObserver(alert).observe(badge,{attributes:true,childList:true,subtree:true,characterData:true});alert()}
+    const strip=document.getElementById('beastHoldingStrip');const decorate=()=>{strip?.querySelectorAll('.beast-holding-card').forEach(card=>{card.classList.toggle('aurora-form-review',!!card.querySelector('.beast-status-review'));card.classList.toggle('aurora-form-strong',!!card.querySelector('.beast-status-strong'))})};if(strip){new MutationObserver(decorate).observe(strip,{childList:true,subtree:true});decorate()}
+  }
+  function decorateScouting(){
+    const command=document.querySelector('.command-radar');if(command&&!command.querySelector('.aurora-command-blip')){[['29%','37%','0s'],['67%','29%','.7s'],['73%','68%','1.35s'],['38%','73%','2s']].forEach(([left,top,delay])=>{const dot=document.createElement('i');dot.className='aurora-command-blip';dot.style.left=left;dot.style.top=top;dot.style.setProperty('--delay',delay);command.appendChild(dot)})}
+    const field=document.getElementById('radarField');const decorate=()=>{const blips=[...(field?.querySelectorAll('.radar-blip')||[])];blips.forEach((blip,index)=>{blip.style.setProperty('--aurora-blip-delay',`${(index%7)*.22}s`);blip.classList.toggle('aurora-priority-blip',index===0)})};if(field){new MutationObserver(decorate).observe(field,{childList:true,subtree:true});decorate()}
+    ['#commandTitle','#kpiScouted','#kpiProspects','#kpiGems','#directorScore'].forEach(observeValue);
+  }
+  function decorateTransfer(){
+    ['#m4TargetProgress','#m4FullCapital','#m4BaseFinal','#m4FullFinal'].forEach(observeValue);
+    let lastStage='';const lifecycle=document.getElementById('m4LifecycleSteps');const decorateStages=()=>{const current=lifecycle?.querySelector('.m4-step.current');const stage=current?.dataset.step||'';if(stage&&stage!==lastStage){lastStage=stage;current.classList.add('aurora-stage-change');setTimeout(()=>current.classList.remove('aurora-stage-change'),950)}};if(lifecycle){new MutationObserver(decorateStages).observe(lifecycle,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});decorateStages()}
+    const decorateRows=()=>{const rows=[...(document.querySelectorAll('#m4MonthRows tr')||[])];const month=Math.max(1,Number(document.getElementById('m4CurrentMonth')?.value)||1);rows.forEach((row,index)=>row.classList.toggle('aurora-current-plan-row',index===month-1))};const tbody=document.getElementById('m4MonthRows');if(tbody){new MutationObserver(decorateRows).observe(tbody,{childList:true,subtree:true});decorateRows()}document.getElementById('m4CurrentMonth')?.addEventListener('input',decorateRows);
+    document.querySelectorAll('.registration-message').forEach(observeRegistrationMessage);
+    const registration=document.getElementById('registration-desk');if(registration)new MutationObserver(()=>registration.querySelectorAll('.registration-message').forEach(observeRegistrationMessage)).observe(registration,{childList:true,subtree:true});
+  }
+  function observeRegistrationMessage(el){if(!el||el.dataset.motionObserved)return;el.dataset.motionObserved='1';let last=el.textContent;new MutationObserver(()=>{if(el.textContent!==last){last=el.textContent;flashValue(el)}}).observe(el,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']})}
+  function decorateSquad(){
+    const income=document.getElementById('annualIncome')?.closest('.squad-card');income?.classList.add('aurora-income-card');['#annualIncome','#monthlyIncome','#squadStrength'].forEach(observeValue);
+    const body=document.getElementById('teamSelectionBody');const decorate=()=>{body?.querySelectorAll('.player-row').forEach(row=>{const positive=!!row.querySelector('.positive')||/[▲+]/.test(row.textContent);const negative=!!row.querySelector('.negative')||/▼/.test(row.textContent);row.classList.toggle('aurora-positive-row',positive&&!negative);row.classList.toggle('aurora-negative-row',negative)})};if(body){new MutationObserver(()=>{decorate();body.querySelectorAll('.player-row').forEach(row=>{const cls=row.classList.contains('aurora-negative-row')?'aurora-row-flash-negative':'aurora-row-flash-positive';row.classList.add(cls);setTimeout(()=>row.classList.remove(cls),1250)})}).observe(body,{childList:true,subtree:true});decorate()}
+  }
+  function decorateAnalysis(){
+    document.getElementById('bestPerformer')?.closest('.score-card')?.classList.add('aurora-best-card');['#bestPerformer','#positiveMovers','#negativeMovers','#analysisStatus'].forEach(observeValue);
+    const table=document.getElementById('playerTable');const decorate=()=>{table?.querySelectorAll('tr').forEach(row=>{if(row.querySelector('.positive'))row.classList.add('aurora-positive-row');if(row.querySelector('.negative'))row.classList.add('aurora-negative-row')})};if(table){new MutationObserver(()=>{decorate();table.querySelectorAll('tr.aurora-positive-row').forEach(r=>{r.classList.add('aurora-row-flash-positive');setTimeout(()=>r.classList.remove('aurora-row-flash-positive'),1200)});table.querySelectorAll('tr.aurora-negative-row').forEach(r=>{r.classList.add('aurora-row-flash-negative');setTimeout(()=>r.classList.remove('aurora-row-flash-negative'),1200)})}).observe(table,{childList:true,subtree:true});decorate()}
+  }
+  function decorateTraining(){
+    ['#topHeadline','#dividendCount','#rumourCount','#pressMood'].forEach(observeValue);
+    const rising=document.getElementById('risingStars'),medical=document.getElementById('medicalRoom');const decorate=()=>medical?.querySelectorAll('.row').forEach(row=>row.classList.toggle('aurora-medical-watch',!!row.querySelector('.score-pill.red')));if(rising)new MutationObserver(()=>{const first=rising.querySelector('.row:first-child');if(first)flashValue(first)}).observe(rising,{childList:true,subtree:true});if(medical){new MutationObserver(decorate).observe(medical,{childList:true,subtree:true});decorate()}
+  }
+  function decorateBoardroom(){['#boardConfidence','#confidenceGaugeScore','#supporterMood','#jobSecurity','#priorityObjective'].forEach(observeValue)}
+  function decorateMedia(){
+    ['#topHeadline','#pressMood','#dividendCount','#rumourCount'].forEach(observeValue);
+    const breaking=document.getElementById('breakingStories'),divs=document.getElementById('dividendDesk');if(breaking)new MutationObserver(()=>{const first=breaking.querySelector('.row:first-child');if(first)flashValue(first)}).observe(breaking,{childList:true,subtree:true});if(divs)new MutationObserver(()=>{const first=divs.querySelector('.row:first-child');if(first)flashValue(first)}).observe(divs,{childList:true,subtree:true});
+  }
+  function start(){
+    applyLevel(savedLevel());installToggle();bindRefresh();
+    ({manager:decorateManager,scouting:decorateScouting,transfer:decorateTransfer,squad:decorateSquad,analysis:decorateAnalysis,training:decorateTraining,boardroom:decorateBoardroom,media:decorateMedia}[page]||(()=>{}))();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+</body>
 </html>
