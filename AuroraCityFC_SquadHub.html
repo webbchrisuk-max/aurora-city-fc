@@ -17,6 +17,7 @@
 <title>Aurora City FC — Squad Hub</title>
 <!-- Build: Universal Scouting Navigation • 23 Jul 2026 -->
 <!-- Build: Colour Player Profiles • 20 Jul 2026 -->
+<!-- Build: Aurora M3 Squad Tactics Upgrade • 24 Jul 2026 -->
 
 <!-- ===================== SECTION: ROOT THEME ===================== -->
 <style>
@@ -4641,6 +4642,32 @@ body.fm-transfer-menu-open .fm-side-scroll{
 }
 
 </style>
+
+<style id="aurora-m3-squad-styles">
+/* ===================== AURORA M3 — SQUAD TACTICS UPGRADE ===================== */
+.m3-squad-toolbar{border:1px solid rgba(34,211,238,.22);background:rgba(2,6,23,.32);border-radius:17px;padding:10px;margin:0 0 10px}
+.m3-squad-toolbar-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.m3-squad-toolbar h4{margin:0;font-size:14px}.m3-squad-toolbar p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.4}
+.m3-squad-build{color:#bbf7d0;border:1px solid rgba(52,211,153,.26);background:rgba(20,83,45,.20);border-radius:999px;padding:6px 8px;font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+.m3-tactic-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.m3-tactic-buttons button{border:1px solid var(--line);background:rgba(15,23,42,.55);color:#bfdbfe;border-radius:999px;padding:7px 9px;font-size:9px;font-weight:1000;cursor:pointer}
+.m3-tactic-buttons button.active{border-color:rgba(52,211,153,.38);background:rgba(20,83,45,.28);color:#bbf7d0}
+.m3-squad-leaders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px}
+.m3-squad-leaders div{border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.42);border-radius:12px;padding:8px}
+.m3-squad-leaders small{display:block;color:var(--muted);font-size:7px;text-transform:uppercase}.m3-squad-leaders strong{display:block;margin-top:4px;color:#e0f2fe;font-size:11px}
+.m3-player-status{position:absolute;left:50%;top:-8px;transform:translateX(-50%);z-index:7;border-radius:999px;padding:3px 6px;font-size:7px;font-weight:1000;white-space:nowrap;border:1px solid rgba(125,211,252,.25);background:rgba(8,47,73,.90);color:#cffafe}
+.m3-player-status.add{border-color:rgba(52,211,153,.35);background:rgba(20,83,45,.92);color:#bbf7d0}
+.m3-player-status.watch{border-color:rgba(251,191,36,.35);background:rgba(120,53,15,.92);color:#fde68a}
+.m3-player-status.sell{border-color:rgba(251,113,133,.35);background:rgba(127,29,29,.94);color:#fecdd3}
+.m3-account-breakdown{margin-top:14px;border:1px solid rgba(34,211,238,.18);background:rgba(2,6,23,.28);border-radius:16px;padding:11px}
+.m3-account-breakdown h3{margin:0 0 8px;font-size:14px}
+.m3-account-row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(148,163,184,.12);padding:7px 0;font-size:10px}.m3-account-row:last-child{border-bottom:0}
+.m3-former-panel{margin-top:12px;border:1px solid rgba(148,163,184,.15);background:rgba(2,6,23,.25);border-radius:18px;padding:12px}
+.m3-former-panel h3{margin:0;font-size:15px}.m3-former-panel p{margin:4px 0 9px;color:var(--muted);font-size:10px}
+.m3-former-list{display:flex;gap:7px;flex-wrap:wrap}.m3-former-list span{border:1px solid rgba(148,163,184,.16);background:rgba(15,23,42,.45);color:#94a3b8;border-radius:999px;padding:6px 8px;font-size:9px;font-weight:900}
+@media(max-width:650px){.m3-squad-toolbar-head{flex-direction:column}.m3-squad-leaders{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 
@@ -5019,6 +5046,13 @@ body.fm-transfer-menu-open .fm-side-scroll{
         </div>
       </div>
     </div>
+  </section>
+
+<!-- ===================== AURORA M3: FORMER PLAYERS ===================== -->
+  <section class="m3-former-panel" id="m3FormerPlayers">
+    <h3>Former Players</h3>
+    <p>Sold and zeroed-out holdings are kept away from the active squad and Club Legends, but remain visible here as the club’s transfer history.</p>
+    <div class="m3-former-list" id="m3FormerPlayerList"><span>Loading former players…</span></div>
   </section>
 
   <!-- ===================== SECTION: FOOTER ===================== -->
@@ -6711,5 +6745,168 @@ document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_SquadHub.html
 <script id="player-profile-colour-marker">
 document.documentElement.dataset.playerProfileBuild = "colour-signals-v25";
 </script>
+
+<script id="aurora-m3-squad-upgrade">
+(() => {
+  "use strict";
+  document.documentElement.dataset.auroraM3Squad = "current-file-v1";
+  let tacticMode=localStorage.getItem("aurora_m3_squad_tactic")||"default";
+  const id=value=>document.getElementById(value);
+  const clean=value=>String(value||"").trim().toUpperCase().replace("LON:","").replace(".L","");
+  const parse=value=>{
+    const n=Number(String(value??"").replace(/[£,%]/g,"").replace(/,/g,"").trim());
+    return Number.isFinite(n)?n:0;
+  };
+  const cash=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:2}).format(Number(value)||0);
+
+  const originalUnique=uniqueByTicker;
+  uniqueByTicker=function(rows){
+    const groups=new Map();
+    (rows||[]).filter(isActiveHolding).forEach(row=>{
+      const ticker=clean(row.ticker);
+      if(!ticker)return;
+      const list=groups.get(ticker)||[];
+      list.push(row);groups.set(ticker,list);
+    });
+    return [...groups.entries()].map(([ticker,list])=>{
+      if(list.length===1){list[0]._m3Accounts=list;return list[0];}
+      const representative=[...list].sort((a,b)=>squadScore(b)-squadScore(a))[0];
+      const combined={...representative};
+      const shares=list.reduce((s,row)=>s+parse(row.shares??row.quantity??row.units??row.Shares),0);
+      const value=list.reduce((s,row)=>s+holdingValue(row),0);
+      const income=list.reduce((s,row)=>s+annualIncomeFromRow(row),0);
+      const book=list.reduce((s,row)=>s+parse(row.book_cost??row["Book Cost"]??row.cost??row.invested),0);
+      combined.ticker=representative.ticker;
+      combined.shares=shares;combined.quantity=shares;combined.units=shares;
+      combined.current_value=value;combined.market_value=value;combined.value=value;
+      combined.annual_dps_total=income;combined.annual_income=income;
+      combined.book_cost=book;combined.account="Combined accounts";
+      combined._m3Accounts=list;
+      return combined;
+    });
+  };
+
+  const originalPositionPlan=positionPlan;
+  positionPlan=function(rows){
+    if(tacticMode==="default") return originalPositionPlan(rows);
+    const pool=[...uniqueByTicker(rows)].filter(isActiveHolding);
+    const scoreFor=row=>{
+      const income=annualIncomeFromRow(row),value=holdingValue(row),rating=squadScore(row),move=Math.abs(dailyMove(row));
+      const y=value>0?income/value:0;
+      if(tacticMode==="income") return income*5+y*1000+rating;
+      if(tacticMode==="defensive") return value/250+rating*1.2-move*2;
+      if(tacticMode==="growth") return (buyStrength(row)||50)*1.4+(impact(row)||50)*1.2+dailyMove(row)*2;
+      return rating*1.4+income/10+value/1000-move;
+    };
+    const picked=pool.sort((a,b)=>scoreFor(b)-scoreFor(a)).slice(0,11);
+    const slots=[
+      {number:1,pos:"GK",...FORMATION_433.GK,role:"Safe Hands"},
+      {number:5,pos:"LB",...FORMATION_433.LB,role:"Left Back"},
+      {number:3,pos:"CB",...FORMATION_433.LCB,role:"Centre Back"},
+      {number:4,pos:"CB",...FORMATION_433.RCB,role:"Centre Back"},
+      {number:2,pos:"RB",...FORMATION_433.RB,role:"Right Back"},
+      {number:8,pos:"CM",...FORMATION_433.LCM,role:"Vice-Captain"},
+      {number:6,pos:"CM",...FORMATION_433.RCM,role:"Captain"},
+      {number:10,pos:"CAM",...FORMATION_433.CAM,role:"Playmaker"},
+      {number:11,pos:"LW",...FORMATION_433.LW,role:"Left Wing"},
+      {number:9,pos:"ST",...FORMATION_433.ST,role:"Top Scorer"},
+      {number:7,pos:"RW",...FORMATION_433.RW,role:"Right Wing"}
+    ];
+    return slots.map((slot,index)=>({...slot,row:picked[index]||null}));
+  };
+
+  function recommendation(row){
+    const watch=(state.watchlist||[]).find(item=>clean(item.ticker)===clean(row.ticker))||
+      (state.scout||[]).find(item=>clean(item.ticker)===clean(row.ticker))||row;
+    const text=String(watch.recommendation??watch.status??watch.trial_verdict??watch.watchlist_status??"").toLowerCase();
+    const value=holdingValue(row),income=annualIncomeFromRow(row),yieldRate=value>0?income/value:0;
+    if(/\b(sell|exit|reduce|trim)\b/.test(text))return {label:"Sell target",cls:"sell"};
+    if(/\b(buy|add|accumulate|green)\b/.test(text))return {label:"Add",cls:"add"};
+    if(/\b(watch|review|monitor|amber)\b/.test(text))return {label:"Watch",cls:"watch"};
+    if(yieldRate>0.09)return {label:"Income hold",cls:"add"};
+    return {label:"Hold",cls:""};
+  }
+
+  const originalRenderFormation=renderFormation;
+  renderFormation=function(rows,target){
+    originalRenderFormation(rows,target);
+    document.querySelectorAll(`#${target} [data-player-ticker]`).forEach(player=>{
+      const row=uniqueByTicker(state.holdings).find(item=>clean(item.ticker)===clean(player.dataset.playerTicker));
+      if(!row)return;
+      const status=recommendation(row);
+      const badge=document.createElement("span");
+      badge.className=`m3-player-status ${status.cls}`;
+      badge.textContent=status.label;
+      player.appendChild(badge);
+    });
+    renderToolbarLeaders();
+  };
+
+  function renderToolbarLeaders(){
+    const rows=uniqueByTicker(state.holdings).sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a));
+    const plan=currentTeamPlan.filter(x=>x.row);
+    const captain=plan.find(x=>x.role==="Captain")?.row||rows[0];
+    const vice=plan.find(x=>x.role==="Vice-Captain")?.row||rows[1];
+    const scorer=rows[0];
+    if(id("m3SquadLeaders")) id("m3SquadLeaders").innerHTML=[
+      ["Captain",captain?displayTicker(captain.ticker):"—"],
+      ["Vice-captain",vice?displayTicker(vice.ticker):"—"],
+      ["Top income scorer",scorer?`${displayTicker(scorer.ticker)} • ${cash(annualIncomeFromRow(scorer))}/yr`:"—"]
+    ].map(([label,value])=>`<div><small>${label}</small><strong>${value}</strong></div>`).join("");
+  }
+
+  function installToolbar(){
+    const wrap=document.querySelector(".squad-formation-card .formation-wrap");
+    if(!wrap||id("m3SquadToolbar"))return;
+    const toolbar=document.createElement("div");
+    toolbar.className="m3-squad-toolbar";toolbar.id="m3SquadToolbar";
+    toolbar.innerHTML=`<div class="m3-squad-toolbar-head"><div><h4>Formation strategy</h4><p>Change the XI without changing the current page design. Active holdings are combined across IG and Trade 212 before selection.</p></div><span class="m3-squad-build">M3 current-file upgrade</span></div><div class="m3-tactic-buttons">${[
+      ["default","Manager XI"],["income","Maximum Income"],["balanced","Balanced"],["defensive","Defensive Income"],["growth","Growth + Income"]
+    ].map(([mode,label])=>`<button type="button" data-m3-tactic="${mode}" class="${tacticMode===mode?"active":""}">${label}</button>`).join("")}</div><div class="m3-squad-leaders" id="m3SquadLeaders"></div>`;
+    wrap.insertAdjacentElement("beforebegin",toolbar);
+    toolbar.addEventListener("click",event=>{
+      const button=event.target.closest("[data-m3-tactic]");if(!button)return;
+      tacticMode=button.dataset.m3Tactic;
+      localStorage.setItem("aurora_m3_squad_tactic",tacticMode);
+      toolbar.querySelectorAll("button").forEach(btn=>btn.classList.toggle("active",btn===button));
+      renderAll();
+    });
+  }
+
+  function appendAccountBreakdown(ticker){
+    const content=id("playerDrawerContent");if(!content)return;
+    content.querySelector(".m3-account-breakdown")?.remove();
+    const rows=accountRowsForTicker(ticker);
+    if(!rows.length)return;
+    const box=document.createElement("div");box.className="m3-account-breakdown";
+    box.innerHTML=`<h3>Combined account breakdown</h3>${rows.map(row=>{
+      const account=String(row.account??row.Account??row.platform??row.broker??"Account not set");
+      const shares=parse(row.shares??row.quantity??row.units??row.Shares);
+      return `<div class="m3-account-row"><span>${account}</span><strong>${shares.toLocaleString("en-GB",{maximumFractionDigits:4})} shares • ${cash(holdingValue(row))} • ${cash(annualIncomeFromRow(row))}/yr</strong></div>`;
+    }).join("")}`;
+    content.appendChild(box);
+  }
+
+  function renderFormer(){
+    const list=id("m3FormerPlayerList");if(!list||typeof state==="undefined")return;
+    const former=[...new Set((state.holdings||[]).filter(row=>!isActiveHolding(row)).map(row=>clean(row.ticker)).filter(Boolean))];
+    list.innerHTML=former.length?former.map(ticker=>`<span>${ticker}</span>`).join(""):"<span>No sold holdings are currently recorded</span>";
+  }
+
+  function init(){
+    installToolbar();
+    document.addEventListener("click",event=>{
+      const player=event.target.closest("[data-player-ticker]");
+      if(player)setTimeout(()=>appendAccountBreakdown(player.dataset.playerTicker),50);
+    });
+    const observer=new MutationObserver(()=>{installToolbar();renderFormer();});
+    observer.observe(document.body,{childList:true,subtree:true});
+    window.setInterval(()=>{renderFormer();renderToolbarLeaders();},1600);
+    if(Array.isArray(state?.holdings)&&state.holdings.length)renderAll();
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
+})();
+</script>
+
 </body>
 </html>
