@@ -14,6 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Transfer Centre</title>
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
+<!-- Build: Aurora M4 Transfer Centre Clean Workflow • 24 Jul 2026 -->
 <!-- Build: Transfer Centre Five-Upgrades Suite • 23 Jul 2026 -->
 <!-- Build: Aurora M3 Guided Payday Upgrade • 24 Jul 2026 -->
 
@@ -5416,6 +5417,66 @@ body.fm-transfer-menu-open .fm-side-scroll{
 @media(max-width:600px){.m3-control-head{flex-direction:column}.m3-budget-fields,.m3-reconcile-grid,.m3-receipt-meta{grid-template-columns:1fr}.m3-steps{grid-template-columns:1fr}}
 </style>
 
+
+<style id="aurora-transfer-cleanup-styles">
+/* ===================== AURORA TRANSFER CENTRE — CLEAN WORKFLOW ===================== */
+#investment-release-plan,
+#income-simulator,
+#m3-payday-control{display:none!important}
+
+.clean-route-options,
+.clean-funding-details{
+  border:1px solid rgba(96,165,250,.18);
+  border-radius:18px;
+  background:rgba(2,8,20,.36);
+  overflow:hidden;
+}
+.clean-route-options{margin:14px 0}
+.clean-route-options>summary,
+.clean-funding-details>summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:13px 15px;
+  color:#dbeafe;
+  font-size:11px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+.clean-route-options>summary::-webkit-details-marker,
+.clean-funding-details>summary::-webkit-details-marker{display:none}
+.clean-route-options>summary:after,
+.clean-funding-details>summary:after{content:'＋';color:var(--cyan);font-size:17px}
+.clean-route-options[open]>summary:after,
+.clean-funding-details[open]>summary:after{content:'−'}
+.clean-route-options .route-compare-panel{border:0!important;border-top:1px solid rgba(148,163,184,.12)!important;border-radius:0!important;margin:0!important;box-shadow:none!important}
+.clean-route-options .best-return-head{padding-top:14px}
+.clean-route-options #bestReturnGrid,
+.clean-route-options #bestReturnNote{display:none!important}
+.clean-funding-details{margin-top:12px;border-color:rgba(52,211,153,.16)}
+.clean-funding-details .exit-funding-grid{margin-top:0}
+#exit-funding-room .exit-funding-panel{padding-bottom:14px}
+#exit-funding-room .exit-funding-head p{max-width:760px}
+
+/* One simulator only: the M4 ten-month plan. */
+#auroraM4Mission .m4-health-box{display:none!important}
+#auroraM4Mission .m4-details-body{grid-template-columns:1fr!important}
+#auroraM4Mission .m4-month-table-wrap{grid-column:1!important}
+#auroraM4Mission .m4-mission-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+
+#deal-sheet .broadcast-title h3{letter-spacing:-.025em}
+#payday-execution{scroll-margin-top:92px}
+@media(max-width:1100px){#auroraM4Mission .m4-mission-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){
+  #auroraM4Mission .m4-mission-grid{grid-template-columns:1fr 1fr}
+  .clean-route-options .route-choice-grid{grid-template-columns:1fr}
+}
+</style>
+
 </head>
 <body>
 
@@ -5643,7 +5704,7 @@ body.fm-transfer-menu-open .fm-side-scroll{
         <div>
           <span class="exit-funding-kicker">Departure desk • live funding update</span>
           <h3>Payday Exit & Funding Tracker</h3>
-          <p>Tracks IITU as the planned payday sale, VWRA against its fixed offer-room target, and how much of the £1,000 monthly ETF release is actually funded before each transfer window.</p>
+          <p>Shows whether the planned ETF funding is ready for this month’s transfer window. Detailed exit calculations stay collapsed until needed.</p>
         </div>
         <div class="exit-funding-controls">
           <label class="exit-funding-field"><span>Next payday</span><input id="nextPaydayInput" type="date" aria-label="Next payday"></label>
@@ -5656,51 +5717,16 @@ body.fm-transfer-menu-open .fm-side-scroll{
         <div class="exit-funding-stat"><small>VWRA target status</small><strong id="vwraTargetStatus">—</strong><span id="vwraTargetGap">Checking the offer room…</span></div>
         <div class="exit-funding-stat"><small>ETF pot coverage</small><strong id="etfPotCoverage">—</strong><span id="etfPotCoverageNote">Based on the current live exit values.</span></div>
       </div>
-      <div class="exit-funding-grid" id="exitFundingGrid"><div class="loading">Loading the departure and funding plan…</div></div>
+      <details class="clean-funding-details"><summary>Open detailed exit funding plan</summary>
+  <div class="exit-funding-grid" id="exitFundingGrid"><div class="loading">Loading the departure and funding plan…</div></div>
       <div class="smart-exit-desk" id="smartExitDesk"><div class="loading">Building the smarter ETF exit desk…</div></div>
       <span class="exit-funding-note">Aurora treats target prices as opportunities, not guarantees. IITU can fund the opening tranches while VWRA remains locked; the monthly Transfer Centre still reruns the market before every purchase.</span>
     </div>
   </section>
 
   <!-- ===================== SECTION: ROUTE COMPARISON ===================== -->
-  <section class="section" id="best-return-allocation">
-    <div class="route-compare-panel">
-      <div class="best-return-head">
-        <div>
-          <h3>Monthly Route Comparison</h3>
-          <p>The final deal sheet defaults to the balanced route. Maximum income remains available, but it must pass the same verified-data, single-holding and post-purchase concentration rules.</p>
-        </div>
-        <span class="badge green" id="routeModeBadge">Balanced route active</span>
-      </div>
-      <div class="route-choice-grid">
-        <article class="route-choice-card balanced active" id="balancedRouteCard">
-          <div class="route-choice-top"><span class="route-choice-icon">⚖</span><div><small>Default recommendation</small><h4>Balanced Monthly Route</h4></div></div>
-          <div class="route-choice-metrics">
-            <div><small>Yearly income</small><strong id="balancedRouteIncome">—</strong></div>
-            <div><small>Monthly income</small><strong id="balancedRouteMonthly">—</strong></div>
-            <div><small>Portfolio score</small><strong id="balancedRouteScore">—</strong></div>
-          </div>
-          <p id="balancedRouteWarnings">Calculating verified income, valuation, safety and diversification.</p>
-          <button class="route-choice-button" id="applyBalancedRoute" type="button">Use balanced route</button>
-        </article>
-        <article class="route-choice-card maximum" id="maximumRouteCard">
-          <div class="route-choice-top"><span class="route-choice-icon">£</span><div><small>Higher-income alternative</small><h4>Maximum Income Route</h4></div></div>
-          <div class="route-choice-metrics">
-            <div><small>Yearly income</small><strong id="bestReturnIncome">—</strong></div>
-            <div><small>Monthly income</small><strong id="bestReturnMonthly">—</strong></div>
-            <div><small>Extra vs balanced</small><strong id="bestReturnUplift">—</strong></div>
-          </div>
-          <p id="bestReturnSpend">Calculating permitted allocation…</p>
-          <button class="route-choice-button maximum" id="applyBestReturn" type="button" disabled>Use maximum-income route</button>
-        </article>
-      </div>
-      <div class="best-return-grid" id="bestReturnGrid"><div class="loading">Comparing the permitted maximum-income route…</div></div>
-      <span class="best-return-note" id="bestReturnNote">Meaningless £150 token purchases have been removed. A company must receive a meaningful allocation or stay on the bench.</span>
-    </div>
-  </section>
-
-
-  <!-- ===================== SECTION: LONG-RANGE INCOME SIMULATOR ===================== -->
+  
+<!-- ===================== SECTION: LONG-RANGE INCOME SIMULATOR ===================== -->
   <section class="section" id="income-simulator">
     <div class="upgrade-panel income-simulator-panel">
       <div class="upgrade-head">
@@ -5833,40 +5859,8 @@ body.fm-transfer-menu-open .fm-side-scroll{
 
 
   <!-- ===================== SECTION: PAYDAY EXECUTION MODE ===================== -->
-  <section class="section" id="payday-execution">
-    <div class="upgrade-panel payday-execution-panel" id="paydayExecutionPanel">
-      <div class="upgrade-head payday-execution-head">
-        <div>
-          <span class="upgrade-kicker">Deadline day • controlled execution</span>
-          <h3>Payday Execution Mode</h3>
-          <p>Turns the approved route into a step-by-step payday checklist, then compares planned and completed purchases. It records the workflow only and never places a broker order.</p>
-        </div>
-        <button class="payday-open-button" id="openPaydayWindow" type="button">Open Payday Window</button>
-      </div>
-      <div class="payday-window-body" id="paydayWindowBody">
-        <div class="payday-status-strip">
-          <div><small>Window status</small><strong id="paydayWindowStatus">Closed</strong><span id="paydayWindowStatusNote">Open the window when payday arrives.</span></div>
-          <label class="payday-cash-field"><span>Available transfer cash</span><b>£</b><input id="paydayAvailableCash" type="number" min="0" step="25" value="0"></label>
-        </div>
-        <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
-        <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter the actual fills from the broker to compare them with the deal sheet.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div>
-        <div class="payday-trade-grid" id="paydayTradeGrid"><div class="loading">Waiting for an approved route…</div></div>
-        <div class="upgrade-stat-grid four payday-final-stats">
-          <div class="upgrade-stat"><small>Planned investment</small><strong id="paydayPlannedInvested">—</strong><span id="paydayPlannedIncome">— annual income</span></div>
-          <div class="upgrade-stat featured"><small>Actual investment</small><strong id="paydayActualInvested">—</strong><span id="paydayActualIncome">— annual income</span></div>
-          <div class="upgrade-stat"><small>Investment variance</small><strong id="paydayInvestmentVariance">—</strong><span>Actual versus planned</span></div>
-          <div class="upgrade-stat"><small>New club income</small><strong id="paydayNewClubIncome">—</strong><span>Starting income plus actual additions</span></div>
-        </div>
-        <div class="payday-actions">
-          <button class="payday-complete-button" id="completePaydayWindow" type="button" disabled>Complete transfer window</button>
-          <button class="payday-reset-button" id="resetPaydayWindow" type="button">Reset payday record</button>
-          <span id="paydayCompletionMessage">Complete every control before closing the window.</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: TOP TRANSFER BOARD ===================== -->
+  
+<!-- ===================== SECTION: TOP TRANSFER BOARD ===================== -->
   <section class="section" id="top-transfer-board">
     <div class="section-head">
       <div>
@@ -5889,8 +5883,8 @@ body.fm-transfer-menu-open .fm-side-scroll{
       <div class="broadcast-panel">
         <div class="broadcast-head">
           <div>
-            <div class="broadcast-title"><span class="broadcast-live">Breaking</span><h3>Transfer Centre Final Deal Sheet</h3></div>
-            <p>Balanced monthly recruitment route by default, with a separate maximum-income option for comparison.</p>
+            <div class="broadcast-title"><span class="broadcast-live">Breaking</span><h3>This Month’s Deal Sheet</h3></div>
+            <p>One approved route, one editable allocation and one purchase record for the current transfer window.</p>
           </div>
           <span class="badge green" id="dealSheetBadge">Syncing</span>
         </div>
@@ -5901,11 +5895,48 @@ body.fm-transfer-menu-open .fm-side-scroll{
           <span id="gafferCallText">Aurora is balancing income, valuation, dividend safety, verified data and post-purchase portfolio fit.</span>
         </div>
 
-        <div class="deal-budget-panel">
+     
+   <details class="clean-route-options" id="dealRouteOptions">
+    <summary>Route choice — balanced or maximum income</summary>
+    <div class="route-compare-panel">
+      <div class="best-return-head">
+        <div>
+          <h3>Route Choice</h3>
+          <p>Balanced is the default. Open this only when you want to compare it with the permitted maximum-income alternative.</p>
+        </div>
+        <span class="badge green" id="routeModeBadge">Balanced route active</span>
+      </div>
+      <div class="route-choice-grid">
+        <article class="route-choice-card balanced active" id="balancedRouteCard">
+          <div class="route-choice-top"><span class="route-choice-icon">⚖</span><div><small>Default recommendation</small><h4>Balanced Monthly Route</h4></div></div>
+          <div class="route-choice-metrics">
+            <div><small>Yearly income</small><strong id="balancedRouteIncome">—</strong></div>
+            <div><small>Monthly income</small><strong id="balancedRouteMonthly">—</strong></div>
+            <div><small>Portfolio score</small><strong id="balancedRouteScore">—</strong></div>
+          </div>
+          <p id="balancedRouteWarnings">Calculating verified income, valuation, safety and diversification.</p>
+          <button class="route-choice-button" id="applyBalancedRoute" type="button">Use balanced route</button>
+        </article>
+        <article class="route-choice-card maximum" id="maximumRouteCard">
+          <div class="route-choice-top"><span class="route-choice-icon">£</span><div><small>Higher-income alternative</small><h4>Maximum Income Route</h4></div></div>
+          <div class="route-choice-metrics">
+            <div><small>Yearly income</small><strong id="bestReturnIncome">—</strong></div>
+            <div><small>Monthly income</small><strong id="bestReturnMonthly">—</strong></div>
+            <div><small>Extra vs balanced</small><strong id="bestReturnUplift">—</strong></div>
+          </div>
+          <p id="bestReturnSpend">Calculating permitted allocation…</p>
+          <button class="route-choice-button maximum" id="applyBestReturn" type="button" disabled>Use maximum-income route</button>
+        </article>
+      </div>
+      <div class="best-return-grid" id="bestReturnGrid"><div class="loading">Comparing the permitted maximum-income route…</div></div>
+      <span class="best-return-note" id="bestReturnNote">Meaningless £150 token purchases have been removed. A company must receive a meaningful allocation or stay on the bench.</span>
+    </div>
+   </details>
+   <div class="deal-budget-panel">
           <div class="deal-budget-head">
             <div>
-              <div class="broadcast-title"><span class="broadcast-live">Budget</span><h3>Final Deal Allocation</h3></div>
-              <p>Use the monthly release plan or change any individual buy amount here. Aurora will not force unallocated cash into a weak or concentrated deal.</p>
+              <div class="broadcast-title"><span class="broadcast-live">Budget</span><h3>This Month’s Allocation</h3></div>
+              <p>The budget comes from the ten-month plan. Adjust only the buys you actually intend to make; unallocated cash can remain on hold.</p>
             </div>
             <button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset recommendation</button>
           </div>
@@ -5975,6 +6006,40 @@ body.fm-transfer-menu-open .fm-side-scroll{
       </div>
     </div>
   </section>
+
+<section class="section" id="payday-execution">
+    <div class="upgrade-panel payday-execution-panel" id="paydayExecutionPanel">
+      <div class="upgrade-head payday-execution-head">
+        <div>
+          <span class="upgrade-kicker">Deadline day • controlled execution</span>
+          <h3>Payday Execution &amp; Purchase Record</h3>
+          <p>Record the real broker fills against this month’s approved deal sheet. Aurora tracks the workflow but never places an order.</p>
+        </div>
+        <button class="payday-open-button" id="openPaydayWindow" type="button">Open Payday Window</button>
+      </div>
+      <div class="payday-window-body" id="paydayWindowBody">
+        <div class="payday-status-strip">
+          <div><small>Window status</small><strong id="paydayWindowStatus">Closed</strong><span id="paydayWindowStatusNote">Open the window when payday arrives.</span></div>
+          <label class="payday-cash-field"><span>Available transfer cash</span><b>£</b><input id="paydayAvailableCash" type="number" min="0" step="25" value="0"></label>
+        </div>
+        <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
+        <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter the actual fills from the broker to compare them with the deal sheet.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div>
+        <div class="payday-trade-grid" id="paydayTradeGrid"><div class="loading">Waiting for an approved route…</div></div>
+        <div class="upgrade-stat-grid four payday-final-stats">
+          <div class="upgrade-stat"><small>Planned investment</small><strong id="paydayPlannedInvested">—</strong><span id="paydayPlannedIncome">— annual income</span></div>
+          <div class="upgrade-stat featured"><small>Actual investment</small><strong id="paydayActualInvested">—</strong><span id="paydayActualIncome">— annual income</span></div>
+          <div class="upgrade-stat"><small>Investment variance</small><strong id="paydayInvestmentVariance">—</strong><span>Actual versus planned</span></div>
+          <div class="upgrade-stat"><small>New club income</small><strong id="paydayNewClubIncome">—</strong><span>Starting income plus actual additions</span></div>
+        </div>
+        <div class="payday-actions">
+          <button class="payday-complete-button" id="completePaydayWindow" type="button" disabled>Complete transfer window</button>
+          <button class="payday-reset-button" id="resetPaydayWindow" type="button">Reset payday record</button>
+          <span id="paydayCompletionMessage">Complete every control before closing the window.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
 
 
   <!-- ===================== SECTION: INCOMING OFFERS ===================== -->
@@ -9111,7 +9176,7 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
   const money=value=>Number.isFinite(value)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(value):'—';
   const read=(key,fallback={})=>{try{return JSON.parse(localStorage.getItem(key)||'null')||fallback}catch(_){return fallback}};
   const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}};
-  function plan(){return {...defaults,...read(PLAN_KEY,{})};}
+  function plan(){return {...defaults,...read(PLAN_KEY,{}),paydayMonthly:0};}
   function savePlan(next){const clean={...defaults,...next,updatedAt:new Date().toISOString(),version:4};write(PLAN_KEY,clean);write(DEPLOYMENT_KEY,{corePot:clean.corePot,coreMonthly:clean.coreMonthly,etfPot:clean.etfPot,etfMonthly:clean.etfMonthly,currentMonth:clean.currentMonth,updatedAt:clean.updatedAt,m4:true});return clean;}
   function migrate(){
     const existing=read(PLAN_KEY,null);
@@ -9152,7 +9217,7 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
       const payday=p.paydayMonthly;
       totalBase+=release.total;
       totalFull+=release.total+payday;
-      annual+=((release.total+payday)*m.yieldRate);
+      annual+=(release.total*m.yieldRate);
       if(month<=p.months)rows.push({month,release,payday,base:release.total,full:release.total+payday,baseIncome:m.annual+totalBase*m.yieldRate,fullIncome:m.annual+totalFull*m.yieldRate});
       if(targetMonth===null&&annual/12>=p.monthlyTarget)targetMonth=month;
     }
@@ -9199,26 +9264,26 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     return {checks,level:bad?'bad':warn?'warn':'ok',label:bad?'Critical data issue':warn?'Attention required':'All systems operational'};
   }
   function missionMarkup(){return `<section id="auroraM4Mission" aria-label="Aurora M4 integrated mission control">
-    <header class="m4-mission-head"><div><span class="m4-mission-kicker">Aurora M4 • integrated investment mission</span><h3>Ten-Month Income-Building Command</h3><p>One shared plan now controls the Transfer Centre, Analysis Room, Manager Dashboard and Boardroom. The £33,000 capital-release mission stays separate from the optional ten £1,500 paydays.</p></div><span class="m4-system-chip" id="m4SystemChip"><i></i><span>Checking systems</span></span></header>
+    <header class="m4-mission-head"><div><span class="m4-mission-kicker">Transfer Centre • master investment plan</span><h3>10-Month Investment Plan</h3><p>This is the only income simulator on the page: £3,500 in months 1–8, then £2,500 in months 9–10, for £33,000 invested in total.</p></div><span class="m4-system-chip" id="m4SystemChip"><i></i><span>Checking systems</span></span></header>
     <div class="m4-mission-grid">
-      <article class="m4-stat featured"><small>Capital-release mission</small><strong id="m4BaseCapital">—</strong><span>£25,000 share pot + £8,000 ETF pot</span></article>
-      <article class="m4-stat"><small>Full 10-month cashflow</small><strong id="m4FullCapital">—</strong><span>Capital mission plus ten £1,500 paydays</span></article>
-      <article class="m4-stat"><small>Base final income</small><strong id="m4BaseFinal">—</strong><span id="m4BaseFinalNote">At the current portfolio yield</span></article>
-      <article class="m4-stat"><small>Full final income</small><strong id="m4FullFinal">—</strong><span id="m4FullFinalNote">Including regular paydays</span></article>
-      <article class="m4-stat"><small>Progress to £625/month</small><strong id="m4TargetProgress">—</strong><span id="m4TargetNote">Calculating target month</span><div class="m4-target-track"><i id="m4TargetFill"></i></div></article>
+      <article class="m4-stat featured"><small>Total 10-month plan</small><strong id="m4BaseCapital">—</strong><span>£25,000 existing pot + £8,000 ETF pot</span></article>
+      <article class="m4-stat"><small>This month’s investment</small><strong id="m4FullCapital">—</strong><span id="m4CurrentBudgetNote">Loading the current plan month</span></article>
+      <article class="m4-stat"><small>Projected final income</small><strong id="m4BaseFinal">—</strong><span id="m4BaseFinalNote">At the current portfolio yield</span></article>
+      <article class="m4-stat"><small>Projected monthly income</small><strong id="m4FullFinal">—</strong><span id="m4FullFinalNote">Final annual income divided by 12</span></article>
+      <article class="m4-stat"><small>Progress to £625/month</small><strong id="m4TargetProgress">—</strong><span id="m4TargetNote">Calculating plan progress</span><div class="m4-target-track"><i id="m4TargetFill"></i></div></article>
     </div>
     <div class="m4-lifecycle"><div class="m4-lifecycle-title"><span>Signing lifecycle</span><span id="m4LifecycleStatus">Checking transfer state</span></div><div class="m4-lifecycle-steps" id="m4LifecycleSteps"></div></div>
-    <details class="m4-mission-details"><summary>Plan editor, month-by-month schedule and system health</summary><div class="m4-details-body">
+    <details class="m4-mission-details"><summary>Edit the plan and view the 10-month schedule</summary><div class="m4-details-body">
       <div class="m4-plan-editor"><div class="m4-editor-grid">
         <label class="m4-field"><span>Existing share pot</span><b>£</b><input id="m4CorePot" type="number" min="0" step="100"></label>
         <label class="m4-field"><span>Share-pot release</span><b>£</b><input id="m4CoreMonthly" type="number" min="0" step="100"></label>
         <label class="m4-field"><span>ETF-sale pot</span><b>£</b><input id="m4EtfPot" type="number" min="0" step="100"></label>
         <label class="m4-field"><span>ETF monthly release</span><b>£</b><input id="m4EtfMonthly" type="number" min="0" step="100"></label>
-        <label class="m4-field"><span>Regular payday</span><b>£</b><input id="m4PaydayMonthly" type="number" min="0" step="50"></label>
+        <input id="m4PaydayMonthly" type="hidden" value="0">
         <label class="m4-field"><span>Current plan month</span><b>#</b><input id="m4CurrentMonth" type="number" min="1" max="120" step="1"></label>
-      </div><button class="m4-save" id="m4SavePlan" type="button">Save and sync the Aurora plan</button><span class="m4-editor-note">The base mission reports £33,000 invested. The full-cashflow view reports £48,000 when all ten regular paydays are included.</span></div>
+      </div><button class="m4-save" id="m4SavePlan" type="button">Save and sync the Aurora plan</button><span class="m4-editor-note">The agreed plan invests £33,000 only. The previous £48,000 comparison has been removed to avoid double-counting regular payday money.</span></div>
       <div class="m4-health-box"><div class="m4-health-list" id="m4HealthList"></div></div>
-      <div class="m4-month-table-wrap"><table class="m4-month-table"><thead><tr><th>Month</th><th>Share pot</th><th>ETF release</th><th>Capital mission</th><th>With payday</th><th>Base monthly income</th><th>Full monthly income</th></tr></thead><tbody id="m4MonthRows"></tbody></table></div>
+      <div class="m4-month-table-wrap"><table class="m4-month-table"><thead><tr><th>Month</th><th>Existing pot</th><th>ETF release</th><th>Total invested</th><th>Projected annual income</th><th>Projected monthly income</th></tr></thead><tbody id="m4MonthRows"></tbody></table></div>
     </div></details><div class="m4-updated" id="m4Updated">M4 plan loading…</div>
   </section>`;}
   function inject(){
@@ -9233,7 +9298,7 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
   function renderLifecycle(life){
     const labels=[['Plan approved','Deal sheet configured'],['Funds ready','Monthly release available'],['Purchases completed','Broker fills recorded'],['Registered','AuroraData updated'],['Added to squad','Holding confirmed live']];
     q('m4LifecycleSteps').innerHTML=labels.map((item,index)=>{const n=index+1;return `<div class="m4-step ${life.stage>n?'done':life.stage===n?'current':''}" data-step="${n}"><strong>${item[0]}</strong><span>${n===4&&life.ticker?`${life.ticker} latest registration`:item[1]}</span></div>`}).join('');
-    const stageText=['Mission configured','Funds and route ready','Purchase execution complete','Registration confirmed','Signing live in the squad'][Math.max(0,life.stage-1)];q('m4LifecycleStatus').textContent=stageText;
+    const stageText=['Plan configured','Funds and route ready','Purchase execution complete','Registration confirmed','Signing live in the squad'][Math.max(0,life.stage-1)];q('m4LifecycleStatus').textContent=stageText;
   }
   function renderMediaStory(life){
     const box=q('breakingStories');if(!box||life.stage<3)return;
@@ -9244,10 +9309,12 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
   function update(){
     inject();insertScoutingLink();const p=plan();syncNative(p,false);const m=metrics(),proj=projections(p,m),life=lifecycle(),h=health(p,m,life);
     [['m4CorePot',p.corePot],['m4CoreMonthly',p.coreMonthly],['m4EtfPot',p.etfPot],['m4EtfMonthly',p.etfMonthly],['m4PaydayMonthly',p.paydayMonthly],['m4CurrentMonth',p.currentMonth]].forEach(([id,value])=>{const el=q(id);if(el&&document.activeElement!==el)el.value=value});
-    q('m4BaseCapital').textContent=money(proj.baseCapital);q('m4FullCapital').textContent=money(proj.fullCapital);q('m4BaseFinal').textContent=`${money(proj.baseFinal)}/yr`;q('m4FullFinal').textContent=`${money(proj.fullFinal)}/yr`;q('m4BaseFinalNote').textContent=`${money(proj.baseFinal/12)}/month at ${(m.yieldRate*100).toFixed(2)}%`;q('m4FullFinalNote').textContent=`${money(proj.fullFinal/12)}/month including paydays`;
-    const progress=Math.max(0,Math.min(100,(m.annual/12)/p.monthlyTarget*100));q('m4TargetProgress').textContent=`${progress.toFixed(1)}%`;q('m4TargetFill').style.width=`${progress}%`;q('m4TargetNote').textContent=proj.targetMonth?`Full-cashflow route reaches target around month ${proj.targetMonth}`:`Target remains beyond the 10-month mission`;
-    q('m4MonthRows').innerHTML=proj.rows.map(row=>`<tr><td><strong>Month ${row.month}</strong></td><td>${money(row.release.core)}</td><td>${money(row.release.etf)}</td><td class="m4-base">${money(row.base)}</td><td class="m4-full">${money(row.full)}</td><td>${money(row.baseIncome/12)}</td><td>${money(row.fullIncome/12)}</td></tr>`).join('');
-    renderLifecycle(life);const chip=q('m4SystemChip');chip.className=`m4-system-chip ${h.level==='ok'?'':h.level}`.trim();chip.querySelector('span').textContent=h.label;q('m4HealthList').innerHTML=h.checks.map(x=>`<div class="m4-health-row ${x.level}"><i></i><strong>${x.name}</strong><span>${x.detail}</span></div>`).join('');q('m4Updated').textContent=`Shared plan synced ${p.updatedAt?new Date(p.updatedAt).toLocaleString('en-GB'):'for Aurora M4'} • Live planning yield ${(m.yieldRate*100).toFixed(2)}%`;
+    const currentRelease=releaseAt(p,Math.min(p.months,Math.max(1,p.currentMonth)));
+    q('m4BaseCapital').textContent=money(proj.baseCapital);q('m4FullCapital').textContent=money(currentRelease.total);q('m4BaseFinal').textContent=`${money(proj.baseFinal)}/yr`;q('m4FullFinal').textContent=`${money(proj.baseFinal/12)}/month`;q('m4BaseFinalNote').textContent=`Adds ${money(proj.baseFinal-m.annual)}/yr at ${(m.yieldRate*100).toFixed(2)}%`;q('m4FullFinalNote').textContent='Projected final annual income divided by 12';
+    const budgetNote=q('m4CurrentBudgetNote');if(budgetNote)budgetNote.textContent=`Month ${p.currentMonth}: ${money(currentRelease.core)} existing pot + ${money(currentRelease.etf)} ETF release`;
+    const finalMonthly=proj.baseFinal/12;const progress=Math.max(0,Math.min(100,finalMonthly/p.monthlyTarget*100));q('m4TargetProgress').textContent=`${progress.toFixed(1)}%`;q('m4TargetFill').style.width=`${progress}%`;q('m4TargetNote').textContent=proj.targetMonth?`The £625 target is reached during plan month ${proj.targetMonth}`:`The 10-month plan finishes at ${money(finalMonthly)}/month`;
+    q('m4MonthRows').innerHTML=proj.rows.map(row=>`<tr><td><strong>Month ${row.month}</strong></td><td>${money(row.release.core)}</td><td>${money(row.release.etf)}</td><td class="m4-base">${money(row.base)}</td><td>${money(row.baseIncome)}/yr</td><td>${money(row.baseIncome/12)}</td></tr>`).join('');
+    renderLifecycle(life);const chip=q('m4SystemChip');chip.className=`m4-system-chip ${h.level==='ok'?'':h.level}`.trim();chip.querySelector('span').textContent=h.label;q('m4HealthList').innerHTML=h.checks.map(x=>`<div class="m4-health-row ${x.level}"><i></i><strong>${x.name}</strong><span>${x.detail}</span></div>`).join('');q('m4Updated').textContent=`Transfer plan saved ${p.updatedAt?new Date(p.updatedAt).toLocaleString('en-GB'):'for Aurora M4'} • Live planning yield ${(m.yieldRate*100).toFixed(2)}%`;
     renderMediaStory(life);
   }
   function bind(){
