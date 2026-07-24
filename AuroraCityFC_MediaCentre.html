@@ -10,10 +10,10 @@
 <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
-<meta content="yes" name="mobile-web-app-capable">
-<meta content="yes" name="apple-mobile-web-app-capable">
-<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
-<meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Aurora City FC" name="apple-mobile-web-app-title">
 <title>Aurora City FC — Media Centre</title>
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
@@ -706,7 +706,7 @@ body .fm-side-scroll .fm-side-link.active .fm-side-icon{
   #transferSideMenu:before{top:6px;bottom:6px}
 }
 </style>
-</meta></meta></meta><style id="aurora-page-section-navigation-styles">
+</meta><style id="aurora-page-section-navigation-styles">
 /* ================= AURORA PAGE SECTION NAVIGATION ================= */
 .aurora-page-folder{
   --page-accent:#60a5fa;
@@ -792,6 +792,46 @@ body .fm-side-scroll .fm-side-link.active .fm-side-icon{
   .aurora-page-folder .fm-side-submenu{padding-left:36px}
   .aurora-page-folder .fm-side-submenu a{font-size:10px}
 }
+</style><style id="aurora-sidebar-consistency-hotfix">
+/* ================= AURORA SIDEBAR CONSISTENCY HOTFIX =================
+   Keeps recruitment colours available on every page and prevents the
+   active Scouting Centre folder from being duplicated by legacy injection. */
+.fm-side-link[href*="AuroraCityFC_ScoutingCentre.html"]{
+  --dept-colour:#4ade80!important;
+  --dept-rgb:74,222,128!important;
+}
+.fm-side-link[href*="AuroraCityFC_TransferCentre.html"]{
+  --dept-colour:#f59e0b!important;
+  --dept-rgb:245,158,11!important;
+}
+#scoutingSideMenu{
+  --dept-colour:#4ade80!important;
+  --dept-rgb:74,222,128!important;
+  --page-accent:#4ade80!important;
+  --page-accent-rgb:74,222,128!important;
+}
+#transferSideMenu{
+  --dept-colour:#f59e0b!important;
+  --dept-rgb:245,158,11!important;
+  --page-accent:#f59e0b!important;
+  --page-accent-rgb:245,158,11!important;
+}
+/* Explicit fallback so an unset legacy custom property can never create
+   the white-outline recruitment buttons seen on iPad. */
+.fm-side-link[href*="AuroraCityFC_ScoutingCentre.html"]{
+  border-color:rgba(74,222,128,.15)!important;
+  background:linear-gradient(90deg,rgba(74,222,128,.10),rgba(74,222,128,.025) 66%,transparent)!important;
+}
+.fm-side-link[href*="AuroraCityFC_TransferCentre.html"]{
+  border-color:rgba(245,158,11,.15)!important;
+  background:linear-gradient(90deg,rgba(245,158,11,.10),rgba(245,158,11,.025) 66%,transparent)!important;
+}
+.fm-side-link[href*="AuroraCityFC_ScoutingCentre.html"]:before{background:#4ade80!important;box-shadow:0 0 12px rgba(74,222,128,.32)!important}
+.fm-side-link[href*="AuroraCityFC_TransferCentre.html"]:before{background:#f59e0b!important;box-shadow:0 0 12px rgba(245,158,11,.32)!important}
+.fm-side-link[href*="AuroraCityFC_ScoutingCentre.html"] .fm-side-icon{color:#4ade80!important;background:rgba(74,222,128,.11)!important;border-color:rgba(74,222,128,.15)!important}
+.fm-side-link[href*="AuroraCityFC_TransferCentre.html"] .fm-side-icon{color:#f59e0b!important;background:rgba(245,158,11,.11)!important;border-color:rgba(245,158,11,.15)!important}
+.fm-side-link[href*="AuroraCityFC_ScoutingCentre.html"]:hover{border-color:rgba(74,222,128,.42)!important;background:linear-gradient(90deg,rgba(74,222,128,.25),rgba(74,222,128,.08) 72%,transparent)!important}
+.fm-side-link[href*="AuroraCityFC_TransferCentre.html"]:hover{border-color:rgba(245,158,11,.42)!important;background:linear-gradient(90deg,rgba(245,158,11,.25),rgba(245,158,11,.08) 72%,transparent)!important}
 </style></head>
 <body>
 <div aria-label="Open navigation" class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" role="button" tabindex="0">
@@ -1203,7 +1243,7 @@ $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuro
     const output={...saved,stage,routeTickers,purchasedAt:payday.completedAt||receipt.completedAt||saved.purchasedAt||'',registeredAt:lastReg.at||saved.registeredAt||'',ticker:regTicker||saved.ticker||'',updatedAt:new Date().toISOString()};write(LIFECYCLE_KEY,output);return output;
   }
   function insertScoutingLink(){
-    const nav=document.querySelector('.fm-side-scroll');if(!nav||[...nav.querySelectorAll('a')].some(a=>/Scouting Centre/i.test(a.textContent)))return;
+    const nav=document.querySelector('.fm-side-scroll');if(!nav||nav.querySelector('#scoutingSideMenu')||[...nav.querySelectorAll('a,summary')].some(a=>/Scouting Centre/i.test(a.textContent)))return;
     const recruitment=[...nav.querySelectorAll('.fm-nav-group')].find(x=>/Recruitment/i.test(x.textContent));if(!recruitment)return;
     const link=document.createElement('a');link.className='fm-side-link';link.href='AuroraCityFC_ScoutingCentre.html';link.innerHTML='<span class="fm-side-icon">⌕</span><span>Scouting Centre</span>';recruitment.insertAdjacentElement('afterend',link);
   }
@@ -1216,7 +1256,7 @@ $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuro
     let holdings=[];try{if(typeof state!=='undefined'&&Array.isArray(state?.holdings))holdings=state.holdings.filter(active)}catch(_){}
     const broken=[...document.images].filter(img=>img.complete&&img.naturalWidth===0).length;
     const names=holdings.map(ticker).filter(Boolean),dupes=[...new Set(names.filter((x,i)=>names.indexOf(x)!==i))];
-    const hasScout=[...document.querySelectorAll('.fm-side-scroll a')].some(a=>/Scouting Centre/i.test(a.textContent));
+    const hasScout=[...document.querySelectorAll('.fm-side-scroll a,.fm-side-scroll summary')].some(a=>/Scouting Centre/i.test(a.textContent));
     const lastRefresh=read(REFRESH_KEY,{});
     const checks=[
       {level:holdings.length?'ok':'warn',name:'AuroraMaster holdings',detail:holdings.length?`${holdings.length} active rows`:'waiting for data'},
@@ -1356,6 +1396,23 @@ $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuro
     window.setTimeout(() => scrollToHash(location.hash), 80);
   } else {
     syncActive();
+  }
+})();
+</script><script id="aurora-sidebar-duplicate-guard">
+(function(){
+  function cleanScoutingDuplicate(){
+    const nav=document.querySelector('.fm-side-scroll');
+    const folder=document.getElementById('scoutingSideMenu');
+    if(!nav||!folder)return;
+    nav.querySelectorAll('a[href*="AuroraCityFC_ScoutingCentre.html"]').forEach(link=>{
+      if(!folder.contains(link)) link.remove();
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',cleanScoutingDuplicate,{once:true});
+  else cleanScoutingDuplicate();
+  const nav=document.querySelector('.fm-side-scroll');
+  if(nav){
+    new MutationObserver(cleanScoutingDuplicate).observe(nav,{childList:true,subtree:true});
   }
 })();
 </script></body>
