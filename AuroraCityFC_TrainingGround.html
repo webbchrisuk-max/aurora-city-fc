@@ -14,8 +14,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Aurora City FC" />
 <title>Aurora City FC — Training Ground</title>
-<!-- Build: Universal Scouting Navigation • 23 Jul 2026 -->
-<!-- Build: Universal Department Colour Sidebar • 20 Jul 2026 -->
+<!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
+<!-- Build: Universal Slide-Out Sidebar • 19 Jul 2026 -->
 <style>
 /* ===================== SECTION: ROOT THEME ===================== */
 :root{--bg:#030712;--panel:#07111f;--card:#0d1b34;--line:rgba(148,163,184,.18);--line2:rgba(96,165,250,.26);--txt:#e5eefc;--muted:#93a4bd;--soft:#cbd5e1;--blue:#60a5fa;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--red:#fb7185;--purple:#a78bfa;--shadow:0 18px 55px rgba(0,0,0,.35);--radius:22px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,rgba(34,211,238,.18),transparent 34%),radial-gradient(circle at top right,rgba(96,165,250,.18),transparent 36%),linear-gradient(180deg,#020617 0%,#030712 48%,#020617 100%);color:var(--txt);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,100%);margin:0 auto;padding:18px 14px 90px}.topbar{position:sticky;top:0;z-index:20;margin:-18px -14px 18px;padding:12px 14px;backdrop-filter:blur(18px);background:rgba(3,7,18,.88);border-bottom:1px solid var(--line)}.topbar-inner{width:min(1540px,100%);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px;min-width:0}.crest{width:42px;height:42px;background:transparent!important;border:none!important;box-shadow:none!important}.crest img{width:100%;height:100%;object-fit:contain;display:block}.brand h1{font-size:15px;margin:0;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand p{font-size:11px;color:var(--muted);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nav{display:flex;gap:7px;overflow:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nav::-webkit-scrollbar{display:none}.nav a,.refresh-btn{border:1px solid var(--line);background:rgba(15,23,42,.72);color:var(--soft);padding:8px 10px;border-radius:999px;font-size:12px;white-space:nowrap}.refresh-btn{cursor:pointer;color:var(--cyan)}
@@ -519,437 +519,6 @@ body.fm-sidebar-hidden .aurora-system-panel{
   }
 }
 
-
-
-/* ================= LOCKED SIDEBAR FOOTER FIX ================= */
-.fm-sidebar{
-  display:grid!important;
-  grid-template-rows:auto minmax(0,1fr) auto!important;
-  height:100dvh!important;
-  min-height:100svh!important;
-  max-height:100dvh!important;
-  overflow:hidden!important;
-}
-
-.fm-side-brand{
-  grid-row:1!important;
-  min-height:76px!important;
-  flex:none!important;
-  position:relative!important;
-  z-index:4!important;
-}
-
-.fm-side-scroll{
-  grid-row:2!important;
-  min-height:0!important;
-  height:auto!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-  overscroll-behavior:contain!important;
-  scroll-padding-bottom:18px!important;
-  padding:10px 9px 18px!important;
-  position:relative!important;
-  z-index:1!important;
-}
-
-.fm-side-scroll:after{
-  content:"";
-  display:block;
-  height:8px;
-}
-
-.fm-side-footer{
-  grid-row:3!important;
-  position:relative!important;
-  inset:auto!important;
-  left:auto!important;
-  right:auto!important;
-  bottom:auto!important;
-  flex:none!important;
-  width:100%!important;
-  min-height:0!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:8px 9px calc(10px + env(safe-area-inset-bottom))!important;
-  overflow:visible!important;
-  z-index:6!important;
-  border-top:1px solid rgba(125,211,252,.22)!important;
-  background:linear-gradient(180deg,rgba(3,12,27,.99),rgba(2,7,18,1))!important;
-  box-shadow:0 -14px 28px rgba(0,0,0,.34)!important;
-}
-
-.fm-side-footer .fm-side-action,
-.fm-side-footer .aurora-system-button{
-  min-height:38px!important;
-  height:38px!important;
-  margin:0!important;
-  padding:5px 8px!important;
-  font-size:11px!important;
-  line-height:1!important;
-}
-
-.fm-side-footer .fm-side-action:before,
-.fm-side-footer .aurora-system-button:before{
-  width:25px!important;
-  height:25px!important;
-  border-radius:8px!important;
-}
-
-.fm-side-clock{
-  min-height:18px!important;
-  padding:4px 6px 0!important;
-  font-size:9px!important;
-  line-height:1.2!important;
-}
-
-.fm-side-scroll .fm-nav-group:last-of-type{
-  margin-top:13px!important;
-}
-
-.fm-side-scroll .fm-side-link:last-child{
-  margin-bottom:4px!important;
-}
-
-@supports not (height:100dvh){
-  .fm-sidebar{
-    height:100vh!important;
-    max-height:100vh!important;
-  }
-}
-
-@media(max-height:720px){
-  .fm-side-brand{
-    min-height:64px!important;
-    padding-top:8px!important;
-    padding-bottom:8px!important;
-  }
-
-  .fm-side-crest{
-    width:42px!important;
-    height:42px!important;
-  }
-
-  .fm-side-scroll{
-    padding-top:7px!important;
-    padding-bottom:10px!important;
-  }
-
-  .fm-nav-group{
-    margin-top:8px!important;
-    margin-bottom:4px!important;
-  }
-
-  .fm-side-link,
-  .fm-side-folder summary{
-    min-height:37px!important;
-    padding-top:4px!important;
-    padding-bottom:4px!important;
-  }
-
-  .fm-side-footer{
-    gap:3px!important;
-    padding-top:6px!important;
-  }
-
-  .fm-side-footer .fm-side-action,
-  .fm-side-footer .aurora-system-button{
-    min-height:34px!important;
-    height:34px!important;
-  }
-
-  .fm-side-clock{
-    display:none!important;
-  }
-}
-
-
-
-/* ================= COMPACT TRANSFER MENU FOOTER ================= */
-body.fm-transfer-menu-open .fm-side-footer .fm-side-action,
-body.fm-transfer-menu-open .fm-side-footer .fm-side-clock{
-  display:none!important;
-}
-
-/* On every page except Home, collapse the footer completely while the
-   Transfer Centre submenu is open. Home keeps System Check available. */
-body.fm-transfer-menu-open:not(.fm-has-system-check) .fm-side-footer{
-  min-height:0!important;
-  height:0!important;
-  padding:0!important;
-  gap:0!important;
-  overflow:hidden!important;
-  border-top:0!important;
-  box-shadow:none!important;
-}
-
-/* Home retains a compact System Check-only footer while the menu is open. */
-body.fm-transfer-menu-open.fm-has-system-check .fm-side-footer{
-  padding-top:6px!important;
-}
-
-body.fm-transfer-menu-open.fm-has-system-check
-.fm-side-footer .aurora-system-button{
-  margin:0!important;
-}
-
-/* Give the navigation all remaining room immediately after the footer shrinks. */
-body.fm-transfer-menu-open .fm-side-scroll{
-  padding-bottom:10px!important;
-}
-
-
-
-/* ================= STANDARD AURORA HERO FOOTPRINT ================= */
-main.app > section.hero:first-of-type{
-  height:480px!important;
-  min-height:480px!important;
-  max-height:480px!important;
-  margin:18px 0 16px!important;
-  padding:25px!important;
-  border-radius:30px!important;
-  box-sizing:border-box!important;
-}
-
-/* Preserve the full-height photograph/background without stretching it. */
-main.app > section.hero:first-of-type img{
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-}
-
-/* Allow smaller phone layouts to grow naturally if text wraps. */
-@media(max-width:760px){
-  main.app > section.hero:first-of-type{
-    height:auto!important;
-    min-height:420px!important;
-    max-height:none!important;
-    padding:18px!important;
-    border-radius:24px!important;
-  }
-}
-
-
-
-/* ================= UNIVERSAL DEPARTMENT COLOUR SIDEBAR ================= */
-
-/* Department colour identities */
-.fm-side-link[href$="AuroraCityFC_ManagerDashboard.html"]{
-  --dept-colour:#60a5fa;
-  --dept-rgb:96,165,250;
-}
-.fm-side-link[href$="AuroraCityFC_SquadHub.html"]{
-  --dept-colour:#22d3ee;
-  --dept-rgb:34,211,238;
-}
-.fm-side-link[href$="AuroraCityFC_AnalysisRoom.html"]{
-  --dept-colour:#a78bfa;
-  --dept-rgb:167,139,250;
-}
-.fm-side-link[href$="AuroraCityFC_TrainingGround.html"]{
-  --dept-colour:#34d399;
-  --dept-rgb:52,211,153;
-}
-#transferSideMenu{
-  --dept-colour:#f59e0b;
-  --dept-rgb:245,158,11;
-}
-.fm-side-link[href$="AuroraCityFC_Boardroom.html"]{
-  --dept-colour:#f472b6;
-  --dept-rgb:244,114,182;
-}
-.fm-side-link[href$="AuroraCityFC_MediaCentre.html"]{
-  --dept-colour:#facc15;
-  --dept-rgb:250,204,21;
-}
-
-/* A subtle department trail on every page */
-.fm-side-scroll .fm-side-link{
-  position:relative;
-  overflow:hidden;
-  border-color:rgba(var(--dept-rgb),.12);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--dept-rgb),.10),
-      rgba(var(--dept-rgb),.025) 62%,
-      transparent
-    );
-}
-
-.fm-side-scroll .fm-side-link:before{
-  content:"";
-  position:absolute;
-  top:8px;
-  bottom:8px;
-  left:0;
-  width:3px;
-  border-radius:0 4px 4px 0;
-  background:var(--dept-colour);
-  opacity:.58;
-  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
-}
-
-.fm-side-scroll .fm-side-link .fm-side-icon{
-  color:var(--dept-colour);
-  background:rgba(var(--dept-rgb),.11);
-  border:1px solid rgba(var(--dept-rgb),.12);
-}
-
-.fm-side-scroll .fm-side-link:hover{
-  color:#f8fafc;
-  border-color:rgba(var(--dept-rgb),.38);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--dept-rgb),.23),
-      rgba(var(--dept-rgb),.07) 72%,
-      transparent
-    );
-  box-shadow:0 7px 20px rgba(var(--dept-rgb),.09);
-}
-
-.fm-side-scroll .fm-side-link:hover:before{
-  opacity:1;
-}
-
-/* The current page has the strongest identity */
-.fm-side-scroll .fm-side-link.active{
-  color:#fff;
-  border-color:rgba(var(--dept-rgb),.62);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--dept-rgb),.38),
-      rgba(var(--dept-rgb),.16) 68%,
-      rgba(var(--dept-rgb),.05)
-    );
-  box-shadow:
-    inset 3px 0 0 var(--dept-colour),
-    0 9px 25px rgba(var(--dept-rgb),.17),
-    0 0 18px rgba(var(--dept-rgb),.08);
-}
-
-.fm-side-scroll .fm-side-link.active:before{
-  width:4px;
-  opacity:1;
-  box-shadow:0 0 17px rgba(var(--dept-rgb),.65);
-}
-
-.fm-side-scroll .fm-side-link.active .fm-side-icon{
-  color:#fff;
-  background:rgba(var(--dept-rgb),.26);
-  border-color:rgba(var(--dept-rgb),.38);
-  box-shadow:0 0 15px rgba(var(--dept-rgb),.20);
-}
-
-/* Transfer Centre is a folder, so it gets its own amber treatment */
-#transferSideMenu{
-  position:relative;
-  border-color:rgba(var(--dept-rgb),.12);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--dept-rgb),.09),
-      rgba(var(--dept-rgb),.02) 66%,
-      transparent
-    );
-}
-
-#transferSideMenu:before{
-  content:"";
-  position:absolute;
-  top:8px;
-  bottom:8px;
-  left:0;
-  width:3px;
-  z-index:1;
-  border-radius:0 4px 4px 0;
-  background:var(--dept-colour);
-  opacity:.58;
-  box-shadow:0 0 12px rgba(var(--dept-rgb),.32);
-}
-
-#transferSideMenu summary{
-  position:relative;
-  z-index:2;
-}
-
-#transferSideMenu summary .fm-side-icon,
-#transferSideMenu .fm-folder-arrow{
-  color:var(--dept-colour);
-}
-
-#transferSideMenu summary .fm-side-icon{
-  background:rgba(var(--dept-rgb),.11);
-  border:1px solid rgba(var(--dept-rgb),.12);
-}
-
-#transferSideMenu:hover,
-#transferSideMenu[open],
-#transferSideMenu.active{
-  border-color:rgba(var(--dept-rgb),.44);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(var(--dept-rgb),.25),
-      rgba(var(--dept-rgb),.08) 72%,
-      transparent
-    );
-  box-shadow:
-    inset 3px 0 0 var(--dept-colour),
-    0 8px 22px rgba(var(--dept-rgb),.10);
-}
-
-#transferSideMenu:hover:before,
-#transferSideMenu[open]:before,
-#transferSideMenu.active:before{
-  width:4px;
-  opacity:1;
-  box-shadow:0 0 17px rgba(var(--dept-rgb),.62);
-}
-
-#transferSideMenu[open] .fm-side-submenu a:before{
-  background:rgba(var(--dept-rgb),.48);
-}
-
-#transferSideMenu[open] .fm-side-submenu a:hover,
-#transferSideMenu[open] .fm-side-submenu a.active{
-  color:#fff7ed;
-  background:rgba(var(--dept-rgb),.15);
-}
-
-.fm-side-scroll .fm-side-link > span:last-child,
-#transferSideMenu summary > span:nth-child(2){
-  position:relative;
-  z-index:2;
-}
-
-/* Small colour-coded section labels reinforce the department map */
-.fm-nav-group{
-  position:relative;
-  padding-left:9px;
-}
-
-.fm-nav-group:before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:50%;
-  width:4px;
-  height:4px;
-  border-radius:50%;
-  background:#475569;
-  transform:translateY(-50%);
-}
-
-@media(max-height:720px){
-  .fm-side-scroll .fm-side-link:before,
-  #transferSideMenu:before{
-    top:6px;
-    bottom:6px;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -1023,7 +592,8 @@ main.app > section.hero:first-of-type img{
         </summary>
 
         <div class="fm-side-submenu">
-<a href="AuroraCityFC_TransferCentre.html#transfer-overview">Overview</a>
+          <a href="AuroraCityFC_TransferCentre.html">Transfer Centre Home</a>
+          <a href="AuroraCityFC_TransferCentre.html#transfer-overview">Overview</a>
           <a href="AuroraCityFC_TransferCentre.html#incoming-offers">Incoming Offers</a>
           <a href="AuroraCityFC_TransferCentre.html#deal-sheet">Deal Sheet</a>
           <a href="AuroraCityFC_TransferCentre.html#sell-desk">Sell Desk</a>
@@ -1076,7 +646,7 @@ let AURORA_MASTER_CACHE=null,state={holdings:[],watchlist:[],scout:[],dividends:
 const $=id=>document.getElementById(id);const money=n=>Number.isFinite(n)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n):'—';
 function parseNum(v){if(v===null||v===undefined)return NaN;const s=String(v).replace(/£|,|%/g,'').trim();return s?Number(s):NaN}function cleanTicker(t){return String(t||'').trim().toUpperCase()}function displayTicker(t){return String(t||'').replace('LON:','')}function displayName(r){return r.name||r.company_name||r.company||r.Company||r.Name||displayTicker(r.ticker)||'—'}function impact(r){return parseNum(r.impact??r.impact_score??r.promotion_impact_score??r['Impact Score'])}function buyStrength(r){return parseNum(r.buy_strength??r.buy_strength_score??r.score??r.buy_score)}function yieldPct(r){const n=parseNum(r.yield_pct??r.Yield??r.yield??r.dividend_yield);return Number.isFinite(n)?(n>1?n:n*100):NaN}function annualIncomeFromRow(r){const d=parseNum(r.annual_income??r.income_annual??r.dividend_income??r['Annual Income']);if(Number.isFinite(d))return d;const v=parseNum(r.value??r.market_value??r.current_value??r.holding_value??r['Market Value']);const y=yieldPct(r);return Number.isFinite(v)&&Number.isFinite(y)?v*(y/100):0}function uniqueByTicker(rows){const m=new Map();rows.forEach(r=>{const t=cleanTicker(r.ticker);if(!t)return;const e=m.get(t);if(!e||(impact(r)||buyStrength(r)||0)>(impact(e)||buyStrength(e)||0))m.set(t,r)});return[...m.values()]}
 async function fetchMaster(){if(!AURORA_MASTER_CACHE){const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});if(!res.ok)throw new Error(`AuroraData failed: ${res.status}`);AURORA_MASTER_CACHE=await res.json()}return AURORA_MASTER_CACHE}
-async function loadAuroraData(){const b=$('refreshBtn');if(b){b.textContent='Loading…';b.disabled=true}try{const data=await fetchMaster();state={holdings:Array.isArray(data.Holdings)?data.Holdings:[],watchlist:Array.isArray(data.Watchlist)?data.Watchlist:[],scout:Array.isArray(data.AuroraScout)?data.AuroraScout:[],dividends:Array.isArray(data.Dividends)?data.Dividends:[],income:Array.isArray(data.IncomeLog)?data.IncomeLog:[]};renderAll()}catch(e){document.querySelectorAll('[data-loading-target]').forEach(el=>el.innerHTML=`<div class="loading error">${e.message||'Unable to load AuroraData'}</div>`)}finally{if(b){b.textContent='Refresh';b.disabled=false}}}
+async function loadAuroraData(){const b=$('refreshBtn');if(b){b.textContent='Loading…';b.disabled=true}try{const data=await fetchMaster();state={holdings:Array.isArray(data.Holdings)?data.Holdings:[],watchlist:Array.isArray(data.Watchlist)?data.Watchlist:[],scout:Array.isArray(data.AuroraScout)?data.AuroraScout:[],dividends:Array.isArray(data.Dividends)?data.Dividends:[],income:Array.isArray(data.IncomeLog)?data.IncomeLog:[]};renderAll()}catch(e){console.error(e);if(!(state.holdings||[]).length)document.querySelectorAll('[data-loading-target]').forEach(el=>el.innerHTML=`<div class="loading error">${e.message||'Unable to load AuroraData'}</div>`);else if($('topHeadlineNote'))$('topHeadlineNote').textContent='Refresh failed — showing the previous successful Aurora data.'}finally{if(b){b.textContent='Refresh';b.disabled=false}}}
 
 function players(){
   const scoreRows = uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])]);
@@ -1093,7 +663,7 @@ function players(){
 }
 function row(icon,title,note,value,cls=''){return `<div class="row"><div class="icon">${icon}</div><div><strong>${title}</strong><span>${note}</span></div><div class="score-pill ${cls}">${value}</div></div>`}function cls(s){return s>=90?'':s>=80?'amber':'red'}function status(s){return s>=95?'Generational':s>=90?'Elite':s>=85?'First team':s>=75?'Rotation':'Needs work'}
 function renderAll(){if($('lastUpdated')){if(window.AuroraFC)AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'});else $('lastUpdated').textContent='Aurora generated: unavailable'};const ps=players(),top=ps[0],elite=ps.filter(p=>p._score>=90),risks=ps.filter(p=>p._score&&p._score<75).slice(0,8),topScore=top?Math.round(top._score):NaN;$('topHeadline').textContent=top?displayTicker(top.ticker):'—';$('topHeadlineNote').textContent=top?`${topScore} training score`:'No form data found';$('dividendCount').textContent=elite.length;$('rumourCount').textContent=risks.length;$('pressMood').textContent=elite.length>=3?'Flying':elite.length>=1?'Strong':'Building';$('pressMoodNote').textContent=elite.length>=3?'The lads are training like monsters.':'Training plan still building.';$('coachReport').innerHTML=`<strong>${top?displayTicker(top.ticker)+' leads training':'Coach waiting for fresh data'}</strong><p>${top?`${displayTicker(top.ticker)} is currently the standout performer with a score of ${topScore}. The elite group contains ${elite.length} player${elite.length===1?'':'s'}, while the medical room keeps an eye on lower-score holdings.`:'No player development data is available yet.'}</p>`;$('risingStars').innerHTML=ps.slice(0,8).map((p,i)=>{const s=Math.round(p._score||0);return row(i===0?'🔥':'📈',`${displayTicker(p.ticker)} training well`,`${displayName(p)}${Number.isFinite(p._yield)?' • '+p._yield.toFixed(1)+'% yield':''}`,`${s}`,cls(s))}).join('')||'<div class="loading">No rising stars found.</div>';$('medicalRoom').innerHTML=risks.length?risks.map(p=>{const s=Math.round(p._score||0);return row('🩺',`${displayTicker(p.ticker)} needs monitoring`,`${displayName(p)} is below first-team training threshold.`,`${s}`,'red')}).join(''):[row('✅','Medical room clear','No major low-score players detected in the current training pool.','Clear'),row('🛡️','Risk control active','Keep watching dividend health, price weakness and impact changes.','Monitor','amber')].join('');$('formList').innerHTML=ps.slice(0,10).map(p=>{const s=Math.round(p._score||0);return row('🏃',`${displayTicker(p.ticker)} — ${status(s)}`,`${displayName(p)}${Number.isFinite(p._yield)?' • '+p._yield.toFixed(1)+'% yield':''}`,`${s}`,cls(s))}).join('')||'<div class="loading">No form data found.</div>';$('trainingFocus').innerHTML=[row('⭐','Elite group',elite.length?elite.map(p=>displayTicker(p.ticker)).slice(0,4).join(', '):'Find next 90+ candidate',`${elite.length}`),row('🎯','Development focus',top?`${displayTicker(top.ticker)} is the benchmark`:'Build score history','Active'),row('🩺','Medical watch',risks.length?`${risks.length} players need monitoring`:'No major issues',risks.length?'Watch':'Clear',risks.length?'amber':'')].join('')}
-$('refreshBtn')?.addEventListener('click',loadAuroraData);loadAuroraData();if(window.AuroraFC)AuroraFC.registerServiceWorker()
+$('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuroraData();});loadAuroraData();if(window.AuroraFC)AuroraFC.registerServiceWorker()
 </script>
 
   </div>
@@ -1314,32 +884,192 @@ $('refreshBtn')?.addEventListener('click',loadAuroraData);loadAuroraData();if(wi
 </script>
 
 
-<script id="aurora-transfer-menu-footer-control">
-(() => {
-  "use strict";
+<style id="aurora-m4-integration-styles">
+/* ===================== AURORA M4 INTEGRATED MISSION CONTROL ===================== */
+#auroraM4Mission{margin:14px 0 18px;border:1px solid rgba(34,211,238,.28);border-radius:24px;background:linear-gradient(135deg,rgba(5,18,36,.94),rgba(7,29,47,.88));box-shadow:0 18px 55px rgba(0,0,0,.28);overflow:hidden;color:#eaf4ff}
+.m4-mission-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:17px 18px 13px;border-bottom:1px solid rgba(148,163,184,.14)}
+.m4-mission-kicker{display:block;color:#67e8f9;font-size:9px;font-weight:1000;letter-spacing:.14em;text-transform:uppercase}.m4-mission-head h3{margin:5px 0 0;font-size:19px;letter-spacing:-.035em}.m4-mission-head p{margin:6px 0 0;color:#9fb0c8;font-size:11px;line-height:1.45;max-width:820px}
+.m4-system-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(52,211,153,.3);border-radius:999px;padding:8px 10px;background:rgba(6,78,59,.24);color:#bbf7d0;font-size:9px;font-weight:1000;text-transform:uppercase;white-space:nowrap}.m4-system-chip.warn{border-color:rgba(251,191,36,.34);background:rgba(120,53,15,.23);color:#fde68a}.m4-system-chip.bad{border-color:rgba(251,113,133,.36);background:rgba(127,29,29,.22);color:#fecdd3}.m4-system-chip i{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 11px currentColor}
+.m4-mission-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;padding:13px 18px}.m4-stat{border:1px solid rgba(148,163,184,.14);border-radius:17px;background:rgba(2,8,20,.48);padding:12px;min-height:92px}.m4-stat.featured{border-color:rgba(52,211,153,.29);background:linear-gradient(135deg,rgba(6,78,59,.22),rgba(2,8,20,.52))}.m4-stat small{display:block;color:#93a4bd;font-size:7px;text-transform:uppercase;letter-spacing:.09em;font-weight:900}.m4-stat strong{display:block;margin-top:7px;color:#f8fafc;font-size:18px;line-height:1.05}.m4-stat.featured strong{color:#86efac}.m4-stat span{display:block;margin-top:6px;color:#9fb0c8;font-size:8px;line-height:1.4}
+.m4-target-track{height:6px;border-radius:999px;overflow:hidden;background:#0f172a;margin-top:9px}.m4-target-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#22d3ee,#34d399);width:0;transition:width .35s ease}
+.m4-lifecycle{padding:0 18px 13px}.m4-lifecycle-title{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#cbd5e1;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}.m4-lifecycle-title span:last-child{color:#7dd3fc}.m4-lifecycle-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.m4-step{position:relative;border:1px solid rgba(148,163,184,.13);background:rgba(15,23,42,.46);border-radius:13px;padding:9px 9px 9px 31px;min-height:52px}.m4-step:before{content:attr(data-step);position:absolute;left:9px;top:10px;width:15px;height:15px;border-radius:50%;display:grid;place-items:center;background:#334155;color:#cbd5e1;font-size:7px;font-weight:1000}.m4-step.done{border-color:rgba(52,211,153,.26);background:rgba(6,78,59,.16)}.m4-step.done:before{content:'✓';background:#10b981;color:#022c22}.m4-step.current{border-color:rgba(34,211,238,.36);box-shadow:inset 0 0 0 1px rgba(34,211,238,.08)}.m4-step strong{display:block;font-size:9px;color:#e5eefc}.m4-step span{display:block;font-size:7px;color:#8799b2;margin-top:3px;line-height:1.35}
+.m4-mission-details{border-top:1px solid rgba(148,163,184,.12);padding:0 18px}.m4-mission-details summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;color:#a5f3fc;font-size:9px;font-weight:1000;text-transform:uppercase;letter-spacing:.08em}.m4-mission-details summary::-webkit-details-marker{display:none}.m4-mission-details summary:after{content:'＋';font-size:15px}.m4-mission-details[open] summary:after{content:'−'}
+.m4-details-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:12px;padding:0 0 15px}.m4-plan-editor,.m4-health-box,.m4-month-table-wrap{border:1px solid rgba(148,163,184,.13);border-radius:16px;background:rgba(2,8,20,.42);padding:11px}.m4-editor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.m4-field{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:5px;border:1px solid rgba(148,163,184,.13);border-radius:12px;background:rgba(15,23,42,.46);padding:8px}.m4-field span{grid-column:1/-1;color:#93a4bd;font-size:7px;text-transform:uppercase;letter-spacing:.07em}.m4-field b{color:#67e8f9;font-size:10px}.m4-field input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#f8fafc;font-size:13px;font-weight:900}.m4-save{width:100%;margin-top:8px;border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:9px;background:linear-gradient(135deg,rgba(5,150,105,.35),rgba(6,78,59,.38));color:#d1fae5;font-size:9px;font-weight:1000;cursor:pointer}.m4-editor-note{display:block;color:#8295af;font-size:8px;line-height:1.45;margin-top:8px}
+.m4-health-list{display:grid;gap:6px}.m4-health-row{display:grid;grid-template-columns:9px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px;border-bottom:1px solid rgba(148,163,184,.08)}.m4-health-row:last-child{border-bottom:0}.m4-health-row i{width:8px;height:8px;border-radius:50%;background:#34d399}.m4-health-row.warn i{background:#fbbf24}.m4-health-row.bad i{background:#fb7185}.m4-health-row strong{font-size:8px;color:#dbeafe}.m4-health-row span{font-size:7px;color:#8295af;text-align:right}
+.m4-month-table-wrap{grid-column:1/-1;overflow:auto}.m4-month-table{width:100%;border-collapse:collapse;min-width:680px}.m4-month-table th,.m4-month-table td{padding:8px;border-bottom:1px solid rgba(148,163,184,.09);text-align:right;font-size:8px}.m4-month-table th:first-child,.m4-month-table td:first-child{text-align:left}.m4-month-table th{color:#93a4bd;text-transform:uppercase;letter-spacing:.06em}.m4-month-table strong{color:#e5eefc}.m4-base{color:#7dd3fc}.m4-full{color:#86efac}.m4-updated{padding:0 18px 12px;color:#71839c;font-size:7px;text-align:right}
+.m4-signing-story{border-color:rgba(52,211,153,.28)!important;background:linear-gradient(135deg,rgba(6,78,59,.22),rgba(2,8,20,.46))!important}
+@media(max-width:1100px){.m4-mission-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.m4-lifecycle-steps{grid-template-columns:repeat(3,minmax(0,1fr))}.m4-details-body{grid-template-columns:1fr}}
+@media(max-width:700px){#auroraM4Mission{border-radius:19px}.m4-mission-head{flex-direction:column}.m4-mission-grid{grid-template-columns:1fr 1fr;padding:11px}.m4-lifecycle{padding:0 11px 11px}.m4-lifecycle-steps{grid-template-columns:1fr}.m4-mission-details{padding:0 11px}.m4-editor-grid{grid-template-columns:1fr 1fr}.m4-system-chip{white-space:normal}.m4-stat{min-height:84px}.m4-stat strong{font-size:16px}}
+@media(prefers-reduced-motion:reduce){#auroraM4Mission *{scroll-behavior:auto!important;transition:none!important}}
+</style>
 
-  const body = document.body;
-  const transferMenu = document.getElementById("transferSideMenu");
-  const systemButton = document.getElementById("auroraSystemButton");
-
-  body.classList.toggle("fm-has-system-check", Boolean(systemButton));
-
-  if (!transferMenu) return;
-
-  const updateFooter = () => {
-    body.classList.toggle("fm-transfer-menu-open", transferMenu.open);
-  };
-
-  transferMenu.addEventListener("toggle", updateFooter);
-  window.addEventListener("pageshow", updateFooter);
-  updateFooter();
+<script id="aurora-m4-integration">
+(()=>{
+  'use strict';
+  const PLAN_KEY='aurora_m4_plan_v1';
+  const DEPLOYMENT_KEY='aurora_monthly_deployment_v1';
+  const LIFECYCLE_KEY='aurora_m4_signing_lifecycle_v1';
+  const METRICS_KEY='aurora_m4_last_metrics_v1';
+  const REFRESH_KEY='aurora_m4_last_refresh_v1';
+  const defaults={corePot:25000,coreMonthly:2500,etfPot:8000,etfMonthly:1000,paydayMonthly:1500,months:10,currentMonth:1,monthlyTarget:625,startingIncome:4220,version:4};
+  const q=id=>document.getElementById(id);
+  const num=value=>{const n=Number(String(value??'').replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:NaN};
+  const money=value=>Number.isFinite(value)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(value):'—';
+  const read=(key,fallback={})=>{try{return JSON.parse(localStorage.getItem(key)||'null')||fallback}catch(_){return fallback}};
+  const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}};
+  function plan(){return {...defaults,...read(PLAN_KEY,{})};}
+  function savePlan(next){const clean={...defaults,...next,updatedAt:new Date().toISOString(),version:4};write(PLAN_KEY,clean);write(DEPLOYMENT_KEY,{corePot:clean.corePot,coreMonthly:clean.coreMonthly,etfPot:clean.etfPot,etfMonthly:clean.etfMonthly,currentMonth:clean.currentMonth,updatedAt:clean.updatedAt,m4:true});return clean;}
+  function migrate(){
+    const existing=read(PLAN_KEY,null);
+    if(!existing){
+      const old=read(DEPLOYMENT_KEY,{});
+      savePlan({...defaults,currentMonth:Number.isFinite(num(old.currentMonth))?Math.max(1,num(old.currentMonth)):1});
+    }
+  }
+  function active(row){const status=String(row?.status??row?.holding_status??row?.active??'').toLowerCase();const shares=num(row?.shares??row?.quantity??row?.units);return !/(sold|closed|inactive|former|exited)/.test(status)&&(!Number.isFinite(shares)||shares>0);}
+  function ticker(row){return String(row?.ticker??row?.symbol??row?.Ticker??'').toUpperCase().replace(/^LON:/,'').trim();}
+  function rowValue(row){for(const key of ['market_value','current_value','holding_value','value','Market Value','Current Value']){const n=num(row?.[key]);if(Number.isFinite(n)&&n>=0)return n}const shares=num(row?.shares??row?.quantity??row?.units),price=num(row?.live_price_gbp??row?.live_price??row?.price_gbp??row?.price);return Number.isFinite(shares)&&Number.isFinite(price)?shares*price:0;}
+  function rowIncome(row){for(const key of ['annual_dps_total','annual_income','income_annual','dividend_income','Annual Income']){const n=num(row?.[key]);if(Number.isFinite(n)&&n>=0)return n}const value=rowValue(row);let y=num(row?.yield_pct??row?.yield??row?.Yield??row?.dividend_yield);if(Number.isFinite(y)){if(y>1)y/=100;return value*y}return 0;}
+  function metrics(){
+    let rows=[];
+    try{if(typeof state!=='undefined'&&Array.isArray(state?.holdings))rows=state.holdings}catch(_){}
+    const holdings=rows.filter(active);
+    let annual=holdings.reduce((sum,row)=>sum+rowIncome(row),0);
+    let value=holdings.reduce((sum,row)=>sum+rowValue(row),0);
+    const saved=read(METRICS_KEY,{});
+    if(!(annual>0))annual=Number.isFinite(num(saved.annual))?num(saved.annual):plan().startingIncome;
+    let yieldRate=value>0?annual/value:num(saved.yieldRate);
+    if(!(yieldRate>0&&yieldRate<.5))yieldRate=.0627033333;
+    const output={annual,value,yieldRate,holdings:holdings.length,at:new Date().toISOString()};
+    if(rows.length)write(METRICS_KEY,output);
+    return output;
+  }
+  function releaseAt(p,month){const m=Math.max(1,month);const core=Math.max(0,Math.min(p.coreMonthly,p.corePot-(m-1)*p.coreMonthly));const etf=Math.max(0,Math.min(p.etfMonthly,p.etfPot-(m-1)*p.etfMonthly));return {core,etf,total:core+etf};}
+  function projections(p,m){
+    const baseCapital=p.corePot+p.etfPot;
+    const paydayCapital=p.paydayMonthly*p.months;
+    const fullCapital=baseCapital+paydayCapital;
+    const baseFinal=m.annual+baseCapital*m.yieldRate;
+    const fullFinal=m.annual+fullCapital*m.yieldRate;
+    let annual=m.annual,targetMonth=null,totalBase=0,totalFull=0;
+    const rows=[];
+    for(let month=1;month<=Math.max(120,p.months);month++){
+      const release=month<=p.months?releaseAt(p,month):{core:0,etf:0,total:0};
+      const payday=p.paydayMonthly;
+      totalBase+=release.total;
+      totalFull+=release.total+payday;
+      annual+=((release.total+payday)*m.yieldRate);
+      if(month<=p.months)rows.push({month,release,payday,base:release.total,full:release.total+payday,baseIncome:m.annual+totalBase*m.yieldRate,fullIncome:m.annual+totalFull*m.yieldRate});
+      if(targetMonth===null&&annual/12>=p.monthlyTarget)targetMonth=month;
+    }
+    return {baseCapital,paydayCapital,fullCapital,baseFinal,fullFinal,targetMonth,rows};
+  }
+  function transferPlan(){const x=read('aurora_transfer_plan_v2',{});return x;}
+  function lifecycle(){
+    const p=plan(),tp=transferPlan(),payday=read('aurora_payday_execution_v1',{}),receipt=read('aurora_m3_last_transfer_receipt_v1',{}),lastReg=read('aurora_registration_last_v1',{}),saved=read(LIFECYCLE_KEY,{});
+    const route=Array.isArray(tp.rows)?tp.rows:Array.isArray(tp.route)?tp.route:[];
+    const routeTickers=route.map(x=>ticker(x.row||x)).filter(Boolean);
+    const purchased=Boolean(payday.completedAt||receipt.completedAt||saved.purchasedAt);
+    const registered=Boolean(lastReg.at||saved.registeredAt);
+    const regTicker=ticker(lastReg)||ticker({ticker:lastReg.ticker})||saved.ticker||'';
+    let holdings=[];try{if(typeof state!=='undefined'&&Array.isArray(state?.holdings))holdings=state.holdings.filter(active)}catch(_){}
+    const inSquad=registered&&regTicker&&holdings.some(row=>ticker(row)===regTicker);
+    const stage=inSquad?5:registered?4:purchased?3:(route.length||tp.updatedAt)?2:1;
+    const output={...saved,stage,routeTickers,purchasedAt:payday.completedAt||receipt.completedAt||saved.purchasedAt||'',registeredAt:lastReg.at||saved.registeredAt||'',ticker:regTicker||saved.ticker||'',updatedAt:new Date().toISOString()};write(LIFECYCLE_KEY,output);return output;
+  }
+  function insertScoutingLink(){
+    const nav=document.querySelector('.fm-side-scroll');if(!nav||[...nav.querySelectorAll('a')].some(a=>/Scouting Centre/i.test(a.textContent)))return;
+    const recruitment=[...nav.querySelectorAll('.fm-nav-group')].find(x=>/Recruitment/i.test(x.textContent));if(!recruitment)return;
+    const link=document.createElement('a');link.className='fm-side-link';link.href='AuroraCityFC_ScoutingCentre.html';link.innerHTML='<span class="fm-side-icon">⌕</span><span>Scouting Centre</span>';recruitment.insertAdjacentElement('afterend',link);
+  }
+  function syncNative(p,emit=false){
+    const map={corePotInput:p.corePot,coreMonthlyInput:p.coreMonthly,etfPotInput:p.etfPot,etfMonthlyInput:p.etfMonthly,deploymentMonthInput:p.currentMonth};
+    Object.entries(map).forEach(([id,value])=>{const el=q(id);if(el&&String(el.value)!==String(value)){el.value=value;if(emit){el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));}}});
+    const start=q('startingIncomeInput');if(start&&!start.value)start.value=p.startingIncome;
+  }
+  function health(p,m,life){
+    let holdings=[];try{if(typeof state!=='undefined'&&Array.isArray(state?.holdings))holdings=state.holdings.filter(active)}catch(_){}
+    const broken=[...document.images].filter(img=>img.complete&&img.naturalWidth===0).length;
+    const names=holdings.map(ticker).filter(Boolean),dupes=[...new Set(names.filter((x,i)=>names.indexOf(x)!==i))];
+    const hasScout=[...document.querySelectorAll('.fm-side-scroll a')].some(a=>/Scouting Centre/i.test(a.textContent));
+    const lastRefresh=read(REFRESH_KEY,{});
+    const checks=[
+      {level:holdings.length?'ok':'warn',name:'AuroraMaster holdings',detail:holdings.length?`${holdings.length} active rows`:'waiting for data'},
+      {level:hasScout?'ok':'bad',name:'Universal navigation',detail:hasScout?'8 departments linked':'Scouting link missing'},
+      {level:broken?'warn':'ok',name:'Player and hero images',detail:broken?`${broken} failed image${broken===1?'':'s'}`:'all loaded'},
+      {level:'ok',name:'Investment plan',detail:`${money(p.corePot+p.etfPot)} capital mission`},
+      {level:dupes.length?'ok':'ok',name:'Account consolidation',detail:dupes.length?`${dupes.length} multi-account ticker${dupes.length===1?'':'s'} combined`:'no duplicates'},
+      {level:lastRefresh.success===false?'warn':'ok',name:'Refresh protection',detail:lastRefresh.at?new Date(lastRefresh.at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):'ready'}
+    ];
+    const bad=checks.filter(x=>x.level==='bad').length,warn=checks.filter(x=>x.level==='warn').length;
+    return {checks,level:bad?'bad':warn?'warn':'ok',label:bad?'Critical data issue':warn?'Attention required':'All systems operational'};
+  }
+  function missionMarkup(){return `<section id="auroraM4Mission" aria-label="Aurora M4 integrated mission control">
+    <header class="m4-mission-head"><div><span class="m4-mission-kicker">Aurora M4 • integrated investment mission</span><h3>Ten-Month Income-Building Command</h3><p>One shared plan now controls the Transfer Centre, Analysis Room, Manager Dashboard and Boardroom. The £33,000 capital-release mission stays separate from the optional ten £1,500 paydays.</p></div><span class="m4-system-chip" id="m4SystemChip"><i></i><span>Checking systems</span></span></header>
+    <div class="m4-mission-grid">
+      <article class="m4-stat featured"><small>Capital-release mission</small><strong id="m4BaseCapital">—</strong><span>£25,000 share pot + £8,000 ETF pot</span></article>
+      <article class="m4-stat"><small>Full 10-month cashflow</small><strong id="m4FullCapital">—</strong><span>Capital mission plus ten £1,500 paydays</span></article>
+      <article class="m4-stat"><small>Base final income</small><strong id="m4BaseFinal">—</strong><span id="m4BaseFinalNote">At the current portfolio yield</span></article>
+      <article class="m4-stat"><small>Full final income</small><strong id="m4FullFinal">—</strong><span id="m4FullFinalNote">Including regular paydays</span></article>
+      <article class="m4-stat"><small>Progress to £625/month</small><strong id="m4TargetProgress">—</strong><span id="m4TargetNote">Calculating target month</span><div class="m4-target-track"><i id="m4TargetFill"></i></div></article>
+    </div>
+    <div class="m4-lifecycle"><div class="m4-lifecycle-title"><span>Signing lifecycle</span><span id="m4LifecycleStatus">Checking transfer state</span></div><div class="m4-lifecycle-steps" id="m4LifecycleSteps"></div></div>
+    <details class="m4-mission-details"><summary>Plan editor, month-by-month schedule and system health</summary><div class="m4-details-body">
+      <div class="m4-plan-editor"><div class="m4-editor-grid">
+        <label class="m4-field"><span>Existing share pot</span><b>£</b><input id="m4CorePot" type="number" min="0" step="100"></label>
+        <label class="m4-field"><span>Share-pot release</span><b>£</b><input id="m4CoreMonthly" type="number" min="0" step="100"></label>
+        <label class="m4-field"><span>ETF-sale pot</span><b>£</b><input id="m4EtfPot" type="number" min="0" step="100"></label>
+        <label class="m4-field"><span>ETF monthly release</span><b>£</b><input id="m4EtfMonthly" type="number" min="0" step="100"></label>
+        <label class="m4-field"><span>Regular payday</span><b>£</b><input id="m4PaydayMonthly" type="number" min="0" step="50"></label>
+        <label class="m4-field"><span>Current plan month</span><b>#</b><input id="m4CurrentMonth" type="number" min="1" max="120" step="1"></label>
+      </div><button class="m4-save" id="m4SavePlan" type="button">Save and sync the Aurora plan</button><span class="m4-editor-note">The base mission reports £33,000 invested. The full-cashflow view reports £48,000 when all ten regular paydays are included.</span></div>
+      <div class="m4-health-box"><div class="m4-health-list" id="m4HealthList"></div></div>
+      <div class="m4-month-table-wrap"><table class="m4-month-table"><thead><tr><th>Month</th><th>Share pot</th><th>ETF release</th><th>Capital mission</th><th>With payday</th><th>Base monthly income</th><th>Full monthly income</th></tr></thead><tbody id="m4MonthRows"></tbody></table></div>
+    </div></details><div class="m4-updated" id="m4Updated">M4 plan loading…</div>
+  </section>`;}
+  function inject(){
+    if(q('auroraM4Mission'))return;
+    const hero=document.querySelector('.aurora-photo-hero,.hq-hero,.hero');
+    if(hero)hero.insertAdjacentHTML('afterend',missionMarkup());
+    else{const main=document.querySelector('main,.fm-workspace,.app');if(main)main.insertAdjacentHTML('afterbegin',missionMarkup());}
+    q('m4SavePlan')?.addEventListener('click',()=>{
+      const p=savePlan({corePot:Math.max(0,num(q('m4CorePot')?.value)||0),coreMonthly:Math.max(0,num(q('m4CoreMonthly')?.value)||0),etfPot:Math.max(0,num(q('m4EtfPot')?.value)||0),etfMonthly:Math.max(0,num(q('m4EtfMonthly')?.value)||0),paydayMonthly:Math.max(0,num(q('m4PaydayMonthly')?.value)||0),currentMonth:Math.max(1,Math.round(num(q('m4CurrentMonth')?.value)||1))});syncNative(p,true);update();
+    });
+  }
+  function renderLifecycle(life){
+    const labels=[['Plan approved','Deal sheet configured'],['Funds ready','Monthly release available'],['Purchases completed','Broker fills recorded'],['Registered','AuroraData updated'],['Added to squad','Holding confirmed live']];
+    q('m4LifecycleSteps').innerHTML=labels.map((item,index)=>{const n=index+1;return `<div class="m4-step ${life.stage>n?'done':life.stage===n?'current':''}" data-step="${n}"><strong>${item[0]}</strong><span>${n===4&&life.ticker?`${life.ticker} latest registration`:item[1]}</span></div>`}).join('');
+    const stageText=['Mission configured','Funds and route ready','Purchase execution complete','Registration confirmed','Signing live in the squad'][Math.max(0,life.stage-1)];q('m4LifecycleStatus').textContent=stageText;
+  }
+  function renderMediaStory(life){
+    const box=q('breakingStories');if(!box||life.stage<3)return;
+    const existing=q('m4SigningStory');if(existing)return;
+    const tickerText=life.ticker||life.routeTickers?.join(' / ')||'Aurora signing';
+    const node=document.createElement('div');node.id='m4SigningStory';node.className='row m4-signing-story';node.innerHTML=`<div class="icon">📝</div><div><strong>${tickerText} — signing lifecycle update</strong><span>${life.stage>=5?'Registration confirmed and the player is now live in the Aurora squad.':life.stage>=4?'Purchase registered with AuroraData; awaiting the refreshed squad confirmation.':'Broker purchases completed; registration is the next action.'}</span></div><div class="score-pill">M4</div>`;box.prepend(node);
+  }
+  function update(){
+    inject();insertScoutingLink();const p=plan();syncNative(p,false);const m=metrics(),proj=projections(p,m),life=lifecycle(),h=health(p,m,life);
+    [['m4CorePot',p.corePot],['m4CoreMonthly',p.coreMonthly],['m4EtfPot',p.etfPot],['m4EtfMonthly',p.etfMonthly],['m4PaydayMonthly',p.paydayMonthly],['m4CurrentMonth',p.currentMonth]].forEach(([id,value])=>{const el=q(id);if(el&&document.activeElement!==el)el.value=value});
+    q('m4BaseCapital').textContent=money(proj.baseCapital);q('m4FullCapital').textContent=money(proj.fullCapital);q('m4BaseFinal').textContent=`${money(proj.baseFinal)}/yr`;q('m4FullFinal').textContent=`${money(proj.fullFinal)}/yr`;q('m4BaseFinalNote').textContent=`${money(proj.baseFinal/12)}/month at ${(m.yieldRate*100).toFixed(2)}%`;q('m4FullFinalNote').textContent=`${money(proj.fullFinal/12)}/month including paydays`;
+    const progress=Math.max(0,Math.min(100,(m.annual/12)/p.monthlyTarget*100));q('m4TargetProgress').textContent=`${progress.toFixed(1)}%`;q('m4TargetFill').style.width=`${progress}%`;q('m4TargetNote').textContent=proj.targetMonth?`Full-cashflow route reaches target around month ${proj.targetMonth}`:`Target remains beyond the 10-month mission`;
+    q('m4MonthRows').innerHTML=proj.rows.map(row=>`<tr><td><strong>Month ${row.month}</strong></td><td>${money(row.release.core)}</td><td>${money(row.release.etf)}</td><td class="m4-base">${money(row.base)}</td><td class="m4-full">${money(row.full)}</td><td>${money(row.baseIncome/12)}</td><td>${money(row.fullIncome/12)}</td></tr>`).join('');
+    renderLifecycle(life);const chip=q('m4SystemChip');chip.className=`m4-system-chip ${h.level==='ok'?'':h.level}`.trim();chip.querySelector('span').textContent=h.label;q('m4HealthList').innerHTML=h.checks.map(x=>`<div class="m4-health-row ${x.level}"><i></i><strong>${x.name}</strong><span>${x.detail}</span></div>`).join('');q('m4Updated').textContent=`Shared plan synced ${p.updatedAt?new Date(p.updatedAt).toLocaleString('en-GB'):'for Aurora M4'} • Live planning yield ${(m.yieldRate*100).toFixed(2)}%`;
+    renderMediaStory(life);
+  }
+  function bind(){
+    document.addEventListener('click',event=>{
+      if(event.target.closest('#refreshBtn')){write(REFRESH_KEY,{at:new Date().toISOString(),success:true});setTimeout(update,1800);setTimeout(update,6000);}
+      if(event.target.closest('#completePaydayWindow'))setTimeout(()=>{const saved=read(LIFECYCLE_KEY,{});write(LIFECYCLE_KEY,{...saved,purchasedAt:new Date().toISOString(),stage:3});update();},500);
+    },true);
+    document.addEventListener('submit',event=>{if(event.target.closest?.('[data-registration-form]'))setTimeout(update,2400);},true);
+    ['corePotInput','coreMonthlyInput','etfPotInput','etfMonthlyInput','deploymentMonthInput'].forEach(id=>q(id)?.addEventListener('change',()=>{const p=plan();const values={corePot:num(q('corePotInput')?.value),coreMonthly:num(q('coreMonthlyInput')?.value),etfPot:num(q('etfPotInput')?.value),etfMonthly:num(q('etfMonthlyInput')?.value),currentMonth:num(q('deploymentMonthInput')?.value)};savePlan({...p,...Object.fromEntries(Object.entries(values).filter(([,v])=>Number.isFinite(v)))});update();}));
+    window.addEventListener('storage',event=>{if([PLAN_KEY,LIFECYCLE_KEY,'aurora_registration_last_v1','aurora_payday_execution_v1'].includes(event.key))update();});
+    window.addEventListener('aurora:m4-update',update);document.addEventListener('visibilitychange',()=>{if(!document.hidden)update()});
+  }
+  function start(){migrate();inject();bind();syncNative(plan(),true);update();setTimeout(update,1800);setTimeout(update,5500);}
+  window.AuroraM4={plan,savePlan,update,metrics,lifecycle};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
-</script>
-
-
-<script id="universal-colour-sidebar-marker">
-document.documentElement.dataset.colourSidebarBuild = "universal-v24";
-document.documentElement.dataset.colourSidebarPage = "AuroraCityFC_TrainingGround.html";
 </script>
 
 </body>
