@@ -12,8 +12,10 @@
 <meta content="yes" name="mobile-web-app-capable"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
-<meta content="Aurora City FC" name="apple-mobile-web-app-title">
-<title>Aurora City FC — Performance Analysis Room</title>
+<meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
+<title>Aurora City FC — Analysis Room BEAST</title>
+<!-- Build: Analysis Room BEAST Interactive Intelligence • 24 Jul 2026 -->
+
 <!-- Build: Aurora Motion Attention System • 24 Jul 2026 -->
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
@@ -1397,7 +1399,7 @@ body.fm-transfer-menu-open .fm-side-scroll{
 /* Keep the shared M4 logic available without duplicating the large mission panel on this page. */
 #auroraM4Mission{display:none!important}
 </style>
-</meta><style id="aurora-page-section-navigation-styles">
+<style id="aurora-page-section-navigation-styles">
 /* ================= AURORA PAGE SECTION NAVIGATION ================= */
 .aurora-page-folder{
   --page-accent:#60a5fa;
@@ -1688,7 +1690,349 @@ html[data-aurora-motion="subtle"] .aurora-refresh-wave{height:2px;filter:none}
 html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[data-aurora-motion="off"] *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 @media(prefers-reduced-motion:reduce){html:not([data-aurora-motion="full"]) *,html:not([data-aurora-motion="full"]) *:before,html:not([data-aurora-motion="full"]) *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
-</head>
+<style id="analysis-room-beast-styles">
+/* ================= ANALYSIS ROOM BEAST • INTERACTIVE INTELLIGENCE ================= */
+:root{
+  --analysis-accent:#a78bfa;
+  --analysis-accent-rgb:167,139,250;
+  --analysis-cyan:#22d3ee;
+  --analysis-green:#34d399;
+  --analysis-amber:#fbbf24;
+  --analysis-red:#fb7185;
+  --analysis-surface:rgba(8,20,40,.92);
+  --analysis-surface-2:rgba(12,28,52,.86);
+}
+html[data-aurora-page="analysis"] body{
+  background:
+    linear-gradient(180deg,rgba(2,6,23,.42),rgba(2,6,23,.91) 62%,#020617),
+    radial-gradient(circle at 15% 3%,rgba(167,139,250,.19),transparent 27%),
+    radial-gradient(circle at 90% 8%,rgba(34,211,238,.13),transparent 30%),
+    #020617;
+}
+.analysis-command-bar{
+  position:sticky;top:0;z-index:68;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin:0 0 18px;padding:10px 12px;
+  border:1px solid rgba(167,139,250,.22);border-radius:18px;
+  background:rgba(3,9,24,.82);backdrop-filter:blur(18px);
+  box-shadow:0 16px 44px rgba(0,0,0,.26);
+}
+.analysis-command-tabs{display:flex;gap:6px;overflow:auto;scrollbar-width:none}
+.analysis-command-tabs::-webkit-scrollbar{display:none}
+.analysis-command-tab{
+  flex:0 0 auto;padding:9px 12px;border:1px solid transparent;border-radius:12px;
+  color:#9fb0c7;font-size:11px;font-weight:900;letter-spacing:.02em;
+  transition:.18s ease;
+}
+.analysis-command-tab:hover,.analysis-command-tab.active{
+  color:#f5f3ff;border-color:rgba(167,139,250,.28);
+  background:linear-gradient(135deg,rgba(124,58,237,.30),rgba(30,64,175,.15));
+}
+.analysis-command-state{display:flex;align-items:center;gap:8px;flex:0 0 auto;color:#c4b5fd;font-size:10px;font-weight:900}
+.analysis-live-dot{width:8px;height:8px;border-radius:50%;background:var(--analysis-green);box-shadow:0 0 0 5px rgba(52,211,153,.09),0 0 14px rgba(52,211,153,.52)}
+
+.analysis-section-title{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:30px 2px 14px;
+}
+.analysis-section-title h2,.analysis-card-head h2{margin:4px 0 0;font-size:clamp(25px,2.4vw,38px);letter-spacing:-.055em}
+.analysis-section-title p,.analysis-card-head p{margin:6px 0 0;color:#91a3ba;font-size:12px;line-height:1.48}
+.analysis-kicker{display:block;color:#c4b5fd;font-size:9px;font-weight:1000;letter-spacing:.15em;text-transform:uppercase}
+.analysis-card-head{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+.analysis-card-head h3{margin:5px 0 0;font-size:20px;letter-spacing:-.04em}
+
+.analysis-match-centre,.analysis-income-room,.analysis-manager-room,.analysis-player-room{
+  scroll-margin-top:86px;
+}
+.analysis-match-grid{display:grid;grid-template-columns:minmax(320px,.74fr) minmax(0,1.26fr);gap:14px}
+.analysis-scoreboard-card,.analysis-workbench-card,.analysis-income-chart-card,.analysis-target-card,
+.analysis-dividend-room,.analysis-sector-room,.analysis-manager-verdict,.analysis-manager-decisions,
+.analysis-shape-review,.analysis-player-room{
+  position:relative;overflow:hidden;border:1px solid rgba(167,139,250,.18);border-radius:26px;
+  background:
+    radial-gradient(circle at 95% 0%,rgba(167,139,250,.10),transparent 30%),
+    linear-gradient(180deg,rgba(10,25,48,.91),rgba(4,12,25,.97));
+  box-shadow:0 18px 55px rgba(0,0,0,.30);
+}
+.analysis-scoreboard-card{padding:20px;min-height:225px}
+.analysis-scoreboard-card:after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--analysis-accent),var(--analysis-cyan),transparent);
+}
+.analysis-scoreboard-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.analysis-mini-label{display:block;color:#9fb0c7;font-size:9px;font-weight:1000;letter-spacing:.13em;text-transform:uppercase}
+.analysis-scoreboard-head strong{display:block;margin-top:8px;color:#f5f3ff;font-size:58px;line-height:.86;letter-spacing:-.075em}
+.analysis-scoreboard-head p{max-width:320px;margin:10px 0 0;color:#b7c7da;font-size:12px;line-height:1.48}
+.analysis-score-orbit{position:relative;width:92px;height:92px;flex:0 0 auto;border:1px solid rgba(167,139,250,.20);border-radius:50%;box-shadow:inset 0 0 28px rgba(167,139,250,.08)}
+.analysis-score-orbit:before,.analysis-score-orbit:after{content:"";position:absolute;inset:14px;border:1px solid rgba(34,211,238,.16);border-radius:50%}
+.analysis-score-orbit:after{inset:31px;background:#e9d5ff;box-shadow:0 0 18px rgba(167,139,250,.75)}
+.analysis-score-orbit span{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--analysis-cyan);box-shadow:0 0 10px rgba(34,211,238,.8)}
+.analysis-score-orbit span:nth-child(1){left:42px;top:-4px}.analysis-score-orbit span:nth-child(2){right:4px;bottom:18px}.analysis-score-orbit span:nth-child(3){left:4px;bottom:18px}
+.analysis-form-ribbon{display:flex;align-items:center;gap:6px;margin-top:18px;min-height:32px}
+.analysis-form-result{width:29px;height:29px;display:grid;place-items:center;border-radius:10px;border:1px solid rgba(148,163,184,.15);font-size:10px;font-weight:1000}
+.analysis-form-result.win{color:#bbf7d0;background:rgba(20,83,45,.36);border-color:rgba(52,211,153,.28)}
+.analysis-form-result.draw{color:#dbeafe;background:rgba(30,64,175,.23);border-color:rgba(96,165,250,.24)}
+.analysis-form-result.loss{color:#fecdd3;background:rgba(127,29,29,.25);border-color:rgba(251,113,133,.25)}
+.analysis-match-call{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;padding:12px;border:1px solid rgba(167,139,250,.15);border-radius:16px;background:rgba(2,6,23,.34)}
+.analysis-match-call span{color:#a78bfa;font-size:9px;font-weight:1000;text-transform:uppercase;letter-spacing:.11em}
+.analysis-match-call strong{color:#dbeafe;font-size:11px;text-align:right}
+
+.analysis-match-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.analysis-match-metric{
+  position:relative;overflow:hidden;min-width:0;min-height:126px;padding:14px;text-align:left;
+  border:1px solid rgba(148,163,184,.13);border-radius:20px;background:rgba(5,14,28,.72);
+  color:#e5eefc;cursor:pointer;touch-action:manipulation;
+  transition:transform .18s,border-color .18s,background .18s;
+}
+.analysis-match-metric:before{content:"";position:absolute;width:90px;height:90px;right:-34px;top:-42px;border-radius:50%;background:rgba(96,165,250,.10)}
+.analysis-match-metric.positive:before{background:rgba(52,211,153,.15)}
+.analysis-match-metric.negative:before{background:rgba(251,113,133,.14)}
+.analysis-match-metric.star:before{background:rgba(251,191,36,.15)}
+.analysis-match-metric.shape:before{background:rgba(167,139,250,.16)}
+.analysis-match-metric.quality:before{background:rgba(34,211,238,.15)}
+.analysis-match-metric:hover,.analysis-match-metric:focus-visible{transform:translateY(-2px);border-color:rgba(167,139,250,.38);background:rgba(14,29,54,.86)}
+.analysis-match-metric span{position:relative;display:block;color:#91a3ba;font-size:8px;font-weight:1000;letter-spacing:.11em;text-transform:uppercase}
+.analysis-match-metric strong{position:relative;display:block;margin-top:13px;color:#f8fafc;font-size:27px;letter-spacing:-.05em}
+.analysis-match-metric small{position:relative;display:block;margin-top:9px;color:#8194ad;font-size:9px;line-height:1.35}
+.analysis-match-metric.positive strong{color:#86efac}.analysis-match-metric.negative strong{color:#fda4af}.analysis-match-metric.star strong{color:#fde68a}.analysis-match-metric.shape strong{color:#c4b5fd}.analysis-match-metric.quality strong{color:#67e8f9}
+
+.analysis-workbench-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;margin-top:14px}
+.analysis-workbench-card{padding:18px}
+.tactical-card{grid-column:span 7}.form-card{grid-column:span 5}.strength-card{grid-column:span 12}
+.analysis-segmented{display:flex;gap:4px;padding:4px;border:1px solid rgba(148,163,184,.14);border-radius:13px;background:rgba(2,6,23,.38)}
+.analysis-segmented button{
+  min-height:34px;padding:7px 10px;border:0;border-radius:9px;background:transparent;color:#8194ad;
+  font-size:9px;font-weight:1000;white-space:nowrap;cursor:pointer;touch-action:manipulation;
+}
+.analysis-segmented button:hover,.analysis-segmented button.active{color:#f5f3ff;background:rgba(124,58,237,.30);box-shadow:inset 0 0 0 1px rgba(167,139,250,.19)}
+.analysis-segmented.compact button{min-height:29px;padding:5px 8px;font-size:8px}
+
+.analysis-pitch{
+  position:relative;min-height:445px;overflow:hidden;border:1px solid rgba(52,211,153,.25);border-radius:22px;
+  background:
+    linear-gradient(180deg,rgba(5,46,22,.35),rgba(5,35,26,.58)),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 10%,rgba(255,255,255,.050) 10% 20%);
+  box-shadow:inset 0 0 50px rgba(0,0,0,.22);
+}
+.analysis-pitch:before{content:"";position:absolute;inset:13px;border:1px solid rgba(209,250,229,.27);border-radius:16px}
+.analysis-pitch-line.halfway{position:absolute;left:13px;right:13px;top:50%;height:1px;background:rgba(209,250,229,.28)}
+.analysis-pitch-centre{position:absolute;left:50%;top:50%;width:104px;height:104px;transform:translate(-50%,-50%);border:1px solid rgba(209,250,229,.28);border-radius:50%}
+.analysis-pitch-centre:after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(236,253,245,.72)}
+.analysis-pitch-box{position:absolute;left:50%;width:43%;height:72px;transform:translateX(-50%);border:1px solid rgba(209,250,229,.25)}
+.analysis-pitch-box.top{top:13px;border-top:0}.analysis-pitch-box.bottom{bottom:13px;border-bottom:0}
+.analysis-pitch-loading{position:absolute;inset:0;display:grid;place-items:center;color:#86a394;font-size:12px}
+.analysis-player-node{
+  position:absolute;z-index:3;width:92px;min-height:54px;transform:translate(-50%,-50%);padding:7px 8px;
+  border:1px solid rgba(125,211,252,.24);border-radius:15px;background:rgba(2,6,23,.88);
+  color:#e0f2fe;text-align:center;cursor:pointer;touch-action:manipulation;
+  box-shadow:0 10px 26px rgba(0,0,0,.30);transition:transform .18s,border-color .18s,box-shadow .18s;
+}
+.analysis-player-node:hover,.analysis-player-node:focus-visible{transform:translate(-50%,-54%) scale(1.04);border-color:rgba(167,139,250,.56);box-shadow:0 14px 34px rgba(0,0,0,.38),0 0 22px rgba(167,139,250,.13)}
+.analysis-player-node b{display:block;font-size:12px}.analysis-player-node span{display:block;margin-top:3px;color:#86efac;font-size:9px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.analysis-player-node.review{border-color:rgba(251,191,36,.34)}.analysis-player-node.strong{border-color:rgba(52,211,153,.32)}
+.analysis-player-node:after{content:"";position:absolute;left:50%;bottom:-9px;width:2px;height:8px;background:rgba(125,211,252,.28)}
+.analysis-pitch-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:11px;color:#91a3ba;font-size:10px}
+.analysis-pitch-footer button{border:0;background:transparent;color:#c4b5fd;font-size:10px;font-weight:900;cursor:pointer}
+
+.analysis-form-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.analysis-form-summary div{padding:11px;border:1px solid rgba(148,163,184,.12);border-radius:14px;background:rgba(2,6,23,.30)}
+.analysis-form-summary small{display:block;color:#71839c;font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.1em}
+.analysis-form-summary strong{display:block;margin-top:6px;color:#e0f2fe;font-size:15px}
+.analysis-sparkline{min-height:150px;margin-top:12px;padding:10px;border:1px solid rgba(96,165,250,.14);border-radius:17px;background:linear-gradient(180deg,rgba(30,64,175,.08),rgba(2,6,23,.16))}
+.analysis-sparkline svg{display:block;width:100%;height:130px;overflow:visible}
+.analysis-sparkline .spark-area{fill:rgba(96,165,250,.10)}
+.analysis-sparkline .spark-line{fill:none;stroke:#60a5fa;stroke-width:3;filter:drop-shadow(0 0 6px rgba(96,165,250,.32))}
+.analysis-sparkline .spark-dot{fill:#dbeafe;stroke:#60a5fa;stroke-width:2;cursor:pointer}
+.analysis-session-list{display:flex;gap:6px;overflow:auto;margin-top:10px;padding-bottom:2px;scrollbar-width:none}
+.analysis-session-list::-webkit-scrollbar{display:none}
+.analysis-session-chip{flex:0 0 auto;min-width:72px;padding:8px;border:1px solid rgba(148,163,184,.12);border-radius:12px;background:rgba(2,6,23,.27)}
+.analysis-session-chip small{display:block;color:#71839c;font-size:7px;font-weight:900}.analysis-session-chip strong{display:block;margin-top:5px;font-size:10px}
+.analysis-session-chip.win strong{color:#86efac}.analysis-session-chip.loss strong{color:#fda4af}.analysis-session-chip.draw strong{color:#bfdbfe}
+
+.analysis-quadrant-map{position:relative;height:390px;overflow:hidden;border:1px solid rgba(167,139,250,.18);border-radius:20px;background:
+  linear-gradient(90deg,transparent calc(50% - .5px),rgba(167,139,250,.20) 50%,transparent calc(50% + .5px)),
+  linear-gradient(transparent calc(50% - .5px),rgba(167,139,250,.20) 50%,transparent calc(50% + .5px)),
+  radial-gradient(circle at 75% 25%,rgba(52,211,153,.10),transparent 32%),
+  radial-gradient(circle at 75% 75%,rgba(251,191,36,.09),transparent 30%),
+  rgba(2,6,23,.34);
+}
+.quadrant-label{position:absolute;color:#71839c;font-size:9px;font-weight:900;line-height:1.35;text-transform:uppercase;letter-spacing:.08em;pointer-events:none}
+.quadrant-label.q1{left:14px;top:14px}.quadrant-label.q2{right:14px;top:14px;text-align:right}.quadrant-label.q3{left:14px;bottom:14px}.quadrant-label.q4{right:14px;bottom:14px;text-align:right}
+.quadrant-axis{position:absolute;display:flex;justify-content:space-between;color:#586a84;font-size:8px;font-weight:900;text-transform:uppercase}
+.quadrant-axis.horizontal{left:12px;right:12px;bottom:4px}.quadrant-axis.vertical{left:4px;top:12px;bottom:12px;flex-direction:column}
+.analysis-quadrant-player{
+  position:absolute;z-index:3;min-width:56px;transform:translate(-50%,-50%);padding:7px 9px;
+  border:1px solid rgba(96,165,250,.28);border-radius:999px;background:rgba(3,12,28,.93);
+  color:#dbeafe;font-size:9px;font-weight:1000;cursor:pointer;touch-action:manipulation;
+  box-shadow:0 8px 18px rgba(0,0,0,.30);transition:.18s ease;
+}
+.analysis-quadrant-player:hover,.analysis-quadrant-player:focus-visible{z-index:5;transform:translate(-50%,-58%) scale(1.08);border-color:#c4b5fd;box-shadow:0 10px 25px rgba(0,0,0,.38),0 0 17px rgba(167,139,250,.18)}
+.analysis-quadrant-player.elite{border-color:rgba(52,211,153,.48);color:#bbf7d0}
+.analysis-quadrant-player.income{border-color:rgba(251,191,36,.48);color:#fde68a}
+.analysis-quadrant-player.watch{border-color:rgba(251,113,133,.43);color:#fecdd3}
+.analysis-mini-table{display:grid;gap:6px;margin-top:10px}
+.analysis-mini-row{display:grid;grid-template-columns:58px minmax(0,1fr) 80px 80px;gap:10px;align-items:center;padding:9px 10px;border:1px solid rgba(148,163,184,.11);border-radius:13px;background:rgba(2,6,23,.26);font-size:10px;cursor:pointer}
+.analysis-mini-row b{color:#e0f2fe}.analysis-mini-row span{color:#8496ad}.analysis-mini-row em{font-style:normal;text-align:right;color:#86efac}
+
+.analysis-income-room{margin-top:30px}
+.analysis-income-grid{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px}
+.analysis-income-chart-card,.analysis-target-card{padding:18px}
+.analysis-income-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}
+.analysis-income-toolbar>span{color:#91a3ba;font-size:10px;text-align:right}
+.analysis-runway-chart{height:390px!important}
+.analysis-runway-legend{margin-top:9px}
+.analysis-target-card{display:flex;flex-direction:column;align-items:center;text-align:center}
+.analysis-target-ring{
+  --target-progress:0deg;position:relative;width:205px;height:205px;display:grid;place-items:center;margin:20px auto 16px;border-radius:50%;
+  background:conic-gradient(var(--analysis-green) var(--target-progress),rgba(148,163,184,.12) 0);
+  box-shadow:0 0 40px rgba(52,211,153,.10);
+}
+.analysis-target-ring:before{content:"";position:absolute;inset:14px;border-radius:50%;background:linear-gradient(180deg,#0b1a30,#040c19);box-shadow:inset 0 0 34px rgba(0,0,0,.34)}
+.analysis-target-ring>div{position:relative;z-index:2}.analysis-target-ring small{display:block;color:#91a3ba;font-size:9px;text-transform:uppercase;letter-spacing:.11em;font-weight:900}
+.analysis-target-ring strong{display:block;margin-top:7px;color:#86efac;font-size:31px;letter-spacing:-.05em}.analysis-target-ring span{display:block;margin-top:4px;color:#71839c;font-size:10px}
+.analysis-target-stats{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.analysis-target-stats div{padding:10px 7px;border:1px solid rgba(148,163,184,.12);border-radius:13px;background:rgba(2,6,23,.28)}
+.analysis-target-stats small{display:block;color:#71839c;font-size:7px;text-transform:uppercase;font-weight:1000;letter-spacing:.08em}.analysis-target-stats strong{display:block;margin-top:6px;color:#e0f2fe;font-size:11px}
+.analysis-target-card>p{margin:14px 0 0;color:#9fb0c5;font-size:11px;line-height:1.5}
+.analysis-checkpoint-grid{margin-top:14px}
+.analysis-checkpoint-grid .forecast-card{width:100%;text-align:left;cursor:pointer;touch-action:manipulation}
+.analysis-checkpoint-grid .forecast-card:hover{transform:translateY(-2px);border-color:rgba(52,211,153,.42)}
+.analysis-tesco-details{margin-top:14px;border:1px solid rgba(192,132,252,.20);border-radius:20px;background:rgba(24,12,48,.25)}
+.analysis-tesco-details summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 17px;cursor:pointer;list-style:none}
+.analysis-tesco-details summary::-webkit-details-marker{display:none}.analysis-tesco-details summary b{display:block;color:#e9d5ff;font-size:13px}.analysis-tesco-details summary small{display:block;margin-top:4px;color:#8f80aa;font-size:9px}.analysis-tesco-details summary>span:last-child{color:#c084fc;font-size:22px}
+.analysis-tesco-details[open] summary>span:last-child{transform:rotate(45deg)}
+.analysis-tesco-details .tesco-forecast-impact{margin:0 14px 14px}
+
+.analysis-squad-intelligence{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px}
+.analysis-dividend-room,.analysis-sector-room{padding:18px;min-width:0}
+.analysis-income-leaderboard,.analysis-sector-lanes{display:grid;gap:8px}
+.analysis-income-player{
+  position:relative;overflow:hidden;display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:11px;align-items:center;
+  min-height:66px;padding:10px 12px;border:1px solid rgba(148,163,184,.12);border-radius:16px;background:rgba(2,6,23,.29);
+  cursor:pointer;touch-action:manipulation;transition:.18s ease;
+}
+.analysis-income-player:before{content:"";position:absolute;left:0;bottom:0;height:3px;width:var(--income-width,0%);background:linear-gradient(90deg,var(--analysis-green),var(--analysis-cyan));opacity:.65}
+.analysis-income-player:hover{transform:translateX(3px);border-color:rgba(52,211,153,.31);background:rgba(6,38,38,.37)}
+.analysis-income-rank{width:38px;height:38px;display:grid;place-items:center;border-radius:13px;background:rgba(52,211,153,.11);border:1px solid rgba(52,211,153,.16);color:#86efac;font-weight:1000}
+.analysis-income-player b{display:block;color:#e0f2fe;font-size:12px}.analysis-income-player span{display:block;margin-top:3px;color:#7f91a9;font-size:9px}.analysis-income-player strong{text-align:right;color:#86efac;font-size:13px}.analysis-income-player strong small{display:block;margin-top:4px;color:#71839c;font-size:8px;font-weight:800}
+.analysis-account-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.analysis-account-card{padding:11px;border:1px solid rgba(148,163,184,.12);border-radius:14px;background:rgba(2,6,23,.28)}
+.analysis-account-card small{display:block;color:#71839c;font-size:8px;text-transform:uppercase;font-weight:1000}.analysis-account-card strong{display:block;margin-top:6px;color:#e0f2fe;font-size:14px}.analysis-account-card span{display:block;margin-top:4px;color:#8fa1b8;font-size:9px}
+
+.analysis-sector-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.analysis-sector-summary div{padding:11px;border:1px solid rgba(148,163,184,.12);border-radius:14px;background:rgba(2,6,23,.28)}
+.analysis-sector-summary small{display:block;color:#71839c;font-size:8px;text-transform:uppercase;font-weight:1000}.analysis-sector-summary strong{display:block;margin-top:6px;color:#c4b5fd;font-size:14px}
+.analysis-sector-lane{
+  position:relative;overflow:hidden;padding:11px 12px;border:1px solid rgba(148,163,184,.12);border-radius:16px;background:rgba(2,6,23,.28);
+  cursor:pointer;touch-action:manipulation;transition:.18s ease;
+}
+.analysis-sector-lane:hover,.analysis-sector-lane.active{border-color:rgba(167,139,250,.36);background:rgba(55,25,105,.24)}
+.analysis-sector-lane:before{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--sector-width,0%);background:linear-gradient(90deg,rgba(167,139,250,.15),rgba(34,211,238,.03));pointer-events:none}
+.analysis-sector-lane-head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.analysis-sector-lane-head b{color:#e9d5ff;font-size:11px}.analysis-sector-lane-head strong{color:#e0f2fe;font-size:11px}
+.analysis-sector-players{position:relative;display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.analysis-sector-player{padding:5px 7px;border:1px solid rgba(96,165,250,.15);border-radius:999px;background:rgba(2,6,23,.46);color:#aebed2;font-size:8px;font-weight:900}
+.analysis-clear-filter{margin-top:10px;border:1px solid rgba(167,139,250,.25);border-radius:12px;background:rgba(76,29,149,.18);color:#ddd6fe;padding:9px 11px;font-size:9px;font-weight:900;cursor:pointer}
+
+.analysis-manager-room{margin-top:30px}
+.analysis-manager-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:14px}
+.analysis-manager-verdict,.analysis-manager-decisions,.analysis-shape-review{padding:18px}
+.analysis-manager-verdict{grid-row:span 2}
+.analysis-decision-card{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:11px;align-items:center;margin-top:8px;padding:11px;border:1px solid rgba(148,163,184,.12);border-radius:15px;background:rgba(2,6,23,.29)}
+.analysis-decision-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:rgba(167,139,250,.12);color:#c4b5fd}
+.analysis-decision-card b{display:block;color:#e0f2fe;font-size:11px}.analysis-decision-card span{display:block;margin-top:3px;color:#8194ad;font-size:9px;line-height:1.35}.analysis-decision-card em{font-style:normal;color:#fde68a;font-size:9px;font-weight:1000}
+
+.analysis-player-room{margin-top:30px;padding:18px}
+.analysis-player-toolbar{display:grid;grid-template-columns:minmax(280px,1fr) 170px 170px auto;gap:9px;align-items:center}
+.analysis-search{display:flex;align-items:center;gap:9px;min-height:42px;padding:0 12px;border:1px solid rgba(167,139,250,.20);border-radius:14px;background:rgba(2,6,23,.35);color:#a78bfa}
+.analysis-search input{width:100%;border:0;outline:0;background:transparent;color:#e5eefc;font-size:11px}.analysis-search input::placeholder{color:#6f8199}
+.analysis-player-toolbar select{min-height:42px;padding:0 11px;border:1px solid rgba(148,163,184,.14);border-radius:14px;background:#071426;color:#cbd5e1;font-size:10px;font-weight:800}
+.analysis-table-summary{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.analysis-table-chip{padding:7px 9px;border:1px solid rgba(148,163,184,.12);border-radius:999px;background:rgba(2,6,23,.27);color:#91a3ba;font-size:9px}.analysis-table-chip b{color:#e0f2fe}
+.analysis-performance-table{max-height:650px}
+.analysis-performance-table tr{cursor:pointer;transition:background .16s,transform .16s}
+.analysis-performance-table tbody tr:hover{background:rgba(76,29,149,.18)}
+.analysis-performance-table tbody tr.analysis-row-enter{animation:analysisRowEnter .45s ease both;animation-delay:calc(var(--row-index,0) * 35ms)}
+.analysis-player-cell{display:flex;align-items:center;gap:10px;min-width:190px}
+.analysis-player-avatar{width:38px;height:38px;display:grid;place-items:center;flex:0 0 auto;border-radius:13px;border:1px solid rgba(167,139,250,.20);background:linear-gradient(135deg,rgba(76,29,149,.38),rgba(8,47,73,.36));color:#e9d5ff;font-size:10px;font-weight:1000}
+.analysis-player-cell b{display:block;color:#f0f9ff}.analysis-player-cell span{display:block;margin-top:3px;color:#7f91a9;font-size:9px}
+.analysis-form-pill{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:999px;font-size:8px;font-weight:1000}
+.analysis-form-pill.rising{color:#bbf7d0;background:rgba(20,83,45,.28)}.analysis-form-pill.stable{color:#bfdbfe;background:rgba(30,64,175,.22)}.analysis-form-pill.review{color:#fecdd3;background:rgba(127,29,29,.22)}
+.analysis-strength-meter{min-width:92px}.analysis-strength-meter span{display:block;font-size:9px}.analysis-strength-meter i{display:block;height:5px;margin-top:5px;border-radius:999px;background:rgba(148,163,184,.12);overflow:hidden}.analysis-strength-meter i:after{content:"";display:block;width:var(--strength,0%);height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--analysis-accent),var(--analysis-cyan))}
+.analysis-open-profile{border:1px solid rgba(167,139,250,.23);border-radius:10px;background:rgba(76,29,149,.18);color:#ddd6fe;padding:7px 9px;font-size:8px;font-weight:900;cursor:pointer;touch-action:manipulation}
+
+.analysis-legacy-engine{position:absolute!important;left:-9999px!important;top:0!important;width:2px!important;height:2px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important}
+.analysis-legacy-engine canvas{width:1px!important;height:1px!important}
+.analysis-loading{padding:25px;text-align:center;color:#8194ad;font-size:11px}
+
+.analysis-drawer-backdrop{position:fixed;inset:0;z-index:290;background:rgba(2,6,23,.66);backdrop-filter:blur(7px)}
+.analysis-player-drawer{
+  position:fixed;right:0;top:0;bottom:0;z-index:291;width:min(500px,94vw);display:flex;flex-direction:column;
+  transform:translateX(105%);border-left:1px solid rgba(167,139,250,.30);
+  background:linear-gradient(180deg,rgba(10,23,46,.99),rgba(3,9,20,.995));box-shadow:-28px 0 80px rgba(0,0,0,.55);
+  transition:transform .28s cubic-bezier(.2,.85,.25,1);
+}
+.analysis-player-drawer.open{transform:translateX(0)}
+.analysis-drawer-head{display:flex;justify-content:space-between;gap:14px;padding:22px;border-bottom:1px solid rgba(167,139,250,.16)}
+.analysis-drawer-head h2{margin:6px 0 0;font-size:30px;letter-spacing:-.055em}.analysis-drawer-head p{margin:5px 0 0;color:#8fa1b8;font-size:11px}
+.analysis-drawer-head button{width:42px;height:42px;border:1px solid rgba(167,139,250,.23);border-radius:14px;background:rgba(76,29,149,.18);color:#e9d5ff;font-size:25px;cursor:pointer}
+.analysis-drawer-content{flex:1;min-height:0;overflow:auto;padding:18px 22px}
+.analysis-drawer-hero{display:grid;grid-template-columns:110px minmax(0,1fr);gap:15px;align-items:center;padding:16px;border:1px solid rgba(167,139,250,.17);border-radius:20px;background:radial-gradient(circle at 15% 15%,rgba(167,139,250,.16),transparent 40%),rgba(2,6,23,.28)}
+.analysis-drawer-rating{width:110px;height:110px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(var(--analysis-green) var(--rating-progress,0deg),rgba(148,163,184,.12) 0);box-shadow:0 0 28px rgba(52,211,153,.10)}
+.analysis-drawer-rating:before{content:"";position:absolute}.analysis-drawer-rating span{width:88px;height:88px;display:grid;place-items:center;border-radius:50%;background:#071426;color:#86efac;font-size:27px;font-weight:1000}
+.analysis-drawer-hero h3{margin:0;color:#f0f9ff;font-size:22px}.analysis-drawer-hero p{margin:7px 0 0;color:#91a3ba;font-size:11px;line-height:1.45}
+.analysis-drawer-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:13px}
+.analysis-drawer-metric{padding:12px;border:1px solid rgba(148,163,184,.12);border-radius:15px;background:rgba(2,6,23,.28)}
+.analysis-drawer-metric small{display:block;color:#71839c;font-size:8px;text-transform:uppercase;font-weight:1000}.analysis-drawer-metric strong{display:block;margin-top:7px;color:#e0f2fe;font-size:16px}
+.analysis-drawer-section{margin-top:16px}.analysis-drawer-section h4{margin:0 0 9px;color:#c4b5fd;font-size:11px;text-transform:uppercase;letter-spacing:.11em}
+.analysis-drawer-bar{margin-top:8px}.analysis-drawer-bar-head{display:flex;justify-content:space-between;color:#91a3ba;font-size:9px}.analysis-drawer-bar-track{height:7px;margin-top:5px;border-radius:999px;background:rgba(148,163,184,.12);overflow:hidden}.analysis-drawer-bar-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--analysis-accent),var(--analysis-cyan))}
+.analysis-drawer-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:14px 18px calc(14px + env(safe-area-inset-bottom));border-top:1px solid rgba(167,139,250,.16)}
+.analysis-drawer-actions button,.analysis-drawer-actions a{display:grid;place-items:center;min-height:42px;border:1px solid rgba(167,139,250,.20);border-radius:13px;background:rgba(76,29,149,.17);color:#e9d5ff;font-size:9px;font-weight:900;cursor:pointer}
+
+@keyframes analysisRowEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes analysisOrbit{to{transform:rotate(360deg)}}
+@keyframes analysisTargetPulse{0%,100%{filter:drop-shadow(0 0 7px rgba(52,211,153,.18))}50%{filter:drop-shadow(0 0 17px rgba(52,211,153,.42))}}
+@keyframes analysisNodeBreath{0%,100%{box-shadow:0 10px 26px rgba(0,0,0,.30)}50%{box-shadow:0 10px 26px rgba(0,0,0,.30),0 0 20px rgba(167,139,250,.18)}}
+html[data-aurora-motion="full"] .analysis-score-orbit{animation:analysisOrbit 11s linear infinite}
+html[data-aurora-motion="full"] .analysis-target-ring{animation:analysisTargetPulse 3.2s ease-in-out infinite}
+html[data-aurora-motion="full"] .analysis-player-node:first-of-type{animation:analysisNodeBreath 3.2s ease-in-out infinite}
+html[data-aurora-motion="subtle"] .analysis-score-orbit{animation:analysisOrbit 22s linear infinite}
+html[data-aurora-motion="subtle"] .analysis-target-ring{animation:analysisTargetPulse 6s ease-in-out infinite}
+html[data-aurora-motion="off"] .analysis-score-orbit,
+html[data-aurora-motion="off"] .analysis-target-ring,
+html[data-aurora-motion="off"] .analysis-player-node{animation:none!important;transition:none!important}
+
+@media(max-width:1280px){
+  .analysis-match-grid{grid-template-columns:1fr}
+  .analysis-match-metrics{grid-template-columns:repeat(5,minmax(145px,1fr));overflow:auto;padding-bottom:3px}
+  .analysis-income-grid{grid-template-columns:1fr}.analysis-target-card{display:grid;grid-template-columns:230px 1fr;align-items:center;text-align:left}
+  .analysis-target-card .analysis-kicker{grid-column:1/-1}.analysis-target-ring{grid-row:2/5}.analysis-target-stats{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:1100px){
+  .tactical-card,.form-card,.strength-card{grid-column:span 12}
+  .analysis-squad-intelligence{grid-template-columns:1fr}
+  .analysis-manager-grid{grid-template-columns:1fr}.analysis-manager-verdict{grid-row:auto}
+  .analysis-player-toolbar{grid-template-columns:1fr 1fr}.analysis-search{grid-column:1/-1}
+}
+@media(max-width:760px){
+  .analysis-command-bar{top:0;align-items:flex-start;flex-direction:column}.analysis-command-state{padding-left:4px}
+  .analysis-section-title{align-items:flex-start;flex-direction:column}
+  .analysis-match-metrics{grid-template-columns:repeat(5,145px)}
+  .analysis-scoreboard-head strong{font-size:48px}.analysis-score-orbit{width:74px;height:74px}.analysis-score-orbit span:nth-child(1){left:34px}
+  .analysis-pitch{min-height:410px}.analysis-player-node{width:74px;padding:6px}.analysis-player-node b{font-size:10px}
+  .analysis-card-head{flex-direction:column}.analysis-segmented{max-width:100%;overflow:auto}
+  .analysis-income-toolbar{align-items:flex-start;flex-direction:column}.analysis-income-toolbar>span{text-align:left}
+  .analysis-target-card{display:flex;text-align:center}.analysis-target-ring{width:190px;height:190px}
+  .analysis-checkpoint-grid{grid-template-columns:1fr 1fr}
+  .analysis-player-toolbar{grid-template-columns:1fr}.analysis-search{grid-column:auto}
+  .analysis-performance-table{max-height:none}
+  .analysis-drawer-hero{grid-template-columns:1fr;text-align:center}.analysis-drawer-rating{margin:auto}
+}
+@media(max-width:480px){
+  .analysis-form-summary,.analysis-target-stats,.analysis-account-split,.analysis-sector-summary,.analysis-drawer-metrics{grid-template-columns:1fr}
+  .analysis-checkpoint-grid{grid-template-columns:1fr}
+  .analysis-match-call{align-items:flex-start;flex-direction:column}.analysis-match-call strong{text-align:left}
+}
+</style></head>
 <body>
 <div aria-label="Open navigation" class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" role="button" tabindex="0">
 <span class="fm-sidebar-edge-handle">›</span>
@@ -1743,8 +2087,7 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 </div>
 </aside>
 <div class="fm-workspace">
-<main class="app" id="analysis">
-<section aria-label="Analysis Room hero" class="aurora-photo-hero aurora-section-anchor" id="analysis-overview">
+<main class="app" id="analysis"><section aria-label="Analysis Room hero" class="aurora-photo-hero aurora-section-anchor" id="analysis-overview">
 <img alt="Analysis Room performance lab hero" class="aurora-photo-banner" src="assets/aurora-city-fc/analysis-room-performance-lab.png"/>
 <div class="aurora-photo-content">
 <div class="aurora-photo-kicker"><span class="aurora-photo-kicker-dot"></span> Performance intelligence live</div>
@@ -1752,7 +2095,7 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <p class="aurora-photo-sub" id="heroCopy">Loading live player form, market momentum, portfolio concentration and squad-quality signals.</p>
 <div class="aurora-photo-actions">
 <span class="aurora-photo-pill" id="dataFreshness">Aurora data: loading…</span>
-<span class="aurora-photo-pill">Primary objective: £500/month</span>
+<span class="aurora-photo-pill">Primary objective: £625/month</span>
 <span class="aurora-photo-pill">Charts update from AuroraMaster.json</span>
 </div>
 <div class="aurora-photo-meta analysis-meta">
@@ -1764,161 +2107,386 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 </div>
 </div>
 </section>
-<section class="score-strip">
-<div class="score-card green"><div class="score-icon">▲</div><small>Positive Movers</small><strong id="positiveMovers">—</strong><span id="positiveMoversNote">Players rising today</span></div>
-<div class="score-card red"><div class="score-icon">▼</div><small>Negative Movers</small><strong id="negativeMovers">—</strong><span id="negativeMoversNote">Players falling today</span></div>
-<div class="score-card green"><div class="score-icon">⭐</div><small>Best Performer</small><strong id="bestPerformer">—</strong><span id="bestPerformerNote">Strongest live move</span></div>
-<div class="score-card amber"><div class="score-icon">◉</div><small>Sector Concentration</small><strong id="sectorConcentration">—</strong><span id="sectorConcentrationNote">Largest portfolio sector</span></div>
-<div class="score-card"><div class="score-icon">🧠</div><small>Average Buy Strength</small><strong id="averageBuyStrength">—</strong><span id="averageBuyStrengthNote">Squad opportunity score</span></div>
-</section>
-<div class="section-head aurora-section-anchor" id="match-analysis"><div><h2>Match Analysis</h2><p>Future income, player contribution and portfolio shape in one live review.</p></div><span class="badge blue" id="analysisStatus">Loading data</span></div>
-<section class="chart-grid">
-<article class="panel span-8 aurora-section-anchor" id="income-runway">
-<div class="panel-head">
-<div>
-<h3>Income Runway After the 10-Month Mission</h3>
-<p>Projects the £33,000 capital-release mission, ongoing £1,500 paydays and dividend reinvestment at the portfolio’s current yield.</p>
-<div class="forecast-legend">
-<span class="reinvest"><i></i>£33k release + £1,500/month + reinvestment</span>
-<span class="tesco"><i></i>M4 mission + Tesco SAYE 2029</span>
-<span class="contributions"><i></i>M4 mission without reinvestment</span>
-<span class="current"><i></i>Current annual income</span>
+<section aria-label="Analysis Room controls" class="analysis-command-bar">
+<div class="analysis-command-tabs">
+<a class="analysis-command-tab active" href="#match-analysis">Match Analysis</a>
+<a class="analysis-command-tab" href="#income-runway">Income Runway</a>
+<a class="analysis-command-tab" href="#dividend-contribution">Dividends</a>
+<a class="analysis-command-tab" href="#squad-shape-sector">Squad Shape</a>
+<a class="analysis-command-tab" href="#player-performance-table">Players</a>
 </div>
+<div class="analysis-command-state">
+<span class="analysis-live-dot"></span>
+<span id="analysisCommandState">Live intelligence loading…</span>
+</div>
+</section>
+<section class="analysis-match-centre aurora-section-anchor" id="match-analysis">
+<header class="analysis-section-title">
+<div>
+<span class="analysis-kicker">Live match intelligence</span>
+<h2>Match Analysis</h2>
+<p>One clear reading of form, income attack, portfolio defence and recruitment quality.</p>
+</div>
+<span class="badge blue" id="analysisStatus">Loading data</span>
+</header>
+<div class="analysis-match-grid">
+<article class="analysis-scoreboard-card">
+<div class="analysis-scoreboard-head">
+<div>
+<span class="analysis-mini-label">Aurora performance index</span>
+<strong id="matchOverallScore">—</strong>
+<p id="matchOverallVerdict">Calculating the current match state…</p>
+</div>
+<div aria-hidden="true" class="analysis-score-orbit">
+<span></span><span></span><span></span>
+</div>
+</div>
+<div aria-label="Recent club form" class="analysis-form-ribbon" id="matchFormRibbon"></div>
+<div class="analysis-match-call">
+<span>Manager call</span>
+<strong id="matchManagerCall">Hold shape while the live feed loads.</strong>
+</div>
+</article>
+<div class="analysis-match-metrics">
+<button class="analysis-match-metric positive" data-analysis-filter="positive" type="button">
+<span>Rising players</span>
+<strong id="positiveMovers">—</strong>
+<small id="positiveMoversNote">Players rising today</small>
+</button>
+<button class="analysis-match-metric negative" data-analysis-filter="negative" type="button">
+<span>Under pressure</span>
+<strong id="negativeMovers">—</strong>
+<small id="negativeMoversNote">Players falling today</small>
+</button>
+<button class="analysis-match-metric star" data-analysis-player-best="true" type="button">
+<span>Man of the match</span>
+<strong id="bestPerformer">—</strong>
+<small id="bestPerformerNote">Strongest live move</small>
+</button>
+<button class="analysis-match-metric shape" data-scroll-target="squad-shape-sector" type="button">
+<span>Shape pressure</span>
+<strong id="sectorConcentration">—</strong>
+<small id="sectorConcentrationNote">Largest portfolio sector</small>
+</button>
+<button class="analysis-match-metric quality" data-scroll-target="yield-strength-workbench" type="button">
+<span>Recruitment quality</span>
+<strong id="averageBuyStrength">—</strong>
+<small id="averageBuyStrengthNote">Squad opportunity score</small>
+</button>
+</div>
+</div>
+<div class="analysis-workbench-grid">
+<article class="analysis-workbench-card tactical-card">
+<div class="analysis-card-head">
+<div>
+<span class="analysis-kicker">Current tactical shape</span>
+<h3>Interactive Starting XI</h3>
+<p>Change the lens to see which holdings carry value, income, form or risk.</p>
+</div>
+<div aria-label="Tactical focus" class="analysis-segmented" id="tacticalFocusControls" role="group">
+<button class="active" data-tactical-focus="value" type="button">Value</button>
+<button data-tactical-focus="income" type="button">Income</button>
+<button data-tactical-focus="form" type="button">Form</button>
+<button data-tactical-focus="risk" type="button">Risk</button>
+</div>
+</div>
+<div aria-label="Interactive portfolio formation" class="analysis-pitch" id="analysisTacticalPitch">
+<div class="analysis-pitch-line halfway"></div>
+<div class="analysis-pitch-centre"></div>
+<div class="analysis-pitch-box top"></div>
+<div class="analysis-pitch-box bottom"></div>
+<div class="analysis-pitch-loading">Building the live formation…</div>
+</div>
+<div class="analysis-pitch-footer">
+<span id="tacticalShapeSummary">Shape loading…</span>
+<button data-scroll-target="player-performance-table" type="button">Open full squad analysis →</button>
+</div>
+</article>
+<article class="analysis-workbench-card form-card" id="club-form-workbench">
+<div class="analysis-card-head">
+<div>
+<span class="analysis-kicker">Club form</span>
+<h3>Momentum Room</h3>
+<p>Price-log sessions translated into football form and trend.</p>
+</div>
+<span class="badge blue" id="valueTrendBadge">Last 30 logs</span>
+</div>
+<div aria-label="Club form range" class="analysis-segmented compact" id="clubFormRange" role="group">
+<button data-form-range="5" type="button">5</button>
+<button class="active" data-form-range="10" type="button">10</button>
+<button data-form-range="20" type="button">20</button>
+<button data-form-range="30" type="button">30</button>
+</div>
+<div class="analysis-form-summary">
+<div><small>Record</small><strong id="clubFormRecord">—</strong></div>
+<div><small>Value change</small><strong id="clubFormChange">—</strong></div>
+<div><small>Current run</small><strong id="clubFormRun">—</strong></div>
+</div>
+<div aria-label="Club value form line" class="analysis-sparkline" id="clubFormSparkline"></div>
+<div class="analysis-session-list" id="clubFormSessions"></div>
+</article>
+<article class="analysis-workbench-card strength-card aurora-section-anchor" id="yield-strength-workbench">
+<div class="analysis-card-head">
+<div>
+<span class="analysis-kicker">Yield versus buy strength</span>
+<h3>Recruitment Quadrants</h3>
+<p>Tap a player to inspect the balance between income rate and Aurora recruitment quality.</p>
+</div>
+<div class="analysis-segmented compact" id="quadrantFilter">
+<button class="active" data-quadrant="all" type="button">All</button>
+<button data-quadrant="elite" type="button">Elite</button>
+<button data-quadrant="income" type="button">Income</button>
+<button data-quadrant="watch" type="button">Watch</button>
+</div>
+</div>
+<div class="analysis-quadrant-map" id="yieldStrengthMap">
+<div class="quadrant-label q1">Strong quality<br/>Lower yield</div>
+<div class="quadrant-label q2">Elite income<br/>Strong quality</div>
+<div class="quadrant-label q3">Low priority</div>
+<div class="quadrant-label q4">High yield<br/>Needs review</div>
+<div class="quadrant-axis horizontal"><span>Lower yield</span><span>Higher yield</span></div>
+<div class="quadrant-axis vertical"><span>Strong buy</span><span>Weak buy</span></div>
+</div>
+<div class="analysis-mini-table" id="yieldStrengthTable"></div>
+</article>
+</div>
+</section>
+<section class="analysis-income-room aurora-section-anchor" id="income-runway">
+<header class="analysis-section-title">
+<div>
+<span class="analysis-kicker">Income runway</span>
+<h2>Future Income Command</h2>
+<p>Keep the detailed forecast, but control exactly which scenario you are looking at.</p>
 </div>
 <span class="badge green" id="incomeTrendBadge">Forecast loading</span>
+</header>
+<div class="analysis-income-grid">
+<article class="analysis-income-chart-card">
+<div class="analysis-income-toolbar">
+<div aria-label="Income scenario" class="analysis-segmented" id="incomeScenarioControls" role="group">
+<button class="active" data-income-scenario="reinvest" type="button">Reinvested</button>
+<button data-income-scenario="tesco" type="button">Tesco 2029</button>
+<button data-income-scenario="contributions" type="button">Contributions only</button>
+<button data-income-scenario="compare" type="button">Compare all</button>
 </div>
-<div class="chart-wrap">
+<span id="incomeScenarioSummary">Preparing the reinvestment scenario…</span>
+</div>
+<div class="chart-wrap analysis-runway-chart">
 <canvas id="incomeProgressChart"></canvas>
 <div class="chart-empty" id="incomeProgressEmpty">Income forecast unavailable until current income and yield data load.</div>
 </div>
-<div class="forecast-checkpoints">
-<div class="forecast-card">
-<small>6 months</small>
-<strong id="forecast6Annual">—</strong>
-<span id="forecast6Monthly">Monthly equivalent loading…</span>
-<em id="forecast6Added">Contribution impact loading…</em>
+<div class="forecast-legend analysis-runway-legend">
+<span class="reinvest"><i></i>Reinvested mission</span>
+<span class="tesco"><i></i>Tesco SAYE 2029</span>
+<span class="contributions"><i></i>Contributions only</span>
+<span class="current"><i></i>Current income</span>
 </div>
-<div class="forecast-card">
-<small>12 months</small>
-<strong id="forecast12Annual">—</strong>
-<span id="forecast12Monthly">Monthly equivalent loading…</span>
-<em id="forecast12Added">Contribution impact loading…</em>
-</div>
-<div class="forecast-card">
-<small>2 years</small>
-<strong id="forecast24Annual">—</strong>
-<span id="forecast24Monthly">Monthly equivalent loading…</span>
-<em id="forecast24Added">Contribution impact loading…</em>
-</div>
-<div class="forecast-card">
-<small>5 years</small>
-<strong id="forecast60Annual">—</strong>
-<span id="forecast60Monthly">Monthly equivalent loading…</span>
-<em id="forecast60Added">Contribution impact loading…</em>
+</article>
+<aside class="analysis-target-card">
+<span class="analysis-kicker">Promotion target</span>
+<div class="analysis-target-ring" id="analysisTargetRing">
+<div>
+<small>Current monthly</small>
+<strong id="analysisTargetMonthly">—</strong>
+<span>of £625</span>
 </div>
 </div>
+<div class="analysis-target-stats">
+<div><small>Gap</small><strong id="analysisTargetGap">—</strong></div>
+<div><small>Progress</small><strong id="analysisTargetPercent">—</strong></div>
+<div><small>Projected finish</small><strong id="analysisTargetFinish">—</strong></div>
+</div>
+<p id="analysisTargetVerdict">Calculating the promotion route…</p>
+</aside>
+</div>
+<div class="forecast-checkpoints analysis-checkpoint-grid">
+<button class="forecast-card" data-forecast-month="6" type="button">
+<small>6 months</small><strong id="forecast6Annual">—</strong>
+<span id="forecast6Monthly">Monthly equivalent loading…</span><em id="forecast6Added">Contribution impact loading…</em>
+</button>
+<button class="forecast-card" data-forecast-month="12" type="button">
+<small>12 months</small><strong id="forecast12Annual">—</strong>
+<span id="forecast12Monthly">Monthly equivalent loading…</span><em id="forecast12Added">Contribution impact loading…</em>
+</button>
+<button class="forecast-card" data-forecast-month="24" type="button">
+<small>2 years</small><strong id="forecast24Annual">—</strong>
+<span id="forecast24Monthly">Monthly equivalent loading…</span><em id="forecast24Added">Contribution impact loading…</em>
+</button>
+<button class="forecast-card" data-forecast-month="60" type="button">
+<small>5 years</small><strong id="forecast60Annual">—</strong>
+<span id="forecast60Monthly">Monthly equivalent loading…</span><em id="forecast60Added">Contribution impact loading…</em>
+</button>
+</div>
+<details class="analysis-tesco-details">
+<summary>
+<span><b>Tesco SAYE 2029 capital event</b><small>Open the detailed maturity and ISA-wave impact</small></span>
+<span>＋</span>
+</summary>
 <div class="tesco-forecast-impact">
 <div>
-<div class="tesco-impact-head">
-<div>
-<small>2029 Capital Event</small>
-<h4>Tesco SAYE maturity impact</h4>
-</div>
-<span class="tesco-impact-badge">1 Mar 2029</span>
-</div>
+<div class="tesco-impact-head"><div><small>2029 Capital Event</small><h4>Tesco SAYE maturity impact</h4></div><span class="tesco-impact-badge">1 Mar 2029</span></div>
 <div class="tesco-impact-grid">
-<div class="tesco-impact-stat">
-<small>Options</small>
-<strong>14,363</strong>
-<span>Option price £2.20</span>
-</div>
-<div class="tesco-impact-stat">
-<small>Projected value</small>
-<strong id="tescoForecastValue">—</strong>
-<span id="tescoForecastPrice">Current Tesco price loading…</span>
-</div>
-<div class="tesco-impact-stat">
-<small>Tesco core retained</small>
-<strong>£15,000</strong>
-<span>Kept outside the income-wave calculation</span>
-</div>
-<div class="tesco-impact-stat">
-<small>Income capital</small>
-<strong id="tescoForecastDeployable">—</strong>
-<span>Available for the planned ISA waves</span>
-</div>
+<div class="tesco-impact-stat"><small>Options</small><strong>14,363</strong><span>Option price £2.20</span></div>
+<div class="tesco-impact-stat"><small>Projected value</small><strong id="tescoForecastValue">—</strong><span id="tescoForecastPrice">Current Tesco price loading…</span></div>
+<div class="tesco-impact-stat"><small>Tesco core retained</small><strong>£15,000</strong><span>Kept outside the income-wave calculation</span></div>
+<div class="tesco-impact-stat"><small>Income capital</small><strong id="tescoForecastDeployable">—</strong><span>Available for the planned ISA waves</span></div>
 </div>
 <div class="tesco-wave-strip">
-<div class="tesco-wave">
-<small>March 2029</small>
-<strong id="tescoWaveOne">—</strong>
-</div>
-<div class="tesco-wave">
-<small>April 2029</small>
-<strong id="tescoWaveTwo">—</strong>
-</div>
-<div class="tesco-wave">
-<small>April 2030</small>
-<strong id="tescoWaveThree">—</strong>
-</div>
+<div class="tesco-wave"><small>March 2029</small><strong id="tescoWaveOne">—</strong></div>
+<div class="tesco-wave"><small>April 2029</small><strong id="tescoWaveTwo">—</strong></div>
+<div class="tesco-wave"><small>April 2030</small><strong id="tescoWaveThree">—</strong></div>
 </div>
 </div>
 <div class="tesco-impact-result">
-<small>Five-year Tesco boost</small>
-<strong id="tescoFiveYearBoost">—</strong>
+<small>Five-year Tesco boost</small><strong id="tescoFiveYearBoost">—</strong>
 <span id="tescoFiveYearBoostMonthly">Income effect loading…</span>
 <span id="tescoFiveYearCombined">Combined five-year projection loading…</span>
 </div>
-<p class="tesco-impact-note" id="tescoImpactNote">
-          The maturity value is estimated using the live Tesco price in Aurora. The forecast keeps £15,000 as the Tesco core and deploys up to £60,000 through the March 2029, April 2029 and April 2030 ISA waves. The retained Tesco core dividend is excluded until Aurora has a live post-maturity Tesco DPS, keeping this estimate conservative.
-        </p>
+<p class="tesco-impact-note" id="tescoImpactNote">Tesco maturity analysis loading…</p>
 </div>
-<div class="forecast-assumptions" id="forecastAssumptions">
-<b>Forecast assumptions:</b> £1,500 invested monthly, current portfolio yield held constant, and dividends reinvested monthly for the green forecast. It excludes share-price growth, dividend increases or cuts, fees and tax.
-      </div>
+</details>
+<div class="forecast-assumptions" id="forecastAssumptions"><b>Forecast assumptions:</b> Loading the current portfolio yield.</div>
+</section>
+<section class="analysis-squad-intelligence">
+<article class="analysis-dividend-room aurora-section-anchor" id="dividend-contribution">
+<div class="analysis-card-head">
+<div>
+<span class="analysis-kicker">Dividend contribution</span>
+<h2>Income Scorers</h2>
+<p>A ranked, interactive contribution view rather than another bar chart.</p>
+</div>
+<div>
+<span class="badge green" id="topIncomeBadge">Top scorer</span>
+<div class="analysis-segmented compact" id="dividendModeControls">
+<button class="active" data-dividend-mode="annual" type="button">Annual</button>
+<button data-dividend-mode="monthly" type="button">Monthly</button>
+<button data-dividend-mode="share" type="button">Share</button>
+<button data-dividend-mode="yield" type="button">Yield</button>
+</div>
+</div>
+</div>
+<div class="analysis-income-leaderboard" id="dividendLeaderboard">
+<div class="analysis-loading">Building the income leaderboard…</div>
+</div>
+<div class="analysis-account-split" id="dividendAccountSplit"></div>
 </article>
-<article class="panel span-4">
-<div class="panel-head"><div><h3>Income Target</h3><p>Current monthly run rate against the £500 target.</p></div><span class="badge amber">Promotion race</span></div>
-<div class="chart-wrap compact"><canvas id="targetChart"></canvas><div class="chart-empty" id="targetEmpty">Target data unavailable.</div></div>
-</article>
-<article class="panel span-7 aurora-section-anchor" id="dividend-contribution">
-<div class="panel-head"><div><h3>Dividend Contribution by Player</h3><p>Annual income contribution with duplicate account rows combined.</p></div><span class="badge green" id="topIncomeBadge">Top scorer</span></div>
-<div class="chart-wrap tall"><canvas id="incomeContributionChart"></canvas><div class="chart-empty" id="incomeContributionEmpty">No dividend income rows found.</div></div>
-</article>
-<article class="panel span-5 aurora-section-anchor" id="squad-shape-sector">
-<div class="panel-head"><div><h3>Squad Shape by Sector</h3><p>Investing portfolio value across IG ISA and Trade 212.</p></div><span class="badge blue" id="sectorBadge">Shape check</span></div>
-<div class="chart-wrap tall"><canvas id="sectorChart"></canvas><div class="chart-empty" id="sectorEmpty">No sector data found.</div></div>
-</article>
-<article class="panel span-8">
-<div class="panel-head"><div><h3>Club Value Form</h3><p>Current squad replayed through available price-log dates. This is an indicative form line, not a transaction-perfect historical valuation.</p></div><span class="badge blue" id="valueTrendBadge">Last 30 logs</span></div>
-<div class="chart-wrap"><canvas id="valueProgressChart"></canvas><div class="chart-empty" id="valueProgressEmpty">Price history is still building.</div></div>
-</article>
-<article class="panel span-4">
-<div class="panel-head"><div><h3>Yield vs Buy Strength</h3><p>Income rate against Aurora’s current recruitment score.</p></div><span class="badge amber">Tactical map</span></div>
-<div class="chart-wrap"><canvas id="yieldStrengthChart"></canvas><div class="chart-empty" id="yieldStrengthEmpty">Not enough scored holdings.</div></div>
+<article class="analysis-sector-room aurora-section-anchor" id="squad-shape-sector">
+<div class="analysis-card-head">
+<div>
+<span class="analysis-kicker">Squad shape by sector</span>
+<h2>Sector Dressing Room</h2>
+<p>See the actual players inside each sector and tap a lane to filter the squad.</p>
+</div>
+<div>
+<span class="badge blue" id="sectorBadge">Shape check</span>
+<div class="analysis-segmented compact" id="sectorModeControls">
+<button class="active" data-sector-mode="value" type="button">Value</button>
+<button data-sector-mode="income" type="button">Income</button>
+<button data-sector-mode="players" type="button">Players</button>
+</div>
+</div>
+</div>
+<div class="analysis-sector-summary" id="sectorSummaryCards"></div>
+<div class="analysis-sector-lanes" id="sectorLanes">
+<div class="analysis-loading">Building the sector shape…</div>
+</div>
+<button class="analysis-clear-filter" hidden="" id="clearSectorFilter" type="button">Clear sector filter</button>
 </article>
 </section>
-<div class="section-head aurora-section-anchor" id="manager-review"><div><h2>Manager’s Review</h2><p>The key message behind the charts.</p></div><span class="badge green" id="verdictStatus">Analysis ready</span></div>
-<section class="verdict-grid">
-<article class="verdict-card">
-<div class="verdict-main"><div class="manager-icon">🧠</div><div><h3 id="verdictTitle">Loading the match report…</h3><p id="verdictText">Aurora is checking income momentum, concentration and the next promotion gap.</p></div></div>
+<section class="analysis-manager-room aurora-section-anchor" id="manager-review">
+<header class="analysis-section-title">
+<div>
+<span class="analysis-kicker">Manager’s review</span>
+<h2>Decision Room</h2>
+<p>The key message behind the data, with clear actions rather than chart interpretation.</p>
+</div>
+<span class="badge green" id="verdictStatus">Analysis ready</span>
+</header>
+<div class="analysis-manager-grid">
+<article class="analysis-manager-verdict">
+<div class="verdict-main">
+<div class="manager-icon">🧠</div>
+<div><h3 id="verdictTitle">Loading the match report…</h3><p id="verdictText">Aurora is checking income momentum, concentration and the next promotion gap.</p></div>
+</div>
 <div class="verdict-list" id="verdictList"></div>
 </article>
-<article class="verdict-card">
-<div class="panel-head"><div><h3>Current Tactical Shape</h3><p>Where the investing squad is carrying the most weight.</p></div><span class="badge blue">Live exposure</span></div>
+<article class="analysis-manager-decisions">
+<div class="analysis-card-head">
+<div><span class="analysis-kicker">Next decisions</span><h3>Manager Action Board</h3><p>Three issues with the greatest effect on the portfolio.</p></div>
+</div>
+<div id="managerDecisionCards"></div>
+</article>
+<article class="analysis-shape-review">
+<div class="analysis-card-head">
+<div><span class="analysis-kicker">Shape report</span><h3>Current Tactical Shape</h3><p>Where the investing squad is carrying the most weight.</p></div>
+</div>
 <div class="verdict-list" id="shapeList"></div>
 </article>
+</div>
 </section>
-<div class="section-head aurora-section-anchor" id="player-performance-table"><div><h2>Player Performance Table</h2><p>Combined view of value, income, yield and profit/loss by ticker.</p></div><span class="badge blue" id="playerCountBadge">— players</span></div>
-<section class="panel">
-<div class="table-wrap">
+<section class="analysis-player-room aurora-section-anchor" id="player-performance-table">
+<header class="analysis-section-title">
+<div>
+<span class="analysis-kicker">Deep player analysis</span>
+<h2>Player Performance Table</h2>
+<p>Search, sort, filter and open any player for a full analytical profile.</p>
+</div>
+<span class="badge blue" id="playerCountBadge">— players</span>
+</header>
+<div class="analysis-player-toolbar">
+<label class="analysis-search"><span>⌕</span><input autocomplete="off" id="analysisPlayerSearch" placeholder="Search ticker, player, role or sector…" type="search"/></label>
+<select aria-label="Sort players" id="analysisPlayerSort">
+<option value="value">Highest value</option>
+<option value="income">Highest income</option>
+<option value="yield">Highest yield</option>
+<option value="profit">Best profit</option>
+<option value="strength">Best buy strength</option>
+<option value="form">Best live form</option>
+<option value="risk">Highest risk</option>
+</select>
+<select aria-label="Filter by sector" id="analysisSectorFilter"><option value="all">All sectors</option></select>
+<div class="analysis-segmented compact" id="analysisStatusFilter">
+<button class="active" data-player-status="all" type="button">All</button>
+<button data-player-status="rising" type="button">Rising</button>
+<button data-player-status="stable" type="button">Stable</button>
+<button data-player-status="review" type="button">Review</button>
+</div>
+</div>
+<div class="analysis-table-summary" id="analysisTableSummary"></div>
+<div class="table-wrap analysis-performance-table">
 <table>
-<thead><tr><th>Player</th><th>Role / Sector</th><th>Value</th><th>Annual Income</th><th>Yield</th><th>Profit / Loss</th><th>Buy Strength</th><th>Income Share</th></tr></thead>
-<tbody id="playerTable"><tr><td class="loading" colspan="8">Loading player analysis…</td></tr></tbody>
+<thead>
+<tr>
+<th>Player</th><th>Role / Sector</th><th>Live Form</th><th>Value</th>
+<th>Annual Income</th><th>Yield</th><th>Profit / Loss</th><th>Buy Strength</th><th>Command</th>
+</tr>
+</thead>
+<tbody id="analysisPlayerBody"><tr><td class="loading" colspan="9">Loading detailed player analysis…</td></tr></tbody>
 </table>
 </div>
 </section>
-<p class="footer-note">Performance Analysis Room uses the same AuroraMaster.json feed as the rest of Aurora City FC. Historical charts become stronger as PriceLog, IncomeLog and TradeReviewLog continue to build.</p>
+<div aria-hidden="true" class="analysis-legacy-engine">
+<canvas id="targetChart"></canvas><div id="targetEmpty"></div>
+<canvas id="incomeContributionChart"></canvas><div id="incomeContributionEmpty"></div>
+<canvas id="sectorChart"></canvas><div id="sectorEmpty"></div>
+<canvas id="valueProgressChart"></canvas><div id="valueProgressEmpty"></div>
+<canvas id="yieldStrengthChart"></canvas><div id="yieldStrengthEmpty"></div>
+<table><tbody id="playerTable"></tbody></table>
+</div>
+<p class="footer-note">Analysis Room uses the same AuroraMaster.json feed as the rest of Aurora City FC. Interactive views become stronger as PriceLog, IncomeLog and TradeReviewLog continue to build.</p>
+<div class="analysis-drawer-backdrop" hidden="" id="analysisDrawerBackdrop"></div>
+<aside aria-hidden="true" aria-label="Player analytical profile" class="analysis-player-drawer" id="analysisPlayerDrawer">
+<div class="analysis-drawer-head">
+<div><span class="analysis-kicker">Player analytical profile</span><h2 id="drawerPlayerTitle">Player</h2><p id="drawerPlayerSubtitle">Loading profile…</p></div>
+<button aria-label="Close player profile" id="analysisDrawerClose" type="button">×</button>
+</div>
+<div class="analysis-drawer-content" id="analysisDrawerContent"></div>
+<div class="analysis-drawer-actions">
+<button id="analysisDrawerPrevious" type="button">← Previous</button>
+<a href="AuroraCityFC_SquadHub.html" id="analysisDrawerSquadLink">Open Squad Hub</a>
+<button id="analysisDrawerNext" type="button">Next →</button>
+</div>
+</aside>
 </main>
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
@@ -2662,14 +3230,14 @@ function renderKpis(){
 function renderVerdict(){
   const combined=combinedHoldings().sort((a,b)=>b.income-a.income),income=annualTotal(),monthly=income/12,gap=Math.max(0,MONTHLY_TARGET-monthly),y=portfolioYield(),sectors=combinedSectorData(),sectorTotal=sectors.reduce((s,x)=>s+x.value,0),topSector=sectors[0],topIncome=combined.find(x=>x.income>0),topProfit=[...combined].sort((a,b)=>b.profit-a.profit)[0];
   const progress=monthly/MONTHLY_TARGET;let title,text,status="Analysis ready",statusClass="green";
-  if(progress>=1){title="Promotion secured — protect the lead.";text="The £500 monthly income target has been reached. The next tactical job is protecting dividend quality and reducing avoidable concentration.";}
-  else if(progress>=.8){title="Strong promotion push — final third reached.";text=`The squad is producing ${money(monthly)} per month and needs another ${money(gap)} to reach the £500 target. Income momentum is strong, but allocation discipline still matters.`;}
-  else{title="Rebuild progressing — keep the shape disciplined.";text=`Current annual income is ${money(income)}. The route to £500 per month remains open, but the next transfers should improve income without making one sector carry the entire team.`;status="Work in progress";statusClass="amber";}
+  if(progress>=1){title="Promotion secured — protect the lead.";text="The £625 monthly income target has been reached. The next tactical job is protecting dividend quality and reducing avoidable concentration.";}
+  else if(progress>=.8){title="Strong promotion push — final third reached.";text=`The squad is producing ${money(monthly)} per month and needs another ${money(gap)} to reach the £625 target. Income momentum is strong, but allocation discipline still matters.`;}
+  else{title="Rebuild progressing — keep the shape disciplined.";text=`Current annual income is ${money(income)}. The route to £625 per month remains open, but the next transfers should improve income without making one sector carry the entire team.`;status="Work in progress";statusClass="amber";}
   $("verdictTitle").textContent=title;$("verdictText").textContent=text;$("verdictStatus").textContent=status;$("verdictStatus").className=`badge ${statusClass}`;
   const rows=[
     {label:"Top income scorer",detail:topIncome?`${topIncome.name} contributes the most annual income.`:"No income scorer found.",value:topIncome?`${topIncome.ticker} • ${money(topIncome.income)}`:"—"},
     {label:"Best current profit",detail:topProfit?`${topProfit.name} has the largest current gain.`:"No profit data found.",value:topProfit?`${topProfit.ticker} • ${money(topProfit.profit)}`:"—"},
-    {label:"Promotion gap",detail:"Extra average monthly income needed to hit £500.",value:money(gap)},
+    {label:"Promotion gap",detail:"Extra average monthly income needed to hit £625.",value:money(gap)},
     {label:"Income portfolio yield",detail:"IG ISA and Trade 212 income divided by their live value.",value:pct(y)}
   ];
   $("verdictList").innerHTML=rows.map(r=>`<div class="verdict-row"><span class="verdict-dot"></span><div><strong>${r.label}</strong><span>${r.detail}</span></div><div class="verdict-value">${r.value}</div></div>`).join("");
@@ -3294,5 +3862,584 @@ document.documentElement.dataset.tescoForecastBuild = "tesco-2029-v32";
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
-</body>
+<script id="analysis-room-beast-script">
+(() => {
+  "use strict";
+
+  const byId = id => document.getElementById(id);
+  const clamp = (value,min,max) => Math.min(max,Math.max(min,value));
+  const escapeHtml = value => String(value ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const fmtMove = value => `${value>=0?"+":""}${Number(value||0).toFixed(2)}%`;
+  const ui = {
+    tacticalFocus:"value",
+    formRange:10,
+    quadrant:"all",
+    dividendMode:"annual",
+    sectorMode:"value",
+    sector:"all",
+    status:"all",
+    sort:"value",
+    search:"",
+    rows:[],
+    visibleRows:[],
+    drawerIndex:0,
+    renderQueued:false
+  };
+
+  const positions = [
+    {left:50,top:89},{left:18,top:72},{left:39,top:70},{left:61,top:70},{left:82,top:72},
+    {left:24,top:49},{left:50,top:52},{left:76,top:49},
+    {left:23,top:27},{left:50,top:22},{left:77,top:27}
+  ];
+
+  function totalValue(rows){ return rows.reduce((sum,row)=>sum+row.value,0); }
+  function totalIncome(rows){ return rows.reduce((sum,row)=>sum+row.income,0); }
+  function statusFor(row){
+    if(row.movement>.22) return "rising";
+    if(row.movement<-.22) return "review";
+    return "stable";
+  }
+  function riskFor(row,portfolioValue){
+    const concentration = portfolioValue>0 ? row.value/portfolioValue : 0;
+    const movementRisk = Math.max(0,-row.movement)*6;
+    const qualityRisk = row.buyStrength>0 ? Math.max(0,60-row.buyStrength)*.55 : 12;
+    const incomeRisk = row.yield>0.13 ? (row.yield-.13)*140 : 0;
+    return clamp(concentration*95 + movementRisk + qualityRisk + incomeRisk,0,100);
+  }
+  function ratingFor(row){
+    const quality = row.buyStrength>0 ? row.buyStrength : 55;
+    const incomeQuality = clamp(row.yield*550,0,100);
+    const profitQuality = clamp(50 + (row.value>0 ? row.profit/row.value*160 : 0),0,100);
+    const formQuality = clamp(50 + row.movement*11,0,100);
+    return Math.round(quality*.38 + incomeQuality*.25 + profitQuality*.17 + formQuality*.20);
+  }
+  function getRows(){
+    if(typeof combinedHoldings!=="function") return [];
+    const base = combinedHoldings();
+    const pValue = base.reduce((sum,row)=>sum+row.value,0);
+    const pIncome = base.reduce((sum,row)=>sum+row.income,0);
+    return base.map(row=>{
+      const movement = typeof currentMovement==="function" ? currentMovement(row.ticker) : 0;
+      const enriched = {
+        ...row,
+        movement:Number.isFinite(movement)?movement:0,
+        monthly:row.income/12,
+        valueShare:pValue>0?row.value/pValue:0,
+        incomeShare:pIncome>0?row.income/pIncome:0
+      };
+      enriched.status=statusFor(enriched);
+      enriched.risk=riskFor(enriched,pValue);
+      enriched.rating=ratingFor(enriched);
+      return enriched;
+    });
+  }
+  function aggregateSectors(rows){
+    const map=new Map();
+    rows.forEach(row=>{
+      const name=String(row.sector||"Unclassified").trim()||"Unclassified";
+      if(!map.has(name)) map.set(name,{sector:name,value:0,income:0,players:[]});
+      const item=map.get(name); item.value+=row.value; item.income+=row.income; item.players.push(row);
+    });
+    return [...map.values()].sort((a,b)=>b.value-a.value);
+  }
+  function recentForm(range=10){
+    if(typeof valueProgression!=="function") return [];
+    const points=valueProgression().slice(-Math.max(2,range));
+    return points.map((point,index)=>{
+      if(index===0) return {...point,change:0,result:"D"};
+      const previous=points[index-1].value;
+      const change=point.value-previous;
+      const threshold=Math.max(1,Math.abs(previous)*.00025);
+      return {...point,change,result:change>threshold?"W":change<-threshold?"L":"D"};
+    });
+  }
+
+  function renderMatchCentre(rows){
+    const positive=rows.filter(row=>row.movement>0), negative=rows.filter(row=>row.movement<0);
+    const monthly=totalIncome(rows)/12;
+    const sectors=aggregateSectors(rows);
+    const portfolio=totalValue(rows);
+    const concentration=sectors[0]&&portfolio?sectors[0].value/portfolio:0;
+    const strengthRows=rows.filter(row=>row.buyStrength>0);
+    const averageStrength=strengthRows.length?strengthRows.reduce((s,r)=>s+r.buyStrength,0)/strengthRows.length:55;
+    const avgMove=rows.length?rows.reduce((s,r)=>s+r.movement,0)/rows.length:0;
+    const attack=clamp(monthly/625*100,0,100);
+    const defence=clamp(100-concentration*145,0,100);
+    const quality=clamp(averageStrength,0,100);
+    const form=clamp(50+avgMove*13,0,100);
+    const overall=Math.round(attack*.32+defence*.23+quality*.27+form*.18);
+
+    byId("matchOverallScore").textContent=`${overall}/100`;
+    byId("matchOverallVerdict").textContent=
+      overall>=80?"Promotion-level performance with strong income control."
+      :overall>=65?"The rebuild is in good shape, with one or two tactical weaknesses."
+      :overall>=50?"Competitive, but concentration or recruitment quality needs attention."
+      :"The squad needs decisive rebalancing before the next transfer window.";
+
+    const lowest=[["income attack",attack],["portfolio defence",defence],["recruitment quality",quality],["club form",form]].sort((a,b)=>a[1]-b[1])[0];
+    byId("matchManagerCall").textContent=
+      lowest[1]>=72?"Protect the current shape and keep executing the agreed plan."
+      :`Prioritise ${lowest[0]} — it is currently the weakest department at ${Math.round(lowest[1])}/100.`;
+
+    const formRows=recentForm(6).slice(1);
+    byId("matchFormRibbon").innerHTML=formRows.length
+      ? formRows.map(item=>`<span class="analysis-form-result ${item.result==="W"?"win":item.result==="L"?"loss":"draw"}" title="${dateLabel(item.date)} • ${money(item.change)}">${item.result}</span>`).join("")
+      : `<span class="analysis-form-result draw">D</span><span style="color:#71839c;font-size:10px">Price-log form is still building.</span>`;
+
+    byId("analysisCommandState").textContent=
+      `${rows.length} players analysed • ${positive.length} rising • ${negative.length} under pressure • ${money(monthly)}/month`;
+  }
+
+  function focusValue(row,focus){
+    if(focus==="income") return row.income;
+    if(focus==="form") return row.movement;
+    if(focus==="risk") return row.risk;
+    return row.value;
+  }
+  function focusLabel(row,focus){
+    if(focus==="income") return `${money(row.monthly)}/m`;
+    if(focus==="form") return fmtMove(row.movement);
+    if(focus==="risk") return `${Math.round(row.risk)}/100 risk`;
+    return money0(row.value);
+  }
+  function renderTacticalPitch(rows){
+    const sorted=[...rows].sort((a,b)=>focusValue(b,ui.tacticalFocus)-focusValue(a,ui.tacticalFocus)).slice(0,11);
+    const pitch=byId("analysisTacticalPitch");
+    pitch.querySelectorAll(".analysis-player-node,.analysis-pitch-loading").forEach(node=>node.remove());
+    sorted.forEach((row,index)=>{
+      const pos=positions[index]||positions.at(-1);
+      const button=document.createElement("button");
+      button.type="button";
+      button.className=`analysis-player-node ${row.status==="review"?"review":row.status==="rising"?"strong":""}`;
+      button.style.left=`${pos.left}%`; button.style.top=`${pos.top}%`;
+      button.dataset.playerTicker=row.ticker;
+      button.innerHTML=`<b>${escapeHtml(row.ticker)}</b><span>${escapeHtml(focusLabel(row,ui.tacticalFocus))}</span>`;
+      button.title=`${row.name} • ${row.sector}`;
+      pitch.appendChild(button);
+    });
+    const leader=sorted[0];
+    byId("tacticalShapeSummary").textContent=leader
+      ? `${leader.ticker} leads the ${ui.tacticalFocus} view. Tap any shirt for the full profile.`
+      :"No active squad data available.";
+  }
+
+  function renderClubForm(){
+    const range=ui.formRange;
+    const points=recentForm(range);
+    const usable=points.slice(1);
+    const wins=usable.filter(x=>x.result==="W").length, losses=usable.filter(x=>x.result==="L").length, draws=usable.length-wins-losses;
+    const change=points.length>1?points.at(-1).value-points[0].value:0;
+    const lastResults=usable.slice(-5).map(x=>x.result).join(" · ")||"Building";
+    byId("clubFormRecord").textContent=`${wins}W ${draws}D ${losses}L`;
+    byId("clubFormChange").textContent=`${change>=0?"+":""}${money(change)}`;
+    byId("clubFormChange").className=change>=0?"positive":"negative";
+    byId("clubFormRun").textContent=lastResults;
+
+    if(points.length<2){
+      byId("clubFormSparkline").innerHTML=`<div class="analysis-loading">Price history is still building.</div>`;
+      byId("clubFormSessions").innerHTML="";
+      return;
+    }
+    const width=620,height=130,pad=12;
+    const values=points.map(x=>x.value),min=Math.min(...values),max=Math.max(...values),span=Math.max(1,max-min);
+    const coords=points.map((point,index)=>{
+      const x=pad+(width-pad*2)*(index/(points.length-1));
+      const y=height-pad-(height-pad*2)*((point.value-min)/span);
+      return {x,y,point};
+    });
+    const line=coords.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+    const area=`${pad},${height-pad} ${line} ${width-pad},${height-pad}`;
+    byId("clubFormSparkline").innerHTML=
+      `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" role="img" aria-label="Club value trend">
+        <polygon class="spark-area" points="${area}"></polygon>
+        <polyline class="spark-line" points="${line}"></polyline>
+        ${coords.map((p,index)=>`<circle class="spark-dot" cx="${p.x}" cy="${p.y}" r="${index===coords.length-1?5:3}" data-form-point="${index}"><title>${dateLabel(p.point.date)} • ${money(p.point.value)}</title></circle>`).join("")}
+      </svg>`;
+    byId("clubFormSessions").innerHTML=usable.slice(-10).map(item=>
+      `<div class="analysis-session-chip ${item.result==="W"?"win":item.result==="L"?"loss":"draw"}">
+        <small>${escapeHtml(dateLabel(item.date))}</small><strong>${item.result} • ${item.change>=0?"+":""}${money(item.change)}</strong>
+      </div>`).join("");
+  }
+
+  function quadrantClass(row){
+    const strong=row.buyStrength>=65, highYield=row.yield>=.075;
+    if(strong&&highYield) return "elite";
+    if(!strong&&highYield) return "income";
+    if(!strong&&!highYield) return "watch";
+    return "quality";
+  }
+  function renderQuadrant(rows){
+    const map=byId("yieldStrengthMap");
+    map.querySelectorAll(".analysis-quadrant-player").forEach(node=>node.remove());
+    const scored=rows.filter(row=>row.buyStrength>0&&row.yield>0);
+    const maxYield=Math.max(.10,...scored.map(row=>row.yield))*1.08;
+    const filtered=ui.quadrant==="all"?scored:scored.filter(row=>quadrantClass(row)===ui.quadrant);
+    filtered.forEach(row=>{
+      const button=document.createElement("button");
+      button.type="button";
+      button.className=`analysis-quadrant-player ${quadrantClass(row)}`;
+      button.dataset.playerTicker=row.ticker;
+      button.style.left=`${clamp(row.yield/maxYield*90+5,5,95)}%`;
+      button.style.top=`${clamp(96-row.buyStrength*.88,5,95)}%`;
+      button.textContent=row.ticker;
+      button.title=`${row.name}: ${(row.yield*100).toFixed(2)}% yield • buy strength ${row.buyStrength}`;
+      map.appendChild(button);
+    });
+    const elite=[...scored].sort((a,b)=>(b.buyStrength+b.yield*500)-(a.buyStrength+a.yield*500)).slice(0,5);
+    byId("yieldStrengthTable").innerHTML=elite.length?elite.map(row=>
+      `<div class="analysis-mini-row" data-player-ticker="${escapeHtml(row.ticker)}">
+        <b>${escapeHtml(row.ticker)}</b><span>${escapeHtml(row.name)}</span><em>${(row.yield*100).toFixed(2)}%</em><em>${Math.round(row.buyStrength)}/100</em>
+      </div>`).join(""):`<div class="analysis-loading">Not enough scored holdings.</div>`;
+  }
+
+  function setIncomeScenario(mode){
+    const chart=typeof charts!=="undefined" ? charts.incomeProgressChart : null;
+    if(!chart) return;
+    const show={
+      reinvest:[true,false,false,true],
+      tesco:[false,true,false,true],
+      contributions:[false,false,true,true],
+      compare:[true,true,true,true]
+    }[mode]||[true,false,false,true];
+    chart.data.datasets.forEach((dataset,index)=>{dataset.hidden=!show[index];});
+    chart.update();
+    const point=mode==="tesco"?incomeForecastPoint(60,true,true)
+      :mode==="contributions"?incomeForecastPoint(60,false,false)
+      :incomeForecastPoint(60,true,false);
+    const summary=mode==="compare"
+      ?"All four routes are visible for direct comparison."
+      :Number.isFinite(point.monthlyIncome)
+        ? `${money(point.monthlyIncome)}/month projected at year five • ${money(point.annualIncome)}/year`
+        :"Scenario unavailable until current yield loads.";
+    byId("incomeScenarioSummary").textContent=summary;
+  }
+
+  function renderTarget(rows){
+    const monthly=totalIncome(rows)/12, target=625, progress=clamp(monthly/target,0,1),gap=Math.max(0,target-monthly);
+    byId("analysisTargetMonthly").textContent=money(monthly);
+    byId("analysisTargetGap").textContent=money(gap);
+    byId("analysisTargetPercent").textContent=`${(progress*100).toFixed(1)}%`;
+    byId("analysisTargetRing").style.setProperty("--target-progress",`${progress*360}deg`);
+    let finish=null;
+    for(let month=0;month<=120;month++){
+      const point=incomeForecastPoint(month,true,true);
+      if(Number.isFinite(point.monthlyIncome)&&point.monthlyIncome>=target){finish=month;break;}
+    }
+    byId("analysisTargetFinish").textContent=finish===null?"Beyond model":finish===0?"Reached":`Month ${finish}`;
+    byId("analysisTargetVerdict").textContent=progress>=1
+      ?"Promotion secured. Protect dividend quality and reduce concentration."
+      :progress>=.8
+        ?`Final push: another ${money(gap)} per month is needed.`
+        :`The current squad produces ${money(monthly)} per month. The agreed capital plan remains the main route forward.`;
+  }
+
+  function renderDividend(rows){
+    const incomeRows=rows.filter(row=>row.income>0);
+    const total=totalIncome(incomeRows);
+    const sorted=[...incomeRows].sort((a,b)=>{
+      if(ui.dividendMode==="monthly") return b.monthly-a.monthly;
+      if(ui.dividendMode==="share") return b.incomeShare-a.incomeShare;
+      if(ui.dividendMode==="yield") return b.yield-a.yield;
+      return b.income-a.income;
+    });
+    const max=Math.max(1,...sorted.map(row=>ui.dividendMode==="yield"?row.yield:ui.dividendMode==="share"?row.incomeShare:ui.dividendMode==="monthly"?row.monthly:row.income));
+    byId("dividendLeaderboard").innerHTML=sorted.length?sorted.slice(0,10).map((row,index)=>{
+      const metric=ui.dividendMode==="monthly"?money(row.monthly)
+        :ui.dividendMode==="share"?`${(row.incomeShare*100).toFixed(1)}%`
+        :ui.dividendMode==="yield"?`${(row.yield*100).toFixed(2)}%`
+        :money(row.income);
+      const raw=ui.dividendMode==="yield"?row.yield:ui.dividendMode==="share"?row.incomeShare:ui.dividendMode==="monthly"?row.monthly:row.income;
+      return `<button class="analysis-income-player" type="button" data-player-ticker="${escapeHtml(row.ticker)}" style="--income-width:${clamp(raw/max*100,4,100)}%">
+        <span class="analysis-income-rank">${index+1}</span>
+        <span><b>${escapeHtml(row.ticker)} — ${escapeHtml(row.name)}</b><span>${escapeHtml(row.accounts.join(" • "))} • ${money(row.monthly)}/month</span></span>
+        <strong>${metric}<small>${money(row.income)} annual</small></strong>
+      </button>`;
+    }).join(""):`<div class="analysis-loading">No dividend income rows found.</div>`;
+
+    const accountMap=new Map();
+    if(typeof activeHoldings==="function"){
+      activeHoldings().forEach(row=>{
+        const account=accountText(row)||"Unassigned";
+        accountMap.set(account,(accountMap.get(account)||0)+annualIncome(row));
+      });
+    }
+    byId("dividendAccountSplit").innerHTML=[...accountMap.entries()].sort((a,b)=>b[1]-a[1]).map(([account,income])=>
+      `<div class="analysis-account-card"><small>${escapeHtml(account)}</small><strong>${money(income)}/yr</strong><span>${money(income/12)}/month • ${total?((income/total)*100).toFixed(1):0}% of income</span></div>`
+    ).join("");
+  }
+
+  function renderSectors(rows){
+    const sectors=aggregateSectors(rows);
+    const metric=sector=>ui.sectorMode==="income"?sector.income:ui.sectorMode==="players"?sector.players.length:sector.value;
+    const total=sectors.reduce((s,sector)=>s+metric(sector),0);
+    const max=Math.max(1,...sectors.map(metric));
+    const portfolio=totalValue(rows), top=sectors[0];
+    const topShare=top&&portfolio?top.value/portfolio:0;
+    byId("sectorSummaryCards").innerHTML=
+      `<div><small>Largest sector</small><strong>${escapeHtml(top?.sector||"—")}</strong></div>
+       <div><small>Top concentration</small><strong>${top?`${(topShare*100).toFixed(1)}%`:"—"}</strong></div>
+       <div><small>Sectors covered</small><strong>${sectors.length}</strong></div>`;
+    byId("sectorLanes").innerHTML=sectors.length?sectors.map(sector=>{
+      const display=ui.sectorMode==="income"?money(sector.income)
+        :ui.sectorMode==="players"?`${sector.players.length} players`:money0(sector.value);
+      return `<button class="analysis-sector-lane ${ui.sector===sector.sector?"active":""}" type="button" data-sector-filter="${escapeHtml(sector.sector)}" style="--sector-width:${clamp(metric(sector)/max*100,5,100)}%">
+        <span class="analysis-sector-lane-head"><b>${escapeHtml(sector.sector)}</b><strong>${display} • ${total?((metric(sector)/total)*100).toFixed(1):0}%</strong></span>
+        <span class="analysis-sector-players">${sector.players.slice(0,8).map(row=>`<span class="analysis-sector-player">${escapeHtml(row.ticker)}</span>`).join("")}</span>
+      </button>`;
+    }).join(""):`<div class="analysis-loading">No sector data found.</div>`;
+    byId("clearSectorFilter").hidden=ui.sector==="all";
+    byId("sectorBadge").textContent=top?`${top.sector}: ${(topShare*100).toFixed(1)}%`:"Shape check";
+    byId("sectorBadge").className=`badge ${topShare>.35?"amber":"blue"}`;
+    const select=byId("analysisSectorFilter");
+    const current=select.value;
+    select.innerHTML=`<option value="all">All sectors</option>${sectors.map(s=>`<option value="${escapeHtml(s.sector)}">${escapeHtml(s.sector)}</option>`).join("")}`;
+    select.value=sectors.some(s=>s.sector===ui.sector)?ui.sector:"all";
+  }
+
+  function renderDecisions(rows){
+    const sectors=aggregateSectors(rows),pValue=totalValue(rows),top=sectors[0],topShare=top&&pValue?top.value/pValue:0;
+    const weakest=[...rows].sort((a,b)=>a.buyStrength-b.buyStrength)[0];
+    const pressure=[...rows].sort((a,b)=>a.movement-b.movement)[0];
+    const monthly=totalIncome(rows)/12,gap=Math.max(0,625-monthly);
+    const decisions=[
+      topShare>.30
+        ?{icon:"⚠",title:"Shape discipline",text:`${top.sector} carries ${(topShare*100).toFixed(1)}% of value. New money should avoid increasing that concentration.`,tag:"Watch"}
+        :{icon:"✓",title:"Shape controlled",text:"No sector currently dominates the portfolio beyond the main warning threshold.",tag:"Good"},
+      pressure&&pressure.movement<0
+        ?{icon:"▼",title:`Review ${pressure.ticker} form`,text:`The weakest live move is ${fmtMove(pressure.movement)}. Check whether this is price noise or a fundamental issue.`,tag:"Review"}
+        :{icon:"▲",title:"Form stable",text:"No active holding is creating a major live performance warning.",tag:"Stable"},
+      {icon:"£",title:"Income promotion route",text:`Another ${money(gap)} per month is required to reach £625. Use the agreed transfer plan rather than chasing yield.`,tag:gap?"Plan":"Reached"}
+    ];
+    byId("managerDecisionCards").innerHTML=decisions.map(item=>
+      `<div class="analysis-decision-card"><span class="analysis-decision-icon">${item.icon}</span><span><b>${escapeHtml(item.title)}</b><span>${escapeHtml(item.text)}</span></span><em>${escapeHtml(item.tag)}</em></div>`
+    ).join("");
+  }
+
+  function filteredRows(){
+    let rows=[...ui.rows];
+    const term=ui.search.trim().toLowerCase();
+    if(term) rows=rows.filter(row=>[row.ticker,row.name,row.role,row.sector,...row.accounts].join(" ").toLowerCase().includes(term));
+    if(ui.sector!=="all") rows=rows.filter(row=>row.sector===ui.sector);
+    if(ui.status!=="all") rows=rows.filter(row=>row.status===ui.status);
+    const sorters={
+      value:(a,b)=>b.value-a.value,income:(a,b)=>b.income-a.income,yield:(a,b)=>b.yield-a.yield,
+      profit:(a,b)=>b.profit-a.profit,strength:(a,b)=>b.buyStrength-a.buyStrength,
+      form:(a,b)=>b.movement-a.movement,risk:(a,b)=>b.risk-a.risk
+    };
+    rows.sort(sorters[ui.sort]||sorters.value);
+    return rows;
+  }
+  function renderPlayerTable(){
+    const rows=filteredRows();
+    ui.visibleRows=rows;
+    byId("playerCountBadge").textContent=`${rows.length} players`;
+    const rising=rows.filter(r=>r.status==="rising").length,review=rows.filter(r=>r.status==="review").length;
+    byId("analysisTableSummary").innerHTML=
+      `<span class="analysis-table-chip"><b>${rows.length}</b> visible</span>
+       <span class="analysis-table-chip"><b>${rising}</b> rising</span>
+       <span class="analysis-table-chip"><b>${review}</b> under review</span>
+       <span class="analysis-table-chip"><b>${money(totalValue(rows))}</b> value</span>
+       <span class="analysis-table-chip"><b>${money(totalIncome(rows))}</b> annual income</span>`;
+    byId("analysisPlayerBody").innerHTML=rows.length?rows.map((row,index)=>
+      `<tr class="analysis-row-enter" style="--row-index:${index}" data-player-ticker="${escapeHtml(row.ticker)}">
+        <td><span class="analysis-player-cell"><span class="analysis-player-avatar">${escapeHtml(row.ticker.slice(0,3))}</span><span><b>${escapeHtml(row.ticker)}</b><span>${escapeHtml(row.name)}</span></span></span></td>
+        <td>${escapeHtml(row.role)}<br><span style="color:#71839c">${escapeHtml(row.sector)}</span></td>
+        <td><span class="analysis-form-pill ${row.status}">${row.status==="rising"?"▲":row.status==="review"?"▼":"●"} ${fmtMove(row.movement)}</span></td>
+        <td>${money(row.value)}<br><span style="color:#71839c">${(row.valueShare*100).toFixed(1)}% of value</span></td>
+        <td class="${row.income>0?"positive":"neutral"}">${money(row.income)}<br><span style="color:#71839c">${money(row.monthly)}/month</span></td>
+        <td>${(row.yield*100).toFixed(2)}%</td>
+        <td class="${row.profit>0?"positive":row.profit<0?"negative":"neutral"}">${money(row.profit)}</td>
+        <td><span class="analysis-strength-meter"><span>${row.buyStrength||"—"}</span><i style="--strength:${clamp(row.buyStrength,0,100)}%"></i></span></td>
+        <td><button class="analysis-open-profile" type="button" data-player-ticker="${escapeHtml(row.ticker)}">Open profile</button></td>
+      </tr>`).join(""):`<tr><td class="loading" colspan="9">No players match the current filters.</td></tr>`;
+  }
+
+  function openDrawer(ticker){
+    const index=ui.rows.findIndex(row=>row.ticker===ticker);
+    if(index<0) return;
+    ui.drawerIndex=index;
+    const row=ui.rows[index];
+    byId("drawerPlayerTitle").textContent=`${row.ticker} — ${row.name}`;
+    byId("drawerPlayerSubtitle").textContent=`${row.role} • ${row.sector} • ${row.accounts.join(" / ")}`;
+    const valueScore=clamp(row.valueShare*600,0,100);
+    const incomeScore=clamp(row.incomeShare*500,0,100);
+    const risk=Math.round(row.risk);
+    byId("analysisDrawerContent").innerHTML=
+      `<div class="analysis-drawer-hero">
+        <div class="analysis-drawer-rating" style="--rating-progress:${row.rating*3.6}deg"><span>${row.rating}</span></div>
+        <div><h3>${escapeHtml(row.status==="rising"?"Strong live form":row.status==="review"?"Under review":"Stable squad player")}</h3>
+        <p>${escapeHtml(row.ticker)} contributes ${(row.incomeShare*100).toFixed(1)}% of annual income and ${(row.valueShare*100).toFixed(1)}% of total club value.</p></div>
+      </div>
+      <div class="analysis-drawer-metrics">
+        <div class="analysis-drawer-metric"><small>Club value</small><strong>${money(row.value)}</strong></div>
+        <div class="analysis-drawer-metric"><small>Annual income</small><strong>${money(row.income)}</strong></div>
+        <div class="analysis-drawer-metric"><small>Monthly income</small><strong>${money(row.monthly)}</strong></div>
+        <div class="analysis-drawer-metric"><small>Dividend yield</small><strong>${(row.yield*100).toFixed(2)}%</strong></div>
+        <div class="analysis-drawer-metric"><small>Profit / loss</small><strong class="${row.profit>=0?"positive":"negative"}">${money(row.profit)}</strong></div>
+        <div class="analysis-drawer-metric"><small>Live form</small><strong class="${row.movement>=0?"positive":"negative"}">${fmtMove(row.movement)}</strong></div>
+        <div class="analysis-drawer-metric"><small>Buy strength</small><strong>${row.buyStrength||"—"}/100</strong></div>
+        <div class="analysis-drawer-metric"><small>Risk score</small><strong>${risk}/100</strong></div>
+      </div>
+      <div class="analysis-drawer-section"><h4>Tactical contribution</h4>
+        ${drawerBar("Value influence",valueScore)}
+        ${drawerBar("Income influence",incomeScore)}
+        ${drawerBar("Recruitment quality",row.buyStrength||0)}
+        ${drawerBar("Risk pressure",risk)}
+      </div>
+      <div class="analysis-drawer-section"><h4>Manager interpretation</h4>
+        <div class="analysis-decision-card"><span class="analysis-decision-icon">${row.status==="rising"?"▲":row.status==="review"?"!":"●"}</span>
+        <span><b>${escapeHtml(profileCall(row))}</b><span>${escapeHtml(profileDetail(row))}</span></span><em>${escapeHtml(row.status)}</em></div>
+      </div>`;
+    byId("analysisDrawerBackdrop").hidden=false;
+    byId("analysisPlayerDrawer").classList.add("open");
+    byId("analysisPlayerDrawer").setAttribute("aria-hidden","false");
+    document.body.style.overflow="hidden";
+  }
+  function drawerBar(label,value){
+    return `<div class="analysis-drawer-bar"><div class="analysis-drawer-bar-head"><span>${escapeHtml(label)}</span><b>${Math.round(clamp(value,0,100))}/100</b></div><div class="analysis-drawer-bar-track"><i style="width:${clamp(value,0,100)}%"></i></div></div>`;
+  }
+  function profileCall(row){
+    if(row.status==="review") return "Review before adding more capital";
+    if(row.buyStrength>=70&&row.yield>=.06) return "Strong all-round squad profile";
+    if(row.incomeShare>.15) return "Core income player";
+    if(row.status==="rising") return "Form is improving";
+    return "Hold current tactical role";
+  }
+  function profileDetail(row){
+    if(row.risk>=65) return "Concentration, form or yield risk is elevated. Check the underlying case before the next purchase.";
+    if(row.buyStrength>=70) return "Aurora recruitment quality remains strong relative to the current income rate.";
+    return "The holding is contributing, but it is not currently the strongest candidate for additional capital.";
+  }
+  function closeDrawer(){
+    byId("analysisPlayerDrawer").classList.remove("open");
+    byId("analysisPlayerDrawer").setAttribute("aria-hidden","true");
+    byId("analysisDrawerBackdrop").hidden=true;
+    document.body.style.overflow="";
+  }
+  function stepDrawer(direction){
+    if(!ui.rows.length) return;
+    ui.drawerIndex=(ui.drawerIndex+direction+ui.rows.length)%ui.rows.length;
+    openDrawer(ui.rows[ui.drawerIndex].ticker);
+  }
+
+  function renderAll(){
+    ui.rows=getRows();
+    if(!ui.rows.length) return;
+    renderMatchCentre(ui.rows);
+    renderTacticalPitch(ui.rows);
+    renderClubForm();
+    renderQuadrant(ui.rows);
+    renderTarget(ui.rows);
+    renderDividend(ui.rows);
+    renderSectors(ui.rows);
+    renderDecisions(ui.rows);
+    renderPlayerTable();
+    setIncomeScenario(byId("incomeScenarioControls")?.querySelector("button.active")?.dataset.incomeScenario||"reinvest");
+  }
+  function queueRender(){
+    if(ui.renderQueued) return;
+    ui.renderQueued=true;
+    window.requestAnimationFrame(()=>{
+      ui.renderQueued=false;
+      try{renderAll();}catch(error){console.error("Analysis BEAST render failed",error);}
+    });
+  }
+
+  function activateButtons(container,button){
+    container?.querySelectorAll("button").forEach(item=>item.classList.toggle("active",item===button));
+  }
+  function bind(){
+    document.addEventListener("click",event=>{
+      const scroll=event.target.closest("[data-scroll-target]");
+      if(scroll){byId(scroll.dataset.scrollTarget)?.scrollIntoView({behavior:"smooth",block:"start"});return;}
+
+      const focus=event.target.closest("[data-tactical-focus]");
+      if(focus){ui.tacticalFocus=focus.dataset.tacticalFocus;activateButtons(byId("tacticalFocusControls"),focus);renderTacticalPitch(ui.rows);return;}
+
+      const range=event.target.closest("[data-form-range]");
+      if(range){ui.formRange=Number(range.dataset.formRange)||10;activateButtons(byId("clubFormRange"),range);renderClubForm();return;}
+
+      const quadrant=event.target.closest("[data-quadrant]");
+      if(quadrant){ui.quadrant=quadrant.dataset.quadrant;activateButtons(byId("quadrantFilter"),quadrant);renderQuadrant(ui.rows);return;}
+
+      const scenario=event.target.closest("[data-income-scenario]");
+      if(scenario){activateButtons(byId("incomeScenarioControls"),scenario);setIncomeScenario(scenario.dataset.incomeScenario);return;}
+
+      const dividend=event.target.closest("[data-dividend-mode]");
+      if(dividend){ui.dividendMode=dividend.dataset.dividendMode;activateButtons(byId("dividendModeControls"),dividend);renderDividend(ui.rows);return;}
+
+      const sectorMode=event.target.closest("[data-sector-mode]");
+      if(sectorMode){ui.sectorMode=sectorMode.dataset.sectorMode;activateButtons(byId("sectorModeControls"),sectorMode);renderSectors(ui.rows);return;}
+
+      const sector=event.target.closest("[data-sector-filter]");
+      if(sector){ui.sector=sector.dataset.sectorFilter;byId("analysisSectorFilter").value=ui.sector;renderSectors(ui.rows);renderPlayerTable();byId("player-performance-table").scrollIntoView({behavior:"smooth",block:"start"});return;}
+
+      const status=event.target.closest("[data-player-status]");
+      if(status){ui.status=status.dataset.playerStatus;activateButtons(byId("analysisStatusFilter"),status);renderPlayerTable();return;}
+
+      const best=event.target.closest("[data-analysis-player-best]");
+      if(best){const ticker=byId("bestPerformer").textContent.trim();openDrawer(ticker);return;}
+
+      const matchFilter=event.target.closest("[data-analysis-filter]");
+      if(matchFilter){
+        ui.status=matchFilter.dataset.analysisFilter==="positive"?"rising":"review";
+        byId("analysisStatusFilter").querySelectorAll("button").forEach(button=>button.classList.toggle("active",button.dataset.playerStatus===ui.status));
+        renderPlayerTable();byId("player-performance-table").scrollIntoView({behavior:"smooth",block:"start"});return;
+      }
+
+      const player=event.target.closest("[data-player-ticker]");
+      if(player){event.preventDefault();openDrawer(player.dataset.playerTicker);return;}
+    });
+
+    byId("analysisPlayerSearch")?.addEventListener("input",event=>{ui.search=event.target.value;renderPlayerTable();});
+    byId("analysisPlayerSort")?.addEventListener("change",event=>{ui.sort=event.target.value;renderPlayerTable();});
+    byId("analysisSectorFilter")?.addEventListener("change",event=>{ui.sector=event.target.value;renderSectors(ui.rows);renderPlayerTable();});
+    byId("clearSectorFilter")?.addEventListener("click",()=>{ui.sector="all";renderSectors(ui.rows);renderPlayerTable();});
+    byId("analysisDrawerClose")?.addEventListener("click",closeDrawer);
+    byId("analysisDrawerBackdrop")?.addEventListener("click",closeDrawer);
+    byId("analysisDrawerPrevious")?.addEventListener("click",()=>stepDrawer(-1));
+    byId("analysisDrawerNext")?.addEventListener("click",()=>stepDrawer(1));
+    document.addEventListener("keydown",event=>{if(event.key==="Escape")closeDrawer();});
+
+    const sections=["match-analysis","income-runway","dividend-contribution","squad-shape-sector","player-performance-table"];
+    if("IntersectionObserver" in window){
+      const observer=new IntersectionObserver(entries=>{
+        const current=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+        if(!current)return;
+        document.querySelectorAll(".analysis-command-tab").forEach(link=>link.classList.toggle("active",link.getAttribute("href")===`#${current.target.id}`));
+      },{rootMargin:"-20% 0px -65% 0px",threshold:[0,.2,.5]});
+      sections.forEach(id=>{const section=byId(id);if(section)observer.observe(section);});
+    }
+  }
+
+  bind();
+
+  const legacyBody=byId("playerTable");
+  if(legacyBody&&"MutationObserver" in window){
+    new MutationObserver(queueRender).observe(legacyBody,{childList:true,subtree:true});
+  }
+
+  if(typeof loadData==="function"){
+    const baseLoadData=loadData;
+    loadData=async function(force=false){
+      await baseLoadData(force);
+      queueRender();
+    };
+    window.loadData=loadData;
+  }
+
+  let attempts=0;
+  const wait=window.setInterval(()=>{
+    attempts++;
+    if((typeof state!=="undefined"&&state?.holdings?.length)||attempts>80){
+      window.clearInterval(wait);
+      queueRender();
+    }
+  },125);
+
+  window.addEventListener("pageshow",queueRender);
+})();
+</script></body>
 </html>
