@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Aurora Wealth Planner — M25 Financial Control</title>
+<title>Aurora Wealth Planner — M27 House Project Ledger</title>
 
 <style>
  :root {
@@ -2336,6 +2336,58 @@ body{padding:0!important;margin:0!important}
 @media(max-width:480px){.m22-protection,.m25-reconcile,.m25-sinking-summary{grid-template-columns:1fr!important}}
 </style>
 
+
+<style>
+/* ===================== M27 HOUSE PROJECT LEDGER ===================== */
+.m27-house-ledger{
+  border-color:rgba(167,139,250,.28)!important;
+  background:
+    radial-gradient(circle at 92% 0%,rgba(167,139,250,.12),transparent 35%),
+    radial-gradient(circle at 0% 100%,rgba(34,211,238,.07),transparent 32%),
+    linear-gradient(145deg,rgba(12,24,39,.96),rgba(6,14,25,.99))!important;
+}
+.m27-house-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:14px;align-items:stretch}
+.m27-house-copy{padding:15px;border-radius:18px;border:1px solid rgba(167,139,250,.20);background:rgba(167,139,250,.045)}
+.m27-house-copy h3{margin:4px 0 7px;font-size:22px;letter-spacing:-.7px}
+.m27-house-copy p{margin:0;color:#aabbd0;font-size:11px;line-height:1.58}
+.m27-house-rule{margin-top:11px;padding:10px 12px;border-left:3px solid #a78bfa;border-radius:13px;background:rgba(167,139,250,.065);font-size:10px;line-height:1.5;color:#d9d1ff}
+.m27-progress-card{display:grid;place-items:center;padding:15px;border-radius:18px;border:1px solid rgba(52,211,153,.22);background:radial-gradient(circle,rgba(52,211,153,.10),transparent 66%),rgba(255,255,255,.02);text-align:center}
+.m27-progress-ring{--m27-progress:0%;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(#34d399 0 var(--m27-progress),rgba(255,255,255,.075) var(--m27-progress));box-shadow:0 0 28px rgba(52,211,153,.09)}
+.m27-progress-ring:after{content:"";position:absolute;inset:11px;border-radius:50%;background:#071326}
+.m27-progress-ring div{position:relative;z-index:1}.m27-progress-ring strong{display:block;font-size:26px}.m27-progress-ring small{display:block;color:#91a5bd;font-size:8px;text-transform:uppercase;font-weight:950;letter-spacing:.65px;margin-top:3px}
+.m27-kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px;margin-top:13px}
+.m27-kpi{position:relative;overflow:hidden;padding:12px;border-radius:16px;border:1px solid rgba(125,211,252,.14);background:rgba(255,255,255,.024)}
+.m27-kpi:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--m27-accent,#22d3ee)}
+.m27-kpi span{display:block;color:#90a2b8;font-size:8px;font-weight:950;letter-spacing:.68px;text-transform:uppercase}.m27-kpi strong{display:block;margin-top:6px;font-size:18px}
+.m27-setup{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:9px;margin-top:14px;align-items:end}
+.m27-field{padding:11px;border-radius:15px;border:1px solid rgba(125,211,252,.13);background:rgba(255,255,255,.022)}
+.m27-field label{display:block;color:#90a2b8;font-size:8px;font-weight:950;letter-spacing:.65px;text-transform:uppercase;margin-bottom:6px}
+.m27-field input,.m27-field select{width:100%;padding:9px 10px!important;font-size:14px!important;font-weight:900!important}
+.m27-save-btn,.m27-add-btn,.m27-paid-btn,.m27-undo-payment,.m27-delete-entry{border-radius:11px!important;padding:9px 11px!important;font-size:9px!important;font-weight:950!important;white-space:nowrap}
+.m27-save-btn,.m27-add-btn{border:1px solid rgba(52,211,153,.34)!important;background:rgba(52,211,153,.09)!important;color:#8cffb8!important;min-height:43px}
+.m27-form{display:grid;grid-template-columns:1.25fr .65fr .72fr .8fr .85fr auto;gap:9px;margin-top:12px;align-items:end}
+.m27-ledger-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0 9px;padding-top:13px;border-top:1px solid rgba(125,211,252,.10)}
+.m27-ledger-head h3{margin:0;font-size:16px}.m27-ledger-head small{color:#22d3ee;font-size:9px;font-weight:900}
+.m27-ledger-list{display:grid;gap:8px}
+.m27-ledger-row{display:grid;grid-template-columns:minmax(0,1fr) 112px 112px 160px;gap:10px;align-items:center;padding:11px;border-radius:15px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.022)}
+.m27-ledger-row.reserved{border-color:rgba(251,191,36,.24);background:rgba(251,191,36,.035)}
+.m27-ledger-row.paid,.m27-ledger-row.historical{border-color:rgba(52,211,153,.23);background:rgba(52,211,153,.038)}
+.m27-entry-name{font-size:12px;font-weight:950}.m27-entry-meta{margin-top:4px;color:#91a5bd;font-size:8px;line-height:1.45}
+.m27-entry-amount{text-align:right;font-size:14px;font-weight:1000}.m27-entry-date{text-align:right;color:#b8c8da;font-size:9px;font-weight:850}
+.m27-status-pill{display:inline-flex;align-items:center;justify-content:center;padding:6px 8px;border-radius:999px;font-size:8px;font-weight:950;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.m27-status-pill.reserved{color:#ffe08a;border:1px solid rgba(251,191,36,.28);background:rgba(251,191,36,.07)}
+.m27-status-pill.paid,.m27-status-pill.historical{color:#9affc3;border:1px solid rgba(52,211,153,.28);background:rgba(52,211,153,.07)}
+.m27-entry-actions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.m27-paid-btn{border:1px solid rgba(52,211,153,.32)!important;background:rgba(52,211,153,.08)!important;color:#8cffb8!important}
+.m27-undo-payment{border:1px solid rgba(96,165,250,.28)!important;background:rgba(96,165,250,.07)!important;color:#b4ddff!important}
+.m27-delete-entry{border:1px solid rgba(251,113,133,.26)!important;background:rgba(251,113,133,.06)!important;color:#ffadba!important}
+.m27-note{margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(251,191,36,.20);background:rgba(251,191,36,.045);color:#d8cda7;font-size:9px;line-height:1.5}
+.m27-status{display:none;margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid rgba(52,211,153,.24);background:rgba(52,211,153,.055);color:#c7ffda;font-size:10px;line-height:1.45}.m27-status.show{display:block}.m27-status.error{border-color:rgba(251,113,133,.28);background:rgba(251,113,133,.07);color:#ffc0ca}
+@media(max-width:1250px){.m27-kpis{grid-template-columns:repeat(4,1fr)}.m27-form{grid-template-columns:1fr 1fr 1fr}.m27-add-btn{grid-column:1/-1}.m27-ledger-row{grid-template-columns:minmax(0,1fr) 100px 110px}.m27-entry-actions{grid-column:1/-1;justify-content:flex-start}}
+@media(max-width:820px){.m27-house-hero{grid-template-columns:1fr}.m27-setup{grid-template-columns:1fr 1fr}.m27-save-btn{grid-column:1/-1}.m27-kpis{grid-template-columns:1fr 1fr}.m27-form{grid-template-columns:1fr 1fr}.m27-ledger-row{grid-template-columns:1fr auto}.m27-entry-date{text-align:left}.m27-status-pill{justify-self:start}.m27-entry-actions{grid-column:1/-1}}
+@media(max-width:480px){.m27-setup,.m27-kpis,.m27-form{grid-template-columns:1fr}.m27-ledger-row{grid-template-columns:1fr}.m27-entry-amount,.m27-entry-date{text-align:left}}
+</style>
+
 </head>
 <body>
 
@@ -2616,6 +2668,66 @@ body{padding:0!important;margin:0!important}
       <div class="command-badge watch">GOAL MAP</div>
     </div>
     <div class="radar-grid" id="potHealthRadar"></div>
+  </section>
+
+
+
+
+  <!-- ===================== M27 HOUSE PROJECT LEDGER ===================== -->
+  <section class="section card m27-house-ledger" id="m27HouseProjectLedger">
+    <div class="command-title">
+      <div>
+        <h2>House Project Ledger</h2>
+        <div class="subv">Track available House Pot cash and completed renovation spending as one £19,000 project mission.</div>
+      </div>
+      <div class="command-badge good">M27 PROJECT CONTROL</div>
+    </div>
+
+    <div class="m27-house-hero">
+      <div class="m27-house-copy">
+        <div class="m13-eyebrow">HOUSE FUNDING RULE</div>
+        <h3>Spending on the house still counts as progress.</h3>
+        <p>Upcoming payments are reserved first. When you mark one paid, Aurora reduces the House Pot cash and increases confirmed house spending by the same amount. The total funded progress therefore stays unchanged.</p>
+        <div class="m27-house-rule"><strong>Funded progress = current House Pot cash + confirmed house spending.</strong> The payday allocator now uses this project progress—not the cash balance alone—to calculate the remaining gap.</div>
+      </div>
+      <div class="m27-progress-card">
+        <div class="m27-progress-ring" id="m27ProgressRing"><div><strong id="m27ProgressPct">0%</strong><small>Project funded</small></div></div>
+        <div class="subv" id="m27ProgressCaption" style="margin-top:10px">Calculating house progress…</div>
+      </div>
+    </div>
+
+    <div class="m27-kpis">
+      <div class="m27-kpi" style="--m27-accent:#a78bfa"><span>Project target</span><strong id="m27TargetKpi">£0.00</strong></div>
+      <div class="m27-kpi" style="--m27-accent:#22d3ee"><span>House Pot cash</span><strong id="m27CashKpi">£0.00</strong></div>
+      <div class="m27-kpi" style="--m27-accent:#fbbf24"><span>Upcoming reserved</span><strong id="m27ReservedKpi">£0.00</strong></div>
+      <div class="m27-kpi" style="--m27-accent:#60a5fa"><span>Available after costs</span><strong id="m27AvailableKpi">£0.00</strong></div>
+      <div class="m27-kpi" style="--m27-accent:#34d399"><span>Spent on house</span><strong id="m27SpentKpi">£0.00</strong></div>
+      <div class="m27-kpi" style="--m27-accent:#34d399"><span>Total funded progress</span><strong id="m27FundedKpi">£0.00</strong></div>
+      <div class="m27-kpi" style="--m27-accent:#fb7185"><span>Remaining to fund</span><strong id="m27RemainingKpi">£0.00</strong></div>
+    </div>
+
+    <div class="m27-setup">
+      <div class="m27-field"><label for="m27HouseTarget">House project target</label><input id="m27HouseTarget" type="number" min="0" step="0.01"></div>
+      <div class="m27-field"><label for="m27HouseCash">Current House Pot balance</label><input id="m27HouseCash" type="number" min="0" step="0.01"></div>
+      <div class="m27-field"><label for="m27OpeningSpend">Starting historical spend total</label><input id="m27OpeningSpend" type="number" min="0" step="0.01"></div>
+      <button class="m27-save-btn" id="m27SaveSetup" type="button">Save House Setup</button>
+    </div>
+
+    <div class="m27-note"><strong>Historical spending:</strong> use the starting total for one combined amount, or add previous payments individually below. Do not enter the same payment in both places, or it will be counted twice.</div>
+
+    <div class="m27-form">
+      <div class="m27-field"><label for="m27EntryName">Payment description</label><input id="m27EntryName" type="text" placeholder="e.g. Games-room panels"></div>
+      <div class="m27-field"><label for="m27EntryAmount">Amount</label><input id="m27EntryAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="m27-field"><label for="m27EntryDate">Due / paid date</label><input id="m27EntryDate" type="date"></div>
+      <div class="m27-field"><label for="m27EntryType">Payment type</label><select id="m27EntryType"><option value="historical">Already paid — do not deduct cash</option><option value="reserved">Upcoming — reserve from House Pot</option></select></div>
+      <div class="m27-field"><label for="m27EntryCategory">Category</label><input id="m27EntryCategory" type="text" placeholder="House project"></div>
+      <button class="m27-add-btn" id="m27AddEntry" type="button">+ Add Payment</button>
+    </div>
+
+    <div id="m27HouseStatus" class="m27-status"></div>
+
+    <div class="m27-ledger-head"><h3>House payment ledger</h3><small id="m27LedgerMeta">0 records</small></div>
+    <div class="m27-ledger-list" id="m27LedgerList"></div>
   </section>
 
 
@@ -3521,7 +3633,7 @@ const defaultEditablePots = [
   {id:"holiday_pot",name:"Holiday Pot",balance:0,target:500,note:"Holiday fund",priority:3},
   {id:"emergency_fund",name:"Emergency Fund",balance:700,target:7500,note:"Long-term safety reserve",priority:1},
   {id:"payday_rollover",name:"Payday Rollover",balance:0,target:350,note:"Short-term safety buffer",priority:1},
-  {id:"house_fund",name:"House Fund",balance:0,target:28000,note:"Renovation and home projects",priority:2}
+  {id:"house_fund",name:"House Fund",balance:16152.01,target:19000,note:"Renovation and home projects",priority:2}
 ];
 function freshEditablePots(){return JSON.parse(JSON.stringify(defaultEditablePots));}
 function migrateLegacyPots(parsed){
@@ -6408,6 +6520,505 @@ document.addEventListener("click",event=>{
   window.addEventListener("load",()=>{m22Render();m25ApplyPlannerClarity();m25RenderAudit()});
 })();
 </script>
+
+
+<script>
+/* ===================== M26 FULL PAY-CYCLE PROTECTION FIX ===================== */
+(function(){
+  'use strict';
+
+  const M26_LOGIC_VERSION = 26;
+  const m26OriginalBillProtection = window.m22BillProtection;
+  const m26OriginalSinkingFundPlan = window.m25SinkingFundPlan;
+  const m26OriginalComputePlan = window.m22ComputePlan;
+
+  function m26Date(value){
+    if(!value) return null;
+    const date = value instanceof Date
+      ? new Date(value)
+      : (typeof parseLocalDate === 'function' ? parseLocalDate(value) : new Date(value));
+    return date instanceof Date && !Number.isNaN(date.getTime()) ? date : null;
+  }
+
+  function m26Iso(date){
+    if(!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  }
+
+  function m26Norm(value){
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g,'and')
+      .replace(/[^a-z0-9]+/g,' ')
+      .trim();
+  }
+
+  function m26ItemDate(item){
+    return m26Date(item?._d || item?.due);
+  }
+
+  function m26ItemAmount(item){
+    return Math.max(0, Number((item?._cashAmount ?? item?.amount) || 0));
+  }
+
+  function m26Unique(items){
+    const seen = new Set();
+    return (items || []).filter(item => {
+      const due = item?.due || m26Iso(m26ItemDate(item));
+      const key = `${m26Norm(item?.name)}|${due}|${m26ItemAmount(item).toFixed(2)}`;
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function m26Window(paydayValue){
+    const payday = m26Date(paydayValue);
+    if(!payday) return null;
+    payday.setHours(0,0,0,0);
+    const nextPayday = new Date(payday);
+    nextPayday.setDate(nextPayday.getDate()+28);
+    nextPayday.setHours(0,0,0,0);
+    return {payday,nextPayday};
+  }
+
+  window.m26PayCycleItems = function(paydayValue){
+    const range = m26Window(paydayValue);
+    if(!range || typeof window.m25BeforePaydayItems !== 'function') return [];
+    const throughNextPayday = window.m25BeforePaydayItems(range.nextPayday) || [];
+    return m26Unique(throughNextPayday.filter(item => {
+      const due = m26ItemDate(item);
+      if(!due) return false;
+      due.setHours(0,0,0,0);
+      return due >= range.payday && due < range.nextPayday;
+    })).sort((a,b)=>m26ItemDate(a)-m26ItemDate(b));
+  };
+
+  window.m22BillProtection = function(paydayDate){
+    const prePaydayItems = typeof window.m25BeforePaydayItems === 'function'
+      ? window.m25BeforePaydayItems(paydayDate)
+      : (typeof m26OriginalBillProtection === 'function' ? (m26OriginalBillProtection(paydayDate)?.items || []) : []);
+    const cycleItems = window.m26PayCycleItems(paydayDate);
+    const items = m26Unique([...(prePaydayItems || []),...(cycleItems || [])])
+      .sort((a,b)=>m26ItemDate(a)-m26ItemDate(b));
+    const preBills = (prePaydayItems || []).reduce((sum,item)=>sum+m26ItemAmount(item),0);
+    const cycleBills = cycleItems.reduce((sum,item)=>sum+m26ItemAmount(item),0);
+    const bills = items.reduce((sum,item)=>sum+m26ItemAmount(item),0);
+    const recurring = (plannerState?.recurringCosts || [])
+      .filter(item=>item?.included!==false)
+      .reduce((sum,item)=>sum+Math.max(0,Number(item.amount||0)-Number(item.spentThisCycle||0)),0);
+    const minimum = Math.max(0,Number(plannerState?.minimumBuffer||0));
+    const holding = Math.max(0,Number(plannerState?.holdingBalance||0));
+    const required = minimum+bills+recurring;
+    const range = m26Window(paydayDate);
+    return {
+      items,
+      prePaydayItems,
+      cycleItems,
+      preBills,
+      cycleBills,
+      bills,
+      recurring,
+      minimum,
+      holding,
+      required,
+      headroom:Math.max(0,holding-required),
+      topUp:Math.max(0,required-holding),
+      paydayDate:range?m26Iso(range.payday):'',
+      nextPayday:range?m26Iso(range.nextPayday):''
+    };
+  };
+
+  function m26SourceLabel(item){
+    if(item?._sourceLabel) return String(item._sourceLabel);
+    if(item?.source === 'yearly') return 'Yearly Costs';
+    if(item?.source === 'future') return 'Future Costs';
+    return 'Scheduled Bills';
+  }
+
+  window.m25SinkingFundPlan = function(paydayValue){
+    const plan = typeof m26OriginalSinkingFundPlan === 'function'
+      ? m26OriginalSinkingFundPlan(paydayValue)
+      : {details:[],totalCommitments:0,totalRemaining:0,allocatedHeadroom:0,contribution:0};
+    const protection = window.m22BillProtection(paydayValue);
+    const cycleDetails = (protection.cycleItems || []).map(item=>({
+      ...item,
+      amount:m26ItemAmount(item),
+      sourceLabel:m26SourceLabel(item),
+      paydays:1,
+      contribution:m26ItemAmount(item),
+      dueThisCycle:true
+    }));
+    return {
+      ...plan,
+      protection,
+      cycleDetails,
+      cycleCommitments:protection.cycleBills || 0,
+      payCycleStart:protection.paydayDate,
+      payCycleEnd:protection.nextPayday
+    };
+  };
+
+  window.m22ComputePlan = function(){
+    const plan = typeof m26OriginalComputePlan === 'function' ? m26OriginalComputePlan() : null;
+    if(!plan) return plan;
+    plan.logicVersion = M26_LOGIC_VERSION;
+    const urgent = plan.actions?.find(action=>action.id==='holding:protection');
+    if(urgent){
+      urgent.meta = `Immediate cover through the following payday: ${m15Money(plan.protection.minimum)} buffer + ${m15Money(plan.protection.bills)} dated payments + ${m15Money(plan.protection.recurring)} remaining monthly spending`;
+    }
+    plan.cycleBills = Number(plan.protection?.cycleBills || 0);
+    return plan;
+  };
+
+  window.m22CurrentPlan = function(){
+    const mission = m22EnsureState();
+    if(mission.plan && mission.plan.logicVersion !== M26_LOGIC_VERSION && !m22AnyExecuted() && !mission.completed){
+      mission.plan = null;
+    }
+    return mission.plan || window.m22ComputePlan();
+  };
+
+  window.m25RenderSinking = function(plan){
+    const sinking = plan.sinking || window.m25SinkingFundPlan(plan.paydayDate);
+    const cycleTotal = Number(sinking.cycleCommitments || 0);
+    const futureContribution = Number(sinking.contribution || 0);
+
+    m15Set('m25SinkingTotal',cycleTotal > .009
+      ? `${m15Money(futureContribution)} FUTURE • ${m15Money(cycleTotal)} DUE THIS CYCLE`
+      : `${m15Money(futureContribution)} THIS PAYDAY`);
+    m15Set('m25LongTermTarget',m15Money(sinking.totalCommitments || 0));
+    m15Set('m25LongTermGap',m15Money(sinking.totalRemaining || 0));
+
+    const summary = document.getElementById('m25SinkingSummary');
+    if(summary){
+      summary.innerHTML = `
+        <div class="m25-sinking-stat"><span>Due this pay cycle</span><strong>${m15Money(cycleTotal)}</strong></div>
+        <div class="m25-sinking-stat"><span>Future commitments</span><strong>${m15Money(sinking.totalCommitments || 0)}</strong></div>
+        <div class="m25-sinking-stat"><span>Future funding gap</span><strong>${m15Money(sinking.totalRemaining || 0)}</strong></div>`;
+    }
+
+    const host = document.getElementById('m25SinkingList');
+    if(!host) return;
+    const cycleRows = (sinking.cycleDetails || []).map(item=>`
+      <div class="m25-sinking-row">
+        <div>
+          <strong>${m22Escape(item.name)}</strong>
+          <small>${m22Escape(item.sourceLabel)} • due ${m22Escape(dateLabel(item.due))} • due before ${m22Escape(dateLabel(sinking.payCycleEnd))} • protected in full</small>
+        </div>
+        <div class="m25-sinking-amount">${m15Money(item.amount)}<small>full cycle reserve</small></div>
+      </div>`);
+    const futureRows = (sinking.details || []).map(item=>`
+      <div class="m25-sinking-row">
+        <div>
+          <strong>${m22Escape(item.name)}</strong>
+          <small>${m22Escape(item.source === 'scheduled' ? 'Scheduled Bills' : item.source === 'yearly' ? 'Yearly Costs' : 'Future Costs')} • due ${m22Escape(dateLabel(item.due))} • ${item.paydays} payday${item.paydays===1?'':'s'} left • ${m15Money(item.remaining)} still to fund</small>
+        </div>
+        <div class="m25-sinking-amount">${m15Money(item.contribution)}<small>this payday</small></div>
+      </div>`);
+    const rows = [...cycleRows,...futureRows];
+    host.innerHTML = rows.length
+      ? rows.join('')
+      : '<div class="m22-empty">No dated commitments currently need protection or a sinking-fund contribution.</div>';
+  };
+
+  const m26OriginalInstruction = window.m22Instruction;
+  window.m22Instruction = function(plan){
+    if(typeof m26OriginalInstruction === 'function') m26OriginalInstruction(plan);
+    const el = document.getElementById('m15Instruction');
+    if(!el || plan.unresolvedProtection > .009 || plan.unresolvedRegularHolding > .009 || plan.shortfall > .009) return;
+    const cycleBills = Number(plan.protection?.cycleBills || 0);
+    if(cycleBills > .009){
+      el.className = 'm22-callout good';
+      el.innerHTML = `Current-account payday plan ready. <strong>${m15Money(cycleBills)}</strong> due between this payday and the following payday is protected in full. Any required immediate top-up is <strong>${m15Money(plan.urgentHoldingAmount)}</strong>, with <strong>${m15Money(plan.regularHoldingAmount)}</strong> added for later dated commitments.`;
+    }
+  };
+
+  window.addEventListener('load',()=>{
+    const mission = typeof m22EnsureState === 'function' ? m22EnsureState() : null;
+    if(mission && mission.plan && mission.plan.logicVersion !== M26_LOGIC_VERSION && !m22AnyExecuted() && !mission.completed){
+      mission.plan = null;
+    }
+    if(typeof m22Render === 'function') m22Render();
+    if(typeof m25ApplyPlannerClarity === 'function') m25ApplyPlannerClarity();
+  });
+})();
+</script>
+
+
+<script>
+/* ===================== M27 HOUSE PROJECT LEDGER ENGINE ===================== */
+(function(){
+  'use strict';
+
+  const M27_VERSION = 27;
+  const M27_TARGET = 19000;
+  const M27_OPENING_CASH = 16152.01;
+  const M27_SEED_ENTRIES = [
+    {id:'m27-electrician-20260726',name:'Electrician',amount:280,due:'2026-07-26',category:'Electrical',status:'reserved',deducted:false,paidDate:'',notes:'Upcoming house payment'},
+    {id:'m27-window-20260727',name:'Window repair',amount:134,due:'2026-07-27',category:'Windows',status:'reserved',deducted:false,paidDate:'',notes:'Upcoming house payment'}
+  ];
+
+  function m27Money(value){
+    return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));
+  }
+  function m27Number(value){
+    const number = Number(String(value ?? '').replace(/[^0-9.-]/g,''));
+    return Number.isFinite(number) ? number : 0;
+  }
+  function m27Escape(value){
+    return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+  }
+  function m27Today(){
+    const date = new Date();
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  }
+  function m27HousePot(){
+    if(!Array.isArray(plannerState.editablePots)) plannerState.editablePots = [];
+    let pot = plannerState.editablePots.find(item=>String(item?.id||'')==='house_fund')
+      || plannerState.editablePots.find(item=>String(item?.name||'').trim().toLowerCase().includes('house'));
+    if(!pot){
+      pot = {id:'house_fund',name:'House Fund',balance:M27_OPENING_CASH,target:M27_TARGET,note:'Renovation and home projects',priority:2};
+      plannerState.editablePots.push(pot);
+    }
+    return pot;
+  }
+  function m27NormaliseEntry(item,index){
+    const status = ['reserved','paid','historical'].includes(String(item?.status||'')) ? String(item.status) : (item?.paid ? 'paid' : 'reserved');
+    return {
+      id:String(item?.id||`house-${Date.now()}-${index}`),
+      name:String(item?.name||'House payment'),
+      amount:Math.max(0,m27Number(item?.amount)),
+      due:String(item?.due||''),
+      category:String(item?.category||'House project'),
+      status,
+      deducted:Boolean(item?.deducted),
+      paidDate:String(item?.paidDate||''),
+      notes:String(item?.notes||'')
+    };
+  }
+  function m27EnsureState(){
+    const pot = m27HousePot();
+    if(!plannerState.houseProjectLedger || typeof plannerState.houseProjectLedger !== 'object'){
+      plannerState.houseProjectLedger = {version:M27_VERSION,openingHistoricalSpend:0,entries:[]};
+    }
+    const ledger = plannerState.houseProjectLedger;
+    ledger.version = M27_VERSION;
+    ledger.openingHistoricalSpend = Math.max(0,m27Number(ledger.openingHistoricalSpend));
+    ledger.entries = Array.isArray(ledger.entries) ? ledger.entries.map(m27NormaliseEntry) : [];
+
+    if(!plannerState.m27HouseProjectMigrated){
+      pot.target = M27_TARGET;
+      if(m27Number(pot.balance) <= 0) pot.balance = M27_OPENING_CASH;
+      M27_SEED_ENTRIES.forEach(seed=>{
+        const exists = ledger.entries.some(entry=>entry.id===seed.id || (String(entry.name).toLowerCase()===seed.name.toLowerCase() && Math.abs(entry.amount-seed.amount)<.01));
+        if(!exists) ledger.entries.push({...seed});
+      });
+      plannerState.m27HouseProjectMigrated = true;
+      if(typeof savePlannerData === 'function') savePlannerData();
+    }
+    return {pot,ledger};
+  }
+  function m27Metrics(){
+    const {pot,ledger} = m27EnsureState();
+    const cash = Math.max(0,m27Number(pot.balance));
+    const target = Math.max(0,m27Number(pot.target));
+    const reserved = ledger.entries.filter(entry=>entry.status==='reserved').reduce((sum,entry)=>sum+entry.amount,0);
+    const entrySpend = ledger.entries.filter(entry=>entry.status==='paid'||entry.status==='historical').reduce((sum,entry)=>sum+entry.amount,0);
+    const spent = Math.max(0,m27Number(ledger.openingHistoricalSpend)) + entrySpend;
+    const funded = cash + spent;
+    const remaining = Math.max(0,target-funded);
+    const available = Math.max(0,cash-reserved);
+    const progress = target>0 ? Math.min(100,(funded/target)*100) : (funded>0?100:0);
+    return {pot,ledger,cash,target,reserved,spent,funded,remaining,available,progress};
+  }
+  function m27Set(id,value){const el=document.getElementById(id);if(el)el.textContent=value}
+  function m27SetStatus(message,error=false){
+    const box=document.getElementById('m27HouseStatus');
+    if(!box)return;
+    box.textContent=message;
+    box.classList.toggle('error',Boolean(error));
+    box.classList.add('show');
+    clearTimeout(window.m27StatusTimer);
+    window.m27StatusTimer=setTimeout(()=>box.classList.remove('show'),5200);
+  }
+  function m27StatusLabel(status){return status==='historical'?'Historical paid':status==='paid'?'Paid from House Pot':'Reserved'}
+  function m27DateLabel(value){
+    if(!value)return 'No date';
+    try{return typeof dateLabel==='function'?dateLabel(value):new Date(value).toLocaleDateString('en-GB')}catch(_){return value}
+  }
+  function m27RenderLedger(metrics){
+    const host=document.getElementById('m27LedgerList');
+    if(!host)return;
+    const entries=[...metrics.ledger.entries].sort((a,b)=>{
+      const rank={reserved:0,paid:1,historical:2};
+      return (rank[a.status]??3)-(rank[b.status]??3) || String(a.due||'9999').localeCompare(String(b.due||'9999')) || a.name.localeCompare(b.name,'en-GB');
+    });
+    m27Set('m27LedgerMeta',`${entries.length} record${entries.length===1?'':'s'} • ${m27Money(metrics.reserved)} reserved • ${m27Money(metrics.spent)} spent`);
+    host.innerHTML=entries.length?entries.map(entry=>`
+      <div class="m27-ledger-row ${entry.status}">
+        <div><div class="m27-entry-name">${m27Escape(entry.name)}</div><div class="m27-entry-meta">${m27Escape(entry.category||'House project')}${entry.notes?` • ${m27Escape(entry.notes)}`:''}${entry.status==='historical'?' • cash was already adjusted before this ledger':''}</div></div>
+        <div class="m27-entry-date">${m27Escape(m27DateLabel(entry.paidDate||entry.due))}</div>
+        <div><span class="m27-status-pill ${entry.status}">${m27StatusLabel(entry.status)}</span><div class="m27-entry-amount">${m27Money(entry.amount)}</div></div>
+        <div class="m27-entry-actions">
+          ${entry.status==='reserved'?`<button class="m27-paid-btn" type="button" data-m27-pay="${m27Escape(entry.id)}">Mark paid</button>`:''}
+          ${entry.status==='paid'&&entry.deducted?`<button class="m27-undo-payment" type="button" data-m27-undo="${m27Escape(entry.id)}">Undo payment</button>`:''}
+          <button class="m27-delete-entry" type="button" data-m27-delete="${m27Escape(entry.id)}">Delete</button>
+        </div>
+      </div>`).join(''):'<div class="m22-empty">No house payments have been recorded yet.</div>';
+  }
+  function m27Render(){
+    const metrics=m27Metrics();
+    m27Set('m27TargetKpi',m27Money(metrics.target));
+    m27Set('m27CashKpi',m27Money(metrics.cash));
+    m27Set('m27ReservedKpi',m27Money(metrics.reserved));
+    m27Set('m27AvailableKpi',m27Money(metrics.available));
+    m27Set('m27SpentKpi',m27Money(metrics.spent));
+    m27Set('m27FundedKpi',m27Money(metrics.funded));
+    m27Set('m27RemainingKpi',m27Money(metrics.remaining));
+    m27Set('m27ProgressPct',`${metrics.progress.toFixed(1)}%`);
+    m27Set('m27ProgressCaption',metrics.remaining>.009?`${m27Money(metrics.remaining)} remains to reach the ${m27Money(metrics.target)} project target.`:`Project target reached • ${m27Money(Math.max(0,metrics.funded-metrics.target))} above target.`);
+    document.getElementById('m27ProgressRing')?.style.setProperty('--m27-progress',`${metrics.progress}%`);
+    const target=document.getElementById('m27HouseTarget'),cash=document.getElementById('m27HouseCash'),opening=document.getElementById('m27OpeningSpend');
+    if(target && document.activeElement!==target)target.value=metrics.target.toFixed(2);
+    if(cash && document.activeElement!==cash)cash.value=metrics.cash.toFixed(2);
+    if(opening && document.activeElement!==opening)opening.value=metrics.ledger.openingHistoricalSpend.toFixed(2);
+    m27RenderLedger(metrics);
+  }
+  function m27SaveSetup(){
+    const {pot,ledger}=m27EnsureState();
+    const target=Math.max(0,m27Number(document.getElementById('m27HouseTarget')?.value));
+    const cash=Math.max(0,m27Number(document.getElementById('m27HouseCash')?.value));
+    const opening=Math.max(0,m27Number(document.getElementById('m27OpeningSpend')?.value));
+    pot.target=target;pot.balance=cash;ledger.openingHistoricalSpend=opening;
+    if(typeof savePlannerData==='function')savePlannerData();
+    if(typeof renderPotEditor==='function')renderPotEditor();
+    if(typeof runPlanner==='function')runPlanner();else m27Render();
+    m27SetStatus(`House setup saved. The project is ${m27Money(m27Metrics().funded)} funded with ${m27Money(m27Metrics().remaining)} remaining.`);
+  }
+  function m27AddEntry(){
+    const {ledger}=m27EnsureState();
+    const name=String(document.getElementById('m27EntryName')?.value||'').trim();
+    const amount=Math.max(0,m27Number(document.getElementById('m27EntryAmount')?.value));
+    const due=String(document.getElementById('m27EntryDate')?.value||'');
+    const type=String(document.getElementById('m27EntryType')?.value||'historical');
+    const category=String(document.getElementById('m27EntryCategory')?.value||'House project').trim()||'House project';
+    if(!name||amount<=0){m27SetStatus('Enter a payment description and an amount above £0.',true);return}
+    ledger.entries.push({id:`house-${Date.now()}-${Math.random().toString(16).slice(2)}`,name,amount,due,category,status:type==='reserved'?'reserved':'historical',deducted:false,paidDate:type==='historical'?(due||m27Today()):'',notes:type==='historical'?'Previous payment added without deducting current cash':'Upcoming House Pot payment'});
+    ['m27EntryName','m27EntryAmount','m27EntryDate','m27EntryCategory'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+    if(typeof savePlannerData==='function')savePlannerData();
+    if(typeof runPlanner==='function')runPlanner();else m27Render();
+    m27SetStatus(type==='reserved'?`${name} is reserved from the House Pot.`:`${name} was added as historical spending without changing the current House Pot balance.`);
+  }
+  function m27FindEntry(id){const {ledger}=m27EnsureState();return ledger.entries.find(entry=>entry.id===id)}
+  function m27PayEntry(id){
+    const entry=m27FindEntry(id),metrics=m27Metrics();
+    if(!entry||entry.status!=='reserved')return;
+    if(metrics.cash+0.009<entry.amount){m27SetStatus(`The House Pot has ${m27Money(metrics.cash)}, which is not enough to record this ${m27Money(entry.amount)} payment.`,true);return}
+    metrics.pot.balance=Math.max(0,metrics.cash-entry.amount);
+    entry.status='paid';entry.deducted=true;entry.paidDate=m27Today();
+    if(typeof savePlannerData==='function')savePlannerData();
+    if(typeof renderPotEditor==='function')renderPotEditor();
+    if(typeof runPlanner==='function')runPlanner();else m27Render();
+    m27SetStatus(`${entry.name} paid. House Pot cash fell by ${m27Money(entry.amount)}, while project spending rose by the same amount.`);
+  }
+  function m27UndoEntry(id){
+    const entry=m27FindEntry(id),metrics=m27Metrics();
+    if(!entry||entry.status!=='paid'||!entry.deducted)return;
+    metrics.pot.balance=metrics.cash+entry.amount;
+    entry.status='reserved';entry.deducted=false;entry.paidDate='';
+    if(typeof savePlannerData==='function')savePlannerData();
+    if(typeof renderPotEditor==='function')renderPotEditor();
+    if(typeof runPlanner==='function')runPlanner();else m27Render();
+    m27SetStatus(`${entry.name} was undone. ${m27Money(entry.amount)} was restored to the House Pot and returned to reserved costs.`);
+  }
+  function m27DeleteEntry(id){
+    const {pot,ledger}=m27EnsureState();
+    const index=ledger.entries.findIndex(entry=>entry.id===id);if(index<0)return;
+    const entry=ledger.entries[index];
+    if(entry.status==='paid'&&entry.deducted)pot.balance=m27Number(pot.balance)+entry.amount;
+    ledger.entries.splice(index,1);
+    if(typeof savePlannerData==='function')savePlannerData();
+    if(typeof renderPotEditor==='function')renderPotEditor();
+    if(typeof runPlanner==='function')runPlanner();else m27Render();
+    m27SetStatus(`${entry.name} was deleted${entry.status==='paid'&&entry.deducted?' and its cash deduction was restored':''}.`);
+  }
+
+  window.m27HouseMetrics=m27Metrics;
+  window.m27HouseProjectProgress=function(){return m27Metrics().funded};
+
+  const m27OriginalPotGap=window.m15PotGap;
+  window.m15PotGap=function(pot){
+    const id=String(pot?.id||'');
+    const name=String(pot?.name||'').toLowerCase();
+    if(id==='house_fund'||name.includes('house')){
+      const metrics=m27Metrics();
+      return Math.max(0,Number(pot?.target||metrics.target)-metrics.funded);
+    }
+    return typeof m27OriginalPotGap==='function'?m27OriginalPotGap(pot):Math.max(0,Number(pot?.target||0)-Number(pot?.balance||0));
+  };
+
+  window.renderPotHealthRadar=function(){
+    const grid=document.getElementById('potHealthRadar');if(!grid)return;
+    const pots=[...(Array.isArray(plannerState.editablePots)?plannerState.editablePots:[])];
+    pots.sort((a,b)=>{
+      const pa=normalisePotPriority(a.priority),pb=normalisePotPriority(b.priority);if(pa!==pb)return pa-pb;
+      const av=(Number(a.target||0)>0?Math.max(0,Number(a.target||0)-m15PotGap(a))/Number(a.target||1):1);
+      const bv=(Number(b.target||0)>0?Math.max(0,Number(b.target||0)-m15PotGap(b))/Number(b.target||1):1);
+      return av-bv||String(a.name||'').localeCompare(String(b.name||''),'en-GB');
+    });
+    const houseMetrics=m27Metrics();
+    grid.innerHTML=pots.map(p=>{
+      const isHouse=String(p.id||'')==='house_fund'||String(p.name||'').toLowerCase().includes('house');
+      const current=isHouse?houseMetrics.funded:Number(p.balance||0),target=Number(p.target||0);
+      const progress=target>0?Math.min(100,(current/target)*100):(current>0?100:0);
+      const cls=progress>=85?'good':progress>=45?'watch':'risk',priority=normalisePotPriority(p.priority),targetText=target>0?`£${formatMoney(target)}`:'Open target';
+      const detail=isHouse?`£${formatMoney(houseMetrics.cash)} cash + £${formatMoney(houseMetrics.spent)} spent = £${formatMoney(houseMetrics.funded)} funded`:`£${formatMoney(current)} / ${targetText} • ${progress.toFixed(0)}%`;
+      return `<div class="pot-radar-card ${cls} priority-${priority}"><div class="pot-radar-top"><div class="pot-name">${m27Escape(p.name||'Unnamed Pot')}</div><span class="pot-priority-rank">P${priority} ${priorityLabel(priority)}</span></div><div class="subv">${m27Escape(p.note||'Personal goal pot')}</div><div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div><div class="subv">${detail}${isHouse?` • ${progress.toFixed(0)}%`:''}</div></div>`;
+    }).join('')||'<div class="subv">Add pots in the Editable Pot Manager to build your radar.</div>';
+  };
+
+  try{
+    if(typeof M14_VIEWS!=='undefined'&&M14_VIEWS.m13PotHealth&&!M14_VIEWS.m13PotHealth.headings.includes('House Project Ledger')){
+      M14_VIEWS.m13PotHealth.headings.splice(2,0,'House Project Ledger');
+    }
+    if(typeof M16_VIEW_DATA!=='undefined'&&M16_VIEW_DATA.m13PotHealth){
+      M16_VIEW_DATA.m13PotHealth.kpis=()=>{
+        const pots=Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[];
+        const totalCash=pots.reduce((sum,p)=>sum+Number(p.balance||0),0);
+        const target=pots.reduce((sum,p)=>sum+Number(p.target||0),0);
+        const gap=pots.reduce((sum,p)=>sum+Number(m15PotGap(p)||0),0);
+        const critical=pots.filter(p=>Number(p.priority||2)===1&&m15PotGap(p)>.009).length;
+        return [['Total pot cash',m16Money(totalCash),'#22d3ee'],['Combined targets',m16Money(target),'#a78bfa'],['Remaining funding gap',m16Money(gap),'#fbbf24'],['Critical pots below target',String(critical),'#fb7185']];
+      };
+    }
+  }catch(error){console.warn('M27 view integration warning',error)}
+
+  const m27OriginalRunPlanner=window.runPlanner;
+  if(typeof m27OriginalRunPlanner==='function'){
+    window.runPlanner=function(){m27EnsureState();const result=m27OriginalRunPlanner.apply(this,arguments);m27Render();return result};
+  }
+  const m27OriginalResetPlannerData=window.resetPlannerData;
+  if(typeof m27OriginalResetPlannerData==='function'){
+    window.resetPlannerData=function(){const result=m27OriginalResetPlannerData.apply(this,arguments);plannerState.m27HouseProjectMigrated=false;m27EnsureState();return result};
+  }
+
+  document.getElementById('m27SaveSetup')?.addEventListener('click',m27SaveSetup);
+  document.getElementById('m27AddEntry')?.addEventListener('click',m27AddEntry);
+  document.getElementById('m27LedgerList')?.addEventListener('click',event=>{
+    const pay=event.target.closest('[data-m27-pay]');if(pay){m27PayEntry(pay.dataset.m27Pay);return}
+    const undo=event.target.closest('[data-m27-undo]');if(undo){m27UndoEntry(undo.dataset.m27Undo);return}
+    const del=event.target.closest('[data-m27-delete]');if(del)m27DeleteEntry(del.dataset.m27Delete);
+  });
+  document.getElementById('savePotsBtn')?.addEventListener('click',()=>setTimeout(m27Render,0));
+  document.getElementById('potEditorGrid')?.addEventListener('change',()=>setTimeout(m27Render,0));
+  window.addEventListener('load',()=>{m27EnsureState();m27Render();if(typeof renderPotHealthRadar==='function')renderPotHealthRadar({})});
+  m27EnsureState();
+  m27Render();
+})();
+</script>
+
 
 </body>
 </html>
