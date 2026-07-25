@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Aurora Wealth Planner — M27 House Project Ledger</title>
+<title>Aurora Wealth Planner — M29 House Payment History Fix</title>
 
 <style>
  :root {
@@ -2386,6 +2386,98 @@ body{padding:0!important;margin:0!important}
 @media(max-width:1250px){.m27-kpis{grid-template-columns:repeat(4,1fr)}.m27-form{grid-template-columns:1fr 1fr 1fr}.m27-add-btn{grid-column:1/-1}.m27-ledger-row{grid-template-columns:minmax(0,1fr) 100px 110px}.m27-entry-actions{grid-column:1/-1;justify-content:flex-start}}
 @media(max-width:820px){.m27-house-hero{grid-template-columns:1fr}.m27-setup{grid-template-columns:1fr 1fr}.m27-save-btn{grid-column:1/-1}.m27-kpis{grid-template-columns:1fr 1fr}.m27-form{grid-template-columns:1fr 1fr}.m27-ledger-row{grid-template-columns:1fr auto}.m27-entry-date{text-align:left}.m27-status-pill{justify-self:start}.m27-entry-actions{grid-column:1/-1}}
 @media(max-width:480px){.m27-setup,.m27-kpis,.m27-form{grid-template-columns:1fr}.m27-ledger-row{grid-template-columns:1fr}.m27-entry-amount,.m27-entry-date{text-align:left}}
+
+
+/* ===================== M28 READABLE FUNDING NOTES ===================== */
+.m28-note-cell{
+  min-width:310px!important;
+  width:340px;
+  vertical-align:top!important;
+}
+.m28-notes-textarea,
+.pot-editor-row textarea.pot-note{
+  display:block;
+  width:100%;
+  min-width:280px;
+  min-height:78px;
+  padding:12px 13px;
+  border-radius:13px;
+  border:1px solid rgba(98,243,255,.22);
+  background:rgba(4,16,30,.82);
+  color:#eef8ff;
+  font:inherit;
+  font-size:16px!important;
+  line-height:1.45;
+  letter-spacing:.01em;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  resize:vertical;
+  overflow:hidden;
+  box-sizing:border-box;
+  -webkit-text-size-adjust:100%;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.015);
+}
+.m28-notes-textarea:focus,
+.pot-editor-row textarea.pot-note:focus{
+  outline:none;
+  border-color:rgba(98,243,255,.72);
+  box-shadow:0 0 0 3px rgba(98,243,255,.10), inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.m28-notes-textarea::placeholder,
+.pot-editor-row textarea.pot-note::placeholder{color:#71859a;opacity:1}
+.m28-notes-label{
+  display:block;
+  margin:0 0 7px 2px;
+  color:#8feeff;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+.m28-note-display{
+  min-width:280px;
+  max-width:520px;
+  padding:11px 13px;
+  border-radius:12px;
+  border:1px solid rgba(98,243,255,.16);
+  background:rgba(98,243,255,.045);
+  color:#dcefff;
+  font-size:15px;
+  line-height:1.5;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.m28-note-display.is-empty{color:#71859a;font-style:italic}
+.m18-row-paid .m28-notes-textarea,
+.m21-yearly-row-paid .m28-notes-textarea{
+  border-color:rgba(80,255,143,.28);
+  background:rgba(80,255,143,.045);
+}
+.m18-row-excluded .m28-notes-textarea{
+  border-color:rgba(255,200,87,.25);
+  background:rgba(255,200,87,.035);
+}
+#archivedBillsBody td:nth-child(6){min-width:310px;vertical-align:top}
+#futureCostsBody td:nth-child(6){min-width:310px;vertical-align:top}
+#yearlyRecurringCostsBody td:nth-child(9){min-width:310px;vertical-align:top}
+.pot-editor-row textarea.pot-note{
+  grid-column:1/-1;
+  min-width:0;
+  min-height:72px;
+}
+.pot-radar-card .m28-note-display{
+  min-width:0;
+  max-width:none;
+  margin:8px 0 10px;
+  padding:9px 10px;
+  font-size:13px;
+}
+@media(max-width:900px){
+  .m28-note-cell{min-width:290px!important;width:310px}
+  .m28-notes-textarea{min-width:260px}
+  .m28-note-display{min-width:250px}
+}
+
 </style>
 
 </head>
@@ -3114,7 +3206,7 @@ body{padding:0!important;margin:0!important}
 
   <div class="grid two-grid" style="margin-bottom:12px;">
     <button class="add-btn" id="addScheduledBtn">+ Add Scheduled Bill</button>
-    <div class="subv">Use this for confirmed bills with a proper due date, planned amount, paid tracking, rolling and archiving.</div>
+    <div class="subv">Use this for confirmed bills with a proper due date, planned amount, paid tracking, rolling and archiving. Funding notes now expand and remain readable after completion.</div>
   </div>
   <div class="m18-sort-note">Bills are automatically grouped by the exact category you enter and ordered by due date. Changing “Direct Debit” to “Subscription” will immediately create or move it into the Subscription category.</div>
   <div id="m18DynamicBillGroups"></div>
@@ -3291,7 +3383,7 @@ body{padding:0!important;margin:0!important}
     <h2>Editable Future Costs</h2>
     <div class="grid two-grid" style="margin-bottom:12px;">
       <button class="add-btn" id="addFutureBtn">Add Future Cost</button>
-      <div class="subv">Use this for things like next holiday, season ticket, or future dentist costs.</div>
+      <div class="subv">Use this for things like next holiday, season ticket, or future dentist costs. Use the expanded note to record which Monzo pot is responsible.</div>
     </div>
 
     <div class="table-wrap">
@@ -3365,6 +3457,7 @@ body{padding:0!important;margin:0!important}
             <th>Next Auto-Renewal</th>
             <th>Included</th>
             <th>Category</th>
+            <th>Notes</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -3476,7 +3569,7 @@ body{padding:0!important;margin:0!important}
   </section>
 
   <div class="footer">
-    Aurora Wealth Centre M25 • Due-Date Funding + Actual Transfers + Reconciliation + Duplicate Audit
+    Aurora Wealth Centre M29 • House Payment History Fix + Due-Date Funding + Reconciliation
   </div>
 </div>
 
@@ -3575,7 +3668,7 @@ const defaultRecurringCosts = [
 ];
 
 const defaultYearlyRecurringCosts = [
-  { id: "tv_yearly", name: "TV Subscription", due: "2027-03-15", amount: 50, paid: false, deducted: false, paidAmount: 0, lastPaidDate: "", nextRenewalDue: "2028-03-15", included: true, category: "Subscription" },
+  { id: "tv_yearly", name: "TV Subscription", due: "2027-03-15", amount: 50, paid: false, deducted: false, paidAmount: 0, lastPaidDate: "", nextRenewalDue: "2028-03-15", included: true, category: "Subscription", notes: "" },
   { id: "ps_yearly", name: "PlayStation Subscription", due: "2026-11-14", amount: 99.99, paid: false, deducted: false, paidAmount: 0, lastPaidDate: "", nextRenewalDue: "2027-11-14", included: true, category: "Subscription" }
 ];
 
@@ -3617,7 +3710,8 @@ function normaliseYearlyRecurringCosts(items) {
       lastPaidDate: String(item?.lastPaidDate || ""),
       nextRenewalDue: String(item?.nextRenewalDue || m21NextRenewalDate(due)),
       included: item?.included !== false,
-      category: String(item?.category || "Other")
+      category: String(item?.category || "Other"),
+      notes: String(item?.notes || "")
     };
   });
 }
@@ -4144,7 +4238,7 @@ function renderScheduledBills() {
           <option value="yearly" ${bill.recurrence==="yearly"?"selected":""}>Yearly</option>
         </select></td>
         <td><span class="m20-next-date">${m20NextRollLabel(bill)}</span></td>
-        <td><input class="table-input" type="text" value="${m18Escape(bill.notes)}" data-section="scheduled" data-index="${index}" data-field="notes"></td>
+        <td class="m28-note-cell"><label class="m28-notes-label" for="m28ScheduledNote_${index}">Funding note</label><textarea id="m28ScheduledNote_${index}" class="m28-notes-textarea" rows="3" placeholder="Example: Covered by Car Costs Pot — do not fund through Holding Pot." data-section="scheduled" data-index="${index}" data-field="notes">${m18Escape(bill.notes)}</textarea></td>
         <td><button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.paid && bill.recurrence!=="none" ? "" : "disabled"}>Roll →</button></td>
         <td><button class="quick-btn" data-archive-section="scheduled" data-archive-index="${index}" ${bill.paid ? "" : "disabled"}>Archive</button></td>
         <td><button class="delete-btn" data-delete-section="scheduled" data-delete-index="${index}">Delete</button></td>
@@ -4237,7 +4331,7 @@ function renderArchivedBills() {
       <td>£${formatMoney(bill.amount || 0)}</td>
       <td>£${formatMoney(bill.actualPaid || 0)}</td>
       <td>${bill.category || ""}</td>
-      <td>${bill.notes || ""}</td>
+      <td><div class="m28-note-display ${String(bill.notes || "").trim() ? "" : "is-empty"}">${String(bill.notes || "").trim() ? m18Escape(bill.notes) : "No funding note recorded"}</div></td>
       <td>${bill.archivedAt ? new Date(bill.archivedAt).toLocaleDateString("en-GB") : "-"}</td>
       <td><button class="delete-btn" data-delete-section="archived" data-delete-index="${index}">Delete</button></td>
     `;
@@ -4258,7 +4352,7 @@ function renderFutureCosts() {
       <td><input class="table-input" type="number" step="0.01" value="${bill.amount}" data-section="future" data-index="${index}" data-field="amount"></td>
       <td><div class="check-wrap"><input type="checkbox" ${bill.included ? "checked" : ""} data-section="future" data-index="${index}" data-field="included"><span>${bill.included ? "Yes" : "No"}</span></div></td>
       <td><input class="table-input" type="text" value="${bill.category || ""}" data-section="future" data-index="${index}" data-field="category"></td>
-      <td><input class="table-input" type="text" value="${bill.notes || ""}" data-section="future" data-index="${index}" data-field="notes"></td>
+      <td class="m28-note-cell"><label class="m28-notes-label" for="m28FutureNote_${index}">Funding note</label><textarea id="m28FutureNote_${index}" class="m28-notes-textarea" rows="3" placeholder="State which pot covers this cost, or why it is excluded." data-section="future" data-index="${index}" data-field="notes">${m18Escape(bill.notes)}</textarea></td>
       <td><button class="delete-btn" data-delete-section="future" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
@@ -4440,6 +4534,7 @@ function renderYearlyRecurringCosts() {
       <td><span class="m21-renewal-pill">${renewal ? dateLabel(renewal) : "Add due date"}</span></td>
       <td><div class="check-wrap"><input type="checkbox" ${cost.included ? "checked" : ""} data-section="yearlyRecurring" data-index="${index}" data-field="included"><span>${cost.included ? "Yes" : "No"}</span></div></td>
       <td><input class="table-input" type="text" value="${m18Escape(cost.category)}" data-section="yearlyRecurring" data-index="${index}" data-field="category"></td>
+      <td class="m28-note-cell"><label class="m28-notes-label" for="m28YearlyNote_${index}">Funding note</label><textarea id="m28YearlyNote_${index}" class="m28-notes-textarea" rows="3" placeholder="Example: Fully covered by a named Monzo pot." data-section="yearlyRecurring" data-index="${index}" data-field="notes">${m18Escape(cost.notes || "")}</textarea></td>
       <td><button class="delete-btn" data-delete-section="yearlyRecurring" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
@@ -5100,6 +5195,12 @@ function handleRollForward(e) {
   runPlanner();
 }
 
+function m28AutoGrowNotes(element) {
+  if (!element || element.tagName !== "TEXTAREA") return;
+  element.style.height = "auto";
+  element.style.height = `${Math.max(78, element.scrollHeight)}px`;
+}
+
 function bindTableInputs() {
   document.querySelectorAll("[data-section]").forEach(el => {
     const field = el.dataset.field;
@@ -5107,7 +5208,14 @@ function bindTableInputs() {
     el.oninput = null;
     el.onchange = null;
 
-    if (field === "included" || field === "paid") {
+    if (field === "notes" && el.tagName === "TEXTAREA") {
+      m28AutoGrowNotes(el);
+      el.oninput = event => {
+        m28AutoGrowNotes(el);
+        handleTableEdit(event);
+      };
+      el.onchange = handleTableEdit;
+    } else if (field === "included" || field === "paid") {
       el.onchange = handleTableEdit;
     } else {
       el.oninput = handleTableEdit;
@@ -5178,7 +5286,8 @@ function addRecurringCost() {
     payAmount: 0,
     lastPaidDate: "",
     included: true,
-    category: "Other"
+    category: "Other",
+    notes: ""
   });
   savePlannerData();
   runPlanner();
@@ -5277,9 +5386,15 @@ function renderPotEditor() {
         <option value="2" ${normalisePotPriority(p.priority)===2?"selected":""}>2 — Important</option>
         <option value="3" ${normalisePotPriority(p.priority)===3?"selected":""}>3 — Flexible</option>
       </select>
-      <input class="pot-note" data-pot-field="note" value="${String(p.note||"").replace(/"/g,"&quot;")}" aria-label="Pot note">
+      <textarea class="pot-note" data-pot-field="note" rows="3" placeholder="Explain what this pot covers and which bills it funds." aria-label="Pot note">${m18Escape(p.note || "")}</textarea>
       <button class="delete-btn" type="button" data-delete-pot="${index}">Delete</button>
     </div>`).join("") || `<div class="subv">No pots yet. Add your first pot below.</div>`;
+  requestAnimationFrame(() => {
+    grid.querySelectorAll("textarea.pot-note").forEach(note => {
+      m28AutoGrowNotes(note);
+      note.addEventListener("input", () => m28AutoGrowNotes(note));
+    });
+  });
 }
 function syncPotEditorToState(){
   const rows=[...document.querySelectorAll("#potEditorGrid .pot-editor-row")];
@@ -5315,7 +5430,7 @@ function renderPotHealthRadar(metrics) {
           <div class="pot-name">${p.name||"Unnamed Pot"}</div>
           <span class="pot-priority-rank">P${priority} ${priorityLabel(priority)}</span>
         </div>
-        <div class="subv">${p.note||"Personal goal pot"}</div>
+        <div class="m28-note-display ${String(p.note || "").trim() ? "" : "is-empty"}">${String(p.note || "").trim() ? m18Escape(p.note) : "No pot funding note recorded"}</div>
         <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
         <div class="subv">£${formatMoney(current)} / ${targetText} • ${progress.toFixed(0)}%</div>
       </div>
@@ -6843,7 +6958,7 @@ document.addEventListener("click",event=>{
     clearTimeout(window.m27StatusTimer);
     window.m27StatusTimer=setTimeout(()=>box.classList.remove('show'),5200);
   }
-  function m27StatusLabel(status){return status==='historical'?'Historical paid':status==='paid'?'Paid from House Pot':'Reserved'}
+  function m27StatusLabel(status,deducted){return status==='historical'?(deducted?'Historically paid from House Pot':'Historical paid'):(status==='paid'?'Paid from House Pot':'Reserved')}
   function m27DateLabel(value){
     if(!value)return 'No date';
     try{return typeof dateLabel==='function'?dateLabel(value):new Date(value).toLocaleDateString('en-GB')}catch(_){return value}
@@ -6860,10 +6975,10 @@ document.addEventListener("click",event=>{
       <div class="m27-ledger-row ${entry.status}">
         <div><div class="m27-entry-name">${m27Escape(entry.name)}</div><div class="m27-entry-meta">${m27Escape(entry.category||'House project')}${entry.notes?` • ${m27Escape(entry.notes)}`:''}${entry.status==='historical'?' • cash was already adjusted before this ledger':''}</div></div>
         <div class="m27-entry-date">${m27Escape(m27DateLabel(entry.paidDate||entry.due))}</div>
-        <div><span class="m27-status-pill ${entry.status}">${m27StatusLabel(entry.status)}</span><div class="m27-entry-amount">${m27Money(entry.amount)}</div></div>
+        <div><span class="m27-status-pill ${entry.status}">${m27StatusLabel(entry.status,entry.deducted)}</span><div class="m27-entry-amount">${m27Money(entry.amount)}</div></div>
         <div class="m27-entry-actions">
           ${entry.status==='reserved'?`<button class="m27-paid-btn" type="button" data-m27-pay="${m27Escape(entry.id)}">Mark paid</button>`:''}
-          ${entry.status==='paid'&&entry.deducted?`<button class="m27-undo-payment" type="button" data-m27-undo="${m27Escape(entry.id)}">Undo payment</button>`:''}
+          ${(entry.status==='paid'||entry.status==='historical')&&entry.deducted?`<button class="m27-undo-payment" type="button" data-m27-undo="${m27Escape(entry.id)}">Undo payment</button>`:''}
           <button class="m27-delete-entry" type="button" data-m27-delete="${m27Escape(entry.id)}">Delete</button>
         </div>
       </div>`).join(''):'<div class="m22-empty">No house payments have been recorded yet.</div>';
@@ -6917,7 +7032,7 @@ document.addEventListener("click",event=>{
     if(!entry||entry.status!=='reserved')return;
     if(metrics.cash+0.009<entry.amount){m27SetStatus(`The House Pot has ${m27Money(metrics.cash)}, which is not enough to record this ${m27Money(entry.amount)} payment.`,true);return}
     metrics.pot.balance=Math.max(0,metrics.cash-entry.amount);
-    entry.status='paid';entry.deducted=true;entry.paidDate=m27Today();
+    entry.status='historical';entry.deducted=true;entry.paidDate=m27Today();
     if(typeof savePlannerData==='function')savePlannerData();
     if(typeof renderPotEditor==='function')renderPotEditor();
     if(typeof runPlanner==='function')runPlanner();else m27Render();
@@ -6925,7 +7040,7 @@ document.addEventListener("click",event=>{
   }
   function m27UndoEntry(id){
     const entry=m27FindEntry(id),metrics=m27Metrics();
-    if(!entry||entry.status!=='paid'||!entry.deducted)return;
+    if(!entry||(entry.status!=='paid'&&entry.status!=='historical')||!entry.deducted)return;
     metrics.pot.balance=metrics.cash+entry.amount;
     entry.status='reserved';entry.deducted=false;entry.paidDate='';
     if(typeof savePlannerData==='function')savePlannerData();
@@ -6937,12 +7052,12 @@ document.addEventListener("click",event=>{
     const {pot,ledger}=m27EnsureState();
     const index=ledger.entries.findIndex(entry=>entry.id===id);if(index<0)return;
     const entry=ledger.entries[index];
-    if(entry.status==='paid'&&entry.deducted)pot.balance=m27Number(pot.balance)+entry.amount;
+    if((entry.status==='paid'||entry.status==='historical')&&entry.deducted)pot.balance=m27Number(pot.balance)+entry.amount;
     ledger.entries.splice(index,1);
     if(typeof savePlannerData==='function')savePlannerData();
     if(typeof renderPotEditor==='function')renderPotEditor();
     if(typeof runPlanner==='function')runPlanner();else m27Render();
-    m27SetStatus(`${entry.name} was deleted${entry.status==='paid'&&entry.deducted?' and its cash deduction was restored':''}.`);
+    m27SetStatus(`${entry.name} was deleted${(entry.status==='paid'||entry.status==='historical')&&entry.deducted?' and its cash deduction was restored':''}.`);
   }
 
   window.m27HouseMetrics=m27Metrics;
