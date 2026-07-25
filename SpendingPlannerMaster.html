@@ -2351,6 +2351,83 @@ body{padding:0!important;margin:0!important}
   .m23-card-grid{grid-template-columns:1fr}
 }
 
+
+/* ===================== M26 COMPLETE BILL WORKFLOW ===================== */
+.m26-action-section{
+  margin-bottom:14px;border:1px solid rgba(125,211,252,.14);
+  border-radius:20px;overflow:hidden;background:rgba(7,15,27,.84)
+}
+.m26-section-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 15px;border-bottom:1px solid rgba(125,211,252,.10)
+}
+.m26-section-head>div{display:flex;align-items:center;gap:9px}
+.m26-section-head span{width:8px;height:8px;border-radius:50%;background:#22d3ee;box-shadow:0 0 13px rgba(34,211,238,.6)}
+.m26-section-head h3{margin:0;font-size:13px}
+.m26-section-head strong{font-size:9px;color:#9bb0c6}
+.m26-action-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:11px}
+.m26-action-card{
+  min-width:0;padding:14px;border-radius:16px;
+  border:1px solid rgba(148,163,184,.14);
+  background:linear-gradient(180deg,rgba(13,26,43,.98),rgba(8,17,29,.98))
+}
+.m26-action-card.overdue{border-color:rgba(251,113,133,.36)}
+.m26-action-card.due-today{border-color:rgba(52,211,153,.40)}
+.m26-action-card.due-soon{border-color:rgba(251,191,36,.30)}
+.m26-action-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.m26-action-category{font-size:7px;font-weight:950;color:#7e93aa;text-transform:uppercase;letter-spacing:.65px}
+.m26-action-card h3{margin:4px 0 3px;font-size:15px;color:#f1f8ff}
+.m26-action-due{font-size:9px;color:#8fa3b8}
+.m26-action-amount{font-size:20px;font-weight:950;color:#e8f8ff;white-space:nowrap}
+.m26-pay-row{display:grid;grid-template-columns:minmax(90px,.75fr) minmax(145px,1.25fr);gap:8px;margin-top:13px}
+.m26-pay-row label span,.m26-manage-grid label>span{display:block;margin-bottom:5px;font-size:7px;font-weight:950;text-transform:uppercase;letter-spacing:.55px;color:#788ca3}
+.m26-pay-row input{
+  width:100%;box-sizing:border-box;border-radius:10px;padding:9px;
+  border:1px solid rgba(125,211,252,.18);background:#071321;color:#eff8ff;font-weight:900
+}
+.m26-pay-button{
+  align-self:end;border:1px solid rgba(52,211,153,.38);border-radius:11px;
+  padding:10px 8px;background:rgba(52,211,153,.10);color:#9effc1;
+  font-size:9px;font-weight:950;cursor:pointer
+}
+.m26-edit-toggle{
+  width:100%;margin-top:8px;border:0;background:transparent;color:#7890a8;
+  font-size:8px;font-weight:900;cursor:pointer
+}
+.m26-inline-edit{display:none;margin-top:9px;padding-top:10px;border-top:1px solid rgba(148,163,184,.10)}
+.m26-inline-edit.open{display:block}
+.m26-manage-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.m26-manage-grid.compact{grid-template-columns:repeat(2,minmax(0,1fr))}
+.m26-manage-grid label{min-width:0}
+.m26-manage-grid .table-input{width:100%;min-width:0!important}
+.m26-check{
+  display:flex!important;align-items:center;justify-content:space-between;padding:8px 9px;
+  border:1px solid rgba(148,163,184,.12);border-radius:10px
+}
+.m26-check span{margin:0!important}
+.m26-check input{width:17px;height:17px;accent-color:#34d399}
+.m26-manage-actions{display:flex;align-items:end}
+.m26-manage-actions button{width:100%}
+.m26-manage-list{display:grid;gap:10px}
+.m26-manage-card{
+  padding:13px;border:1px solid rgba(125,211,252,.13);border-radius:17px;
+  background:linear-gradient(180deg,rgba(13,26,43,.98),rgba(7,15,27,.98))
+}
+.m26-manage-head,.m26-manage-footer{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.m26-manage-head{margin-bottom:11px}
+.m26-manage-head strong{display:block;font-size:13px}
+.m26-manage-head small{display:block;margin-top:3px;color:#8195aa;font-size:8px}
+.m26-manage-footer{margin-top:10px;padding-top:10px;border-top:1px solid rgba(148,163,184,.10);font-size:8px;color:#8295aa}
+.m26-manage-footer button{margin-left:6px}
+#m26PaymentNotice{
+  display:none;margin:10px 0;padding:10px 12px;border-radius:12px;
+  border:1px solid rgba(52,211,153,.28);background:rgba(52,211,153,.07);
+  color:#c9ffdb;font-size:9px;font-weight:850
+}
+#m26PaymentNotice.show{display:block}
+@media(max-width:1180px){.m26-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.m26-manage-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.m26-action-grid,.m26-manage-grid,.m26-manage-grid.compact{grid-template-columns:1fr}.m26-pay-row{grid-template-columns:1fr}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -2985,11 +3062,12 @@ body{padding:0!important;margin:0!important}
               <span>Only overdue, due today and due soon bills are shown by default.</span>
             </div>
             <div class="m23-view-buttons">
-              <button type="button" class="m23-view-btn active" data-m23-view="action">Action needed</button>
-              <button type="button" class="m23-view-btn" data-m23-view="all">Manage all bills</button>
+              <button type="button" class="m23-view-btn active" data-m23-view="action">🚨 Action Centre</button>
+              <button type="button" class="m23-view-btn" data-m23-view="upcoming">📅 Upcoming</button>
+              <button type="button" class="m23-view-btn" data-m23-view="manage">⚙️ Manage Bills</button>
             </div>
           </div>
-          <div id="m18DynamicBillGroups"></div>
+          <div id="m26PaymentNotice"></div><div id="m18DynamicBillGroups"></div>
         </main>
 
         <aside class="m24-finance-rail" aria-label="Bills command centre overview">
@@ -3528,7 +3606,11 @@ function loadPlannerData() {
       scheduledBills: Array.isArray(parsed.scheduledBills)
         ? parsed.scheduledBills.map(bill => ({
             deducted: false,
-            ...bill
+            included: bill?.included !== false,
+            paid: bill?.paid === true,
+            ...bill,
+            included: bill?.included !== false,
+            paid: bill?.paid === true
           }))
         : JSON.parse(JSON.stringify(defaultScheduledBills)),
 
@@ -3908,139 +3990,138 @@ function m20NextRollLabel(bill) {
 
 let m23BillViewMode = "action";
 
-function m23IsActionBill(bill){
-  if (!bill || bill.paid || !bill.included) return false;
-  const status = m18BillStatus(bill);
-  return ["overdue","due-today","due-soon"].includes(status.cls);
+function m26BillDaysLeft(bill){
+  if(!bill?.due)return null;
+  return getDaysLeft(bill.due);
 }
+function m26IsActionBill(bill){
+  if(!bill || bill.paid === true || bill.included === false)return false;
+  const days=m26BillDaysLeft(bill);
+  return days!==null && days<=7;
+}
+function m26IsUpcomingBill(bill){
+  if(!bill || bill.paid === true || bill.included === false)return false;
+  const days=m26BillDaysLeft(bill);
+  return days!==null && days>7 && days<=30;
+}
+function m26StatusCopy(bill){
+  const days=m26BillDaysLeft(bill);
+  if(days===null)return "No due date";
+  if(days<0)return `${Math.abs(days)} day${Math.abs(days)===1?"":"s"} overdue`;
+  if(days===0)return "Due today";
+  if(days===1)return "Due tomorrow";
+  return `Due in ${days} days`;
+}
+function m26CompactBillCard(bill,index){
+  const status=m18BillStatus(bill);
+  const suggested=Number(bill.actualPaid||bill.amount||0);
+  return `<article class="m26-action-card ${status.cls}">
+    <div class="m26-action-top">
+      <div>
+        <div class="m26-action-category">${m18Escape(m18CategoryName(bill.category))}</div>
+        <h3>${m18Escape(bill.name||"Unnamed bill")}</h3>
+        <div class="m26-action-due">${m26StatusCopy(bill)} • ${m24Date(bill.due)}</div>
+      </div>
+      <div class="m26-action-amount">£${formatMoney(bill.amount||0)}</div>
+    </div>
+    <div class="m26-pay-row">
+      <label>
+        <span>Pay amount</span>
+        <input type="number" min="0" step="0.01" value="${suggested}" data-m26-pay-amount="${index}">
+      </label>
+      <button type="button" class="m26-pay-button" data-m26-pay-bill="${index}">✓ Pay from Holding Pot</button>
+    </div>
+    <button type="button" class="m26-edit-toggle" data-m26-edit="${index}">Edit bill details</button>
+    <div class="m26-inline-edit" id="m26Edit_${index}">
+      ${m26ManageFields(bill,index,true)}
+    </div>
+  </article>`;
+}
+function m26ManageFields(bill,index,compact=false){
+  const frequency=bill.recurrence||"monthly";
+  return `<div class="m26-manage-grid ${compact?"compact":""}">
+    <label><span>Name</span><input class="table-input" type="text" value="${m18Escape(bill.name)}" data-section="scheduled" data-index="${index}" data-field="name"></label>
+    <label><span>Due date</span><input class="table-input" type="date" value="${m18Escape(bill.due)}" data-section="scheduled" data-index="${index}" data-field="due"></label>
+    <label><span>Amount</span><input class="table-input" type="number" step="0.01" value="${Number(bill.amount||0)}" data-section="scheduled" data-index="${index}" data-field="amount"></label>
+    <label><span>Frequency</span><select class="table-input" data-section="scheduled" data-index="${index}" data-field="recurrence">
+      <option value="none" ${frequency==="none"?"selected":""}>One-off</option>
+      <option value="weekly" ${frequency==="weekly"?"selected":""}>Weekly</option>
+      <option value="fortnightly" ${frequency==="fortnightly"?"selected":""}>Fortnightly</option>
+      <option value="four-weekly" ${frequency==="four-weekly"?"selected":""}>Every 4 weeks</option>
+      <option value="monthly" ${frequency==="monthly"?"selected":""}>Monthly</option>
+      <option value="yearly" ${frequency==="yearly"?"selected":""}>Yearly</option>
+    </select></label>
+    <label><span>Category</span><input class="table-input" type="text" value="${m18Escape(bill.category)}" data-section="scheduled" data-index="${index}" data-field="category"></label>
+    <label><span>Notes</span><input class="table-input" type="text" value="${m18Escape(bill.notes||"")}" data-section="scheduled" data-index="${index}" data-field="notes"></label>
+    <label class="m26-check"><span>Included</span><input type="checkbox" ${bill.included!==false?"checked":""} data-section="scheduled" data-index="${index}" data-field="included"></label>
+    <div class="m26-manage-actions">
+      <button class="delete-btn" data-delete-section="scheduled" data-delete-index="${index}">Delete</button>
+    </div>
+  </div>`;
+}
+function m26ManageCard(bill,index){
+  const status=m18BillStatus(bill);
+  return `<article class="m26-manage-card ${status.cls}">
+    <div class="m26-manage-head">
+      <div><strong>${m18Escape(bill.name||"Unnamed bill")}</strong><small>${m26StatusCopy(bill)}</small></div>
+      <span class="m18-status ${status.cls}">${status.label}</span>
+    </div>
+    ${m26ManageFields(bill,index,false)}
+    <div class="m26-manage-footer">
+      <span>Next roll: <strong>${m20NextRollLabel(bill)}</strong></span>
+      ${bill.paid ? `<button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.recurrence==="none"?"disabled":""}>Roll forward</button>
+      <button class="quick-btn" data-archive-section="scheduled" data-archive-index="${index}">Archive</button>` : ""}
+    </div>
+  </article>`;
+}
+function renderScheduledBills(){
+  const host=document.getElementById("m18DynamicBillGroups");
+  if(!host)return;
 
-function renderScheduledBills() {
-  const host = document.getElementById("m18DynamicBillGroups");
-  if (!host) return;
+  const all=(plannerState.scheduledBills||[]).map((bill,index)=>({bill,index}))
+    .sort((a,b)=>m18DueTimestamp(a.bill)-m18DueTimestamp(b.bill));
 
-  const allBills = (plannerState.scheduledBills || []).map((bill, index) => ({
-    bill, index, category:m18CategoryName(bill.category)
-  }));
+  let visible=[];
+  if(m23BillViewMode==="action")visible=all.filter(x=>m26IsActionBill(x.bill));
+  else if(m23BillViewMode==="upcoming")visible=all.filter(x=>m26IsUpcomingBill(x.bill));
+  else visible=all;
 
-  const visibleBills = m23BillViewMode === "all"
-    ? allBills
-    : allBills.filter(item => m23IsActionBill(item.bill));
+  const copy=document.querySelector(".m23-view-copy span");
+  if(copy){
+    copy.textContent=m23BillViewMode==="action"
+      ?"Only overdue, due today and due within seven days are shown."
+      :m23BillViewMode==="upcoming"
+      ?"Bills due between 8 and 30 days from now."
+      :"Edit, include, roll, archive or remove every scheduled bill.";
+  }
 
-  if (!visibleBills.length) {
-    host.innerHTML = `<div class="m23-empty-state">
-      <strong>No bills need attention right now ✓</strong>
-      <span>Overdue, due today and due soon bills will appear here automatically.</span>
-    </div>`;
+  if(!visible.length){
+    const title=m23BillViewMode==="action"?"No bills need attention right now ✓"
+      :m23BillViewMode==="upcoming"?"Nothing is due in the next 8–30 days"
+      :"No scheduled bills have been added yet";
+    host.innerHTML=`<div class="m23-empty-state"><strong>${title}</strong><span>Aurora will surface bills here automatically when they become relevant.</span></div>`;
     m24UpdateBillsCommandCentre();
     return;
   }
 
-  const groups = new Map();
-  visibleBills.forEach(item => {
-    const key = item.category.toLocaleLowerCase("en-GB");
-    if (!groups.has(key)) groups.set(key, { name:item.category, items:[] });
-    groups.get(key).items.push(item);
-  });
-
-  const sortedGroups = [...groups.values()].sort((a,b) => {
-    const aDue = Math.min(...a.items.map(x => m18DueTimestamp(x.bill)));
-    const bDue = Math.min(...b.items.map(x => m18DueTimestamp(x.bill)));
-    return aDue - bDue || a.name.localeCompare(b.name, "en-GB");
-  });
-
-  host.innerHTML = sortedGroups.map(group => {
-    const items = [...group.items].sort((a,b) =>
-      m18DueTimestamp(a.bill) - m18DueTimestamp(b.bill)
-      || String(a.bill.name||"").localeCompare(String(b.bill.name||""), "en-GB")
-    );
-
-    const total = items.reduce((sum,x)=>sum + Number(x.bill.amount||0),0);
-
-    const cards = items.map(({bill,index}) => {
-      const status = m18BillStatus(bill);
-      const frequency = bill.recurrence || "monthly";
-      const actualPaid = Number(bill.actualPaid || 0);
-
-      return `<article class="m22-bill-card ${status.cls}">
-        <div class="m22-bill-top">
-          <div class="m22-bill-name">
-            <input class="table-input" type="text" value="${m18Escape(bill.name)}" data-section="scheduled" data-index="${index}" data-field="name" aria-label="Bill name">
-          </div>
-          <span class="m18-status ${status.cls}">${status.label}</span>
+  if(m23BillViewMode==="manage"){
+    host.innerHTML=`<div class="m26-manage-list">${visible.map(({bill,index})=>m26ManageCard(bill,index)).join("")}</div>`;
+  }else{
+    const grouped=new Map();
+    visible.forEach(item=>{
+      const name=m18CategoryName(item.bill.category);
+      if(!grouped.has(name))grouped.set(name,[]);
+      grouped.get(name).push(item);
+    });
+    host.innerHTML=[...grouped.entries()].map(([name,items])=>`
+      <section class="m26-action-section">
+        <div class="m26-section-head">
+          <div><span></span><h3>${m18Escape(name)}</h3></div>
+          <strong>${items.length} action${items.length===1?"":"s"} • £${formatMoney(items.reduce((s,x)=>s+Number(x.bill.amount||0),0))}</strong>
         </div>
-
-        <div class="m22-bill-grid">
-          <div class="m22-field">
-            <span class="m22-label">Due date</span>
-            <input class="table-input" type="date" value="${m18Escape(bill.due)}" data-section="scheduled" data-index="${index}" data-field="due">
-          </div>
-          <div class="m22-field">
-            <span class="m22-label">Frequency</span>
-            <select class="table-input m20-frequency-select" data-section="scheduled" data-index="${index}" data-field="recurrence">
-              <option value="none" ${frequency==="none"?"selected":""}>One-off</option>
-              <option value="weekly" ${frequency==="weekly"?"selected":""}>Weekly</option>
-              <option value="fortnightly" ${frequency==="fortnightly"?"selected":""}>Fortnightly</option>
-              <option value="four-weekly" ${frequency==="four-weekly"?"selected":""}>Every 4 weeks</option>
-              <option value="monthly" ${frequency==="monthly"?"selected":""}>Monthly</option>
-              <option value="yearly" ${frequency==="yearly"?"selected":""}>Yearly</option>
-            </select>
-          </div>
-
-          <div class="m22-field">
-            <span class="m22-label">Planned amount</span>
-            <input class="table-input" type="number" step="0.01" value="${Number(bill.amount||0)}" data-section="scheduled" data-index="${index}" data-field="amount">
-          </div>
-          <div class="m22-field">
-            <span class="m22-label">Actual paid</span>
-            <input class="table-input" type="number" step="0.01" value="${actualPaid}" data-section="scheduled" data-index="${index}" data-field="actualPaid">
-          </div>
-
-          <div class="m22-field">
-            <span class="m22-label">Category</span>
-            <input class="table-input m18-category-input" type="text" value="${m18Escape(bill.category)}" data-section="scheduled" data-index="${index}" data-field="category">
-          </div>
-          <div class="m22-field">
-            <span class="m22-label">Next roll</span>
-            <div class="m22-next"><span>Next</span><strong>${m20NextRollLabel(bill)}</strong></div>
-          </div>
-
-          <div class="m22-check-row">
-            <label>Mark as paid</label>
-            <input type="checkbox" ${bill.paid ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="paid">
-          </div>
-          <div class="m22-check-row">
-            <label>Include in plan</label>
-            <input type="checkbox" ${bill.included ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="included">
-          </div>
-
-          <div class="m22-field wide">
-            <span class="m22-label">Notes</span>
-            <input class="table-input" type="text" value="${m18Escape(bill.notes)}" data-section="scheduled" data-index="${index}" data-field="notes">
-          </div>
-        </div>
-
-        <div class="m22-actions">
-          <button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.paid && frequency!=="none" ? "" : "disabled"}>Roll →</button>
-          <button class="quick-btn" data-archive-section="scheduled" data-archive-index="${index}" ${bill.paid ? "" : "disabled"}>Archive</button>
-          <button class="delete-btn" data-delete-section="scheduled" data-delete-index="${index}">Delete</button>
-        </div>
-      </article>`;
-    }).join("");
-
-    return `<section class="m23-category-section">
-      <div class="m23-category-head">
-        <div class="m23-category-title">
-          <span></span>
-          <h3>${m18Escape(group.name)}</h3>
-        </div>
-        <div class="m23-category-meta">
-          <strong>£${formatMoney(total)}</strong>
-          <small>${items.length} bill${items.length===1?"":"s"} shown</small>
-        </div>
-      </div>
-      <div class="m23-card-grid">${cards}</div>
-    </section>`;
-  }).join("");
+        <div class="m26-action-grid">${items.map(({bill,index})=>m26CompactBillCard(bill,index)).join("")}</div>
+      </section>`).join("");
+  }
   m24UpdateBillsCommandCentre();
 }
 
@@ -4059,7 +4140,7 @@ function updateScheduledBillsCommander() {
     other: { meta:"otherMeta", count:0, total:0 }
   };
 
-  const liveBills = (plannerState.scheduledBills || []).filter(b => b.included && !b.paid);
+  const liveBills = (plannerState.scheduledBills || []).filter(b => b && b.included !== false && b.paid !== true);
   liveBills.forEach(bill => {
     const key = getScheduledGroupKey(bill);
     if (groups[key]) {
@@ -5986,14 +6067,62 @@ document.addEventListener("click",event=>{
 });
 </script>
 <script>
-document.addEventListener("click", event => {
-  const button = event.target.closest("[data-m23-view]");
-  if (!button) return;
-  m23BillViewMode = button.dataset.m23View === "all" ? "all" : "action";
-  document.querySelectorAll("[data-m23-view]").forEach(btn =>
-    btn.classList.toggle("active", btn.dataset.m23View === m23BillViewMode)
-  );
-  renderScheduledBills();
+function m26Notice(message,error=false){
+  const box=document.getElementById("m26PaymentNotice");
+  if(!box)return;
+  box.textContent=message;
+  box.style.borderColor=error?"rgba(251,113,133,.32)":"rgba(52,211,153,.28)";
+  box.style.background=error?"rgba(251,113,133,.07)":"rgba(52,211,153,.07)";
+  box.style.color=error?"#ffc7d0":"#c9ffdb";
+  box.classList.add("show");
+  clearTimeout(window.m26NoticeTimer);
+  window.m26NoticeTimer=setTimeout(()=>box.classList.remove("show"),5000);
+}
+function m26PayScheduledBill(index){
+  const bill=plannerState.scheduledBills?.[index];
+  if(!bill || bill.paid===true)return;
+  const input=document.querySelector(`[data-m26-pay-amount="${index}"]`);
+  const amount=Math.max(0,Number(input?.value||bill.amount||0));
+  const holding=Number(plannerState.holdingBalance||0);
+  if(amount<=0){m26Notice("Enter the amount actually paid first.",true);return;}
+  if(amount>holding){m26Notice(`The Holding Pot only contains £${formatMoney(holding)}.`,true);return;}
+
+  plannerState.holdingBalance=holding-amount;
+  bill.actualPaid=amount;
+  bill.paid=true;
+  bill.deducted=true;
+  bill.paidDate=new Date().toISOString();
+
+  plannerState.scheduledPaymentHistory=Array.isArray(plannerState.scheduledPaymentHistory)
+    ? plannerState.scheduledPaymentHistory : [];
+  plannerState.scheduledPaymentHistory.unshift({
+    id:`scheduled_${Date.now()}`,
+    billId:bill.id||"",
+    name:bill.name||"Unnamed bill",
+    category:bill.category||"Other",
+    amount,
+    date:bill.paidDate
+  });
+
+  savePlannerData();
+  runPlanner();
+  m26Notice(`£${formatMoney(amount)} paid for ${bill.name}. Holding Pot now £${formatMoney(plannerState.holdingBalance)}.`);
+}
+document.addEventListener("click",event=>{
+  const tab=event.target.closest("[data-m23-view]");
+  if(tab){
+    const mode=tab.dataset.m23View;
+    m23BillViewMode=["action","upcoming","manage"].includes(mode)?mode:"action";
+    document.querySelectorAll("[data-m23-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.m23View===m23BillViewMode));
+    renderScheduledBills();
+    return;
+  }
+  const pay=event.target.closest("[data-m26-pay-bill]");
+  if(pay){m26PayScheduledBill(Number(pay.dataset.m26PayBill));return;}
+  const edit=event.target.closest("[data-m26-edit]");
+  if(edit){
+    document.getElementById(`m26Edit_${edit.dataset.m26Edit}`)?.classList.toggle("open");
+  }
 });
 </script>
 <script>
@@ -6024,9 +6153,37 @@ function m24Tracker(terms){
 function m24UpdateBillsCommandCentre(){
   if(typeof plannerState==="undefined")return;
   const bills=(plannerState.scheduledBills||[]).filter(Boolean);
-  const included=bills.filter(b=>b.included);
-  const live=included.filter(b=>!b.paid);
-  const paid=included.filter(b=>b.paid);
+  // Older saved bills may not contain an explicit included flag.
+  // Only an explicit false excludes a bill.
+  const included=bills.filter(b=>b.included !== false);
+  const live=included.filter(b=>b.paid !== true);
+  const paid=included.filter(b=>b.paid === true);
+
+  // M25: keep the four command tiles tied directly to the same live data
+  // used to draw the visible bill cards.
+  const todayStart=new Date();
+  todayStart.setHours(0,0,0,0);
+  const dueSoonBills=live.filter(b=>{
+    if(!b.due)return false;
+    const due=new Date(`${String(b.due).slice(0,10)}T12:00:00`);
+    if(Number.isNaN(due.getTime()))return false;
+    const days=Math.floor((due-todayStart)/86400000);
+    return days>=0 && days<=7;
+  });
+  const datedLive=live
+    .filter(b=>b.due)
+    .map(b=>({bill:b,time:m18DueTimestamp(b)}))
+    .filter(x=>Number.isFinite(x.time))
+    .sort((a,b)=>a.time-b.time);
+  const nextLive=datedLive[0]?.bill||null;
+
+  m24Set("scheduledLiveCount",String(live.length));
+  m24Set("scheduledLiveTotal",m24Money(live.reduce((sum,b)=>sum+Number(b.amount||0),0)));
+  m24Set("scheduledDueSoon",m24Money(dueSoonBills.reduce((sum,b)=>sum+Number(b.amount||0),0)));
+  m24Set("scheduledNextBill",nextLive?(nextLive.name||"Unnamed bill"):"Clear");
+  m24Set("scheduledNextBillMeta",nextLive
+    ? `${m24Date(nextLive.due)} • ${m24Money(nextLive.amount)}`
+    : "No live scheduled pressure");
 
   const holding=Number(plannerState.holdingBalance||0);
   const protectedValue=live.reduce((s,b)=>s+Number(b.amount||0),0);
