@@ -2185,6 +2185,75 @@ body{padding:0!important;margin:0!important}
   .m22-field.wide{grid-column:auto}
 }
 
+
+/* ===================== M23 ACTION-ONLY BILL VIEW ===================== */
+#m23BillViewControls{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin:14px 0 4px;flex-wrap:wrap
+}
+.m23-view-copy strong{display:block;font-size:12px;color:#edf8ff}
+.m23-view-copy span{display:block;margin-top:3px;font-size:9px;color:#8295aa}
+.m23-view-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.m23-view-btn{
+  border:1px solid rgba(125,211,252,.18);
+  background:rgba(255,255,255,.025);
+  color:#9fb4c9;border-radius:11px;padding:8px 11px;
+  font-size:9px;font-weight:950;cursor:pointer
+}
+.m23-view-btn.active{
+  color:#c9fbff;border-color:rgba(34,211,238,.38);
+  background:rgba(34,211,238,.10);
+  box-shadow:0 0 0 1px rgba(34,211,238,.06) inset
+}
+#m18DynamicBillGroups{
+  display:block!important;
+  margin-top:14px
+}
+.m23-category-section{
+  margin:0 0 18px;
+  padding:0;
+  border:1px solid rgba(125,211,252,.14);
+  border-radius:20px;
+  overflow:hidden;
+  background:linear-gradient(180deg,rgba(12,24,40,.96),rgba(7,15,27,.96))
+}
+.m23-category-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 16px;border-bottom:1px solid rgba(125,211,252,.10)
+}
+.m23-category-title{display:flex;align-items:center;gap:10px;min-width:0}
+.m23-category-title h3{margin:0;font-size:14px}
+.m23-category-title span{
+  width:9px;height:9px;border-radius:50%;background:#22d3ee;
+  box-shadow:0 0 14px rgba(34,211,238,.55)
+}
+.m23-category-meta{text-align:right}
+.m23-category-meta strong{display:block;font-size:12px;color:#edf8ff}
+.m23-category-meta small{
+  display:block;margin-top:2px;color:#7f93aa;font-size:8px;
+  text-transform:uppercase;letter-spacing:.5px;font-weight:900
+}
+.m23-card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  padding:12px
+}
+.m23-empty-state{
+  padding:30px 18px;text-align:center;
+  border:1px dashed rgba(52,211,153,.28);
+  border-radius:18px;background:rgba(52,211,153,.045);
+  color:#bfffd6
+}
+.m23-empty-state strong{display:block;font-size:15px;margin-bottom:6px}
+.m23-empty-state span{font-size:10px;color:#8fbfa0}
+@media(max-width:1050px){
+  .m23-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  .m23-card-grid{grid-template-columns:1fr}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -2811,7 +2880,17 @@ body{padding:0!important;margin:0!important}
     <div class="subv">Use this for confirmed bills with a proper due date, planned amount, paid tracking, rolling and archiving.</div>
   </div>
   <div class="m18-sort-note">Bills are automatically grouped by the exact category you enter and ordered by due date. Changing “Direct Debit” to “Subscription” will immediately create or move it into the Subscription category.</div>
-  <div id="m18DynamicBillGroups"></div>
+  <div id="m23BillViewControls">
+        <div class="m23-view-copy">
+          <strong>Action Bills</strong>
+          <span>Only overdue, due today and due soon bills are shown by default.</span>
+        </div>
+        <div class="m23-view-buttons">
+          <button type="button" class="m23-view-btn active" data-m23-view="action">Action needed</button>
+          <button type="button" class="m23-view-btn" data-m23-view="all">Show all bills</button>
+        </div>
+      </div>
+      <div id="m18DynamicBillGroups"></div>
 
   <!-- ===================== CATEGORY: DIRECT DEBITS ===================== -->
   <div class="bill-group">
@@ -3674,46 +3753,54 @@ function m20NextRollLabel(bill) {
   return next ? next.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}) : "—";
 }
 
+let m23BillViewMode = "action";
+
+function m23IsActionBill(bill){
+  if (!bill || bill.paid || !bill.included) return false;
+  const status = m18BillStatus(bill);
+  return ["overdue","due-today","due-soon"].includes(status.cls);
+}
+
 function renderScheduledBills() {
   const host = document.getElementById("m18DynamicBillGroups");
   if (!host) return;
 
-  const indexedBills = (plannerState.scheduledBills || []).map((bill, index) => ({
+  const allBills = (plannerState.scheduledBills || []).map((bill, index) => ({
     bill, index, category:m18CategoryName(bill.category)
   }));
 
+  const visibleBills = m23BillViewMode === "all"
+    ? allBills
+    : allBills.filter(item => m23IsActionBill(item.bill));
+
+  if (!visibleBills.length) {
+    host.innerHTML = `<div class="m23-empty-state">
+      <strong>No bills need attention right now ✓</strong>
+      <span>Overdue, due today and due soon bills will appear here automatically.</span>
+    </div>`;
+    return;
+  }
+
   const groups = new Map();
-  indexedBills.forEach(item => {
+  visibleBills.forEach(item => {
     const key = item.category.toLocaleLowerCase("en-GB");
     if (!groups.has(key)) groups.set(key, { name:item.category, items:[] });
     groups.get(key).items.push(item);
   });
 
   const sortedGroups = [...groups.values()].sort((a,b) => {
-    const aLive = a.items.filter(x => x.bill.included && !x.bill.paid);
-    const bLive = b.items.filter(x => x.bill.included && !x.bill.paid);
-    const aDue = Math.min(...(aLive.length ? aLive : a.items).map(x => m18DueTimestamp(x.bill)));
-    const bDue = Math.min(...(bLive.length ? bLive : b.items).map(x => m18DueTimestamp(x.bill)));
+    const aDue = Math.min(...a.items.map(x => m18DueTimestamp(x.bill)));
+    const bDue = Math.min(...b.items.map(x => m18DueTimestamp(x.bill)));
     return aDue - bDue || a.name.localeCompare(b.name, "en-GB");
   });
 
-  if (!sortedGroups.length) {
-    host.innerHTML = '<div class="m22-card-empty">No scheduled bills have been added yet.</div>';
-    return;
-  }
+  host.innerHTML = sortedGroups.map(group => {
+    const items = [...group.items].sort((a,b) =>
+      m18DueTimestamp(a.bill) - m18DueTimestamp(b.bill)
+      || String(a.bill.name||"").localeCompare(String(b.bill.name||""), "en-GB")
+    );
 
-  host.innerHTML = sortedGroups.map((group, groupIndex) => {
-    const items = [...group.items].sort((a,b) => {
-      const aLiveRank = a.bill.paid ? 2 : (a.bill.included ? 0 : 1);
-      const bLiveRank = b.bill.paid ? 2 : (b.bill.included ? 0 : 1);
-      return aLiveRank - bLiveRank
-        || m18DueTimestamp(a.bill) - m18DueTimestamp(b.bill)
-        || String(a.bill.name||"").localeCompare(String(b.bill.name||""), "en-GB");
-    });
-
-    const live = items.filter(x => x.bill.included && !x.bill.paid);
-    const total = live.reduce((sum,x)=>sum + Number(x.bill.amount||0),0);
-    const bodyId = `m22CategoryBody_${groupIndex}`;
+    const total = items.reduce((sum,x)=>sum + Number(x.bill.amount||0),0);
 
     const cards = items.map(({bill,index}) => {
       const status = m18BillStatus(bill);
@@ -3786,18 +3873,18 @@ function renderScheduledBills() {
       </article>`;
     }).join("");
 
-    return `<section class="m22-category-card">
-      <div class="m22-category-head" data-m18-toggle="${bodyId}">
-        <div class="m22-category-title">
-          <span class="m22-category-dot"></span>
+    return `<section class="m23-category-section">
+      <div class="m23-category-head">
+        <div class="m23-category-title">
+          <span></span>
           <h3>${m18Escape(group.name)}</h3>
         </div>
-        <div class="m22-category-summary">
+        <div class="m23-category-meta">
           <strong>£${formatMoney(total)}</strong>
-          <span>${live.length} live • ${items.length} total</span>
+          <small>${items.length} bill${items.length===1?"":"s"} shown</small>
         </div>
       </div>
-      <div class="m22-category-body" id="${bodyId}">${cards}</div>
+      <div class="m23-card-grid">${cards}</div>
     </section>`;
   }).join("");
 }
@@ -5741,6 +5828,17 @@ function m21PayFutureCost(index){
 document.addEventListener("click",event=>{
   const button=event.target.closest("[data-m21-pay]");
   if(button)m21PayFutureCost(Number(button.dataset.m21Pay));
+});
+</script>
+<script>
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-m23-view]");
+  if (!button) return;
+  m23BillViewMode = button.dataset.m23View === "all" ? "all" : "action";
+  document.querySelectorAll("[data-m23-view]").forEach(btn =>
+    btn.classList.toggle("active", btn.dataset.m23View === m23BillViewMode)
+  );
+  renderScheduledBills();
 });
 </script>
 </body>
