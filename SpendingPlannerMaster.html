@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Aurora Wealth Planner — Manager Dashboard M13</title>
+<title>Aurora Wealth Planner — Definitive M30</title>
 
 <style>
  :root {
@@ -2429,12 +2429,85 @@ body{padding:0!important;margin:0!important}
 @media(max-width:700px){.m26-action-grid,.m26-manage-grid,.m26-manage-grid.compact{grid-template-columns:1fr}.m26-pay-row{grid-template-columns:1fr}}
 
 
-/* ===================== M27 STABILITY REPAIR ===================== */
+/* ===================== M30 DEFINITIVE WEALTH HQ ===================== */
+:root{
+  --m30-bg:#030914;
+  --m30-panel:#081526;
+  --m30-panel-2:#0b1b2f;
+  --m30-line:rgba(95,213,255,.16);
+  --m30-cyan:#38e7ff;
+  --m30-green:#53f59a;
+  --m30-amber:#ffd166;
+  --m30-red:#ff7896;
+  --m30-muted:#8ea3ba;
+}
+body{background:
+  radial-gradient(circle at 18% 0%,rgba(122,91,255,.14),transparent 25%),
+  radial-gradient(circle at 82% 8%,rgba(56,231,255,.12),transparent 28%),
+  linear-gradient(180deg,#020711,#06101d 52%,#020711)!important
+}
+.m13-content{max-width:1450px;margin:0 auto;padding:18px 20px 52px!important}
+.m13-topbar{position:sticky;top:0;z-index:60;padding:10px 0 12px;
+  background:linear-gradient(180deg,rgba(3,9,20,.96),rgba(3,9,20,.78),transparent);
+  backdrop-filter:blur(14px)
+}
+.m13-panel,.section.card,.scheduled-bills-command{
+  border-radius:22px!important;
+  border:1px solid var(--m30-line)!important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(56,231,255,.055),transparent 34%),
+    linear-gradient(145deg,rgba(9,24,42,.96),rgba(4,13,25,.98))!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.26)!important
+}
+.m13-panel-head,.section.card>h2,.scheduled-bills-command>h2{
+  border-bottom:1px solid rgba(255,255,255,.07);
+  padding-bottom:12px!important;margin-bottom:14px!important
+}
+.m13-panel-title:before,.section.card>h2:before,.scheduled-bills-command>h2:before{
+  border-radius:4px!important;width:6px!important;height:23px!important
+}
+.m13-nav button{min-height:44px}
+.m13-nav button.active{box-shadow:inset 3px 0 0 var(--m30-cyan)}
+.m13-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.m13-kpi{min-height:104px!important}
+.m30-page-intro{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:14px 16px;margin-bottom:13px;border:1px solid rgba(56,231,255,.18);
+  border-radius:18px;background:linear-gradient(90deg,rgba(56,231,255,.07),rgba(83,245,154,.035))
+}
+.m30-page-intro strong{display:block;font-size:14px}
+.m30-page-intro span{display:block;margin-top:3px;color:var(--m30-muted);font-size:10px}
+.m30-page-status{
+  flex:0 0 auto;padding:7px 10px;border-radius:999px;border:1px solid rgba(83,245,154,.32);
+  color:var(--m30-green);background:rgba(83,245,154,.07);font-size:9px;font-weight:950
+}
+#m13Funding .m16-section-card[data-m30-hidden="true"],
+#m13Dashboard .m16-section-card[data-m30-hidden="true"]{display:none!important}
+#m13Funding .section.card{margin-top:0!important}
+#m13Funding .four-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#m13Funding .input-box{min-height:130px}
+#m13Bills .m24-command-layout{grid-template-columns:minmax(0,1fr) 310px!important;gap:14px}
+#m13Bills .m24-finance-rail{position:sticky;top:92px}
+#m13Bills .m26-action-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#m13Bills .m26-action-card{min-height:0!important}
+#m13Bills .m26-pay-row{grid-template-columns:110px minmax(0,1fr)!important}
+#m13Bills .m26-pay-button{min-height:42px}
 #m13Bills .bill-group{display:none!important}
-#m13Bills .m24-command-layout{margin-top:12px}
-#m13Bills .m26-action-card,
-#m13Bills .m26-manage-card{contain:layout paint}
-#m13Bills button:disabled{cursor:not-allowed}
+#m13Bills .scheduled-bill-command-strip{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#m13Bills .schedule-command-tile{min-height:92px}
+#futureCostsBody .m21-pay-btn{min-width:145px}
+.m30-clean-heading{font-size:18px!important}
+@media(max-width:1180px){
+  .m13-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #m13Bills .m24-command-layout{grid-template-columns:1fr!important}
+  #m13Bills .m24-finance-rail{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}
+  #m13Bills .m26-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+  .m13-content{padding:12px 10px 44px!important}
+  .m13-kpis,#m13Bills .m26-action-grid,#m13Bills .m24-finance-rail{grid-template-columns:1fr!important}
+  #m13Funding .four-grid{grid-template-columns:1fr!important}
+}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -5969,7 +6042,6 @@ function m26PayScheduledBill(index){
   plannerState.holdingBalance=holding-amount;
   bill.actualPaid=amount;
   bill.paid=true;
-  // The Holding Pot deduction has already happened here.
   bill.deducted=true;
   bill.paidDate=new Date().toISOString();
 
@@ -6122,15 +6194,81 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(m24UpdateBillsComman
 </script>
 
 <script>
-window.addEventListener("error",function(event){
-  const message=String(event?.message||"");
-  if(message.includes("m24UpdateBillsCommandCentre")){
-    event.preventDefault();
+(function(){
+  "use strict";
+
+  function headingOf(section){
+    const heading=section.querySelector("h1,h2,h3,.m13-panel-title");
+    return (heading?.textContent||"").trim();
+  }
+
+  function installIntro(target,title,copy){
+    const page=document.getElementById(target);
+    if(!page || page.querySelector(".m30-page-intro"))return;
+    const intro=document.createElement("div");
+    intro.className="m30-page-intro";
+    intro.innerHTML=`<div><strong>${title}</strong><span>${copy}</span></div><div class="m30-page-status">M30 LIVE</div>`;
+    page.prepend(intro);
+  }
+
+  function cleanFundingPage(){
+    const page=document.getElementById("m13Funding");
+    if(!page)return;
+    const hideTitles=new Set([
+      "Aurora CFO Command Deck",
+      "Aurora Wealth Intelligence",
+      "Financial Freedom Flight Path"
+    ]);
+    page.querySelectorAll(".m16-section-card").forEach(section=>{
+      if(hideTitles.has(headingOf(section)))section.dataset.m30Hidden="true";
+    });
+    installIntro(
+      "m13Funding",
+      "Funding Engine",
+      "One operational screen for the Holding Pot, safe buffer, payday contributions and Grow Pot funding."
+    );
+  }
+
+  function cleanBillsPage(){
+    installIntro(
+      "m13Bills",
+      "Bills Command Centre",
+      "Action bills first, upcoming payments second, complete bill management when needed, plus Future Costs paid from the Holding Pot."
+    );
+  }
+
+  function cleanDashboard(){
+    installIntro(
+      "m13Dashboard",
+      "Aurora Wealth HQ",
+      "A single live view of payday readiness, bill pressure, protected money and available surplus."
+    );
+  }
+
+  function safeRefresh(){
     try{
       if(typeof renderScheduledBills==="function")renderScheduledBills();
-    }catch(_){}
+    }catch(error){console.warn("M30 scheduled bill refresh skipped:",error);}
+    try{
+      if(typeof m24UpdateBillsCommandCentre==="function")m24UpdateBillsCommandCentre();
+    }catch(error){console.warn("M30 finance rail refresh skipped:",error);}
   }
-});
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    cleanDashboard();
+    cleanBillsPage();
+    cleanFundingPage();
+    setTimeout(safeRefresh,120);
+  });
+
+  window.addEventListener("error",event=>{
+    const message=String(event?.message||"");
+    if(message.includes("m24UpdateBillsCommandCentre") || message.includes("renderScheduledBills")){
+      event.preventDefault();
+      console.warn("M30 contained an optional dashboard error:",message);
+    }
+  });
+})();
 </script>
 
 </body>
