@@ -2177,6 +2177,55 @@ body{padding:0!important;margin:0!important}
   .m13-sidebar-toggle{display:none!important;}
 }
 
+
+/* ===================== M21 YEARLY COST PAYMENT TRACKER ===================== */
+.m21-yearly-table{min-width:1180px!important}
+.m21-yearly-table th:nth-child(1){min-width:170px}
+.m21-yearly-table th:nth-child(2){min-width:135px}
+.m21-yearly-table th:nth-child(3){min-width:110px}
+.m21-yearly-table th:nth-child(4){min-width:130px}
+.m21-yearly-table th:nth-child(5){min-width:185px}
+.m21-yearly-table th:nth-child(6){min-width:155px}
+.m21-yearly-table th:nth-child(7){min-width:90px}
+.m21-yearly-table th:nth-child(8){min-width:130px}
+.m21-yearly-status{
+  display:none;margin:0 0 12px;padding:11px 13px;border-radius:14px;
+  border:1px solid rgba(52,211,153,.25);background:rgba(52,211,153,.06);
+  color:#c7ffda;font-size:10px;line-height:1.45
+}
+.m21-yearly-status.show{display:block;animation:m13Rise .25s ease both}
+.m21-yearly-status.error{border-color:rgba(251,113,133,.28);background:rgba(251,113,133,.07);color:#ffc0ca}
+.m21-paid-wrap{display:flex;align-items:center;gap:8px;min-width:120px}
+.m21-paid-check{width:20px;height:20px;accent-color:#34d399;cursor:pointer}
+.m21-paid-check:disabled{cursor:not-allowed;opacity:.85}
+.m21-paid-label{font-size:10px;font-weight:950;white-space:nowrap}
+.m21-paid-label.done{color:#8cffb8}
+.m21-payment-record{display:grid;gap:6px;min-width:170px}
+.m21-payment-pill{
+  display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;
+  padding:6px 8px;border-radius:999px;border:1px solid rgba(52,211,153,.27);
+  background:rgba(52,211,153,.07);color:#a8ffc8;font-size:9px;font-weight:950
+}
+.m21-payment-pending{
+  display:inline-flex;align-items:center;padding:6px 8px;border-radius:999px;
+  border:1px solid rgba(251,191,36,.24);background:rgba(251,191,36,.06);
+  color:#ffe08a;font-size:9px;font-weight:900;width:max-content
+}
+.m21-undo-btn{
+  width:max-content;border:1px solid rgba(96,165,250,.27)!important;
+  background:rgba(96,165,250,.07)!important;color:#a9d8ff!important;
+  border-radius:9px!important;padding:6px 8px!important;font-size:8px!important;font-weight:950!important
+}
+.m21-renewal-pill{
+  display:inline-flex;align-items:center;justify-content:center;min-width:112px;
+  padding:7px 9px;border-radius:999px;border:1px solid rgba(167,139,250,.27);
+  background:rgba(167,139,250,.07);color:#d8c8ff;font-size:9px;font-weight:950;white-space:nowrap
+}
+.m21-yearly-row-paid td{background:rgba(52,211,153,.045)!important;border-color:rgba(52,211,153,.17)!important}
+.m21-yearly-row-overdue td{background:rgba(251,113,133,.035)!important}
+.m21-yearly-row-due-soon td{background:rgba(251,191,36,.035)!important}
+.m21-yearly-table input:disabled{opacity:.72;cursor:not-allowed}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -3035,15 +3084,21 @@ body{padding:0!important;margin:0!important}
     <h2>Editable Yearly Recurring Costs</h2>
     <div class="grid two-grid" style="margin-bottom:12px;">
       <button class="add-btn" id="addYearlyRecurringBtn">Add Yearly Recurring Cost</button>
-      <div class="subv">Use this for fixed annual costs like TV subscription, PlayStation, car insurance, boiler service, or anything you know repeats yearly.</div>
+      <div class="subv">Add the annual due date, mark it paid when it leaves the account, and Aurora will deduct it once from the Holding Pot and show the next renewal date.</div>
     </div>
 
-    <div class="table-wrap">
-      <table>
+    <div id="m21YearlyStatus" class="m21-yearly-status"></div>
+
+    <div class="table-wrap m21-yearly-table-wrap">
+      <table class="m21-yearly-table">
         <thead>
           <tr>
             <th>Name</th>
+            <th>Due Date</th>
             <th>Yearly Amount</th>
+            <th>Paid?</th>
+            <th>Payment Record</th>
+            <th>Next Auto-Renewal</th>
             <th>Included</th>
             <th>Category</th>
             <th>Delete</th>
@@ -3256,9 +3311,52 @@ const defaultRecurringCosts = [
 ];
 
 const defaultYearlyRecurringCosts = [
-  { id: "tv_yearly", name: "TV Subscription", amount: 50, included: true, category: "Subscription" },
-  { id: "ps_yearly", name: "PlayStation Subscription", amount: 99.99, included: true, category: "Subscription" }
+  { id: "tv_yearly", name: "TV Subscription", due: "2027-03-15", amount: 50, paid: false, deducted: false, paidAmount: 0, lastPaidDate: "", nextRenewalDue: "2028-03-15", included: true, category: "Subscription" },
+  { id: "ps_yearly", name: "PlayStation Subscription", due: "2026-11-14", amount: 99.99, paid: false, deducted: false, paidAmount: 0, lastPaidDate: "", nextRenewalDue: "2027-11-14", included: true, category: "Subscription" }
 ];
+
+function m21DateValue(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "";
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function m21NextRenewalDate(dueValue, fromToday = false) {
+  if (!dueValue) return "";
+  const due = parseLocalDate(dueValue);
+  if (Number.isNaN(due.getTime())) return "";
+  due.setFullYear(due.getFullYear() + 1);
+
+  if (fromToday) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    while (due <= today) due.setFullYear(due.getFullYear() + 1);
+  }
+  return m21DateValue(due);
+}
+
+function normaliseYearlyRecurringCosts(items) {
+  const source = Array.isArray(items) ? items : [];
+  return source.map(item => {
+    const due = String(item?.due || "");
+    const paid = Boolean(item?.paid);
+    const deducted = Boolean(item?.deducted);
+    return {
+      ...item,
+      due,
+      amount: Number(item?.amount || 0),
+      paid,
+      deducted,
+      paidAmount: Number(item?.paidAmount || (deducted ? item?.amount : 0) || 0),
+      lastPaidDate: String(item?.lastPaidDate || ""),
+      nextRenewalDue: String(item?.nextRenewalDue || m21NextRenewalDate(due)),
+      included: item?.included !== false,
+      category: String(item?.category || "Other")
+    };
+  });
+}
 
 
 const defaultEditablePots = [
@@ -3359,9 +3457,11 @@ function loadPlannerData() {
         ? parsed.recurringCosts
         : JSON.parse(JSON.stringify(defaultRecurringCosts)),
 
-      yearlyRecurringCosts: Array.isArray(parsed.yearlyRecurringCosts)
-        ? parsed.yearlyRecurringCosts
-        : JSON.parse(JSON.stringify(defaultYearlyRecurringCosts)),
+      yearlyRecurringCosts: normaliseYearlyRecurringCosts(
+        Array.isArray(parsed.yearlyRecurringCosts)
+          ? parsed.yearlyRecurringCosts
+          : JSON.parse(JSON.stringify(defaultYearlyRecurringCosts))
+      ),
 
       archivedBills: Array.isArray(parsed.archivedBills)
         ? parsed.archivedBills
@@ -3568,9 +3668,11 @@ function importPlannerBackupFromFile(file) {
         recurringCosts: Array.isArray(importedState.recurringCosts)
           ? importedState.recurringCosts
           : JSON.parse(JSON.stringify(defaultRecurringCosts)),
-        yearlyRecurringCosts: Array.isArray(importedState.yearlyRecurringCosts)
-          ? importedState.yearlyRecurringCosts
-          : JSON.parse(JSON.stringify(defaultYearlyRecurringCosts)),
+        yearlyRecurringCosts: normaliseYearlyRecurringCosts(
+          Array.isArray(importedState.yearlyRecurringCosts)
+            ? importedState.yearlyRecurringCosts
+            : JSON.parse(JSON.stringify(defaultYearlyRecurringCosts))
+        ),
         archivedBills: Array.isArray(importedState.archivedBills)
           ? importedState.archivedBills
           : [],
@@ -3929,22 +4031,170 @@ function renderRecurringCosts() {
   });
 }
 
+function m21ShowYearlyStatus(message, isError = false) {
+  const box = document.getElementById("m21YearlyStatus");
+  if (!box) return;
+  box.textContent = message;
+  box.classList.toggle("error", Boolean(isError));
+  box.classList.add("show");
+  clearTimeout(window.m21YearlyStatusTimer);
+  window.m21YearlyStatusTimer = setTimeout(() => box.classList.remove("show"), 5200);
+}
+
+function processYearlyAutoRenewals() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  plannerState.yearlyRecurringCosts = normaliseYearlyRecurringCosts(plannerState.yearlyRecurringCosts);
+  plannerState.yearlyRecurringCosts.forEach(cost => {
+    if (!cost.paid || !cost.nextRenewalDue) return;
+    const renewal = parseLocalDate(cost.nextRenewalDue);
+    if (Number.isNaN(renewal.getTime()) || renewal > today) return;
+
+    cost.due = cost.nextRenewalDue;
+    cost.paid = false;
+    cost.deducted = false;
+    cost.paidAmount = 0;
+    cost.lastPaidDate = "";
+    cost.nextRenewalDue = m21NextRenewalDate(cost.due);
+  });
+}
+
+function handleYearlyRecurringPaid(e) {
+  const input = e.target.closest("[data-m21-paid]");
+  if (!input) return;
+  const index = Number(input.dataset.m21Paid);
+  const cost = plannerState.yearlyRecurringCosts[index];
+  if (!cost || !Number.isFinite(index)) return;
+
+  if (!input.checked) {
+    input.checked = Boolean(cost.paid);
+    return;
+  }
+
+  if (!cost.due) {
+    input.checked = false;
+    m21ShowYearlyStatus("Add the annual due date before marking this cost as paid.", true);
+    return;
+  }
+
+  const amount = Math.max(0, Number(cost.amount || 0));
+  if (amount <= 0) {
+    input.checked = false;
+    m21ShowYearlyStatus("Enter the yearly amount before marking this cost as paid.", true);
+    return;
+  }
+
+  const holding = Number(plannerState.holdingBalance || 0);
+  if (amount > holding) {
+    input.checked = false;
+    m21ShowYearlyStatus(`Holding Pot is £${formatMoney(holding)}. Add funds before deducting £${formatMoney(amount)}.`, true);
+    return;
+  }
+
+  if (!cost.deducted) {
+    plannerState.holdingBalance = holding - amount;
+    cost.paidAmount = amount;
+    cost.deducted = true;
+  }
+  cost.paid = true;
+  cost.lastPaidDate = new Date().toISOString();
+  cost.nextRenewalDue = m21NextRenewalDate(cost.due, true);
+
+  const holdingInput = document.getElementById("holdingBalanceInput");
+  if (holdingInput) holdingInput.value = Number(plannerState.holdingBalance).toFixed(2);
+
+  savePlannerData();
+  m21ShowYearlyStatus(`${cost.name || "Yearly cost"} marked paid. £${formatMoney(amount)} deducted from the Holding Pot.`);
+  runPlanner();
+}
+
+function handleYearlyRecurringUndo(e) {
+  const btn = e.target.closest("[data-m21-undo]");
+  if (!btn) return;
+  const index = Number(btn.dataset.m21Undo);
+  const cost = plannerState.yearlyRecurringCosts[index];
+  if (!cost || !Number.isFinite(index) || !cost.deducted) return;
+
+  const refund = Math.max(0, Number(cost.paidAmount || cost.amount || 0));
+  plannerState.holdingBalance = Number(plannerState.holdingBalance || 0) + refund;
+  cost.paid = false;
+  cost.deducted = false;
+  cost.paidAmount = 0;
+  cost.lastPaidDate = "";
+  cost.nextRenewalDue = m21NextRenewalDate(cost.due);
+
+  const holdingInput = document.getElementById("holdingBalanceInput");
+  if (holdingInput) holdingInput.value = Number(plannerState.holdingBalance).toFixed(2);
+
+  savePlannerData();
+  m21ShowYearlyStatus(`${cost.name || "Yearly cost"} payment was undone. £${formatMoney(refund)} returned to the Holding Pot.`);
+  runPlanner();
+}
+
 function renderYearlyRecurringCosts() {
   const body = document.getElementById("yearlyRecurringCostsBody");
   if (!body) return;
   body.innerHTML = "";
 
+  plannerState.yearlyRecurringCosts = normaliseYearlyRecurringCosts(plannerState.yearlyRecurringCosts);
+
   plannerState.yearlyRecurringCosts.forEach((cost, index) => {
+    const daysLeft = cost.due ? getDaysLeft(cost.due) : null;
+    const rowClass = cost.paid
+      ? "m21-yearly-row-paid"
+      : (daysLeft !== null && daysLeft < 0)
+        ? "m21-yearly-row-overdue"
+        : (daysLeft !== null && daysLeft <= 30)
+          ? "m21-yearly-row-due-soon"
+          : "";
+    const locked = cost.paid && cost.deducted;
+    const renewal = cost.nextRenewalDue || m21NextRenewalDate(cost.due);
+    const paidDate = cost.lastPaidDate
+      ? new Date(cost.lastPaidDate).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" })
+      : "";
+
     const tr = document.createElement("tr");
+    tr.className = rowClass;
     tr.innerHTML = `
-      <td><input class="table-input" type="text" value="${cost.name}" data-section="yearlyRecurring" data-index="${index}" data-field="name"></td>
-      <td><input class="table-input" type="number" step="0.01" value="${cost.amount}" data-section="yearlyRecurring" data-index="${index}" data-field="amount"></td>
+      <td><input class="table-input" type="text" value="${m18Escape(cost.name)}" data-section="yearlyRecurring" data-index="${index}" data-field="name"></td>
+      <td><input class="table-input" type="date" value="${m18Escape(cost.due)}" data-section="yearlyRecurring" data-index="${index}" data-field="due" ${locked ? "disabled" : ""}></td>
+      <td><input class="table-input" type="number" min="0" step="0.01" value="${Number(cost.amount || 0)}" data-section="yearlyRecurring" data-index="${index}" data-field="amount" ${locked ? "disabled" : ""}></td>
+      <td>
+        <div class="m21-paid-wrap">
+          <input class="m21-paid-check" type="checkbox" data-m21-paid="${index}" ${cost.paid ? "checked disabled" : ""}>
+          <span class="m21-paid-label ${cost.paid ? "done" : ""}">${cost.paid ? "✅ Paid" : "Mark paid"}</span>
+        </div>
+      </td>
+      <td>
+        <div class="m21-payment-record">
+          ${cost.deducted
+            ? `<span class="m21-payment-pill">−£${formatMoney(cost.paidAmount || cost.amount)} • ${paidDate || "recorded"}</span><button class="m21-undo-btn" type="button" data-m21-undo="${index}">Undo payment</button>`
+            : `<span class="m21-payment-pending">Not deducted yet</span>`}
+        </div>
+      </td>
+      <td><span class="m21-renewal-pill">${renewal ? dateLabel(renewal) : "Add due date"}</span></td>
       <td><div class="check-wrap"><input type="checkbox" ${cost.included ? "checked" : ""} data-section="yearlyRecurring" data-index="${index}" data-field="included"><span>${cost.included ? "Yes" : "No"}</span></div></td>
-      <td><input class="table-input" type="text" value="${cost.category}" data-section="yearlyRecurring" data-index="${index}" data-field="category"></td>
+      <td><input class="table-input" type="text" value="${m18Escape(cost.category)}" data-section="yearlyRecurring" data-index="${index}" data-field="category"></td>
       <td><button class="delete-btn" data-delete-section="yearlyRecurring" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
   });
+}
+
+function m21CombinedDatedBills() {
+  const scheduled = (plannerState.scheduledBills || []).filter(item => item && item.included && !item.paid);
+  const seen = new Set(scheduled.map(item => `${String(item.name || "").trim().toLowerCase()}|${item.due || ""}`));
+  const yearly = (plannerState.yearlyRecurringCosts || [])
+    .filter(item => item && item.included && !item.paid)
+    .filter(item => {
+      const key = `${String(item.name || "").trim().toLowerCase()}|${item.due || ""}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .map(item => ({ ...item, _sourceLabel: "Yearly recurring cost" }));
+  return [...scheduled, ...yearly];
 }
 
 function renderNext7DaysBills(bills) {
@@ -3980,7 +4230,7 @@ function renderNext7DaysBills(bills) {
     card.innerHTML = `
       <div class="next-bill-title">${item.name}</div>
       <div class="subv">${dateLabel(item.due)} • £${formatMoney(item.amount)}</div>
-      <div class="subv ${left <= 3 ? "risk" : "watch"}">${left} days left • ${item.category}</div>
+      <div class="subv ${left <= 3 ? "risk" : "watch"}">${left} days left • ${item.category}${item._sourceLabel ? ` • ${item._sourceLabel}` : ""}</div>
     `;
     grid.appendChild(card);
   });
@@ -4160,6 +4410,12 @@ function updatePlannerTotals() {
 
   const unpaidScheduled = includedScheduled.filter(x => !x.paid);
   const unpaidScheduledTotal = unpaidScheduled.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  const scheduledKeys = new Set(unpaidScheduled.map(x => `${String(x.name || "").trim().toLowerCase()}|${x.due || ""}`));
+  const unpaidYearlyRecurring = includedYearlyRecurring
+    .filter(x => !x.paid)
+    .filter(x => !scheduledKeys.has(`${String(x.name || "").trim().toLowerCase()}|${x.due || ""}`));
+  const unpaidYearlyRecurringTotal = unpaidYearlyRecurring.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  const unpaidProtectedTotal = unpaidScheduledTotal + unpaidYearlyRecurringTotal;
 
   const actualPaidScheduledTotal = includedScheduled
     .filter(x => x.paid)
@@ -4182,7 +4438,7 @@ function updatePlannerTotals() {
     Math.max(0, plannedPaidScheduledTotal - actualPaidScheduledTotal) +
     Math.max(0, recurringReleased);
 
-  const next7DayBillsList = unpaidScheduled
+  const next7DayBillsList = [...unpaidScheduled, ...unpaidYearlyRecurring]
     .filter(x => x.due)
     .filter(x => {
       const diff = getDaysLeft(x.due);
@@ -4190,7 +4446,7 @@ function updatePlannerTotals() {
     })
     .sort((a, b) => new Date(a.due) - new Date(b.due));
 
-  const next30DayBillsList = unpaidScheduled
+  const next30DayBillsList = [...unpaidScheduled, ...unpaidYearlyRecurring]
     .filter(x => x.due)
     .filter(x => {
       const diff = getDaysLeft(x.due);
@@ -4205,12 +4461,12 @@ function updatePlannerTotals() {
 
   const protectedBase = plannerState.minimumBuffer;
   const protectedRecurringMonthly = recurringMonthlyTotal;
-  const protectedMoney = protectedBase + unpaidScheduledTotal + protectedRecurringMonthly;
+  const protectedMoney = protectedBase + unpaidProtectedTotal + protectedRecurringMonthly;
   const protectedNext30Cycle = next30DaysBills + protectedRecurringMonthly;
 
   const availableToInvest = Math.max(
     0,
-    plannerState.holdingBalance - protectedBase - unpaidScheduledTotal - protectedRecurringMonthly + releasedSurplus
+    plannerState.holdingBalance - protectedBase - unpaidProtectedTotal - protectedRecurringMonthly + releasedSurplus
   );
 
   const safeToMoveNow = Math.max(
@@ -4311,10 +4567,10 @@ function updatePlannerTotals() {
   setText("trueSurplusMeta", trueSurplus > 0 ? "Money genuinely spare after short-term protection" : "No genuine spare money right now");
 
   setText("protectedMoney", formatMoney(protectedMoney));
-  setText("protectedMoneyMeta", `£${formatMoney(plannerState.minimumBuffer)} buffer + £${formatMoney(unpaidScheduledTotal)} unpaid bills + £${formatMoney(protectedRecurringMonthly)} recurring monthly`);
+  setText("protectedMoneyMeta", `£${formatMoney(plannerState.minimumBuffer)} buffer + £${formatMoney(unpaidProtectedTotal)} unpaid dated / annual bills + £${formatMoney(protectedRecurringMonthly)} recurring monthly`);
 
   setText("releaseSurplusCard", `£${formatMoney(releasedSurplus)}`);
-  setText("protectedBillsCard", `£${formatMoney(unpaidScheduledTotal + protectedRecurringMonthly)}`);
+  setText("protectedBillsCard", `£${formatMoney(unpaidProtectedTotal + protectedRecurringMonthly)}`);
   setText("safeSurplusCard", `£${formatMoney(safeToMoveNow)}`);
   setText("freeAfterBufferCard", `£${formatMoney(freeAfterBuffer)}`);
 
@@ -4395,12 +4651,12 @@ function updatePlannerTotals() {
   if (
     releasedSurplus > 0 &&
     plannerState.holdingBalance - releasedSurplus >= plannerState.minimumBuffer &&
-    (plannerState.holdingBalance - plannerState.minimumBuffer) >= (unpaidScheduledTotal + protectedRecurringMonthly)
+    (plannerState.holdingBalance - plannerState.minimumBuffer) >= (unpaidProtectedTotal + protectedRecurringMonthly)
   ) {
     igSignal = "Move Surplus";
     igMeta = `Safe to move up to £${formatMoney(releasedSurplus)} to IG ISA if you want. Suggested per payday: £${formatMoney(payCycleTarget)}.`;
   } else if (
-    plannerState.holdingBalance >= (unpaidScheduledTotal + protectedRecurringMonthly + plannerState.minimumBuffer) &&
+    plannerState.holdingBalance >= (unpaidProtectedTotal + protectedRecurringMonthly + plannerState.minimumBuffer) &&
     surplusShortfall >= 0
   ) {
     igSignal = "Balanced";
@@ -4430,7 +4686,7 @@ function updatePlannerTotals() {
   }
 
   renderYearlyTable([
-    { name: "Scheduled Bills Included", yearly: scheduledIncludedTotal, notes: `Unpaid scheduled remaining: £${formatMoney(unpaidScheduledTotal)}` },
+    { name: "Scheduled Bills Included", yearly: scheduledIncludedTotal, notes: `Unpaid scheduled remaining: £${formatMoney(unpaidScheduledTotal)} • unique yearly renewals awaiting payment: £${formatMoney(unpaidYearlyRecurringTotal)}` },
     { name: "Recurring Monthly Costs Included", yearly: recurringIncludedTotal, notes: "Monthly costs annualised" },
     { name: "Future Costs Included", yearly: futureIncludedTotal, notes: "Future items currently switched on" },
     { name: "Recurring Yearly Costs Included", yearly: yearlyRecurringTotal, notes: "Fixed annual costs" },
@@ -4440,7 +4696,7 @@ function updatePlannerTotals() {
 
   renderCategoryBreakdown(categoryTotals);
   
-renderNext7DaysBills(plannerState.scheduledBills);
+renderNext7DaysBills(m21CombinedDatedBills());
   renderContributionTable();
 
   updateWealthCommandDeck({
@@ -4452,7 +4708,7 @@ renderNext7DaysBills(plannerState.scheduledBills);
     trueSurplus,
     availableToInvest,
     includedGrandTotal,
-    unpaidScheduledTotal,
+    unpaidScheduledTotal: unpaidProtectedTotal,
     protectedRecurringMonthly,
     protectedNext30Cycle
   });
@@ -4495,8 +4751,16 @@ function handleTableEdit(e) {
     }
   }
 
+  if (section === "yearlyRecurring" && field === "due") {
+    source[index].nextRenewalDue = m21NextRenewalDate(source[index].due);
+  }
+
   savePlannerData();
   if (section === "scheduled" && (field === "category" || field === "due" || field === "recurrence") && e.type === "change") {
+    runPlanner();
+    return;
+  }
+  if (section === "yearlyRecurring" && field === "due" && e.type === "change") {
     runPlanner();
     return;
   }
@@ -4598,6 +4862,14 @@ function bindTableInputs() {
   document.querySelectorAll("[data-roll-section]").forEach(btn => {
     btn.onclick = handleRollForward;
   });
+
+  document.querySelectorAll("[data-m21-paid]").forEach(input => {
+    input.onchange = handleYearlyRecurringPaid;
+  });
+
+  document.querySelectorAll("[data-m21-undo]").forEach(btn => {
+    btn.onclick = handleYearlyRecurringUndo;
+  });
 }
 
 function addScheduledBill() {
@@ -4652,7 +4924,13 @@ function addYearlyRecurringCost() {
   plannerState.yearlyRecurringCosts.push({
     id: `yearlyRecurring_${Date.now()}`,
     name: "New Yearly Cost",
+    due: "",
     amount: 0,
+    paid: false,
+    deducted: false,
+    paidAmount: 0,
+    lastPaidDate: "",
+    nextRenewalDue: "",
     included: true,
     category: "Other"
   });
@@ -4915,6 +5193,7 @@ function runPlanner() {
   plannerState.growPotTarget = parseNum(document.getElementById("growPotTargetInput")?.value);
 
   applyPaidScheduledDeductions();
+  processYearlyAutoRenewals();
 
   const holdingInput = document.getElementById("holdingBalanceInput");
   if (holdingInput) {
@@ -5081,7 +5360,13 @@ function m13Render(){
   const flex=Math.max(0,pay-isa-lifestyle-goals-grow);
 
   const included=(plannerState.scheduledBills||[]).filter(x=>x&&x.included);
-  const unpaid=included.filter(x=>!x.paid);
+  const unpaidScheduled=included.filter(x=>!x.paid);
+  const scheduledKeys=new Set(unpaidScheduled.map(x=>`${String(x.name||"").trim().toLowerCase()}|${x.due||""}`));
+  const unpaidYearly=(plannerState.yearlyRecurringCosts||[])
+    .filter(x=>x&&x.included&&!x.paid)
+    .filter(x=>!scheduledKeys.has(`${String(x.name||"").trim().toLowerCase()}|${x.due||""}`))
+    .map(x=>({...x,_sourceLabel:"Yearly renewal"}));
+  const unpaid=[...unpaidScheduled,...unpaidYearly];
   const unpaidTotal=unpaid.reduce((s,x)=>s+Number(x.amount||0),0);
   const recurringMonthly=(plannerState.recurringCosts||[]).filter(x=>x&&x.included).reduce((s,x)=>s+Number(x.amount||0),0);
   const protectedMoney=Number(plannerState.minimumBuffer||0)+unpaidTotal+recurringMonthly;
@@ -5114,11 +5399,11 @@ function m13Render(){
   m13Set("m13Ticker",`Expected pay ${m13GBP(pay)} • IG ISA ${m13GBP(isa)} • Goal pots ${m13GBP(goals)} • Lifestyle ${m13GBP(lifestyle)} • ${m13GBP(beforeTotal)} scheduled before payday • projected balance ${m13GBP(projected)}`);
 
   const list=document.getElementById("m13CashflowList");
-  if(list)list.innerHTML=before.length?before.map(x=>`<div class="m13-cashflow-item"><div class="m13-cashflow-date">${x._d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}).toUpperCase()}</div><div><div class="m13-cashflow-name">${x.name||"Unnamed payment"}</div><div class="m13-cashflow-meta">${x.category||"Scheduled bill"} • unpaid</div></div><div class="m13-cashflow-amount">−${m13GBP(x.amount)}</div></div>`).join(""):`<div class="m13-cashflow-item"><div class="m13-cashflow-date">CLEAR</div><div><div class="m13-cashflow-name">Nothing dated before payday</div><div class="m13-cashflow-meta">Only genuine unpaid dated items are counted</div></div><div class="m13-cashflow-amount">${m13GBP(0)}</div></div>`;
+  if(list)list.innerHTML=before.length?before.map(x=>`<div class="m13-cashflow-item"><div class="m13-cashflow-date">${x._d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}).toUpperCase()}</div><div><div class="m13-cashflow-name">${x.name||"Unnamed payment"}</div><div class="m13-cashflow-meta">${x.category||"Scheduled bill"}${x._sourceLabel?` • ${x._sourceLabel}`:""} • unpaid</div></div><div class="m13-cashflow-amount">−${m13GBP(x.amount)}</div></div>`).join(""):`<div class="m13-cashflow-item"><div class="m13-cashflow-date">CLEAR</div><div><div class="m13-cashflow-name">Nothing dated before payday</div><div class="m13-cashflow-meta">Only genuine unpaid dated items are counted</div></div><div class="m13-cashflow-amount">${m13GBP(0)}</div></div>`;
 
   const upcoming=[...unpaid].filter(x=>m13Date(x.due)).sort((a,b)=>m13Date(a.due)-m13Date(b.due)).slice(0,4);
   const up=document.getElementById("m13UpcomingBills");
-  if(up)up.innerHTML=upcoming.length?upcoming.map(x=>{const d=m13Date(x.due);return `<div class="m13-cashflow-item"><div class="m13-cashflow-date">${d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}).toUpperCase()}</div><div><div class="m13-cashflow-name">${x.name||"Unnamed payment"}</div><div class="m13-cashflow-meta">${x.category||"Scheduled bill"}</div></div><div class="m13-cashflow-amount">${m13GBP(x.amount)}</div></div>`}).join(""):`<div class="m13-cashflow-item"><div class="m13-cashflow-date">CLEAR</div><div><div class="m13-cashflow-name">No upcoming dated bills</div><div class="m13-cashflow-meta">Add due dates in Bills & Spending</div></div><div class="m13-cashflow-amount">—</div></div>`;
+  if(up)up.innerHTML=upcoming.length?upcoming.map(x=>{const d=m13Date(x.due);return `<div class="m13-cashflow-item"><div class="m13-cashflow-date">${d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}).toUpperCase()}</div><div><div class="m13-cashflow-name">${x.name||"Unnamed payment"}</div><div class="m13-cashflow-meta">${x.category||"Scheduled bill"}${x._sourceLabel?` • ${x._sourceLabel}`:""}</div></div><div class="m13-cashflow-amount">${m13GBP(x.amount)}</div></div>`}).join(""):`<div class="m13-cashflow-item"><div class="m13-cashflow-date">CLEAR</div><div><div class="m13-cashflow-name">No upcoming dated bills</div><div class="m13-cashflow-meta">Add due dates in Bills & Spending</div></div><div class="m13-cashflow-amount">—</div></div>`;
 }
 function m13ScrollTo(id){document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"})}
 document.querySelectorAll("#m13Nav button").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll("#m13Nav button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");m13ScrollTo(btn.dataset.target)}));
