@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Aurora Wealth Command Centre</title>
+<title>Aurora Wealth HQ — Editable Pots M9</title>
 
 <style>
  :root {
@@ -1322,6 +1322,55 @@ body:before{
 }
 
 
+
+/* ===================== AURORA CONNECTED HQ DOCK ===================== */
+.aurora-hq-dock{
+  margin:18px auto 8px;
+  padding:14px;
+  border:1px solid rgba(98,243,255,.18);
+  border-radius:20px;
+  background:linear-gradient(145deg,rgba(13,27,45,.94),rgba(5,12,24,.96));
+  box-shadow:0 14px 38px rgba(0,0,0,.26);
+}
+.aurora-hq-dock-title{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;
+}
+.aurora-hq-dock-title strong{font-size:15px}
+.aurora-hq-dock-title span{color:#96abc5;font-size:11px}
+.aurora-hq-dock-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;
+}
+.aurora-hq-link{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  min-height:44px;padding:10px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.04);
+  color:#e9f4ff!important;text-decoration:none!important;font-weight:900;font-size:12px;
+}
+.aurora-hq-link:hover,.aurora-hq-link.active{
+  border-color:rgba(98,243,255,.42);
+  background:rgba(98,243,255,.09);
+  color:#62f3ff!important;
+  box-shadow:0 0 18px rgba(98,243,255,.10);
+}
+@media(max-width:760px){.aurora-hq-dock-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){.aurora-hq-dock-grid{grid-template-columns:1fr}}
+
+/* ===================== EDITABLE POT MANAGER ===================== */
+.pot-editor-grid{display:grid;gap:8px;margin-top:12px}
+.pot-editor-row{
+  display:grid;grid-template-columns:1.4fr .75fr .75fr 1.2fr auto;gap:8px;align-items:center;
+  padding:9px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.03)
+}
+.pot-editor-row input{width:100%;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);color:var(--text);border-radius:10px;padding:9px}
+.pot-editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pot-editor-status{margin-top:9px;color:var(--muted);font-size:11px}
+@media(max-width:850px){
+  .pot-editor-row{grid-template-columns:1fr 1fr}
+  .pot-editor-row .pot-note{grid-column:1/-1}
+  .pot-editor-row button{grid-column:1/-1}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -1447,6 +1496,25 @@ body:before{
         </div>
       </div>
     </div>
+  </section>
+
+
+  <!-- ===================== SECTION: EDITABLE POT MANAGER ===================== -->
+  <section class="section card" id="editablePotManager">
+    <div class="command-title">
+      <div>
+        <h2>Editable Pot Manager</h2>
+        <div class="subv">Update balances and targets directly here. These values are saved on this device and rebuild the Pot Health Radar instantly.</div>
+      </div>
+      <div class="command-badge good" id="potEditorBadge">LOCAL SAVE</div>
+    </div>
+    <div class="pot-editor-grid" id="potEditorGrid"></div>
+    <div class="pot-editor-actions">
+      <button class="add-btn" id="addPotBtn" type="button">+ Add New Pot</button>
+      <button class="quick-btn" id="savePotsBtn" type="button">Save Pot Changes</button>
+      <button class="delete-btn" id="resetPotsBtn" type="button">Reset Pot List</button>
+    </div>
+    <div class="pot-editor-status" id="potEditorStatus">Your pot values stay in this browser until you export or import a planner backup.</div>
   </section>
 
   <!-- ===================== SECTION: POT HEALTH RADAR ===================== -->
@@ -2185,6 +2253,33 @@ const defaultYearlyRecurringCosts = [
   { id: "ps_yearly", name: "PlayStation Subscription", amount: 99.99, included: true, category: "Subscription" }
 ];
 
+
+const defaultEditablePots = [
+  {id:"spending_pot",name:"Spending Pot",balance:0,target:600,note:"Lifestyle spending"},
+  {id:"coventry_city_tickets_travel",name:"Coventry City Tickets / Travel",balance:0,target:540,note:"Match tickets and travel"},
+  {id:"coventry_city_season_ticket",name:"Coventry City Season Ticket",balance:0,target:635,note:"Season ticket fund"},
+  {id:"dentist",name:"Dentist",balance:150,target:345,note:"Current dentist balance"},
+  {id:"car_costs",name:"Car Costs",balance:0,target:650,note:"Maintenance, MOT and repairs"},
+  {id:"christmas",name:"Christmas Pot",balance:0,target:500,note:"Christmas fund"},
+  {id:"holiday_pot",name:"Holiday Pot",balance:0,target:500,note:"Holiday fund"},
+  {id:"emergency_fund",name:"Emergency Fund",balance:700,target:7500,note:"Long-term safety reserve"},
+  {id:"payday_rollover",name:"Payday Rollover",balance:0,target:350,note:"Short-term safety buffer"},
+  {id:"house_fund",name:"House Fund",balance:0,target:28000,note:"Renovation and home projects"}
+];
+function freshEditablePots(){return JSON.parse(JSON.stringify(defaultEditablePots));}
+function migrateLegacyPots(parsed){
+  if(Array.isArray(parsed?.editablePots)) return parsed.editablePots;
+  const mp=parsed?.monzoPots;
+  if(!mp || typeof mp!=="object") return freshEditablePots();
+  return Object.entries(mp).map(([id,p])=>({
+    id,
+    name:String(p?.name||id.replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase())),
+    balance:parseNum(p?.balance),
+    target:parseNum(p?.target ?? p?.payday_target),
+    note:String(p?.note||"Imported from previous pot data")
+  }));
+}
+
 function getFreshDefaults() {
   const freshScheduled = JSON.parse(JSON.stringify(defaultScheduledBills));
   const freshFuture = JSON.parse(JSON.stringify(defaultFutureCosts));
@@ -2207,6 +2302,7 @@ function getFreshDefaults() {
     minimumBuffer: 1000,
     growPotBalance: 700,
     growPotTarget: 7500,
+    editablePots: freshEditablePots(),
     scheduledBills: freshScheduled,
     futureCosts: freshFuture,
     recurringCosts: freshRecurring,
@@ -2238,6 +2334,7 @@ function loadPlannerData() {
       paydayContribution: parseNum(parsed.paydayContribution ?? 140),
       growPotBalance: parseNum(parsed.growPotBalance ?? 700),
       growPotTarget: parseNum(parsed.growPotTarget ?? 7500),
+      editablePots: migrateLegacyPots(parsed),
 
       scheduledBills: Array.isArray(parsed.scheduledBills)
         ? parsed.scheduledBills.map(bill => ({
@@ -3542,6 +3639,7 @@ function updateWealthCommandDeck(metrics) {
   setText("commandSurplusRoute", route);
   setText("commandSurplusMeta", routeMeta);
 
+  renderPotEditor();
   renderPotHealthRadar(metrics);
   updatePaydaySimulator(metrics);
   updateNextPaydayPlan(metrics);
@@ -3549,107 +3647,50 @@ function updateWealthCommandDeck(metrics) {
   renderFreedomFlightPath(metrics);
 }
 
+function renderPotEditor() {
+  const grid=document.getElementById("potEditorGrid");
+  if(!grid)return;
+  const pots=Array.isArray(plannerState.editablePots)?plannerState.editablePots:[];
+  grid.innerHTML=pots.map((p,index)=>`
+    <div class="pot-editor-row" data-pot-index="${index}">
+      <input data-pot-field="name" value="${String(p.name||"").replace(/"/g,"&quot;")}" aria-label="Pot name">
+      <input data-pot-field="balance" type="number" step="0.01" value="${Number(p.balance||0)}" aria-label="Current balance">
+      <input data-pot-field="target" type="number" step="0.01" value="${Number(p.target||0)}" aria-label="Target">
+      <input class="pot-note" data-pot-field="note" value="${String(p.note||"").replace(/"/g,"&quot;")}" aria-label="Pot note">
+      <button class="delete-btn" type="button" data-delete-pot="${index}">Delete</button>
+    </div>`).join("") || `<div class="subv">No pots yet. Add your first pot below.</div>`;
+}
+function syncPotEditorToState(){
+  const rows=[...document.querySelectorAll("#potEditorGrid .pot-editor-row")];
+  plannerState.editablePots=rows.map((row,index)=>({
+    id:String(plannerState.editablePots?.[index]?.id||`pot_${Date.now()}_${index}`),
+    name:String(row.querySelector('[data-pot-field="name"]')?.value||`Pot ${index+1}`).trim(),
+    balance:parseNum(row.querySelector('[data-pot-field="balance"]')?.value),
+    target:parseNum(row.querySelector('[data-pot-field="target"]')?.value),
+    note:String(row.querySelector('[data-pot-field="note"]')?.value||"").trim()
+  }));
+}
 function renderPotHealthRadar(metrics) {
   const grid = document.getElementById("potHealthRadar");
   if (!grid) return;
-
-  const mp = plannerState.monzoPots || {};
-
-const pots = [
-  {
-    name: "Spending Pot",
-    current: Number(mp.spending_pot?.balance || 0),
-    target: Number(mp.spending_pot?.payday_target || 600),
-    note: "Lifestyle spending"
-  },
-  {
-    name: "Coventry City Tickets / Travel",
-    current: Number(mp.coventry_city_tickets_travel?.balance || 0),
-    target: Number(mp.coventry_city_tickets_travel?.target || 880),
-    note: "Match tickets and travel"
-  },
-  {
-    name: "Coventry City Season Ticket",
-    current: Number(mp.coventry_city_season_ticket?.balance || 0),
-    target: Number(mp.coventry_city_season_ticket?.target || 880),
-    note: "Season ticket fund"
-  },
-  {
-    name: "Dentist",
-    current: Number(mp.dentist?.balance || 0),
-    target: Number(mp.dentist?.target || 300),
-    note: "Routine dental costs"
-  },
-  {
-    name: "Dental Treatment",
-    current: Number(mp.dentist_treatment?.balance || 0),
-    target: Number(mp.dentist_treatment?.target || 850),
-    note: "Major treatment fund"
-  },
-  {
-    name: "Car Costs",
-    current: Number(mp.car_costs?.balance || 0),
-    target: Number(mp.car_costs?.target || 650),
-    note: "Maintenance and repairs"
-  },
-  {
-    name: "Christmas Pot",
-    current: Number(mp.christmas?.balance || 0),
-    target: Number(mp.christmas?.target || 520),
-    note: "Christmas fund"
-  },
-  {
-    name: "Birthdays / Gifts",
-    current: Number(mp.birthday_gifts?.balance || 0),
-    target: Number(mp.birthday_gifts?.target || 400),
-    note: "Annual gifts"
-  },
-  {
-    name: "Holiday Pot",
-    current: Number(mp.holiday_pot?.balance || 0),
-    target: Number(mp.holiday_pot?.target || 500),
-    note: "Holiday fund"
-  },
-  {
-    name: "IG Trading",
-    current: Number(mp.ig_trading?.balance || 0),
-    target: 0,
-    note: "Investment opportunities"
-  },
-  {
-    name: "Payday Rollover",
-    current: Number(mp.payday_rollover?.balance || 0),
-    target: Number(mp.payday_rollover?.target || 350),
-    note: "Safety buffer"
-  },
-  {
-    name: "Mobile Phone",
-    current: Number(mp.mobile_phone?.balance || 0),
-    target: Number(mp.mobile_phone?.target || 800),
-    note: "Phone replacement fund"
-  },
-  {
-    name: "PS5 Games",
-    current: Number(mp.ps5_games?.balance || 0),
-    target: 0,
-    note: "Gaming fund"
-  }
-];
+  const pots=Array.isArray(plannerState.editablePots)?plannerState.editablePots:[];
   grid.innerHTML = pots.map(p => {
-    const progress = p.target > 0 ? Math.min(100, (p.current / p.target) * 100) : 0;
+    const current=Number(p.balance||0), target=Number(p.target||0);
+    const progress = target > 0 ? Math.min(100, (current / target) * 100) : (current>0?100:0);
     const cls = progress >= 85 ? "good" : progress >= 45 ? "watch" : "risk";
+    const targetText=target>0?`£${formatMoney(target)}`:"Open target";
     return `
       <div class="pot-radar-card ${cls}">
         <div class="pot-radar-top">
-          <div class="pot-name">${p.name}</div>
+          <div class="pot-name">${p.name||"Unnamed Pot"}</div>
           <div class="pot-status-dot"></div>
         </div>
-        <div class="subv">${p.note}</div>
+        <div class="subv">${p.note||"Personal goal pot"}</div>
         <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-        <div class="subv">£${formatMoney(p.current)} / £${formatMoney(p.target)} • ${progress.toFixed(0)}%</div>
+        <div class="subv">£${formatMoney(current)} / ${targetText} • ${progress.toFixed(0)}%</div>
       </div>
     `;
-  }).join("");
+  }).join("") || `<div class="subv">Add pots in the Editable Pot Manager to build your radar.</div>`;
 }
 
 
@@ -3905,6 +3946,29 @@ document.getElementById("removeCustomBtn")?.addEventListener("click", () => {
 });
 
 
+
+document.getElementById("addPotBtn")?.addEventListener("click",()=>{
+  syncPotEditorToState();
+  plannerState.editablePots.push({id:`pot_${Date.now()}`,name:"New Pot",balance:0,target:0,note:""});
+  renderPotEditor();renderPotHealthRadar({});
+});
+document.getElementById("savePotsBtn")?.addEventListener("click",()=>{
+  syncPotEditorToState();savePlannerData();renderPotHealthRadar({});
+  setText("potEditorStatus",`Pot changes saved at ${new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}.`);
+});
+document.getElementById("resetPotsBtn")?.addEventListener("click",()=>{
+  plannerState.editablePots=freshEditablePots();savePlannerData();renderPotEditor();renderPotHealthRadar({});
+  setText("potEditorStatus","Pot list reset to the Aurora starter layout.");
+});
+document.getElementById("potEditorGrid")?.addEventListener("input",()=>{
+  syncPotEditorToState();renderPotHealthRadar({});
+});
+document.getElementById("potEditorGrid")?.addEventListener("click",(event)=>{
+  const btn=event.target.closest("[data-delete-pot]");if(!btn)return;
+  syncPotEditorToState();plannerState.editablePots.splice(Number(btn.dataset.deletePot),1);
+  savePlannerData();renderPotEditor();renderPotHealthRadar({});
+});
+
 ["simPayInput","simInvestInput","simLifestyleInput","simGoalsInput"].forEach(id => {
   document.getElementById(id)?.addEventListener("input", () => updatePlannerTotals());
 });
@@ -3912,11 +3976,12 @@ document.getElementById("removeCustomBtn")?.addEventListener("click", () => {
 runPlanner();
 </script>
 
-<a class="hq-home-btn"
-   href="AuroraNexusMaster.html"
-   target="_self">
-   🏠 Aurora HQ
-</a>
+
+<section class="aurora-hq-dock" aria-label="Aurora connected headquarters">
+  <div class="aurora-hq-dock-title"><strong>Aurora Connected HQ</strong><span>Move between the four command systems</span></div>
+  <div class="aurora-hq-dock-grid"><a class="aurora-hq-link" href="AuroraNexusMaster.html" target="_self">🏟️ Nexus HQ</a><a class="aurora-hq-link active" href="SpendingPlannerMaster.html" target="_self">💷 Wealth HQ</a><a class="aurora-hq-link" href="TradingBrainMaster.html" target="_self">🧠 Trading Brain</a><a class="aurora-hq-link" href="TescoSimMaster.html" target="_self">🛒 Tesco Simulator</a></div>
+</section>
+
 
 <!-- ===================== SECTION: AURORA MASTER JSON SOURCE ===================== -->
 <script>
