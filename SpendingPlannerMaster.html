@@ -2064,6 +2064,37 @@ body{padding:0!important;margin:0!important}
   color:#a9d8ff;font-size:8px;font-weight:950;white-space:nowrap
 }
 
+
+/* ===================== M21 PAY FUTURE COSTS FROM HOLDING POT ===================== */
+.m21-pay-input{min-width:105px!important}
+.m21-status{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:78px;padding:6px 8px;border-radius:999px;
+  font-size:8px;font-weight:950;letter-spacing:.45px;text-transform:uppercase;
+  border:1px solid rgba(125,211,252,.16);white-space:nowrap
+}
+.m21-status.planned{color:#9fdcff;background:rgba(34,211,238,.07);border-color:rgba(34,211,238,.22)}
+.m21-status.part-paid{color:#ffe08a;background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28)}
+.m21-status.paid{color:#9affc3;background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.30)}
+.m21-pay-btn{
+  border:1px solid rgba(52,211,153,.34)!important;
+  background:rgba(52,211,153,.09)!important;color:#8cffb8!important;
+  border-radius:10px!important;padding:8px 10px!important;font-size:9px!important;
+  font-weight:950!important;white-space:nowrap
+}
+.m21-pay-btn:disabled{opacity:.45;cursor:not-allowed}
+.m21-balance{
+  display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:999px;
+  border:1px solid rgba(96,165,250,.20);background:rgba(96,165,250,.06);
+  color:#b8dcff;font-size:9px;font-weight:900;white-space:nowrap
+}
+#m21FutureStatus{
+  display:none;margin:10px 0 0;padding:11px 12px;border-radius:14px;
+  border:1px solid rgba(52,211,153,.25);background:rgba(52,211,153,.06);
+  color:#c7ffda;font-size:10px;line-height:1.45
+}
+#m21FutureStatus.show{display:block;animation:m13Rise .25s ease both}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -2867,17 +2898,14 @@ body{padding:0!important;margin:0!important}
       <div class="subv">Use this for things like next holiday, season ticket, or future dentist costs.</div>
     </div>
 
+    <div id="m21FutureStatus"></div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Included</th>
-            <th>Category</th>
-            <th>Notes</th>
-            <th>Delete</th>
+            <th>Name</th><th>Due Date</th><th>Total Cost</th><th>Payment Progress</th>
+            <th>Pay Amount</th><th>Pay Now</th><th>Status</th><th>Included</th>
+            <th>Category</th><th>Last Paid</th><th>Notes</th><th>Delete</th>
           </tr>
         </thead>
         <tbody id="futureCostsBody"></tbody>
@@ -3270,6 +3298,13 @@ function loadPlannerData() {
     plannerState.recurringSpendHistory = Array.isArray(plannerState.recurringSpendHistory)
       ? plannerState.recurringSpendHistory
       : [];
+    plannerState.futureCosts = (plannerState.futureCosts || []).map(item => ({
+      ...item,
+      paidAmount: Number(item.paidAmount || 0),
+      payAmount: Number(item.payAmount ?? 0),
+      lastPaidDate: item.lastPaidDate || "",
+      paid: Boolean(item.paid || (Number(item.paidAmount || 0) >= Number(item.amount || 0) && Number(item.amount || 0) > 0))
+    }));
   } catch (err) {
     console.error("Could not load planner data", err);
   }
@@ -3770,15 +3805,28 @@ function renderFutureCosts() {
   if (!body) return;
   body.innerHTML = "";
 
-  plannerState.futureCosts.forEach((bill, index) => {
+  (plannerState.futureCosts || []).forEach((cost, index) => {
+    const total = Number(cost.amount || 0);
+    const paidAmount = Number(cost.paidAmount || 0);
+    const remaining = Math.max(0, total - paidAmount);
+    const paid = total > 0 && paidAmount >= total;
+    const partPaid = paidAmount > 0 && !paid;
+    const statusClass = paid ? "paid" : (partPaid ? "part-paid" : "planned");
+    const statusLabel = paid ? "Paid" : (partPaid ? "Part paid" : "Planned");
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td><input class="table-input" type="text" value="${bill.name || ""}" data-section="future" data-index="${index}" data-field="name"></td>
-      <td><input class="table-input" type="date" value="${bill.due || ""}" data-section="future" data-index="${index}" data-field="due"></td>
-      <td><input class="table-input" type="number" step="0.01" value="${bill.amount}" data-section="future" data-index="${index}" data-field="amount"></td>
-      <td><div class="check-wrap"><input type="checkbox" ${bill.included ? "checked" : ""} data-section="future" data-index="${index}" data-field="included"><span>${bill.included ? "Yes" : "No"}</span></div></td>
-      <td><input class="table-input" type="text" value="${bill.category || ""}" data-section="future" data-index="${index}" data-field="category"></td>
-      <td><input class="table-input" type="text" value="${bill.notes || ""}" data-section="future" data-index="${index}" data-field="notes"></td>
+      <td><input class="table-input" type="text" value="${m18Escape(cost.name)}" data-section="future" data-index="${index}" data-field="name"></td>
+      <td><input class="table-input" type="date" value="${m18Escape(cost.due || "")}" data-section="future" data-index="${index}" data-field="due"></td>
+      <td><input class="table-input" type="number" step="0.01" value="${total}" data-section="future" data-index="${index}" data-field="amount"></td>
+      <td><span class="m21-balance">£${formatMoney(paidAmount)} paid • £${formatMoney(remaining)} left</span></td>
+      <td><input class="table-input m21-pay-input" type="number" min="0" step="0.01" value="${Number(cost.payAmount || 0)}" data-section="future" data-index="${index}" data-field="payAmount"></td>
+      <td><button class="m21-pay-btn" type="button" data-m21-pay="${index}" ${paid ? "disabled" : ""}>${paid ? "Paid ✓" : "Pay from Holding Pot"}</button></td>
+      <td><span class="m21-status ${statusClass}">${statusLabel}</span></td>
+      <td><input class="table-input" type="checkbox" ${cost.included ? "checked" : ""} data-section="future" data-index="${index}" data-field="included"></td>
+      <td><input class="table-input" type="text" value="${m18Escape(cost.category || "")}" data-section="future" data-index="${index}" data-field="category"></td>
+      <td>${cost.lastPaidDate ? new Date(cost.lastPaidDate).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}) : "—"}</td>
+      <td><input class="table-input" type="text" value="${m18Escape(cost.notes || "")}" data-section="future" data-index="${index}" data-field="notes"></td>
       <td><button class="delete-btn" data-delete-section="future" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
@@ -4368,7 +4416,7 @@ function handleTableEdit(e) {
     return;
   }
 
-  if (field === "amount" || field === "actualPaid" || field === "payAmount") {
+  if (field === "amount" || field === "actualPaid" || field === "payAmount" || field === "paidAmount") {
     source[index][field] = parseNum(target.value);
   } else {
     source[index][field] = target.value;
@@ -4512,7 +4560,11 @@ function addFutureCost() {
     amount: 0,
     included: false,
     category: "Other",
-    notes: ""
+    notes: "",
+    paidAmount: 0,
+    payAmount: 0,
+    lastPaidDate: "",
+    paid: false
   });
   savePlannerData();
   runPlanner();
@@ -5541,6 +5593,80 @@ document.addEventListener("click",event=>{
   if(pay){m19PayRecurring(Number(pay.dataset.m19Pay));return}
   const reset=event.target.closest("[data-m19-reset]");
   if(reset)m19ResetCycle(Number(reset.dataset.m19Reset));
+});
+</script>
+<script>
+/* ===================== M21 FUTURE COST PAYMENTS ===================== */
+function m21Show(message, error=false){
+  const box=document.getElementById("m21FutureStatus");
+  if(!box)return;
+  box.textContent=message;
+  box.style.borderColor=error?"rgba(251,113,133,.30)":"rgba(52,211,153,.25)";
+  box.style.background=error?"rgba(251,113,133,.07)":"rgba(52,211,153,.06)";
+  box.style.color=error?"#ffc2cc":"#c7ffda";
+  box.classList.add("show");
+  clearTimeout(window.m21StatusTimer);
+  window.m21StatusTimer=setTimeout(()=>box.classList.remove("show"),5000);
+}
+function m21PayFutureCost(index){
+  const cost=plannerState.futureCosts?.[index];
+  if(!cost)return;
+
+  const total=Math.max(0,Number(cost.amount||0));
+  const alreadyPaid=Math.max(0,Number(cost.paidAmount||0));
+  const remaining=Math.max(0,total-alreadyPaid);
+  let amount=Math.max(0,Number(cost.payAmount||0));
+
+  if(remaining<=0){
+    m21Show(`${cost.name} is already fully paid.`);
+    return;
+  }
+  if(amount<=0){
+    m21Show("Enter the amount you are paying before pressing Pay from Holding Pot.",true);
+    return;
+  }
+  amount=Math.min(amount,remaining);
+
+  const holding=Number(plannerState.holdingBalance||0);
+  if(amount>holding){
+    m21Show(`The Holding Pot only contains £${formatMoney(holding)}. This payment cannot be recorded yet.`,true);
+    return;
+  }
+
+  plannerState.holdingBalance=holding-amount;
+  cost.paidAmount=alreadyPaid+amount;
+  cost.lastPaidDate=new Date().toISOString();
+  cost.paid=cost.paidAmount>=total && total>0;
+
+  plannerState.futureCostPaymentHistory=Array.isArray(plannerState.futureCostPaymentHistory)
+    ? plannerState.futureCostPaymentHistory
+    : [];
+  plannerState.futureCostPaymentHistory.unshift({
+    id:`future_${Date.now()}`,
+    futureCostId:cost.id||"",
+    name:cost.name,
+    category:cost.category||"Other",
+    amount,
+    date:cost.lastPaidDate,
+    remaining:Math.max(0,total-cost.paidAmount)
+  });
+
+  const holdingInput=document.getElementById("holdingBalanceInput");
+  if(holdingInput)holdingInput.value=plannerState.holdingBalance.toFixed(2);
+
+  if(typeof savePlannerData==="function")savePlannerData();
+  if(typeof runPlanner==="function")runPlanner();
+
+  const remainingAfter=Math.max(0,total-cost.paidAmount);
+  m21Show(
+    cost.paid
+      ? `£${formatMoney(amount)} has been paid for ${cost.name}. It is now fully paid. Holding Pot: £${formatMoney(plannerState.holdingBalance)}.`
+      : `£${formatMoney(amount)} has been paid for ${cost.name}. £${formatMoney(remainingAfter)} remains. Holding Pot: £${formatMoney(plannerState.holdingBalance)}.`
+  );
+}
+document.addEventListener("click",event=>{
+  const button=event.target.closest("[data-m21-pay]");
+  if(button)m21PayFutureCost(Number(button.dataset.m21Pay));
 });
 </script>
 </body>
