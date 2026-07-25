@@ -2023,6 +2023,47 @@ body{padding:0!important;margin:0!important}
 #m18DynamicBillGroups th:nth-child(3){min-width:90px}
 #m18DynamicBillGroups th:nth-child(4){min-width:92px}
 
+
+/* ===================== M19 PAY RECURRING COSTS FROM HOLDING POT ===================== */
+.m19-pay-input{min-width:105px!important}
+.m19-spent{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border-radius:999px;
+  border:1px solid rgba(125,211,252,.16);background:rgba(255,255,255,.025);
+  font-size:9px;font-weight:900;white-space:nowrap
+}
+.m19-spent.complete{color:#9affc3;border-color:rgba(52,211,153,.28);background:rgba(52,211,153,.07)}
+.m19-spent.over{color:#ff9aab;border-color:rgba(251,113,133,.28);background:rgba(251,113,133,.07)}
+.m19-pay-btn{
+  border:1px solid rgba(52,211,153,.34)!important;
+  background:rgba(52,211,153,.09)!important;color:#8cffb8!important;
+  border-radius:10px!important;padding:8px 10px!important;font-size:9px!important;
+  font-weight:950!important;white-space:nowrap
+}
+.m19-reset-btn{
+  border:1px solid rgba(96,165,250,.27)!important;
+  background:rgba(96,165,250,.07)!important;color:#a9d8ff!important;
+  border-radius:10px!important;padding:8px 9px!important;font-size:9px!important;
+  font-weight:900!important;white-space:nowrap
+}
+#m19SpendStatus{
+  display:none;margin:10px 0 0;padding:11px 12px;border-radius:14px;
+  border:1px solid rgba(52,211,153,.25);background:rgba(52,211,153,.06);
+  color:#c7ffda;font-size:10px;line-height:1.45
+}
+#m19SpendStatus.show{display:block;animation:m13Rise .25s ease both}
+#recurringCostsBody tr.m19-over-budget td{background:rgba(251,113,133,.035)!important}
+
+
+/* ===================== M20 FLEXIBLE BILL RECURRENCE ===================== */
+.m20-frequency-select{min-width:118px!important}
+.m20-next-date{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:92px;padding:6px 8px;border-radius:999px;
+  border:1px solid rgba(96,165,250,.20);
+  background:rgba(96,165,250,.06);
+  color:#a9d8ff;font-size:8px;font-weight:950;white-space:nowrap
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -2904,18 +2945,24 @@ body{padding:0!important;margin:0!important}
     <h2>Editable Recurring Monthly Costs</h2>
     <div class="grid two-grid" style="margin-bottom:12px;">
       <button class="add-btn" id="addRecurringBtn">Add Recurring Cost</button>
-      <div class="subv">Use this for monthly items like haircut, petrol, wash, or any repeat spending.</div>
+      <div class="subv">Use this for monthly items like haircut, petrol, wash, or any repeat spending. Enter the actual spend and press Pay from Holding Pot.</div>
     </div>
 
+    <div id="m19SpendStatus"></div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Name</th>
-            <th>Monthly Amount</th>
+            <th>Monthly Budget</th>
+            <th>Spent This Cycle</th>
+            <th>Pay Amount</th>
+            <th>Pay Now</th>
             <th>Yearly Amount</th>
             <th>Included</th>
             <th>Category</th>
+            <th>Last Paid</th>
+            <th>Reset Cycle</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -3215,8 +3262,14 @@ function loadPlannerData() {
 
     plannerState.recurringCosts = plannerState.recurringCosts.map(item => ({
       ...item,
-      originalAmount: Number(item.originalAmount ?? item.amount ?? 0)
+      originalAmount: Number(item.originalAmount ?? item.amount ?? 0),
+      spentThisCycle: Number(item.spentThisCycle || 0),
+      payAmount: Number(item.payAmount ?? item.amount ?? 0),
+      lastPaidDate: item.lastPaidDate || ""
     }));
+    plannerState.recurringSpendHistory = Array.isArray(plannerState.recurringSpendHistory)
+      ? plannerState.recurringSpendHistory
+      : [];
   } catch (err) {
     console.error("Could not load planner data", err);
   }
@@ -3517,6 +3570,37 @@ function m18BillStatus(bill) {
   return { label:"Planned", cls:"planned", rank:3 };
 }
 
+
+function m20AddRecurrence(dateValue, recurrence) {
+  const d = parseLocalDate(dateValue);
+  if (!dateValue || Number.isNaN(d.getTime())) return null;
+  const next = new Date(d);
+
+  if (recurrence === "weekly") next.setDate(next.getDate() + 7);
+  else if (recurrence === "fortnightly") next.setDate(next.getDate() + 14);
+  else if (recurrence === "four-weekly") next.setDate(next.getDate() + 28);
+  else if (recurrence === "yearly") next.setFullYear(next.getFullYear() + 1);
+  else {
+    const originalDay = next.getDate();
+    next.setDate(1);
+    next.setMonth(next.getMonth() + 1);
+    const lastDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+    next.setDate(Math.min(originalDay, lastDay));
+  }
+  return next;
+}
+function m20DateInputValue(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "";
+  const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+function m20NextRollLabel(bill) {
+  if (!bill?.due) return "No date";
+  if (bill.recurrence === "none") return "One-off";
+  const next = m20AddRecurrence(bill.due, bill.recurrence || "monthly");
+  return next ? next.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}) : "—";
+}
+
 function renderScheduledBills() {
   const host = document.getElementById("m18DynamicBillGroups");
   if (!host) return;
@@ -3571,8 +3655,17 @@ function renderScheduledBills() {
         <td><input class="table-input" type="number" step="0.01" value="${Number(bill.actualPaid||0)}" data-section="scheduled" data-index="${index}" data-field="actualPaid"></td>
         <td><div class="check-wrap"><input type="checkbox" ${bill.included ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="included"><span>${bill.included ? "Yes" : "No"}</span></div></td>
         <td><input class="table-input m18-category-input" type="text" value="${m18Escape(bill.category)}" data-section="scheduled" data-index="${index}" data-field="category"></td>
+        <td><select class="table-input m20-frequency-select" data-section="scheduled" data-index="${index}" data-field="recurrence">
+          <option value="none" ${bill.recurrence==="none"?"selected":""}>One-off</option>
+          <option value="weekly" ${bill.recurrence==="weekly"?"selected":""}>Weekly</option>
+          <option value="fortnightly" ${bill.recurrence==="fortnightly"?"selected":""}>Fortnightly</option>
+          <option value="four-weekly" ${bill.recurrence==="four-weekly"?"selected":""}>Every 4 weeks</option>
+          <option value="monthly" ${(!bill.recurrence||bill.recurrence==="monthly")?"selected":""}>Monthly</option>
+          <option value="yearly" ${bill.recurrence==="yearly"?"selected":""}>Yearly</option>
+        </select></td>
+        <td><span class="m20-next-date">${m20NextRollLabel(bill)}</span></td>
         <td><input class="table-input" type="text" value="${m18Escape(bill.notes)}" data-section="scheduled" data-index="${index}" data-field="notes"></td>
-        <td><button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.paid ? "" : "disabled"}>Roll →</button></td>
+        <td><button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.paid && bill.recurrence!=="none" ? "" : "disabled"}>Roll →</button></td>
         <td><button class="quick-btn" data-archive-section="scheduled" data-archive-index="${index}" ${bill.paid ? "" : "disabled"}>Archive</button></td>
         <td><button class="delete-btn" data-delete-section="scheduled" data-delete-index="${index}">Delete</button></td>
       </tr>`;
@@ -3588,7 +3681,7 @@ function renderScheduledBills() {
           <table>
             <thead><tr>
               <th>Name</th><th>Due Date</th><th>Status</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th><th>Notes</th>
+              <th>Actual Paid</th><th>Included</th><th>Category</th><th>Frequency</th><th>Next Roll</th><th>Notes</th>
               <th>Roll</th><th>Archive</th><th>Delete</th>
             </tr></thead>
             <tbody>${rows}</tbody>
@@ -3698,14 +3791,24 @@ function renderRecurringCosts() {
   body.innerHTML = "";
 
   plannerState.recurringCosts.forEach((cost, index) => {
-    const yearly = Number(cost.amount || 0) * 12;
+    const monthly = Number(cost.amount || 0);
+    const spent = Number(cost.spentThisCycle || 0);
+    const yearly = monthly * 12;
+    const remaining = Math.max(0, monthly - spent);
+    const spentClass = spent > monthly && monthly > 0 ? "over" : (spent >= monthly && monthly > 0 ? "complete" : "");
     const tr = document.createElement("tr");
+    if (spent > monthly && monthly > 0) tr.classList.add("m19-over-budget");
     tr.innerHTML = `
-      <td><input class="table-input" type="text" value="${cost.name}" data-section="recurring" data-index="${index}" data-field="name"></td>
-      <td><input class="table-input" type="number" step="0.01" value="${cost.amount}" data-section="recurring" data-index="${index}" data-field="amount"></td>
+      <td><input class="table-input" type="text" value="${m18Escape(cost.name)}" data-section="recurring" data-index="${index}" data-field="name"></td>
+      <td><input class="table-input" type="number" step="0.01" value="${monthly}" data-section="recurring" data-index="${index}" data-field="amount"></td>
+      <td><span class="m19-spent ${spentClass}">£${formatMoney(spent)} / £${formatMoney(monthly)}${remaining > 0 ? ` • £${formatMoney(remaining)} left` : ""}</span></td>
+      <td><input class="table-input m19-pay-input" type="number" min="0" step="0.01" value="${Number(cost.payAmount ?? monthly)}" data-section="recurring" data-index="${index}" data-field="payAmount"></td>
+      <td><button class="m19-pay-btn" type="button" data-m19-pay="${index}">Pay from Holding Pot</button></td>
       <td><span class="recurring-yearly" data-yearly-index="${index}">£${formatMoney(yearly)}</span></td>
       <td><div class="check-wrap"><input type="checkbox" ${cost.included ? "checked" : ""} data-section="recurring" data-index="${index}" data-field="included"><span>${cost.included ? "Yes" : "No"}</span></div></td>
-      <td><input class="table-input" type="text" value="${cost.category}" data-section="recurring" data-index="${index}" data-field="category"></td>
+      <td><input class="table-input" type="text" value="${m18Escape(cost.category)}" data-section="recurring" data-index="${index}" data-field="category"></td>
+      <td>${cost.lastPaidDate ? new Date(cost.lastPaidDate).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}) : "—"}</td>
+      <td><button class="m19-reset-btn" type="button" data-m19-reset="${index}">Reset</button></td>
       <td><button class="delete-btn" data-delete-section="recurring" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
@@ -3984,7 +4087,7 @@ function updatePlannerTotals() {
   const next7DaysBills = next7DayBillsList.reduce((sum, x) => sum + Number(x.amount || 0), 0);
   const next30DaysBills = next30DayBillsList.reduce((sum, x) => sum + Number(x.amount || 0), 0);
 
-  const recurringMonthlyTotal = includedRecurring.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  const recurringMonthlyTotal = includedRecurring.reduce((sum, x) => sum + Math.max(0, Number(x.amount || 0) - Number(x.spentThisCycle || 0)), 0);
 
   const protectedBase = plannerState.minimumBuffer;
   const protectedRecurringMonthly = recurringMonthlyTotal;
@@ -4265,7 +4368,7 @@ function handleTableEdit(e) {
     return;
   }
 
-  if (field === "amount" || field === "actualPaid") {
+  if (field === "amount" || field === "actualPaid" || field === "payAmount") {
     source[index][field] = parseNum(target.value);
   } else {
     source[index][field] = target.value;
@@ -4279,7 +4382,7 @@ function handleTableEdit(e) {
   }
 
   savePlannerData();
-  if (section === "scheduled" && (field === "category" || field === "due") && e.type === "change") {
+  if (section === "scheduled" && (field === "category" || field === "due" || field === "recurrence") && e.type === "change") {
     runPlanner();
     return;
   }
@@ -4336,16 +4439,16 @@ function handleRollForward(e) {
   const bill = plannerState.scheduledBills[index];
   if (!bill || !bill.paid) return;
 
+  const recurrence = bill.recurrence || "monthly";
+  if (recurrence === "none") return;
+
   const surplus = Math.max(0, Number(bill.amount || 0) - Number(bill.actualPaid || 0));
   if (surplus > 0) {
     plannerState.holdingBalance += surplus;
   }
 
-  if (bill.due) {
-    const d = new Date(bill.due);
-    d.setMonth(d.getMonth() + 1);
-    bill.due = d.toISOString().split("T")[0];
-  }
+  const nextDate = m20AddRecurrence(bill.due, recurrence);
+  if (nextDate) bill.due = m20DateInputValue(nextDate);
 
   bill.paid = false;
   bill.actualPaid = 0;
@@ -4394,7 +4497,8 @@ function addScheduledBill() {
     deducted: false,
     included: true,
     category: "Other",
-    notes: ""
+    notes: "",
+    recurrence: "monthly"
   });
   savePlannerData();
   runPlanner();
@@ -4420,6 +4524,9 @@ function addRecurringCost() {
     name: "New Recurring Cost",
     amount: 0,
     originalAmount: 0,
+    spentThisCycle: 0,
+    payAmount: 0,
+    lastPaidDate: "",
     included: true,
     category: "Other"
   });
@@ -5315,7 +5422,7 @@ function m16BeforePaydayTotal(){return m16BeforePaydayItems().reduce((s,x)=>s+Nu
 function m16UnpaidTotal(){return (plannerState?.scheduledBills||[]).filter(x=>x&&x.included&&!x.paid).reduce((s,x)=>s+Number(x.amount||0),0)}
 function m16Protected(){
   const unpaid=m16UnpaidTotal();
-  const recurring=(plannerState?.recurringCosts||[]).filter(x=>x&&x.included).reduce((s,x)=>s+Number(x.amount||0),0);
+  const recurring=(plannerState?.recurringCosts||[]).filter(x=>x&&x.included).reduce((s,x)=>s+Math.max(0,Number(x.amount||0)-Number(x.spentThisCycle||0)),0);
   return Number(plannerState?.minimumBuffer||0)+unpaid+recurring;
 }
 function m16ApplyGridClasses(target){
@@ -5375,6 +5482,65 @@ document.addEventListener("click", event => {
   if (!head) return;
   const body = document.getElementById(head.dataset.m18Toggle);
   if (body) body.classList.toggle("closed");
+});
+</script>
+<script>
+/* ===================== M19 RECURRING SPEND PAYMENTS ===================== */
+function m19Show(message, error=false){
+  const box=document.getElementById("m19SpendStatus");
+  if(!box)return;
+  box.textContent=message;
+  box.style.borderColor=error?"rgba(251,113,133,.30)":"rgba(52,211,153,.25)";
+  box.style.background=error?"rgba(251,113,133,.07)":"rgba(52,211,153,.06)";
+  box.style.color=error?"#ffc2cc":"#c7ffda";
+  box.classList.add("show");
+  clearTimeout(window.m19StatusTimer);
+  window.m19StatusTimer=setTimeout(()=>box.classList.remove("show"),5000);
+}
+function m19Save(){
+  if(typeof savePlannerData==="function")savePlannerData();
+}
+function m19PayRecurring(index){
+  const cost=plannerState.recurringCosts?.[index];
+  if(!cost)return;
+  const amount=Math.max(0,Number(cost.payAmount||0));
+  if(amount<=0){m19Show("Enter the amount actually spent before pressing Pay from Holding Pot.",true);return}
+  const holding=Number(plannerState.holdingBalance||0);
+  if(amount>holding){m19Show(`The Holding Pot only contains £${formatMoney(holding)}. This payment cannot be recorded yet.`,true);return}
+
+  plannerState.holdingBalance=holding-amount;
+  cost.spentThisCycle=Number(cost.spentThisCycle||0)+amount;
+  cost.lastPaidDate=new Date().toISOString();
+  plannerState.recurringSpendHistory=Array.isArray(plannerState.recurringSpendHistory)?plannerState.recurringSpendHistory:[];
+  plannerState.recurringSpendHistory.unshift({
+    id:`spend_${Date.now()}`,
+    recurringId:cost.id||"",
+    name:cost.name,
+    category:cost.category||"Other",
+    amount,
+    date:cost.lastPaidDate
+  });
+
+  const holdingInput=document.getElementById("holdingBalanceInput");
+  if(holdingInput)holdingInput.value=plannerState.holdingBalance.toFixed(2);
+  m19Save();
+  if(typeof runPlanner==="function")runPlanner();
+  m19Show(`£${formatMoney(amount)} for ${cost.name} has been taken from the Holding Pot. New Holding Pot balance: £${formatMoney(plannerState.holdingBalance)}.`);
+}
+function m19ResetCycle(index){
+  const cost=plannerState.recurringCosts?.[index];
+  if(!cost)return;
+  cost.spentThisCycle=0;
+  cost.payAmount=Number(cost.amount||0);
+  m19Save();
+  if(typeof runPlanner==="function")runPlanner();
+  m19Show(`${cost.name} has been reset for the new monthly/payday cycle.`);
+}
+document.addEventListener("click",event=>{
+  const pay=event.target.closest("[data-m19-pay]");
+  if(pay){m19PayRecurring(Number(pay.dataset.m19Pay));return}
+  const reset=event.target.closest("[data-m19-reset]");
+  if(reset)m19ResetCycle(Number(reset.dataset.m19Reset));
 });
 </script>
 </body>
