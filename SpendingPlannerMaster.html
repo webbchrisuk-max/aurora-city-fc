@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Aurora Wealth Planner — Definitive M30</title>
+<title>Aurora Wealth Planner — M31 Funding Engine Fixed</title>
 
 <style>
  :root {
@@ -2509,6 +2509,31 @@ body{background:
   #m13Funding .four-grid{grid-template-columns:1fr!important}
 }
 
+
+/* ===================== M31 FUNDING ENGINE FIX ===================== */
+.m31-funding-summary{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;margin:2px 0 14px
+}
+.m31-summary-tile{
+  padding:13px;border-radius:15px;
+  border:1px solid rgba(125,211,252,.15);
+  background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.018))
+}
+.m31-summary-tile span{
+  display:block;color:#8ea3ba;font-size:8px;font-weight:950;
+  text-transform:uppercase;letter-spacing:.72px
+}
+.m31-summary-tile strong{
+  display:block;margin-top:6px;font-size:21px;color:#eaf8ff
+}
+@media(max-width:800px){
+  .m31-funding-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:480px){
+  .m31-funding-summary{grid-template-columns:1fr}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -2898,33 +2923,28 @@ body{background:
     </div>
   </section>
 
-  <!-- ===================== SECTION: AURORA WEALTH INTELLIGENCE ===================== -->
-  <section class="section card">
-    <div class="command-title">
-      <div>
-        <h2>Aurora Wealth Intelligence</h2>
-        <div class="subv">Live explanation of the current money setup.</div>
-      </div>
-      <div class="command-badge good">AI VIEW</div>
-    </div>
-    <div class="ai-command-text" id="wealthAiView">Aurora is analysing the Wealth Centre...</div>
-  </section>
-
-  <!-- ===================== SECTION: FREEDOM FLIGHT PATH ===================== -->
-  <section class="section card">
-    <div class="command-title">
-      <div>
-        <h2>Financial Freedom Flight Path</h2>
-        <div class="subv">Progress view towards the long-term £2,000/month passive income mission.</div>
-      </div>
-      <div class="command-badge cyan">MISSION</div>
-    </div>
-    <div id="freedomFlightPath"></div>
-  </section>
-
   <!-- ===================== SECTION: CONTROL STRIP ===================== -->
-  <section class="section card" id="m13Funding" class="m13-anchor section card">
+  <section id="m13Funding" class="m13-anchor section card">
     <h2>Funding Engine</h2>
+    <div class="m31-funding-summary">
+      <div class="m31-summary-tile">
+        <span>Holding Pot</span>
+        <strong id="m31Holding">£0.00</strong>
+      </div>
+      <div class="m31-summary-tile">
+        <span>Protected</span>
+        <strong id="m31Protected">£0.00</strong>
+      </div>
+      <div class="m31-summary-tile">
+        <span>Safe Surplus</span>
+        <strong id="m31Surplus">£0.00</strong>
+      </div>
+      <div class="m31-summary-tile">
+        <span>Minimum Buffer</span>
+        <strong id="m31Buffer">£0.00</strong>
+      </div>
+    </div>
+
 
     <div class="grid four-grid">
       <div class="mini">
@@ -4997,8 +5017,6 @@ function updateWealthCommandDeck(metrics) {
   renderPotHealthRadar(metrics);
   updatePaydaySimulator(metrics);
   updateNextPaydayPlan(metrics);
-  renderWealthAiView(metrics, score);
-  renderFreedomFlightPath(metrics);
 }
 
 function normalisePotPriority(value){
@@ -6211,24 +6229,6 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(m24UpdateBillsComman
     page.prepend(intro);
   }
 
-  function cleanFundingPage(){
-    const page=document.getElementById("m13Funding");
-    if(!page)return;
-    const hideTitles=new Set([
-      "Aurora CFO Command Deck",
-      "Aurora Wealth Intelligence",
-      "Financial Freedom Flight Path"
-    ]);
-    page.querySelectorAll(".m16-section-card").forEach(section=>{
-      if(hideTitles.has(headingOf(section)))section.dataset.m30Hidden="true";
-    });
-    installIntro(
-      "m13Funding",
-      "Funding Engine",
-      "One operational screen for the Holding Pot, safe buffer, payday contributions and Grow Pot funding."
-    );
-  }
-
   function cleanBillsPage(){
     installIntro(
       "m13Bills",
@@ -6257,7 +6257,6 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(m24UpdateBillsComman
   document.addEventListener("DOMContentLoaded",()=>{
     cleanDashboard();
     cleanBillsPage();
-    cleanFundingPage();
     setTimeout(safeRefresh,120);
   });
 
@@ -6268,6 +6267,52 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(m24UpdateBillsComman
       console.warn("M30 contained an optional dashboard error:",message);
     }
   });
+})();
+</script>
+
+
+<script>
+(function(){
+  function money(value){
+    const n=Number(value||0);
+    return new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP"}).format(n);
+  }
+  function set(id,value){
+    const el=document.getElementById(id);
+    if(el)el.textContent=value;
+  }
+  function refreshM31Funding(){
+    if(typeof plannerState==="undefined")return;
+    const holding=Number(plannerState.holdingBalance||0);
+    const buffer=Number(plannerState.minimumBuffer||0);
+    const live=(plannerState.scheduledBills||[]).filter(b=>b&&b.included!==false&&b.paid!==true);
+    const scheduled=live.reduce((sum,b)=>sum+Number(b.amount||0),0);
+    const future=(plannerState.futureCosts||[])
+      .filter(f=>f&&f.included!==false&&f.paid!==true)
+      .reduce((sum,f)=>sum+Math.max(0,Number(f.amount||0)-Number(f.paidAmount||0)),0);
+    const protectedMoney=buffer+scheduled+future;
+    const surplus=Math.max(0,holding-protectedMoney);
+
+    set("m31Holding",money(holding));
+    set("m31Protected",money(protectedMoney));
+    set("m31Surplus",money(surplus));
+    set("m31Buffer",money(buffer));
+  }
+
+  document.addEventListener("DOMContentLoaded",()=>setTimeout(refreshM31Funding,100));
+  document.addEventListener("input",event=>{
+    if(event.target.closest("#m13Funding"))setTimeout(refreshM31Funding,0);
+  });
+  document.addEventListener("click",()=>setTimeout(refreshM31Funding,50));
+
+  const originalRun=window.runPlanner;
+  if(typeof originalRun==="function"){
+    window.runPlanner=function(){
+      const result=originalRun.apply(this,arguments);
+      refreshM31Funding();
+      return result;
+    };
+  }
 })();
 </script>
 
