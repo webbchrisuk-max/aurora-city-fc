@@ -5929,9 +5929,9 @@ const M14_VIEWS = {
   },
   m13History:{
     title:"History",
-    subtitle:"Review category totals, yearly breakdowns and your saved Holding Pot movement.",
+    subtitle:"Review paid house costs, category totals, yearly breakdowns and your saved Holding Pot movement.",
     headings:[
-      "Category Breakdown","Yearly Breakdown"
+      "House Project Ledger","Category Breakdown","Yearly Breakdown"
     ]
   }
 };
@@ -6238,7 +6238,9 @@ const M16_VIEW_DATA = {
       const current=Number(plannerState?.holdingBalance||0);
       const first=hist.length?Number(hist[0]?.balance||hist[0]?.value||0):current;
       const change=current-first;
-      const paid=(plannerState?.scheduledBills||[]).filter(x=>x?.paid).reduce((s,x)=>s+Number(x.amount||0),0);
+      const scheduledPaid=(plannerState?.scheduledBills||[]).filter(x=>x?.paid).reduce((s,x)=>s+Number(x.amount||0),0);
+      const housePaid=(plannerState?.houseProjectLedger?.entries||[]).filter(x=>x?.status==='paid'||x?.status==='historical').reduce((s,x)=>s+Number(x.amount||0),0);
+      const paid=scheduledPaid+housePaid;
       return [
         ["Current Holding Pot",m16Money(current),"#22d3ee"],
         ["Saved snapshots",String(hist.length),"#60a5fa"],
@@ -6958,7 +6960,7 @@ document.addEventListener("click",event=>{
     clearTimeout(window.m27StatusTimer);
     window.m27StatusTimer=setTimeout(()=>box.classList.remove('show'),5200);
   }
-  function m27StatusLabel(status,deducted){return status==='historical'?(deducted?'Historically paid from House Pot':'Historical paid'):(status==='paid'?'Paid from House Pot':'Reserved')}
+  function m27StatusLabel(status,deducted){return status==='paid'?'✅ Paid':(status==='historical'?'✅ Historically paid':'Reserved')}
   function m27DateLabel(value){
     if(!value)return 'No date';
     try{return typeof dateLabel==='function'?dateLabel(value):new Date(value).toLocaleDateString('en-GB')}catch(_){return value}
@@ -6973,7 +6975,7 @@ document.addEventListener("click",event=>{
     m27Set('m27LedgerMeta',`${entries.length} record${entries.length===1?'':'s'} • ${m27Money(metrics.reserved)} reserved • ${m27Money(metrics.spent)} spent`);
     host.innerHTML=entries.length?entries.map(entry=>`
       <div class="m27-ledger-row ${entry.status}">
-        <div><div class="m27-entry-name">${m27Escape(entry.name)}</div><div class="m27-entry-meta">${m27Escape(entry.category||'House project')}${entry.notes?` • ${m27Escape(entry.notes)}`:''}${entry.status==='historical'?' • cash was already adjusted before this ledger':''}</div></div>
+        <div><div class="m27-entry-name">${m27Escape(entry.name)}</div><div class="m27-entry-meta">${m27Escape(entry.category||'House project')}${entry.notes?` • ${m27Escape(entry.notes)}`:''}${entry.status==='paid'?' • completed from House Pot':(entry.status==='historical'?' • entered as earlier historical spending':'')}</div></div>
         <div class="m27-entry-date">${m27Escape(m27DateLabel(entry.paidDate||entry.due))}</div>
         <div><span class="m27-status-pill ${entry.status}">${m27StatusLabel(entry.status,entry.deducted)}</span><div class="m27-entry-amount">${m27Money(entry.amount)}</div></div>
         <div class="m27-entry-actions">
@@ -7032,11 +7034,11 @@ document.addEventListener("click",event=>{
     if(!entry||entry.status!=='reserved')return;
     if(metrics.cash+0.009<entry.amount){m27SetStatus(`The House Pot has ${m27Money(metrics.cash)}, which is not enough to record this ${m27Money(entry.amount)} payment.`,true);return}
     metrics.pot.balance=Math.max(0,metrics.cash-entry.amount);
-    entry.status='historical';entry.deducted=true;entry.paidDate=m27Today();
+    entry.status='paid';entry.deducted=true;entry.paidDate=m27Today();
     if(typeof savePlannerData==='function')savePlannerData();
     if(typeof renderPotEditor==='function')renderPotEditor();
     if(typeof runPlanner==='function')runPlanner();else m27Render();
-    m27SetStatus(`${entry.name} paid. House Pot cash fell by ${m27Money(entry.amount)}, while project spending rose by the same amount.`);
+    m27SetStatus(`${entry.name} is now marked ✅ Paid. House Pot cash fell by ${m27Money(entry.amount)}, and the payment is shown in History.`);
   }
   function m27UndoEntry(id){
     const entry=m27FindEntry(id),metrics=m27Metrics();
