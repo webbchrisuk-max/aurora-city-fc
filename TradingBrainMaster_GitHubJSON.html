@@ -1,0 +1,2579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Aurora Trading Brain M8 — Decision Publisher</title>
+<style>
+/* ===================== SECTION: ROOT THEME ===================== */
+:root{
+  --bg:#030712;
+  --bg2:#07111f;
+  --panel:rgba(9,18,32,.88);
+  --panel2:rgba(13,27,45,.92);
+  --glass:rgba(255,255,255,.055);
+  --line:rgba(96,230,255,.18);
+  --line2:rgba(255,255,255,.09);
+  --text:#eaf7ff;
+  --muted:#8ba6c2;
+  --cyan:#58f4ff;
+  --blue:#6aa8ff;
+  --green:#59ff9a;
+  --amber:#ffd15e;
+  --red:#ff5f83;
+  --purple:#b985ff;
+  --pink:#ff6bd5;
+  --shadow:0 22px 60px rgba(0,0,0,.35);
+  --glow:0 0 34px rgba(88,244,255,.18);
+  --r:22px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;overflow-x:hidden}
+body{
+  padding:14px;
+  background:
+    radial-gradient(circle at 12% 5%,rgba(185,133,255,.22),transparent 28%),
+    radial-gradient(circle at 82% 12%,rgba(88,244,255,.18),transparent 30%),
+    radial-gradient(circle at 50% 100%,rgba(89,255,154,.08),transparent 35%),
+    linear-gradient(180deg,#020611,#07101e 48%,#02050c);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent 85%);
+}
+.wrap{position:relative;z-index:1;max-width:1500px;margin:0 auto;display:grid;gap:14px}
+
+/* ===================== SECTION: BASICS ===================== */
+h1,h2,h3,p{margin:0} h1{font-size:clamp(30px,4vw,58px);letter-spacing:-1.6px;line-height:.92} h2{font-size:20px;letter-spacing:-.3px}.muted,.subv{color:var(--muted);font-size:12px;line-height:1.45}.k{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.9px;font-weight:900}.v{font-weight:950}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.card,.glass,.dock,.tile,.buy-card,.terminal,.heat-cell,.position-card{
+  background:linear-gradient(145deg,rgba(13,27,45,.88),rgba(5,12,24,.88));
+  border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);backdrop-filter:blur(18px);
+}
+.good,.positive{color:var(--green)}.watch,.amber{color:var(--amber)}.risk,.negative,.avoid{color:var(--red)}.cyan{color:var(--cyan)}.blue{color:var(--blue)}.purple{color:var(--purple)}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 11px;border:1px solid currentColor;font-weight:950;font-size:11px;letter-spacing:.5px;background:rgba(255,255,255,.035);white-space:nowrap}.badge.good{color:var(--green);background:rgba(89,255,154,.08)}.badge.watch{color:var(--amber);background:rgba(255,209,94,.08)}.badge.avoid{color:var(--red);background:rgba(255,95,131,.08)}.badge.hold{color:var(--muted)}
+button{border:1px solid var(--line2);background:rgba(255,255,255,.055);color:var(--text);border-radius:14px;padding:12px 13px;font-weight:950;cursor:pointer;transition:.18s ease}button:hover{transform:translateY(-1px);border-color:rgba(88,244,255,.38);box-shadow:0 0 18px rgba(88,244,255,.12)}input,select{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);border-radius:14px;padding:12px;outline:none;font-weight:800}
+
+/* ===================== SECTION: HERO COMMAND DECK ===================== */
+.hero{
+  position:relative;overflow:hidden;border-radius:30px;padding:22px;border:1px solid rgba(88,244,255,.2);box-shadow:var(--glow),var(--shadow);
+  background:
+    linear-gradient(135deg,rgba(10,24,43,.98),rgba(4,8,18,.96)),
+    radial-gradient(circle at 80% 10%,rgba(88,244,255,.2),transparent 35%);
+}
+.hero:before{content:"";position:absolute;inset:-2px;background:linear-gradient(120deg,transparent,rgba(88,244,255,.11),transparent);animation:scan 7s linear infinite;transform:translateX(-100%)}@keyframes scan{to{transform:translateX(100%)}}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:stretch}.title-block{display:flex;flex-direction:column;justify-content:space-between;gap:18px}.hero-topline{display:flex;gap:10px;flex-wrap:wrap}.big-sub{font-size:14px;color:var(--muted);max-width:760px;margin-top:12px}.command-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{padding:14px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}.metric .v{font-size:clamp(21px,2.1vw,34px);margin-top:5px}.radar{position:relative;min-height:250px;border-radius:26px;border:1px solid rgba(88,244,255,.18);background:radial-gradient(circle,rgba(88,244,255,.16),transparent 62%),linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.015));overflow:hidden;display:flex;align-items:center;justify-content:center}.radar:before{content:"";position:absolute;width:160%;height:160%;background:conic-gradient(from 0deg,transparent 0 72%,rgba(88,244,255,.28),transparent 86%);animation:spin 5s linear infinite}.radar:after{content:"";position:absolute;inset:24px;border-radius:50%;border:1px dashed rgba(88,244,255,.2);box-shadow:inset 0 0 50px rgba(88,244,255,.05)}@keyframes spin{to{transform:rotate(360deg)}}.radar-core{position:relative;z-index:1;text-align:center;width:160px;height:160px;border-radius:50%;background:rgba(3,7,18,.82);border:1px solid rgba(88,244,255,.28);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(88,244,255,.12)}.radar-core .v{font-size:24px}.radar-core .k{margin-bottom:6px}
+
+/* ===================== SECTION: WAR ROOM LAYOUT ===================== */
+.deck{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.full{grid-column:1/-1}.panel{padding:16px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.section-head .left{display:flex;align-items:center;gap:10px}.orb{width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 16px var(--cyan)}
+
+/* ===================== SECTION: DECISION ENGINE ===================== */
+.decision-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:12px}.best-move{padding:18px;border-radius:24px;background:linear-gradient(145deg,rgba(89,255,154,.08),rgba(88,244,255,.04));border:1px solid rgba(89,255,154,.23)}.best-name{font-size:clamp(25px,3vw,44px);font-weight:1000;letter-spacing:-1px;line-height:.98;margin:8px 0;color:var(--green)}.decision-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.mini-tile{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:11px}.mini-tile .v{font-size:20px;margin-top:4px}.signal-stack{display:grid;gap:10px}.signal-card{padding:14px;border-radius:18px;border:1px solid var(--line2);background:rgba(255,255,255,.035);display:flex;justify-content:space-between;gap:12px;align-items:center}.signal-card .v{font-size:22px}.progress{height:12px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.06);margin-top:10px}.fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:999px;width:0;transition:.35s ease;box-shadow:0 0 24px rgba(89,255,154,.25)}
+
+/* ===================== SECTION: ALLOCATOR ===================== */
+.buy-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.buy-card{padding:15px;position:relative;overflow:hidden}.buy-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(88,244,255,.12),transparent 45%);pointer-events:none}.buy-card.primary{border-color:rgba(89,255,154,.38)}.buy-card.secondary{border-color:rgba(88,244,255,.34)}.buy-card.support{border-color:rgba(255,209,94,.34)}.buy-card.maintain{border-color:rgba(106,168,255,.34)}.buy-head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px}.emoji{font-size:26px}.amount{position:relative;font-size:clamp(30px,3vw,46px);font-weight:1000;letter-spacing:-1px;margin:9px 0 3px}.buy-name{position:relative;color:var(--cyan);font-weight:950;min-height:38px}.buy-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.buy-metrics .mini-tile{padding:9px}.note{position:relative;color:var(--muted);font-size:12px;line-height:1.4;margin-top:9px}
+.control-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.button-row{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-top:12px}.mode-btn.active{border-color:rgba(88,244,255,.55);color:var(--cyan);box-shadow:0 0 18px rgba(88,244,255,.14)}
+
+/* ===================== SECTION: MISSION ===================== */
+.mission-card{display:grid;grid-template-columns:.8fr 1.2fr;gap:14px;align-items:stretch}.moonshot{padding:18px;border-radius:24px;background:linear-gradient(145deg,rgba(185,133,255,.12),rgba(88,244,255,.04));border:1px solid rgba(185,133,255,.24)}.moonshot .v{font-size:clamp(32px,4vw,54px);line-height:.95;margin-top:10px}.goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.goal-grid .mini-tile{min-height:88px}.timeline{margin-top:14px;display:grid;gap:8px}.milestone{display:grid;grid-template-columns:90px 1fr auto;gap:10px;align-items:center}.milestone-line{height:7px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}.milestone-line div{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:999px;width:0}
+
+/* ===================== SECTION: HEATMAP + CARDS ===================== */
+.heatmap{display:grid;grid-template-columns:repeat(8,1fr);gap:9px}.heat-cell{padding:12px;min-height:126px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.heat-cell:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05),transparent);pointer-events:none}.heat-ticker{display:flex;justify-content:space-between;gap:8px;align-items:center}.heat-name{font-size:12px;color:var(--muted);line-height:1.25}.heat-score{font-size:27px;font-weight:1000}.heat-price{font-size:13px;color:var(--cyan);font-weight:900}.position-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.position-card{padding:15px}.pos-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.pos-name{font-size:24px;font-weight:1000;letter-spacing:-.5px}.pos-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}.pos-metrics .mini-tile .v{font-size:16px}.bar-row{display:grid;grid-template-columns:80px 1fr 48px;gap:8px;align-items:center;margin-top:10px}.smallbar{height:9px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden}.smallbar div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:999px;width:0}.terminal{padding:0;overflow:hidden}.terminal-head{padding:12px 14px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:7px;align-items:center}.dot{width:10px;height:10px;border-radius:50%;background:var(--red)}.dot:nth-child(2){background:var(--amber)}.dot:nth-child(3){background:var(--green)}.terminal-body{padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.7;color:#bdefff;min-height:170px}.terminal-body .line:before{content:"> ";color:var(--green)}
+
+/* ===================== SECTION: WATCHLIST ===================== */
+.watch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.watch-card{padding:14px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08)}.watch-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.watch-name{font-size:19px;font-weight:1000}.watch-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}.watch-stats .mini-tile{padding:8px}.watch-stats .v{font-size:15px}
+
+/* ===================== SECTION: RESPONSIVE ===================== */
+@media(max-width:1180px){.hero-grid,.deck,.decision-grid,.mission-card{grid-template-columns:1fr}.heatmap{grid-template-columns:repeat(4,1fr)}.watch-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){body{padding:10px}.hero,.panel,.allocator-pro{border-radius:22px;padding:14px}.command-strip,.buy-strip,.control-grid,.button-row,.goal-grid,.pos-metrics,.position-grid,.watch-grid,.heatmap{grid-template-columns:1fr}.hero-bottom{grid-template-columns:1fr}.hero-strip{grid-template-columns:1fr}.decision-meta{grid-template-columns:1fr}.status-row{grid-template-columns:1fr}.money-row{grid-template-columns:1fr}.reserve-actions{grid-template-columns:1fr}.mode-row{grid-template-columns:1fr}.big-amount,.amount{font-size:36px}.pillar-name,.pos-name{font-size:22px}.allocator-head{flex-direction:column}.milestone{grid-template-columns:70px 1fr}.milestone span:last-child{grid-column:2}}
+
+
+/* ===================== SECTION: TABLET LANDSCAPE COMPACT FIX ===================== */
+:root{--r:18px;--shadow:0 14px 34px rgba(0,0,0,.28);--glow:0 0 22px rgba(88,244,255,.14)}
+body{padding:10px}
+.wrap{max-width:1280px;gap:10px}
+.hero{padding:16px;border-radius:24px}
+h1{font-size:clamp(28px,3.4vw,46px)}
+h2{font-size:18px}.big-sub{font-size:12px;margin-top:8px}.panel{padding:12px}.section-head{margin-bottom:10px}.badge{padding:5px 9px;font-size:10px}.metric{padding:10px;border-radius:15px}.metric .v{font-size:clamp(18px,1.8vw,27px)}
+.hero-grid{grid-template-columns:1.35fr .65fr;gap:12px}.title-block{gap:12px}.command-strip{gap:8px}.radar{min-height:185px;border-radius:20px;padding:10px}.radar-core{border-radius:18px;padding:12px}.radar-core .v{font-size:clamp(24px,2.4vw,34px)}.radar-data-grid{gap:6px}.radar-data{padding:7px}.radar-data .mv{font-size:14px}.radar-strategy{font-size:11px;padding:8px;margin-top:9px}
+.deck{grid-template-columns:1.15fr .85fr;gap:10px}.decision-grid{gap:10px}.best-move{padding:14px;border-radius:20px}.best-name{font-size:clamp(24px,2.6vw,36px)}.decision-meta{gap:7px}.mini-tile{padding:9px;border-radius:13px}.mini-tile .v{font-size:17px}.signal-card{padding:10px;border-radius:14px}.signal-card .v{font-size:18px}
+.buy-strip{gap:9px}.buy-card{padding:11px;border-radius:16px}.emoji{font-size:20px}.amount{font-size:clamp(25px,2.4vw,34px);margin:6px 0 2px}.buy-name{font-size:12px;min-height:32px}.buy-metrics{gap:6px;margin-top:8px}.note{font-size:11px;margin-top:7px}.control-grid{gap:8px;margin-top:9px}.button-row{grid-template-columns:repeat(6,1fr);gap:7px;margin-top:9px}button,input{padding:9px 10px;border-radius:12px;font-size:12px}.mission-card{gap:10px}.moonshot{padding:13px;border-radius:18px}.moonshot .v{font-size:clamp(28px,3.2vw,42px)}.goal-grid{gap:8px}.goal-grid .mini-tile{min-height:72px}
+/* Better heatmap: scanner tiles instead of big blocks */
+.heatmap{grid-template-columns:repeat(4,1fr);gap:8px}.heat-cell{min-height:82px;padding:10px;border-radius:15px;background:linear-gradient(145deg,rgba(8,18,32,.92),rgba(4,10,20,.92));border-color:rgba(255,255,255,.085)}.heat-cell.good{border-color:rgba(89,255,154,.34);box-shadow:0 0 20px rgba(89,255,154,.07)}.heat-cell.watch{border-color:rgba(255,209,94,.32);box-shadow:0 0 18px rgba(255,209,94,.06)}.heat-cell.avoid,.heat-cell.risk{border-color:rgba(255,95,131,.32);box-shadow:0 0 18px rgba(255,95,131,.06)}.heat-cell.hold{border-color:rgba(139,166,194,.2)}.heat-cell:before{background:radial-gradient(circle at top right,rgba(88,244,255,.11),transparent 45%)}.heat-ticker{position:relative}.heat-ticker strong{font-size:15px}.heat-score{font-size:22px;line-height:1}.heat-name{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.heat-price{font-size:11px}.heat-mini-bar{height:6px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-top:6px}.heat-mini-bar div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--green));width:0}.heat-foot{display:flex;justify-content:space-between;gap:8px;align-items:end}
+.position-grid{grid-template-columns:repeat(2,1fr);gap:10px}.position-card{padding:12px;border-radius:16px}.pos-name{font-size:20px}.pos-metrics{grid-template-columns:repeat(4,1fr);gap:7px}.pos-metrics .mini-tile .v{font-size:14px}.bar-row{margin-top:8px}.watch-grid{grid-template-columns:repeat(3,1fr);gap:10px}.watch-card{padding:11px;border-radius:15px}.watch-name{font-size:16px}.watch-stats{gap:6px;margin-top:9px}.terminal-body{min-height:140px;font-size:11px;padding:11px}
+@media (min-width:821px) and (max-width:1180px){.wrap{max-width:1120px}.hero-grid{grid-template-columns:1fr .55fr}.command-strip{grid-template-columns:repeat(4,1fr)}.deck{grid-template-columns:1fr}.buy-strip{grid-template-columns:repeat(4,1fr)}.heatmap{grid-template-columns:repeat(4,1fr)}.position-grid{grid-template-columns:repeat(2,1fr)}.watch-grid{grid-template-columns:repeat(3,1fr)}.control-grid{grid-template-columns:repeat(4,1fr)}.button-row{grid-template-columns:repeat(6,1fr)}}
+@media (max-width:820px){.heatmap{grid-template-columns:repeat(2,1fr)}.button-row{grid-template-columns:repeat(2,1fr)}}
+
+
+
+/* ===================== SECTION: EXECUTION TICKET PANEL ===================== */
+.execution-ticket-panel {
+  min-height: 185px;
+  border-radius: 22px;
+  padding: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(89,255,154,0.12), transparent 34%),
+    linear-gradient(145deg, rgba(8,19,34,0.98), rgba(4,10,20,0.98));
+  border: 1px solid rgba(88,244,255,0.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035), 0 0 26px rgba(0,0,0,0.28);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.execution-ticket-panel:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(88,244,255,0.06), transparent);
+  transform: translateX(-100%);
+  animation: ticketSweep 9s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes ticketSweep { to { transform: translateX(100%); } }
+
+.ticket-header,
+.ticket-footer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ticket-eyebrow {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.ticket-title {
+  margin-top: 5px;
+  font-size: clamp(24px, 2.5vw, 36px);
+  font-weight: 1000;
+  letter-spacing: -0.8px;
+  line-height: 1.02;
+  color: var(--text);
+}
+
+.ticket-chip {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+  border-radius: 999px;
+  color: var(--green);
+  border: 1px solid rgba(89,255,154,0.45);
+  background: rgba(89,255,154,0.08);
+  font-size: 10px;
+  font-weight: 1000;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.ticket-meta {
+  position: relative;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+  min-height: 32px;
+}
+
+.ticket-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.ticket-cell {
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.075);
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.ticket-cell .mv {
+  color: var(--cyan);
+  font-size: 17px;
+}
+
+.ticket-strategy {
+  position: relative;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.035);
+  border-left: 3px solid rgba(88,244,255,0.5);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.ticket-footer {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ticket-bar {
+  flex: 1;
+  height: 7px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.ticket-bar div {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+  box-shadow: 0 0 18px rgba(89,255,154,0.25);
+  transition: width .25s ease;
+}
+
+@media (max-width: 920px) {
+  .execution-ticket-panel { min-height: auto; }
+  .ticket-grid { grid-template-columns: 1fr; }
+}
+
+/* ===================== SECTION: AURORA UPGRADE PACK ===================== */
+.command-centre-x {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: 12px;
+}
+.command-card-x,
+.race-card-x,
+.impact-card-x,
+.projection-card-x,
+.commentary-card-x,
+.beacon-card-x,
+.promotion-board-x {
+  background: linear-gradient(145deg, rgba(11,24,39,.96), rgba(5,12,22,.98));
+  border: 1px solid rgba(101,225,255,.14);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.025), 0 10px 24px rgba(0,0,0,.18);
+}
+.command-main-x {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+.action-word-x {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 950;
+  line-height: .95;
+  letter-spacing: -1px;
+}
+.action-target-x {
+  margin-top: 6px;
+  color: var(--cyan);
+  font-size: 18px;
+  font-weight: 900;
+}
+.action-pill-x {
+  border: 1px solid rgba(80,255,143,.45);
+  color: var(--green);
+  background: rgba(80,255,143,.08);
+  border-radius: 999px;
+  padding: 9px 12px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+.command-detail-grid-x {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 8px;
+}
+.race-row-x,
+.promo-row-x,
+.proj-row-x {
+  display: grid;
+  grid-template-columns: 88px 1fr 80px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.race-label-x,
+.promo-label-x,
+.proj-label-x { font-weight: 900; font-size: 12px; color: var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.race-bar-x,
+.proj-bar-x {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.04);
+}
+.race-bar-x div,
+.proj-bar-x div { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--cyan), var(--green)); }
+.race-value-x,
+.proj-value-x { text-align: right; font-weight: 900; color: var(--cyan); font-size: 12px; }
+.intel-grid-x {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 12px;
+}
+.impact-number-x { font-size: 28px; font-weight: 950; color: var(--green); margin-top: 4px; }
+.commentary-text-x { color: var(--text); font-size: 14px; line-height: 1.45; }
+
+.beacon-card-x { grid-column: span 2; }
+.beacon-grid-x {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.beacon-main-x {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+.beacon-pct-x {
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: .9;
+  font-weight: 1000;
+  color: var(--green);
+  letter-spacing: -1.5px;
+}
+.beacon-status-x {
+  border: 1px solid rgba(89,255,154,.42);
+  background: rgba(89,255,154,.08);
+  color: var(--green);
+  border-radius: 999px;
+  padding: 8px 11px;
+  font-size: 11px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+.beacon-meter-x {
+  height: 12px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+.beacon-meter-x div {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--purple), var(--cyan), var(--green));
+  box-shadow: 0 0 24px rgba(89,255,154,.2);
+  transition: width .35s ease;
+}
+.beacon-note-x {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.promo-row-x { grid-template-columns: 34px 1fr 54px; }
+.promo-rank-x { color: var(--muted); font-weight: 900; }
+.promo-score-x { text-align:right; color:var(--amber); font-weight:950; }
+.projection-card-x { grid-column: span 2; }
+.commentary-card-x { grid-column: span 2; }
+.desktop-matrix-x {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 10px;
+}
+.matrix-tile-x {
+  min-height: 72px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 10px;
+  background: rgba(255,255,255,.03);
+}
+.matrix-tile-x.good-x { border-color: rgba(80,255,143,.35); }
+.matrix-tile-x.watch-x { border-color: rgba(255,200,87,.35); }
+.matrix-tile-x.hold-x { border-color: rgba(150,171,197,.24); }
+.matrix-tile-x.avoid-x { border-color: rgba(255,107,138,.35); }
+.matrix-title-x { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing:.7px; }
+.matrix-list-x { margin-top: 8px; font-weight: 900; font-size: 13px; line-height: 1.55; }
+@media (max-width: 920px) {
+  .command-centre-x,
+  .intel-grid-x,
+  .desktop-matrix-x { grid-template-columns: 1fr; }
+  .command-detail-grid-x { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .projection-card-x,
+  .commentary-card-x,
+  .beacon-card-x { grid-column: auto; }
+  .beacon-grid-x { grid-template-columns: 1fr; }
+}
+.promotion-elite{
+  background:rgba(0,255,120,.15);
+  border:1px solid rgba(0,255,120,.5);
+  color:#00ff88;
+  font-weight:700;
+  box-shadow:0 0 12px rgba(0,255,120,.35);
+}
+
+.promotion-ready{
+  background:rgba(255,193,7,.15);
+  border:1px solid rgba(255,193,7,.4);
+  color:#ffc107;
+}
+
+.promotion-watch{
+  background:rgba(0,170,255,.15);
+  border:1px solid rgba(0,170,255,.4);
+  color:#4db8ff;
+}
+
+.promotion-hold{
+  background:rgba(255,80,80,.15);
+  border:1px solid rgba(255,80,80,.4);
+  color:#ff7070;
+}
+.hq-home-btn{
+  position:fixed;
+  bottom:14px;
+  left:14px;
+  z-index:9999;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:10px 14px;
+  border-radius:14px;
+  text-decoration:none !important;
+  font-weight:900;
+  color:#58f4ff !important;
+  border:1px solid rgba(88,244,255,.25);
+  background:rgba(13,27,45,.92);
+  backdrop-filter:blur(12px);
+  box-shadow:0 0 18px rgba(88,244,255,.12);
+  line-height:1;
+}
+
+.hq-home-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 0 22px rgba(88,244,255,.22);
+}
+
+
+
+
+/* ===================== SECTION: LIVE MODE RESULT FIX ===================== */
+#prodeskModeResult,#prodeskSafetyCheck{
+  white-space:normal;
+  line-height:1.05;
+  overflow-wrap:anywhere;
+}
+#prodeskModeResultMeta,#prodeskSafetyMeta{
+  margin-top:6px;
+}
+
+/* ===================== SECTION: PHONE FIT FIX ===================== */
+@media (max-width: 640px){
+  html,body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden !important;
+  }
+
+  body{
+    padding:8px 8px 72px !important;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:100%;
+    gap:9px;
+    overflow:hidden;
+  }
+
+  .hero,
+  .panel,
+  .card,
+  .best-move,
+  .execution-ticket-panel,
+  .moonshot,
+  .position-card,
+  .buy-card,
+  .terminal,
+  .command-card-x,
+  .race-card-x,
+  .impact-card-x,
+  .projection-card-x,
+  .commentary-card-x,
+  .beacon-card-x,
+  .promotion-board-x{
+    border-radius:16px !important;
+    padding:10px !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    overflow:hidden;
+  }
+
+  h1{
+    font-size:28px !important;
+    line-height:.95 !important;
+    letter-spacing:-.8px !important;
+  }
+
+  h2{
+    font-size:16px !important;
+  }
+
+  h3{
+    font-size:14px !important;
+  }
+
+  .big-sub,
+  .subv,
+  .note,
+  .ticket-meta,
+  .ticket-strategy,
+  .commentary-text-x{
+    font-size:11px !important;
+    line-height:1.35 !important;
+  }
+
+  .hero-grid,
+  .deck,
+  .decision-grid,
+  .mission-card,
+  .command-centre-x,
+  .intel-grid-x,
+  .position-grid,
+  .watch-grid,
+  .control-grid,
+  .goal-grid,
+  .pos-metrics,
+  .decision-meta,
+  .command-detail-grid-x,
+  .desktop-matrix-x,
+  .beacon-grid-x{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+  }
+
+  .command-strip,
+  .buy-strip,
+  .ticket-grid{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:7px !important;
+  }
+
+  .button-row{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:7px !important;
+  }
+
+  .heatmap{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:7px !important;
+  }
+
+  .metric,
+  .mini-tile,
+  .ticket-cell,
+  .watch-card,
+  .matrix-tile-x{
+    padding:8px !important;
+    border-radius:12px !important;
+    min-width:0 !important;
+  }
+
+  .metric .v,
+  .mini-tile .v,
+  .signal-card .v{
+    font-size:15px !important;
+  }
+
+  .best-name,
+  .ticket-title,
+  .action-word-x{
+    font-size:24px !important;
+    line-height:1 !important;
+    word-break:break-word;
+  }
+
+  .amount{
+    font-size:28px !important;
+  }
+
+  .buy-name,
+  .pos-name,
+  .watch-name,
+  .action-target-x{
+    font-size:14px !important;
+    min-height:auto !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere;
+  }
+
+  .section-head,
+  .ticket-header,
+  .ticket-footer,
+  .signal-card,
+  .pos-top,
+  .watch-top,
+  .command-main-x,
+  .beacon-main-x{
+    align-items:flex-start !important;
+    gap:8px !important;
+    min-width:0 !important;
+  }
+
+  .section-head{
+    flex-wrap:wrap !important;
+  }
+
+  .badge,
+  .ticket-chip,
+  .action-pill-x,
+  .beacon-status-x{
+    font-size:9px !important;
+    padding:5px 7px !important;
+    white-space:normal !important;
+    text-align:center;
+  }
+
+  .heat-cell{
+    min-height:86px !important;
+    padding:8px !important;
+  }
+
+  .heat-score{
+    font-size:20px !important;
+  }
+
+  .heat-name,
+  .heat-price{
+    font-size:10px !important;
+  }
+
+  .race-row-x,
+  .promo-row-x,
+  .proj-row-x,
+  .bar-row{
+    grid-template-columns:64px 1fr 56px !important;
+    gap:6px !important;
+  }
+
+  .race-label-x,
+  .promo-label-x,
+  .proj-label-x{
+    font-size:10px !important;
+  }
+
+  .terminal-body{
+    min-height:110px !important;
+    font-size:10px !important;
+    padding:9px !important;
+  }
+
+  button,input,select{
+    font-size:12px !important;
+    padding:9px !important;
+    min-width:0 !important;
+  }
+
+  .hq-home-btn{
+    left:8px !important;
+    bottom:10px !important;
+    padding:9px 11px !important;
+    font-size:12px !important;
+  }
+}
+
+@media (max-width: 390px){
+  .command-strip,
+  .buy-strip,
+  .ticket-grid,
+  .heatmap{
+    grid-template-columns:1fr !important;
+  }
+
+  .button-row{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ===================== SECTION: HQ-STYLE TRADING BRAIN LAYOUT POLISH ===================== */
+.hero{
+  isolation:isolate;
+  box-shadow:0 0 38px rgba(88,244,255,.13),0 24px 70px rgba(0,0,0,.40);
+}
+.hero:before{
+  content:"";
+  position:absolute;
+  inset:-18%;
+  background:
+    radial-gradient(circle at 18% 16%,rgba(185,133,255,.20),transparent 28%),
+    radial-gradient(circle at 78% 18%,rgba(88,244,255,.20),transparent 30%),
+    radial-gradient(circle at 56% 88%,rgba(89,255,154,.13),transparent 34%);
+  animation:heroAmbientGlow 11s ease-in-out infinite;
+  transform:none;
+  opacity:.88;
+  pointer-events:none;
+  z-index:0;
+}
+.hero:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.035),transparent 34%,rgba(88,244,255,.035));
+  pointer-events:none;
+  z-index:0;
+}
+.hero-grid{z-index:1}
+@keyframes heroAmbientGlow{
+  0%,100%{filter:hue-rotate(0deg) blur(0px);opacity:.70;transform:scale(1)}
+  50%{filter:hue-rotate(14deg) blur(1px);opacity:1;transform:scale(1.035)}
+}
+.aurora-title{
+  width:max-content;
+  max-width:100%;
+  background:linear-gradient(100deg,var(--cyan),var(--green),var(--purple),var(--cyan));
+  background-size:260% 260%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 0 26px rgba(88,244,255,.12);
+  animation:auroraTitleFlow 9s ease-in-out infinite, auroraTitleBreath 5.5s ease-in-out infinite;
+}
+@keyframes auroraTitleFlow{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+@keyframes auroraTitleBreath{
+  0%,100%{filter:drop-shadow(0 0 10px rgba(88,244,255,.18))}
+  50%{filter:drop-shadow(0 0 22px rgba(89,255,154,.28))}
+}
+.execution-ticket-panel:before{
+  content:"";
+  position:absolute;
+  inset:-25%;
+  background:
+    radial-gradient(circle at 76% 12%,rgba(89,255,154,.16),transparent 34%),
+    radial-gradient(circle at 12% 92%,rgba(88,244,255,.12),transparent 36%);
+  transform:none;
+  animation:ticketAmbientGlow 10s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes ticketAmbientGlow{
+  0%,100%{opacity:.55;transform:scale(1)}
+  50%{opacity:.95;transform:scale(1.04)}
+}
+.commentary-card-x{display:none!important}
+.position-grid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.position-card{background:linear-gradient(145deg,rgba(12,25,42,.94),rgba(5,12,23,.96));border-color:rgba(88,244,255,.13)}
+.position-card .pos-name{font-size:20px}
+.position-card .pos-metrics{grid-template-columns:repeat(2,1fr)}
+.position-card .note{color:var(--soft)}
+#pillarGrid .position-card:nth-child(1){border-color:rgba(89,255,154,.38);box-shadow:0 0 22px rgba(89,255,154,.09),var(--shadow)}
+@media(max-width:820px){
+  .aurora-title{width:auto}
+  .position-grid{grid-template-columns:1fr!important}
+}
+
+
+/* ===================== SECTION: TRADING BRAIN CLEANUP PACK ===================== */
+/* Tidies the lower half to match Aurora Nexus HQ: calmer command centre, four ranked cards, compact watchlists. */
+.command-centre-x{
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.command-card-x{
+  border-color:rgba(89,255,154,.24);
+  background:
+    radial-gradient(circle at 92% 0%,rgba(89,255,154,.12),transparent 34%),
+    linear-gradient(145deg,rgba(11,24,39,.96),rgba(5,12,22,.98));
+}
+.race-card-x{display:none!important}
+.intel-grid-x{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.impact-card-x,.promotion-board-x,.projection-card-x,.beacon-card-x,.guard-card-x,.next-move-card-x{
+  min-height:156px;
+  border-color:rgba(88,244,255,.15);
+  background:linear-gradient(145deg,rgba(10,22,37,.96),rgba(4,10,20,.98));
+}
+.impact-card-x{border-color:rgba(89,255,154,.22)}
+.guard-card-x{border-color:rgba(88,244,255,.22)}
+.next-move-card-x{border-color:rgba(255,209,94,.22)}
+.projection-card-x{grid-column:auto;border-color:rgba(106,168,255,.22)}
+.beacon-card-x{grid-column:span 1;border-color:rgba(185,133,255,.22)}
+.beacon-grid-x{grid-template-columns:1fr;gap:6px;margin-top:8px}
+.beacon-main-x{grid-template-columns:1fr;gap:6px}
+.beacon-pct-x{font-size:clamp(28px,3vw,38px)}
+.beacon-note-x{font-size:11px;line-height:1.35}
+.race-row-x,.promo-row-x,.proj-row-x{
+  margin-top:7px;
+  padding:8px;
+  border-radius:12px;
+  background:rgba(255,255,255,.032);
+  border:1px solid rgba(255,255,255,.07);
+}
+.promo-row-x{grid-template-columns:32px 1fr 46px}
+.proj-row-x{grid-template-columns:64px 1fr 58px}
+.promo-label-x,.proj-label-x{font-size:11px}
+.proj-value-x,.promo-score-x{font-size:11px}
+.position-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.position-card{
+  padding:12px;
+  border-radius:18px;
+}
+.position-card .pos-name{
+  font-size:17px;
+  line-height:1.08;
+}
+.position-card .pos-metrics{
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+.position-card .mini-tile{padding:8px}
+.position-card .mini-tile .v{font-size:13px}
+.position-card .note{font-size:10px}
+.watch-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+}
+.compact-watch-card{
+  min-height:168px;
+  padding:11px;
+  border-radius:16px;
+  background:linear-gradient(145deg,rgba(9,20,34,.94),rgba(4,10,20,.96));
+}
+.compact-watch-card .watch-top{
+  display:block;
+}
+.compact-watch-card .watch-top .badge{
+  margin-top:8px;
+}
+.compact-watch-card .watch-name{
+  font-size:15px;
+  line-height:1.1;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.compact-watch-card .watch-stats{
+  grid-template-columns:1fr;
+  gap:6px;
+  margin-top:9px;
+}
+.compact-watch-card .mini-tile{
+  padding:7px;
+}
+.compact-watch-card .mini-tile .v{
+  font-size:13px;
+}
+.compact-watch-card .note{
+  display:none;
+}
+#watchlistPromotionAlert,#globalWatchlistAlert{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.heatmap{
+  grid-template-columns:repeat(4,1fr);
+}
+.terminal-body{
+  min-height:116px;
+}
+
+.prodesk-impact-strip{
+  display:grid;
+  grid-template-columns:1.1fr 1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+.prodesk-impact-card{
+  min-height:118px;
+  border-color:rgba(89,255,154,.28);
+  background:radial-gradient(circle at 92% 0%,rgba(89,255,154,.14),transparent 34%),linear-gradient(145deg,rgba(10,22,37,.96),rgba(4,10,20,.98));
+}
+.prodesk-snapshot-card{
+  min-height:118px;
+  padding:14px;
+  border-radius:18px;
+  border:1px solid rgba(88,244,255,.15);
+  background:linear-gradient(145deg,rgba(10,22,37,.96),rgba(4,10,20,.98));
+}
+.prodesk-snapshot-card .v{font-size:clamp(20px,2.2vw,30px);margin-top:6px;color:var(--cyan)}
+.guard-grid-x{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:8px;
+}
+.next-focus-main{
+  margin-top:8px;
+  font-size:clamp(22px,2.6vw,34px);
+  line-height:.98;
+  letter-spacing:-.7px;
+  font-weight:1000;
+  color:var(--amber);
+}
+.projection-tile-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.projection-tile{
+  min-height:94px;
+  padding:10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.035);
+}
+.projection-tile .pv{
+  margin-top:7px;
+  font-size:clamp(18px,2vw,26px);
+  font-weight:1000;
+  color:var(--green);
+  line-height:1;
+}
+.projection-tile .mini-bar{
+  height:7px;
+  margin-top:9px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,.07);
+}
+.projection-tile .mini-bar div{
+  height:100%;
+  width:0;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--purple),var(--cyan),var(--green));
+}
+
+@media(max-width:1180px){
+  .intel-grid-x,.position-grid,.watch-grid,.prodesk-impact-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .projection-tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:820px){
+  .intel-grid-x,.position-grid,.watch-grid,.prodesk-impact-strip,.projection-tile-grid{grid-template-columns:1fr!important}
+  .guard-grid-x{grid-template-columns:1fr!important}
+}
+
+
+/* ===================== SECTION: TRADING BRAIN V4 CLEAN RUNWAY FIX ===================== */
+.prodesk-impact-strip{
+  grid-template-columns:1.15fr .95fr .95fr;
+  margin:0 0 12px 0;
+}
+.prodesk-impact-card .impact-number-x{
+  font-size:clamp(28px,3vw,42px);
+  line-height:.95;
+}
+.income-band-x{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:9px;
+  padding:7px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.045);
+  color:var(--muted);
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.85px;
+  text-transform:uppercase;
+  line-height:1;
+  width:max-content;
+  max-width:100%;
+}
+.income-band-x.not-enough{
+  color:var(--red);
+  border-color:rgba(255,95,131,.42);
+  background:rgba(255,95,131,.10);
+  box-shadow:0 0 16px rgba(255,95,131,.10);
+}
+.income-band-x.acceptable{
+  color:var(--amber);
+  border-color:rgba(255,209,94,.40);
+  background:rgba(255,209,94,.09);
+}
+.income-band-x.good{
+  color:var(--cyan);
+  border-color:rgba(88,244,255,.38);
+  background:rgba(88,244,255,.08);
+}
+.income-band-x.promotion-push{
+  color:var(--green);
+  border-color:rgba(89,255,154,.45);
+  background:rgba(89,255,154,.10);
+  box-shadow:0 0 18px rgba(89,255,154,.14);
+}
+.income-band-x.monster-income{
+  color:var(--purple);
+  border-color:rgba(185,133,255,.48);
+  background:rgba(185,133,255,.11);
+  box-shadow:0 0 20px rgba(185,133,255,.16);
+}
+.projection-card-x{
+  min-height:0;
+}
+.projection-tile-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px;
+  margin-top:10px;
+}
+.projection-tile{
+  min-height:116px;
+  padding:12px;
+  border-radius:16px;
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  border-color:rgba(88,244,255,.14);
+}
+.projection-tile .k{
+  font-size:9px;
+  letter-spacing:1.05px;
+}
+.projection-tile .pv{
+  margin-top:8px;
+  font-size:clamp(21px,2.2vw,31px);
+  line-height:.92;
+  white-space:nowrap;
+  color:var(--green);
+  text-shadow:0 0 15px rgba(89,255,154,.16);
+}
+.projection-tile .subv{
+  margin-top:5px;
+  min-height:28px;
+  font-size:11px;
+  line-height:1.25;
+}
+.projection-tile.milestone{
+  border-color:rgba(185,133,255,.28);
+  background:radial-gradient(circle at 90% 8%,rgba(185,133,255,.14),transparent 38%),linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+}
+.projection-tile.milestone .pv{color:var(--purple);text-shadow:0 0 16px rgba(185,133,255,.18)}
+.projection-tile .mini-bar{
+  height:8px;
+  margin-top:10px;
+}
+.next-move-card-x{
+  background:radial-gradient(circle at 92% 0%,rgba(255,209,94,.11),transparent 36%),linear-gradient(145deg,rgba(10,22,37,.96),rgba(4,10,20,.98));
+}
+.next-focus-main{
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+@media(max-width:1180px){
+  .prodesk-impact-strip{grid-template-columns:1fr 1fr!important}
+  .prodesk-impact-card{grid-column:1/-1}
+}
+@media(max-width:820px){
+  .prodesk-impact-strip,.projection-tile-grid{grid-template-columns:1fr!important}
+  .projection-tile{min-height:96px}
+}
+
+
+
+/* ===================== SECTION: TRADING BRAIN V5 INCOME RUNWAY BEACON FIX ===================== */
+.runway-snapshot-stack{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.runway-stage{
+  display:grid;
+  grid-template-columns:94px minmax(0,1fr) 92px;
+  gap:10px;
+  align-items:center;
+  padding:10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+}
+.runway-stage.milestone{
+  border-color:rgba(185,133,255,.28);
+  background:radial-gradient(circle at 92% 10%,rgba(185,133,255,.13),transparent 40%),linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+}
+.runway-stage-label{
+  color:var(--muted);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:1.05px;
+  font-weight:950;
+}
+.runway-stage-meta{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.25;
+  min-width:0;
+}
+.runway-stage-value{
+  text-align:right;
+  font-size:clamp(18px,1.9vw,25px);
+  line-height:1;
+  font-weight:1000;
+  color:var(--green);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:clip;
+  text-shadow:0 0 14px rgba(89,255,154,.16);
+}
+.runway-stage.milestone .runway-stage-value{
+  color:var(--purple);
+  text-shadow:0 0 14px rgba(185,133,255,.20);
+}
+.runway-stage-bar{
+  grid-column:1/-1;
+  height:7px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,.07);
+}
+.runway-stage-bar div{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--purple),var(--cyan),var(--green));
+}
+@media(max-width:820px){
+  .runway-stage{grid-template-columns:1fr;gap:5px}
+  .runway-stage-value{text-align:left;font-size:24px}
+}
+
+
+/* ===================== SECTION: TRADING BRAIN V6 RUNWAY VALUE CLIP FIX ===================== */
+.runway-stage{
+  grid-template-columns:82px minmax(0,1fr) minmax(112px,auto);
+  column-gap:9px;
+}
+.runway-stage-value{
+  min-width:112px;
+  overflow:visible;
+  text-overflow:unset;
+  font-size:clamp(17px,1.55vw,23px);
+  letter-spacing:-.6px;
+}
+.runway-stage-meta{
+  font-size:10.5px;
+  max-width:100%;
+}
+@media(max-width:1180px){
+  .runway-stage{grid-template-columns:76px minmax(0,1fr) minmax(104px,auto)}
+  .runway-stage-value{min-width:104px;font-size:20px}
+}
+@media(max-width:820px){
+  .runway-stage{grid-template-columns:1fr!important}
+  .runway-stage-value{min-width:0;text-align:left;font-size:24px}
+}
+
+
+/* ===================== SECTION: TRADING BRAIN V7 ACTION CLARITY FINISH ===================== */
+.trade-checklist-card-x{
+  min-height:156px;
+  border:1px solid rgba(88,244,255,.22);
+  border-radius:18px;
+  padding:14px;
+  background:radial-gradient(circle at 92% 0%,rgba(88,244,255,.11),transparent 36%),linear-gradient(145deg,rgba(10,22,37,.96),rgba(4,10,20,.98));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 10px 24px rgba(0,0,0,.18);
+}
+.checklist-grid-x{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin-top:8px;
+}
+.check-item-x{
+  padding:10px;
+  border-radius:14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+}
+.check-item-x .v{
+  margin-top:4px;
+  font-size:clamp(18px,1.8vw,24px);
+  line-height:1;
+}
+.ai-recommendation-box-x{
+  margin-top:12px;
+  padding:11px;
+  border-radius:15px;
+  border:1px solid rgba(255,209,94,.20);
+  background:linear-gradient(145deg,rgba(255,209,94,.065),rgba(255,255,255,.025));
+}
+.rec-line-x{
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr);
+  gap:9px;
+  align-items:start;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.28;
+}
+.rec-line-x span{
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  font-weight:950;
+  color:var(--amber);
+  font-size:9px;
+}
+.rec-line-x strong{
+  color:var(--text);
+  font-weight:900;
+  overflow-wrap:anywhere;
+}
+@media(max-width:1180px){
+  .trade-checklist-card-x{min-height:0}
+}
+@media(max-width:820px){
+  .checklist-grid-x{grid-template-columns:1fr!important}
+  .rec-line-x{grid-template-columns:1fr!important;gap:3px}
+}
+
+
+/* ===================== SECTION: OPPORTUNITY ALERT ENGINE ===================== */
+.opportunity-alert-card-x{
+  min-height:156px;
+  border:1px solid rgba(88,244,255,.24);
+  border-radius:18px;
+  padding:14px;
+  background:
+    radial-gradient(circle at 92% 0%,rgba(88,244,255,.13),transparent 36%),
+    linear-gradient(145deg,rgba(10,22,37,.96),rgba(4,10,20,.98));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 10px 24px rgba(0,0,0,.18);
+}
+.opportunity-main-x{
+  margin-top:6px;
+  display:grid;
+  gap:5px;
+}
+.alert-ticker-x{
+  font-size:clamp(22px,2.7vw,34px);
+  line-height:.98;
+  letter-spacing:-.8px;
+  font-weight:1000;
+  color:var(--cyan);
+  overflow-wrap:anywhere;
+}
+.alert-grid-x{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.alert-metric-x{
+  padding:9px;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+}
+.alert-metric-x .v{
+  margin-top:4px;
+  font-size:clamp(17px,1.7vw,23px);
+  line-height:1;
+}
+.alert-verdict-x{
+  margin-top:10px;
+  padding:10px;
+  border-radius:14px;
+  border:1px solid rgba(255,209,94,.18);
+  background:linear-gradient(145deg,rgba(255,209,94,.06),rgba(255,255,255,.025));
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.34;
+  font-weight:850;
+}
+@media(max-width:820px){
+  .alert-grid-x{grid-template-columns:1fr!important}
+  .alert-ticker-x{font-size:24px}
+}
+
+/* ===================== SECTION: HQ TITLE SIZE MATCH ===================== */
+.aurora-title{
+  font-size:clamp(34px,4.4vw,66px) !important;
+  letter-spacing:-1.8px !important;
+  line-height:.92 !important;
+}
+@media(max-width:640px){
+  .aurora-title{
+    font-size:clamp(32px,10vw,48px) !important;
+    letter-spacing:-1.2px !important;
+    line-height:.94 !important;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===================== SECTION: HERO ===================== -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="title-block">
+      <div>
+        <div class="hero-topline">
+          <span class="badge good">● LIVE DIVIDEND TERMINAL</span>
+          <span class="badge watch" id="marketPulseBadge">SCANNING</span>
+          <span class="badge hold mono" id="clockBadge">--:--</span>
+        </div>
+        <h1 class="aurora-title">Aurora<br>Trading Brain X</h1>
+        <p class="big-sub">A real command-terminal rebuild for income investing: buy radar, deployment engine, watchlist promotion, heatmap scoring, reserve logic, dividend milestones and mission telemetry.</p>
+      </div>
+      <div class="command-strip">
+        <div class="metric"><div class="k">Portfolio Value</div><div class="v">£<span id="portfolioValue">0.00</span></div><div class="subv" id="portfolioValueMeta">Live holdings</div></div>
+        <div class="metric"><div class="k">Unrealised Gain</div><div class="v" id="portfolioGain">£0.00</div><div class="subv" id="portfolioGainMeta">0.00%</div></div>
+        <div class="metric"><div class="k">Annual Income</div><div class="v">£<span id="totalAnnualIncome">0.00</span></div><div class="subv">Confirmed run-rate</div></div>
+        <div class="metric"><div class="k">Monthly Income</div><div class="v">£<span id="totalMonthlyIncome">0.00</span></div><div class="subv" id="monthlyIncomeMeta">Average monthly</div></div>
+      </div>
+    </div>
+    <div class="execution-ticket-panel">
+      <div class="ticket-header">
+        <div>
+          <div class="ticket-eyebrow">NEXT TRADE TICKET</div>
+          <div class="ticket-title" id="radarBest">--</div>
+        </div>
+        <div class="ticket-chip" id="radarRoute">WAITING</div>
+      </div>
+
+      <div class="ticket-meta" id="radarMeta">Waiting for live buy comparison...</div>
+
+      <div class="ticket-grid">
+        <div class="ticket-cell">
+          <div class="mk">Score</div>
+          <div class="mv" id="radarScore">--</div>
+        </div>
+        <div class="ticket-cell">
+          <div class="mk">£500 Income</div>
+          <div class="mv" id="radarIncome">--</div>
+        </div>
+        <div class="ticket-cell">
+          <div class="mk">Signal</div>
+          <div class="mv" id="radarSignal">--</div>
+        </div>
+      </div>
+
+      <div class="ticket-strategy" id="radarStrategy">Decision engine will compare core and watchlist income, then flag the cleanest move.</div>
+
+      <div class="ticket-footer">
+        <span>Confidence</span>
+        <div class="ticket-bar"><div id="radarPulseBar"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: DECISION + MISSION ===================== -->
+<div class="deck">
+  <section class="card panel">
+    <div class="section-head"><div class="left"><span class="orb"></span><h2>Decision Engine</h2></div><span class="badge good" id="decisionBadge">READY</span></div>
+    <div class="decision-grid">
+      <div class="best-move">
+        <div class="k">Today’s Best Action</div>
+        <div class="best-name" id="bestActionName">Hold Fire</div>
+        <div class="subv" id="bestActionMeta">Waiting for live sheet data...</div>
+        <div class="decision-meta">
+          <div class="mini-tile"><div class="k">Top Core</div><div class="v" id="topCoreName">--</div><div class="subv" id="topCoreMeta">--</div></div>
+          <div class="mini-tile"><div class="k">Top Watchlist</div><div class="v" id="topWatchName">--</div><div class="subv" id="topWatchMeta">--</div></div>
+          <div class="mini-tile"><div class="k">£500 Income Winner</div><div class="v" id="incomeWinner">--</div><div class="subv" id="incomeWinnerMeta">--</div></div>
+        </div>
+      </div>
+      <div class="signal-stack">
+        <div class="signal-card"><div><div class="k">Execution Signal</div><div class="subv" id="executionSignalMeta">Waiting</div></div><div class="v" id="executionSignal">WAIT</div></div>
+        <div class="signal-card"><div><div class="k">Risk Temperature</div><div class="subv" id="riskTempMeta">No data</div></div><div class="v" id="riskTemp">--</div></div>
+        <div class="signal-card"><div><div class="k">Live Sync</div><div class="subv" id="liveSyncMeta">Refreshing</div></div><div class="v cyan" id="liveSyncStatus">SYNC</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card panel">
+    <div class="section-head"><div class="left"><span class="orb"></span><h2>Mission Control</h2></div><span class="badge good" id="missionPercent">0%</span></div>
+    <div class="mission-card">
+      <div class="moonshot"><div class="k">Ultimate Target</div><div class="v">£2,000/m</div><div class="subv">£24,000/year passive income machine</div><div class="progress"><div class="fill" id="missionProgressBar"></div></div></div>
+      <div>
+        <div class="goal-grid">
+          <div class="mini-tile"><div class="k">Current</div><div class="v" id="currentMonthlyIncomeGoal">£0.00</div><div class="subv">monthly income</div></div>
+          <div class="mini-tile"><div class="k">Remaining</div><div class="v" id="remainingToGoal">£0.00</div><div class="subv">to £2k/month</div></div>
+          <div class="mini-tile"><div class="k">Next Buy Impact</div><div class="v" id="annualImpact">£0/y</div><div class="subv" id="monthlyImpact">£0/m added</div></div>
+          <div class="mini-tile"><div class="k">Next Milestone</div><div class="v">£500/m</div><div class="subv">£6,000/year</div></div>
+          <div class="mini-tile"><div class="k">Years To Milestone</div><div class="v" id="yearsToNextStage">--</div><div class="subv">at current plan</div></div>
+          <div class="mini-tile"><div class="k">Income Concentration</div><div class="v" id="incomeConcentration">--</div><div class="subv" id="incomeConcentrationMeta">top payer</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== SECTION: ALLOCATOR ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Aurora Opportunity Engine — Pro Desk</h2></div><span class="badge cyan" id="activeModeLabel">AUTO</span></div>
+  <div class="prodesk-impact-strip">
+    <div class="impact-card-x prodesk-impact-card">
+      <div class="k">Income Created By This Buy</div>
+      <div class="impact-number-x" id="impactAnnualCreated">£0/y</div>
+      <div class="subv" id="impactMonthlyCreated">£0/m snowball added</div>
+      <div class="income-band-x" id="impactIncomeBand">NOT ENOUGH</div>
+    </div>
+    <div class="prodesk-snapshot-card">
+      <div class="k">Strategy Result</div>
+      <div class="v" id="prodeskModeResult">Waiting</div>
+      <div class="subv" id="prodeskModeResultMeta">Updates when you choose Income, Balance, Dip Hunter or Defensive.</div>
+    </div>
+    <div class="prodesk-snapshot-card">
+      <div class="k">Mode Check</div>
+      <div class="v cyan" id="prodeskSafetyCheck">Waiting</div>
+      <div class="subv" id="prodeskSafetyMeta">Updates when you choose Income, Balance, Dip Hunter or Defensive.</div>
+    </div>
+  </div>
+  <div class="buy-strip">
+    <div class="buy-card primary"><div class="buy-head"><div><span class="emoji">🥇</span><span class="k"> Income Winner</span></div><span class="badge good">MAX</span></div><div class="amount" id="alloc1Amt">£0</div><div class="buy-name" id="alloc1Name">--</div><div class="buy-metrics"><div class="mini-tile"><div class="k">Score</div><div class="v" id="alloc1Score">--</div></div><div class="mini-tile"><div class="k">Yield</div><div class="v" id="alloc1Yield">--</div></div></div><div class="note" id="alloc1Note">Waiting</div></div>
+    <div class="buy-card secondary"><div class="buy-head"><div><span class="emoji">🧱</span><span class="k"> Core Winner</span></div><span class="badge watch">CORE</span></div><div class="amount" id="alloc2Amt">£0</div><div class="buy-name" id="alloc2Name">--</div><div class="buy-metrics"><div class="mini-tile"><div class="k">Score</div><div class="v" id="alloc2Score">--</div></div><div class="mini-tile"><div class="k">Yield</div><div class="v" id="alloc2Yield">--</div></div></div><div class="note" id="alloc2Note">Waiting</div></div>
+    <div class="buy-card support"><div class="buy-head"><div><span class="emoji">⚖️</span><span class="k"> Balanced Split</span></div><span class="badge hold">SPLIT</span></div><div class="amount" id="alloc3Amt">£0</div><div class="buy-name" id="alloc3Name">--</div><div class="buy-metrics"><div class="mini-tile"><div class="k">Score</div><div class="v" id="alloc3Score">--</div></div><div class="mini-tile"><div class="k">Yield</div><div class="v" id="alloc3Yield">--</div></div></div><div class="note" id="alloc3Note">Waiting</div></div>
+    <div class="buy-card maintain"><div class="buy-head"><div><span class="emoji">📊</span><span class="k"> Next Option</span></div><span class="badge hold">ALT</span></div><div class="amount" id="alloc4Amt">£0</div><div class="buy-name" id="alloc4Name">--</div><div class="buy-metrics"><div class="mini-tile"><div class="k">Score</div><div class="v" id="alloc4Score">--</div></div><div class="mini-tile"><div class="k">Yield</div><div class="v" id="alloc4Yield">--</div></div></div><div class="note" id="alloc4Note">Waiting</div></div>
+  </div>
+  <div class="control-grid">
+    <div class="mini-tile"><div class="k">Reserve Carried</div><div class="v blue" id="reserveCarried">£0</div></div>
+    <div class="mini-tile"><div class="k">New Money</div><div class="v cyan" id="newMoneyAmount">£500</div></div>
+    <div class="mini-tile"><div class="k">Total Deployable</div><div class="v good" id="totalDeployable">£500</div></div>
+    <div class="mini-tile"><div class="k">Suggested Reserve</div><div class="v amber" id="suggestedReserve">£0</div></div>
+  </div>
+  <div class="control-grid">
+    <div><div class="k">Investment Amount</div><input id="totalInvestment" type="number" value="500" step="1"></div>
+    <div><div class="k">Dip Aggression</div><input id="dipWeight" type="number" value="1.2" step="0.1" min="0.5" max="2.0"></div>
+    <div><div class="k">Manual Reserve</div><input id="manualReserve" type="number" placeholder="e.g. 250"></div>
+    <button id="setManualReserveBtn">Set Reserve</button>
+  </div>
+  <div class="button-row">
+    <button class="mode-btn" data-mode="auto">Auto</button><button class="mode-btn" data-mode="income">Income</button><button class="mode-btn" data-mode="balance">Balance</button><button class="mode-btn" data-mode="dip">Dip Hunter</button><button class="mode-btn" data-mode="defensive">Defensive</button><button id="saveReserveBtn">Save Reserve</button>
+    <button id="resetReserveBtn">Reset Reserve</button><button id="useReserveBtn">Use Reserve</button><button data-amt="200">£200</button><button data-amt="400">£400</button><button data-amt="600">£600</button><button data-amt="800">£800</button>
+  </div>
+</section>
+
+
+<!-- ===================== SECTION: AURORA INTELLIGENCE UPGRADE ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Aurora Command Centre</h2></div><span class="badge good" id="commandConfidenceBadge">WAITING</span></div>
+
+  <div class="command-centre-x">
+    <div class="command-card-x">
+      <div class="command-main-x">
+        <div>
+          <div class="k">Recommended Move</div>
+          <div class="action-word-x" id="commandAction">WAIT</div>
+          <div class="action-target-x" id="commandTarget">Loading live feeds...</div>
+          <div class="subv" id="commandReason">Aurora is building the decision ticket.</div>
+        </div>
+        <div class="action-pill-x" id="commandTicketStatus">STANDBY</div>
+      </div>
+      <div class="command-detail-grid-x">
+        <div class="mini-tile"><div class="k">Amount</div><div class="v" id="commandAmount">£500</div></div>
+        <div class="mini-tile"><div class="k">Income Created</div><div class="v" id="commandIncome">£0/y</div></div>
+        <div class="mini-tile"><div class="k">Confidence</div><div class="v" id="commandConfidence">0%</div></div>
+        <div class="mini-tile"><div class="k">Route</div><div class="v" id="commandRoute">--</div></div>
+      </div>
+    </div>
+
+    <div class="race-card-x">
+      <div class="section-head" style="margin-bottom:4px"><div class="left"><h3>Dividend Race Track</h3></div><span class="badge cyan">£2K/YR</span></div>
+      <div id="dividendRaceTrack"></div>
+    </div>
+  </div>
+
+  <div class="intel-grid-x">
+    <div class="opportunity-alert-card-x">
+      <div class="section-head" style="margin-bottom:6px"><div class="left"><h3>Opportunity Alert Engine</h3></div><span class="badge cyan" id="opportunityAlertBadge">SCAN</span></div>
+      <div class="opportunity-main-x">
+        <div class="alert-ticker-x" id="opportunityAlertTicker">--</div>
+        <div class="subv" id="opportunityAlertTrigger">Waiting for 52-week low, fair-value and dividend impact checks...</div>
+      </div>
+      <div class="alert-grid-x">
+        <div class="alert-metric-x"><div class="k">Dividend Boost</div><div class="v good" id="opportunityDividendBoost">--</div><div class="subv" id="opportunityBoostMeta">From selected cash</div></div>
+        <div class="alert-metric-x"><div class="k">Dividend Cut Risk</div><div class="v risk" id="opportunityCutRisk">--</div><div class="subv" id="opportunityRiskMeta">25% cut scenario</div></div>
+      </div>
+      <div class="alert-verdict-x" id="opportunityAlertVerdict">Aurora will flag review opportunities, not automatic buys.</div>
+    </div>
+
+    <div class="next-move-card-x">
+      <div class="section-head" style="margin-bottom:6px"><div class="left"><h3>Next Move Focus</h3></div><span class="badge good">AI VIEW</span></div>
+      <div class="next-focus-main" id="nextMoveFocus">Waiting for decision engine...</div>
+      <div class="subv" id="nextMoveFocusMeta">Shows whether Trading Brain is favouring core holdings or review candidates.</div>
+      <div class="ai-recommendation-box-x">
+        <div class="k">AI Recommendation</div>
+        <div class="rec-line-x"><span>Why</span><strong id="nextMoveWhy">Waiting</strong></div>
+        <div class="rec-line-x"><span>Action</span><strong id="nextMoveAction">Waiting</strong></div>
+        <div class="rec-line-x"><span>Watch</span><strong id="nextMoveWatch">Waiting</strong></div>
+      </div>
+    </div>
+
+    <div class="projection-card-x">
+      <div class="section-head" style="margin-bottom:4px"><div class="left"><h3>Income Runway Snapshot</h3></div><span class="badge good">PLAN</span></div>
+      <div id="projectionPath"></div>
+    </div>
+
+    <div class="commentary-card-x">
+      <div class="section-head" style="margin-bottom:8px"><div class="left"><h3>Aurora Commentary</h3></div><span class="badge cyan">AI VIEW</span></div>
+      <div class="commentary-text-x" id="auroraCommentary">Waiting for the live decision engine...</div>
+      <div class="desktop-matrix-x" id="statusMatrix"></div>
+    </div>
+
+    <div class="beacon-card-x">
+      <div class="section-head" style="margin-bottom:8px"><div class="left"><h3>Aurora Progress Beacon</h3></div><span class="badge good" id="beaconDirection">MOVING</span></div>
+      <div class="beacon-main-x">
+        <div>
+          <div class="k">Freedom Progress</div>
+          <div class="beacon-pct-x" id="beaconProgressPct">0.0%</div>
+        </div>
+        <div class="beacon-status-x" id="beaconStatus">SYNCING</div>
+      </div>
+      <div class="beacon-meter-x"><div id="beaconProgressBar"></div></div>
+      <div class="beacon-grid-x">
+        <div class="mini-tile"><div class="k">Current</div><div class="v" id="beaconCurrent">£0/m</div></div>
+        <div class="mini-tile"><div class="k">Needed</div><div class="v" id="beaconNeeded">£0/m</div></div>
+        <div class="mini-tile"><div class="k">Estimate</div><div class="v" id="beaconEstimate">--</div></div>
+      </div>
+      <div class="beacon-note-x" id="beaconNote">Aurora is measuring the gap to £2,000/month.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: HEATMAP + TERMINAL ===================== -->
+<div class="deck">
+  <section class="card panel">
+    <div class="section-head"><div class="left"><span class="orb"></span><h2>Core Heatmap</h2></div><span class="badge hold">RANKED</span></div>
+    <div class="heatmap" id="coreHeatmap"></div>
+  </section>
+  <section class="terminal">
+    <div class="terminal-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="muted mono">aurora://brain/log</span></div>
+    <div class="terminal-body" id="terminalLog"><div class="line">Booting Aurora terminal...</div></div>
+  </section>
+</div>
+
+<!-- ===================== SECTION: CORE POSITIONS ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Top 4 Ranked Holdings</h2></div><span class="badge cyan" id="pillarCount">TOP 4</span></div>
+  <div class="position-grid" id="pillarGrid"></div>
+</section>
+
+<!-- ===================== SECTION: WATCHLIST ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Watchlist Promotion Bay</h2></div><span class="badge watch">TOP 5</span></div>
+  <div class="signal-card" style="margin-bottom:12px"><div><div class="k">Promotion Radar</div><div class="subv" id="watchlistPromotionAlert">Waiting for watchlist data...</div></div><div class="v" id="promotionScore">--</div></div>
+  <div class="watch-grid" id="watchlistGrid"></div>
+</section>
+
+
+<!-- ===================== SECTION: GLOBAL WATCHLIST LIVE ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Global Watchlist Bay</h2></div><span class="badge cyan" id="globalWatchlistStatus">TOP PICKS</span></div>
+  <div class="signal-card" style="margin-bottom:12px">
+    <div><div class="k">Global Income Radar</div><div class="subv" id="globalWatchlistAlert">Loading Global Watchlist from Aurora API...</div></div>
+    <div class="v" id="globalWatchlistCount">--</div>
+  </div>
+  <div class="watch-grid" id="globalWatchlistGrid"></div>
+</section>
+
+<div class="muted" style="text-align:center;padding:10px 0 22px">Aurora Trading Brain X • Compact Terminal Edition • iPad landscape tuned</div>
+</div>
+
+<script>
+/* ===================== SECTION: DATA SOURCE ===================== */
+/* ===================== SECTION: AURORA MASTER JSON CONNECTION ===================== */
+/*
+  Trading Brain now reads from the shared GitHub Pages AuroraMaster.json export.
+  Keep AuroraMaster.json in the same published Aurora folder, or override this URL with:
+  window.AURORA_MASTER_JSON_URL = "YOUR_GITHUB_JSON_URL";
+*/
+const MASTER_JSON_URL = window.AURORA_MASTER_JSON_URL || "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const USE_SINGLE_JSON_FEED = true;
+
+/* Legacy OpenSheet feeds are kept only as an emergency fallback if the master JSON is unavailable. */
+const SHEET_ID = "10MdgQKc4tParno7pNkz40eBGz308wxHu1u3gvJe_WsE";
+const HOLDINGS_URL = `https://opensheet.elk.sh/${SHEET_ID}/Holdings`;
+const DIVIDENDS_URL = `https://opensheet.elk.sh/${SHEET_ID}/Dividends`;
+const PRICE_HISTORY_URL = `https://opensheet.elk.sh/${SHEET_ID}/PriceLog`;
+const WATCHLIST_URL = `https://opensheet.elk.sh/${SHEET_ID}/Watchlist`;
+const GLOBAL_WATCHLIST_URL = `https://opensheet.elk.sh/${SHEET_ID}/Global%20Watchlist`;
+const MODE_KEY = "aurora_mode_x";
+const RESERVE_KEY = "aurora_reserve_x";
+const MASTER_MONTHLY_GOAL = 2000;
+const NEXT_MILESTONE_ANNUAL = 6000;
+
+const SOFT_CAP_PCT = 10;
+const HARD_CAP_PCT = 12;
+const MAX_SINGLE_BUY_PCT = 25;
+
+
+/*
+  Aurora Trading Brain now uses the Holdings tab as the master source of truth.
+  No hardcoded Aviva / National Grid / pillar list is used. A holding only appears
+  if it exists in the Holdings sheet with active shares/value/income.
+*/
+let latestWatchRows = [];
+
+/* ===================== SECTION: HELPERS ===================== */
+function setText(id,v){const el=document.getElementById(id);if(el)el.innerText=v}
+function parseNum(v){const n=parseFloat(String(v??"").replace(/[^0-9.-]/g,""));return Number.isFinite(n)?n:0}
+function formatMoney(v){return Number(v||0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function formatMoney0(v){return Number(v||0).toLocaleString("en-GB",{maximumFractionDigits:0})}
+function formatPct(v){return `${Number(v||0).toFixed(2)}%`}
+function getCell(row,names){const keys=Object.keys(row);for(const name of names){const found=keys.find(k=>k.trim().toLowerCase()===name.trim().toLowerCase());if(found)return row[found]}return ""}
+function normaliseSheetName(name){return String(name||"").trim().toLowerCase().replace(/[^a-z0-9]/g,"")}
+function unwrapRows(v){
+  if(Array.isArray(v))return v;
+  if(v&&Array.isArray(v.rows))return v.rows;
+  if(v&&Array.isArray(v.data))return v.data;
+  if(v&&Array.isArray(v.values))return v.values;
+  return [];
+}
+function pickSheet(master,names){
+  if(!master)return [];
+  const pools=[master,master.sheets,master.tabs,master.data,master.payload].filter(Boolean);
+  const wanted=names.map(normaliseSheetName);
+  for(const pool of pools){
+    if(Array.isArray(pool))continue;
+    const keys=Object.keys(pool||{});
+    for(const key of keys){
+      if(wanted.includes(normaliseSheetName(key)))return unwrapRows(pool[key]);
+    }
+  }
+  return [];
+}
+async function fetchJsonNoCache(url){
+  const sep=String(url).includes("?")?"&":"?";
+  const res=await fetch(`${url}${sep}v=${Date.now()}`,{cache:"no-store"});
+  if(!res.ok)throw new Error(`Master JSON HTTP ${res.status}`);
+  return await res.json();
+}
+async function loadAuroraMasterData(){
+  const master=await fetchJsonNoCache(MASTER_JSON_URL);
+  return {
+    master,
+    holdings:pickSheet(master,["Holdings","Holding"]),
+    dividends:pickSheet(master,["Dividends","Dividend"]),
+    priceHistory:pickSheet(master,["DailyPriceSummary","PriceLog","Price History","PriceHistory"]),
+    watchlist:pickSheet(master,["Watchlist","Watch List"]),
+    globalWatchlist:pickSheet(master,["Global Watchlist","GlobalWatchlist","Global"]),
+  };
+}
+async function loadLegacySheetFeeds(){
+  const [holdingsRes,dividendsRes,priceHistoryRes,watchlistRes,globalWatchlistRes]=await Promise.all([fetch(HOLDINGS_URL),fetch(DIVIDENDS_URL),fetch(PRICE_HISTORY_URL),fetch(WATCHLIST_URL),fetch(GLOBAL_WATCHLIST_URL)]);
+  return {
+    holdings:await holdingsRes.json(),
+    dividends:await dividendsRes.json(),
+    priceHistory:await priceHistoryRes.json(),
+    watchlist:await watchlistRes.json(),
+    globalWatchlist:await globalWatchlistRes.json(),
+  };
+}
+function cleanTicker(v){return String(v||"").trim().toUpperCase().replace("LON:","").replace(".L","").replace(".GB","").replace(" GB","").replace(/\s+/g," ")}
+function buildDailyPriceSummaryMap(rows){
+  const map={};
+  (rows||[]).forEach(r=>{
+    const ticker=cleanTicker(
+      getCell(r,["Ticker","ticker","Symbol","symbol"])
+    );
+    if(ticker) map[ticker]=r;
+  });
+  return map;
+}
+function priceSummaryForTicker(map,ticker){
+  return (map||{})[cleanTicker(ticker)] || null;
+}
+function parseDailyPriceSummary(ticker,row,shares){
+  if(!row){
+    return {hasSummary:false,closePrice:0,changeGbp:0,changePct:0};
+  }
+  const closePrice=normalisePriceForTicker(ticker,getCell(row,["Close Price","close_price","closePrice","Close","close"]));
+  const changePerShare=parseNum(getCell(row,["Change","change"]));
+  let changePct=parseNum(getCell(row,["Change %","change %","change_pct","change pct","changePercent"]));
+
+  // OpenSheet may return "0.49%" as 0.49, while Google Sheets can return 0.0049.
+  // Trading Brain displays percentages as plain percent values, so keep 0.49 as 0.49%.
+  if(Math.abs(changePct)>0 && Math.abs(changePct)<0.1){
+    changePct = changePct * 100;
+  }
+
+  return {
+    hasSummary:true,
+    closePrice,
+    changeGbp:changePerShare * Number(shares||0),
+    changePct
+  };
+}
+
+function normalisePriceForTicker(ticker,v){
+  const n=parseNum(v); if(!Number.isFinite(n)||n<=0)return 0;
+  const t=cleanTicker(ticker);
+  const penceQuoted=new Set(["LGEN","MNG","SUPR","PHP","FSFL","FGEN","FJGN","TSCO","AV","NG","PHNX","SDLF"]);
+  if(n>1000)return n/100;
+  if(n>20 && penceQuoted.has(t))return n/100;
+  return n;
+}
+function normaliseDpsForTicker(ticker,v){
+  const n=parseNum(v); if(!Number.isFinite(n)||n<0)return 0;
+  const t=cleanTicker(ticker);
+  const penceQuoted=new Set(["LGEN","MNG","SUPR","PHP","FSFL","FGEN","FJGN","TSCO","AV","NG","PHNX","SDLF"]);
+  if(n>2 && penceQuoted.has(t))return n/100;
+  return n;
+}
+function statusTone(status){
+  const s=String(status||"").toUpperCase();
+  if(s.includes("BUY"))return {label:status||"BUY",cls:"good",rank:1};
+  if(s.includes("ACCUM"))return {label:status||"ACCUMULATE",cls:"watch",rank:2};
+  if(s.includes("HOLD"))return {label:status||"HOLD",cls:"hold",rank:3};
+  if(s.includes("WAIT")||s.includes("AVOID")||s.includes("EXPENS"))return {label:status||"WAIT",cls:"avoid",rank:7};
+  return {label:status||"HOLD",cls:"hold",rank:4};
+}
+function getStatus(stock){return statusTone(stock.status)}
+function isGrowthHolding(x){
+  const t=cleanTicker(x.ticker);
+  const role=String(x.role||"").toUpperCase();
+  const sector=String(x.sector||"").toUpperCase();
+  const name=String(x.name||"").toUpperCase();
+  return ["VWRA","VWRP","VWRL","IITU"].includes(t) || role.includes("GROWTH") || sector.includes("ETF") || name.includes("VANGUARD") || name.includes("ISHARES");
+}
+function getMode(){return localStorage.getItem(MODE_KEY)||"auto"}
+function setMode(m){localStorage.setItem(MODE_KEY,m)}
+function getReserve(){const v=Number(localStorage.getItem(RESERVE_KEY)||"0");return Number.isFinite(v)?v:0}
+function setReserve(v){localStorage.setItem(RESERVE_KEY,String(Number(v||0)))}
+function updateClock(){setText("clockBadge",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}))}
+setInterval(updateClock,30000);updateClock();
+function logLines(lines){const el=document.getElementById("terminalLog");if(el)el.innerHTML=lines.map(x=>`<div class="line">${x}</div>`).join("")}
+function getBaseModeConfig(mode){
+  if(mode==="income")return{key:"income",label:"INCOME",holdPct:.10};
+  if(mode==="dip")return{key:"dip",label:"DIP HUNTER",holdPct:.25};
+  if(mode==="defensive")return{key:"defensive",label:"DEFENSIVE",holdPct:.35};
+  return{key:"balance",label:"BALANCE",holdPct:.20};
+}
+function chooseAutoMode(stocks){
+  const buys=stocks.filter(s=>String(s.status).toUpperCase().includes("BUY")||s.score>=80).length;
+  const waits=stocks.filter(s=>String(s.status).toUpperCase().includes("WAIT")).length;
+  const highYield=stocks.filter(s=>s.yieldPct>=8&&s.score>=60).length;
+  if(buys>=1||highYield>=1)return getBaseModeConfig("income");
+  if(waits>=Math.max(2,stocks.length/2))return getBaseModeConfig("defensive");
+  return getBaseModeConfig("balance");
+}
+function positiveDiscount(x){return Math.max(0,Number(x.discount||0));}
+function statusBoost(x){
+  const s=String(x.status||"").toUpperCase();
+  if(s.includes("BUY"))return 18;
+  if(s.includes("ACCUM"))return 12;
+  if(s.includes("HOLD"))return 4;
+  if(s.includes("WAIT")||s.includes("AVOID"))return -25;
+  return 0;
+}
+
+function annualTargetFor(x){
+  return Number(x.annualTarget||3000);
+}
+function incomeGapPriority(x){
+  const target=annualTargetFor(x);
+  if(!target||target<=0)return 0;
+  const gap=Math.max(0,target-Number(x.annual||0));
+  return (gap/target)*100;
+}
+
+function defensiveQualityBoost(x){
+  const text=`${x.name||""} ${x.role||""} ${x.sector||""}`.toUpperCase();
+  let boost=0;
+  if(text.includes("ANCHOR")||text.includes("CORE"))boost+=18;
+  if(text.includes("ETF")||text.includes("VANGUARD")||text.includes("ISHARES"))boost+=14;
+  if(text.includes("FINANCIAL")||text.includes("INSURANCE")||text.includes("LEGAL")||text.includes("HEALTH"))boost+=10;
+  if(text.includes("REIT")||text.includes("SOLAR")||text.includes("ENVIRONMENTAL"))boost-=4;
+  return boost;
+}
+function allocatorScore(x,modeKey){
+  const baseScore=Number(x.score||0);
+  const income=Number(x.income500||0);
+  const yieldPct=Number(x.yieldPct||0);
+  const discount=positiveDiscount(x);
+  const growth=isGrowthHolding(x);
+  if(modeKey==="income"){
+    const incomeGap=incomeGapPriority(x); return (income*1.9)+(yieldPct*4)+(baseScore*.45)+statusBoost(x)+(incomeGap*0.60)-(growth?35:0);
+  }
+  if(modeKey==="dip"){
+    return (discount*2.2)+(baseScore*.75)+statusBoost(x)+(String(x.status||"").toUpperCase().includes("BUY")?15:0);
+  }
+  if(modeKey==="defensive"){
+    return (baseScore*.45)+(income*.45)+defensiveQualityBoost(x)+statusBoost(x)+(growth?10:0)-(yieldPct>10?8:0);
+  }
+  // Balance mode deliberately blends income, valuation, strength and growth diversification.
+  const incomeGap=incomeGapPriority(x); return (baseScore*.65)+(income*.85)+(discount*.7)+(incomeGap*0.40)+(growth?14:0)+statusBoost(x);
+}
+function modeReason(x,modeKey){
+  if(!x)return "Waiting";
+  if(modeKey==="income")return `${x.status} • income mode • £${x.income500.toFixed(2)}/yr from £500`;
+  if(modeKey==="dip")return `${x.status} • dip mode • ${x.discount>=0?"+":""}${x.discount.toFixed(1)}% vs fair value`;
+  if(modeKey==="defensive")return `${x.status} • defensive mode • ${x.role||x.sector||"quality screen"}`;
+  return `${x.status} • balanced mode • strength ${Math.round(x.score)}/100`;
+}
+function updateModeButtons(){const mode=getMode();document.querySelectorAll(".mode-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.mode===mode))}
+
+function syncProDeskMode(mode, modeKey, modeConfig){
+  const key = modeKey || (modeConfig && modeConfig.key) || "balance";
+  const labelUpper = {income:"INCOME", balance:"BALANCE", dip:"DIP HUNTER", defensive:"DEFENSIVE"};
+  const labelHuman = {income:"Income Focus", balance:"Balanced", dip:"Dip Hunter", defensive:"Defensive"};
+  const safetyMeta = {
+    income:"Auto is currently using the income engine: strongest dividend income from the cash entered.",
+    balance:"Balance engine: blends income, fair value, score and diversification.",
+    dip:"Dip Hunter engine: prioritises fair-value discount and undervaluation.",
+    defensive:"Defensive engine: favours steadier core/quality holdings and keeps more cash protected."
+  };
+  const resultLabels = {
+    income:"Highest income creator",
+    balance:"Best blended route",
+    dip:"Best value / dip route",
+    defensive:"Steadier core route"
+  };
+  const resultMeta = {
+    income:"This mode is ranking holdings by dividend income created from the selected buy amount.",
+    balance:"This mode spreads the decision across income, strength, valuation and diversification.",
+    dip:"This mode is hunting the biggest fair-value discount before income alone.",
+    defensive:"This mode is reducing risk and favouring safer/core holdings first."
+  };
+  const upper = labelUpper[key] || (modeConfig && modeConfig.label) || "BALANCE";
+  const human = labelHuman[key] || upper;
+  setText("activeModeLabel", mode === "auto" ? `AUTO → ${upper}` : upper);
+  setText("prodeskSafetyCheck", mode === "auto" ? `Auto → ${human}` : human);
+  setText("prodeskSafetyMeta", safetyMeta[key] || "Updates with the selected Trading Brain mode.");
+  setText("prodeskModeResult", mode === "auto" ? `Auto picked ${resultLabels[key] || upper}` : (resultLabels[key] || upper));
+  setText("prodeskModeResultMeta", resultMeta[key] || "Updates with the selected Trading Brain mode.");
+}
+
+
+/* ===================== SECTION: HOLDINGS MASTER PARSER ===================== */
+function parseHolding(row){
+  const ticker=getCell(row,["ticker","Ticker"]);
+  const name=getCell(row,["name","Name"]) || ticker;
+  const shares=parseNum(getCell(row,["shares","Shares"]));
+  const price=normalisePriceForTicker(ticker,getCell(row,["live_price","live price","price"]));
+  const book=parseNum(getCell(row,["book_cost","book cost"]));
+  const avg=parseNum(getCell(row,["average_price","average price"]));
+  const dps=normaliseDpsForTicker(ticker,getCell(row,["annual dividend per share","annual_dividend_per_share","annual_dps","dps"]));
+  const annualSheet=parseNum(getCell(row,["annual_dividend_total","annual dividend total"]));
+  const fairValue=normalisePriceForTicker(ticker,getCell(row,["fair_value","fair value"]));
+  const status=getCell(row,["status","Status"]) || "HOLD";
+  const buyStrength=parseNum(getCell(row,["buy_strength","buy strength"]));
+  const role=getCell(row,["role","Role"]);
+  const sector=getCell(row,["sector","Sector"]);
+  const account=getCell(row,["account","Account"]);
+  const annualTarget=parseNum(getCell(row,["annual_income_target","annual income target"]));
+  const profitLoss=parseNum(getCell(row,["profit_loss","profit loss","return"]));
+  const changeGbp=parseNum(getCell(row,["change_gbp","change gbp","change £","change"]));
+  const changePct=parseNum(getCell(row,["change_pct","change pct","change percentage"]));
+  const low52=normalisePriceForTicker(ticker,getCell(row,["low_52w","low 52w","low52","low 52 week"]));
+  const high52=normalisePriceForTicker(ticker,getCell(row,["high_52w","high 52w","high52","high 52 week"]));
+  const value=shares*price;
+  const annual=annualSheet>0?annualSheet:shares*dps;
+  const yieldPct=price>0?(dps/price)*100:0;
+  const monthlyIncome=annual/12;
+  const income500=price>0&&dps>0?(500/price)*dps:0;
+  const discount=fairValue>0?((fairValue-price)/fairValue)*100:0;
+  const score=Number.isFinite(buyStrength)&&buyStrength>0?Math.max(0,Math.min(100,buyStrength)):0;
+  return {ticker:cleanTicker(ticker),rawTicker:ticker,name,shares,price,book,avg,dps,annual,value,yieldPct,monthlyIncome,income500,fairValue,status,score,buyStrength:score,role,sector,account,annualTarget,profitLoss,changeGbp,changePct,low52,high52,discount,decision:`${status} from Holdings sheet`};
+}
+function activeHoldings(rows){
+  const parsed = rows.map(parseHolding).filter(x=>x.ticker && (x.shares>0 || x.value>0 || x.annual>0));
+  const grouped = new Map();
+
+  parsed.forEach(item=>{
+    const key = cleanTicker(item.ticker || item.rawTicker || item.name);
+    if(!key) return;
+
+    if(!grouped.has(key)){
+      grouped.set(key, {
+        ...item,
+        ticker:key,
+        accounts:new Set(item.account ? [item.account] : []),
+        roles:new Set(item.role ? [item.role] : []),
+        sectors:new Set(item.sector ? [item.sector] : [])
+      });
+      return;
+    }
+
+    const existing = grouped.get(key);
+    existing.shares += item.shares || 0;
+    existing.book += item.book || 0;
+    existing.value += item.value || 0;
+    existing.annual += item.annual || 0;
+    existing.profitLoss += item.profitLoss || 0;
+    existing.changeGbp += item.changeGbp || 0;
+
+    if(item.account) existing.accounts.add(item.account);
+    if(item.role) existing.roles.add(item.role);
+    if(item.sector) existing.sectors.add(item.sector);
+
+    // Market-level data should be identical for duplicate tickers. Keep the best live values if one row is blank.
+    if(!existing.price && item.price) existing.price = item.price;
+    if(!existing.dps && item.dps) existing.dps = item.dps;
+    if(!existing.fairValue && item.fairValue) existing.fairValue = item.fairValue;
+    if(!existing.low52 && item.low52) existing.low52 = item.low52;
+    if(!existing.high52 && item.high52) existing.high52 = item.high52;
+
+    // Keep the strongest buy-strength/status signal for the same underlying share.
+    if((item.score || 0) > (existing.score || 0)){
+      existing.score = item.score;
+      existing.buyStrength = item.buyStrength;
+      existing.status = item.status;
+    }
+
+    // One annual target per underlying holding, not one target per account row.
+    existing.annualTarget = Math.max(existing.annualTarget || 0, item.annualTarget || 0);
+  });
+
+  return Array.from(grouped.values()).map(item=>{
+    const price = item.price || (item.shares > 0 ? item.value / item.shares : 0);
+    const dps = item.dps || (item.shares > 0 ? item.annual / item.shares : 0);
+    const fairValue = item.fairValue || 0;
+    return {
+      ...item,
+      price,
+      dps,
+      avg:item.shares > 0 ? item.book / item.shares : 0,
+      monthlyIncome:item.annual / 12,
+      yieldPct:price > 0 ? (dps / price) * 100 : 0,
+      income500:price > 0 && dps > 0 ? (500 / price) * dps : 0,
+      discount:fairValue > 0 ? ((fairValue - price) / fairValue) * 100 : 0,
+      account:Array.from(item.accounts || []).join(" + ") || item.account || "Account n/a",
+      role:Array.from(item.roles || [item.role]).filter(Boolean).join(" + ") || item.role,
+      sector:Array.from(item.sectors || [item.sector]).filter(Boolean).join(" + ") || item.sector
+    };
+  });
+}
+
+/* ===================== SECTION: WATCHLIST ===================== */
+function scoreWatch(row){
+  const ticker=getCell(row,["ticker","Ticker"]);
+  const name=getCell(row,["name","Name"]) || ticker;
+  const livePrice=normalisePriceForTicker(ticker,getCell(row,["live_price","live price","price"]));
+  const annualDps=normaliseDpsForTicker(ticker,getCell(row,["annual_dps","annual dps","dps","annual dividend per share"]));
+  const low52=normalisePriceForTicker(ticker,getCell(row,["low_52w","low 52w","low52"]));
+  const high52=normalisePriceForTicker(ticker,getCell(row,["high_52w","high 52w","high52"]));
+  const sheetFairValue=normalisePriceForTicker(ticker,getCell(row,["fair_value","fair value"]));
+  const fairValue=sheetFairValue>0?sheetFairValue:(low52>0&&high52>low52?(low52+high52)/2:0);
+  const sheetYield=parseNum(getCell(row,["yield_pct","yield pct","yield","dividend yield"]));
+  const yieldPct=livePrice>0?(annualDps/livePrice)*100:(sheetYield>0&&sheetYield<1?sheetYield*100:sheetYield);
+  const discount=fairValue>0?((fairValue-livePrice)/fairValue)*100:0;
+  const sheetScore=parseNum(getCell(row,["buy_strength","buy strength","score","watch pressure"]));
+  let calculatedScore=0;
+  if(yieldPct>0) calculatedScore+=Math.min(40,yieldPct*4);
+  if(discount>0) calculatedScore+=Math.min(35,discount);
+  if(low52>0&&high52>low52){const pos=((livePrice-low52)/(high52-low52))*100;calculatedScore+=Math.max(0,25-pos*.25)}
+  calculatedScore=Math.round(Math.max(0,Math.min(100,calculatedScore)));
+  const score=sheetScore>0?Math.round(Math.max(0,Math.min(100,sheetScore))):calculatedScore;
+  const sheetStatus=getCell(row,["status","Status"]);
+  const tone=sheetStatus?statusTone(sheetStatus):statusTone(score>=80?"BUY":score>=70?"ACCUMULATE":score>=55?"HOLD":"WAIT");
+  return {
+    ticker,name,livePrice,annualDps,low52,high52,fairValue,score,yieldPct,discount,
+    income500:livePrice>0?(500/livePrice)*annualDps:0,
+    status:tone.label,label:tone.label,cls:tone.cls,
+    scoreSource:sheetScore>0?"Watchlist sheet buy_strength":"calculated fallback"
+  };
+}
+function renderWatchlist(watchlist,coreStocks){
+  const heldTickers=new Set(coreStocks.map(x=>cleanTicker(x.ticker)));
+  const rows=(watchlist||[]).map(scoreWatch).filter(x=>x.ticker&&x.livePrice>0&&!heldTickers.has(cleanTicker(x.ticker))).sort((a,b)=>b.score-a.score);
+  latestWatchRows=rows; window.latestWatchRows=rows;
+  const best=rows[0];
+  const weakest=[...coreStocks].sort((a,b)=>a.score-b.score)[0];
+  if(best){
+    setText("topWatchName",best.name);
+    setText("topWatchMeta",`Score ${best.score} • +£${best.income500.toFixed(2)}/yr from £500`);
+    setText("promotionScore",best.score);
+    setText("watchlistPromotionAlert",weakest&&best.score>weakest.score?`${best.name} beats lowest holding score (${weakest.name}). Promotion candidate.`:"No watchlist idea beats the active holdings right now.");
+  }else{
+    setText("topWatchName","--");setText("topWatchMeta","No watchlist data");setText("promotionScore","--");setText("watchlistPromotionAlert","No watchlist candidates loaded.");
+  }
+  const grid=document.getElementById("watchlistGrid");
+  if(grid)grid.innerHTML=rows.slice(0,5).map(w=>`<div class="watch-card compact-watch-card"><div class="watch-top"><div><div class="watch-name">${w.name}</div><div class="subv">${w.ticker} • Watchlist candidate</div></div><span class="badge ${w.cls}">${w.label}</span></div><div class="watch-stats"><div class="mini-tile"><div class="k">Price</div><div class="v">£${w.livePrice.toFixed(3)}</div></div><div class="mini-tile"><div class="k">Score</div><div class="v">${w.score}</div></div><div class="mini-tile"><div class="k">£500 Income</div><div class="v">£${w.income500.toFixed(2)}</div></div></div><div class="note">Yield ${formatPct(w.yieldPct)} • Separate from active Holdings sheet.</div></div>`).join("") || `<div class="subv">No watchlist data loaded.</div>`;
+  return best;
+}
+function getPromotionClass(score){if(score>=80)return"promotion-elite";if(score>=70)return"promotion-ready";if(score>=60)return"promotion-watch";return"promotion-hold"}
+
+/* ===================== SECTION: RENDERERS ===================== */
+function renderHeatmap(stocks){
+  const grid=document.getElementById("coreHeatmap"); if(!grid)return;
+  grid.innerHTML=stocks.map(s=>{const st=getStatus(s);const width=Math.max(4,Math.min(100,s.score));return `<div class="heat-cell ${st.cls}"><div class="heat-ticker"><strong>${s.ticker}</strong><span class="badge ${st.cls}">${st.label}</span></div><div><div class="heat-score">${Math.round(s.score)}</div><div class="heat-mini-bar"><div style="width:${width}%"></div></div></div><div class="heat-foot"><div class="heat-name">${s.name}</div><div class="heat-price">${formatPct(s.yieldPct)}</div></div></div>`}).join("") || `<div class="subv">No active holdings loaded.</div>`;
+}
+function renderPillars(stocks){
+  const topRanked=[...stocks].sort((a,b)=>b.score-a.score||b.income500-a.income500||b.annual-a.annual).slice(0,4);
+  setText("pillarCount",`TOP ${topRanked.length}`);
+  const grid=document.getElementById("pillarGrid"); if(!grid)return;
+  grid.innerHTML=topRanked.map(s=>{const st=getStatus(s);const discountTxt=s.fairValue>0?`${s.discount>=0?"+":""}${formatPct(s.discount)} vs fair value`:"No fair value data";return `<div class="position-card"><div class="pos-top"><div><div class="pos-name">${s.name}</div><div class="subv">${s.ticker} • ${s.account||"Account n/a"} • ${discountTxt}</div></div><span class="badge ${st.cls}">${st.label}</span></div><div class="pos-metrics"><div class="mini-tile"><div class="k">Price</div><div class="v">£${s.price.toFixed(3)}</div></div><div class="mini-tile"><div class="k">Score</div><div class="v">${Math.round(s.score)}</div></div><div class="mini-tile"><div class="k">Yield</div><div class="v">${formatPct(s.yieldPct)}</div></div><div class="mini-tile"><div class="k">£500 Income</div><div class="v">£${s.income500.toFixed(2)}</div></div><div class="mini-tile"><div class="k">Annual</div><div class="v">£${formatMoney(s.annual)}</div></div><div class="mini-tile"><div class="k">Monthly</div><div class="v">£${formatMoney(s.monthlyIncome)}</div></div><div class="mini-tile"><div class="k">Fair Value</div><div class="v">${s.fairValue>0?`£${s.fairValue.toFixed(2)}`:"--"}</div></div><div class="mini-tile"><div class="k">Target Gap</div><div class="v">£${formatMoney0(Math.max(0,(s.annualTarget||2000)-s.annual))}</div></div></div><div class="bar-row"><div class="k">Strength</div><div class="smallbar"><div style="width:${Math.max(4,s.score)}%"></div></div><div class="subv">${Math.round(s.score)}</div></div><div class="note">Top 4 only • ${s.role||"Role n/a"} • ${s.sector||"Sector n/a"}</div></div>`}).join("") || `<div class="subv">No ranked holdings available.</div>`;
+}
+function renderOpportunityAlert(stocks, investAmount){
+  const rows=(stocks||[]).filter(s=>s && s.price>0).map(s=>{
+    const distanceLow=s.low52>0?((s.price-s.low52)/s.low52)*100:null;
+    const nearLow=distanceLow!==null && distanceLow<=2.0;
+    const fairDiscount=Number(s.discount||0);
+    const incomeBoost=s.price>0&&s.dps>0?(Number(investAmount||500)/s.price)*s.dps:0;
+    const status=String(s.status||"").toUpperCase();
+    let alertScore=0;
+    if(nearLow) alertScore+=55;
+    if(fairDiscount>=10) alertScore+=25;
+    if(incomeBoost>0) alertScore+=Math.min(20,incomeBoost/2);
+    alertScore+=Math.max(0,(Number(s.score||0)-60)/2);
+    if(status.includes("BUY")||status.includes("ACCUM")) alertScore+=10;
+    if(status.includes("WAIT")||status.includes("AVOID")) alertScore-=20;
+    return {...s,distanceLow,nearLow,fairDiscount,incomeBoost,alertScore};
+  }).filter(s=>s.nearLow || s.fairDiscount>=8 || String(s.status||"").toUpperCase().includes("BUY") || String(s.status||"").toUpperCase().includes("ACCUM") || s.incomeBoost>0).sort((a,b)=>b.alertScore-a.alertScore||b.incomeBoost-a.incomeBoost);
+
+  const pick=rows[0];
+  if(!pick){
+    setText("opportunityAlertBadge","NO ALERT");
+    setText("opportunityAlertTicker","No live alert");
+    setText("opportunityAlertTrigger","No 52-week low, fair-value or dividend-boost alert is active right now.");
+    setText("opportunityDividendBoost","--");
+    setText("opportunityBoostMeta","No active candidate");
+    setText("opportunityCutRisk","--");
+    setText("opportunityRiskMeta","No active candidate");
+    setText("opportunityAlertVerdict","No forced move. Keep the Pro Desk decision in charge and wait for a cleaner opportunity.");
+    return null;
+  }
+
+  const name=(pick.name||pick.ticker||"Opportunity").replace("Foresight Environmental Infrastructure","Foresight Env. Infra");
+  const cut10=(Number(pick.annual||0)*0.10);
+  const cut25=(Number(pick.annual||0)*0.25);
+  const cut50=(Number(pick.annual||0)*0.50);
+  const dist=pick.distanceLow;
+  const trigger=pick.nearLow
+    ? `${name} is within ${Math.max(0,dist).toFixed(1)}% of its 52-week low.`
+    : pick.fairDiscount>=8
+      ? `${name} is showing a fair-value discount of ${pick.fairDiscount.toFixed(1)}%.`
+      : `${name} has the strongest dividend/score review signal right now.`;
+  const status=String(pick.status||"").toUpperCase();
+  const verdict=status.includes("WAIT")||status.includes("AVOID")
+    ? `Review only: price may look tempting, but the current status is ${pick.status}. Do not chase a falling knife.`
+    : pick.nearLow && pick.score>=70
+      ? `Review/accumulate candidate: 52-week low area plus a usable score. Check dividend safety before adding.`
+      : `Potential opportunity, not an automatic buy. Use this as a review flag alongside the Pro Desk mode.`;
+
+  setText("opportunityAlertBadge",pick.nearLow?"52W LOW WATCH":pick.fairDiscount>=8?"FAIR VALUE":"DIVIDEND");
+  setText("opportunityAlertTicker",name);
+  setText("opportunityAlertTrigger",trigger);
+  setText("opportunityDividendBoost",`+£${formatMoney(pick.incomeBoost)}/y`);
+  setText("opportunityBoostMeta",`From £${formatMoney0(investAmount||500)} added`);
+  setText("opportunityCutRisk",`-£${formatMoney(cut25)}/y`);
+  setText("opportunityRiskMeta",`10% -£${formatMoney(cut10)} • 50% -£${formatMoney(cut50)}`);
+  setText("opportunityAlertVerdict",verdict);
+  return pick;
+}
+function getIncomeBandFrom500(amount){
+  const n=Number(amount||0);
+  if(n>=50) return {label:"MONSTER INCOME", cls:"monster-income"};
+  if(n>=45) return {label:"PROMOTION PUSH", cls:"promotion-push"};
+  if(n>=40) return {label:"GOOD", cls:"good"};
+  if(n>=35) return {label:"ACCEPTABLE", cls:"acceptable"};
+  return {label:"NOT ENOUGH", cls:"not-enough"};
+}
+function setIncomeBandFrom500(id, amount){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const band=getIncomeBandFrom500(amount);
+  el.textContent=band.label;
+  el.className=`income-band-x ${band.cls}`;
+}
+let globalOpportunityCandidates=[];
+function renderAuroraUpgrades({stocks,bestWatch,topPick,plan,totalAnnual,totalMonthly,buyNow}){
+  const investAmount=Number(document.getElementById("totalInvestment")?.value||500);
+  renderOpportunityAlert(stocks, investAmount);
+  const coreIncome500=topPick?.income500||0;
+  const bestGlobal=globalOpportunityCandidates.sort((a,b)=>b.income500-a.income500||b.score-a.score)[0];
+      const watchIncome500=bestWatch?.income500||0;
+      const globalIncome500=bestGlobal?.income500||0;
+  const useWatch=bestWatch && watchIncome500>coreIncome500;
+  const winner=useWatch?bestWatch:topPick;
+  const winnerName=winner?.name||"Hold Fire";
+  const winnerScore=Math.round(winner?.score||0);
+  const winnerIncome500=useWatch?watchIncome500:coreIncome500;
+  const action=useWatch?"REVIEW":(String(topPick?.status||"").toUpperCase().includes("BUY")?"BUY":String(topPick?.status||"").toUpperCase().includes("ACCUM")?"ACCUMULATE":String(topPick?.status||"").toUpperCase().includes("WAIT")?"WAIT":"HOLD");
+  const confidence=Math.max(0,Math.min(99,winnerScore));
+  setText("commandAction",action);
+  setText("commandTarget",winnerName.replace("Foresight Environmental Infrastructure","Foresight Env. Infra"));
+  setText("commandReason",useWatch?"Watchlist creates stronger £500 income, but it remains a review/promotion decision.":"Decision uses status, buy strength, live price, fair value and dividend data from the Holdings sheet.");
+  setText("commandTicketStatus",action==="BUY"?"READY TO DEPLOY":action==="ACCUMULATE"?"CONTROLLED BUY":action==="REVIEW"?"REVIEW FIRST":"WAIT / PRESERVE");
+  setText("commandAmount",`£${formatMoney0(investAmount)}`);
+  setText("commandIncome",`£${winnerIncome500.toFixed(2)}/y`);
+  setText("commandConfidence",`${confidence}%`);
+  setText("commandConfidenceBadge",`${confidence}% CONFIDENCE`);
+  setText("commandRoute",useWatch?"WATCHLIST":"HOLDINGS");
+  setText("prodeskModeResult", `${action} • ${useWatch?"Watchlist review":"Holdings route"}`);
+  setText("nextMoveFocus", winnerName.replace("Foresight Environmental Infrastructure","Foresight Env. Infra"));
+  setText("nextMoveFocusMeta", useWatch?`Watchlist edge: £${watchIncome500.toFixed(2)}/yr from £500. Review before promotion.`:`Core route: £${coreIncome500.toFixed(2)}/yr from £500, using active Holdings data.`);
+  const corePlanAnnual=plan.reduce((sum,p)=>sum+((p.price>0&&p.dps>0&&p.amount>0)?(p.amount/p.price)*p.dps:0),0);
+  const impactAnnual=useWatch?winnerIncome500:corePlanAnnual;
+  const incomeBandBase=investAmount>0 ? (impactAnnual/investAmount)*500 : impactAnnual;
+  setText("impactAnnualCreated",`£${formatMoney(impactAnnual)}/y`);
+  setText("impactMonthlyCreated",`£${formatMoney(impactAnnual/12)}/m snowball added`);
+  setIncomeBandFrom500("impactIncomeBand", incomeBandBase);
+  setText("checklistDecision", action);
+  setText("checklistDecisionMeta", action==="BUY"?"Green light from current sheet signals":action==="ACCUMULATE"?"Controlled top-up, not an all-in move":action==="REVIEW"?"Review candidate before promotion":"Preserve cash unless signal improves");
+  setText("checklistCashMove", `£${formatMoney0(investAmount)}`);
+  setText("checklistIncomeGain", `+£${formatMoney(impactAnnual)}/y`);
+  setText("nextMoveWhy", useWatch?`${winnerName} creates the stronger £500 income, but it is still outside the owned holdings.`:`${winnerName} has the best active route using your Holdings sheet score, status and income data.`);
+  setText("nextMoveAction", action==="BUY"?`Deploy toward ${winnerName} if the live price still matches the sheet.`:action==="ACCUMULATE"?`Small controlled top-up only — keep the rest disciplined.`:action==="REVIEW"?`Do not auto-buy. Check the watchlist candidate first.`:`Wait. Keep cash/reserve until the signal improves.`);
+  setText("nextMoveWatch", `Estimated income added by this setup: £${formatMoney(impactAnnual)}/yr, or £${formatMoney(impactAnnual/12)}/m.`);
+  const raceRows=[...stocks].sort((a,b)=>b.annual-a.annual).slice(0,5).map(s=>{const pct=Math.max(4,Math.min(100,(s.annual/(s.annualTarget||2000))*100));return `<div class="race-row-x"><div class="race-label-x">${s.name.replace("Foresight Environmental Infrastructure","FGEN")}</div><div class="race-bar-x"><div style="width:${pct}%"></div></div><div class="race-value-x">£${formatMoney0(s.annual)}</div></div>`}).join("");
+  document.getElementById("dividendRaceTrack").innerHTML=raceRows||`<div class="subv">No income rows loaded.</div>`;
+  const promotionLeagueEl=document.getElementById("promotionLeague");
+  if(promotionLeagueEl)promotionLeagueEl.innerHTML=(latestWatchRows||[]).slice(0,3).map((w,i)=>`<div class="promo-row-x ${getPromotionClass(Number(w.score||0))}"><div class="promo-rank-x">#${i+1}</div><div class="promo-label-x">${w.name}</div><div class="promo-score-x">${w.score}</div></div>`).join("")||`<div class="subv">No watchlist league yet.</div>`;
+  const assumedMonthlyNewMoney=Math.max(1,investAmount);
+  const blendedYield=buyNow>0?impactAnnual/buyNow:0.075;
+  const annualAdd=assumedMonthlyNewMoney*12*blendedYield;
+  const yearsTo500=annualAdd>0?Math.max(0,(6000-totalAnnual)/annualAdd):null;
+  const projectionTargets=[{label:"Now",value:totalMonthly,meta:"Current monthly income"},{label:"12 months",value:totalMonthly+(annualAdd/12),meta:"At same buy pace"},{label:"24 months",value:totalMonthly+(annualAdd*2/12),meta:"Estimated snowball path"},{label:"£500/m goal",value:500,special:true,meta:"Estimated time to next milestone"}];
+  document.getElementById("projectionPath").innerHTML=`<div class="runway-snapshot-stack">${projectionTargets.map(p=>{const pct=Math.max(4,Math.min(100,(p.value/500)*100));const value=p.special&&yearsTo500!=null?`${yearsTo500.toFixed(1)}y`:`£${formatMoney0(p.value)}/m`;const cls=p.special?"runway-stage milestone":"runway-stage";return `<div class="${cls}"><div class="runway-stage-label">${p.label}</div><div class="runway-stage-meta">${p.meta}</div><div class="runway-stage-value">${value}</div><div class="runway-stage-bar"><div style="width:${pct}%"></div></div></div>`}).join("")}</div>`;
+  const freedomPct=Math.max(0,Math.min(100,(totalMonthly/MASTER_MONTHLY_GOAL)*100));
+  const monthlyNeeded=Math.max(0,MASTER_MONTHLY_GOAL-totalMonthly);
+  const yearsToFreedom=annualAdd>0?(monthlyNeeded*12)/annualAdd:null;
+  setText("beaconProgressPct",`${freedomPct.toFixed(1)}%`);setText("beaconCurrent",`£${formatMoney0(totalMonthly)}/m`);setText("beaconNeeded",`£${formatMoney0(monthlyNeeded)}/m`);setText("beaconEstimate",yearsToFreedom==null||!Number.isFinite(yearsToFreedom)?"--":yearsToFreedom<0.1?"<0.1y":`${yearsToFreedom.toFixed(1)}y`);setText("beaconStatus",freedomPct>=50?"SNOWBALLING":freedomPct>=20?"ACCELERATING":"BUILDING");setText("beaconDirection",annualAdd>0?"MOVING FORWARD":"NEEDS INPUT");const beaconBar=document.getElementById("beaconProgressBar");if(beaconBar)beaconBar.style.width=`${Math.max(3,freedomPct)}%`;setText("beaconNote",annualAdd>0?`At the current buy engine pace, Aurora estimates roughly ${yearsToFreedom&&Number.isFinite(yearsToFreedom)?yearsToFreedom.toFixed(1):"--"} years to the £2,000/month target.`:"Add a live buy amount to calculate the freedom path.");
+  const comment=useWatch?`${bestWatch.name} creates the strongest £500 income, but it is outside active Holdings and should be reviewed before promotion.`:`${topPick?.name||"The Holdings engine"} is the cleanest current active holding signal. Trading Brain is now reading the same status, buy strength and income fields as HQ.`;
+  setText("auroraCommentary",comment);
+  const buckets={"BUY":[],"ACCUMULATE":[],"HOLD":[],"WAIT":[]};
+  stocks.forEach(s=>{const st=String(s.status||"").toUpperCase();if(st.includes("BUY"))buckets.BUY.push(s.ticker);else if(st.includes("ACCUM"))buckets.ACCUMULATE.push(s.ticker);else if(st.includes("WAIT")||st.includes("AVOID"))buckets.WAIT.push(s.ticker);else buckets.HOLD.push(s.ticker);});
+  document.getElementById("statusMatrix").innerHTML=`<div class="matrix-tile-x good-x"><div class="matrix-title-x">Buy</div><div class="matrix-list-x">${buckets.BUY.join("<br>")||"—"}</div></div><div class="matrix-tile-x watch-x"><div class="matrix-title-x">Accumulate</div><div class="matrix-list-x">${buckets.ACCUMULATE.join("<br>")||"—"}</div></div><div class="matrix-tile-x hold-x"><div class="matrix-title-x">Hold</div><div class="matrix-list-x">${buckets.HOLD.join("<br>")||"—"}</div></div><div class="matrix-tile-x avoid-x"><div class="matrix-title-x">Wait</div><div class="matrix-list-x">${buckets.WAIT.join("<br>")||"—"}</div></div>`;
+}
+
+
+/* ===================== SECTION: M8 SHARED DECISION PUBLISHER ===================== */
+const AURORA_TRADING_BRAIN_KEY = "aurora_trading_brain_decision_v1";
+function auroraDecisionAccount(item){
+  const explicit=String(item?.account||"").trim();
+  if(explicit) return explicit;
+  const t=cleanTicker(item?.ticker);
+  if(["FSFL","RGL"].includes(t)) return "Trading 212 ISA";
+  if(["ARCC","UKW","TRIG"].includes(t)) return "IG ISA";
+  return item?.sourceType==="holding" ? "Existing account" : "Account review";
+}
+function publishAuroraTradingBrainDecision(ctx){
+  const {plan=[],modeKey="balance",newMoney=0,totalDeployable=0,buyNow=0,holdBack=0,annualImpact=0,portfolioValue=0,totalAnnual=0}=ctx||{};
+  const funded=plan.filter(x=>Number(x?.amount||0)>0).slice(0,4);
+  const targets=funded.map((p,index)=>{
+    const score=Math.max(0,Math.min(100,Math.round(Number(p.score||p.buyStrength||0))));
+    const allocation=Math.max(0,Number(p.amount||0));
+    const income=(Number(p.price||0)>0&&Number(p.dps||0)>0)?(allocation/Number(p.price))*Number(p.dps):0;
+    return {
+      rank:index+1,ticker:cleanTicker(p.ticker),name:String(p.name||p.ticker||"Unknown"),score,allocation,
+      account:auroraDecisionAccount(p),income,yield:Number(p.yieldPct||0),status:String(p.status||"REVIEW"),
+      sourceType:String(p.sourceType||"holding"),fairValue:Number(p.fairValue||0),livePrice:Number(p.price||0),
+      reason:modeReason(p,modeKey)
+    };
+  });
+  const avgScore=targets.length?targets.reduce((sum,x)=>sum+x.score,0)/targets.length:0;
+  const deploymentQuality=totalDeployable>0?(buyNow/totalDeployable)*100:0;
+  const confidence=Math.round(Math.max(0,Math.min(100,(avgScore*.82)+(deploymentQuality*.18))));
+  const payload={
+    version:"M8",schemaVersion:1,source:"Aurora Trading Brain",generatedAt:new Date().toISOString(),
+    strategy:({income:"Maximum Income",balance:"Balanced",dip:"Dip Hunter",defensive:"Defensive"})[modeKey]||"Balanced",
+    mode:modeKey,budget:Number(newMoney||0),totalDeployable:Number(totalDeployable||0),spent:Number(buyNow||0),
+    holdback:Number(holdBack||0),totalIncome:Number(annualImpact||0),confidence,portfolioValue:Number(portfolioValue||0),
+    currentAnnualIncome:Number(totalAnnual||0),status:targets.length?"READY_TO_EXECUTE":"HOLD_CASH",targets
+  };
+  window.AURORA_TRADING_BRAIN_DECISION=payload;
+  try{localStorage.setItem(AURORA_TRADING_BRAIN_KEY,JSON.stringify(payload));}catch(err){console.warn("Trading Brain decision could not be saved",err);}
+  try{window.dispatchEvent(new CustomEvent("aurora:trading-brain-decision",{detail:payload}));}catch(_){ }
+  return payload;
+}
+
+/* ===================== SECTION: MAIN BRAIN ===================== */
+async function runBrain(){
+  try{
+    updateModeButtons();
+    setText("liveSyncStatus","SYNC");setText("liveSyncMeta","Loading Aurora API...");
+    let feed;
+    try{
+      feed=USE_SINGLE_JSON_FEED ? await loadAuroraMasterData() : await loadLegacySheetFeeds();
+    }catch(masterErr){
+      console.warn("AuroraMaster.json failed, trying legacy sheet feeds", masterErr);
+      feed=await loadLegacySheetFeeds();
+    }
+    const {holdings,dividends,priceHistory,watchlist,globalWatchlist}=feed;
+    let stocks=activeHoldings(holdings);
+    const totalAnnual=stocks.reduce((s,x)=>s+x.annual,0);
+    const totalMonthly=totalAnnual/12;
+    const portfolioValue=stocks.reduce((s,x)=>s+x.value,0);
+    const bookCost=stocks.reduce((s,x)=>s+x.book,0);
+    const gain=portfolioValue-bookCost;
+    const gainPct=bookCost>0?(gain/bookCost)*100:0;
+    stocks=stocks.map(s=>({...s,incomeWeight:totalAnnual>0?(s.annual/totalAnnual)*100:0}));
+    setText("portfolioValue",formatMoney(portfolioValue));
+    setText("portfolioGain",`${gain>=0?"+":"-"}£${formatMoney(Math.abs(gain))}`);
+    const gainEl=document.getElementById("portfolioGain");if(gainEl)gainEl.className=`v ${gain>=0?"positive":"negative"}`;
+    setText("portfolioGainMeta",`${gain>=0?"+":""}${formatPct(gainPct)}`);
+    setText("totalAnnualIncome",formatMoney(totalAnnual));
+    setText("totalMonthlyIncome",formatMoney(totalMonthly));
+    setText("monthlyIncomeMeta",`£${formatMoney(totalAnnual)} annual run-rate`);
+    setText("liveSyncStatus","LIVE");setText("liveSyncMeta",`Aurora API refresh ${new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}`);
+    const concentration=[...stocks].sort((a,b)=>b.incomeWeight-a.incomeWeight)[0];
+    if(concentration){setText("incomeConcentration",concentration.name);setText("incomeConcentrationMeta",`${concentration.incomeWeight.toFixed(1)}% of annual income`)}
+    let mode=getMode();let modeConfig=mode==="auto"?chooseAutoMode(stocks):getBaseModeConfig(mode);
+    const modeKey=modeConfig.key||"balance";
+    syncProDeskMode(mode, modeKey, modeConfig);
+    const newMoney=Number(document.getElementById("totalInvestment")?.value||500);
+    const carriedReserve=getReserve();
+    const totalDeployable=newMoney+carriedReserve;
+    const ranked=[...stocks].sort((a,b)=>getStatus(a).rank-getStatus(b).rank||b.score-a.score||b.income500-a.income500);
+    const heldTickersForOpportunity=new Set(stocks.map(x=>cleanTicker(x.ticker)));
+    globalOpportunityCandidates=(globalWatchlist||[])
+      .map(scoreGlobalWatchlistRow)
+      .filter(x=>x.ticker&&x.livePrice>0&&!heldTickersForOpportunity.has(cleanTicker(x.ticker))&&x.annualDps>0&&Number(x.score||0)>=70)
+      .map(x=>({
+        ticker:cleanTicker(x.ticker),rawTicker:x.ticker,name:x.name,shares:0,price:x.livePrice,book:0,avg:0,dps:x.annualDps,annual:0,value:0,yieldPct:x.yieldPct,monthlyIncome:0,income500:x.income500,fairValue:x.fairValue||0,status:Number(x.score||0)>=75?"GLOBAL PROMOTION CANDIDATE":"GLOBAL SCOUT OPPORTUNITY",score:x.score,buyStrength:x.score,role:x.role||"Global Watchlist Opportunity",sector:x.sector||"Global Watchlist",account:"Global review before purchase",annualTarget:0,profitLoss:0,changeGbp:0,changePct:0,low52:0,high52:0,discount:0,decision:Number(x.score||0)>=75?"Global promotion candidate":"Global scout opportunity",sourceType:"global",modeScore:0
+      }));
+    globalOpportunityCandidates=(globalWatchlist||[])
+      .map(scoreGlobalWatchlistRow)
+      .filter(x=>x.ticker&&x.livePrice>0&&!heldTickersForOpportunity.has(cleanTicker(x.ticker))&&x.annualDps>0&&Number(x.score||0)>=70)
+      .map(x=>({
+        ticker:cleanTicker(x.ticker), rawTicker:x.ticker, name:x.name, shares:0, price:x.livePrice, book:0, avg:0, dps:x.annualDps, annual:0, value:0, yieldPct:x.yieldPct, monthlyIncome:0, income500:x.income500, fairValue:x.fairValue||0, status:Number(x.score||0)>=75?"GLOBAL PROMOTION CANDIDATE":"GLOBAL SCOUT OPPORTUNITY", score:x.score, buyStrength:x.score, role:x.role||"Global Watchlist Opportunity", sector:x.sector||"Global Watchlist", account:"Global review before purchase", annualTarget:0, profitLoss:0, changeGbp:0, changePct:0, low52:0, high52:0, discount:0, decision:Number(x.score||0)>=75?"Global promotion candidate":"Global scout opportunity", sourceType:"global", modeScore:0
+      }));
+    const watchIncomeCandidates=(watchlist||[])
+      .map(scoreWatch)
+      .filter(x=>x.ticker&&x.livePrice>0&&!heldTickersForOpportunity.has(cleanTicker(x.ticker))&&x.annualDps>0)
+      .map(x=>({
+        ticker:cleanTicker(x.ticker),
+        rawTicker:x.ticker,
+        name:x.name,
+        shares:0,
+        price:x.livePrice,
+        book:0,
+        avg:0,
+        dps:x.annualDps,
+        annual:0,
+        value:0,
+        yieldPct:x.yieldPct,
+        monthlyIncome:0,
+        income500:x.income500,
+        fairValue:0,
+        status:"REVIEW",
+        score:x.score,
+        buyStrength:x.score,
+        role:"Watchlist Opportunity",
+        sector:"Watchlist",
+        account:"Review before purchase",
+        annualTarget:0,
+        profitLoss:0,
+        changeGbp:0,
+        changePct:0,
+        low52:0,
+        high52:0,
+        discount:x.discount,
+        decision:"Watchlist income opportunity",
+        sourceType:"watchlist",
+        modeScore:0
+      }))
+      .sort((a,b)=>b.income500-a.income500||b.score-a.score);
+    const allocatorRanked=[...stocks].map(s=>{
+      const weightPct=portfolioValue>0?(s.value/portfolioValue)*100:0;
+      let penalty=0;
+      if(weightPct>=HARD_CAP_PCT) penalty=9999;
+      else if(weightPct>=SOFT_CAP_PCT) penalty=25;
+      return {...s,weightPct,modeScore:allocatorScore(s,modeKey)-penalty,sourceType:"holding"};
+    }).filter(s=>s.modeScore>-9000).sort((a,b)=>b.modeScore-a.modeScore||b.score-a.score||b.income500-a.income500);
+    const incomeRanked=[...ranked].filter(s=>!isGrowthHolding(s)&&s.dps>0).sort((a,b)=>b.income500-a.income500||b.score-a.score);
+    const topPick=incomeRanked[0]||ranked[0];
+    const topScore=topPick?.score||0;
+    let holdPct=modeConfig.holdPct;
+    if(topScore<40)holdPct=Math.max(holdPct,.45); else if(topScore>=80)holdPct=Math.min(holdPct,.10);
+    const holdBack=Math.round(totalDeployable*holdPct);
+    const buyNow=Math.max(0,totalDeployable-holdBack);
+    setText("reserveCarried",`£${formatMoney0(carriedReserve)}`);setText("newMoneyAmount",`£${formatMoney0(newMoney)}`);setText("totalDeployable",`£${formatMoney0(totalDeployable)}`);setText("suggestedReserve",`£${formatMoney0(holdBack)}`);
+
+    let chosen=allocatorRanked.filter(s=>!String(s.status||"").toUpperCase().includes("WAIT") && !String(s.status||"").toUpperCase().includes("AVOID"));
+    let plan=[];
+
+    if(modeKey==="income"){
+      const activeIncomeOptions=[...incomeRanked].map(s=>({...s,sourceType:"holding",modeScore:allocatorScore(s,modeKey)}));
+      const watchOptions=watchIncomeCandidates.map(s=>({...s,modeScore:allocatorScore(s,modeKey)+8}));
+      const globalOptions=globalOpportunityCandidates.map(s=>({...s,modeScore:allocatorScore(s,modeKey)+6}));
+      const projectedPortfolioValue = Math.max(1, portfolioValue + buyNow);
+      const maxSingleBuy = Math.max(0, buyNow * (MAX_SINGLE_BUY_PCT / 100));
+
+      function currentHoldingValueFor(candidate){
+        const t = cleanTicker(candidate.ticker);
+        const existing = stocks.find(s=>cleanTicker(s.ticker)===t);
+        return existing ? Number(existing.value || 0) : 0;
+      }
+
+      function remainingHardCapFor(candidate){
+        const currentValue = currentHoldingValueFor(candidate);
+        const hardCapValue = projectedPortfolioValue * (HARD_CAP_PCT / 100);
+        return Math.max(0, hardCapValue - currentValue);
+      }
+
+      function capAwareScore(candidate){
+        const currentValue = currentHoldingValueFor(candidate);
+        const currentWeight = projectedPortfolioValue > 0 ? (currentValue / projectedPortfolioValue) * 100 : 0;
+        const projectedSoftPenalty = currentWeight >= SOFT_CAP_PCT ? 25 : 0;
+        return Number(candidate.modeScore || 0) - projectedSoftPenalty;
+      }
+
+      const allIncomeOptions=[...watchOptions,...globalOptions,...activeIncomeOptions]
+        .filter(s=>s.price>0&&s.dps>0&&s.income500>0)
+        .map(s=>({
+          ...s,
+          capRemaining:remainingHardCapFor(s),
+          capScore:capAwareScore(s)
+        }))
+        .filter(s=>s.capRemaining>0)
+        .sort((a,b)=>b.income500-a.income500||b.capScore-a.capScore||b.score-a.score);
+
+      let remainingToAllocate = buyNow;
+      plan = [];
+
+      allIncomeOptions.forEach((candidate,idx)=>{
+        if(remainingToAllocate <= 0) return;
+
+        const capLimit = Math.min(candidate.capRemaining, maxSingleBuy || remainingToAllocate);
+        const amount = Math.min(remainingToAllocate, Math.round(capLimit));
+
+        if(amount > 0){
+          plan.push({
+            ...candidate,
+            amount,
+            opportunityRole: idx===0 ? "Income Winner" : idx===1 ? "Core / Diversifier" : "Cap Rotation"
+          });
+          remainingToAllocate -= amount;
+        }
+      });
+
+      if(remainingToAllocate > 0 && plan.length){
+        const expandable = plan.filter(p=>p.capRemaining > p.amount);
+        for(const p of expandable){
+          if(remainingToAllocate <= 0) break;
+          const extraRoom = Math.max(0, Math.min(p.capRemaining, maxSingleBuy || p.capRemaining) - p.amount);
+          const extra = Math.min(remainingToAllocate, Math.round(extraRoom));
+          p.amount += extra;
+          remainingToAllocate -= extra;
+        }
+      }
+
+      if(plan.length < 4){
+        const usedTickers = new Set(plan.map(p=>cleanTicker(p.ticker)));
+        allIncomeOptions
+          .filter(x=>!usedTickers.has(cleanTicker(x.ticker)))
+          .slice(0,4-plan.length)
+          .forEach(x=>plan.push({...x,amount:0,opportunityRole:"Next Option"}));
+      }
+
+      chosen=allIncomeOptions;
+    }else{
+      if(modeKey==="dip"){
+        chosen=chosen.filter(s=>s.fairValue>0 || s.score>0);
+      }else if(modeKey==="defensive"){
+        const defensivePool=chosen.filter(s=>defensiveQualityBoost(s)>0 || isGrowthHolding(s));
+        if(defensivePool.length)chosen=defensivePool;
+      }
+      if(!chosen.length)chosen=allocatorRanked;
+
+      const topFour=chosen.slice(0,4);
+      const totalModeScore=topFour.reduce((s,x)=>s+Math.max(1,x.modeScore),0)||1;
+      let allocated=0;
+      plan=topFour.map((s,i,arr)=>{
+        let amount=Math.round((Math.max(1,s.modeScore)/totalModeScore)*buyNow);
+        if(i===arr.length-1)amount=buyNow-allocated;
+        allocated+=amount;
+        return{...s,amount};
+      });
+    }
+
+    const primaryPlan = plan.find(p=>Number(p.amount||0)>0) || plan[0] || topPick;
+    const primaryName = primaryPlan?.name || topPick?.name || "Waiting";
+    const modeResultLabels = {
+      income:"Highest income creator",
+      balance:"Best blended route",
+      dip:"Best value/dip route",
+      defensive:"Steadier core route"
+    };
+    const modeResultMeta = {
+      income:`${primaryName} is being prioritised because this mode hunts the strongest dividend income from the cash entered.`,
+      balance:`${primaryName} is being prioritised because this mode blends score, income, fair value and diversification.`,
+      dip:`${primaryName} is being prioritised because this mode leans harder toward fair-value discount and recovery upside.`,
+      defensive:`${primaryName} is being prioritised because this mode favours steadier core/quality holdings and protects more cash.`
+    };
+    setText("prodeskModeResult", mode==="auto" ? `Auto picked ${modeResultLabels[modeKey]||modeConfig.label}` : (modeResultLabels[modeKey]||modeConfig.label));
+    setText("prodeskModeResultMeta", modeResultMeta[modeKey] || "Updates with the selected Trading Brain mode.");
+
+    for(let i=0;i<4;i++){
+      const p=plan[i];
+      const sourceLabel=p?.sourceType==="global"?"Global Watchlist / 70+ gate":p?.sourceType==="watchlist"?"Watchlist / review":(p?.account||"Holdings");
+      setText(`alloc${i+1}Amt`,p?`£${formatMoney0(p.amount)}`:"£0");
+      setText(`alloc${i+1}Name`,p?p.name:"--");
+      setText(`alloc${i+1}Score`,p?Math.round(p.score):"--");
+      setText(`alloc${i+1}Yield`,p?formatPct(p.yieldPct):"--");
+      setText(`alloc${i+1}Note`,p?(modeKey==="income"?`${p.opportunityRole||"Opportunity"} • £${p.income500.toFixed(2)}/yr from £500 • ${sourceLabel}`:modeReason(p,modeKey)):"Waiting");
+    }
+    const annualImpact=plan.reduce((sum,p)=>sum+((p.price>0&&p.dps>0&&p.amount>0)?(p.amount/p.price)*p.dps:0),0);
+    publishAuroraTradingBrainDecision({plan,modeKey,newMoney,totalDeployable,buyNow,holdBack,annualImpact,portfolioValue,totalAnnual});
+    const monthlyImpact=annualImpact/12;
+    const progressPct=Math.min(100,(totalMonthly/MASTER_MONTHLY_GOAL)*100);
+    setText("missionPercent",`${progressPct.toFixed(1)}%`);const mbar=document.getElementById("missionProgressBar");if(mbar)mbar.style.width=`${progressPct}%`;setText("currentMonthlyIncomeGoal",`£${formatMoney(totalMonthly)}`);setText("remainingToGoal",`£${formatMoney(Math.max(0,MASTER_MONTHLY_GOAL-totalMonthly))}`);setText("annualImpact",`£${formatMoney(annualImpact)}/y`);setText("monthlyImpact",`£${formatMoney(monthlyImpact)}/m added`);const yearsToNext=annualImpact>0&&newMoney>0?Math.max(0,NEXT_MILESTONE_ANNUAL-totalAnnual)/((annualImpact/newMoney)*newMoney*12):null;setText("yearsToNextStage",yearsToNext==null||!Number.isFinite(yearsToNext)?"--":yearsToNext<.1?"<0.1y":`${yearsToNext.toFixed(1)}y`);
+    const bestWatch=renderWatchlist(watchlist,ranked);
+    if(topPick){
+      const coreIncome500=topPick.income500;
+      const bestGlobal=globalOpportunityCandidates.sort((a,b)=>b.income500-a.income500||b.score-a.score)[0];
+      const watchIncome500=bestWatch?.income500||0;
+      const globalIncome500=bestGlobal?.income500||0;
+      setText("topCoreName",topPick.name);setText("topCoreMeta",`Score ${Math.round(topPick.score)} • +£${coreIncome500.toFixed(2)}/yr from £500`);
+      const proDeskWinner=[{type:"holding",item:topPick,income:coreIncome500},{type:"watchlist",item:bestWatch,income:watchIncome500},{type:"global",item:bestGlobal,income:globalIncome500}].filter(x=>x.item).sort((a,b)=>b.income-a.income)[0];
+      if(proDeskWinner?.type==="global"){setText("incomeWinner",bestGlobal.name);setText("incomeWinnerMeta",`Global 70+ candidate beats active holding by £${(globalIncome500-coreIncome500).toFixed(2)}/yr`);setText("bestActionName",bestGlobal.name);setText("bestActionMeta",`${bestGlobal.status} • Score ${Math.round(bestGlobal.score)} • £${bestGlobal.income500.toFixed(2)}/yr from £500`);}
+      else if(proDeskWinner?.type==="watchlist"){setText("incomeWinner",bestWatch.name);setText("incomeWinnerMeta",`Watchlist beats active holding by £${(watchIncome500-coreIncome500).toFixed(2)}/yr`);setText("bestActionName",bestWatch.name);setText("bestActionMeta","Watchlist gives more income from £500, but review before promotion.");}
+      else{setText("incomeWinner",topPick.name);setText("incomeWinnerMeta",`Active holding remains strongest against gated watchlist/global candidates`);setText("bestActionName",topPick.name);setText("bestActionMeta",`${topPick.status} • Score ${Math.round(topPick.score)} • £${topPick.income500.toFixed(2)}/yr from £500`);}
+      const radarWinner=proDeskWinner?.item||topPick;const radarIncome=proDeskWinner?.income||coreIncome500;const radarScore=Math.round(radarWinner?.score||0);setText("radarBest",(radarWinner?.name||"--").replace("Foresight Environmental Infrastructure","Foresight Env. Infra"));setText("radarMeta",proDeskWinner?.type==="global"?`Global Watchlist 70+ gate: £${radarIncome.toFixed(2)}/yr from £500`:(proDeskWinner?.type==="watchlist"?`Watchlist income beats active holding by £${(watchIncome500-coreIncome500).toFixed(2)}/yr from £500`:`Active holding route from Holdings sheet: £${coreIncome500.toFixed(2)}/yr from £500`));setText("radarRoute",proDeskWinner?.type==="global"?"GLOBAL 70+ EDGE":(proDeskWinner?.type==="watchlist"?"WATCHLIST EDGE":"HOLDINGS EDGE"));setText("radarScore",radarScore);setText("radarIncome",`£${radarIncome.toFixed(2)}`);setText("radarSignal",proDeskWinner?.type==="global"?(radarScore>=75?"Promotion":"Global Scout"):(proDeskWinner?.type==="watchlist"?"Review":topPick.status));setText("radarStrategy","Trading Brain compares Holdings, UK Watchlist and Global Watchlist. Global rows only enter Pro Desk at 70+ buy strength; 75+ gets promotion status.");const pulse=document.getElementById("radarPulseBar");if(pulse)pulse.style.width=`${Math.max(12,Math.min(100,radarScore))}%`;
+    }
+    const buys=ranked.filter(s=>String(s.status).toUpperCase().includes("BUY")||String(s.status).toUpperCase().includes("ACCUM")).length;
+    const waits=ranked.filter(s=>String(s.status).toUpperCase().includes("WAIT")).length;
+    const exec=buys>0?{label:"ACCUM",meta:`${buys} active holding(s) show buy/accumulate from Holdings.`}:waits>=Math.max(2,ranked.length/2)?{label:"WAIT",meta:"Most holdings say wait. Preserve discipline."}:{label:"HOLD",meta:"No urgent buy signal from Holdings."};
+    setText("executionSignal",exec.label);setText("executionSignalMeta",exec.meta);setText("decisionBadge",exec.label);setText("marketPulseBadge",exec.label);setText("riskTemp",waits>=3?"HOT":waits>=1?"WARM":"COOL");setText("riskTempMeta",`${waits} holdings marked WAIT`);
+    renderHeatmap(ranked);renderAuroraUpgrades({stocks:ranked,bestWatch,topPick,plan,totalAnnual,totalMonthly,buyNow});syncProDeskMode(mode, modeKey, modeConfig);renderPillars(ranked);
+    logLines([`Sheets online: Holdings ${holdings.length}, Active ${ranked.length}, Dividends ${dividends.length}, Watchlist ${watchlist.length}, Global gated ${globalOpportunityCandidates.length}`,`Best active income route: ${topPick?.name||"--"} | Score ${Math.round(topPick?.score||0)} | £${(topPick?.income500||0).toFixed(2)}/yr from £500`,`Mode: ${modeConfig.label} | Deployable: £${formatMoney0(totalDeployable)} | Buy now: £${formatMoney0(buyNow)} | Reserve: £${formatMoney0(holdBack)}`,`Annual income: £${formatMoney(totalAnnual)} | Monthly: £${formatMoney(totalMonthly)}`,`Source of truth: Holdings + Watchlist + Global Watchlist gated at 70+ buy strength.`,`Risk controls: 10% soft cap, 12% hard cap, 25% max per single deployment.`]);
+  }catch(err){console.error(err);setText("liveSyncStatus","ERROR");setText("liveSyncMeta","Sheet connection failed");setText("executionSignal","ERROR");logLines(["ERROR: Aurora terminal failed to load AuroraMaster.json.","Check the JSON file is published beside the HTML, or set MASTER_JSON_URL to your Apps Script web-app URL.",String(err.message||err)]);}
+}
+
+
+/* ===================== SECTION: GLOBAL WATCHLIST LIVE FEED ===================== */
+
+function scoreGlobalWatchlistRow(row){
+  const ticker = cleanTicker(getCell(row,["ticker","Ticker","symbol","Symbol"]));
+  const name = getCell(row,["name","Name"]) || ticker;
+  const market = getCell(row,["market","Market"]) || "Global";
+  const currency = getCell(row,["currency","Currency"]) || "";
+  const liveNative = parseNum(getCell(row,["live_price_native","live price native","native price"]));
+  const dpsNative = parseNum(getCell(row,["annual_dps_native","annual dps native","native dps"]));
+  const fxRate = parseNum(getCell(row,["fx_rate_to_gbp","fx rate to gbp","fx"]));
+  const liveGbpSheet = parseNum(getCell(row,["live_price_gbp","live price gbp","price_gbp"]));
+  const dpsGbpSheet = parseNum(getCell(row,["annual_dps_gbp","annual dps gbp","dps_gbp"]));
+  const livePrice = liveGbpSheet > 0 ? liveGbpSheet : (liveNative > 0 && fxRate > 0 ? liveNative * fxRate : liveNative);
+  const annualDps = dpsGbpSheet > 0 ? dpsGbpSheet : (dpsNative > 0 && fxRate > 0 ? dpsNative * fxRate : dpsNative);
+  const fairValue = parseNum(getCell(row,["fair_value_gbp","fair value gbp","fair_value","fair value"]));
+  const incomeFrom500Sheet = parseNum(getCell(row,["income_from_500","income from 500"]));
+  const yieldSheet = parseNum(getCell(row,["yield_pct","yield pct","yield","dividend yield"]));
+  const yieldPct = livePrice > 0 && annualDps > 0 ? (annualDps / livePrice) * 100 : (yieldSheet > 0 && yieldSheet < 1 ? yieldSheet * 100 : yieldSheet);
+  const income500 = incomeFrom500Sheet > 0 ? incomeFrom500Sheet : (livePrice > 0 && annualDps > 0 ? (500 / livePrice) * annualDps : 0);
+  const score = Math.round(Math.max(0,Math.min(100,parseNum(getCell(row,["buy_strength","buy strength","score"])) || parseNum(getCell(row,["valuation_score","valuation score"])) || 0)));
+  const role = getCell(row,["role","Role"]);
+  const sector = getCell(row,["sector","Sector"]);
+  return {ticker,name,market,currency,livePrice,annualDps,fairValue,income500,yieldPct,score,role,sector};
+}
+
+function scoreGlobalWatchlistRow(row){
+  const ticker = cleanTicker(getCell(row,["ticker","Ticker","symbol","Symbol"]));
+  const name = getCell(row,["name","Name"]) || ticker;
+  const market = getCell(row,["market","Market"]) || "Global";
+  const currency = getCell(row,["currency","Currency"]) || "";
+  const liveNative = parseNum(getCell(row,["live_price_native","live price native","native price"]));
+  const dpsNative = parseNum(getCell(row,["annual_dps_native","annual dps native","native dps"]));
+  const fxRate = parseNum(getCell(row,["fx_rate_to_gbp","fx rate to gbp","fx"]));
+  const liveGbpSheet = parseNum(getCell(row,["live_price_gbp","live price gbp","price_gbp"]));
+  const dpsGbpSheet = parseNum(getCell(row,["annual_dps_gbp","annual dps gbp","dps_gbp"]));
+  const livePrice = liveGbpSheet > 0 ? liveGbpSheet : (liveNative > 0 && fxRate > 0 ? liveNative * fxRate : liveNative);
+  const annualDps = dpsGbpSheet > 0 ? dpsGbpSheet : (dpsNative > 0 && fxRate > 0 ? dpsNative * fxRate : dpsNative);
+  const fairValue = parseNum(getCell(row,["fair_value_gbp","fair value gbp","fair_value","fair value"]));
+  const incomeFrom500Sheet = parseNum(getCell(row,["income_from_500","income from 500"]));
+  const yieldSheet = parseNum(getCell(row,["yield_pct","yield pct","yield","dividend yield"]));
+  const yieldPct = livePrice > 0 && annualDps > 0 ? (annualDps / livePrice) * 100 : (yieldSheet > 0 && yieldSheet < 1 ? yieldSheet * 100 : yieldSheet);
+  const income500 = incomeFrom500Sheet > 0 ? incomeFrom500Sheet : (livePrice > 0 && annualDps > 0 ? (500 / livePrice) * annualDps : 0);
+  const score = Math.round(Math.max(0,Math.min(100,parseNum(getCell(row,["buy_strength","buy strength","score"])))));
+  const status = getCell(row,["status","Status"]) || (score >= 80 ? "BUY" : score >= 70 ? "ACCUMULATE" : score >= 55 ? "HOLD" : "WAIT");
+  const tone = statusTone(status);
+  const role = getCell(row,["role","Role"]);
+  const sector = getCell(row,["sector","Sector"]);
+  const payoutRisk = getCell(row,["payout_risk","payout risk"]);
+  const notes = getCell(row,["notes","Notes"]);
+  return {ticker,name,market,currency,livePrice,annualDps,fairValue,income500,yieldPct,score,status:tone.label,cls:tone.cls,role,sector,payoutRisk,notes};
+}
+
+async function loadGlobalWatchlistLive(){
+  const statusEl = document.getElementById("globalWatchlistStatus");
+  const alertEl = document.getElementById("globalWatchlistAlert");
+  const countEl = document.getElementById("globalWatchlistCount");
+  const grid = document.getElementById("globalWatchlistGrid");
+  if(!grid) return;
+
+  try{
+    if(statusEl) statusEl.innerText = "LOADING";
+    if(alertEl) alertEl.innerText = "Checking AuroraMaster.json Global Watchlist data...";
+    let rows=[];
+    try{
+      rows=(await loadAuroraMasterData()).globalWatchlist;
+    }catch(masterErr){
+      console.warn("AuroraMaster.json Global Watchlist failed, trying legacy OpenSheet", masterErr);
+      const res = await fetch(GLOBAL_WATCHLIST_URL, {cache:"no-store"});
+      if(!res.ok) throw new Error(`OpenSheet HTTP ${res.status}`);
+      rows = await res.json();
+    }
+    const globalRows = (rows || [])
+      .map(scoreGlobalWatchlistRow)
+      .filter(x => x.ticker && (x.livePrice > 0 || x.income500 > 0 || x.score > 0))
+      .sort((a,b)=>b.score-a.score || b.income500-a.income500);
+
+    if(statusEl) statusEl.innerText = "LIVE JSON";
+    if(countEl) countEl.innerText = `${globalRows.length}`;
+    if(alertEl) alertEl.innerText = globalRows.length
+      ? `Loaded ${globalRows.length} global candidates. Showing the cleanest top picks only.`
+      : "AuroraMaster.json Global Watchlist loaded, but no usable rows were found.";
+
+    grid.innerHTML = globalRows.slice(0,6).map(w => `
+      <div class="watch-card compact-watch-card">
+        <div class="watch-top">
+          <div>
+            <div class="watch-name">${w.name}</div>
+            <div class="subv">${w.ticker} • ${w.market} • ${w.currency} • ${w.role || w.sector || "Global income candidate"}</div>
+          </div>
+          <span class="badge ${w.cls}">${w.status}</span>
+        </div>
+        <div class="watch-stats">
+          <div class="mini-tile"><div class="k">Price GBP</div><div class="v">£${w.livePrice ? w.livePrice.toFixed(3) : "--"}</div></div>
+          <div class="mini-tile"><div class="k">Score</div><div class="v">${w.score || "--"}</div></div>
+          <div class="mini-tile"><div class="k">£500 Income</div><div class="v">£${w.income500 ? w.income500.toFixed(2) : "0.00"}</div></div>
+        </div>
+        <div class="note">Yield ${formatPct(w.yieldPct)} • ${w.payoutRisk || "Risk check"}${w.notes ? " • " + w.notes : ""}</div>
+      </div>
+    `).join("") || `<div class="subv">AuroraMaster.json Global Watchlist loaded, but there are no rows to show.</div>`;
+  }catch(err){
+    console.error(err);
+    if(statusEl) statusEl.innerText = "ERROR";
+    if(countEl) countEl.innerText = "--";
+    if(alertEl) alertEl.innerText = `Global Watchlist live feed failed: ${err.message || err}`;
+    grid.innerHTML = `<div class="watch-card"><div class="watch-name">Global Watchlist feed failed</div><div class="subv">AuroraMaster.json did not return usable Global Watchlist data.</div></div>`;
+  }
+}
+
+/* ===================== SECTION: EVENTS ===================== */
+document.querySelectorAll("button[data-amt]").forEach(btn=>btn.addEventListener("click",()=>{document.getElementById("totalInvestment").value=btn.dataset.amt;runBrain()}));
+document.querySelectorAll(".mode-btn").forEach(btn=>btn.addEventListener("click",()=>{setMode(btn.dataset.mode);runBrain()}));
+document.getElementById("totalInvestment")?.addEventListener("input",runBrain);
+document.getElementById("dipWeight")?.addEventListener("input",runBrain);
+document.getElementById("saveReserveBtn")?.addEventListener("click",()=>{setReserve(getReserve()+parseNum(document.getElementById("suggestedReserve")?.innerText));runBrain()});
+document.getElementById("resetReserveBtn")?.addEventListener("click",()=>{setReserve(0);runBrain()});
+document.getElementById("useReserveBtn")?.addEventListener("click",()=>{const r=getReserve();document.getElementById("totalInvestment").value=Number(document.getElementById("totalInvestment").value||0)+r;setReserve(0);runBrain()});
+document.getElementById("setManualReserveBtn")?.addEventListener("click",()=>{setReserve(Number(document.getElementById("manualReserve").value||0));runBrain()});
+updateModeButtons();runBrain();loadGlobalWatchlistLive();
+</script>
+
+<a class="hq-home-btn"
+   href="AuroraNexusMaster.html">
+   🏠 Aurora HQ
+</a>
+
+</body>
+</html>

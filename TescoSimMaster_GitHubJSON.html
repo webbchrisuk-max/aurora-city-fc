@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Aurora Tesco 2029 Command Simulator — Full Holdings Allocator</title>
+<style>
+/* ===================== SECTION: ROOT THEME ===================== */
+:root{
+  --bg:#030712;--bg2:#07111f;--panel:rgba(9,18,32,.90);--panel2:rgba(13,27,45,.94);--glass:rgba(255,255,255,.055);
+  --line:rgba(96,230,255,.18);--line2:rgba(255,255,255,.09);--text:#eaf7ff;--muted:#8ba6c2;--cyan:#58f4ff;--blue:#6aa8ff;
+  --green:#59ff9a;--amber:#ffd15e;--red:#ff5f83;--purple:#b985ff;--pink:#ff6bd5;--shadow:0 22px 60px rgba(0,0,0,.35);
+  --glow:0 0 34px rgba(88,244,255,.18);--r:22px;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;overflow-x:hidden}
+body{padding:14px 14px 80px;background:radial-gradient(circle at 12% 5%,rgba(185,133,255,.22),transparent 28%),radial-gradient(circle at 82% 12%,rgba(88,244,255,.18),transparent 30%),radial-gradient(circle at 50% 100%,rgba(89,255,154,.08),transparent 35%),linear-gradient(180deg,#020611,#07101e 48%,#02050c)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent 85%)}
+.wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;display:grid;gap:14px}h1,h2,h3,p{margin:0}h1{font-size:clamp(30px,4vw,56px);letter-spacing:-1.6px;line-height:.92}h2{font-size:20px;letter-spacing:-.3px}.muted,.subv{color:var(--muted);font-size:12px;line-height:1.45}.k{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.9px;font-weight:900}.v{font-weight:950}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.good{color:var(--green)}.watch,.amber{color:var(--amber)}.risk,.red{color:var(--red)}.cyan{color:var(--cyan)}.purple{color:var(--purple)}
+.card,.mini,.hero,.terminal,.allocation-card,.scenario-card,.plan-card,.candidate-card{background:linear-gradient(145deg,rgba(13,27,45,.88),rgba(5,12,24,.88));border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 11px;border:1px solid currentColor;font-weight:950;font-size:11px;letter-spacing:.5px;background:rgba(255,255,255,.035);white-space:nowrap}.badge.good{color:var(--green);background:rgba(89,255,154,.08)}.badge.watch{color:var(--amber);background:rgba(255,209,94,.08)}.badge.red{color:var(--red);background:rgba(255,95,131,.08)}.badge.cyan{color:var(--cyan)}.badge.hold{color:var(--muted)}
+button{border:1px solid var(--line2);background:rgba(255,255,255,.055);color:var(--text);border-radius:14px;padding:12px 13px;font-weight:950;cursor:pointer;transition:.18s ease}button:hover{transform:translateY(-1px);border-color:rgba(88,244,255,.38);box-shadow:0 0 18px rgba(88,244,255,.12)}button.active{border-color:rgba(88,244,255,.55);color:var(--cyan);box-shadow:0 0 18px rgba(88,244,255,.14)}input,select{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);border-radius:14px;padding:12px;outline:none;font-weight:800}
+/* ===================== SECTION: HERO ===================== */
+.hero{position:relative;overflow:hidden;border-radius:30px;padding:22px;border:1px solid rgba(88,244,255,.2);box-shadow:var(--glow),var(--shadow);background:linear-gradient(135deg,rgba(10,24,43,.98),rgba(4,8,18,.96)),radial-gradient(circle at 80% 10%,rgba(88,244,255,.2),transparent 35%)}
+.hero:before{content:"";position:absolute;inset:-2px;background:linear-gradient(120deg,transparent,rgba(88,244,255,.11),transparent);animation:scan 7s linear infinite;transform:translateX(-100%)}@keyframes scan{to{transform:translateX(100%)}}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:stretch}.hero-topline{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.big-sub{font-size:14px;color:var(--muted);max-width:760px;margin-top:12px;line-height:1.45}.command-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}.metric{padding:14px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}.metric .v{font-size:clamp(21px,2.1vw,34px);margin-top:5px}.mission-panel{padding:16px;border-radius:24px;background:radial-gradient(circle at top right,rgba(89,255,154,.12),transparent 34%),linear-gradient(145deg,rgba(8,19,34,.98),rgba(4,10,20,.98));border:1px solid rgba(88,244,255,.18);display:flex;flex-direction:column;justify-content:space-between;gap:12px}.mission-title{font-size:clamp(24px,2.5vw,36px);font-weight:1000;letter-spacing:-.8px;line-height:1.02}.mission-number{font-size:clamp(38px,4vw,58px);font-weight:1000;color:var(--green);letter-spacing:-1.5px}.bar{height:14px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.05);margin-top:10px}.fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--green));box-shadow:0 0 24px rgba(89,255,154,.2);transition:width .35s ease}
+/* ===================== SECTION: LAYOUT ===================== */
+.panel{padding:16px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.section-head .left{display:flex;align-items:center;gap:10px}.orb{width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 16px var(--cyan)}.deck{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.grid{display:grid;gap:10px}.four{grid-template-columns:repeat(4,1fr)}.three{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:repeat(2,1fr)}.mini{padding:12px;border-radius:16px;background:rgba(255,255,255,.035)}.mini .v{font-size:19px;margin-top:4px}.input-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.button-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+/* ===================== SECTION: COUNTDOWN + PLAN ===================== */
+.countdown-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.count-cell{padding:16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-align:center}.count-cell .num{font-size:clamp(28px,3.4vw,48px);font-weight:1000;color:var(--cyan);line-height:.95}.count-cell .label{margin-top:8px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.9px;font-weight:900}.plan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.plan-card{padding:15px;overflow:hidden}.plan-card.good{border-color:rgba(89,255,154,.3)}.plan-card.watch{border-color:rgba(255,209,94,.3)}.plan-card.purple{border-color:rgba(185,133,255,.3)}.plan-card.red{border-color:rgba(255,95,131,.3)}.plan-step{font-size:28px}.plan-title{font-size:15px;font-weight:950;margin-top:8px}.plan-amount{font-size:clamp(25px,2.6vw,38px);font-weight:1000;margin-top:8px}.plan-note{color:var(--muted);font-size:12px;line-height:1.4;margin-top:8px}
+/* ===================== SECTION: SCENARIOS + ALLOCATOR ===================== */
+.scenario-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.scenario-card{padding:13px;border-radius:18px}.scenario-card.best{border-color:rgba(89,255,154,.42);box-shadow:0 0 22px rgba(89,255,154,.1)}.scenario-price{font-size:22px;font-weight:1000;color:var(--cyan)}.scenario-value{font-size:16px;font-weight:900;margin:6px 0 10px}.scenario-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid rgba(255,255,255,.06);padding-top:8px;margin-top:8px;color:var(--muted);font-size:12px}.scenario-row strong{color:var(--text)}.allocator-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:12px}.allocation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.allocation-card,.candidate-card{padding:14px;border-radius:18px}.allocation-card{border-color:rgba(89,255,154,.22)}.allocation-top,.candidate-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}.allocation-name,.candidate-name{font-size:17px;font-weight:1000}.allocation-bar{height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-top:10px}.allocation-bar div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--green))}.candidate-list{display:grid;gap:9px}.candidate-card{padding:12px}.score-pill{font-size:28px;font-weight:1000;color:var(--green)}.warning-box{padding:12px;border-radius:16px;border:1px solid rgba(255,209,94,.2);background:rgba(255,209,94,.055);color:var(--muted);font-size:13px;line-height:1.45}.terminal{padding:0;overflow:hidden}.terminal-head{padding:12px 14px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:7px;align-items:center}.dot{width:10px;height:10px;border-radius:50%;background:var(--red)}.dot:nth-child(2){background:var(--amber)}.dot:nth-child(3){background:var(--green)}.terminal-body{padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.7;color:#bdefff;min-height:170px}.terminal-body .line:before{content:"> ";color:var(--green)}
+.timeline{display:grid;gap:10px}.timeline-row{display:grid;grid-template-columns:130px 1fr 130px;gap:12px;align-items:center;padding:11px 12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}.timeline-date{font-weight:950;color:var(--cyan)}.timeline-main{color:var(--text);font-size:13px}.timeline-status{text-align:right;font-size:12px;font-weight:900}.check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.check-item{padding:12px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);display:grid;gap:5px}.check-item strong{font-size:14px}.check-item span{font-size:12px;color:var(--muted);line-height:1.4}.hq-home-btn{position:fixed;bottom:14px;left:14px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:14px;text-decoration:none!important;font-weight:900;color:#58f4ff!important;border:1px solid rgba(88,244,255,.25);background:rgba(13,27,45,.92);backdrop-filter:blur(12px);box-shadow:0 0 18px rgba(88,244,255,.12);line-height:1}.footer{text-align:center;color:var(--muted);font-size:12px;padding:10px 0 22px}
+/* ===================== SECTION: RESPONSIVE ===================== */
+@media(max-width:1000px){.hero-grid,.deck,.allocator-grid{grid-template-columns:1fr}.command-strip,.four,.plan-grid,.scenario-grid,.allocation-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){body{padding:10px 10px 78px}.hero,.panel{border-radius:18px;padding:12px}.command-strip,.four,.three,.two,.input-grid,.button-row,.countdown-grid,.plan-grid,.scenario-grid,.allocation-grid,.check-grid{grid-template-columns:1fr}h1{font-size:30px}.timeline-row{grid-template-columns:1fr}.timeline-status{text-align:left}.mission-number{font-size:38px}.hq-home-btn{left:8px;bottom:10px;padding:9px 11px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===================== SECTION: HERO ===================== -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-topline"><span class="badge good">● TESCO 2029 COMMAND</span><span class="badge cyan" id="liveBadge">SYNCING</span><span class="badge hold mono" id="clockBadge">--:--</span></div>
+      <h1>Aurora Tesco<br>2029 Simulator X</h1>
+      <p class="big-sub">SAYE maturity countdown, Tesco keep/sell/diversify plan, ISA wave planning, and a full Holdings-sheet allocator that scans every eligible share instead of only four fixed pillars.</p>
+      <div class="command-strip">
+        <div class="metric"><div class="k">Tesco Value</div><div class="v">£<span id="tescoValueHero">0</span></div><div class="subv">Shares × live/sim price</div></div>
+        <div class="metric"><div class="k">Potential Gain</div><div class="v good">£<span id="tescoGainHero">0</span></div><div class="subv">Above option cost</div></div>
+        <div class="metric"><div class="k">ISA Capital</div><div class="v">£<span id="deployableHero">0</span></div><div class="subv">After Tesco core</div></div>
+        <div class="metric"><div class="k">Flexible Pot</div><div class="v">£<span id="remainingHero">0</span></div><div class="subv">After 3 ISA waves</div></div>
+      </div>
+    </div>
+    <div class="mission-panel">
+      <div><div class="k">Projected Passive Income After Tesco Waves</div><div class="mission-title" id="missionTitle">Waiting for Holdings feed...</div></div>
+      <div><div class="mission-number" id="projectedMonthlyTotalHero">£0/m</div><div class="bar"><div class="fill" id="missionHeroBar"></div></div><div class="muted" id="missionHeroMeta" style="margin-top:10px">Progress to £2,000/month target</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: COUNTDOWN ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Countdown to SAYE Maturity</h2></div><span class="badge watch">01 MAR 2029</span></div>
+  <div class="countdown-grid">
+    <div class="count-cell"><div class="num" id="daysLeft">--</div><div class="label">Days Left</div></div>
+    <div class="count-cell"><div class="num" id="monthsLeft">--</div><div class="label">Months Left</div></div>
+    <div class="count-cell"><div class="num" id="yearsLeft">--</div><div class="label">Years Left</div></div>
+    <div class="count-cell"><div class="num" id="savingProgress">--</div><div class="label">Saving Progress</div></div>
+  </div>
+  <div class="bar"><div class="fill" id="countdownProgressBar"></div></div>
+  <div class="muted" id="countdownNote" style="margin-top:10px">Calculating maturity countdown...</div>
+</section>
+
+<!-- ===================== SECTION: SNAPSHOT + CONTROLS ===================== -->
+<div class="deck">
+  <section class="card panel">
+    <div class="section-head"><div class="left"><span class="orb"></span><h2>Tesco SAYE Snapshot</h2></div><span class="badge cyan" id="tescoLivePrice">£--</span></div>
+    <div class="grid four">
+      <div class="mini"><div class="k">Shares / Options</div><div class="v" id="tescoShares">--</div><div class="subv">Locked option quantity</div></div>
+      <div class="mini"><div class="k">Option Price</div><div class="v" id="tescoOptionPrice">£--</div><div class="subv">Exercise price</div></div>
+      <div class="mini"><div class="k">Option Cost</div><div class="v" id="tescoOptionCost">£--</div><div class="subv">Cost to exercise</div></div>
+      <div class="mini"><div class="k">Savings to Date</div><div class="v" id="tescoSavingsToDate">£--</div><div class="subv">Dynamic estimate</div></div>
+      <div class="mini"><div class="k">Current Value</div><div class="v" id="tescoValue">£--</div><div class="subv">Shares × live price</div></div>
+      <div class="mini"><div class="k">Potential Gain</div><div class="v good" id="tescoPotentialGain">£--</div><div class="subv">Above option cost</div></div>
+      <div class="mini"><div class="k">Current Monthly Saving</div><div class="v" id="tescoMonthlySavings">£--</div><div class="subv">SAYE contribution</div></div>
+      <div class="mini"><div class="k">Maturity Date</div><div class="v" id="tescoMaturityDate">--</div><div class="subv">Capital event date</div></div>
+    </div>
+  </section>
+
+  <section class="card panel">
+    <div class="section-head"><div class="left"><span class="orb"></span><h2>Simulation Controls</h2></div><span class="badge good" id="strategyBadge">BALANCED</span></div>
+    <div class="input-grid">
+      <div><label class="k" for="expectedPrice">Tesco Price Used</label><input id="expectedPrice" type="number" value="4.764" step="0.01" min="0"></div>
+      <div><label class="k" for="keepCore">Tesco Core to Keep</label><input id="keepCore" type="number" value="15000" step="500" min="0"></div>
+      <div><label class="k" for="maxCandidates">Max Candidates</label><input id="maxCandidates" type="number" value="6" step="1" min="3" max="10"></div>
+    </div>
+    <div class="button-row">
+      <button class="strategy-btn active" data-strategy="balanced">Balanced</button>
+      <button class="strategy-btn" data-strategy="incomeAttack">Income Attack</button>
+      <button class="strategy-btn" data-strategy="valueHunter">Value Hunter</button>
+      <button class="strategy-btn" data-strategy="defensive">Defensive</button>
+    </div>
+    <div class="warning-box" style="margin-top:12px">This version scans the full <strong>Holdings</strong> tab and excludes Tesco from the deployment list. Anything marked WAIT/AVOID is shown as a candidate warning but not used in the main allocation.</div>
+  </section>
+</div>
+
+<!-- ===================== SECTION: 2029 EXIT PLAN ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>2029 Keep / Sell / Diversify Plan</h2></div><span class="badge good">INDEPENDENT PLAN</span></div>
+  <div class="plan-grid">
+    <div class="plan-card good"><div class="plan-step">🛡️</div><div class="plan-title">Keep Tesco Core</div><div class="plan-amount" id="planKeepCore">£0</div><div class="plan-note">Controlled long-term Tesco holding. Keeps you involved without letting Tesco become the portfolio boss goblin.</div></div>
+    <div class="plan-card watch"><div class="plan-step">🚀</div><div class="plan-title">ISA Wave Capital</div><div class="plan-amount" id="planIsaCapital">£0</div><div class="plan-note">Capital available for March 2029, April 2029 and April 2030 ISA waves after keeping Tesco core.</div></div>
+    <div class="plan-card purple"><div class="plan-step">💷</div><div class="plan-title">Flexible Reserve</div><div class="plan-amount" id="planFlexible">£0</div><div class="plan-note">Extra cash after core and ISA waves. Opportunity fund, emergency reserve, or later deployment.</div></div>
+    <div class="plan-card red"><div class="plan-step">⚠️</div><div class="plan-title">Concentration Check</div><div class="plan-amount" id="planRiskLevel">--</div><div class="plan-note" id="planRiskNote">Waiting for simulation...</div></div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: ISA WAVE PLAN ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>ISA Deployment Wave Plan</h2></div><span class="badge cyan" id="waveStatusBadge">3 WAVES</span></div>
+  <div class="grid four">
+    <div class="mini"><div class="k">March 2029 ISA Wave</div><div class="v" id="waveOne">£0</div><div class="subv">First deployment window</div></div>
+    <div class="mini"><div class="k">April 2029 ISA Wave</div><div class="v" id="waveTwo">£0</div><div class="subv">New tax year deployment</div></div>
+    <div class="mini"><div class="k">April 2030 ISA Wave</div><div class="v" id="waveThree">£0</div><div class="subv">Third ISA push</div></div>
+    <div class="mini"><div class="k">Total ISA Income Added</div><div class="v good" id="waveIncomeAdded">£0/y</div><div class="subv" id="waveIncomeMonthly">£0/m added</div></div>
+  </div>
+  <div class="bar"><div class="fill" id="waveFillBar"></div></div>
+  <div class="muted" id="waveNote" style="margin-top:10px">ISA wave plan calculated from simulated Tesco value.</div>
+</section>
+
+<!-- ===================== SECTION: PRICE SCENARIO ENGINE ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Tesco Price Scenario Engine</h2></div><span class="badge watch">PRICE TABLE</span></div>
+  <div class="scenario-grid" id="scenarioGrid"></div>
+</section>
+
+<!-- ===================== SECTION: FULL HOLDINGS ALLOCATOR ===================== -->
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Full Holdings ISA Allocator</h2></div><span class="badge cyan" id="allocationStrategyLabel">BALANCED</span></div>
+  <div class="allocator-grid">
+    <div>
+      <div class="grid four" style="margin-bottom:12px">
+        <div class="mini"><div class="k">Eligible Holdings Scanned</div><div class="v" id="eligibleCount">0</div><div class="subv">From Holdings tab</div></div>
+        <div class="mini"><div class="k">Weighted Yield</div><div class="v" id="weightedYield">0%</div><div class="subv">Planned deployment</div></div>
+        <div class="mini"><div class="k">Projected Total Monthly</div><div class="v good" id="projectedMonthlyTotal">£0</div><div class="subv">Current income + waves</div></div>
+        <div class="mini"><div class="k">Target Progress</div><div class="v" id="missionProgressText">0%</div><div class="subv">To £2,000/month</div></div>
+      </div>
+      <div class="bar"><div class="fill" id="missionBar"></div></div>
+      <div class="allocation-grid" id="allocationGrid" style="margin-top:12px"></div>
+    </div>
+    <div>
+      <div class="section-head" style="margin-bottom:9px"><div class="left"><h3>Top Candidates</h3></div><span class="badge watch">RANKED</span></div>
+      <div class="candidate-list" id="candidateList"></div>
+      <div class="warning-box" id="strategyNote" style="margin-top:12px">Waiting for Holdings tab...</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: CHECKLIST + TIMELINE ===================== -->
+<div class="deck">
+  <section class="card panel">
+    <div class="section-head"><div class="left"><span class="orb"></span><h2>2029 Execution Checklist</h2></div><span class="badge good">PLAN</span></div>
+    <div class="check-grid">
+      <div class="check-item"><strong>1. Confirm maturity value</strong><span>Use final Tesco share price and SAYE terms before selling or exercising.</span></div>
+      <div class="check-item"><strong>2. Lock Tesco core</strong><span>Decide the exact Tesco amount to keep long term, likely around £12k–£15k.</span></div>
+      <div class="check-item"><strong>3. Run full allocator</strong><span>Use the Holdings scanner to choose live candidates based on yield, status, value and buy strength.</span></div>
+      <div class="check-item"><strong>4. Avoid concentration creep</strong><span>If Tesco value surges, diversify more rather than letting one employer stock dominate.</span></div>
+      <div class="check-item"><strong>5. Keep flexible cash</strong><span>Any leftover after core and ISA waves becomes opportunity/reserve capital.</span></div>
+      <div class="check-item"><strong>6. Income target check</strong><span>Measure how much closer the waves get you to £2,000/month passive income.</span></div>
+    </div>
+  </section>
+  <section class="terminal">
+    <div class="terminal-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="muted mono">aurora://tesco/full-holdings-log</span></div>
+    <div class="terminal-body" id="terminalLog"><div class="line">Booting Tesco full holdings allocator...</div></div>
+  </section>
+</div>
+
+<section class="card panel full">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Tesco Roadmap Timeline</h2></div><span class="badge hold">2024 → 2030</span></div>
+  <div class="timeline">
+    <div class="timeline-row"><div class="timeline-date">01/03/2024</div><div class="timeline-main">SAYE start date. Monthly savings engine begins.</div><div class="timeline-status good">Active</div></div>
+    <div class="timeline-row"><div class="timeline-date">2026–2028</div><div class="timeline-main">Monitor Tesco price, keep savings on track, and keep the final allocation flexible.</div><div class="timeline-status watch">Build phase</div></div>
+    <div class="timeline-row"><div class="timeline-date">01/03/2029</div><div class="timeline-main">Maturity date, exercise/sell decision, Tesco core retained, first ISA deployment prepared.</div><div class="timeline-status good">Core trigger</div></div>
+    <div class="timeline-row"><div class="timeline-date">April 2029</div><div class="timeline-main">Second ISA wave into best live income/value candidates from Holdings scanner.</div><div class="timeline-status watch">Scale up</div></div>
+    <div class="timeline-row"><div class="timeline-date">April 2030</div><div class="timeline-main">Third ISA wave, rebalance, and long-term Tesco core review.</div><div class="timeline-status hold">Optimise</div></div>
+  </div>
+</section>
+<div class="footer">Aurora Tesco 2029 Simulator • Full Holdings Allocator • SAYE Countdown • ISA Waves</div>
+</div>
+<a class="hq-home-btn" href="AuroraNexusMaster.html">🏠 Aurora HQ</a>
+
+<script>
+/* ===================== SECTION: DATA SOURCE ===================== */
+const AURORA_MASTER_URL="https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const HOLDINGS_URL=AURORA_MASTER_URL;
+const TARGET_MONTHLY=2000;
+const MAX_ISA_WAVES=60000;
+const DEFAULT_CURRENT_MONTHLY=401.97;
+const tescoData={shares:14363,monthlySavings:500,optionPrice:2.20,totalOptionCost:31598.60,startDate:"2024-03-01",maturityDate:"2029-03-01",fallbackLivePrice:4.764};
+let activeStrategy="balanced";
+let tescoLivePrice=tescoData.fallbackLivePrice;
+let allHoldings=[];
+let currentMonthlyIncome=DEFAULT_CURRENT_MONTHLY;
+
+/* ===================== SECTION: HELPERS ===================== */
+function setText(id,value){const el=document.getElementById(id);if(el)el.innerText=value;}
+function money(v,decimals=2){return Number(v||0).toLocaleString("en-GB",{minimumFractionDigits:decimals,maximumFractionDigits:decimals});}
+function money0(v){return Number(v||0).toLocaleString("en-GB",{maximumFractionDigits:0});}
+function parseNum(v){const n=parseFloat(String(v??"").replace(/[^0-9.-]/g,""));return Number.isFinite(n)?n:0;}
+function getCell(row,names){const keys=Object.keys(row||{});for(const name of names){const found=keys.find(k=>k.trim().toLowerCase()===name.trim().toLowerCase());if(found)return row[found];}return "";}
+function cleanTicker(v){return String(v||"").trim().toUpperCase().replace("LON:","").replace(".L","").replace(".GB","").replace(" GB","").replace(/\s+/g," ");}
+function normalisePriceForTicker(ticker,v){const n=parseNum(v);if(!Number.isFinite(n)||n<=0)return 0;const t=cleanTicker(ticker);const penceQuoted=new Set(["LGEN","MNG","SUPR","PHP","FSFL","FGEN","FJGN","TSCO","AV","NG","PHNX","SDLF","RGL","SEQI","GCP"]);if(n>1000)return n/100;if(n>20&&penceQuoted.has(t))return n/100;return n;}
+function normaliseDpsForTicker(ticker,v){const n=parseNum(v);if(!Number.isFinite(n)||n<0)return 0;const t=cleanTicker(ticker);const penceQuoted=new Set(["LGEN","MNG","SUPR","PHP","FSFL","FGEN","FJGN","TSCO","AV","NG","PHNX","SDLF","RGL","SEQI","GCP"]);if(n>2&&penceQuoted.has(t))return n/100;return n;}
+function formatPct(v){return `${Number(v||0).toFixed(2)}%`;}
+function updateClock(){setText("clockBadge",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));}
+setInterval(updateClock,30000);updateClock();
+function logLines(lines){const el=document.getElementById("terminalLog");if(el)el.innerHTML=lines.map(x=>`<div class="line">${x}</div>`).join("");}
+function getExpectedPrice(){return parseFloat(document.getElementById("expectedPrice")?.value)||tescoLivePrice||tescoData.fallbackLivePrice;}
+function getKeepCore(){return Math.max(0,parseFloat(document.getElementById("keepCore")?.value)||0);}
+function getMaxCandidates(){return Math.max(3,Math.min(10,parseInt(document.getElementById("maxCandidates")?.value||"6",10)));}
+function statusTone(status){const s=String(status||"").toUpperCase();if(s.includes("BUY"))return{label:status||"BUY",cls:"good",rank:1,boost:18};if(s.includes("ACCUM"))return{label:status||"ACCUMULATE",cls:"watch",rank:2,boost:12};if(s.includes("HOLD"))return{label:status||"HOLD",cls:"hold",rank:3,boost:4};if(s.includes("WAIT")||s.includes("AVOID")||s.includes("EXPENS"))return{label:status||"WAIT",cls:"red",rank:7,boost:-40};return{label:status||"HOLD",cls:"hold",rank:4,boost:0};}
+function isTesco(t){return ["TSCO","TSCO.L","LON:TSCO","TSCO.GB"].includes(String(t||"").toUpperCase())||cleanTicker(t)==="TSCO";}
+function isGrowthHolding(x){const t=cleanTicker(x.ticker);const txt=`${x.name} ${x.role} ${x.sector}`.toUpperCase();return ["VWRA","VWRP","VWRL","IITU"].includes(t)||txt.includes("GROWTH")||txt.includes("ETF")||txt.includes("VANGUARD")||txt.includes("ISHARES");}
+
+/* ===================== SECTION: DATE + TESco CALCULATIONS ===================== */
+function monthsBetween(start,end){let months=(end.getFullYear()-start.getFullYear())*12;months+=end.getMonth()-start.getMonth();if(end.getDate()>=start.getDate())months+=1;return Math.max(months,0);}
+function getSavingsToDate(){const start=new Date(`${tescoData.startDate}T00:00:00`);const maturity=new Date(`${tescoData.maturityDate}T00:00:00`);const today=new Date();const effective=today<maturity?today:maturity;return monthsBetween(start,effective)*tescoData.monthlySavings;}
+function formatDateUk(d){return d.toLocaleDateString("en-GB",{day:"2-digit",month:"2-digit",year:"numeric"});}
+function updateCountdown(){const start=new Date(`${tescoData.startDate}T00:00:00`);const maturity=new Date(`${tescoData.maturityDate}T00:00:00`);const now=new Date();const total=maturity-start;const done=Math.max(0,Math.min(total,now-start));const left=Math.max(0,maturity-now);const days=Math.ceil(left/(1000*60*60*24));const months=Math.max(0,monthsBetween(now,maturity));const years=left/(1000*60*60*24*365.25);const progress=total>0?(done/total)*100:100;setText("daysLeft",days.toLocaleString("en-GB"));setText("monthsLeft",months.toLocaleString("en-GB"));setText("yearsLeft",years<=0?"0.0":years.toFixed(1));setText("savingProgress",`${Math.min(100,Math.max(0,progress)).toFixed(1)}%`);const bar=document.getElementById("countdownProgressBar");if(bar)bar.style.width=`${Math.max(2,Math.min(100,progress))}%`;setText("countdownNote",days>0?`${days.toLocaleString("en-GB")} days until SAYE maturity on ${formatDateUk(maturity)}. Keep saving, keep planning, don't let Tesco become the final boss.`:"SAYE maturity reached. Execution plan now matters.");}
+function getTescoValue(price=getExpectedPrice()){return tescoData.shares*price;}
+function getPotentialGain(price=getExpectedPrice()){return getTescoValue(price)-tescoData.totalOptionCost;}
+function getAvailableAfterCore(price=getExpectedPrice(),keepCore=getKeepCore()){return Math.max(0,getTescoValue(price)-keepCore);}
+function getIsaCapital(price=getExpectedPrice(),keepCore=getKeepCore()){return Math.min(MAX_ISA_WAVES,getAvailableAfterCore(price,keepCore));}
+function getFlexibleBalance(price=getExpectedPrice(),keepCore=getKeepCore()){return Math.max(0,getTescoValue(price)-keepCore-MAX_ISA_WAVES);}
+
+/* ===================== SECTION: HOLDINGS PARSER ===================== */
+function parseHolding(row){
+  const ticker=getCell(row,["ticker","Ticker","symbol","Symbol"]);const name=getCell(row,["name","Name"])||ticker;
+  const shares=parseNum(getCell(row,["shares","Shares"]));const price=normalisePriceForTicker(ticker,getCell(row,["live_price","live price","price","Price"]));
+  const book=parseNum(getCell(row,["book_cost","book cost"]));const dps=normaliseDpsForTicker(ticker,getCell(row,["annual dividend per share","annual_dividend_per_share","annual_dps","dps"]));
+  const annualSheet=parseNum(getCell(row,["annual_dividend_total","annual dividend total"]));const fairValue=normalisePriceForTicker(ticker,getCell(row,["fair_value","fair value"]));
+  const status=getCell(row,["status","Status"])||"HOLD";const buyStrength=parseNum(getCell(row,["buy_strength","buy strength","score"]));const role=getCell(row,["role","Role"]);const sector=getCell(row,["sector","Sector"]);const account=getCell(row,["account","Account"]);
+  const annualTarget=parseNum(getCell(row,["annual_income_target","annual income target"]));const value=shares*price;const annual=annualSheet>0?annualSheet:shares*dps;const yieldPct=price>0?(dps/price)*100:0;const income500=price>0&&dps>0?(500/price)*dps:0;const discount=fairValue>0?((fairValue-price)/fairValue)*100:0;
+  let score=buyStrength>0?Math.max(0,Math.min(100,buyStrength)):0;if(!score){score=Math.max(0,Math.min(100,(yieldPct*4)+(Math.max(0,discount)*.8)+statusTone(status).boost+35));}
+  return {ticker:cleanTicker(ticker),rawTicker:ticker,name,shares,price,book,dps,annual,value,yieldPct,income500,fairValue,status,score,role,sector,account,annualTarget,discount};
+}
+function activeHoldings(rows){
+  const parsed=(rows||[]).map(parseHolding).filter(x=>x.ticker&&(x.shares>0||x.value>0||x.annual>0));const grouped=new Map();
+  parsed.forEach(item=>{const key=cleanTicker(item.ticker);if(!grouped.has(key)){grouped.set(key,{...item,accounts:new Set(item.account?[item.account]:[]),roles:new Set(item.role?[item.role]:[]),sectors:new Set(item.sector?[item.sector]:[])});return;}const e=grouped.get(key);e.shares+=item.shares||0;e.book+=item.book||0;e.value+=item.value||0;e.annual+=item.annual||0;if(item.account)e.accounts.add(item.account);if(item.role)e.roles.add(item.role);if(item.sector)e.sectors.add(item.sector);if(!e.price&&item.price)e.price=item.price;if(!e.dps&&item.dps)e.dps=item.dps;if(!e.fairValue&&item.fairValue)e.fairValue=item.fairValue;if(item.score>e.score){e.score=item.score;e.status=item.status;}e.annualTarget=Math.max(e.annualTarget||0,item.annualTarget||0);});
+  return Array.from(grouped.values()).map(x=>{const price=x.price||(x.shares>0?x.value/x.shares:0);const dps=x.dps||(x.shares>0?x.annual/x.shares:0);return {...x,price,dps,yieldPct:price>0?(dps/price)*100:0,income500:price>0&&dps>0?(500/price)*dps:0,discount:x.fairValue>0?((x.fairValue-price)/x.fairValue)*100:0,account:Array.from(x.accounts||[]).join(" + ")||x.account,role:Array.from(x.roles||[]).filter(Boolean).join(" + ")||x.role,sector:Array.from(x.sectors||[]).filter(Boolean).join(" + ")||x.sector};});
+}
+
+/* ===================== SECTION: FULL HOLDINGS ALLOCATOR ===================== */
+function defensiveBoost(x){const txt=`${x.name} ${x.role} ${x.sector}`.toUpperCase();let b=0;if(txt.includes("ANCHOR")||txt.includes("CORE"))b+=18;if(txt.includes("ETF")||txt.includes("VANGUARD")||txt.includes("ISHARES"))b+=14;if(txt.includes("FINANCIAL")||txt.includes("INSURANCE")||txt.includes("LEGAL")||txt.includes("HEALTH"))b+=10;if(txt.includes("REIT")||txt.includes("SOLAR")||txt.includes("ENVIRONMENTAL"))b-=3;return b;}
+function gapPriority(x){const target=Number(x.annualTarget||0);if(!target)return 0;return Math.max(0,(target-Number(x.annual||0))/target)*100;}
+function allocatorScore(x){const st=statusTone(x.status);const discount=Math.max(0,x.discount||0);const income=x.income500||0;const y=x.yieldPct||0;const score=x.score||0;const gap=gapPriority(x);const growth=isGrowthHolding(x);if(activeStrategy==="incomeAttack")return income*2.1+y*4+score*.35+gap*.45+st.boost-(growth?30:0);if(activeStrategy==="valueHunter")return discount*2.3+score*.7+y*1.4+st.boost+gap*.2;if(activeStrategy==="defensive")return score*.5+defensiveBoost(x)+y*1.2+st.boost+(growth?8:0)-(y>10?8:0);return score*.65+income*.9+discount*.65+gap*.35+st.boost+(growth?8:0);}
+function getEligibleHoldings(){return (allHoldings||[]).filter(x=>!isTesco(x.ticker)&&x.price>0&&x.dps>0&&x.income500>0).map(x=>({...x,tone:statusTone(x.status),modeScore:allocatorScore(x)})).sort((a,b)=>b.modeScore-a.modeScore||b.score-a.score||b.income500-a.income500);}
+function buildAllocation(isaCapital){const max=getMaxCandidates();const pool=getEligibleHoldings();const activePool=pool.filter(x=>!String(x.status||"").toUpperCase().includes("WAIT")&&!String(x.status||"").toUpperCase().includes("AVOID"));const chosen=(activePool.length?activePool:pool).slice(0,max);const capPerName=isaCapital*.30;let remaining=isaCapital;let sumScore=chosen.reduce((s,x)=>s+Math.max(1,x.modeScore),0)||1;let plan=chosen.map((x,i)=>{let amount=Math.round((Math.max(1,x.modeScore)/sumScore)*isaCapital);amount=Math.min(amount,capPerName);if(i===chosen.length-1)amount=Math.min(amount,remaining);remaining-=amount;return{...x,amount};});if(remaining>0&&plan.length){for(const p of plan){if(remaining<=0)break;const room=Math.max(0,capPerName-p.amount);const add=Math.min(room,remaining);p.amount+=add;remaining-=add;}}return {pool,chosen:plan.filter(p=>p.amount>0),allCandidates:pool.slice(0,8)};}
+
+/* ===================== SECTION: RENDERERS ===================== */
+function renderSnapshot(){const price=getExpectedPrice();const keepCore=getKeepCore();const value=getTescoValue(price);const gain=getPotentialGain(price);const isa=getIsaCapital(price,keepCore);const flex=getFlexibleBalance(price,keepCore);setText("tescoValueHero",money(value));setText("tescoGainHero",money(gain));setText("deployableHero",money(isa));setText("remainingHero",money(flex));setText("tescoLivePrice",`£${money(tescoLivePrice,3)}`);setText("tescoShares",money0(tescoData.shares));setText("tescoOptionPrice",`£${money(tescoData.optionPrice)}`);setText("tescoOptionCost",`£${money(tescoData.totalOptionCost)}`);setText("tescoSavingsToDate",`£${money(getSavingsToDate())}`);setText("tescoValue",`£${money(value)}`);setText("tescoPotentialGain",`£${money(gain)}`);setText("tescoMonthlySavings",`£${money(tescoData.monthlySavings)}`);setText("tescoMaturityDate","01/03/2029");setText("planKeepCore",`£${money0(keepCore)}`);setText("planIsaCapital",`£${money0(isa)}`);setText("planFlexible",`£${money0(flex)}`);const corePct=value>0?(keepCore/value)*100:0;if(corePct>35){setText("planRiskLevel","HIGH");setText("planRiskNote",`Tesco core would be ${corePct.toFixed(1)}% of SAYE value. Consider reducing retained Tesco.`);}else if(corePct>25){setText("planRiskLevel","MEDIUM");setText("planRiskNote",`Tesco core would be ${corePct.toFixed(1)}% of SAYE value. Manage carefully.`);}else{setText("planRiskLevel","CONTROLLED");setText("planRiskNote",`Tesco core is ${corePct.toFixed(1)}% of SAYE value. Sensible cage for the Tesco goblin.`);}}
+function renderWaves(){const price=getExpectedPrice();const keep=getKeepCore();const isa=getIsaCapital(price,keep);const w1=Math.min(20000,isa);const w2=Math.min(20000,Math.max(0,isa-w1));const w3=Math.min(20000,Math.max(0,isa-w1-w2));setText("waveOne",`£${money(w1)}`);setText("waveTwo",`£${money(w2)}`);setText("waveThree",`£${money(w3)}`);const pct=(isa/MAX_ISA_WAVES)*100;const bar=document.getElementById("waveFillBar");if(bar)bar.style.width=`${Math.max(2,Math.min(100,pct))}%`;setText("waveStatusBadge",isa>=MAX_ISA_WAVES?"FULL 3 WAVES":"PARTIAL WAVES");setText("waveNote",isa>=MAX_ISA_WAVES?"Full £60,000 ISA wave plan is funded after keeping Tesco core.":`Current simulation funds £${money0(isa)} of the £60,000 ISA wave plan after keeping Tesco core.`);return{isaCapital:isa};}
+function renderScenarios(){const base=getExpectedPrice();const keep=getKeepCore();const grid=document.getElementById("scenarioGrid");const prices=[3.50,4.00,4.50,base,5.50].filter((v,i,a)=>a.findIndex(x=>Math.abs(x-v)<.005)===i).sort((a,b)=>a-b);grid.innerHTML=prices.map(price=>{const value=getTescoValue(price);const gain=getPotentialGain(price);const isa=getIsaCapital(price,keep);const flex=getFlexibleBalance(price,keep);const best=Math.abs(price-base)<.005;return `<div class="scenario-card ${best?"best":""}"><div class="scenario-price">£${money(price,2)}</div><div class="scenario-value">£${money0(value)}</div><div class="scenario-row"><span>Gain</span><strong class="${gain>=0?"good":"risk"}">£${money0(gain)}</strong></div><div class="scenario-row"><span>Keep core</span><strong>£${money0(keep)}</strong></div><div class="scenario-row"><span>ISA waves</span><strong>£${money0(isa)}</strong></div><div class="scenario-row"><span>Flex left</span><strong>£${money0(flex)}</strong></div></div>`;}).join("");}
+function renderAllocator(isaCapital){const result=buildAllocation(isaCapital);const plan=result.chosen;const annual=plan.reduce((s,p)=>s+(p.price>0&&p.dps>0?(p.amount/p.price)*p.dps:0),0);const monthly=annual/12;const totalMonthly=currentMonthlyIncome+monthly;const progress=Math.min(100,(totalMonthly/TARGET_MONTHLY)*100);const weightedYield=isaCapital>0?(annual/isaCapital)*100:0;setText("eligibleCount",result.pool.length);setText("weightedYield",formatPct(weightedYield));setText("projectedMonthlyTotal",`£${money(totalMonthly)}`);setText("projectedMonthlyTotalHero",`£${money0(totalMonthly)}/m`);setText("missionProgressText",`${progress.toFixed(1)}%`);setText("missionHeroMeta",`${progress.toFixed(1)}% to £2,000/month after Tesco ISA waves`);setText("missionTitle",monthly>0?`Tesco waves add £${money(monthly)}/month`:"Waiting for live Holdings candidates");const bar=document.getElementById("missionBar");if(bar)bar.style.width=`${Math.max(2,progress)}%`;const hbar=document.getElementById("missionHeroBar");if(hbar)hbar.style.width=`${Math.max(2,progress)}%`;setText("waveIncomeAdded",`£${money(annual)}/y`);setText("waveIncomeMonthly",`£${money(monthly)}/m added`);const label={balanced:"BALANCED",incomeAttack:"INCOME ATTACK",valueHunter:"VALUE HUNTER",defensive:"DEFENSIVE"}[activeStrategy]||"BALANCED";setText("strategyBadge",label);setText("allocationStrategyLabel",label);const grid=document.getElementById("allocationGrid");grid.innerHTML=plan.map(p=>{const annualIncome=p.price>0&&p.dps>0?(p.amount/p.price)*p.dps:0;const pct=isaCapital>0?(p.amount/isaCapital)*100:0;const t=statusTone(p.status);return `<div class="allocation-card"><div class="allocation-top"><div><div class="allocation-name">${p.name}</div><div class="subv">${p.ticker} • ${p.role||p.sector||"Holding"}</div></div><span class="badge ${t.cls}">${t.label}</span></div><div class="grid two"><div class="mini"><div class="k">Capital</div><div class="v">£${money0(p.amount)}</div></div><div class="mini"><div class="k">Income</div><div class="v good">£${money0(annualIncome)}/y</div></div></div><div class="scenario-row"><span>Yield</span><strong>${formatPct(p.yieldPct)}</strong></div><div class="scenario-row"><span>Score</span><strong>${Math.round(p.score)}</strong></div><div class="scenario-row"><span>Fair value gap</span><strong>${p.fairValue>0?(p.discount>=0?"+":"")+formatPct(p.discount):"--"}</strong></div><div class="allocation-bar"><div style="width:${Math.max(2,pct)}%"></div></div></div>`;}).join("")||`<div class="warning-box">No eligible Holdings candidates found. Check live_price, annual DPS, status and buy_strength in the Holdings tab.</div>`;document.getElementById("candidateList").innerHTML=result.allCandidates.map((c,i)=>{const t=statusTone(c.status);return `<div class="candidate-card"><div class="candidate-top"><div><div class="candidate-name">#${i+1} ${c.name}</div><div class="subv">${c.ticker} • £${c.income500.toFixed(2)}/yr from £500 • ${formatPct(c.yieldPct)}</div></div><div class="score-pill">${Math.round(c.modeScore)}</div></div><span class="badge ${t.cls}">${t.label}</span> <span class="badge cyan">Buy strength ${Math.round(c.score)}</span></div>`;}).join("")||`<div class="warning-box">No candidates loaded yet.</div>`;const note=document.getElementById("strategyNote");note.innerHTML=`<strong>${label}:</strong> scanning every eligible non-Tesco holding from the Holdings tab. WAIT/AVOID shares are ranked for visibility but excluded from allocation unless no better active candidates exist.`;return{annual,monthly,weightedYield};}
+function updateSimulator(){updateCountdown();renderSnapshot();const waves=renderWaves();renderScenarios();const alloc=renderAllocator(waves.isaCapital);logLines([`Tesco price used: £${money(getExpectedPrice(),3)} | SAYE value: £${money(getTescoValue())} | Option cost: £${money(tescoData.totalOptionCost)}`,`Tesco core kept: £${money(getKeepCore())} | ISA wave capital: £${money(waves.isaCapital)} | Flexible balance: £${money(getFlexibleBalance())}`,`Holdings scanner: ${getEligibleHoldings().length} eligible non-Tesco income candidates from Holdings tab.`,`${activeStrategy} mode | weighted deployment yield ${formatPct(alloc.weightedYield)} | income created £${money(alloc.annual)}/year / £${money(alloc.monthly)}/month.`,`Projected monthly income: £${money(currentMonthlyIncome+alloc.monthly)} against £2,000/month mission.`]);}
+
+/* ===================== SECTION: EVENTS ===================== */
+function setStrategy(strategy){activeStrategy=strategy;document.querySelectorAll(".strategy-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.strategy===strategy));updateSimulator();}
+document.querySelectorAll(".strategy-btn").forEach(btn=>btn.addEventListener("click",()=>setStrategy(btn.dataset.strategy)));
+["expectedPrice","keepCore","maxCandidates"].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener("input",()=>{if(id==="expectedPrice")el.dataset.manual="true";updateSimulator();});el.addEventListener("change",updateSimulator);}});
+
+/* ===================== SECTION: LIVE HOLDINGS LOAD ===================== */
+async function loadHoldings(){try{setText("liveBadge","LOADING HOLDINGS");const res=await fetch(HOLDINGS_URL,{cache:"no-store"});if(!res.ok)throw new Error(`AuroraMaster fetch ${res.status}`);const master=await res.json();const data=Array.isArray(master)?master:(Array.isArray(master?.Holdings)?master.Holdings:[]);allHoldings=activeHoldings(data);const tesco=allHoldings.find(x=>isTesco(x.ticker)||isTesco(x.rawTicker));if(tesco&&tesco.price>0){tescoLivePrice=tesco.price;const expected=document.getElementById("expectedPrice");if(expected&&expected.dataset.manual!=="true")expected.value=tescoLivePrice.toFixed(3);}const annualTotal=allHoldings.reduce((s,x)=>s+(isTesco(x.ticker)?0:Number(x.annual||0)),0);if(annualTotal>0)currentMonthlyIncome=annualTotal/12;setText("liveBadge","LIVE HOLDINGS");updateSimulator();}catch(err){console.error(err);setText("liveBadge","FALLBACK MODE");updateSimulator();}}
+updateSimulator();loadHoldings();setInterval(loadHoldings,60000);
+</script>
+</body>
+</html>
