@@ -13,7 +13,8 @@
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
-<title>Aurora City FC — Transfer Centre M5</title>
+<title>Aurora City FC — Transfer Centre M6</title>
+<!-- Build: Transfer Centre M6 ISA Execution Controls • 25 Jul 2026 -->
 <!-- Build: Aurora Motion Attention System • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Transfer Centre Clean Workflow • 24 Jul 2026 -->
@@ -5692,6 +5693,20 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 @media(max-width:1100px){.m5-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.m5-grid{grid-template-columns:1fr}}@media(max-width:700px){.m5-kpis,.m5-builder-controls,.m5-impact-grid,.m5-scout-grid{grid-template-columns:1fr}.m5-command-head,.m5-panel-head{flex-direction:column}.m5-platform-row{grid-template-columns:1fr}.m5-platform-chip{justify-self:start}}
 </style>
 
+
+<style id="aurora-m6-isa-execution-styles">
+#m5-transfer-command .m5-builder-controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+#m5-transfer-command .m5-impact-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.m5-execution-lock{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:11px 12px;border:1px solid rgba(245,158,11,.28);border-radius:15px;background:rgba(120,53,15,.13)}
+.m5-execution-lock strong{display:block;color:#fde68a;font-size:13px}.m5-execution-lock span{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.35}
+#m5-transfer-command.is-payday-locked{border-color:rgba(52,211,153,.45);box-shadow:0 0 0 2px rgba(52,211,153,.05),0 20px 60px rgba(0,0,0,.34)}
+#m5-transfer-command.is-payday-locked .m5-builder-controls input,
+#m5-transfer-command.is-payday-locked .m5-builder-controls select{opacity:.62;pointer-events:none}
+#m5IsaImpactCard.good strong{color:#86efac}#m5IsaImpactCard.warn strong{color:#fde68a}
+@media(max-width:1050px){#m5-transfer-command .m5-builder-controls{grid-template-columns:repeat(2,minmax(0,1fr))}#m5-transfer-command .m5-impact-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:620px){#m5-transfer-command .m5-builder-controls,#m5-transfer-command .m5-impact-grid{grid-template-columns:1fr}.m5-execution-lock{align-items:flex-start;flex-direction:column}}
+</style>
+
 </head>
 <body>
 <div aria-label="Open navigation" class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" role="button" tabindex="0">
@@ -5826,7 +5841,7 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
   <div class="m5-kpis">
     <article class="m5-kpi good"><small>Transfer budget</small><strong id="m5Budget">£3,500.00</strong><span id="m5BudgetNote">Synced to the active deal sheet.</span></article>
     <article class="m5-kpi good"><small>Projected annual income</small><strong id="m5Income">£0.00</strong><span id="m5Monthly">£0.00 per month from planned deals.</span></article>
-    <article class="m5-kpi"><small>ISA allowance remaining</small><strong id="m5IsaRemaining">£20,000.00</strong><span>Planning figure only — update it when contributions are made.</span></article>
+    <article class="m5-kpi"><small>ISA allowance remaining</small><strong id="m5IsaRemaining">£15,698.08</strong><span id="m5IsaAllowanceNote">£4,301.92 used across IG and Trading 212.</span></article>
     <article class="m5-kpi warn"><small>Next payday</small><strong id="m5Payday">—</strong><span id="m5PaydayNote">Set in Exit & Funding Tracker.</span></article>
     <article class="m5-kpi lead"><small>Top recommended signing</small><strong id="m5Lead">Loading…</strong><span id="m5LeadNote">Waiting for the live transfer board.</span></article>
   </div>
@@ -5835,7 +5850,8 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
       <div class="m5-panel-head"><div><h3>Live Deal Builder</h3><p>Change the planning inputs here and Aurora updates the transfer impact instantly.</p></div><button class="m5-action primary" id="m5AutoAllocate" type="button">Auto-allocate best route</button></div>
       <div class="m5-builder-controls">
         <label class="m5-field"><span>Working budget (£)</span><input id="m5BuilderBudget" type="number" min="0" step="25" value="3500"></label>
-        <label class="m5-field"><span>ISA used this tax year (£)</span><input id="m5IsaUsed" type="number" min="0" max="20000" step="100" value="0"></label>
+        <label class="m5-field"><span>ISA used this tax year (£)</span><input id="m5IsaUsed" type="number" min="0" max="20000" step="0.01" value="4301.92"></label>
+        <label class="m5-field"><span>Funding source</span><select id="m5FundingSource"><option value="new">New ISA subscription</option><option value="existing">Existing ISA cash</option><option value="dividend">Dividend income</option><option value="sale">Sale proceeds / ETF pot</option></select></label>
         <label class="m5-field"><span>Allocation route</span><select id="m5Route"><option value="balanced">Balanced route</option><option value="maximum">Maximum income</option></select></label>
       </div>
       <div class="m5-impact-grid">
@@ -5843,6 +5859,11 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
         <div class="m5-impact good"><small>Cash remaining</small><strong id="m5Remaining">£3,500.00</strong></div>
         <div class="m5-impact good"><small>Annual income added</small><strong id="m5AddedIncome">£0.00</strong></div>
         <div class="m5-impact"><small>Estimated yield</small><strong id="m5Yield">0.00%</strong></div>
+        <div class="m5-impact" id="m5IsaImpactCard"><small>ISA allowance used by deal</small><strong id="m5IsaImpact">£0.00</strong></div>
+      </div>
+      <div class="m5-execution-lock">
+        <div><strong id="m5LockTitle">Deal sheet editable</strong><span id="m5LockNote">Review allocations, funding source and ISA impact before locking payday execution.</span></div>
+        <button class="m5-action primary" id="m5PaydayLock" type="button">Lock payday plan</button>
       </div>
       <div class="m5-news-window" style="margin-top:10px"><div class="m5-news-track" id="m5NewsTrack"><div class="m5-news-copy"><span class="m5-news-item"><i class="m5-news-dot"></i><b>Aurora</b> building live transfer intelligence…</span></div></div></div>
     </article>
@@ -9636,10 +9657,16 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     const income=currentIncome();
     const remaining=Math.max(0,budget-allocated);
     const used=Math.min(20000,Math.max(0,num(q('m5IsaUsed')?.value)));
+    const source=q('m5FundingSource')?.value||'new';
+    const allowanceRemaining=Math.max(0,20000-used);
+    const isaImpact=source==='new'?Math.min(allocated,allowanceRemaining):0;
     const y=allocated?income/allocated*100:0;
     text(q('m5Budget'),gbp(budget)); text(q('m5BuilderBudget'),q('m5BuilderBudget')?.value);
     text(q('m5Income'),gbp(income)); text(q('m5Monthly'),`${gbp(income/12)} per month from planned deals.`);
-    text(q('m5IsaRemaining'),gbp(20000-used)); text(q('m5Allocated'),gbp(allocated)); text(q('m5Remaining'),gbp(remaining)); text(q('m5AddedIncome'),gbp(income)); text(q('m5Yield'),`${y.toFixed(2)}%`);
+    text(q('m5IsaRemaining'),gbp(allowanceRemaining)); text(q('m5IsaAllowanceNote'),`${gbp(used)} used across IG and Trading 212.`);
+    text(q('m5IsaImpact'),gbp(isaImpact));
+    const impactCard=q('m5IsaImpactCard');if(impactCard){impactCard.classList.toggle('good',isaImpact===0);impactCard.classList.toggle('warn',isaImpact>0);}
+    text(q('m5Allocated'),gbp(allocated)); text(q('m5Remaining'),gbp(remaining)); text(q('m5AddedIncome'),gbp(income)); text(q('m5Yield'),`${y.toFixed(2)}%`);
     const pb=q('nextPaydayInput')?.value; if(pb){const d=new Date(pb+'T12:00:00');const days=Math.ceil((d-Date.now())/86400000);text(q('m5Payday'),days<=0?'Payday now':`${days} day${days===1?'':'s'}`);text(q('m5PaydayNote'),d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}));}
   }
   function extractTargets(){
@@ -9679,8 +9706,34 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     const copy=`<div class="m5-news-copy">${items.map(x=>`<span class="m5-news-item"><i class="m5-news-dot"></i>${x}</span>`).join('')}</div>`;q('m5NewsTrack').innerHTML=copy+copy;
   }
   function refresh(){updateCore();renderScouts();renderWatch();renderHistory();renderNews();}
+  function saveM6Settings(){
+    try{
+      localStorage.setItem('auroraIsaUsedCurrentTaxYear',q('m5IsaUsed')?.value||'4301.92');
+      localStorage.setItem('auroraTransferFundingSource',q('m5FundingSource')?.value||'new');
+      localStorage.setItem('auroraTransferPaydayLocked',q('m5-transfer-command')?.classList.contains('is-payday-locked')?'1':'0');
+    }catch(_){}
+  }
+  function setPaydayLock(locked){
+    const shell=q('m5-transfer-command'),btn=q('m5PaydayLock');
+    if(!shell||!btn)return;
+    shell.classList.toggle('is-payday-locked',locked);
+    text(q('m5LockTitle'),locked?'Payday plan locked':'Deal sheet editable');
+    text(q('m5LockNote'),locked?'Allocations and funding source are frozen for execution. Unlock before making changes.':'Review allocations, funding source and ISA impact before locking payday execution.');
+    btn.textContent=locked?'Unlock payday plan':'Lock payday plan';
+    [q('m5AutoAllocate'),...document.querySelectorAll('.allocation-input,.deal-exclude-btn')].forEach(el=>{if(el)el.disabled=locked;});
+    saveM6Settings();
+  }
+  try{
+    const savedUsed=localStorage.getItem('auroraIsaUsedCurrentTaxYear');
+    if(savedUsed!==null&&q('m5IsaUsed'))q('m5IsaUsed').value=savedUsed;
+    const savedSource=localStorage.getItem('auroraTransferFundingSource');
+    if(savedSource&&q('m5FundingSource'))q('m5FundingSource').value=savedSource;
+    setPaydayLock(localStorage.getItem('auroraTransferPaydayLocked')==='1');
+  }catch(_){}
   q('m5BuilderBudget')?.addEventListener('input',e=>{if(q('transferBudgetInput')){q('transferBudgetInput').value=e.target.value;q('transferBudgetInput').dispatchEvent(new Event('input',{bubbles:true}));}refresh();});
-  q('m5IsaUsed')?.addEventListener('input',refresh);
+  q('m5IsaUsed')?.addEventListener('input',()=>{saveM6Settings();refresh();});
+  q('m5FundingSource')?.addEventListener('change',()=>{saveM6Settings();refresh();});
+  q('m5PaydayLock')?.addEventListener('click',()=>setPaydayLock(!q('m5-transfer-command')?.classList.contains('is-payday-locked')));
   q('m5Route')?.addEventListener('change',refresh);
   q('m5AutoAllocate')?.addEventListener('click',()=>{const max=q('m5Route')?.value==='maximum';const btn=max?q('applyBestReturn'):q('applyBalancedRoute');if(btn&&!btn.disabled){btn.click();}else{q('resetTransferPlan')?.click();}setTimeout(refresh,250);});
   q('m5Refresh')?.addEventListener('click',refresh);
