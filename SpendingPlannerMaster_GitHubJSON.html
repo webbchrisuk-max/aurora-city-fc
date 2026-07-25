@@ -1,0 +1,3926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Aurora Wealth Command Centre</title>
+
+<style>
+ :root {
+  --bg: #071018;
+  --bg2: #0c1624;
+  --panel: rgba(15, 27, 43, 0.88);
+  --panel-2: rgba(10, 20, 34, 0.9);
+  --line: rgba(101, 225, 255, 0.16);
+  --cyan: #62f3ff;
+  --cyan-2: #1ad1ff;
+  --blue: #6ea8ff;
+  --green: #50ff8f;
+  --amber: #ffc857;
+  --red: #ff6b8a;
+  --text: #e9f4ff;
+  --muted: #96abc5;
+  --glow: 0 0 22px rgba(26, 209, 255, 0.22);
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ===================== COLLAPSIBLE ===================== */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.collapsible.open {
+  max-height: 2000px;
+}
+
+html, body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top right, rgba(26, 209, 255, 0.14), transparent 28%),
+    radial-gradient(circle at top left, rgba(110, 168, 255, 0.12), transparent 25%),
+    linear-gradient(180deg, var(--bg), #050b13 100%);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+body {
+  padding: 18px 14px 42px;
+  overflow-x: hidden;
+}
+
+.wrap {
+  max-width: 1380px;
+  margin: 0 auto;
+}
+
+.hero {
+  background: linear-gradient(145deg, rgba(12, 22, 36, 0.95), rgba(6, 13, 23, 0.95));
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: var(--glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(98,243,255,0.08), transparent);
+  transform: translateX(-100%);
+  animation: scan 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  to { transform: translateX(100%); }
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: 0.3px;
+}
+
+h2, h3 {
+  margin: 0 0 10px;
+}
+
+.sub {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.section {
+  margin-top: 14px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+.card.good {
+  border-color: rgba(80,255,143,0.6);
+  box-shadow: 0 0 18px rgba(80,255,143,0.25);
+}
+
+.card.watch {
+  border-color: rgba(255,200,87,0.6);
+  box-shadow: 0 0 18px rgba(255,200,87,0.25);
+}
+
+.card.risk {
+  border-color: rgba(255,107,138,0.6);
+  box-shadow: 0 0 18px rgba(255,107,138,0.25);
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.hero-grid {
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  margin-top: 14px;
+}
+
+.two-grid {
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+
+.three-grid {
+  grid-template-columns: repeat(3, minmax(0,1fr));
+}
+
+.four-grid {
+  grid-template-columns: repeat(4, minmax(0,1fr));
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.stat {
+  margin-top: 6px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.stat.small {
+  font-size: 22px;
+}
+
+.mini {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.mini .k {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.mini .v {
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.subv {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.input-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.input-box label {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.input-box input,
+.input-box select {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.quick-btn,
+.delete-btn,
+.add-btn {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quick-btn:hover,
+.add-btn:hover {
+  border-color: rgba(98,243,255,0.45);
+  color: var(--cyan);
+}
+
+.delete-btn {
+  background: rgba(255,107,138,0.10);
+  border-color: rgba(255,107,138,0.22);
+  color: var(--red);
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 900px;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  vertical-align: top;
+}
+
+th {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.table-input,
+.table-select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+  display: block;
+}
+
+.table-input[type="date"],
+input[type="date"].table-input,
+input[type="date"] {
+  width: 100%;
+  max-width: 100%;
+  min-width: 120px;
+  font-size: 13px;
+  padding: 8px 6px;
+  box-sizing: border-box;
+}
+
+.check-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+}
+
+.category-card {
+  background: linear-gradient(145deg, rgba(12, 24, 39, 0.96), rgba(7, 15, 25, 0.96));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.category-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.good { color: var(--green); }
+.watch { color: var(--amber); }
+.risk { color: var(--red); }
+.neutral { color: var(--muted); }
+
+.next-bill-box {
+  background: linear-gradient(145deg, rgba(12, 24, 39, 0.96), rgba(7, 15, 25, 0.96));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.next-bill-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.footer {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.action-box {
+  background: linear-gradient(145deg, rgba(12, 24, 39, 0.96), rgba(7, 15, 25, 0.96));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.grow-meter {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-top: 10px;
+}
+
+.grow-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, rgba(98,243,255,0.85), rgba(80,255,143,0.85));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.bill-strip-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bill-strip-total {
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+#scheduledBillsBody td:nth-child(1),
+#scheduledBillsBody td:nth-child(1) input,
+thead th:nth-child(1) { min-width: 150px; }
+
+#scheduledBillsBody td:nth-child(2),
+#scheduledBillsBody td:nth-child(2) input,
+thead th:nth-child(2) { min-width: 140px; }
+
+#scheduledBillsBody td:nth-child(3),
+#scheduledBillsBody td:nth-child(3) input,
+thead th:nth-child(3) { min-width: 60px; max-width: 80px; }
+
+#scheduledBillsBody td:nth-child(4),
+thead th:nth-child(4) { min-width: 85px; }
+
+#scheduledBillsBody td:nth-child(5),
+#scheduledBillsBody td:nth-child(5) input,
+thead th:nth-child(5) { min-width: 60px; max-width: 80px; }
+
+#scheduledBillsBody td:nth-child(6),
+thead th:nth-child(6) { min-width: 90px; }
+
+#scheduledBillsBody td:nth-child(7),
+#scheduledBillsBody td:nth-child(7) input,
+thead th:nth-child(7) { min-width: 120px; }
+
+#scheduledBillsBody td:nth-child(8),
+#scheduledBillsBody td:nth-child(8) input,
+thead th:nth-child(8) { min-width: 185px; }
+
+#scheduledBillsBody td:nth-child(9),
+thead th:nth-child(9) { min-width: 70px; }
+
+#scheduledBillsBody input[data-field="amount"],
+#scheduledBillsBody input[data-field="actualPaid"] {
+  padding: 8px 6px;
+  text-align: left;
+}
+
+#scheduledBillsBody input[data-field="category"],
+#scheduledBillsBody input[data-field="notes"] {
+  width: 100%;
+  min-width: 0;
+}
+
+#scheduledBillsBody input[data-field="amount"],
+#scheduledBillsBody input[data-field="actualPaid"],
+#scheduledBillsBody input[type="date"] {
+  font-size: 12px;
+}
+
+#recurringCostsBody input[data-field="amount"] {
+  max-width: 90px;
+  padding: 6px 6px;
+  font-size: 13px;
+}
+
+.recurring-yearly {
+  font-size: 13px;
+  display: inline-block;
+  min-width: 70px;
+}
+
+#yearlyRecurringCostsBody input[data-field="amount"] {
+  max-width: 100px;
+  padding: 6px 6px;
+  font-size: 13px;
+}
+
+#potTrendChart {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
+  height: 70px !important;
+}
+
+.hero-grid .card canvas {
+  max-width: 100%;
+}
+
+.hero-grid .card {
+  min-width: 0;
+}
+
+@media (max-width: 920px) {
+  .hero-grid,
+  .two-grid,
+  .three-grid,
+  .four-grid {
+    grid-template-columns: 1fr;
+  }
+
+  h1 { font-size: 24px; }
+  .stat { font-size: 24px; }
+
+  table {
+    min-width: 900px;
+  }
+
+  .table-input,
+  .table-select,
+  .input-box input,
+  .input-box select {
+    font-size: 16px;
+  }
+
+  .table-input[type="date"],
+  input[type="date"].table-input,
+  input[type="date"] {
+    min-width: 130px;
+  }
+}
+
+/* ===================== SECTION: AURORA WEALTH COMMAND UPGRADE ===================== */
+:root {
+  --purple:#b88cff;
+  --gold:#ffd166;
+}
+
+.hero {
+  background:
+    radial-gradient(circle at 14% 0%, rgba(98,243,255,.18), transparent 34%),
+    radial-gradient(circle at 90% 0%, rgba(80,255,143,.14), transparent 31%),
+    linear-gradient(145deg, rgba(8,18,31,.98), rgba(4,10,19,.98));
+}
+
+.hero h1 {
+  font-size: 31px;
+  font-weight: 950;
+  letter-spacing: .4px;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.card:after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, transparent, rgba(98,243,255,.035), transparent);
+  pointer-events:none;
+}
+
+.command-card {
+  background:
+    radial-gradient(circle at top right, rgba(98,243,255,.13), transparent 42%),
+    linear-gradient(145deg, rgba(12,24,39,.98), rgba(6,14,25,.98));
+  border:1px solid rgba(101,225,255,.22);
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 0 24px rgba(26,209,255,.13);
+}
+
+.command-title {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.command-title h2 {
+  margin:0;
+  font-size:18px;
+}
+
+.command-badge {
+  border:1px solid currentColor;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:.6px;
+}
+
+.wealth-command-grid {
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:12px;
+  margin-top:14px;
+}
+
+.wealth-score-ring {
+  min-height:210px;
+  display:grid;
+  place-items:center;
+  border-radius:20px;
+  background:
+    radial-gradient(circle, rgba(80,255,143,.16), transparent 54%),
+    rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.score-number {
+  font-size:54px;
+  font-weight:1000;
+  line-height:.95;
+  color:var(--green);
+  text-shadow:0 0 22px rgba(80,255,143,.25);
+  text-align:center;
+}
+
+.score-label {
+  margin-top:8px;
+  color:var(--muted);
+  text-transform:uppercase;
+  font-size:11px;
+  letter-spacing:.9px;
+  text-align:center;
+}
+
+.command-metric-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.command-metric {
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:15px;
+  padding:12px;
+}
+
+.command-metric .k {
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+
+.command-metric .v {
+  margin-top:5px;
+  font-size:24px;
+  font-weight:950;
+}
+
+.command-metric.good .v { color:var(--green); }
+.command-metric.watch .v { color:var(--amber); }
+.command-metric.risk .v { color:var(--red); }
+.command-metric.cyan .v { color:var(--cyan); }
+
+.radar-grid {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+
+.pot-radar-card {
+  background:linear-gradient(145deg,rgba(12,24,39,.98),rgba(7,15,25,.98));
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:17px;
+  padding:12px;
+}
+
+.pot-radar-card.good {
+  border-color:rgba(80,255,143,.44);
+  box-shadow:0 0 16px rgba(80,255,143,.13);
+}
+
+.pot-radar-card.watch {
+  border-color:rgba(255,200,87,.44);
+  box-shadow:0 0 16px rgba(255,200,87,.12);
+}
+
+.pot-radar-card.risk {
+  border-color:rgba(255,107,138,.44);
+  box-shadow:0 0 16px rgba(255,107,138,.12);
+}
+
+.pot-radar-top {
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+}
+
+.pot-name {
+  font-size:13px;
+  font-weight:950;
+}
+
+.pot-status-dot {
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--muted);
+  box-shadow:0 0 12px rgba(255,255,255,.2);
+}
+
+.pot-radar-card.good .pot-status-dot { background:var(--green); box-shadow:0 0 14px rgba(80,255,143,.55); }
+.pot-radar-card.watch .pot-status-dot { background:var(--amber); box-shadow:0 0 14px rgba(255,200,87,.5); }
+.pot-radar-card.risk .pot-status-dot { background:var(--red); box-shadow:0 0 14px rgba(255,107,138,.5); }
+
+.progress-bar {
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+  margin-top:9px;
+  border:1px solid rgba(255,255,255,.05);
+}
+
+.progress-fill {
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--cyan-2),var(--green));
+  box-shadow:0 0 16px rgba(80,255,143,.2);
+}
+
+.payday-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.payday-results {
+  display:grid;
+  gap:8px;
+}
+
+.payday-row {
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:center;
+  padding:9px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.035);
+}
+
+.payday-row strong {
+  font-size:13px;
+}
+
+.payday-row span {
+  color:var(--cyan);
+  font-weight:950;
+}
+
+.ai-command-text {
+  color:#cce4f8;
+  line-height:1.58;
+  font-size:13px;
+}
+
+.ai-command-text b {
+  color:var(--cyan);
+}
+
+.flight-row {
+  display:grid;
+  grid-template-columns:90px 1fr 76px;
+  gap:8px;
+  align-items:center;
+  margin:9px 0;
+}
+
+.flight-name {
+  font-size:12px;
+  font-weight:950;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.flight-value {
+  text-align:right;
+  color:var(--muted);
+  font-weight:900;
+  font-size:12px;
+}
+
+@media (max-width: 1024px) {
+  .wealth-command-grid,
+  .payday-grid {
+    grid-template-columns:1fr;
+  }
+
+  .radar-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .radar-grid,
+  .command-metric-grid {
+    grid-template-columns:1fr;
+  }
+
+  .hero h1 {
+    font-size:24px;
+  }
+}
+
+.hq-home-btn{
+  position:fixed;
+  bottom:14px;
+  left:14px;
+  z-index:9999;
+  padding:10px 14px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:900;
+  color:#58f4ff;
+  border:1px solid rgba(88,244,255,.25);
+  background:rgba(13,27,45,.92);
+  backdrop-filter:blur(12px);
+  box-shadow:0 0 18px rgba(88,244,255,.12);
+}
+
+
+
+/* ===================== SECTION: AURORA HQ STYLE TRANSFER SAFE PATCH ===================== */
+:root{
+  --line2:rgba(255,255,255,.09);
+  --purple:#b985ff;
+  --pink:#ff6bd5;
+  --shadow:0 22px 60px rgba(0,0,0,.35);
+}
+body{
+  padding:14px;
+  background:
+    radial-gradient(circle at 12% 5%,rgba(185,133,255,.22),transparent 28%),
+    radial-gradient(circle at 82% 12%,rgba(88,244,255,.18),transparent 30%),
+    radial-gradient(circle at 50% 100%,rgba(89,255,154,.08),transparent 35%),
+    linear-gradient(180deg,#020611,#07101e 48%,#02050c);
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent 85%);
+}
+.wrap{position:relative;z-index:1;max-width:1500px;display:grid;gap:14px;}
+.hero{
+  isolation:isolate;
+  border-radius:30px;
+  padding:22px;
+  border:1px solid rgba(88,244,255,.20);
+  box-shadow:0 0 38px rgba(88,244,255,.13),0 24px 70px rgba(0,0,0,.40);
+  background:
+    radial-gradient(circle at 18% 16%,rgba(185,133,255,.20),transparent 28%),
+    radial-gradient(circle at 78% 18%,rgba(88,244,255,.20),transparent 30%),
+    radial-gradient(circle at 56% 88%,rgba(89,255,154,.13),transparent 34%),
+    linear-gradient(135deg,rgba(10,24,43,.98),rgba(4,8,18,.96));
+}
+.hero:before{
+  inset:-18%;
+  background:
+    radial-gradient(circle at 18% 16%,rgba(185,133,255,.20),transparent 28%),
+    radial-gradient(circle at 78% 18%,rgba(88,244,255,.20),transparent 30%),
+    radial-gradient(circle at 56% 88%,rgba(89,255,154,.13),transparent 34%);
+  animation:heroAmbientGlow 11s ease-in-out infinite;
+  transform:none;
+  opacity:.88;
+  z-index:0;
+}
+.hero:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.035),transparent 34%,rgba(88,244,255,.035));
+  pointer-events:none;
+  z-index:0;
+}
+.hero > *{position:relative;z-index:1;}
+@keyframes heroAmbientGlow{
+  0%,100%{filter:hue-rotate(0deg) blur(0px);opacity:.70;transform:scale(1)}
+  50%{filter:hue-rotate(14deg) blur(1px);opacity:1;transform:scale(1.035)}
+}
+.aurora-title{
+  width:max-content;
+  max-width:100%;
+  margin:0;
+  font-size:clamp(34px,4.4vw,66px)!important;
+  letter-spacing:-1.8px!important;
+  line-height:.92!important;
+  font-weight:1000!important;
+  background:linear-gradient(100deg,var(--cyan),var(--green),var(--purple),var(--cyan));
+  background-size:260% 260%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 0 26px rgba(88,244,255,.12);
+  animation:auroraTitleFlow 9s ease-in-out infinite, auroraTitleBreath 5.5s ease-in-out infinite;
+}
+@keyframes auroraTitleFlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes auroraTitleBreath{0%,100%{filter:drop-shadow(0 0 10px rgba(88,244,255,.18))}50%{filter:drop-shadow(0 0 22px rgba(89,255,154,.28))}}
+.hero .sub{max-width:760px;font-size:14px;line-height:1.45;margin-top:12px;color:var(--muted);}
+.card,.command-card,.mini,.input-box,.next-bill-box,.action-box,.category-card,.pot-radar-card,.command-metric{
+  backdrop-filter:blur(18px);
+}
+.card{
+  background:linear-gradient(145deg,rgba(13,27,45,.88),rgba(5,12,24,.88));
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:var(--shadow);
+}
+.command-card{
+  background:
+    radial-gradient(circle at 92% 0%,rgba(89,255,154,.12),transparent 34%),
+    linear-gradient(145deg,rgba(11,24,39,.96),rgba(5,12,22,.98));
+  border-color:rgba(89,255,154,.24);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 10px 24px rgba(0,0,0,.18);
+}
+.section h2,.command-title h2{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  letter-spacing:-.3px;
+}
+.section h2:before,.command-title h2:before{
+  content:"";
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 16px var(--cyan);
+  flex:0 0 auto;
+}
+.stat,.value,.score-number,.command-metric .v{
+  font-weight:950;
+  letter-spacing:-.5px;
+}
+.quick-btn,.add-btn,.delete-btn{
+  transition:.18s ease;
+  border-radius:14px;
+  font-weight:950;
+}
+.quick-btn:hover,.add-btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(88,244,255,.38);
+  box-shadow:0 0 18px rgba(88,244,255,.12);
+}
+.hq-home-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  text-decoration:none!important;
+  color:#58f4ff!important;
+  box-shadow:0 0 18px rgba(88,244,255,.12);
+}
+@media(max-width:640px){
+  body{padding:8px 8px 72px!important;}
+  .hero,.card,.command-card{border-radius:16px!important;padding:10px!important;}
+  .aurora-title{width:auto;font-size:clamp(34px,11vw,52px)!important;letter-spacing:-1.4px!important;line-height:.92!important;}
+}
+
+
+
+/* ===================== SECTION: SCHEDULED BILLS COMMAND POLISH ===================== */
+.scheduled-bills-command{
+  border-color:rgba(98,243,255,.24);
+  background:
+    radial-gradient(circle at 92% 0%,rgba(98,243,255,.10),transparent 34%),
+    linear-gradient(145deg,rgba(12,24,39,.96),rgba(6,14,25,.98));
+}
+.scheduled-bills-command > h2{font-size:22px;letter-spacing:-.4px;margin-bottom:4px;}
+.scheduled-bills-command .scheduled-subtitle{color:var(--muted);font-size:12px;line-height:1.45;margin:0 0 12px;}
+.scheduled-bill-command-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 14px;}
+.schedule-command-tile{min-height:82px;border-radius:16px;padding:11px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));position:relative;overflow:hidden;}
+.schedule-command-tile:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(98,243,255,.12),transparent 44%);pointer-events:none;}
+.schedule-command-tile .k,.schedule-command-tile .v,.schedule-command-tile .subv{position:relative;z-index:1}
+.schedule-command-tile .v{margin-top:5px;font-size:clamp(20px,2.2vw,30px);font-weight:1000;letter-spacing:-.6px;}
+.schedule-command-tile.good{border-color:rgba(80,255,143,.32)}
+.schedule-command-tile.watch{border-color:rgba(255,200,87,.34)}
+.schedule-command-tile.risk{border-color:rgba(255,107,138,.34)}
+.schedule-command-tile.cyan{border-color:rgba(98,243,255,.34)}
+.bill-group{margin-top:12px;border:1px solid rgba(255,255,255,.075);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.028),rgba(255,255,255,.014));overflow:hidden;}
+.bill-group-title{margin:0!important;padding:13px 14px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;cursor:pointer;user-select:none;background:radial-gradient(circle at 0% 0%,rgba(98,243,255,.11),transparent 34%),rgba(255,255,255,.035);border-bottom:1px solid rgba(255,255,255,.07);font-size:15px;letter-spacing:.1px;}
+.bill-group-title span:first-child{display:flex;align-items:center;gap:9px;}
+.bill-group-title span:first-child:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px rgba(98,243,255,.55);}
+.bill-group-title:hover{color:var(--cyan);border-color:rgba(98,243,255,.16);}
+.bill-group-meta{display:inline-flex;align-items:center;justify-content:center;min-width:118px;padding:6px 9px;border-radius:999px;border:1px solid rgba(98,243,255,.25);color:var(--cyan);background:rgba(98,243,255,.07);font-size:10px;font-weight:950;letter-spacing:.65px;text-transform:uppercase;white-space:nowrap;}
+.bill-group .table-wrap{padding:0 10px 10px;background:rgba(0,0,0,.08);}
+.scheduled-bills-command table{min-width:1050px;border-spacing:0 7px;border-collapse:separate;}
+.scheduled-bills-command thead th{border-bottom:0;padding:9px 10px 5px;}
+.scheduled-bills-command tbody tr{background:rgba(255,255,255,.026);border-radius:14px;transition:.16s ease;}
+.scheduled-bills-command tbody tr:hover{background:rgba(98,243,255,.045);}
+.scheduled-bills-command tbody td{border-bottom:0;padding:8px 7px;vertical-align:middle;}
+.scheduled-bills-command tbody td:first-child{border-radius:13px 0 0 13px;}
+.scheduled-bills-command tbody td:last-child{border-radius:0 13px 13px 0;}
+.scheduled-bills-command .table-input,.scheduled-bills-command .table-select{border-radius:10px;background:rgba(255,255,255,.055);}
+.scheduled-bills-command .table-input:focus,.scheduled-bills-command .table-select:focus{border-color:rgba(98,243,255,.5);box-shadow:0 0 0 2px rgba(98,243,255,.08);}
+.bill-paid-row{opacity:.72;background:rgba(80,255,143,.045)!important;}
+.bill-due-soon-row{background:rgba(255,200,87,.055)!important;}
+.bill-overdue-row{background:rgba(255,107,138,.065)!important;}
+.bill-paid-row input{color:rgba(233,244,255,.7);}
+.scheduled-bills-command .quick-btn,.scheduled-bills-command .add-btn,.scheduled-bills-command .delete-btn{box-shadow:none;position:relative;z-index:1;}
+.scheduled-bills-command .quick-btn:disabled{opacity:.35;cursor:not-allowed;}
+@media(max-width:1024px){.scheduled-bill-command-strip{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:720px){.scheduled-bill-command-strip{grid-template-columns:1fr;}.bill-group-title{grid-template-columns:1fr;align-items:start;}.bill-group-meta{width:max-content;max-width:100%;}}
+
+
+
+/* ===================== SECTION: FULL PAGE COMMAND POLISH ===================== */
+/* Extends the Scheduled Bills Command Bay styling through the rest of Wealth HQ without changing calculations. */
+.section.card:not(.scheduled-bills-command){
+  border-color:rgba(98,243,255,.18);
+  background:
+    radial-gradient(circle at 92% 0%,rgba(98,243,255,.075),transparent 34%),
+    linear-gradient(145deg,rgba(12,24,39,.94),rgba(5,12,24,.96));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 14px 34px rgba(0,0,0,.25);
+}
+.section.card:not(.scheduled-bills-command) > h2,
+.section.card:not(.scheduled-bills-command) summary{
+  min-height:48px;
+  margin:-2px -2px 12px;
+  padding:13px 14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.075);
+  background:
+    radial-gradient(circle at 0% 0%,rgba(98,243,255,.12),transparent 36%),
+    rgba(255,255,255,.035);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-size:18px;
+  letter-spacing:-.2px;
+  cursor:default;
+}
+.section.card:not(.scheduled-bills-command) > h2:after,
+.section.card:not(.scheduled-bills-command) summary:after{
+  content:"LIVE";
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 9px;
+  border-radius:999px;
+  border:1px solid rgba(98,243,255,.28);
+  background:rgba(98,243,255,.07);
+  color:var(--cyan);
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.75px;
+  white-space:nowrap;
+}
+#archivedBillsPanel summary:after{content:"HISTORY";color:var(--amber);border-color:rgba(255,200,87,.28);background:rgba(255,200,87,.07)}
+.section.card:nth-of-type(12) > h2:after{content:"FUTURE";}
+.section.card:nth-of-type(13) > h2:after{content:"WORK";}
+.section.card:nth-of-type(14) > h2:after{content:"SURPLUS";}
+.section.card:nth-of-type(15) > h2:after{content:"YEARLY";}
+.section.card:nth-of-type(16) > h2:after{content:"MONTHLY";}
+.section.card:nth-of-type(17) > h2:after{content:"CATEGORY";}
+.section.card:nth-of-type(18) > h2:after{content:"YEAR VIEW";}
+.section.card:nth-of-type(19) > h2:after{content:"AUTOPILOT";}
+
+.section.card:not(.scheduled-bills-command) .mini,
+.section.card:not(.scheduled-bills-command) .input-box,
+.section.card:not(.scheduled-bills-command) .category-card,
+.section.card:not(.scheduled-bills-command) .next-bill-box,
+.section.card:not(.scheduled-bills-command) .action-box{
+  position:relative;
+  overflow:hidden;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.018);
+}
+.section.card:not(.scheduled-bills-command) .mini:before,
+.section.card:not(.scheduled-bills-command) .input-box:before,
+.section.card:not(.scheduled-bills-command) .category-card:before,
+.section.card:not(.scheduled-bills-command) .next-bill-box:before,
+.section.card:not(.scheduled-bills-command) .action-box:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at top right,rgba(98,243,255,.09),transparent 44%);
+  pointer-events:none;
+}
+.section.card:not(.scheduled-bills-command) .mini > *,
+.section.card:not(.scheduled-bills-command) .input-box > *,
+.section.card:not(.scheduled-bills-command) .category-card > *,
+.section.card:not(.scheduled-bills-command) .next-bill-box > *,
+.section.card:not(.scheduled-bills-command) .action-box > *{position:relative;z-index:1;}
+
+.section.card:not(.scheduled-bills-command) .mini .v,
+.section.card:not(.scheduled-bills-command) .stat,
+.section.card:not(.scheduled-bills-command) .value{
+  color:var(--cyan);
+  text-shadow:0 0 14px rgba(98,243,255,.12);
+}
+.section.card:not(.scheduled-bills-command) .mini .k,
+.section.card:not(.scheduled-bills-command) .stat-label,
+.section.card:not(.scheduled-bills-command) .input-box label{
+  font-weight:950;
+  letter-spacing:1px;
+}
+
+.section.card:not(.scheduled-bills-command) .input-box input,
+.section.card:not(.scheduled-bills-command) .input-box select,
+.section.card:not(.scheduled-bills-command) .table-input,
+.section.card:not(.scheduled-bills-command) .table-select{
+  border-radius:12px;
+  background:rgba(255,255,255,.055);
+  border-color:rgba(255,255,255,.09);
+  transition:.18s ease;
+}
+.section.card:not(.scheduled-bills-command) .input-box input:focus,
+.section.card:not(.scheduled-bills-command) .input-box select:focus,
+.section.card:not(.scheduled-bills-command) .table-input:focus,
+.section.card:not(.scheduled-bills-command) .table-select:focus{
+  border-color:rgba(98,243,255,.5);
+  box-shadow:0 0 0 2px rgba(98,243,255,.08),0 0 18px rgba(98,243,255,.08);
+}
+
+.section.card:not(.scheduled-bills-command) .table-wrap{
+  margin-top:10px;
+  padding:8px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(0,0,0,.10);
+}
+.section.card:not(.scheduled-bills-command) table{
+  border-collapse:separate;
+  border-spacing:0 7px;
+}
+.section.card:not(.scheduled-bills-command) thead th{
+  border-bottom:0;
+  padding:9px 10px 5px;
+}
+.section.card:not(.scheduled-bills-command) tbody tr{
+  background:rgba(255,255,255,.026);
+  transition:.16s ease;
+}
+.section.card:not(.scheduled-bills-command) tbody tr:hover{
+  background:rgba(98,243,255,.045);
+}
+.section.card:not(.scheduled-bills-command) tbody td{
+  border-bottom:0;
+  padding:8px 7px;
+  vertical-align:middle;
+}
+.section.card:not(.scheduled-bills-command) tbody td:first-child{border-radius:13px 0 0 13px;}
+.section.card:not(.scheduled-bills-command) tbody td:last-child{border-radius:0 13px 13px 0;}
+
+/* ===================== SECTION: REST OF PAGE SECTION-SPECIFIC POLISH ===================== */
+#archivedBillsPanel[open] summary{
+  border-color:rgba(255,200,87,.18);
+  box-shadow:0 0 18px rgba(255,200,87,.06);
+}
+#archivedBillsCount{
+  color:var(--cyan)!important;
+  font-size:12px!important;
+  font-weight:950;
+}
+
+#paydayActionsList,
+#wealthAiView{
+  padding:12px;
+  border-radius:15px;
+  border:1px solid rgba(98,243,255,.12);
+  background:rgba(255,255,255,.03);
+}
+#paydayActionsList{
+  color:#cce4f8;
+  line-height:1.7!important;
+}
+
+#futureCostsBody tr:has(input[type="checkbox"]:checked),
+#recurringCostsBody tr:has(input[type="checkbox"]:checked),
+#yearlyRecurringCostsBody tr:has(input[type="checkbox"]:checked){
+  background:rgba(80,255,143,.045)!important;
+}
+#futureCostsBody tr:has(input[type="checkbox"]:not(:checked)),
+#recurringCostsBody tr:has(input[type="checkbox"]:not(:checked)),
+#yearlyRecurringCostsBody tr:has(input[type="checkbox"]:not(:checked)){
+  background:rgba(255,200,87,.035)!important;
+  opacity:.86;
+}
+
+#categoryGrid .category-card{
+  min-height:116px;
+  border-color:rgba(98,243,255,.13);
+}
+#categoryGrid .category-card:nth-child(1){border-color:rgba(80,255,143,.34);box-shadow:0 0 18px rgba(80,255,143,.08);}
+#categoryGrid .category-card:nth-child(2){border-color:rgba(255,200,87,.28);}
+#categoryGrid .category-card:nth-child(3){border-color:rgba(110,168,255,.28);}
+.category-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:1000;
+}
+.category-title:before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 12px rgba(98,243,255,.5);
+}
+
+#next7DaysGrid .next-bill-box{
+  min-height:110px;
+}
+#next7DaysGrid .next-bill-box:only-child{
+  border-color:rgba(80,255,143,.28);
+}
+.next-bill-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:1000;
+}
+.next-bill-title:before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--amber);
+  box-shadow:0 0 12px rgba(255,200,87,.5);
+}
+
+#yearlyTableBody tr:last-child,
+#contributionTableBody tr:first-child{
+  background:rgba(98,243,255,.05)!important;
+}
+
+.grow-meter,.progress-bar,.grow-fill,.progress-fill{
+  box-shadow:0 0 18px rgba(80,255,143,.08);
+}
+.grow-meter,.progress-bar{
+  border-color:rgba(255,255,255,.07);
+}
+
+.footer{
+  margin:18px 0 10px;
+  padding:12px;
+  border-radius:16px;
+  border:1px solid rgba(98,243,255,.12);
+  background:rgba(255,255,255,.025);
+}
+
+/* ===================== SECTION: FULL PAGE MOBILE POLISH ===================== */
+@media(max-width:720px){
+  .section.card:not(.scheduled-bills-command) > h2,
+  .section.card:not(.scheduled-bills-command) summary{
+    display:grid;
+    grid-template-columns:1fr;
+    align-items:start;
+    gap:7px;
+    font-size:16px;
+  }
+  .section.card:not(.scheduled-bills-command) > h2:after,
+  .section.card:not(.scheduled-bills-command) summary:after{
+    width:max-content;
+  }
+  .section.card:not(.scheduled-bills-command) .table-wrap{
+    padding:6px;
+  }
+}
+
+
+/* ===================== SECTION: NEXT PAYDAY PLAN CARD ===================== */
+.payday-plan-command{
+  border-color:rgba(80,255,143,.22);
+  background:
+    radial-gradient(circle at 92% 0%,rgba(80,255,143,.10),transparent 34%),
+    linear-gradient(145deg,rgba(12,24,39,.95),rgba(6,14,25,.98));
+}
+.payday-plan-grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.payday-plan-tile{
+  position:relative;
+  overflow:hidden;
+  min-height:92px;
+  border-radius:16px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+}
+.payday-plan-tile:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at top right,rgba(98,243,255,.10),transparent 44%);
+  pointer-events:none;
+}
+.payday-plan-tile .k,
+.payday-plan-tile .v,
+.payday-plan-tile .subv{
+  position:relative;
+  z-index:1;
+}
+.payday-plan-tile .k{
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.85px;
+  font-weight:950;
+}
+.payday-plan-tile .v{
+  margin-top:6px;
+  font-size:clamp(19px,2vw,28px);
+  font-weight:1000;
+  letter-spacing:-.6px;
+}
+.payday-plan-tile.good{border-color:rgba(80,255,143,.32)}
+.payday-plan-tile.watch{border-color:rgba(255,200,87,.34)}
+.payday-plan-tile.risk{border-color:rgba(255,107,138,.34)}
+.payday-plan-tile.cyan{border-color:rgba(98,243,255,.34)}
+.payday-plan-tile.blue{border-color:rgba(110,168,255,.34)}
+.payday-plan-verdict{
+  margin-top:12px;
+  padding:12px;
+  border-radius:16px;
+  border:1px solid rgba(98,243,255,.14);
+  background:rgba(255,255,255,.03);
+  color:#cce4f8;
+  line-height:1.55;
+  font-size:13px;
+}
+.payday-plan-verdict b{color:var(--cyan)}
+@media(max-width:1120px){
+  .payday-plan-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media(max-width:720px){
+  .payday-plan-grid{grid-template-columns:1fr;}
+}
+
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===================== SECTION: HERO ===================== -->
+  <section class="hero">
+    <h1 class="aurora-title">Aurora<br>Wealth HQ</h1>
+    <div class="sub">Personal CFO terminal • bills radar • payday simulator • pot health • surplus command engine.</div>
+
+    <div class="grid hero-grid">
+      <div class="card">
+        <div class="stat-label">Holding Pot Balance</div>
+        <div class="stat">£<span id="potBalance">0.00</span></div>
+        <div class="subv" id="potBalanceMeta">Current saved amount</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-label">Pot Trend</div>
+        <canvas id="potTrendChart"></canvas>
+        <div class="subv" id="potTrendMeta">Last 8 snapshots of your holding pot</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-label">Available to Invest</div>
+        <div class="stat">£<span id="availableToInvest">0.00</span></div>
+        <div class="subv">Safe to move to IG ISA now</div>
+      </div>
+
+      <div class="card" id="safeMoveCard">
+        <div class="stat-label">Safe To Move Now</div>
+        <div class="stat">£<span id="safeToMoveNow">0.00</span></div>
+        <div class="subv" id="safeToMoveNowMeta">After protecting upcoming bills</div>
+      </div>
+
+      <div class="card" id="pressureCard">
+        <div class="stat-label">Upcoming Pressure</div>
+        <div class="stat small" id="pressureLevel">--</div>
+        <div class="subv" id="pressureMeta">Calculating upcoming bills...</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-label">Included Total</div>
+        <div class="stat">£<span id="includedTotal">0.00</span></div>
+        <div class="subv" id="includedTotalMeta">All active scheduled, future, recurring costs</div>
+      </div>
+
+      <div class="card" id="trueSurplusCard">
+        <div class="stat-label">True Surplus</div>
+        <div class="stat">£<span id="trueSurplus">0.00</span></div>
+        <div class="subv" id="trueSurplusMeta">What is genuinely spare after protection</div>
+      </div>
+
+      <div class="card" id="protectedMoneyCard">
+        <div class="stat-label">Protected Money</div>
+        <div class="stat">£<span id="protectedMoney">0.00</span></div>
+        <div class="subv" id="protectedMoneyMeta">Buffer + unpaid scheduled bills</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-label">Released Surplus</div>
+        <div class="stat">£<span id="releasedSurplus">0.00</span></div>
+        <div class="subv" id="releasedSurplusMeta">From bills costing less than planned</div>
+      </div>
+
+      <div class="card" id="paydayCountdownCard">
+        <div class="stat-label">Days To Payday</div>
+        <div class="stat small" id="daysToPayday">--</div>
+        <div class="subv" id="daysToPaydayMeta">Next payday not calculated yet</div>
+      </div>
+
+      <div class="card" id="igCard">
+        <div class="stat-label">IG ISA Signal</div>
+        <div class="stat small" id="igSignal">--</div>
+        <div class="subv" id="igSignalMeta">Waiting for planner calculation</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== SECTION: AURORA CFO COMMAND DECK ===================== -->
+  <section class="section command-card">
+    <div class="command-title">
+      <div>
+        <h2>Aurora CFO Command Deck</h2>
+        <div class="subv">One-glance financial health, safe-to-move decision, bill pressure and next payday action.</div>
+      </div>
+      <div class="command-badge good" id="wealthCommandBadge">LIVE CFO</div>
+    </div>
+
+    <div class="wealth-command-grid">
+      <div class="wealth-score-ring">
+        <div>
+          <div class="score-number" id="wealthScore">--</div>
+          <div class="score-label">Aurora Wealth Score</div>
+        </div>
+      </div>
+
+      <div class="command-metric-grid">
+        <div class="command-metric good">
+          <div class="k">Safe Move Signal</div>
+          <div class="v" id="commandSafeSignal">--</div>
+          <div class="subv" id="commandSafeMeta">Calculating...</div>
+        </div>
+
+        <div class="command-metric cyan">
+          <div class="k">Next Payday Move</div>
+          <div class="v" id="commandPaydayMove">£0</div>
+          <div class="subv">Suggested holding pot top-up</div>
+        </div>
+
+        <div class="command-metric watch">
+          <div class="k">Bill Pressure</div>
+          <div class="v" id="commandPressure">--</div>
+          <div class="subv" id="commandPressureMeta">Next 30 days</div>
+        </div>
+
+        <div class="command-metric good">
+          <div class="k">Surplus Route</div>
+          <div class="v" id="commandSurplusRoute">--</div>
+          <div class="subv" id="commandSurplusMeta">Aurora allocation logic</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: POT HEALTH RADAR ===================== -->
+  <section class="section card">
+    <div class="command-title">
+      <div>
+        <h2>Pot Health Radar</h2>
+        <div class="subv">Goal pots ranked by funding strength and pressure.</div>
+      </div>
+      <div class="command-badge watch">GOAL MAP</div>
+    </div>
+    <div class="radar-grid" id="potHealthRadar"></div>
+  </section>
+
+  <!-- ===================== SECTION: PAYDAY SIMULATOR ===================== -->
+  <section class="section card">
+    <div class="command-title">
+      <div>
+        <h2>Payday Command Simulator</h2>
+        <div class="subv">Enter expected pay and Aurora builds a clean payday move plan.</div>
+      </div>
+      <div class="command-badge cyan">SIMULATOR</div>
+    </div>
+
+    <div class="payday-grid">
+      <div class="grid two-grid">
+        <div class="input-box">
+          <label for="simPayInput">Expected Pay</label>
+          <input id="simPayInput" type="number" step="1" value="2100" />
+        </div>
+
+        <div class="input-box">
+          <label for="simInvestInput">Target IG ISA</label>
+          <input id="simInvestInput" type="number" step="1" value="500" />
+        </div>
+
+        <div class="input-box">
+          <label for="simLifestyleInput">Lifestyle / Spending Pot</label>
+          <input id="simLifestyleInput" type="number" step="1" value="350" />
+        </div>
+
+        <div class="input-box">
+          <label for="simGoalsInput">Goal Pots Total</label>
+          <input id="simGoalsInput" type="number" step="1" value="250" />
+        </div>
+      </div>
+
+      <div class="payday-results" id="paydaySimulationResults">
+        <div class="payday-row"><strong>Waiting for simulator...</strong><span>--</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: AURORA WEALTH INTELLIGENCE ===================== -->
+  <section class="section card">
+    <div class="command-title">
+      <div>
+        <h2>Aurora Wealth Intelligence</h2>
+        <div class="subv">Live explanation of the current money setup.</div>
+      </div>
+      <div class="command-badge good">AI VIEW</div>
+    </div>
+    <div class="ai-command-text" id="wealthAiView">Aurora is analysing the Wealth Centre...</div>
+  </section>
+
+  <!-- ===================== SECTION: FREEDOM FLIGHT PATH ===================== -->
+  <section class="section card">
+    <div class="command-title">
+      <div>
+        <h2>Financial Freedom Flight Path</h2>
+        <div class="subv">Progress view towards the long-term £2,000/month passive income mission.</div>
+      </div>
+      <div class="command-badge cyan">MISSION</div>
+    </div>
+    <div id="freedomFlightPath"></div>
+  </section>
+
+  <!-- ===================== SECTION: CONTROL STRIP ===================== -->
+  <section class="section card">
+    <h2>Funding Engine</h2>
+
+    <div class="grid four-grid">
+      <div class="mini">
+        <div class="k">Suggested Weekly Funding</div>
+        <div class="v" id="weeklyTarget">£0</div>
+        <div class="subv" id="weeklyTargetMeta">Based on active included costs</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Monthly Equivalent</div>
+        <div class="v" id="monthlyTarget">£0</div>
+        <div class="subv">Weekly target × 52 ÷ 12</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">At Current Rate</div>
+        <div class="v" id="currentRateAnnual">£0</div>
+        <div class="subv" id="currentRateMeta">Funding produced yearly from your weekly amount</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Surplus / Shortfall</div>
+        <div class="v" id="surplusShortfall">£0</div>
+        <div class="subv" id="surplusShortfallMeta">Vs active planner total</div>
+      </div>
+    </div>
+
+    <div class="grid three-grid" style="margin-top:12px;">
+      <div class="input-box">
+        <label for="holdingBalanceInput">Current Holding Pot Balance</label>
+        <input id="holdingBalanceInput" type="number" step="0.01" value="2020" />
+      </div>
+
+      <div class="input-box">
+        <label for="paydayContributionInput">Current Payday Contribution</label>
+        <input id="paydayContributionInput" type="number" step="1" value="140" />
+        <button class="add-btn" id="addPaydayBtn" style="margin-top:8px; width:100%;">
+          + Add Payday Contribution
+        </button>
+      </div>
+
+      <div class="input-box">
+        <label for="customAddInput">Custom Amount To Add</label>
+        <input id="customAddInput" type="number" step="0.01" placeholder="Enter amount" />
+        <button class="quick-btn" id="addCustomBtn" style="margin-top:8px; width:100%;">
+          + Add Custom Amount
+        </button>
+      </div>
+
+      <div class="input-box">
+        <label for="customRemoveInput">Remove / Transfer Out</label>
+        <input id="customRemoveInput" type="number" step="0.01" placeholder="Enter amount" />
+        <button class="delete-btn" id="removeCustomBtn" style="margin-top:8px; width:100%;">
+          - Remove From Pot
+        </button>
+      </div>
+
+      <div class="input-box">
+        <label for="minimumBufferInput">Minimum Safe Buffer</label>
+        <input id="minimumBufferInput" type="number" step="1" value="1000" />
+      </div>
+
+      <div class="input-box">
+        <label for="growPotBalanceInput">Grow Pot Balance</label>
+        <input id="growPotBalanceInput" type="number" step="0.01" value="700" />
+      </div>
+
+      <div class="input-box">
+        <label for="growPotTargetInput">Grow Pot Target</label>
+        <input id="growPotTargetInput" type="number" step="1" value="7500" />
+      </div>
+    </div>
+
+    <div class="grid two-grid" style="margin-top:12px;">
+      <button class="quick-btn" id="savePlannerBtn">Save Planner Data</button>
+      <button class="quick-btn" id="resetPlannerBtn">Reset to Defaults</button>
+    </div>
+
+    <div class="grid two-grid" style="margin-top:12px;">
+      <button class="quick-btn" id="exportBackupBtn">Export Backup JSON</button>
+      <button class="quick-btn" id="importBackupBtn">Import Backup JSON</button>
+    </div>
+
+    <div class="subv" id="backupStatus" style="margin-top:10px;">
+      No backup exported this session
+    </div>
+
+    <input id="importBackupFile" type="file" accept=".json,application/json" style="display:none;" />
+  </section>
+
+  <!-- ===================== SECTION: CONTRIBUTION SUMMARY ===================== -->
+  <section class="section card">
+    <h2>Contribution Adjustment Engine</h2>
+    <div class="grid four-grid">
+      <div class="mini">
+        <div class="k">Suggested Contribution</div>
+        <div class="v">£<span id="suggestedContributionNow">0.00</span></div>
+        <div class="subv" id="suggestedContributionMeta">Planner target for next payday</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Current Pot Offset</div>
+        <div class="v">£<span id="currentPotOffset">0.00</span></div>
+        <div class="subv" id="currentPotOffsetMeta">Extra already sitting above protection</div>
+      </div>
+
+      <div class="mini" id="finalContributionCard">
+        <div class="k">Final Amount To Add</div>
+        <div class="v">£<span id="finalAmountToAdd">0.00</span></div>
+        <div class="subv" id="finalAmountToAddMeta">This is the payday number to use</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Next Payday</div>
+        <div class="v" id="nextPaydayLabel">--</div>
+        <div class="subv" id="nextPaydayMeta">Countdown to next pay cycle</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: PAYDAY ACTION BOX ===================== -->
+  <section class="section card">
+    <h2>Payday Action Box</h2>
+
+    <div class="grid two-grid">
+      <div class="mini">
+        <div class="k">Final Pot Top Up</div>
+        <div class="v" id="finalPotTopUp">£0</div>
+        <div class="subv" id="finalPotTopUpMeta">Suggested contribution after current balance offset</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Suggested Grow Pot Move</div>
+        <div class="v" id="growPotMove">£0</div>
+        <div class="subv" id="growPotMoveMeta">Based on safety status</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px; background:rgba(255,255,255,0.025);">
+      <div class="stat-label">What To Do</div>
+      <div id="paydayActionsList" class="subv" style="margin-top:10px; line-height:1.7;">
+        Waiting for planner calculation...
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: NEXT 7 DAYS BILLS ===================== -->
+  <section class="section card">
+    <div class="bill-strip-head">
+      <div>
+        <h2>Next 7 Days Bills</h2>
+        <div class="subv" id="next7BillsMeta">Closest pressure first.</div>
+      </div>
+      <div class="bill-strip-total" id="next7BillsTotal">£0 due in next 7 days</div>
+    </div>
+    <div class="grid three-grid" id="next7DaysGrid" style="margin-top:12px;"></div>
+  </section>
+
+  <!-- ===================== SECTION: GROW POT ENGINE ===================== -->
+  <section class="section card" id="growPotCard">
+    <h2>Grow Pot Engine</h2>
+    <div class="grid four-grid">
+      <div class="mini">
+        <div class="k">Grow Pot Balance</div>
+        <div class="v">£<span id="growPotBalanceDisplay">0.00</span></div>
+        <div class="subv">Your emergency / savings pot</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Grow Pot Target</div>
+        <div class="v">£<span id="growPotTargetDisplay">0.00</span></div>
+        <div class="subv">Long-term safety goal</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Gap Remaining</div>
+        <div class="v">£<span id="growPotGap">0.00</span></div>
+        <div class="subv" id="growPotGapMeta">Amount still needed</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Status</div>
+        <div class="v" id="growPotStatus">--</div>
+        <div class="subv" id="growPotStatusMeta">Safety state</div>
+      </div>
+    </div>
+
+    <div class="grow-meter">
+      <div class="grow-fill" id="growPotFill"></div>
+    </div>
+    <div class="helper-note subv" id="growPotProgressMeta">0% of target reached</div>
+  </section>
+
+ <!-- ===================== SECTION: EDITABLE SCHEDULED BILLS (GROUPED + COLLAPSIBLE) ===================== -->
+<section class="section card scheduled-bills-command">
+  <h2>Scheduled Bills Command Bay</h2>
+  <div class="scheduled-subtitle">Cleaner grouped bills, quick pressure read, and live category totals — same planner engine, just no spreadsheet dungeon vibes.</div>
+
+  <div class="scheduled-bill-command-strip">
+    <div class="schedule-command-tile cyan"><div class="k">Live Bills</div><div class="v" id="scheduledLiveCount">0</div><div class="subv">Unpaid and included</div></div>
+    <div class="schedule-command-tile watch"><div class="k">Live Total</div><div class="v" id="scheduledLiveTotal">£0</div><div class="subv">Unpaid included bills</div></div>
+    <div class="schedule-command-tile risk"><div class="k">Due Soon</div><div class="v" id="scheduledDueSoon">£0</div><div class="subv">Next 7 days</div></div>
+    <div class="schedule-command-tile good"><div class="k">Next Bill</div><div class="v" id="scheduledNextBill">--</div><div class="subv" id="scheduledNextBillMeta">No pressure yet</div></div>
+  </div>
+
+  <div class="grid two-grid" style="margin-bottom:12px;">
+    <button class="add-btn" id="addScheduledBtn">+ Add Scheduled Bill</button>
+    <div class="subv">Use this for confirmed bills with a proper due date, planned amount, paid tracking, rolling and archiving.</div>
+  </div>
+
+  <!-- ===================== CATEGORY: DIRECT DEBITS ===================== -->
+  <div class="bill-group">
+    <h3 class="bill-group-title" onclick="toggleSection('ddTable')"><span>Direct Debits</span><span class="bill-group-meta" id="ddMeta">--</span></h3>
+    <div id="ddTable" class="collapsible open">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
+              <th>Actual Paid</th><th>Included</th><th>Category</th>
+              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="scheduledBillsBody_dd"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ===================== CATEGORY: DENTIST ===================== -->
+<div class="bill-group">
+  <h3 class="bill-group-title" onclick="toggleSection('dentistTable')"><span>Dentist</span><span class="bill-group-meta" id="dentistMeta">--</span></h3>
+  <div id="dentistTable" class="collapsible open">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
+            <th>Actual Paid</th><th>Included</th><th>Category</th>
+            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="scheduledBillsBody_dentist"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CATEGORY: REPAYMENTS ===================== -->
+<div class="bill-group">
+  <h3 class="bill-group-title" onclick="toggleSection('repaymentTable')"><span>Repayments</span><span class="bill-group-meta" id="repaymentMeta">--</span></h3>
+  <div id="repaymentTable" class="collapsible open">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
+            <th>Actual Paid</th><th>Included</th><th>Category</th>
+            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="scheduledBillsBody_repayment"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CATEGORY: HOME ===================== -->
+<div class="bill-group">
+  <h3 class="bill-group-title" onclick="toggleSection('homeTable')"><span>Home</span><span class="bill-group-meta" id="homeMeta">--</span></h3>
+  <div id="homeTable" class="collapsible open">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
+            <th>Actual Paid</th><th>Included</th><th>Category</th>
+            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="scheduledBillsBody_home"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+  <!-- ===================== CATEGORY: HOLIDAYS ===================== -->
+  <div class="bill-group">
+    <h3 class="bill-group-title" onclick="toggleSection('holidayTable')"><span>Holidays</span><span class="bill-group-meta" id="holidayMeta">--</span></h3>
+    <div id="holidayTable" class="collapsible open">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
+              <th>Actual Paid</th><th>Included</th><th>Category</th>
+              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="scheduledBillsBody_holiday"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CATEGORY: CAR / MAINTENANCE ===================== -->
+  <div class="bill-group">
+    <h3 class="bill-group-title" onclick="toggleSection('carTable')"><span>Car & Maintenance</span><span class="bill-group-meta" id="carMeta">--</span></h3>
+    <div id="carTable" class="collapsible open">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
+              <th>Actual Paid</th><th>Included</th><th>Category</th>
+              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="scheduledBillsBody_car"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CATEGORY: OTHER ===================== -->
+  <div class="bill-group">
+    <h3 class="bill-group-title" onclick="toggleSection('otherTable')"><span>Other</span><span class="bill-group-meta" id="otherMeta">--</span></h3>
+    <div id="otherTable" class="collapsible open">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
+              <th>Actual Paid</th><th>Included</th><th>Category</th>
+              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="scheduledBillsBody_other"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===================== SECTION: ARCHIVED BILLS ===================== -->
+  <section class="section card">
+    <details id="archivedBillsPanel">
+      <summary style="cursor:pointer; font-weight:700; font-size:18px; list-style:none;">
+        Archived Bills
+        <span class="subv" id="archivedBillsCount" style="display:inline-block; margin-left:8px;">(0)</span>
+      </summary>
+
+      <div class="subv" style="margin:12px 0 12px;">
+        Completed items moved out of the live planner but kept for history.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Due Date</th>
+              <th>Planned</th>
+              <th>Actual Paid</th>
+              <th>Category</th>
+              <th>Notes</th>
+              <th>Archived On</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="archivedBillsBody"></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <!-- ===================== SECTION: EDITABLE FUTURE COSTS ===================== -->
+  <section class="section card">
+    <h2>Editable Future Costs</h2>
+    <div class="grid two-grid" style="margin-bottom:12px;">
+      <button class="add-btn" id="addFutureBtn">Add Future Cost</button>
+      <div class="subv">Use this for things like next holiday, season ticket, or future dentist costs.</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Included</th>
+            <th>Category</th>
+            <th>Notes</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="futureCostsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: TRUE SURPLUS SPLIT ===================== -->
+  <section class="section card">
+    <h2>True Surplus Split</h2>
+
+    <div class="grid four-grid">
+      <div class="mini">
+        <div class="k">Released Surplus</div>
+        <div class="v" id="releaseSurplusCard">£0</div>
+        <div class="subv">Freed up from lower actual costs</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Protected For Bills</div>
+        <div class="v" id="protectedBillsCard">£0</div>
+        <div class="subv">Reserved for unpaid included bills</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Safe Surplus</div>
+        <div class="v" id="safeSurplusCard">£0</div>
+        <div class="subv">Actually movable without pressure</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Free After Buffer</div>
+        <div class="v" id="freeAfterBufferCard">£0</div>
+        <div class="subv">Headroom above minimum buffer</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: EDITABLE YEARLY RECURRING COSTS ===================== -->
+  <section class="section card">
+    <h2>Editable Yearly Recurring Costs</h2>
+    <div class="grid two-grid" style="margin-bottom:12px;">
+      <button class="add-btn" id="addYearlyRecurringBtn">Add Yearly Recurring Cost</button>
+      <div class="subv">Use this for fixed annual costs like TV subscription, PlayStation, car insurance, boiler service, or anything you know repeats yearly.</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Yearly Amount</th>
+            <th>Included</th>
+            <th>Category</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="yearlyRecurringCostsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: EDITABLE RECURRING COSTS ===================== -->
+  <section class="section card">
+    <h2>Editable Recurring Monthly Costs</h2>
+    <div class="grid two-grid" style="margin-bottom:12px;">
+      <button class="add-btn" id="addRecurringBtn">Add Recurring Cost</button>
+      <div class="subv">Use this for monthly items like haircut, petrol, wash, or any repeat spending.</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Monthly Amount</th>
+            <th>Yearly Amount</th>
+            <th>Included</th>
+            <th>Category</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="recurringCostsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: CATEGORY BREAKDOWN ===================== -->
+  <section class="section card">
+    <h2>Category Breakdown</h2>
+    <div class="grid four-grid" id="categoryGrid"></div>
+  </section>
+
+  <!-- ===================== SECTION: YEARLY BREAKDOWN ===================== -->
+  <section class="section card">
+    <h2>Yearly Breakdown</h2>
+
+    <div class="grid four-grid">
+      <div class="mini">
+        <div class="k">Scheduled Included</div>
+        <div class="v" id="yearlyScheduled">£0</div>
+        <div class="subv">Active dated bills</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Recurring Included</div>
+        <div class="v" id="yearlyRecurring">£0</div>
+        <div class="subv">Monthly costs annualised</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Future Included</div>
+        <div class="v" id="yearlyFuture">£0</div>
+        <div class="subv">Future items switched on</div>
+      </div>
+
+      <div class="mini">
+        <div class="k">Grand Total View</div>
+        <div class="v" id="yearlyGrand">£0</div>
+        <div class="subv">Everything active in planner</div>
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:12px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Section</th>
+            <th>Total</th>
+            <th>Weekly</th>
+            <th>Monthly</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="yearlyTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION: CONTRIBUTION ADJUSTMENTS ===================== -->
+  <section class="section card">
+    <h2>Contribution Adjustments (Autopilot)</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Projected Balance</th>
+            <th>Min Required</th>
+            <th>Adjustment</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="contributionTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footer">
+    Aurora Wealth Centre • Paid Tracking + Actual Costs + Released Surplus + IG ISA Signal
+  </div>
+</div>
+
+<script>
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+function parseLocalDate(dateStr) {
+  const [year, month, day] = String(dateStr).split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function getDaysLeft(dateStr) {
+  if (!dateStr) return null;
+  const due = parseLocalDate(dateStr);
+  due.setHours(0, 0, 0, 0);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return Math.round((due.getTime() - now.getTime()) / 86400000);
+}
+
+function formatMoney(v) {
+  return Number(v || 0).toLocaleString("en-GB", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function formatMoney0(v) {
+  return Number(v || 0).toLocaleString("en-GB", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+}
+
+function parseNum(v) {
+  const n = parseFloat(String(v ?? "").replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function dateLabel(dateStr) {
+  if (!dateStr) return "No date yet";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "No date yet";
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function daysUntil(dateStr) {
+  return getDaysLeft(dateStr);
+}
+
+function weeklyFromYearly(v) {
+  return v / 52;
+}
+
+function monthlyFromYearly(v) {
+  return v / 12;
+}
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = value;
+}
+
+const STORAGE_KEY = "aurora_wealth_centre";
+const FIRST_PAYDAY = "2026-04-24";
+const GROW_POT_TARGET = 7500;
+
+const defaultScheduledBills = [
+  { id: "Spain", name: "Spain Holiday", due: "2026-05-31", amount: 350, paid: false, actualPaid: 0, deducted: false, included: true, category: "Travel", notes: "End of May" },
+  { id: "tooth", name: "Tooth Extraction Balance", due: "2026-06-16", amount: 120, paid: false, actualPaid: 0, deducted: false, included: true, category: "Dentist", notes: "Confirmed" },
+  { id: "hygienist", name: "Hygienist", due: "2026-07-10", amount: 50, paid: false, actualPaid: 0, deducted: false, included: true, category: "Dentist", notes: "Confirmed" },
+  { id: "carrepairs", name: "Car Repairs", due: "2026-08-15", amount: 400, paid: false, actualPaid: 0, deducted: false, included: true, category: "Car", notes: "Editable placeholder" },
+  { id: "carservice", name: "Car Service", due: "2026-09-15", amount: 300, paid: false, actualPaid: 0, deducted: false, included: true, category: "Car", notes: "Editable estimate" },
+  { id: "insurance", name: "Car Insurance", due: "2026-10-01", amount: 240, paid: false, actualPaid: 0, deducted: false, included: true, category: "Car", notes: "Editable estimate" },
+  { id: "ps", name: "PlayStation Subscription", due: "2026-11-14", amount: 99.99, paid: false, actualPaid: 0, deducted: false, included: true, category: "Subscription", notes: "Annual renewal" },
+  { id: "christmas", name: "Christmas", due: "2026-12-01", amount: 500, paid: false, actualPaid: 0, deducted: false, included: true, category: "Seasonal", notes: "Planned target" },
+  { id: "mot", name: "MOT", due: "2027-01-31", amount: 60, paid: false, actualPaid: 0, deducted: false, included: true, category: "Car", notes: "Editable estimate" },
+  { id: "boiler", name: "Boiler Service", due: "2027-01-31", amount: 90, paid: false, actualPaid: 0, deducted: false, included: true, category: "Home", notes: "End of January / early February" },
+  { id: "tvsub", name: "TV Subscription", due: "2027-03-15", amount: 50, paid: false, actualPaid: 0, deducted: false, included: true, category: "Subscription", notes: "Annual subscription" }
+];
+
+const defaultFutureCosts = [
+  { id: "dent1", name: "Dentist Treatment 1", due: "", amount: 550, included: false, category: "Dentist", notes: "No due date agreed yet" },
+  { id: "dent2", name: "Dentist Treatment 2", due: "", amount: 300, included: false, category: "Dentist", notes: "No due date agreed yet" },
+  { id: "ticket", name: "Coventry Season Ticket", due: "2027-05-01", amount: 750, included: false, category: "Football", notes: "May 2027 estimate only" },
+  { id: "marchholiday", name: "March Holiday", due: "2027-03-01", amount: 400, included: false, category: "Holiday", notes: "Five-day holiday not confirmed yet" },
+  { id: "marchspend", name: "March Holiday Spending Money", due: "2027-03-01", amount: 150, included: false, category: "Holiday", notes: "Editable later if needed" }
+];
+
+const defaultRecurringCosts = [
+  { id: "haircut", name: "Haircut", amount: 21, originalAmount: 21, included: true, category: "Lifestyle" },
+  { id: "carwash", name: "Car Wash", amount: 20, originalAmount: 20, included: true, category: "Car" },
+  { id: "petrol", name: "Petrol", amount: 60, originalAmount: 60, included: true, category: "Car" }
+];
+
+const defaultYearlyRecurringCosts = [
+  { id: "tv_yearly", name: "TV Subscription", amount: 50, included: true, category: "Subscription" },
+  { id: "ps_yearly", name: "PlayStation Subscription", amount: 99.99, included: true, category: "Subscription" }
+];
+
+function getFreshDefaults() {
+  const freshScheduled = JSON.parse(JSON.stringify(defaultScheduledBills));
+  const freshFuture = JSON.parse(JSON.stringify(defaultFutureCosts));
+  const freshRecurring = JSON.parse(JSON.stringify(defaultRecurringCosts));
+  const freshYearlyRecurring = JSON.parse(JSON.stringify(defaultYearlyRecurringCosts));
+
+  freshFuture.forEach(item => {
+    if (
+      item.id === "dent1" ||
+      item.id === "dent2" ||
+      String(item.name || "").toLowerCase().includes("dentist")
+    ) {
+      item.due = "";
+    }
+  });
+
+  return {
+    holdingBalance: 2550.36,
+    paydayContribution: 140,
+    minimumBuffer: 1000,
+    growPotBalance: 700,
+    growPotTarget: 7500,
+    scheduledBills: freshScheduled,
+    futureCosts: freshFuture,
+    recurringCosts: freshRecurring,
+    yearlyRecurringCosts: freshYearlyRecurring,
+    archivedBills: [],
+    canteen: {
+      budget: 80,
+      lastSpend: 0,
+      lastReleased: 0
+    }
+  };
+}
+
+let plannerState = getFreshDefaults();
+
+function savePlannerData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(plannerState));
+}
+
+function loadPlannerData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return;
+
+  try {
+    const parsed = JSON.parse(saved);
+    plannerState = {
+      ...getFreshDefaults(),
+      ...parsed,
+      paydayContribution: parseNum(parsed.paydayContribution ?? 140),
+      growPotBalance: parseNum(parsed.growPotBalance ?? 700),
+      growPotTarget: parseNum(parsed.growPotTarget ?? 7500),
+
+      scheduledBills: Array.isArray(parsed.scheduledBills)
+        ? parsed.scheduledBills.map(bill => ({
+            deducted: false,
+            ...bill
+          }))
+        : JSON.parse(JSON.stringify(defaultScheduledBills)),
+
+      futureCosts: Array.isArray(parsed.futureCosts)
+        ? parsed.futureCosts
+        : JSON.parse(JSON.stringify(defaultFutureCosts)),
+
+      recurringCosts: Array.isArray(parsed.recurringCosts)
+        ? parsed.recurringCosts
+        : JSON.parse(JSON.stringify(defaultRecurringCosts)),
+
+      yearlyRecurringCosts: Array.isArray(parsed.yearlyRecurringCosts)
+        ? parsed.yearlyRecurringCosts
+        : JSON.parse(JSON.stringify(defaultYearlyRecurringCosts)),
+
+      archivedBills: Array.isArray(parsed.archivedBills)
+        ? parsed.archivedBills
+        : [],
+
+      canteen: parsed.canteen || {
+        budget: 80,
+        lastSpend: 0,
+        lastReleased: 0
+      }
+    };
+
+    plannerState.recurringCosts = plannerState.recurringCosts.map(item => ({
+      ...item,
+      originalAmount: Number(item.originalAmount ?? item.amount ?? 0)
+    }));
+  } catch (err) {
+    console.error("Could not load planner data", err);
+  }
+}
+
+function resetPlannerData() {
+  localStorage.removeItem(STORAGE_KEY);
+  plannerState = getFreshDefaults();
+}
+
+function savePotHistory() {
+  const historyKey = "aurora_wealth_centre_history_v1";
+  const existing = JSON.parse(localStorage.getItem(historyKey) || "[]");
+
+  const today = new Date();
+  const stamp = today.toISOString().slice(0, 10);
+  const last = existing[existing.length - 1];
+
+  if (!last || last.date !== stamp || Number(last.balance) !== Number(plannerState.holdingBalance || 0)) {
+    existing.push({
+      date: stamp,
+      balance: Number(plannerState.holdingBalance || 0)
+    });
+  }
+
+  const trimmed = existing.slice(-8);
+  localStorage.setItem(historyKey, JSON.stringify(trimmed));
+}
+
+function renderPotTrendChart() {
+  const canvas = document.getElementById("potTrendChart");
+  if (!canvas || typeof Chart === "undefined") return;
+
+  const historyKey = "aurora_wealth_centre_history_v1";
+  let history = JSON.parse(localStorage.getItem(historyKey) || "[]");
+
+  if (!Array.isArray(history) || history.length === 0) {
+    history = [{
+      date: new Date().toISOString().slice(0, 10),
+      balance: Number(plannerState.holdingBalance || 0)
+    }];
+  }
+
+  const labels = history.map(item => {
+    const d = new Date(item.date);
+    return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+  });
+
+  const data = history.map(item => Number(item.balance || 0));
+
+  if (window.potTrendChartInstance) {
+    window.potTrendChartInstance.destroy();
+  }
+
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createLinearGradient(0, 0, 0, 120);
+  gradient.addColorStop(0, "rgba(98,243,255,0.35)");
+  gradient.addColorStop(1, "rgba(98,243,255,0.02)");
+
+  window.potTrendChartInstance = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: "#62f3ff",
+        backgroundColor: gradient,
+        fill: true,
+        tension: 0.35,
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `£${formatMoney(context.parsed.y)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: "#96abc5",
+            maxRotation: 0,
+            autoSkip: true
+          },
+          grid: {
+            display: false
+          }
+        },
+        y: {
+          ticks: {
+            color: "#96abc5",
+            callback: function(value) {
+              return `£${formatMoney0(value)}`;
+            }
+          },
+          grid: {
+            color: "rgba(255,255,255,0.06)"
+          }
+        }
+      }
+    }
+  });
+
+  setText("potTrendMeta", `${history.length} saved snapshots of your holding pot`);
+}
+
+function exportPlannerBackup() {
+  try {
+    const backupData = {
+      exportedAt: new Date().toISOString(),
+      version: "aurora_wealth_centre",
+      plannerState
+    };
+
+    const blob = new Blob([JSON.stringify(backupData, null, 2)], {
+      type: "application/json"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+
+    a.href = url;
+    a.download = `aurora-wealth-centre-backup-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    setText("backupStatus", `Backup exported: ${new Date().toLocaleString("en-GB")}`);
+  } catch (err) {
+    console.error("Export failed", err);
+    setText("backupStatus", "Backup export failed");
+  }
+}
+
+function importPlannerBackupFromFile(file) {
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      const importedState = parsed?.plannerState ? parsed.plannerState : parsed;
+
+      if (!importedState || typeof importedState !== "object") {
+        throw new Error("Invalid backup format");
+      }
+
+      plannerState = {
+        ...getFreshDefaults(),
+        ...importedState,
+        paydayContribution: Number.isFinite(Number(importedState.paydayContribution))
+          ? Number(importedState.paydayContribution)
+          : 140,
+        growPotBalance: Number.isFinite(Number(importedState.growPotBalance))
+          ? Number(importedState.growPotBalance)
+          : 700,
+        growPotTarget: Number.isFinite(Number(importedState.growPotTarget))
+          ? Number(importedState.growPotTarget)
+          : 7500,
+        scheduledBills: Array.isArray(importedState.scheduledBills)
+          ? importedState.scheduledBills.map(bill => ({
+              deducted: false,
+              ...bill
+            }))
+          : JSON.parse(JSON.stringify(defaultScheduledBills)),
+        futureCosts: Array.isArray(importedState.futureCosts)
+          ? importedState.futureCosts
+          : JSON.parse(JSON.stringify(defaultFutureCosts)),
+        recurringCosts: Array.isArray(importedState.recurringCosts)
+          ? importedState.recurringCosts
+          : JSON.parse(JSON.stringify(defaultRecurringCosts)),
+        yearlyRecurringCosts: Array.isArray(importedState.yearlyRecurringCosts)
+          ? importedState.yearlyRecurringCosts
+          : JSON.parse(JSON.stringify(defaultYearlyRecurringCosts)),
+        archivedBills: Array.isArray(importedState.archivedBills)
+          ? importedState.archivedBills
+          : [],
+        canteen: importedState.canteen || {
+          budget: 80,
+          lastSpend: 0,
+          lastReleased: 0
+        }
+      };
+
+      document.getElementById("holdingBalanceInput").value = Number(plannerState.holdingBalance || 0).toFixed(2);
+      document.getElementById("paydayContributionInput").value = Number(plannerState.paydayContribution || 0);
+      document.getElementById("minimumBufferInput").value = Number(plannerState.minimumBuffer || 0);
+      document.getElementById("growPotBalanceInput").value = Number(plannerState.growPotBalance || 0).toFixed(2);
+      document.getElementById("growPotTargetInput").value = Number(plannerState.growPotTarget || 7500);
+
+      savePlannerData();
+      runPlanner();
+
+      setText("backupStatus", `Backup imported: ${new Date().toLocaleString("en-GB")}`);
+    } catch (err) {
+      console.error("Import failed", err);
+      setText("backupStatus", "Import failed - invalid backup file");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function getContributionInput() {
+  return document.getElementById("paydayContributionInput");
+}
+
+function getNextPaydayDate() {
+  const base = parseLocalDate(FIRST_PAYDAY);
+  base.setHours(0, 0, 0, 0);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const next = new Date(base);
+
+  while (next < today) {
+    next.setDate(next.getDate() + 28);
+  }
+
+  return next;
+}
+
+function getNextPaydayLabel() {
+  return getNextPaydayDate().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+function getDaysToNextPayday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const next = getNextPaydayDate();
+  return Math.round((next.getTime() - today.getTime()) / 86400000);
+}
+
+function applyPaidScheduledDeductions() {
+  plannerState.scheduledBills.forEach(bill => {
+    if (bill.paid && !bill.deducted && Number(bill.actualPaid || 0) > 0) {
+      const amountToDeduct = Number(bill.actualPaid || 0);
+
+      if (amountToDeduct > 0) {
+        plannerState.holdingBalance = Math.max(
+          0,
+          Number(plannerState.holdingBalance || 0) - amountToDeduct
+        );
+      }
+
+      bill.deducted = true;
+    }
+
+    if (!bill.paid && bill.deducted) {
+      bill.deducted = false;
+    }
+  });
+}
+
+function renderScheduledBills() {
+  const ddBody = document.getElementById("scheduledBillsBody_dd");
+  const repaymentBody = document.getElementById("scheduledBillsBody_repayment");
+  const holidayBody = document.getElementById("scheduledBillsBody_holiday");
+  const carBody = document.getElementById("scheduledBillsBody_car");
+  const dentistBody = document.getElementById("scheduledBillsBody_dentist");
+  const homeBody = document.getElementById("scheduledBillsBody_home");
+  const otherBody = document.getElementById("scheduledBillsBody_other");
+
+  if (
+    !ddBody ||
+    !repaymentBody ||
+    !holidayBody ||
+    !carBody ||
+    !dentistBody ||
+    !homeBody ||
+    !otherBody
+  ) return;
+
+  ddBody.innerHTML = "";
+  repaymentBody.innerHTML = "";
+  holidayBody.innerHTML = "";
+  carBody.innerHTML = "";
+  dentistBody.innerHTML = "";
+  homeBody.innerHTML = "";
+  otherBody.innerHTML = "";
+
+  plannerState.scheduledBills.forEach((bill, index) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input class="table-input" type="text" value="${bill.name || ""}" data-section="scheduled" data-index="${index}" data-field="name"></td>
+      <td><input class="table-input" type="date" value="${bill.due || ""}" data-section="scheduled" data-index="${index}" data-field="due"></td>
+      <td><input class="table-input" type="number" step="0.01" value="${bill.amount}" data-section="scheduled" data-index="${index}" data-field="amount"></td>
+      <td>
+        <div class="check-wrap">
+          <input type="checkbox" ${bill.paid ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="paid">
+          <span>${bill.paid ? "Yes" : "No"}</span>
+        </div>
+      </td>
+      <td><input class="table-input" type="number" step="0.01" value="${bill.actualPaid || 0}" data-section="scheduled" data-index="${index}" data-field="actualPaid"></td>
+      <td>
+        <div class="check-wrap">
+          <input type="checkbox" ${bill.included ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="included">
+          <span>${bill.included ? "Yes" : "No"}</span>
+        </div>
+      </td>
+      <td><input class="table-input" type="text" value="${bill.category || ""}" data-section="scheduled" data-index="${index}" data-field="category"></td>
+      <td><input class="table-input" type="text" value="${bill.notes || ""}" data-section="scheduled" data-index="${index}" data-field="notes"></td>
+      <td><button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.paid ? "" : "disabled"}>Roll →</button></td>
+      <td><button class="quick-btn" data-archive-section="scheduled" data-archive-index="${index}" ${bill.paid ? "" : "disabled"}>Archive</button></td>
+      <td><button class="delete-btn" data-delete-section="scheduled" data-delete-index="${index}">Delete</button></td>
+    `;
+
+    const daysLeft = bill.due ? getDaysLeft(bill.due) : null;
+    if (bill.paid) tr.classList.add("bill-paid-row");
+    else if (daysLeft !== null && daysLeft < 0) tr.classList.add("bill-overdue-row");
+    else if (daysLeft !== null && daysLeft <= 7) tr.classList.add("bill-due-soon-row");
+
+    const category = String(bill.category || "").toLowerCase();
+    const name = String(bill.name || "").toLowerCase();
+
+    if (
+      category.includes("repay") ||
+      category.includes("loan") ||
+      category.includes("flex")
+    ) {
+      repaymentBody.appendChild(tr);
+    } else if (
+      category.includes("direct debit") ||
+      category.includes("dd") ||
+      category.includes("subscription") ||
+      category.includes("broadband")
+    ) {
+      ddBody.appendChild(tr);
+    } else if (
+      category.includes("travel") ||
+      category.includes("holiday") ||
+      name.includes("spain") ||
+      name.includes("liverpool")
+    ) {
+      holidayBody.appendChild(tr);
+    } else if (
+      category.includes("car") ||
+      category.includes("mot") ||
+      category.includes("insurance") ||
+      category.includes("service")
+    ) {
+      carBody.appendChild(tr);
+    } else if (
+      category.includes("dentist") ||
+      category.includes("dental") ||
+      name.includes("tooth") ||
+      name.includes("hygienist")
+    ) {
+      dentistBody.appendChild(tr);
+    } else if (
+      category.includes("home") ||
+      category.includes("house") ||
+      category.includes("boiler")
+    ) {
+      homeBody.appendChild(tr);
+    } else {
+      otherBody.appendChild(tr);
+    }
+  });
+}
+
+
+function getScheduledGroupKey(bill) {
+  const category = String(bill.category || "").toLowerCase();
+  const name = String(bill.name || "").toLowerCase();
+
+  if (category.includes("repay") || category.includes("loan") || category.includes("flex")) return "repayment";
+  if (category.includes("direct debit") || category.includes("dd") || category.includes("subscription") || category.includes("broadband")) return "dd";
+  if (category.includes("travel") || category.includes("holiday") || name.includes("spain") || name.includes("liverpool")) return "holiday";
+  if (category.includes("car") || category.includes("mot") || category.includes("insurance") || category.includes("service")) return "car";
+  if (category.includes("dentist") || category.includes("dental") || name.includes("tooth") || name.includes("hygienist")) return "dentist";
+  if (category.includes("home") || category.includes("house") || category.includes("boiler")) return "home";
+  return "other";
+}
+
+function updateScheduledBillsCommander() {
+  const groups = {
+    dd: { meta:"ddMeta", count:0, total:0 },
+    dentist: { meta:"dentistMeta", count:0, total:0 },
+    repayment: { meta:"repaymentMeta", count:0, total:0 },
+    home: { meta:"homeMeta", count:0, total:0 },
+    holiday: { meta:"holidayMeta", count:0, total:0 },
+    car: { meta:"carMeta", count:0, total:0 },
+    other: { meta:"otherMeta", count:0, total:0 }
+  };
+
+  const liveBills = (plannerState.scheduledBills || []).filter(b => b.included && !b.paid);
+  liveBills.forEach(bill => {
+    const key = getScheduledGroupKey(bill);
+    if (!groups[key]) return;
+    groups[key].count += 1;
+    groups[key].total += Number(bill.amount || 0);
+  });
+
+  Object.values(groups).forEach(group => {
+    const label = group.count ? `${group.count} • £${formatMoney0(group.total)}` : "clear";
+    setText(group.meta, label);
+  });
+
+  const dueSoon = liveBills
+    .filter(b => b.due)
+    .map(b => ({...b, daysLeft:getDaysLeft(b.due)}))
+    .filter(b => b.daysLeft !== null && b.daysLeft >= 0 && b.daysLeft <= 7);
+  const dueSoonTotal = dueSoon.reduce((sum,b)=>sum + Number(b.amount || 0),0);
+  const nextBill = liveBills
+    .filter(b => b.due)
+    .map(b => ({...b, daysLeft:getDaysLeft(b.due)}))
+    .filter(b => b.daysLeft !== null)
+    .sort((a,b)=>a.daysLeft-b.daysLeft)[0];
+
+  setText("scheduledLiveCount", liveBills.length);
+  setText("scheduledLiveTotal", `£${formatMoney0(liveBills.reduce((sum,b)=>sum + Number(b.amount || 0),0))}`);
+  setText("scheduledDueSoon", `£${formatMoney0(dueSoonTotal)}`);
+  setText("scheduledNextBill", nextBill ? nextBill.name : "Clear");
+  setText("scheduledNextBillMeta", nextBill ? `${nextBill.daysLeft} day(s) • £${formatMoney(nextBill.amount || 0)}` : "No live scheduled pressure");
+}
+
+
+function renderArchivedBills() {
+  const body = document.getElementById("archivedBillsBody");
+  const countEl = document.getElementById("archivedBillsCount");
+  if (!body) return;
+
+  body.innerHTML = "";
+  if (countEl) countEl.innerText = `(${plannerState.archivedBills.length})`;
+
+  plannerState.archivedBills.forEach((bill, index) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${bill.name || ""}</td>
+      <td>${bill.due ? dateLabel(bill.due) : "No date yet"}</td>
+      <td>£${formatMoney(bill.amount || 0)}</td>
+      <td>£${formatMoney(bill.actualPaid || 0)}</td>
+      <td>${bill.category || ""}</td>
+      <td>${bill.notes || ""}</td>
+      <td>${bill.archivedAt ? new Date(bill.archivedAt).toLocaleDateString("en-GB") : "-"}</td>
+      <td><button class="delete-btn" data-delete-section="archived" data-delete-index="${index}">Delete</button></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function renderFutureCosts() {
+  const body = document.getElementById("futureCostsBody");
+  if (!body) return;
+  body.innerHTML = "";
+
+  plannerState.futureCosts.forEach((bill, index) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input class="table-input" type="text" value="${bill.name || ""}" data-section="future" data-index="${index}" data-field="name"></td>
+      <td><input class="table-input" type="date" value="${bill.due || ""}" data-section="future" data-index="${index}" data-field="due"></td>
+      <td><input class="table-input" type="number" step="0.01" value="${bill.amount}" data-section="future" data-index="${index}" data-field="amount"></td>
+      <td><div class="check-wrap"><input type="checkbox" ${bill.included ? "checked" : ""} data-section="future" data-index="${index}" data-field="included"><span>${bill.included ? "Yes" : "No"}</span></div></td>
+      <td><input class="table-input" type="text" value="${bill.category || ""}" data-section="future" data-index="${index}" data-field="category"></td>
+      <td><input class="table-input" type="text" value="${bill.notes || ""}" data-section="future" data-index="${index}" data-field="notes"></td>
+      <td><button class="delete-btn" data-delete-section="future" data-delete-index="${index}">Delete</button></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function renderRecurringCosts() {
+  const body = document.getElementById("recurringCostsBody");
+  if (!body) return;
+  body.innerHTML = "";
+
+  plannerState.recurringCosts.forEach((cost, index) => {
+    const yearly = Number(cost.amount || 0) * 12;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input class="table-input" type="text" value="${cost.name}" data-section="recurring" data-index="${index}" data-field="name"></td>
+      <td><input class="table-input" type="number" step="0.01" value="${cost.amount}" data-section="recurring" data-index="${index}" data-field="amount"></td>
+      <td><span class="recurring-yearly" data-yearly-index="${index}">£${formatMoney(yearly)}</span></td>
+      <td><div class="check-wrap"><input type="checkbox" ${cost.included ? "checked" : ""} data-section="recurring" data-index="${index}" data-field="included"><span>${cost.included ? "Yes" : "No"}</span></div></td>
+      <td><input class="table-input" type="text" value="${cost.category}" data-section="recurring" data-index="${index}" data-field="category"></td>
+      <td><button class="delete-btn" data-delete-section="recurring" data-delete-index="${index}">Delete</button></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function renderYearlyRecurringCosts() {
+  const body = document.getElementById("yearlyRecurringCostsBody");
+  if (!body) return;
+  body.innerHTML = "";
+
+  plannerState.yearlyRecurringCosts.forEach((cost, index) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input class="table-input" type="text" value="${cost.name}" data-section="yearlyRecurring" data-index="${index}" data-field="name"></td>
+      <td><input class="table-input" type="number" step="0.01" value="${cost.amount}" data-section="yearlyRecurring" data-index="${index}" data-field="amount"></td>
+      <td><div class="check-wrap"><input type="checkbox" ${cost.included ? "checked" : ""} data-section="yearlyRecurring" data-index="${index}" data-field="included"><span>${cost.included ? "Yes" : "No"}</span></div></td>
+      <td><input class="table-input" type="text" value="${cost.category}" data-section="yearlyRecurring" data-index="${index}" data-field="category"></td>
+      <td><button class="delete-btn" data-delete-section="yearlyRecurring" data-delete-index="${index}">Delete</button></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function renderNext7DaysBills(bills) {
+  const grid = document.getElementById("next7DaysGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  const next7 = [...bills]
+    .filter(x => x.included && !x.paid && x.due)
+    .filter(x => {
+      const left = getDaysLeft(x.due);
+      return left !== null && left >= 0 && left <= 7;
+    })
+    .sort((a, b) => new Date(a.due) - new Date(b.due));
+
+  if (!next7.length) {
+    const card = document.createElement("div");
+    card.className = "next-bill-box";
+    card.innerHTML = `
+      <div class="next-bill-title">No bills due in the next 7 days</div>
+      <div class="subv">Short-term pressure is currently clear.</div>
+    `;
+    grid.appendChild(card);
+    setText("next7BillsMeta", "No short-term bill pressure");
+    setText("next7BillsTotal", "£0 due in next 7 days");
+    return;
+  }
+
+  next7.forEach(item => {
+    const left = getDaysLeft(item.due);
+    const card = document.createElement("div");
+    card.className = "next-bill-box";
+    card.innerHTML = `
+      <div class="next-bill-title">${item.name}</div>
+      <div class="subv">${dateLabel(item.due)} • £${formatMoney(item.amount)}</div>
+      <div class="subv ${left <= 3 ? "risk" : "watch"}">${left} days left • ${item.category}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  const total = next7.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  setText("next7BillsMeta", `${next7.length} bill(s) coming up soon`);
+  setText("next7BillsTotal", `£${formatMoney(total)} due in next 7 days`);
+}
+
+function renderCategoryBreakdown(categoryTotals) {
+  const grid = document.getElementById("categoryGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  Object.entries(categoryTotals)
+    .sort((a, b) => b[1] - a[1])
+    .forEach(([name, total]) => {
+      const card = document.createElement("div");
+      card.className = "category-card";
+      card.innerHTML = `
+        <div class="category-title">${name}</div>
+        <div class="stat small">£${formatMoney(total)}</div>
+        <div class="subv">£${formatMoney(weeklyFromYearly(total))}/week • £${formatMoney(monthlyFromYearly(total))}/month</div>
+      `;
+      grid.appendChild(card);
+    });
+}
+
+function renderYearlyTable(rows) {
+  const body = document.getElementById("yearlyTableBody");
+  if (!body) return;
+  body.innerHTML = "";
+
+  rows.forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.name}</td>
+      <td>£${formatMoney(row.yearly)}</td>
+      <td>£${formatMoney(weeklyFromYearly(row.yearly))}</td>
+      <td>£${formatMoney(monthlyFromYearly(row.yearly))}</td>
+      <td>${row.notes}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function calculateMonthlyAdjustments() {
+  const rows = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let runningBalance = Number(plannerState.holdingBalance || 0);
+
+  function countPaydaysInMonth(year, month) {
+    let count = 0;
+    const checkDate = new Date(FIRST_PAYDAY);
+    checkDate.setHours(0, 0, 0, 0);
+
+    for (let i = 0; i < 24; i++) {
+      if (checkDate.getFullYear() === year && checkDate.getMonth() === month) {
+        count++;
+      }
+      checkDate.setDate(checkDate.getDate() + 28);
+    }
+
+    return count;
+  }
+
+  for (let i = 0; i < 12; i++) {
+    const monthDate = new Date(today.getFullYear(), today.getMonth() + i, 1);
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+
+    const monthLabel = monthDate.toLocaleString("en-GB", {
+      month: "short",
+      year: "numeric"
+    });
+
+    const paydaysThisMonth = countPaydaysInMonth(year, month);
+    const monthContribution = paydaysThisMonth * Number(plannerState.paydayContribution || 0);
+
+    runningBalance += monthContribution;
+
+    const scheduledTotal = plannerState.scheduledBills
+      .filter(b => {
+        if (!b.included || !b.due || b.paid) return false;
+        const d = new Date(b.due);
+        return d.getFullYear() === year && d.getMonth() === month;
+      })
+      .reduce((sum, b) => sum + Number(b.amount || 0), 0);
+
+    const futureTotal = plannerState.futureCosts
+      .filter(b => {
+        if (!b.included || !b.due) return false;
+        const d = new Date(b.due);
+        return d.getFullYear() === year && d.getMonth() === month;
+      })
+      .reduce((sum, b) => sum + Number(b.amount || 0), 0);
+
+    const recurringMonthlyTotal = plannerState.recurringCosts
+      .filter(c => c.included)
+      .reduce((sum, c) => sum + Number(c.amount || 0), 0);
+
+    const yearlyRecurringMonthlyShare = plannerState.yearlyRecurringCosts
+      .filter(c => c.included)
+      .reduce((sum, c) => sum + (Number(c.amount || 0) / 12), 0);
+
+    const monthTotal = scheduledTotal + futureTotal + recurringMonthlyTotal + yearlyRecurringMonthlyShare;
+    runningBalance -= monthTotal;
+
+    const minRequired = Number(plannerState.minimumBuffer || 0);
+
+    let adjustment = 0;
+    let status = "OK";
+
+    if (runningBalance < minRequired) {
+      adjustment = Math.ceil((minRequired - runningBalance) / 3);
+      status = "Increase";
+    } else if (runningBalance > minRequired + 300) {
+      adjustment = Math.floor((runningBalance - (minRequired + 300)) / 3);
+      status = "Reduce";
+    }
+
+    rows.push({
+      month: monthLabel,
+      balance: runningBalance,
+      min: minRequired,
+      adjustment,
+      status
+    });
+  }
+
+  return rows;
+}
+
+function renderContributionTable() {
+  const body = document.getElementById("contributionTableBody");
+  if (!body) return;
+
+  body.innerHTML = "";
+  const rows = calculateMonthlyAdjustments();
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    const adjText = r.adjustment > 0
+      ? (r.status === "Increase" ? `+£${r.adjustment}` : `-£${r.adjustment}`)
+      : "—";
+
+    tr.innerHTML = `
+      <td>${r.month}</td>
+      <td>£${formatMoney(r.balance)}</td>
+      <td>£${formatMoney(r.min)}</td>
+      <td>${adjText}</td>
+      <td class="${r.status === "Increase" ? "risk" : r.status === "Reduce" ? "good" : "neutral"}">${r.status}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function updatePlannerTotals() {
+  plannerState.holdingBalance = parseNum(document.getElementById("holdingBalanceInput")?.value);
+  plannerState.paydayContribution = parseNum(getContributionInput()?.value);
+  plannerState.minimumBuffer = parseNum(document.getElementById("minimumBufferInput")?.value);
+  plannerState.growPotBalance = parseNum(document.getElementById("growPotBalanceInput")?.value);
+  plannerState.growPotTarget = parseNum(document.getElementById("growPotTargetInput")?.value) || GROW_POT_TARGET;
+
+  const includedScheduled = plannerState.scheduledBills.filter(x => x.included);
+  const includedFuture = plannerState.futureCosts.filter(x => x.included);
+  const includedRecurring = plannerState.recurringCosts.filter(x => x.included);
+  const includedYearlyRecurring = plannerState.yearlyRecurringCosts.filter(x => x.included);
+
+  const scheduledIncludedTotal = includedScheduled.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  const futureIncludedTotal = includedFuture.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  const recurringIncludedTotal = includedRecurring.reduce((sum, x) => sum + (Number(x.amount || 0) * 12), 0);
+  const yearlyRecurringTotal = includedYearlyRecurring.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  const includedGrandTotal = scheduledIncludedTotal + futureIncludedTotal + recurringIncludedTotal + yearlyRecurringTotal;
+
+  const unpaidScheduled = includedScheduled.filter(x => !x.paid);
+  const unpaidScheduledTotal = unpaidScheduled.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+
+  const actualPaidScheduledTotal = includedScheduled
+    .filter(x => x.paid)
+    .reduce((sum, x) => sum + Number(x.actualPaid || 0), 0);
+
+  const plannedPaidScheduledTotal = includedScheduled
+    .filter(x => x.paid)
+    .reduce((sum, x) => sum + Number(x.amount || 0), 0);
+
+  let recurringReleased = 0;
+  includedRecurring.forEach(x => {
+    const original = Number(x.originalAmount ?? x.amount ?? 0);
+    const current = Number(x.amount || 0);
+    if (current < original) {
+      recurringReleased += (original - current) * 12;
+    }
+  });
+
+  const releasedSurplus =
+    Math.max(0, plannedPaidScheduledTotal - actualPaidScheduledTotal) +
+    Math.max(0, recurringReleased);
+
+  const next7DayBillsList = unpaidScheduled
+    .filter(x => x.due)
+    .filter(x => {
+      const diff = getDaysLeft(x.due);
+      return diff >= 0 && diff <= 7;
+    })
+    .sort((a, b) => new Date(a.due) - new Date(b.due));
+
+  const next30DayBillsList = unpaidScheduled
+    .filter(x => x.due)
+    .filter(x => {
+      const diff = getDaysLeft(x.due);
+      return diff >= 0 && diff <= 30;
+    })
+    .sort((a, b) => new Date(a.due) - new Date(b.due));
+
+  const next7DaysBills = next7DayBillsList.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+  const next30DaysBills = next30DayBillsList.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+
+  const recurringMonthlyTotal = includedRecurring.reduce((sum, x) => sum + Number(x.amount || 0), 0);
+
+  const protectedBase = plannerState.minimumBuffer;
+  const protectedRecurringMonthly = recurringMonthlyTotal;
+  const protectedMoney = protectedBase + unpaidScheduledTotal + protectedRecurringMonthly;
+  const protectedNext30Cycle = next30DaysBills + protectedRecurringMonthly;
+
+  const availableToInvest = Math.max(
+    0,
+    plannerState.holdingBalance - protectedBase - unpaidScheduledTotal - protectedRecurringMonthly + releasedSurplus
+  );
+
+  const safeToMoveNow = Math.max(
+    0,
+    plannerState.holdingBalance - protectedBase - protectedNext30Cycle + releasedSurplus
+  );
+
+  const trueSurplus = Math.max(0, safeToMoveNow);
+  const freeAfterBuffer = Math.max(0, plannerState.holdingBalance - plannerState.minimumBuffer);
+  const deficit = Math.max(0, includedGrandTotal - plannerState.holdingBalance - releasedSurplus);
+  const payCycleTarget = deficit / 13;
+  const currentPotOffset = Math.max(0, plannerState.holdingBalance - protectedMoney);
+  const finalAmountToAdd = Math.max(0, payCycleTarget);
+
+  const currentRateAnnual = plannerState.paydayContribution * 13;
+  const monthlyTarget = deficit / 12;
+  const weeklyTarget = deficit / 52;
+  const surplusShortfall = currentRateAnnual - deficit;
+
+  let pressureLevel = "Low";
+  let pressureClass = "good";
+  const totalNext7DaysPressure = next7DaysBills + recurringMonthlyTotal;
+
+  if (totalNext7DaysPressure > 400) {
+    pressureLevel = "High";
+    pressureClass = "risk";
+  } else if (totalNext7DaysPressure > 150) {
+    pressureLevel = "Medium";
+    pressureClass = "watch";
+  }
+
+  const categoryTotals = {};
+
+  includedScheduled.forEach(item => {
+    categoryTotals[item.category] = (categoryTotals[item.category] || 0) + Number(item.amount || 0);
+  });
+
+  includedFuture.forEach(item => {
+    categoryTotals[item.category] = (categoryTotals[item.category] || 0) + Number(item.amount || 0);
+  });
+
+  includedRecurring.forEach(item => {
+    categoryTotals[item.category] = (categoryTotals[item.category] || 0) + (Number(item.amount || 0) * 12);
+  });
+
+  includedYearlyRecurring.forEach(item => {
+    categoryTotals[item.category] = (categoryTotals[item.category] || 0) + Number(item.amount || 0);
+  });
+
+  setText("potBalance", formatMoney(plannerState.holdingBalance));
+  setText("potBalanceMeta", `Minimum safe buffer: £${formatMoney0(plannerState.minimumBuffer)}`);
+
+  setText("includedTotal", formatMoney(includedGrandTotal));
+  setText("includedTotalMeta", `${includedScheduled.length} scheduled • ${includedFuture.length} future • ${includedRecurring.length} recurring • ${includedYearlyRecurring.length} yearly recurring active`);
+
+  setText("availableToInvest", formatMoney(availableToInvest));
+  setText("safeToMoveNow", formatMoney(safeToMoveNow));
+  setText("safeToMoveNowMeta", protectedNext30Cycle > 0 ? `After protecting £${formatMoney(next30DaysBills)} due in next 30 days + £${formatMoney(protectedRecurringMonthly)} recurring monthly costs` : "No scheduled or recurring monthly costs protected");
+
+  setText("pressureLevel", pressureLevel);
+  setText("pressureMeta", `£${formatMoney(totalNext7DaysPressure)} in next 7 days • £${formatMoney(next30DaysBills)} in next 30 days • £${formatMoney(protectedRecurringMonthly)} recurring monthly`);
+
+  const pressureCard = document.getElementById("pressureCard");
+  if (pressureCard) {
+    pressureCard.classList.remove("good", "watch", "risk");
+    pressureCard.classList.add(pressureClass);
+  }
+
+  setText("releasedSurplus", formatMoney(releasedSurplus));
+  setText("releasedSurplusMeta", releasedSurplus > 0
+    ? `Paid bill savings: £${formatMoney(Math.max(0, plannedPaidScheduledTotal - actualPaidScheduledTotal))} • Recurring released: £${formatMoney(Math.max(0, recurringReleased))}`
+    : "No surplus released from cheaper paid bills or reduced recurring costs yet"
+  );
+
+  setText("weeklyTarget", `£${formatMoney0(weeklyTarget)}`);
+  setText("weeklyTargetMeta", `Based on £${formatMoney(deficit)} remaining deficit to fund`);
+  setText("monthlyTarget", `£${formatMoney(monthlyTarget)}`);
+  setText("currentRateAnnual", `£${formatMoney(currentRateAnnual)}`);
+  setText("currentRateMeta", `£${formatMoney(plannerState.paydayContribution)}/payday • 13 paydays yearly`);
+
+  const surplusEl = document.getElementById("surplusShortfall");
+  if (surplusEl) {
+    surplusEl.innerText = `${surplusShortfall >= 0 ? "+" : "-"}£${formatMoney(Math.abs(surplusShortfall))}`;
+    surplusEl.classList.remove("good", "risk", "neutral");
+    if (surplusShortfall > 0) surplusEl.classList.add("good");
+    else if (surplusShortfall < 0) surplusEl.classList.add("risk");
+    else surplusEl.classList.add("neutral");
+  }
+
+  setText("surplusShortfallMeta", surplusShortfall >= 0 ? "Funding ahead of target" : "Funding below target");
+
+  setText("yearlyScheduled", `£${formatMoney(scheduledIncludedTotal)}`);
+  setText("yearlyRecurring", `£${formatMoney(recurringIncludedTotal)}`);
+  setText("yearlyFuture", `£${formatMoney(futureIncludedTotal)}`);
+  setText("yearlyGrand", `£${formatMoney(includedGrandTotal)}`);
+
+  setText("trueSurplus", formatMoney(trueSurplus));
+  setText("trueSurplusMeta", trueSurplus > 0 ? "Money genuinely spare after short-term protection" : "No genuine spare money right now");
+
+  setText("protectedMoney", formatMoney(protectedMoney));
+  setText("protectedMoneyMeta", `£${formatMoney(plannerState.minimumBuffer)} buffer + £${formatMoney(unpaidScheduledTotal)} unpaid bills + £${formatMoney(protectedRecurringMonthly)} recurring monthly`);
+
+  setText("releaseSurplusCard", `£${formatMoney(releasedSurplus)}`);
+  setText("protectedBillsCard", `£${formatMoney(unpaidScheduledTotal + protectedRecurringMonthly)}`);
+  setText("safeSurplusCard", `£${formatMoney(safeToMoveNow)}`);
+  setText("freeAfterBufferCard", `£${formatMoney(freeAfterBuffer)}`);
+
+  setText("suggestedContributionNow", formatMoney(payCycleTarget));
+  setText("suggestedContributionMeta", `Based on remaining planner gap across 13 paydays`);
+  setText("currentPotOffset", formatMoney(currentPotOffset));
+  setText("currentPotOffsetMeta", currentPotOffset > 0 ? "Already above protection level" : "No spare pot offset currently");
+  setText("finalAmountToAdd", formatMoney(finalAmountToAdd));
+  setText("finalAmountToAddMeta", finalAmountToAdd > 0 ? "This is the clean payday contribution guide" : "No extra top-up needed");
+
+  const daysToPayday = getDaysToNextPayday();
+  setText("nextPaydayLabel", getNextPaydayLabel());
+  setText("nextPaydayMeta", `${daysToPayday} day(s) remaining`);
+  setText("daysToPayday", daysToPayday);
+  setText("daysToPaydayMeta", `Next payday on ${getNextPaydayLabel()}`);
+
+  const growBalance = Number(plannerState.growPotBalance || 0);
+  const growTarget = Number(plannerState.growPotTarget || GROW_POT_TARGET);
+  const growGap = Math.max(0, growTarget - growBalance);
+  const growProgress = growTarget > 0 ? Math.min(100, (growBalance / growTarget) * 100) : 0;
+
+  let growStatus = "Building";
+  let growClass = "watch";
+
+  if (growBalance < 1000) {
+    growStatus = "Priority Funding";
+    growClass = "risk";
+  } else if (growBalance < 3000) {
+    growStatus = "Building Buffer";
+    growClass = "watch";
+  } else if (growBalance < growTarget) {
+    growStatus = "Healthy";
+    growClass = "good";
+  } else {
+    growStatus = "Target Reached";
+    growClass = "good";
+  }
+
+  setText("growPotBalanceDisplay", formatMoney(growBalance));
+  setText("growPotTargetDisplay", formatMoney(growTarget));
+  setText("growPotGap", formatMoney(growGap));
+  setText("growPotGapMeta", growGap > 0 ? "Amount still needed to hit target" : "Target fully reached");
+  setText("growPotStatus", growStatus);
+  setText("growPotStatusMeta", `Current progress: ${growProgress.toFixed(0)}%`);
+  setText("growPotProgressMeta", `${growProgress.toFixed(0)}% of target reached`);
+
+  const growPotStatusEl = document.getElementById("growPotStatus");
+  if (growPotStatusEl) {
+    growPotStatusEl.classList.remove("good", "watch", "risk", "neutral");
+    growPotStatusEl.classList.add(growClass);
+  }
+
+  const growPotFill = document.getElementById("growPotFill");
+  if (growPotFill) {
+    growPotFill.style.width = `${growProgress}%`;
+  }
+
+  const growPotMove = growBalance < 1000 ? Math.min(100, Math.max(0, safeToMoveNow)) : 0;
+  setText("finalPotTopUp", `£${formatMoney(finalAmountToAdd)}`);
+  setText("finalPotTopUpMeta", finalAmountToAdd > 0 ? "Suggested contribution after current balance offset" : "Pot already covered");
+  setText("growPotMove", `£${formatMoney(growPotMove)}`);
+  setText("growPotMoveMeta", growPotMove > 0 ? "Suggested move to strengthen Grow Pot" : "No Grow Pot top-up suggested right now");
+
+  const paydayActions = [];
+  if (finalAmountToAdd > 0) paydayActions.push(`• Add £${formatMoney(finalAmountToAdd)} to the holding pot`);
+  if (growPotMove > 0) paydayActions.push(`• Move £${formatMoney(growPotMove)} to Grow Pot`);
+  if (safeToMoveNow > 0) paydayActions.push(`• Up to £${formatMoney(safeToMoveNow)} is safe to move if no new bills appear`);
+  if (!paydayActions.length) paydayActions.push(`• No action needed right now — pot is covered`);
+
+  const paydayActionsList = document.getElementById("paydayActionsList");
+  if (paydayActionsList) {
+    paydayActionsList.innerHTML = paydayActions.join("<br>");
+  }
+
+  let igSignal = "Hold";
+  let igMeta = `Keep surplus in holding pot for now. Suggested per payday: £${formatMoney(payCycleTarget)}.`;
+
+  if (
+    releasedSurplus > 0 &&
+    plannerState.holdingBalance - releasedSurplus >= plannerState.minimumBuffer &&
+    (plannerState.holdingBalance - plannerState.minimumBuffer) >= (unpaidScheduledTotal + protectedRecurringMonthly)
+  ) {
+    igSignal = "Move Surplus";
+    igMeta = `Safe to move up to £${formatMoney(releasedSurplus)} to IG ISA if you want. Suggested per payday: £${formatMoney(payCycleTarget)}.`;
+  } else if (
+    plannerState.holdingBalance >= (unpaidScheduledTotal + protectedRecurringMonthly + plannerState.minimumBuffer) &&
+    surplusShortfall >= 0
+  ) {
+    igSignal = "Balanced";
+    igMeta = `Holding pot is covering unpaid bills and minimum buffer. Suggested per payday: £${formatMoney(payCycleTarget)}.`;
+  } else {
+    igSignal = "Protect Pot";
+    igMeta = `Do not skim to IG yet — holding pot still needs support. Suggested per payday: £${formatMoney(payCycleTarget)}.`;
+  }
+
+  setText("igSignal", igSignal);
+  setText("igSignalMeta", igMeta);
+
+  const igCard = document.getElementById("igCard");
+  if (igCard) {
+    igCard.classList.remove("good", "watch", "risk");
+    if (igSignal === "Move Surplus") igCard.classList.add("good");
+    else if (igSignal === "Balanced") igCard.classList.add("watch");
+    else igCard.classList.add("risk");
+  }
+
+  const safeMoveCard = document.getElementById("safeMoveCard");
+  if (safeMoveCard) {
+    safeMoveCard.classList.remove("good", "watch", "risk");
+    if (safeToMoveNow > 0) safeMoveCard.classList.add("good");
+    else if (availableToInvest > 0) safeMoveCard.classList.add("watch");
+    else safeMoveCard.classList.add("risk");
+  }
+
+  renderYearlyTable([
+    { name: "Scheduled Bills Included", yearly: scheduledIncludedTotal, notes: `Unpaid scheduled remaining: £${formatMoney(unpaidScheduledTotal)}` },
+    { name: "Recurring Monthly Costs Included", yearly: recurringIncludedTotal, notes: "Monthly costs annualised" },
+    { name: "Future Costs Included", yearly: futureIncludedTotal, notes: "Future items currently switched on" },
+    { name: "Recurring Yearly Costs Included", yearly: yearlyRecurringTotal, notes: "Fixed annual costs" },
+    { name: "Released Surplus", yearly: releasedSurplus, notes: "From actual paid being lower than planned" },
+    { name: "Full Included Total", yearly: includedGrandTotal, notes: "Active planner scenario" }
+  ]);
+
+  renderCategoryBreakdown(categoryTotals);
+  
+renderNext7DaysBills(plannerState.scheduledBills);
+  renderContributionTable();
+
+  updateWealthCommandDeck({
+    safeToMoveNow,
+    next30DaysBills,
+    finalAmountToAdd,
+    protectedMoney,
+    releasedSurplus,
+    trueSurplus,
+    availableToInvest,
+    includedGrandTotal,
+    unpaidScheduledTotal,
+    protectedRecurringMonthly,
+    protectedNext30Cycle
+  });
+
+  savePlannerData();
+}
+
+function handleTableEdit(e) {
+  const target = e.target;
+  const section = target.dataset.section;
+  const index = Number(target.dataset.index);
+  const field = target.dataset.field;
+
+  if (!Number.isFinite(index) || !section || !field) return;
+
+  let source = null;
+  if (section === "scheduled") source = plannerState.scheduledBills;
+  if (section === "future") source = plannerState.futureCosts;
+  if (section === "recurring") source = plannerState.recurringCosts;
+  if (section === "yearlyRecurring") source = plannerState.yearlyRecurringCosts;
+  if (!source || !source[index]) return;
+
+  if (field === "included" || field === "paid") {
+    source[index][field] = target.checked;
+    savePlannerData();
+    runPlanner();
+    return;
+  }
+
+  if (field === "amount" || field === "actualPaid") {
+    source[index][field] = parseNum(target.value);
+  } else {
+    source[index][field] = target.value;
+  }
+
+  if (section === "recurring" && field === "amount") {
+    const yearlyEl = document.querySelector(`[data-yearly-index="${index}"]`);
+    if (yearlyEl) {
+      yearlyEl.innerText = `£${formatMoney(Number(source[index].amount || 0) * 12)}`;
+    }
+  }
+
+  savePlannerData();
+  updatePlannerTotals();
+}
+
+function handleDelete(e) {
+  const btn = e.target.closest(".delete-btn");
+  if (!btn) return;
+
+  const section = btn.dataset.deleteSection;
+  const index = Number(btn.dataset.deleteIndex);
+  if (!Number.isFinite(index)) return;
+
+  if (section === "scheduled") plannerState.scheduledBills.splice(index, 1);
+  if (section === "future") plannerState.futureCosts.splice(index, 1);
+  if (section === "recurring") plannerState.recurringCosts.splice(index, 1);
+  if (section === "yearlyRecurring") plannerState.yearlyRecurringCosts.splice(index, 1);
+  if (section === "archived") plannerState.archivedBills.splice(index, 1);
+
+  savePlannerData();
+  runPlanner();
+}
+
+function handleArchive(e) {
+  const btn = e.target.closest("[data-archive-section]");
+  if (!btn) return;
+
+  const section = btn.dataset.archiveSection;
+  const index = Number(btn.dataset.archiveIndex);
+  if (section !== "scheduled" || !Number.isFinite(index)) return;
+
+  const bill = plannerState.scheduledBills[index];
+  if (!bill || !bill.paid) return;
+
+  plannerState.archivedBills.unshift({
+    ...bill,
+    archivedAt: new Date().toISOString()
+  });
+
+  plannerState.scheduledBills.splice(index, 1);
+
+  savePlannerData();
+  runPlanner();
+}
+
+function handleRollForward(e) {
+  const btn = e.target.closest("[data-roll-section]");
+  if (!btn) return;
+
+  const index = Number(btn.dataset.rollIndex);
+  if (!Number.isFinite(index)) return;
+
+  const bill = plannerState.scheduledBills[index];
+  if (!bill || !bill.paid) return;
+
+  const surplus = Math.max(0, Number(bill.amount || 0) - Number(bill.actualPaid || 0));
+  if (surplus > 0) {
+    plannerState.holdingBalance += surplus;
+  }
+
+  if (bill.due) {
+    const d = new Date(bill.due);
+    d.setMonth(d.getMonth() + 1);
+    bill.due = d.toISOString().split("T")[0];
+  }
+
+  bill.paid = false;
+  bill.actualPaid = 0;
+  bill.deducted = false;
+
+  savePlannerData();
+  runPlanner();
+}
+
+function bindTableInputs() {
+  document.querySelectorAll("[data-section]").forEach(el => {
+    const field = el.dataset.field;
+
+    el.oninput = null;
+    el.onchange = null;
+
+    if (field === "included" || field === "paid") {
+      el.onchange = handleTableEdit;
+    } else {
+      el.oninput = handleTableEdit;
+      el.onchange = handleTableEdit;
+    }
+  });
+
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.onclick = handleDelete;
+  });
+
+  document.querySelectorAll("[data-archive-section]").forEach(btn => {
+    btn.onclick = handleArchive;
+  });
+
+  document.querySelectorAll("[data-roll-section]").forEach(btn => {
+    btn.onclick = handleRollForward;
+  });
+}
+
+function addScheduledBill() {
+  plannerState.scheduledBills.push({
+    id: `scheduled_${Date.now()}`,
+    name: "New Scheduled Bill",
+    due: "",
+    amount: 0,
+    paid: false,
+    actualPaid: 0,
+    deducted: false,
+    included: true,
+    category: "Other",
+    notes: ""
+  });
+  savePlannerData();
+  runPlanner();
+}
+
+function addFutureCost() {
+  plannerState.futureCosts.push({
+    id: `future_${Date.now()}`,
+    name: "New Future Cost",
+    due: "",
+    amount: 0,
+    included: false,
+    category: "Other",
+    notes: ""
+  });
+  savePlannerData();
+  runPlanner();
+}
+
+function addRecurringCost() {
+  plannerState.recurringCosts.push({
+    id: `recurring_${Date.now()}`,
+    name: "New Recurring Cost",
+    amount: 0,
+    originalAmount: 0,
+    included: true,
+    category: "Other"
+  });
+  savePlannerData();
+  runPlanner();
+}
+
+function addYearlyRecurringCost() {
+  plannerState.yearlyRecurringCosts.push({
+    id: `yearlyRecurring_${Date.now()}`,
+    name: "New Yearly Cost",
+    amount: 0,
+    included: true,
+    category: "Other"
+  });
+  savePlannerData();
+  runPlanner();
+}
+
+
+/* ===================== SECTION: AURORA WEALTH COMMAND UPGRADE JS ===================== */
+function updateWealthCommandDeck(metrics) {
+  const safeToMove = metrics.safeToMoveNow || 0;
+  const pressure = metrics.next30DaysBills || 0;
+  const potBalance = Number(plannerState.holdingBalance || 0);
+  const buffer = Number(plannerState.minimumBuffer || 0);
+  const growBalance = Number(plannerState.growPotBalance || 0);
+  const growTarget = Number(plannerState.growPotTarget || 7500);
+  const finalTopUp = metrics.finalAmountToAdd || 0;
+  const protectedMoney = metrics.protectedMoney || 0;
+
+  const bufferScore = buffer > 0 ? Math.min(100, (potBalance / (buffer + 1)) * 40) : 50;
+  const safeScore = safeToMove > 0 ? 25 : 8;
+  const growScore = growTarget > 0 ? Math.min(20, (growBalance / growTarget) * 20) : 0;
+  const pressureScore = pressure < 150 ? 15 : pressure < 400 ? 8 : 2;
+  const score = Math.round(Math.max(0, Math.min(100, bufferScore + safeScore + growScore + pressureScore)));
+
+  setText("wealthScore", score);
+  const badge = document.getElementById("wealthCommandBadge");
+  if (badge) {
+    badge.className = `command-badge ${score >= 75 ? "good" : score >= 55 ? "watch" : "risk"}`;
+    badge.innerText = score >= 75 ? "STRONG" : score >= 55 ? "WATCH" : "PROTECT";
+  }
+
+  setText("commandSafeSignal", safeToMove > 0 ? "MOVE" : "HOLD");
+  setText("commandSafeMeta", safeToMove > 0 ? `£${formatMoney(safeToMove)} available after protection` : "Keep cash protected for bills");
+  setText("commandPaydayMove", `£${formatMoney(finalTopUp)}`);
+  setText("commandPressure", pressure > 400 ? "HIGH" : pressure > 150 ? "MEDIUM" : "LOW");
+  setText("commandPressureMeta", `£${formatMoney(pressure)} due in next 30 days`);
+
+  let route = "Hold";
+  let routeMeta = "No surplus route active yet";
+  if (safeToMove > 250) {
+    route = "IG ISA";
+    routeMeta = "Surplus can support wealth building";
+  } else if (growBalance < 1000 && safeToMove > 0) {
+    route = "Grow Pot";
+    routeMeta = "Emergency buffer still needs strength";
+  } else if (finalTopUp > 0) {
+    route = "Bills";
+    routeMeta = "Fund holding pot before skimming";
+  }
+  setText("commandSurplusRoute", route);
+  setText("commandSurplusMeta", routeMeta);
+
+  renderPotHealthRadar(metrics);
+  updatePaydaySimulator(metrics);
+  updateNextPaydayPlan(metrics);
+  renderWealthAiView(metrics, score);
+  renderFreedomFlightPath(metrics);
+}
+
+function renderPotHealthRadar(metrics) {
+  const grid = document.getElementById("potHealthRadar");
+  if (!grid) return;
+
+  const mp = plannerState.monzoPots || {};
+
+const pots = [
+  {
+    name: "Spending Pot",
+    current: Number(mp.spending_pot?.balance || 0),
+    target: Number(mp.spending_pot?.payday_target || 600),
+    note: "Lifestyle spending"
+  },
+  {
+    name: "Coventry City Tickets / Travel",
+    current: Number(mp.coventry_city_tickets_travel?.balance || 0),
+    target: Number(mp.coventry_city_tickets_travel?.target || 880),
+    note: "Match tickets and travel"
+  },
+  {
+    name: "Coventry City Season Ticket",
+    current: Number(mp.coventry_city_season_ticket?.balance || 0),
+    target: Number(mp.coventry_city_season_ticket?.target || 880),
+    note: "Season ticket fund"
+  },
+  {
+    name: "Dentist",
+    current: Number(mp.dentist?.balance || 0),
+    target: Number(mp.dentist?.target || 300),
+    note: "Routine dental costs"
+  },
+  {
+    name: "Dental Treatment",
+    current: Number(mp.dentist_treatment?.balance || 0),
+    target: Number(mp.dentist_treatment?.target || 850),
+    note: "Major treatment fund"
+  },
+  {
+    name: "Car Costs",
+    current: Number(mp.car_costs?.balance || 0),
+    target: Number(mp.car_costs?.target || 650),
+    note: "Maintenance and repairs"
+  },
+  {
+    name: "Christmas Pot",
+    current: Number(mp.christmas?.balance || 0),
+    target: Number(mp.christmas?.target || 520),
+    note: "Christmas fund"
+  },
+  {
+    name: "Birthdays / Gifts",
+    current: Number(mp.birthday_gifts?.balance || 0),
+    target: Number(mp.birthday_gifts?.target || 400),
+    note: "Annual gifts"
+  },
+  {
+    name: "Holiday Pot",
+    current: Number(mp.holiday_pot?.balance || 0),
+    target: Number(mp.holiday_pot?.target || 500),
+    note: "Holiday fund"
+  },
+  {
+    name: "IG Trading",
+    current: Number(mp.ig_trading?.balance || 0),
+    target: 0,
+    note: "Investment opportunities"
+  },
+  {
+    name: "Payday Rollover",
+    current: Number(mp.payday_rollover?.balance || 0),
+    target: Number(mp.payday_rollover?.target || 350),
+    note: "Safety buffer"
+  },
+  {
+    name: "Mobile Phone",
+    current: Number(mp.mobile_phone?.balance || 0),
+    target: Number(mp.mobile_phone?.target || 800),
+    note: "Phone replacement fund"
+  },
+  {
+    name: "PS5 Games",
+    current: Number(mp.ps5_games?.balance || 0),
+    target: 0,
+    note: "Gaming fund"
+  }
+];
+  grid.innerHTML = pots.map(p => {
+    const progress = p.target > 0 ? Math.min(100, (p.current / p.target) * 100) : 0;
+    const cls = progress >= 85 ? "good" : progress >= 45 ? "watch" : "risk";
+    return `
+      <div class="pot-radar-card ${cls}">
+        <div class="pot-radar-top">
+          <div class="pot-name">${p.name}</div>
+          <div class="pot-status-dot"></div>
+        </div>
+        <div class="subv">${p.note}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+        <div class="subv">£${formatMoney(p.current)} / £${formatMoney(p.target)} • ${progress.toFixed(0)}%</div>
+      </div>
+    `;
+  }).join("");
+}
+
+
+function updateNextPaydayPlan(metrics) {
+  const pay = parseNum(document.getElementById("simPayInput")?.value || 2100);
+  const invest = parseNum(document.getElementById("simInvestInput")?.value || 500);
+  const lifestyle = parseNum(document.getElementById("simLifestyleInput")?.value || 350);
+  const goals = parseNum(document.getElementById("simGoalsInput")?.value || 250);
+  const holding = Number(metrics.finalAmountToAdd || 0);
+
+  const growBalance = Number(plannerState.growPotBalance || 0);
+  const grow = growBalance < 1000
+    ? Math.min(100, Math.max(0, pay - invest - lifestyle - goals - holding))
+    : 0;
+
+  const leftover = pay - invest - lifestyle - goals - holding - grow;
+
+  setText("planHoldingPot", `£${formatMoney0(holding)}`);
+  setText("planIgIsa", `£${formatMoney0(invest)}`);
+  setText("planGoalPots", `£${formatMoney0(goals)}`);
+  setText("planSpending", `£${formatMoney0(lifestyle)}`);
+  setText("planGrowPot", `£${formatMoney0(grow)}`);
+  setText("planLeftover", `${leftover < 0 ? "-" : ""}£${formatMoney0(Math.abs(leftover))}`);
+
+  const leftoverTile = document.getElementById("planLeftoverTile");
+  if (leftoverTile) {
+    leftoverTile.classList.remove("good", "watch", "risk", "cyan");
+    leftoverTile.classList.add(leftover < 0 ? "risk" : leftover < 100 ? "watch" : "good");
+  }
+
+  const badge = document.getElementById("nextPaydayPlanBadge");
+  if (badge) {
+    badge.className = `command-badge ${leftover < 0 ? "risk" : leftover < 100 ? "watch" : "good"}`;
+    badge.innerText = leftover < 0 ? "OVERSTRETCHED" : leftover < 100 ? "TIGHT" : "PAYDAY READY";
+  }
+
+  const verdict = document.getElementById("nextPaydayPlanVerdict");
+  if (verdict) {
+    const safeToMove = Number(metrics.safeToMoveNow || 0);
+    let message = "";
+
+    if (leftover < 0) {
+      message = `Plan is <b>over by £${formatMoney(Math.abs(leftover))}</b>. Reduce goals, lifestyle or IG ISA before payday. No hero moves — the spreadsheet goblin is armed.`;
+    } else if (safeToMove > 250) {
+      message = `Plan leaves <b>£${formatMoney(leftover)}</b> flex and Aurora sees <b>£${formatMoney(safeToMove)}</b> safe-to-move. IG ISA can stay active after the Holding Pot is protected.`;
+    } else if (holding > 0) {
+      message = `Main priority is the <b>Holding Pot top-up of £${formatMoney(holding)}</b>. Keep IG ISA steady, but do not skim extra until bills pressure clears.`;
+    } else {
+      message = `Bills engine looks covered. Payday can focus on <b>IG ISA, goal pots and spending discipline</b>. Clean, boring, powerful — annoyingly effective.`;
+    }
+
+    verdict.innerHTML = message;
+  }
+}
+
+
+function updatePaydaySimulator(metrics) {
+  const pay = parseNum(document.getElementById("simPayInput")?.value || 2100);
+  const invest = parseNum(document.getElementById("simInvestInput")?.value || 500);
+  const lifestyle = parseNum(document.getElementById("simLifestyleInput")?.value || 350);
+  const goals = parseNum(document.getElementById("simGoalsInput")?.value || 250);
+  const holding = Number(metrics.finalAmountToAdd || 0);
+  const grow = Number(plannerState.growPotBalance || 0) < 1000 ? Math.min(100, Math.max(0, pay - invest - lifestyle - goals - holding)) : 0;
+  const remaining = pay - invest - lifestyle - goals - holding - grow;
+
+  const box = document.getElementById("paydaySimulationResults");
+  if (!box) return;
+
+  box.innerHTML = `
+    <div class="payday-row"><strong>Holding Pot</strong><span>£${formatMoney(holding)}</span></div>
+    <div class="payday-row"><strong>IG ISA</strong><span>£${formatMoney(invest)}</span></div>
+    <div class="payday-row"><strong>Goal Pots</strong><span>£${formatMoney(goals)}</span></div>
+    <div class="payday-row"><strong>Grow Pot</strong><span>£${formatMoney(grow)}</span></div>
+    <div class="payday-row"><strong>Lifestyle / Spending</strong><span>£${formatMoney(lifestyle)}</span></div>
+    <div class="payday-row"><strong>Remaining Flex</strong><span class="${remaining >= 0 ? "good" : "risk"}">£${formatMoney(remaining)}</span></div>
+  `;
+}
+
+function renderWealthAiView(metrics, score) {
+  const safeToMove = Number(metrics.safeToMoveNow || 0);
+  const pressure = Number(metrics.next30DaysBills || 0);
+  const finalTopUp = Number(metrics.finalAmountToAdd || 0);
+  const growBalance = Number(plannerState.growPotBalance || 0);
+  const growTarget = Number(plannerState.growPotTarget || 7500);
+
+  let action = "protect the Holding Pot";
+  if (safeToMove > 250) action = "route surplus towards IG ISA";
+  else if (growBalance < 1000 && safeToMove > 0) action = "strengthen the Grow Pot first";
+  else if (finalTopUp <= 0) action = "hold steady and avoid forced moves";
+
+  const text = `
+    Aurora scores this setup at <b>${score}/100</b>. 
+    Current bill pressure is <b>£${formatMoney(pressure)}</b> over the next 30 days. 
+    Safe-to-move is <b>£${formatMoney(safeToMove)}</b>. 
+    The next payday Holding Pot guide is <b>£${formatMoney(finalTopUp)}</b>. 
+    Grow Pot progress is <b>${growTarget > 0 ? ((growBalance / growTarget) * 100).toFixed(0) : 0}%</b>. 
+    Recommended action: <b>${action}</b>.
+  `;
+  const el = document.getElementById("wealthAiView");
+  if (el) el.innerHTML = text;
+}
+
+function renderFreedomFlightPath(metrics) {
+  const box = document.getElementById("freedomFlightPath");
+  if (!box) return;
+
+  const targetAnnual = 24000;
+  const assumedCurrentIncome = 5064; /* From Dividend Terminal current run-rate area */
+  const progress = Math.min(100, (assumedCurrentIncome / targetAnnual) * 100);
+  const nextMilestone = 6000;
+  const milestoneProgress = Math.min(100, (assumedCurrentIncome / nextMilestone) * 100);
+
+  const rows = [
+    { name:"£500/month Stage", value:assumedCurrentIncome, target:nextMilestone, pct:milestoneProgress },
+    { name:"Master Goal", value:assumedCurrentIncome, target:targetAnnual, pct:progress },
+    { name:"Emergency Fund", value:Number(plannerState.growPotBalance||0), target:Number(plannerState.growPotTarget||7500), pct:Number(plannerState.growPotTarget||7500)>0?(Number(plannerState.growPotBalance||0)/Number(plannerState.growPotTarget||7500))*100:0 },
+    { name:"Bills Engine", value:Number(plannerState.holdingBalance||0), target:Number(metrics.protectedMoney||0), pct:Number(metrics.protectedMoney||0)>0?(Number(plannerState.holdingBalance||0)/Number(metrics.protectedMoney||0))*100:0 }
+  ];
+
+  box.innerHTML = rows.map(r => `
+    <div class="flight-row">
+      <div class="flight-name">${r.name}</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.max(0,Math.min(100,r.pct))}%"></div></div>
+      <div class="flight-value">${Math.min(100,r.pct).toFixed(0)}%</div>
+    </div>
+  `).join("");
+}
+
+function runPlanner() {
+  plannerState.holdingBalance = parseNum(document.getElementById("holdingBalanceInput")?.value);
+  plannerState.paydayContribution = parseNum(document.getElementById("paydayContributionInput")?.value);
+  plannerState.minimumBuffer = parseNum(document.getElementById("minimumBufferInput")?.value);
+  plannerState.growPotBalance = parseNum(document.getElementById("growPotBalanceInput")?.value);
+  plannerState.growPotTarget = parseNum(document.getElementById("growPotTargetInput")?.value);
+
+  applyPaidScheduledDeductions();
+
+  const holdingInput = document.getElementById("holdingBalanceInput");
+  if (holdingInput) {
+    holdingInput.value = Number(plannerState.holdingBalance || 0).toFixed(2);
+  }
+
+  savePotHistory();
+  renderScheduledBills();
+  updateScheduledBillsCommander();
+  renderArchivedBills();
+  renderFutureCosts();
+  renderRecurringCosts();
+  renderYearlyRecurringCosts();
+  bindTableInputs();
+  updatePlannerTotals();
+  renderPotTrendChart();
+}
+
+loadPlannerData();
+
+document.getElementById("holdingBalanceInput").value = plannerState.holdingBalance ?? 0;
+document.getElementById("paydayContributionInput").value = plannerState.paydayContribution ?? 0;
+document.getElementById("minimumBufferInput").value = plannerState.minimumBuffer ?? 1000;
+document.getElementById("growPotBalanceInput").value = plannerState.growPotBalance ?? 700;
+document.getElementById("growPotTargetInput").value = plannerState.growPotTarget ?? 7500;
+
+document.getElementById("holdingBalanceInput")?.addEventListener("input", () => {
+  updatePlannerTotals();
+});
+
+document.getElementById("paydayContributionInput")?.addEventListener("input", () => {
+  updatePlannerTotals();
+});
+
+document.getElementById("minimumBufferInput")?.addEventListener("input", () => {
+  updatePlannerTotals();
+});
+
+document.getElementById("growPotBalanceInput")?.addEventListener("input", () => {
+  updatePlannerTotals();
+});
+
+document.getElementById("growPotTargetInput")?.addEventListener("input", () => {
+  updatePlannerTotals();
+});
+
+document.getElementById("savePlannerBtn")?.addEventListener("click", () => {
+  savePlannerData();
+  runPlanner();
+});
+
+document.getElementById("resetPlannerBtn")?.addEventListener("click", () => {
+  resetPlannerData();
+
+  document.getElementById("holdingBalanceInput").value = plannerState.holdingBalance ?? 0;
+  document.getElementById("paydayContributionInput").value = plannerState.paydayContribution ?? 0;
+  document.getElementById("minimumBufferInput").value = plannerState.minimumBuffer ?? 1000;
+  document.getElementById("growPotBalanceInput").value = plannerState.growPotBalance ?? 700;
+  document.getElementById("growPotTargetInput").value = plannerState.growPotTarget ?? 7500;
+
+  savePlannerData();
+  runPlanner();
+});
+
+document.getElementById("exportBackupBtn")?.addEventListener("click", exportPlannerBackup);
+
+document.getElementById("importBackupBtn")?.addEventListener("click", () => {
+  document.getElementById("importBackupFile")?.click();
+});
+
+document.getElementById("importBackupFile")?.addEventListener("change", (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  importPlannerBackupFromFile(file);
+  e.target.value = "";
+});
+
+document.getElementById("addScheduledBtn")?.addEventListener("click", addScheduledBill);
+document.getElementById("addFutureBtn")?.addEventListener("click", addFutureCost);
+document.getElementById("addRecurringBtn")?.addEventListener("click", addRecurringCost);
+document.getElementById("addYearlyRecurringBtn")?.addEventListener("click", addYearlyRecurringCost);
+
+document.getElementById("addPaydayBtn")?.addEventListener("click", () => {
+  const contribution = parseNum(document.getElementById("paydayContributionInput")?.value);
+  if (contribution <= 0) return;
+
+  plannerState.holdingBalance += contribution;
+  document.getElementById("holdingBalanceInput").value = plannerState.holdingBalance.toFixed(2);
+
+  savePlannerData();
+  runPlanner();
+});
+
+document.getElementById("addCustomBtn")?.addEventListener("click", () => {
+  const customAmount = parseNum(document.getElementById("customAddInput")?.value);
+  if (customAmount <= 0) return;
+
+  plannerState.holdingBalance += customAmount;
+  document.getElementById("holdingBalanceInput").value = plannerState.holdingBalance.toFixed(2);
+  document.getElementById("customAddInput").value = "";
+
+  savePlannerData();
+  runPlanner();
+});
+
+document.getElementById("removeCustomBtn")?.addEventListener("click", () => {
+  const removeAmount = parseNum(document.getElementById("customRemoveInput")?.value);
+  if (removeAmount <= 0) return;
+
+  plannerState.holdingBalance = Math.max(0, plannerState.holdingBalance - removeAmount);
+  document.getElementById("holdingBalanceInput").value = plannerState.holdingBalance.toFixed(2);
+  document.getElementById("customRemoveInput").value = "";
+
+  savePlannerData();
+  runPlanner();
+});
+
+
+["simPayInput","simInvestInput","simLifestyleInput","simGoalsInput"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input", () => updatePlannerTotals());
+});
+
+runPlanner();
+</script>
+
+<a class="hq-home-btn"
+   href="AuroraNexusMaster.html"
+   target="_self">
+   🏠 Aurora HQ
+</a>
+
+<!-- ===================== SECTION: AURORA MASTER JSON SOURCE ===================== -->
+<script>
+window.AURORA_MASTER_JSON_URL = window.AURORA_MASTER_JSON_URL || "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+</script>
+</body>
+</html>
