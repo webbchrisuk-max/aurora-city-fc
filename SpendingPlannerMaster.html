@@ -2064,13 +2064,127 @@ body{padding:0!important;margin:0!important}
   color:#a9d8ff;font-size:8px;font-weight:950;white-space:nowrap
 }
 
+
+
+/* ===================== M21 AUTO-HIDE MANAGER SIDEBAR ===================== */
+@media (min-width:821px){
+  .m13-app{
+    --m21-sidebar-open:244px;
+    --m21-sidebar-closed:76px;
+    grid-template-columns:var(--m21-sidebar-open) minmax(0,1fr)!important;
+    transition:grid-template-columns .28s cubic-bezier(.2,.8,.2,1);
+  }
+  .m13-app.m13-sidebar-collapsed{
+    grid-template-columns:var(--m21-sidebar-closed) minmax(0,1fr)!important;
+  }
+  .m13-sidebar{
+    overflow:visible;
+    transition:padding .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s ease;
+    box-shadow:12px 0 34px rgba(0,0,0,.20);
+  }
+  .m13-app.m13-sidebar-collapsed .m13-sidebar{
+    padding-left:10px;
+    padding-right:10px;
+    box-shadow:7px 0 24px rgba(0,0,0,.16);
+  }
+  .m13-sidebar-toggle{
+    position:absolute;
+    top:76px;
+    right:-15px;
+    z-index:120;
+    width:31px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    padding:0;
+    border:1px solid rgba(34,211,238,.34);
+    border-radius:0 13px 13px 0;
+    color:#dffcff;
+    background:linear-gradient(145deg,rgba(7,24,43,.98),rgba(3,12,25,.98));
+    box-shadow:8px 0 22px rgba(0,0,0,.32),0 0 17px rgba(34,211,238,.11);
+    cursor:pointer;
+    transition:transform .18s ease,border-color .18s ease,background .18s ease;
+  }
+  .m13-sidebar-toggle:hover,
+  .m13-sidebar-toggle:focus-visible{
+    border-color:#22d3ee;
+    background:linear-gradient(145deg,rgba(12,39,64,.99),rgba(4,17,34,.99));
+    outline:none;
+  }
+  .m13-sidebar-toggle span{
+    display:block;
+    font-size:24px;
+    line-height:1;
+    transform:rotate(0deg);
+    transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  }
+  .m13-app.m13-sidebar-collapsed .m13-sidebar-toggle span{
+    transform:rotate(180deg);
+  }
+  .m13-club,
+  .m13-nav button,
+  .m13-sidebar-foot{
+    transition:padding .24s ease,gap .24s ease,opacity .18s ease,transform .24s ease;
+  }
+  .m13-club > div:last-child,
+  .m13-nav-label,
+  .m13-nav button span:last-child,
+  .m13-sidebar-foot{
+    transition:opacity .15s ease,visibility .15s ease,max-width .25s ease,max-height .25s ease,margin .25s ease,padding .25s ease;
+  }
+  .m13-app.m13-sidebar-collapsed .m13-club{
+    justify-content:center;
+    gap:0;
+    padding-left:0;
+    padding-right:0;
+  }
+  .m13-app.m13-sidebar-collapsed .m13-club > div:last-child,
+  .m13-app.m13-sidebar-collapsed .m13-nav-label,
+  .m13-app.m13-sidebar-collapsed .m13-nav button span:last-child,
+  .m13-app.m13-sidebar-collapsed .m13-sidebar-foot{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    max-width:0;
+    max-height:0;
+    overflow:hidden;
+    margin:0;
+    padding:0;
+  }
+  .m13-app.m13-sidebar-collapsed .m13-nav{
+    gap:8px;
+  }
+  .m13-app.m13-sidebar-collapsed .m13-nav button{
+    justify-content:center;
+    gap:0;
+    padding:12px 8px;
+    transform:none;
+  }
+  .m13-app.m13-sidebar-collapsed .m13-nav button:hover,
+  .m13-app.m13-sidebar-collapsed .m13-nav button.active{
+    transform:none;
+  }
+  .m13-app.m13-sidebar-collapsed .m13-nav .icon{
+    width:28px;
+    font-size:18px;
+  }
+  .m13-app.m13-sidebar-collapsed .m13-crest{
+    width:48px;
+    height:48px;
+  }
+}
+@media (max-width:820px){
+  .m13-sidebar-toggle{display:none!important;}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<div class="m13-app">
+<div class="m13-app m13-sidebar-collapsed">
 <aside class="m13-sidebar">
+  <button class="m13-sidebar-toggle" id="m21SidebarToggle" type="button" aria-expanded="false" aria-label="Show manager sidebar" title="Show sidebar"><span aria-hidden="true">‹</span></button>
   <div class="m13-club"><div class="m13-crest">A</div><div><strong>Aurora Wealth HQ</strong><small>BUDGET MANAGEMENT</small></div></div>
   <div class="m13-nav-label">MANAGER MENU</div>
   <div class="m13-nav" id="m13Nav">
@@ -5543,5 +5657,96 @@ document.addEventListener("click",event=>{
   if(reset)m19ResetCycle(Number(reset.dataset.m19Reset));
 });
 </script>
+
+<script>
+/* ===================== M21 AUTO-HIDE MANAGER SIDEBAR ===================== */
+(function(){
+  const app=document.querySelector('.m13-app');
+  const sidebar=document.querySelector('.m13-sidebar');
+  const toggle=document.getElementById('m21SidebarToggle');
+  const nav=document.getElementById('m13Nav');
+  if(!app||!sidebar||!toggle)return;
+
+  const desktopQuery=window.matchMedia('(min-width: 821px)');
+  const hoverQuery=window.matchMedia('(hover: hover) and (pointer: fine)');
+  let hideTimer=0;
+
+  const isDesktop=()=>desktopQuery.matches;
+  const clearHide=()=>{if(hideTimer){window.clearTimeout(hideTimer);hideTimer=0;}};
+
+  function setToggleState(expanded){
+    toggle.setAttribute('aria-expanded',String(expanded));
+    toggle.setAttribute('aria-label',expanded?'Hide manager sidebar':'Show manager sidebar');
+    toggle.title=expanded?'Hide sidebar':'Show sidebar';
+  }
+
+  function expandSidebar(){
+    if(!isDesktop())return;
+    clearHide();
+    app.classList.remove('m13-sidebar-collapsed');
+    setToggleState(true);
+  }
+
+  function collapseSidebar(){
+    if(!isDesktop())return;
+    clearHide();
+    app.classList.add('m13-sidebar-collapsed');
+    setToggleState(false);
+  }
+
+  function scheduleCollapse(delay=480){
+    if(!isDesktop())return;
+    clearHide();
+    hideTimer=window.setTimeout(collapseSidebar,delay);
+  }
+
+  function syncResponsiveState(){
+    clearHide();
+    if(isDesktop()){
+      collapseSidebar();
+    }else{
+      app.classList.remove('m13-sidebar-collapsed');
+      setToggleState(true);
+    }
+  }
+
+  toggle.addEventListener('click',event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    if(app.classList.contains('m13-sidebar-collapsed'))expandSidebar();
+    else collapseSidebar();
+  });
+
+  sidebar.addEventListener('pointerenter',()=>{
+    if(hoverQuery.matches)expandSidebar();
+  });
+  sidebar.addEventListener('pointerleave',()=>{
+    if(hoverQuery.matches)scheduleCollapse();
+  });
+  sidebar.addEventListener('focusin',expandSidebar);
+  sidebar.addEventListener('focusout',()=>scheduleCollapse(650));
+
+  nav?.querySelectorAll('button').forEach(button=>{
+    const label=button.querySelector('span:last-child')?.textContent?.trim();
+    if(label)button.title=label;
+    button.addEventListener('click',()=>scheduleCollapse(260));
+  });
+
+  document.addEventListener('click',event=>{
+    if(!isDesktop()||hoverQuery.matches)return;
+    if(!sidebar.contains(event.target))collapseSidebar();
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape')collapseSidebar();
+  });
+
+  if(typeof desktopQuery.addEventListener==='function')desktopQuery.addEventListener('change',syncResponsiveState);
+  else if(typeof desktopQuery.addListener==='function')desktopQuery.addListener(syncResponsiveState);
+
+  setToggleState(!app.classList.contains('m13-sidebar-collapsed'));
+  window.addEventListener('load',()=>window.setTimeout(syncResponsiveState,180),{once:true});
+})();
+</script>
+
 </body>
 </html>
