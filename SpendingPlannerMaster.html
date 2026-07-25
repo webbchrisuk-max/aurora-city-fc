@@ -1923,6 +1923,106 @@ body{padding:0!important;margin:0!important}
   .m16-status{margin-top:9px}
 }
 
+
+/* ===================== M17 APPLY ALLOCATION BUTTONS ===================== */
+.m15-allocation-row{
+  grid-template-columns:minmax(0,1fr) auto auto!important
+}
+.m17-add-allocation{
+  border:1px solid rgba(52,211,153,.35)!important;
+  background:rgba(52,211,153,.09)!important;
+  color:#7dffb0!important;
+  border-radius:10px!important;
+  padding:8px 10px!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  white-space:nowrap;
+  transition:.18s ease
+}
+.m17-add-allocation:hover{
+  transform:translateY(-2px);
+  border-color:#34d399!important;
+  box-shadow:0 0 16px rgba(52,211,153,.14)
+}
+.m17-add-allocation:disabled{
+  opacity:.48;cursor:not-allowed;transform:none!important;box-shadow:none!important
+}
+.m17-add-allocation.applied{
+  color:#d8ffe8!important;
+  background:rgba(52,211,153,.17)!important
+}
+.m17-apply-status{
+  display:none;
+  margin-top:10px;
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid rgba(52,211,153,.25);
+  background:rgba(52,211,153,.06);
+  color:#bfffd7;
+  font-size:10px;
+  line-height:1.45
+}
+.m17-apply-status.show{display:block;animation:m13Rise .25s ease both}
+@media(max-width:620px){
+  .m15-allocation-row{
+    grid-template-columns:minmax(0,1fr) auto!important
+  }
+  .m17-add-allocation{
+    grid-column:1/-1;
+    width:100%
+  }
+}
+
+
+/* ===================== M18 SMART BILL CATEGORIES ===================== */
+.scheduled-bills-command > .bill-group{display:none!important}
+#m18DynamicBillGroups{display:grid;gap:12px;margin-top:12px}
+.m18-bill-group{
+  border:1px solid rgba(125,211,252,.15);
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(255,255,255,.022)
+}
+.m18-bill-group-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 15px;cursor:pointer;
+  background:linear-gradient(90deg,rgba(34,211,238,.06),rgba(96,165,250,.025));
+  border-bottom:1px solid rgba(125,211,252,.10)
+}
+.m18-bill-group-head h3{margin:0;font-size:14px;display:flex;align-items:center;gap:9px}
+.m18-category-dot{width:8px;height:8px;border-radius:50%;background:#22d3ee;box-shadow:0 0 12px rgba(34,211,238,.55)}
+.m18-group-meta{color:#91a5bd;font-size:9px;font-weight:900;letter-spacing:.4px}
+.m18-group-body{display:block;padding:0 10px 10px}
+.m18-group-body.closed{display:none}
+.m18-status{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:76px;padding:6px 8px;border-radius:999px;
+  font-size:8px;font-weight:950;letter-spacing:.5px;text-transform:uppercase;
+  border:1px solid rgba(125,211,252,.16);white-space:nowrap
+}
+.m18-status.planned{color:#8edbff;background:rgba(34,211,238,.07);border-color:rgba(34,211,238,.23)}
+.m18-status.due-soon{color:#ffe08a;background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28)}
+.m18-status.due-today{color:#9affc3;background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.36);box-shadow:0 0 14px rgba(52,211,153,.09)}
+.m18-status.overdue{color:#ff9aab;background:rgba(251,113,133,.09);border-color:rgba(251,113,133,.30)}
+.m18-status.paid{color:#9affc3;background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.28)}
+.m18-status.excluded,.m18-status.no-date{color:#a8b4c5;background:rgba(148,163,184,.07);border-color:rgba(148,163,184,.20)}
+.m18-row-due-today td{background:rgba(52,211,153,.055)!important;border-color:rgba(52,211,153,.20)!important}
+.m18-row-due-soon td{background:rgba(251,191,36,.035)!important}
+.m18-row-overdue td{background:rgba(251,113,133,.045)!important}
+.m18-category-input{min-width:125px!important}
+.m18-sort-note{
+  margin-top:9px;color:#8fa2b9;font-size:9px;line-height:1.45
+}
+.m18-empty{
+  padding:24px;text-align:center;color:#91a5bd;
+  border:1px dashed rgba(125,211,252,.18);border-radius:16px
+}
+#m18DynamicBillGroups table{min-width:1250px}
+#m18DynamicBillGroups th:first-child{min-width:155px}
+#m18DynamicBillGroups th:nth-child(2){min-width:112px}
+#m18DynamicBillGroups th:nth-child(3){min-width:90px}
+#m18DynamicBillGroups th:nth-child(4){min-width:92px}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -2257,7 +2357,7 @@ body{padding:0!important;margin:0!important}
       <div class="m15-plan-grid">
         <div class="m15-panel">
           <div class="m15-panel-head"><h3>Where Aurora says to put it</h3><small id="m15AllocationTotal">£0.00 allocated</small></div>
-          <div class="m15-allocation-list" id="m15AllocationList"></div>
+          <div class="m15-allocation-list" id="m15AllocationList"></div><div class="m17-apply-status" id="m17ApplyStatus"></div>
         </div>
         <div class="m15-panel">
           <div class="m15-panel-head"><h3>Payday execution order</h3><small>STEP BY STEP</small></div>
@@ -2548,6 +2648,8 @@ body{padding:0!important;margin:0!important}
     <button class="add-btn" id="addScheduledBtn">+ Add Scheduled Bill</button>
     <div class="subv">Use this for confirmed bills with a proper due date, planned amount, paid tracking, rolling and archiving.</div>
   </div>
+  <div class="m18-sort-note">Bills are automatically grouped by the exact category you enter and ordered by due date. Changing “Direct Debit” to “Subscription” will immediately create or move it into the Subscription category.</div>
+  <div id="m18DynamicBillGroups"></div>
 
   <!-- ===================== CATEGORY: DIRECT DEBITS ===================== -->
   <div class="bill-group">
@@ -3387,125 +3489,119 @@ function applyPaidScheduledDeductions() {
   });
 }
 
+function m18Escape(value) {
+  return String(value ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+function m18CategoryName(value) {
+  const clean = String(value || "").trim().replace(/\s+/g, " ");
+  return clean || "Other";
+}
+
+function m18DueTimestamp(bill) {
+  if (!bill?.due) return Number.POSITIVE_INFINITY;
+  const d = parseLocalDate(bill.due);
+  return Number.isNaN(d.getTime()) ? Number.POSITIVE_INFINITY : d.getTime();
+}
+
+function m18BillStatus(bill) {
+  if (bill.paid) return { label:"Paid", cls:"paid", rank:5 };
+  if (!bill.included) return { label:"Excluded", cls:"excluded", rank:4 };
+  if (!bill.due) return { label:"No date", cls:"no-date", rank:3 };
+  const days = getDaysLeft(bill.due);
+  if (days < 0) return { label:"Overdue", cls:"overdue", rank:0 };
+  if (days === 0) return { label:"Due today", cls:"due-today", rank:1 };
+  if (days <= 7) return { label:"Due soon", cls:"due-soon", rank:2 };
+  return { label:"Planned", cls:"planned", rank:3 };
+}
+
 function renderScheduledBills() {
-  const ddBody = document.getElementById("scheduledBillsBody_dd");
-  const repaymentBody = document.getElementById("scheduledBillsBody_repayment");
-  const holidayBody = document.getElementById("scheduledBillsBody_holiday");
-  const carBody = document.getElementById("scheduledBillsBody_car");
-  const dentistBody = document.getElementById("scheduledBillsBody_dentist");
-  const homeBody = document.getElementById("scheduledBillsBody_home");
-  const otherBody = document.getElementById("scheduledBillsBody_other");
+  const host = document.getElementById("m18DynamicBillGroups");
+  if (!host) return;
 
-  if (
-    !ddBody ||
-    !repaymentBody ||
-    !holidayBody ||
-    !carBody ||
-    !dentistBody ||
-    !homeBody ||
-    !otherBody
-  ) return;
+  const indexedBills = (plannerState.scheduledBills || []).map((bill, index) => ({
+    bill, index, category:m18CategoryName(bill.category)
+  }));
 
-  ddBody.innerHTML = "";
-  repaymentBody.innerHTML = "";
-  holidayBody.innerHTML = "";
-  carBody.innerHTML = "";
-  dentistBody.innerHTML = "";
-  homeBody.innerHTML = "";
-  otherBody.innerHTML = "";
-
-  plannerState.scheduledBills.forEach((bill, index) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><input class="table-input" type="text" value="${bill.name || ""}" data-section="scheduled" data-index="${index}" data-field="name"></td>
-      <td><input class="table-input" type="date" value="${bill.due || ""}" data-section="scheduled" data-index="${index}" data-field="due"></td>
-      <td><input class="table-input" type="number" step="0.01" value="${bill.amount}" data-section="scheduled" data-index="${index}" data-field="amount"></td>
-      <td>
-        <div class="check-wrap">
-          <input type="checkbox" ${bill.paid ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="paid">
-          <span>${bill.paid ? "Yes" : "No"}</span>
-        </div>
-      </td>
-      <td><input class="table-input" type="number" step="0.01" value="${bill.actualPaid || 0}" data-section="scheduled" data-index="${index}" data-field="actualPaid"></td>
-      <td>
-        <div class="check-wrap">
-          <input type="checkbox" ${bill.included ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="included">
-          <span>${bill.included ? "Yes" : "No"}</span>
-        </div>
-      </td>
-      <td><input class="table-input" type="text" value="${bill.category || ""}" data-section="scheduled" data-index="${index}" data-field="category"></td>
-      <td><input class="table-input" type="text" value="${bill.notes || ""}" data-section="scheduled" data-index="${index}" data-field="notes"></td>
-      <td><button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.paid ? "" : "disabled"}>Roll →</button></td>
-      <td><button class="quick-btn" data-archive-section="scheduled" data-archive-index="${index}" ${bill.paid ? "" : "disabled"}>Archive</button></td>
-      <td><button class="delete-btn" data-delete-section="scheduled" data-delete-index="${index}">Delete</button></td>
-    `;
-
-    const daysLeft = bill.due ? getDaysLeft(bill.due) : null;
-    if (bill.paid) tr.classList.add("bill-paid-row");
-    else if (daysLeft !== null && daysLeft < 0) tr.classList.add("bill-overdue-row");
-    else if (daysLeft !== null && daysLeft <= 7) tr.classList.add("bill-due-soon-row");
-
-    const category = String(bill.category || "").toLowerCase();
-    const name = String(bill.name || "").toLowerCase();
-
-    if (
-      category.includes("repay") ||
-      category.includes("loan") ||
-      category.includes("flex")
-    ) {
-      repaymentBody.appendChild(tr);
-    } else if (
-      category.includes("direct debit") ||
-      category.includes("dd") ||
-      category.includes("subscription") ||
-      category.includes("broadband")
-    ) {
-      ddBody.appendChild(tr);
-    } else if (
-      category.includes("travel") ||
-      category.includes("holiday") ||
-      name.includes("spain") ||
-      name.includes("liverpool")
-    ) {
-      holidayBody.appendChild(tr);
-    } else if (
-      category.includes("car") ||
-      category.includes("mot") ||
-      category.includes("insurance") ||
-      category.includes("service")
-    ) {
-      carBody.appendChild(tr);
-    } else if (
-      category.includes("dentist") ||
-      category.includes("dental") ||
-      name.includes("tooth") ||
-      name.includes("hygienist")
-    ) {
-      dentistBody.appendChild(tr);
-    } else if (
-      category.includes("home") ||
-      category.includes("house") ||
-      category.includes("boiler")
-    ) {
-      homeBody.appendChild(tr);
-    } else {
-      otherBody.appendChild(tr);
-    }
+  const groups = new Map();
+  indexedBills.forEach(item => {
+    const key = item.category.toLocaleLowerCase("en-GB");
+    if (!groups.has(key)) groups.set(key, { name:item.category, items:[] });
+    groups.get(key).items.push(item);
   });
+
+  const sortedGroups = [...groups.values()].sort((a,b) => {
+    const aLive = a.items.filter(x => x.bill.included && !x.bill.paid);
+    const bLive = b.items.filter(x => x.bill.included && !x.bill.paid);
+    const aDue = Math.min(...(aLive.length ? aLive : a.items).map(x => m18DueTimestamp(x.bill)));
+    const bDue = Math.min(...(bLive.length ? bLive : b.items).map(x => m18DueTimestamp(x.bill)));
+    return aDue - bDue || a.name.localeCompare(b.name, "en-GB");
+  });
+
+  if (!sortedGroups.length) {
+    host.innerHTML = '<div class="m18-empty">No scheduled bills have been added yet.</div>';
+    return;
+  }
+
+  host.innerHTML = sortedGroups.map((group, groupIndex) => {
+    const items = [...group.items].sort((a,b) => {
+      const as = m18BillStatus(a.bill), bs = m18BillStatus(b.bill);
+      const aLiveRank = a.bill.paid ? 2 : (a.bill.included ? 0 : 1);
+      const bLiveRank = b.bill.paid ? 2 : (b.bill.included ? 0 : 1);
+      return aLiveRank - bLiveRank
+        || m18DueTimestamp(a.bill) - m18DueTimestamp(b.bill)
+        || as.rank - bs.rank
+        || String(a.bill.name||"").localeCompare(String(b.bill.name||""), "en-GB");
+    });
+
+    const live = items.filter(x => x.bill.included && !x.bill.paid);
+    const total = live.reduce((sum,x)=>sum + Number(x.bill.amount||0),0);
+    const bodyId = `m18GroupBody_${groupIndex}`;
+
+    const rows = items.map(({bill,index}) => {
+      const status = m18BillStatus(bill);
+      return `<tr class="m18-row-${status.cls}">
+        <td><input class="table-input" type="text" value="${m18Escape(bill.name)}" data-section="scheduled" data-index="${index}" data-field="name"></td>
+        <td><input class="table-input" type="date" value="${m18Escape(bill.due)}" data-section="scheduled" data-index="${index}" data-field="due"></td>
+        <td><span class="m18-status ${status.cls}">${status.label}</span></td>
+        <td><input class="table-input" type="number" step="0.01" value="${Number(bill.amount||0)}" data-section="scheduled" data-index="${index}" data-field="amount"></td>
+        <td><div class="check-wrap"><input type="checkbox" ${bill.paid ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="paid"><span>${bill.paid ? "Yes" : "No"}</span></div></td>
+        <td><input class="table-input" type="number" step="0.01" value="${Number(bill.actualPaid||0)}" data-section="scheduled" data-index="${index}" data-field="actualPaid"></td>
+        <td><div class="check-wrap"><input type="checkbox" ${bill.included ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="included"><span>${bill.included ? "Yes" : "No"}</span></div></td>
+        <td><input class="table-input m18-category-input" type="text" value="${m18Escape(bill.category)}" data-section="scheduled" data-index="${index}" data-field="category"></td>
+        <td><input class="table-input" type="text" value="${m18Escape(bill.notes)}" data-section="scheduled" data-index="${index}" data-field="notes"></td>
+        <td><button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.paid ? "" : "disabled"}>Roll →</button></td>
+        <td><button class="quick-btn" data-archive-section="scheduled" data-archive-index="${index}" ${bill.paid ? "" : "disabled"}>Archive</button></td>
+        <td><button class="delete-btn" data-delete-section="scheduled" data-delete-index="${index}">Delete</button></td>
+      </tr>`;
+    }).join("");
+
+    return `<div class="m18-bill-group">
+      <div class="m18-bill-group-head" data-m18-toggle="${bodyId}">
+        <h3><span class="m18-category-dot"></span>${m18Escape(group.name)}</h3>
+        <span class="m18-group-meta">${live.length} live • £${formatMoney(total)} • ${items.length} total</span>
+      </div>
+      <div class="m18-group-body" id="${bodyId}">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Name</th><th>Due Date</th><th>Status</th><th>Planned</th><th>Paid?</th>
+              <th>Actual Paid</th><th>Included</th><th>Category</th><th>Notes</th>
+              <th>Roll</th><th>Archive</th><th>Delete</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
 }
 
 
 function getScheduledGroupKey(bill) {
-  const category = String(bill.category || "").toLowerCase();
-  const name = String(bill.name || "").toLowerCase();
-
-  if (category.includes("repay") || category.includes("loan") || category.includes("flex")) return "repayment";
-  if (category.includes("direct debit") || category.includes("dd") || category.includes("subscription") || category.includes("broadband")) return "dd";
-  if (category.includes("travel") || category.includes("holiday") || name.includes("spain") || name.includes("liverpool")) return "holiday";
-  if (category.includes("car") || category.includes("mot") || category.includes("insurance") || category.includes("service")) return "car";
-  if (category.includes("dentist") || category.includes("dental") || name.includes("tooth") || name.includes("hygienist")) return "dentist";
-  if (category.includes("home") || category.includes("house") || category.includes("boiler")) return "home";
-  return "other";
+  return m18CategoryName(bill?.category).toLocaleLowerCase("en-GB");
 }
 
 function updateScheduledBillsCommander() {
@@ -3522,9 +3618,10 @@ function updateScheduledBillsCommander() {
   const liveBills = (plannerState.scheduledBills || []).filter(b => b.included && !b.paid);
   liveBills.forEach(bill => {
     const key = getScheduledGroupKey(bill);
-    if (!groups[key]) return;
-    groups[key].count += 1;
-    groups[key].total += Number(bill.amount || 0);
+    if (groups[key]) {
+      groups[key].count += 1;
+      groups[key].total += Number(bill.amount || 0);
+    }
   });
 
   Object.values(groups).forEach(group => {
@@ -4182,6 +4279,10 @@ function handleTableEdit(e) {
   }
 
   savePlannerData();
+  if (section === "scheduled" && (field === "category" || field === "due") && e.type === "change") {
+    runPlanner();
+    return;
+  }
   updatePlannerTotals();
 }
 
@@ -4923,10 +5024,10 @@ function m15BuildAllocations(amount,strategy){
     .map(p=>({...p,gap:m15PotGap(p),priority:m15PotPriority(p)}))
     .filter(p=>p.gap>0);
 
-  const add=(name,value,meta,type="pot")=>{
+  const add=(name,value,meta,type="pot",id=null)=>{
     const actual=Math.max(0,Math.min(remaining,value));
     if(actual<=0)return;
-    allocations.push({name,amount:actual,meta,type});
+    allocations.push({id,name,amount:actual,meta,type});
     remaining-=actual;
   };
 
@@ -4958,7 +5059,7 @@ function m15BuildAllocations(amount,strategy){
   }else{
     const maxPriority=strategy==="critical"?1:3;
     const candidates=pots.filter(p=>p.priority<=maxPriority).sort((a,b)=>a.priority-b.priority||b.gap-a.gap);
-    candidates.forEach(p=>add(p.name,p.gap,`P${p.priority} ${p.priority===1?"Critical":p.priority===2?"Important":"Flexible"} • closes up to ${m15Money(p.gap)} funding gap`));
+    candidates.forEach(p=>add(p.name,p.gap,`P${p.priority} ${p.priority===1?"Critical":p.priority===2?"Important":"Flexible"} • closes up to ${m15Money(p.gap)} funding gap`,"pot",p.id||p.name));
   }
 
   if(remaining>0.009){
@@ -5003,7 +5104,15 @@ function m15Render(){
   }
 
   const list=document.getElementById("m15AllocationList");
-  list.innerHTML=allocations.length?allocations.map(a=>`<div class="m15-allocation-row"><div><div class="m15-allocation-name">${a.name}</div><div class="m15-allocation-meta">${a.meta}</div></div><div class="m15-allocation-value">${m15Money(a.amount)}</div></div>`).join(""):`<div class="m15-empty">No extra-pay allocations yet. Enter actual pay above expected pay, then choose the amount to allocate.</div>`;
+  window.M15_CURRENT_ALLOCATIONS=allocations.map((a,index)=>({...a,_key:`alloc-${Date.now()}-${index}`}));
+  list.innerHTML=window.M15_CURRENT_ALLOCATIONS.length?window.M15_CURRENT_ALLOCATIONS.map(a=>{
+    const canApply=a.type==="pot"||a.type==="holding";
+    return `<div class="m15-allocation-row" data-allocation-key="${a._key}">
+      <div><div class="m15-allocation-name">${a.name}</div><div class="m15-allocation-meta">${a.meta}</div></div>
+      <div class="m15-allocation-value">${m15Money(a.amount)}</div>
+      ${canApply?`<button class="m17-add-allocation" type="button" data-apply-allocation="${a._key}">Add to pot</button>`:`<button class="m17-add-allocation" type="button" disabled title="Investment allocations are instructions only">Instruction only</button>`}
+    </div>`;
+  }).join(""):`<div class="m15-empty">No extra-pay allocations yet. Enter actual pay above expected pay, then choose the amount to allocate.</div>`;
 
   const route=document.getElementById("m15Route");
   const base=[
@@ -5041,6 +5150,79 @@ document.getElementById("m15CopyPlan")?.addEventListener("click",async()=>{
   const text=`Aurora Payday Instructions\n${rows.join("\n")||"No extra allocation created."}`;
   try{await navigator.clipboard.writeText(text);document.getElementById("m15CopyPlan").textContent="Copied ✓";setTimeout(()=>document.getElementById("m15CopyPlan").textContent="Copy Payday Instructions",1300)}catch(e){}
 });
+
+function m17SavePlanner(){
+  if(typeof savePlannerData==="function")savePlannerData();
+  else{
+    try{localStorage.setItem("auroraSpendingPlanner",JSON.stringify(plannerState))}catch(error){console.warn("Could not save planner",error)}
+  }
+}
+function m17ShowStatus(message){
+  const box=document.getElementById("m17ApplyStatus");
+  if(!box)return;
+  box.textContent=message;
+  box.classList.add("show");
+  window.clearTimeout(window.m17StatusTimer);
+  window.m17StatusTimer=window.setTimeout(()=>box.classList.remove("show"),4500);
+}
+function m17ApplyAllocation(key,button){
+  const allocation=(window.M15_CURRENT_ALLOCATIONS||[]).find(a=>a._key===key);
+  if(!allocation||allocation.amount<=0)return;
+
+  if(allocation.type==="holding"){
+    plannerState.holdingBalance=Number(plannerState.holdingBalance||0)+Number(allocation.amount||0);
+    m17SavePlanner();
+    if(typeof runPlanner==="function")runPlanner();
+    m15Render();
+    if(typeof m13Render==="function")m13Render();
+    button.textContent="Added ✓";
+    button.disabled=true;
+    button.classList.add("applied");
+    m17ShowStatus(`${m15Money(allocation.amount)} has been added to the Holding Pot.`);
+    return;
+  }
+
+  const pots=Array.isArray(plannerState.editablePots)?plannerState.editablePots:[];
+  const pot=pots.find(p=>String(p.id||p.name)===String(allocation.id||allocation.name))
+    || pots.find(p=>String(p.name).toLowerCase()===String(allocation.name).toLowerCase());
+
+  if(!pot){
+    m17ShowStatus(`Aurora could not find the ${allocation.name} pot. Open Pot Health and make sure that pot still exists.`);
+    return;
+  }
+
+  const before=Number(pot.balance||0);
+  const target=Number(pot.target||0);
+  const room=target>0?Math.max(0,target-before):Number(allocation.amount||0);
+  const amountToAdd=Math.min(Number(allocation.amount||0),room||Number(allocation.amount||0));
+
+  if(amountToAdd<=0){
+    button.textContent="Target reached";
+    button.disabled=true;
+    m17ShowStatus(`${pot.name} is already at its target.`);
+    return;
+  }
+
+  pot.balance=before+amountToAdd;
+  m17SavePlanner();
+  if(typeof runPlanner==="function")runPlanner();
+  m15Render();
+  if(typeof m13Render==="function")m13Render();
+
+  const freshButton=document.querySelector(`[data-apply-allocation="${CSS.escape(key)}"]`);
+  if(freshButton){
+    freshButton.textContent="Added ✓";
+    freshButton.disabled=true;
+    freshButton.classList.add("applied");
+  }
+  m17ShowStatus(`${m15Money(amountToAdd)} has been added to ${pot.name}. New balance: ${m15Money(pot.balance)}.`);
+}
+document.addEventListener("click",event=>{
+  const button=event.target.closest("[data-apply-allocation]");
+  if(!button)return;
+  m17ApplyAllocation(button.dataset.applyAllocation,button);
+});
+
 window.addEventListener("load",()=>{m15SyncExpected();m15Render()});
 document.addEventListener("change",e=>{if(e.target.closest("#m15PaydayAllocationCentre"))m15Render()});
 </script>
@@ -5186,6 +5368,14 @@ document.addEventListener("change",()=>setTimeout(()=>{
   const active=[...document.querySelectorAll("#m13Nav button")].find(b=>b.classList.contains("active"))?.dataset.target;
   if(M16_VIEW_DATA[active])m16RenderOverview(active);
 },0));
+</script>
+<script>
+document.addEventListener("click", event => {
+  const head = event.target.closest("[data-m18-toggle]");
+  if (!head) return;
+  const body = document.getElementById(head.dataset.m18Toggle);
+  if (body) body.classList.toggle("closed");
+});
 </script>
 </body>
 </html>
