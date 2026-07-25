@@ -2254,6 +2254,103 @@ body{padding:0!important;margin:0!important}
   .m23-card-grid{grid-template-columns:1fr}
 }
 
+
+/* ===================== M24 BILLS COMMAND CENTRE ===================== */
+.m24-command-layout{
+  display:grid;
+  grid-template-columns:minmax(0,7fr) minmax(285px,3fr);
+  gap:16px;
+  align-items:start;
+  margin-top:12px
+}
+.m24-action-column{min-width:0}
+.m24-finance-rail{
+  display:grid;gap:12px;
+  position:sticky;top:14px
+}
+.m24-rail-card{
+  border:1px solid rgba(125,211,252,.15);
+  border-radius:18px;padding:14px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(34,211,238,.075),transparent 38%),
+    linear-gradient(180deg,rgba(13,26,43,.98),rgba(7,15,27,.98));
+  box-shadow:0 14px 34px rgba(0,0,0,.18)
+}
+.m24-holding-card{border-color:rgba(52,211,153,.24)}
+.m24-rail-kicker{
+  color:#8298af;font-size:8px;font-weight:950;
+  text-transform:uppercase;letter-spacing:.72px
+}
+.m24-hero-value{
+  margin:5px 0 12px;font-size:28px;line-height:1;
+  font-weight:950;color:#ecfff4
+}
+.m24-split-row,.m24-progress-line{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:7px 0;border-bottom:1px solid rgba(148,163,184,.09);
+  font-size:10px
+}
+.m24-split-row:last-of-type,.m24-progress-line:last-of-type{border-bottom:0}
+.m24-split-row span,.m24-progress-line span{color:#8295aa}
+.m24-split-row strong,.m24-progress-line strong{color:#e7f4ff}
+.m24-meter{
+  height:7px;margin-top:10px;border-radius:999px;overflow:hidden;
+  background:rgba(148,163,184,.12)
+}
+.m24-meter>div{
+  height:100%;width:0;border-radius:inherit;
+  background:linear-gradient(90deg,#22d3ee,#34d399);
+  transition:width .35s ease
+}
+.m24-rail-foot{margin-top:8px;font-size:8px;color:#7f93aa;line-height:1.45}
+.m24-rail-title{
+  display:flex;align-items:center;gap:8px;margin-bottom:11px;
+  font-size:11px;font-weight:950;color:#eaf6ff
+}
+.m24-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.m24-stat-grid>div{
+  padding:9px;border:1px solid rgba(148,163,184,.10);
+  border-radius:12px;background:rgba(255,255,255,.022)
+}
+.m24-stat-grid span{
+  display:block;color:#778ca4;font-size:7px;font-weight:950;
+  text-transform:uppercase;letter-spacing:.52px
+}
+.m24-stat-grid strong{display:block;margin-top:4px;font-size:11px;color:#e5f3ff}
+.m24-next-list{display:grid;gap:7px}
+.m24-next-item{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;
+  padding:9px;border-radius:12px;border:1px solid rgba(148,163,184,.10);
+  background:rgba(255,255,255,.022)
+}
+.m24-next-item b{
+  display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:10px;color:#e9f5ff
+}
+.m24-next-item small{display:block;margin-top:3px;font-size:8px;color:#7f93aa}
+.m24-next-item strong{align-self:center;font-size:10px;color:#bde8ff}
+.m24-next-empty{font-size:9px;color:#8295aa;padding:6px 0}
+.m24-payday-card{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-color:rgba(96,165,250,.22)
+}
+.m24-payday-days{margin-top:4px;font-size:22px;font-weight:950;color:#c9e5ff}
+.m24-payday-date{text-align:right;font-size:9px;color:#8ea4ba}
+.m23-category-section{margin-bottom:14px}
+.m23-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:1180px){
+  .m24-command-layout{grid-template-columns:minmax(0,2fr) minmax(270px,1fr)}
+  .m23-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .m24-command-layout{grid-template-columns:1fr}
+  .m24-finance-rail{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+  .m24-finance-rail{grid-template-columns:1fr}
+  .m23-card-grid{grid-template-columns:1fr}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -2880,17 +2977,73 @@ body{padding:0!important;margin:0!important}
     <div class="subv">Use this for confirmed bills with a proper due date, planned amount, paid tracking, rolling and archiving.</div>
   </div>
   <div class="m18-sort-note">Bills are automatically grouped by the exact category you enter and ordered by due date. Changing “Direct Debit” to “Subscription” will immediately create or move it into the Subscription category.</div>
-  <div id="m23BillViewControls">
-        <div class="m23-view-copy">
-          <strong>Action Bills</strong>
-          <span>Only overdue, due today and due soon bills are shown by default.</span>
-        </div>
-        <div class="m23-view-buttons">
-          <button type="button" class="m23-view-btn active" data-m23-view="action">Action needed</button>
-          <button type="button" class="m23-view-btn" data-m23-view="all">Show all bills</button>
-        </div>
+  <div class="m24-command-layout">
+        <main class="m24-action-column">
+          <div id="m23BillViewControls">
+            <div class="m23-view-copy">
+              <strong>Action Centre</strong>
+              <span>Only overdue, due today and due soon bills are shown by default.</span>
+            </div>
+            <div class="m23-view-buttons">
+              <button type="button" class="m23-view-btn active" data-m23-view="action">Action needed</button>
+              <button type="button" class="m23-view-btn" data-m23-view="all">Manage all bills</button>
+            </div>
+          </div>
+          <div id="m18DynamicBillGroups"></div>
+        </main>
+
+        <aside class="m24-finance-rail" aria-label="Bills command centre overview">
+          <section class="m24-rail-card m24-holding-card">
+            <div class="m24-rail-kicker">Master Holding Pot</div>
+            <div class="m24-hero-value" id="m24HoldingBalance">£0.00</div>
+            <div class="m24-split-row"><span>Protected</span><strong id="m24Protected">£0.00</strong></div>
+            <div class="m24-split-row"><span>Available</span><strong id="m24Available">£0.00</strong></div>
+            <div class="m24-meter"><div id="m24HoldingFill"></div></div>
+            <div class="m24-rail-foot" id="m24HoldingStatus">Waiting for planner data</div>
+          </section>
+
+          <section class="m24-rail-card">
+            <div class="m24-rail-title"><span>🛒</span> Grocery Tracker</div>
+            <div class="m24-stat-grid">
+              <div><span>Planned</span><strong id="m24GroceryBudget">£0</strong></div>
+              <div><span>Paid</span><strong id="m24GroceryPaid">£0</strong></div>
+              <div><span>Remaining</span><strong id="m24GroceryRemaining">£0</strong></div>
+              <div><span>Status</span><strong id="m24GroceryStatus">—</strong></div>
+            </div>
+          </section>
+
+          <section class="m24-rail-card">
+            <div class="m24-rail-title"><span>⛽</span> Car & Fuel</div>
+            <div class="m24-stat-grid">
+              <div><span>Planned</span><strong id="m24FuelBudget">£0</strong></div>
+              <div><span>Paid</span><strong id="m24FuelPaid">£0</strong></div>
+              <div><span>Remaining</span><strong id="m24FuelRemaining">£0</strong></div>
+              <div><span>Next due</span><strong id="m24FuelNext">—</strong></div>
+            </div>
+          </section>
+
+          <section class="m24-rail-card">
+            <div class="m24-rail-title"><span>📅</span> Next Payments</div>
+            <div id="m24NextBills" class="m24-next-list"></div>
+          </section>
+
+          <section class="m24-rail-card">
+            <div class="m24-rail-title"><span>📊</span> Cycle Progress</div>
+            <div class="m24-progress-line"><span>Bills paid</span><strong id="m24PaidCount">0 / 0</strong></div>
+            <div class="m24-progress-line"><span>Paid value</span><strong id="m24PaidValue">£0</strong></div>
+            <div class="m24-progress-line"><span>Still outstanding</span><strong id="m24Outstanding">£0</strong></div>
+            <div class="m24-meter"><div id="m24PaidFill"></div></div>
+          </section>
+
+          <section class="m24-rail-card m24-payday-card">
+            <div>
+              <div class="m24-rail-kicker">Next Payday</div>
+              <div class="m24-payday-days" id="m24PaydayDays">—</div>
+            </div>
+            <div class="m24-payday-date" id="m24PaydayDate">Not calculated</div>
+          </section>
+        </aside>
       </div>
-      <div id="m18DynamicBillGroups"></div>
 
   <!-- ===================== CATEGORY: DIRECT DEBITS ===================== -->
   <div class="bill-group">
@@ -3778,6 +3931,7 @@ function renderScheduledBills() {
       <strong>No bills need attention right now ✓</strong>
       <span>Overdue, due today and due soon bills will appear here automatically.</span>
     </div>`;
+    m24UpdateBillsCommandCentre();
     return;
   }
 
@@ -3887,6 +4041,7 @@ function renderScheduledBills() {
       <div class="m23-card-grid">${cards}</div>
     </section>`;
   }).join("");
+  m24UpdateBillsCommandCentre();
 }
 
 function getScheduledGroupKey(bill) {
@@ -5840,6 +5995,93 @@ document.addEventListener("click", event => {
   );
   renderScheduledBills();
 });
+</script>
+<script>
+/* ===================== M24 LIVE FINANCE RAIL ===================== */
+function m24Set(id,value){
+  const el=document.getElementById(id);
+  if(el)el.textContent=value;
+}
+function m24Money(value){return `£${formatMoney(Number(value||0))}`;}
+function m24Date(value){
+  if(!value)return "No date";
+  const d=new Date(`${String(value).slice(0,10)}T12:00:00`);
+  if(Number.isNaN(d.getTime()))return "No date";
+  return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"});
+}
+function m24CategoryMatch(bill,terms){
+  const hay=`${bill?.name||""} ${bill?.category||""}`.toLowerCase();
+  return terms.some(term=>hay.includes(term));
+}
+function m24Tracker(terms){
+  const bills=(plannerState.scheduledBills||[]).filter(b=>b&&b.included&&m24CategoryMatch(b,terms));
+  const planned=bills.reduce((s,b)=>s+Number(b.amount||0),0);
+  const paid=bills.reduce((s,b)=>s+(b.paid?Number(b.actualPaid||b.amount||0):Number(b.actualPaid||0)),0);
+  const remaining=Math.max(0,planned-paid);
+  const next=bills.filter(b=>!b.paid&&b.due).sort((a,b)=>m18DueTimestamp(a)-m18DueTimestamp(b))[0];
+  return {bills,planned,paid,remaining,next};
+}
+function m24UpdateBillsCommandCentre(){
+  if(typeof plannerState==="undefined")return;
+  const bills=(plannerState.scheduledBills||[]).filter(Boolean);
+  const included=bills.filter(b=>b.included);
+  const live=included.filter(b=>!b.paid);
+  const paid=included.filter(b=>b.paid);
+
+  const holding=Number(plannerState.holdingBalance||0);
+  const protectedValue=live.reduce((s,b)=>s+Number(b.amount||0),0);
+  const available=holding-protectedValue;
+  m24Set("m24HoldingBalance",m24Money(holding));
+  m24Set("m24Protected",m24Money(protectedValue));
+  m24Set("m24Available",m24Money(available));
+  const holdingFill=document.getElementById("m24HoldingFill");
+  if(holdingFill){
+    const pct=holding>0?Math.max(0,Math.min(100,(protectedValue/holding)*100)):0;
+    holdingFill.style.width=`${pct}%`;
+  }
+  m24Set("m24HoldingStatus",
+    available>=0
+      ? `All currently outstanding scheduled bills are covered, leaving ${m24Money(available)} available.`
+      : `The Holding Pot is ${m24Money(Math.abs(available))} below the current scheduled-bill requirement.`
+  );
+
+  const grocery=m24Tracker(["grocery","groceries","lidl","aldi","tesco shop","food shop"]);
+  m24Set("m24GroceryBudget",m24Money(grocery.planned));
+  m24Set("m24GroceryPaid",m24Money(grocery.paid));
+  m24Set("m24GroceryRemaining",m24Money(grocery.remaining));
+  m24Set("m24GroceryStatus",grocery.planned===0?"Not set":grocery.remaining>0?"On track":"Complete");
+
+  const fuel=m24Tracker(["fuel","petrol","diesel","car fuel"]);
+  m24Set("m24FuelBudget",m24Money(fuel.planned));
+  m24Set("m24FuelPaid",m24Money(fuel.paid));
+  m24Set("m24FuelRemaining",m24Money(fuel.remaining));
+  m24Set("m24FuelNext",fuel.next?m24Date(fuel.next.due):"None due");
+
+  const upcoming=[...live].filter(b=>b.due).sort((a,b)=>m18DueTimestamp(a)-m18DueTimestamp(b)).slice(0,4);
+  const nextHost=document.getElementById("m24NextBills");
+  if(nextHost){
+    nextHost.innerHTML=upcoming.length?upcoming.map(b=>`
+      <div class="m24-next-item">
+        <div><b>${m18Escape(b.name||"Unnamed bill")}</b><small>${m24Date(b.due)} • ${m18Escape(m18CategoryName(b.category))}</small></div>
+        <strong>${m24Money(b.amount)}</strong>
+      </div>`).join(""):'<div class="m24-next-empty">No outstanding dated payments.</div>';
+  }
+
+  const paidValue=paid.reduce((s,b)=>s+Number(b.actualPaid||b.amount||0),0);
+  const outstanding=live.reduce((s,b)=>s+Number(b.amount||0),0);
+  m24Set("m24PaidCount",`${paid.length} / ${included.length}`);
+  m24Set("m24PaidValue",m24Money(paidValue));
+  m24Set("m24Outstanding",m24Money(outstanding));
+  const paidFill=document.getElementById("m24PaidFill");
+  if(paidFill)paidFill.style.width=`${included.length?Math.round((paid.length/included.length)*100):0}%`;
+
+  if(typeof getDaysToNextPayday==="function"){
+    const days=getDaysToNextPayday();
+    m24Set("m24PaydayDays",`${days} day${days===1?"":"s"}`);
+  }
+  if(typeof getNextPaydayLabel==="function")m24Set("m24PaydayDate",getNextPaydayLabel());
+}
+document.addEventListener("DOMContentLoaded",()=>setTimeout(m24UpdateBillsCommandCentre,100));
 </script>
 </body>
 </html>
