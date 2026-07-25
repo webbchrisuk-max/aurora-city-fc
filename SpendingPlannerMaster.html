@@ -2428,6 +2428,14 @@ body{padding:0!important;margin:0!important}
 @media(max-width:1180px){.m26-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.m26-manage-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.m26-action-grid,.m26-manage-grid,.m26-manage-grid.compact{grid-template-columns:1fr}.m26-pay-row{grid-template-columns:1fr}}
 
+
+/* ===================== M27 STABILITY REPAIR ===================== */
+#m13Bills .bill-group{display:none!important}
+#m13Bills .m24-command-layout{margin-top:12px}
+#m13Bills .m26-action-card,
+#m13Bills .m26-manage-card{contain:layout paint}
+#m13Bills button:disabled{cursor:not-allowed}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -3038,7 +3046,7 @@ body{padding:0!important;margin:0!important}
   </section>
 
  <!-- ===================== SECTION: EDITABLE SCHEDULED BILLS (GROUPED + COLLAPSIBLE) ===================== -->
-<section class="section card scheduled-bills-command" id="m13Bills" class="m13-anchor section card scheduled-bills-command">
+<section id="m13Bills" class="m13-anchor section card scheduled-bills-command">
   <h2>Scheduled Bills Command Bay</h2>
   <div class="scheduled-subtitle">Your live bills are divided into category cards and ordered by due date, with the next payments shown first.</div>
 
@@ -3123,138 +3131,6 @@ body{padding:0!important;margin:0!important}
         </aside>
       </div>
 
-  <!-- ===================== CATEGORY: DIRECT DEBITS ===================== -->
-  <div class="bill-group">
-    <h3 class="bill-group-title" onclick="toggleSection('ddTable')"><span>Direct Debits</span><span class="bill-group-meta" id="ddMeta">--</span></h3>
-    <div id="ddTable" class="collapsible open">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th>
-              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="scheduledBillsBody_dd"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  
-  <!-- ===================== CATEGORY: DENTIST ===================== -->
-<div class="bill-group">
-  <h3 class="bill-group-title" onclick="toggleSection('dentistTable')"><span>Dentist</span><span class="bill-group-meta" id="dentistMeta">--</span></h3>
-  <div id="dentistTable" class="collapsible open">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-            <th>Actual Paid</th><th>Included</th><th>Category</th>
-            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="scheduledBillsBody_dentist"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== CATEGORY: REPAYMENTS ===================== -->
-<div class="bill-group">
-  <h3 class="bill-group-title" onclick="toggleSection('repaymentTable')"><span>Repayments</span><span class="bill-group-meta" id="repaymentMeta">--</span></h3>
-  <div id="repaymentTable" class="collapsible open">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-            <th>Actual Paid</th><th>Included</th><th>Category</th>
-            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="scheduledBillsBody_repayment"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== CATEGORY: HOME ===================== -->
-<div class="bill-group">
-  <h3 class="bill-group-title" onclick="toggleSection('homeTable')"><span>Home</span><span class="bill-group-meta" id="homeMeta">--</span></h3>
-  <div id="homeTable" class="collapsible open">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-            <th>Actual Paid</th><th>Included</th><th>Category</th>
-            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="scheduledBillsBody_home"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-  <!-- ===================== CATEGORY: HOLIDAYS ===================== -->
-  <div class="bill-group">
-    <h3 class="bill-group-title" onclick="toggleSection('holidayTable')"><span>Holidays</span><span class="bill-group-meta" id="holidayMeta">--</span></h3>
-    <div id="holidayTable" class="collapsible open">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th>
-              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="scheduledBillsBody_holiday"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== CATEGORY: CAR / MAINTENANCE ===================== -->
-  <div class="bill-group">
-    <h3 class="bill-group-title" onclick="toggleSection('carTable')"><span>Car & Maintenance</span><span class="bill-group-meta" id="carMeta">--</span></h3>
-    <div id="carTable" class="collapsible open">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th>
-              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="scheduledBillsBody_car"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== CATEGORY: OTHER ===================== -->
-  <div class="bill-group">
-    <h3 class="bill-group-title" onclick="toggleSection('otherTable')"><span>Other</span><span class="bill-group-meta" id="otherMeta">--</span></h3>
-    <div id="otherTable" class="collapsible open">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th>
-              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="scheduledBillsBody_other"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 
 </section>
 
@@ -3991,8 +3867,11 @@ function m20NextRollLabel(bill) {
 let m23BillViewMode = "action";
 
 function m26BillDaysLeft(bill){
-  if(!bill?.due)return null;
-  return getDaysLeft(bill.due);
+  if(!bill || !bill.due)return null;
+  const value=String(bill.due).slice(0,10);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return null;
+  const days=getDaysLeft(value);
+  return Number.isFinite(days)?days:null;
 }
 function m26IsActionBill(bill){
   if(!bill || bill.paid === true || bill.included === false)return false;
@@ -4100,7 +3979,7 @@ function renderScheduledBills(){
       :m23BillViewMode==="upcoming"?"Nothing is due in the next 8–30 days"
       :"No scheduled bills have been added yet";
     host.innerHTML=`<div class="m23-empty-state"><strong>${title}</strong><span>Aurora will surface bills here automatically when they become relevant.</span></div>`;
-    m24UpdateBillsCommandCentre();
+    if(typeof m24UpdateBillsCommandCentre==="function")m24UpdateBillsCommandCentre();
     return;
   }
 
@@ -4122,7 +4001,7 @@ function renderScheduledBills(){
         <div class="m26-action-grid">${items.map(({bill,index})=>m26CompactBillCard(bill,index)).join("")}</div>
       </section>`).join("");
   }
-  m24UpdateBillsCommandCentre();
+  if(typeof m24UpdateBillsCommandCentre==="function")m24UpdateBillsCommandCentre();
 }
 
 function getScheduledGroupKey(bill) {
@@ -6090,6 +5969,7 @@ function m26PayScheduledBill(index){
   plannerState.holdingBalance=holding-amount;
   bill.actualPaid=amount;
   bill.paid=true;
+  // The Holding Pot deduction has already happened here.
   bill.deducted=true;
   bill.paidDate=new Date().toISOString();
 
@@ -6152,7 +6032,7 @@ function m24Tracker(terms){
 }
 function m24UpdateBillsCommandCentre(){
   if(typeof plannerState==="undefined")return;
-  const bills=(plannerState.scheduledBills||[]).filter(Boolean);
+  const bills=(plannerState.scheduledBills||[]).filter(Boolean).map(b=>({...b,included:b.included!==false,paid:b.paid===true}));
   // Older saved bills may not contain an explicit included flag.
   // Only an explicit false excludes a bill.
   const included=bills.filter(b=>b.included !== false);
@@ -6240,5 +6120,18 @@ function m24UpdateBillsCommandCentre(){
 }
 document.addEventListener("DOMContentLoaded",()=>setTimeout(m24UpdateBillsCommandCentre,100));
 </script>
+
+<script>
+window.addEventListener("error",function(event){
+  const message=String(event?.message||"");
+  if(message.includes("m24UpdateBillsCommandCentre")){
+    event.preventDefault();
+    try{
+      if(typeof renderScheduledBills==="function")renderScheduledBills();
+    }catch(_){}
+  }
+});
+</script>
+
 </body>
 </html>
