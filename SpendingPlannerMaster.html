@@ -7030,21 +7030,30 @@ document.addEventListener("click",event=>{
   }
   function m27FindEntry(id){const {ledger}=m27EnsureState();return ledger.entries.find(entry=>entry.id===id)}
   function m27PayEntry(id){
-    const entry=m27FindEntry(id),metrics=m27Metrics();
+    // Build metrics first, then retrieve the entry from that same normalised ledger.
+    // Calling m27FindEntry() before m27Metrics() created a stale object reference:
+    // the cash changed, but the status update was applied to an object no longer in the ledger.
+    const metrics=m27Metrics();
+    const entry=metrics.ledger.entries.find(item=>item.id===id);
     if(!entry||entry.status!=='reserved')return;
     if(metrics.cash+0.009<entry.amount){m27SetStatus(`The House Pot has ${m27Money(metrics.cash)}, which is not enough to record this ${m27Money(entry.amount)} payment.`,true);return}
     metrics.pot.balance=Math.max(0,metrics.cash-entry.amount);
-    entry.status='paid';entry.deducted=true;entry.paidDate=m27Today();
+    entry.status='paid';
+    entry.deducted=true;
+    entry.paidDate=m27Today();
     if(typeof savePlannerData==='function')savePlannerData();
     if(typeof renderPotEditor==='function')renderPotEditor();
     if(typeof runPlanner==='function')runPlanner();else m27Render();
     m27SetStatus(`${entry.name} is now marked ✅ Paid. House Pot cash fell by ${m27Money(entry.amount)}, and the payment is shown in History.`);
   }
   function m27UndoEntry(id){
-    const entry=m27FindEntry(id),metrics=m27Metrics();
+    const metrics=m27Metrics();
+    const entry=metrics.ledger.entries.find(item=>item.id===id);
     if(!entry||(entry.status!=='paid'&&entry.status!=='historical')||!entry.deducted)return;
     metrics.pot.balance=metrics.cash+entry.amount;
-    entry.status='reserved';entry.deducted=false;entry.paidDate='';
+    entry.status='reserved';
+    entry.deducted=false;
+    entry.paidDate='';
     if(typeof savePlannerData==='function')savePlannerData();
     if(typeof renderPotEditor==='function')renderPotEditor();
     if(typeof runPlanner==='function')runPlanner();else m27Render();
