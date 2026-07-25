@@ -1,0 +1,352 @@
+ name: Deploy Aurora Pages (Slim)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: aurora-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build slim Pages artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build referenced production site only
+        shell: bash
+        run: |
+          cat > /tmp/build_slim_site.py <<'PYTHON'
+          #!/usr/bin/env python3
+          """Build a minimal GitHub Pages artifact for Aurora City FC.
+          
+          The repository contains many historical HTML exports and image versions. Publishing the
+          whole branch makes the Pages artifact unnecessarily large. This builder starts from the
+          current production entry pages, follows local references recursively, and copies only the
+          files the live site can reach into _site/.
+          """
+          
+          from __future__ import annotations
+          
+          import html
+          import os
+          import re
+          import shutil
+          import sys
+          from collections import deque
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import unquote, urlsplit
+          
+          ROOT = Path.cwd().resolve()
+          OUT = ROOT / "_site"
+          
+          REPOSITORY = os.environ.get("GITHUB_REPOSITORY", "webbchrisuk-max/aurora-city-fc")
+          OWNER, _, REPO = REPOSITORY.partition("/")
+          PAGES_HOST = f"{OWNER}.github.io".lower()
+          PAGES_PREFIX = f"/{REPO}/"
+          
+          CORE_ENTRIES = {
+              "index.html",
+              "AuroraCityFC_GameShell.html",
+              "AuroraCityFC_ManagerDashboard.html",
+              "AuroraCityFC_TransferCentre.html",
+              "AuroraCityFC_SquadHub.html",
+              "AuroraCityFC_Boardroom.html",
+              "AuroraCityFC_TrainingGround.html",
+              "AuroraCityFC_MediaCentre.html",
+              "AuroraCityFC_AnalysisRoom.html",
+              "SpendingPlannerMaster.html",
+              "AuroraMaster.json",
+              "manifest.json",
+              "site.webmanifest",
+              "service-worker.js",
+              "sw.js",
+              "robots.txt",
+              "favicon.ico",
+          }
+          
+          REQUIRED_ENTRIES = {
+              "index.html",
+              "AuroraCityFC_GameShell.html",
+              "AuroraCityFC_ManagerDashboard.html",
+          }
+          
+          # Obvious historical root exports are not entry points. They are still copied when a
+          # current page explicitly links to one.
+          VERSIONED_EXPORT = re.compile(
+              r"(?:\(\d+\)|(?:^|[_\-\s])(?:m|v)\d+(?:[_\-\s.]|$)|"
+              r"(?:^|[_\-\s])(?:backup|copy|old|archive|draft|test)(?:[_\-\s.]|$))",
+              re.IGNORECASE,
+          )
+          
+          TEXT_EXTENSIONS = {
+              ".html", ".htm", ".css", ".js", ".mjs", ".json", ".webmanifest",
+              ".xml", ".txt", ".svg",
+          }
+          
+          LOCAL_FILE_EXTENSIONS = (
+              "html|htm|css|js|mjs|json|webmanifest|xml|txt|png|jpg|jpeg|webp|gif|svg|"
+              "ico|avif|woff|woff2|ttf|otf|mp3|wav|ogg|mp4|webm|pdf"
+          )
+          
+          QUOTED_FILE_RE = re.compile(
+              rf"(?P<quote>[\"'`])(?P<ref>[^\"'`<>\s]+?\.(?:{LOCAL_FILE_EXTENSIONS})"
+              rf"(?:[?#][^\"'`<>\s]*)?)(?P=quote)",
+              re.IGNORECASE,
+          )
+          CSS_URL_RE = re.compile(r"url\(\s*([\"']?)(.*?)\1\s*\)", re.IGNORECASE)
+          
+          
+          class ReferenceParser(HTMLParser):
+              """Collect URL-bearing HTML attributes without third-party packages."""
+          
+              URL_ATTRIBUTES = {
+                  "src", "href", "poster", "data-src", "data-href", "action", "content",
+              }
+          
+              def __init__(self) -> None:
+                  super().__init__(convert_charrefs=True)
+                  self.references: list[str] = []
+          
+              def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+                  self._read_attrs(attrs)
+          
+              def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+                  self._read_attrs(attrs)
+          
+              def _read_attrs(self, attrs: list[tuple[str, str | None]]) -> None:
+                  for name, value in attrs:
+                      if not value:
+                          continue
+                      lowered = name.lower()
+                      if lowered in self.URL_ATTRIBUTES:
+                          self.references.append(value)
+                      elif lowered == "srcset":
+                          for candidate in value.split(","):
+                              ref = candidate.strip().split()[0] if candidate.strip() else ""
+                              if ref:
+                                  self.references.append(ref)
+          
+          
+          def is_within_root(path: Path) -> bool:
+              try:
+                  path.relative_to(ROOT)
+                  return True
+              except ValueError:
+                  return False
+          
+          
+          def local_path_from_reference(reference: str, base_dir: Path) -> Path | None:
+              """Resolve a site-local URL to a repository file path."""
+          
+              ref = html.unescape(str(reference or "").strip())
+              if not ref or ref.startswith(("#", "data:", "blob:", "mailto:", "tel:", "javascript:")):
+                  return None
+          
+              parsed = urlsplit(ref)
+              raw_path = parsed.path
+          
+              if parsed.scheme or parsed.netloc:
+                  # Absolute links to the same Pages site still correspond to repository files.
+                  if parsed.scheme not in {"http", "https"} or parsed.netloc.lower() != PAGES_HOST:
+                      return None
+                  if not raw_path.startswith(PAGES_PREFIX):
+                      return None
+                  raw_path = raw_path[len(PAGES_PREFIX):]
+                  base_dir = ROOT
+              elif raw_path.startswith(PAGES_PREFIX):
+                  raw_path = raw_path[len(PAGES_PREFIX):]
+                  base_dir = ROOT
+              elif raw_path.startswith("/"):
+                  raw_path = raw_path.lstrip("/")
+                  base_dir = ROOT
+          
+              raw_path = unquote(raw_path).strip()
+              if not raw_path:
+                  return None
+          
+              candidate = (base_dir / raw_path).resolve()
+              if not is_within_root(candidate):
+                  return None
+              if candidate.is_dir():
+                  candidate = candidate / "index.html"
+          
+              return candidate if candidate.is_file() else None
+          
+          
+          def discover_references(path: Path, text: str) -> set[str]:
+              refs: set[str] = set()
+          
+              if path.suffix.lower() in {".html", ".htm"}:
+                  parser = ReferenceParser()
+                  try:
+                      parser.feed(text)
+                      refs.update(parser.references)
+                  except Exception as exc:
+                      print(f"warning: HTML parser could not fully read {path.relative_to(ROOT)}: {exc}")
+          
+              refs.update(match.group(2).strip() for match in CSS_URL_RE.finditer(text))
+              refs.update(match.group("ref").strip() for match in QUOTED_FILE_RE.finditer(text))
+              return {ref for ref in refs if ref}
+          
+          
+          def initial_entries() -> set[Path]:
+              entries: set[Path] = set()
+          
+              for relative in CORE_ENTRIES:
+                  candidate = ROOT / relative
+                  if candidate.is_file():
+                      entries.add(candidate.resolve())
+          
+              # Automatically include current, cleanly named root pages while excluding numbered
+              # exports such as Page(42).html and Planner_M25_*.html.
+              for candidate in ROOT.glob("*.htm*"):
+                  if candidate.is_file() and not VERSIONED_EXPORT.search(candidate.name):
+                      entries.add(candidate.resolve())
+          
+              return entries
+          
+          
+          def copy_reachable_site() -> tuple[list[Path], list[str]]:
+              if OUT.exists():
+                  shutil.rmtree(OUT)
+              OUT.mkdir(parents=True)
+          
+              queue: deque[Path] = deque(sorted(initial_entries()))
+              seen: set[Path] = set()
+              copied: list[Path] = []
+              missing_refs: set[str] = set()
+          
+              while queue:
+                  source = queue.popleft().resolve()
+                  if source in seen or not source.is_file() or not is_within_root(source):
+                      continue
+                  seen.add(source)
+          
+                  relative = source.relative_to(ROOT)
+                  destination = OUT / relative
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copy2(source, destination)
+                  copied.append(relative)
+          
+                  if source.suffix.lower() not in TEXT_EXTENSIONS:
+                      continue
+          
+                  try:
+                      text = source.read_text(encoding="utf-8")
+                  except UnicodeDecodeError:
+                      text = source.read_text(encoding="utf-8", errors="ignore")
+          
+                  for ref in discover_references(source, text):
+                      resolved = local_path_from_reference(ref, source.parent)
+                      if resolved:
+                          if resolved not in seen:
+                              queue.append(resolved)
+                      elif re.search(rf"\.(?:{LOCAL_FILE_EXTENSIONS})(?:[?#].*)?$", ref, re.IGNORECASE):
+                          parsed = urlsplit(ref)
+                          if not parsed.scheme and not parsed.netloc and not ref.startswith(("data:", "blob:")):
+                              missing_refs.add(f"{relative}: {ref}")
+          
+              (OUT / ".nojekyll").write_text("", encoding="utf-8")
+              return copied, sorted(missing_refs)
+          
+          
+          def format_size(size: int) -> str:
+              units = ["B", "KiB", "MiB", "GiB"]
+              value = float(size)
+              for unit in units:
+                  if value < 1024 or unit == units[-1]:
+                      return f"{value:.2f} {unit}"
+                  value /= 1024
+              return f"{size} B"
+          
+          
+          def main() -> int:
+              copied, missing_refs = copy_reachable_site()
+          
+              missing_required = [name for name in sorted(REQUIRED_ENTRIES) if not (OUT / name).is_file()]
+              if missing_required:
+                  print("error: required production pages were not found in the slim artifact:")
+                  for name in missing_required:
+                      print(f"  - {name}")
+                  return 1
+          
+              total_bytes = sum((OUT / path).stat().st_size for path in copied if (OUT / path).is_file())
+              print(f"Slim Pages artifact: {len(copied)} files, {format_size(total_bytes)}")
+          
+              if missing_refs:
+                  print(f"warning: {len(missing_refs)} local-looking references were not found (first 40 shown):")
+                  for item in missing_refs[:40]:
+                      print(f"  - {item}")
+          
+              if total_bytes > 1_000_000_000:
+                  print("error: slim artifact exceeds the supported 1 GB Pages size.")
+                  return 1
+              if total_bytes > 250_000_000:
+                  print("warning: artifact is still above 250 MB; review the published-file report.")
+          
+              summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+              if summary_path:
+                  with open(summary_path, "a", encoding="utf-8") as summary:
+                      summary.write("## Aurora slim Pages build\n\n")
+                      summary.write(f"- Files published: **{len(copied)}**\n")
+                      summary.write(f"- Artifact size: **{format_size(total_bytes)}**\n")
+                      summary.write(f"- Missing local-looking references: **{len(missing_refs)}**\n")
+                      summary.write("\n<details><summary>Published files</summary>\n\n```text\n")
+                      for path in sorted(copied):
+                          summary.write(f"{path.as_posix()}\n")
+                      summary.write("```\n</details>\n")
+          
+              return 0
+          
+          
+          if __name__ == "__main__":
+              sys.exit(main())
+          PYTHON
+          python3 /tmp/build_slim_site.py
+
+      - name: Verify production shell
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f _site/index.html
+          test -f _site/AuroraCityFC_GameShell.html
+          test -f _site/AuroraCityFC_ManagerDashboard.html
+          echo "Published file count: $(find _site -type f | wc -l)"
+          echo "Published size: $(du -sh _site | cut -f1)"
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./_site
+          include-hidden-files: true
+
+  deploy:
+    name: Deploy slim site
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
