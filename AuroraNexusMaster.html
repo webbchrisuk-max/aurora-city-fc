@@ -1134,20 +1134,21 @@ body.locked .wrap{filter:none!important;pointer-events:auto!important;user-selec
 
 </style>
 
-<style>
-/* ===================== AURORA SMART WEALTH CENTRE NAVIGATION ===================== */
-:root{--aurora-smart-dock-height:132px}
-body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-bottom,0px))!important}
+
+<style id="auroraSmartDockStyles">
+/* ===================== AURORA SMART WEALTH CENTRE — BOTTOM DOCK ===================== */
+:root{--aurora-dock-safe:calc(18px + env(safe-area-inset-bottom,0px))}
+.aurora-hq-dock{display:none!important}
 .aurora-smart-dock{
-  position:fixed;left:50%;bottom:10px;z-index:9998;
-  width:min(1180px,calc(100% - 20px));transform:translateX(-50%);
-  padding:10px;border:1px solid rgba(98,243,255,.24);border-radius:22px;
-  background:linear-gradient(145deg,rgba(5,14,27,.96),rgba(9,24,41,.97));
-  box-shadow:0 22px 58px rgba(0,0,0,.50),0 0 28px rgba(98,243,255,.10);
+  position:relative!important;left:auto!important;bottom:auto!important;z-index:20!important;
+  width:min(1180px,calc(100% - 20px))!important;transform:none!important;
+  margin:22px auto var(--aurora-dock-safe)!important;padding:10px!important;
+  border:1px solid rgba(98,243,255,.24)!important;border-radius:22px!important;
+  background:linear-gradient(145deg,rgba(5,14,27,.98),rgba(9,24,41,.98))!important;
+  box-shadow:0 22px 58px rgba(0,0,0,.42),0 0 28px rgba(98,243,255,.10)!important;
   backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  opacity:1!important;pointer-events:auto!important;visibility:visible!important;
 }
-.aurora-smart-dock{transition:transform .24s ease,opacity .24s ease,bottom .24s ease;will-change:transform,opacity}
-.aurora-smart-dock.is-hidden{transform:translateX(-50%) translateY(calc(100% + 16px));opacity:0;pointer-events:none}
 .aurora-smart-dock *{box-sizing:border-box}
 .aurora-smart-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;margin-bottom:9px}
 .aurora-smart-back,.aurora-smart-next{
@@ -1179,9 +1180,20 @@ body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-b
 .aurora-smart-link[data-aurora-route="brain"]:before{background:#b985ff}
 .aurora-smart-link[data-aurora-route="registration"]:before{background:#59ff9a}
 .aurora-smart-link[data-aurora-route="tesco"]:before{background:#6aa8ff}
+.aurora-dock-launcher{
+  position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:9999;
+  display:flex;align-items:center;gap:8px;min-height:44px;padding:10px 13px;border-radius:999px;
+  border:1px solid rgba(98,243,255,.34);background:rgba(5,14,27,.95);color:#eaf7ff;
+  font:900 11px/1 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  box-shadow:0 12px 32px rgba(0,0,0,.38),0 0 18px rgba(98,243,255,.12);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);cursor:pointer;
+  transition:opacity .2s ease,transform .2s ease;
+}
+.aurora-dock-launcher span:first-child{font-size:18px;color:#62f3ff}
+.aurora-dock-launcher.is-scrolling{opacity:0;transform:translateY(14px);pointer-events:none}
+.aurora-dock-launcher.is-near-dock{opacity:0;transform:translateY(14px);pointer-events:none}
 @media(max-width:760px){
-  :root{--aurora-smart-dock-height:136px}
-  .aurora-smart-dock{bottom:6px;width:calc(100% - 12px);padding:8px;border-radius:18px}
+  .aurora-smart-dock{width:calc(100% - 12px)!important;padding:8px!important;border-radius:18px!important;margin-top:16px!important}
   .aurora-smart-head{grid-template-columns:auto minmax(0,1fr) auto;gap:6px;margin-bottom:7px}
   .aurora-smart-back,.aurora-smart-next{min-height:32px;padding:7px 8px;font-size:10px}
   .aurora-smart-centre strong{font-size:11px}.aurora-smart-centre span{font-size:8px}
@@ -1189,13 +1201,13 @@ body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-b
   .aurora-smart-link{display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:58px;padding:7px 4px;text-align:center}
   .aurora-smart-link:before{left:8px;right:8px;top:auto;bottom:0;width:auto;height:3px}
   .aurora-smart-icon{font-size:18px}.aurora-smart-name{font-size:9px;max-width:100%}.aurora-smart-status{font-size:7px;max-width:100%}
+  .aurora-dock-launcher{right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));padding:9px 11px}
 }
 @media(max-width:430px){
-  :root{--aurora-smart-dock-height:128px}
   .aurora-smart-next{max-width:100px;white-space:normal;line-height:1.1;text-align:center}
-  .aurora-smart-centre span{display:none}
-  .aurora-smart-link{min-height:54px}
+  .aurora-smart-centre span{display:none}.aurora-smart-link{min-height:54px}
   .aurora-smart-name{font-size:8px}.aurora-smart-status{font-size:6.5px}
+  .aurora-dock-launcher span:last-child{display:none}
 }
 </style>
 </head>
@@ -1749,7 +1761,9 @@ document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove
 
 
 
-<section class="aurora-smart-dock" data-aurora-page="nexus" aria-label="Aurora Wealth Centre smart navigation">
+
+
+<section class="aurora-smart-dock" id="auroraSmartDock" data-aurora-page="nexus" aria-label="Aurora Wealth Centre smart navigation">
   <div class="aurora-smart-head">
     <button class="aurora-smart-back" type="button" data-aurora-back>← Back</button>
     <div class="aurora-smart-centre"><strong>Aurora Wealth Centre</strong><span data-aurora-current-label>CONNECTED COMMAND SYSTEM</span></div>
@@ -1763,19 +1777,20 @@ document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove
     <a class="aurora-smart-link" href="#" data-aurora-route="tesco"><span class="aurora-smart-icon">🛒</span><span class="aurora-smart-name">Tesco SAYE</span><span class="aurora-smart-status cyan" data-aurora-status="tesco">2029 PLAN</span></a>
   </nav>
 </section>
+<button class="aurora-dock-launcher" id="auroraDockLauncher" type="button" aria-label="Go to Aurora navigation"><span>⌘</span><span>Aurora navigation</span></button>
 
-
-<script>
+<script id="auroraSmartDockScript">
 /* ===================== AURORA SMART WEALTH CENTRE ROUTER ===================== */
 (()=>{
   const dock=document.querySelector('.aurora-smart-dock[data-aurora-page]');
+  const launcher=document.getElementById('auroraDockLauncher');
   if(!dock)return;
   const page=dock.dataset.auroraPage||'nexus';
   const local=location.protocol==='file:';
   const routes=local?{
-    nexus:'AuroraNexusMaster_Connected_v6.html',
-    wealth:'AuroraWealthExecutiveRoom_Connected_v14.html',
-    brain:'TradingBrainMaster_Connected_v7.html',
+    nexus:'AuroraNexusMaster.html',
+    wealth:'SpendingPlannerMaster.html',
+    brain:'TradingBrainMaster.html',
     registration:'RegistrationDesk.html',
     tesco:'TescoSimMaster.html'
   }:{
@@ -1789,65 +1804,36 @@ document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove
   const nextMap={nexus:['wealth','Open Wealth HQ →'],wealth:['brain','Next: Trading Brain →'],brain:['registration','Next: Registration →'],registration:['nexus','Return to Nexus HQ →'],tesco:['nexus','Return to Nexus HQ →']};
   const read=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
   const money=(v)=>Number(v||0).toLocaleString('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:0,maximumFractionDigits:0});
-  const setStatus=(name,text,tone)=>{
-    const el=dock.querySelector('[data-aurora-status="'+name+'"]');if(!el)return;
-    el.textContent=text;el.className='aurora-smart-status '+(tone||'');
-  };
-  dock.querySelectorAll('[data-aurora-route]').forEach(link=>{
-    const name=link.dataset.auroraRoute;link.href=routes[name]||'#';link.classList.toggle('active',name===page);
-    if(name===page)link.setAttribute('aria-current','page');
-  });
+  const setStatus=(name,text,tone)=>{const el=dock.querySelector('[data-aurora-status="'+name+'"]');if(!el)return;el.textContent=text;el.className='aurora-smart-status '+(tone||'')};
+  dock.querySelectorAll('[data-aurora-route]').forEach(link=>{const name=link.dataset.auroraRoute;link.href=routes[name]||'#';link.classList.toggle('active',name===page);if(name===page)link.setAttribute('aria-current','page')});
   const current=dock.querySelector('[data-aurora-current-label]');if(current)current.textContent=labels[page]||labels.nexus;
   const [nextRoute,nextText]=nextMap[page]||nextMap.nexus;const next=dock.querySelector('[data-aurora-next]');if(next){next.href=routes[nextRoute];next.textContent=nextText}
-  dock.querySelector('[data-aurora-back]')?.addEventListener('click',()=>{
-    const ref=document.referrer;
-    if(history.length>1 && (local || (ref && new URL(ref,location.href).origin===location.origin)))history.back();
-    else location.href=routes.nexus;
-  });
+  dock.querySelector('[data-aurora-back]')?.addEventListener('click',()=>{const ref=document.referrer;if(history.length>1&&(local||(ref&&new URL(ref,location.href).origin===location.origin)))history.back();else location.href=routes.nexus});
   function refresh(){
-    const mission=read('aurora_wealth_investment_mission_v1');
-    const decision=read('aurora_trading_brain_decision_v1');
-    const queue=read('aurora_pending_registrations_v1');
-    if(mission){
-      const budget=Number(mission.investmentBudget||mission.amount||0);
-      setStatus('wealth',budget>0?money(budget):'MISSION READY',budget>0?'good':'');
-    }else setStatus('wealth',page==='wealth'?'OPEN':'NO MISSION',mission?'good':'warn');
-    if(decision && Array.isArray(decision.purchases) && decision.purchases.length){
-      setStatus('brain',decision.purchases.length+' PLANNED','good');
-    }else setStatus('brain',page==='brain'?'OPEN':'PLAN READY','cyan');
-    if(Array.isArray(queue) && queue.length){
-      const pending=queue.filter(x=>String(x.status||'').toLowerCase()!=='completed').length;
-      setStatus('registration',pending?pending+' WAITING':'READY',pending?'good':'cyan');
-    }else setStatus('registration','EMPTY','');
-    setStatus('nexus',page==='nexus'?'HOME':'HOME','cyan');
-    setStatus('tesco','2029 PLAN','cyan');
+    const mission=read('aurora_wealth_investment_mission_v1');const decision=read('aurora_trading_brain_decision_v1');const queue=read('aurora_pending_registrations_v1');
+    if(mission){const budget=Number(mission.investmentBudget||mission.amount||0);setStatus('wealth',budget>0?money(budget):'MISSION READY',budget>0?'good':'')}else setStatus('wealth',page==='wealth'?'OPEN':'NO MISSION',page==='wealth'?'cyan':'watch');
+    if(decision&&Array.isArray(decision.purchases)&&decision.purchases.length)setStatus('brain',decision.purchases.length+' PLANNED','good');else setStatus('brain',page==='brain'?'OPEN':'PLAN READY','cyan');
+    if(Array.isArray(queue)&&queue.length){const pending=queue.filter(x=>String(x.status||'').toLowerCase()!=='completed').length;setStatus('registration',pending?pending+' WAITING':'READY',pending?'good':'cyan')}else setStatus('registration','EMPTY','');
+    setStatus('nexus','HOME','cyan');setStatus('tesco','2029 PLAN','cyan');
   }
-  refresh();
-  window.addEventListener('storage',refresh);
-
-  // auto-hide when scrolling down, show when scrolling up / when scroll ends / near bottom
-  let lastY=window.scrollY||0;
-  let ticking=false;
-  let scrollTimer=null;
-  const reveal=()=>dock.classList.remove('is-hidden');
-  const conceal=()=>dock.classList.add('is-hidden');
-  const onScroll=()=>{
-    const y=window.scrollY||0;
-    const maxY=Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-    const nearBottom=maxY - y < 56;
-    if(nearBottom || y < 12){ reveal(); }
-    else if(y > lastY + 6){ conceal(); }
-    else if(y < lastY - 6){ reveal(); }
-    lastY=y;
-    clearTimeout(scrollTimer);
-    scrollTimer=setTimeout(reveal, 140);
-    ticking=false;
-  };
+  refresh();window.addEventListener('storage',refresh);
+  launcher?.addEventListener('click',()=>dock.scrollIntoView({behavior:'smooth',block:'end'}));
+  let timer=null;
+  function updateLauncher(){
+    if(!launcher)return;
+    const rect=dock.getBoundingClientRect();
+    const nearDock=rect.top<window.innerHeight&&rect.bottom>0;
+    launcher.classList.toggle('is-near-dock',nearDock);
+  }
   window.addEventListener('scroll',()=>{
-    if(!ticking){ window.requestAnimationFrame(onScroll); ticking=true; }
+    if(!launcher)return;
+    launcher.classList.add('is-scrolling');
+    clearTimeout(timer);
+    timer=setTimeout(()=>{launcher.classList.remove('is-scrolling');updateLauncher()},320);
   },{passive:true});
+  window.addEventListener('resize',updateLauncher,{passive:true});
+  updateLauncher();
 })();
 </script>
-
 </body>
 </html>
