@@ -13,7 +13,8 @@
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
-<title>Aurora City FC — Transfer Centre M10 Single Source Fixed</title>
+<title>Aurora City FC — Transfer Centre Clean Payday Workflow</title>
+<!-- Build: Transfer Centre M11 Clean Wealth HQ → Allocation → Deal Sheet → Execution Workflow • 26 Jul 2026 -->
 <!-- Build: Transfer Centre M10 Single Source Route + Offer De-duplication • 26 Jul 2026 -->
 <!-- Build: Transfer Centre M9 Direct Wealth HQ Budget Handoff • 26 Jul 2026 -->
 <!-- Build: Transfer Centre M8 Trading Brain Linked Execution Room • 25 Jul 2026 -->
@@ -5721,6 +5722,38 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 @media(max-width:620px){#m5-transfer-command .m5-builder-controls,#m5-transfer-command .m5-impact-grid{grid-template-columns:1fr}.m5-execution-lock{align-items:flex-start;flex-direction:column}}
 </style>
 
+
+<style id="aurora-m11-clean-workflow-styles">
+/* M11: one visible payday workflow. Legacy engines remain in the file only so their
+   existing data functions keep working; their duplicate interfaces are not shown. */
+#m9WealthMissionBanner,
+#m5-transfer-command,
+#investment-release-plan,
+#exit-funding-room,
+#income-simulator,
+#dividend-calendar,
+#portfolio-control-room,
+#m3-payday-control,
+#top-transfer-board,
+.m11-legacy-hidden{display:none!important}
+#dealRouteOptions{display:none!important}
+#deal-sheet .deal-budget-input{display:none!important}
+#deal-sheet #resetTransferPlan{display:none!important}
+#deal-sheet .transfer-studio-grid{grid-template-columns:minmax(0,1fr)!important}
+#deal-sheet .broadcast-panel{min-width:0}
+.m11-mission-strip{border:1px solid rgba(52,211,153,.34);background:linear-gradient(145deg,rgba(6,78,59,.24),rgba(8,47,73,.22));border-radius:24px;padding:17px;box-shadow:var(--shadow)}
+.m11-mission-main{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center}
+.m11-eyebrow{display:block;color:#86efac;font-size:10px;font-weight:1000;letter-spacing:.13em}
+.m11-mission-main h2{margin:5px 0 4px;font-size:25px;letter-spacing:-.045em}.m11-mission-main p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}
+.m11-mission-budget{min-width:210px;border:1px solid rgba(52,211,153,.24);background:rgba(2,6,23,.48);border-radius:17px;padding:12px 14px;text-align:right}.m11-mission-budget small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;font-weight:900;letter-spacing:.08em}.m11-mission-budget strong{display:block;color:#86efac;font-size:28px;margin-top:3px;letter-spacing:-.05em}.m11-mission-budget span{display:block;color:#cbd5e1;font-size:10px;margin-top:3px}
+.m11-funding-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}.m11-funding-card{border:1px solid rgba(148,163,184,.15);background:rgba(2,6,23,.38);border-radius:15px;padding:11px}.m11-funding-card small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;font-weight:900;letter-spacing:.07em}.m11-funding-card strong{display:block;color:#e0f2fe;font-size:17px;margin-top:4px}.m11-funding-card span{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-top:3px}
+.m11-mission-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid rgba(148,163,184,.13)}.m11-mission-footer span{color:#bbf7d0;font-size:11px}.m11-mission-footer button{border:1px solid rgba(52,211,153,.34);background:rgba(6,78,59,.34);color:#bbf7d0;border-radius:12px;padding:9px 11px;font-weight:900;cursor:pointer}
+.m11-strategy-control{margin-top:13px;border:1px solid rgba(34,211,238,.22);background:rgba(8,47,73,.22);border-radius:16px;padding:11px}.m11-strategy-control>span{display:block;color:#cffafe;font-size:10px;font-weight:1000;text-transform:uppercase;letter-spacing:.08em}.m11-strategy-control>small{display:block;color:var(--muted);font-size:9px;line-height:1.4;margin-top:7px}.m11-strategy-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.m11-strategy-buttons button{border:1px solid rgba(148,163,184,.20);background:rgba(2,6,23,.55);color:#cbd5e1;border-radius:12px;padding:10px;font-size:11px;font-weight:950;cursor:pointer}.m11-strategy-buttons button.active{border-color:rgba(52,211,153,.48);background:linear-gradient(135deg,rgba(5,150,105,.84),rgba(4,120,87,.84));color:#fff;box-shadow:0 0 0 2px rgba(52,211,153,.07)}
+.m11-budget-readout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:11px}.m11-budget-readout>div{border:1px solid rgba(148,163,184,.14);background:rgba(2,6,23,.38);border-radius:14px;padding:10px}.m11-budget-readout small{display:block;color:var(--muted);font-size:8px;text-transform:uppercase;font-weight:900;letter-spacing:.07em}.m11-budget-readout strong{display:block;margin-top:4px;font-size:17px;color:#e0f2fe}.m11-budget-readout .authorised strong{color:#86efac}
+.m11-manual-tools{margin-top:16px;border:1px solid rgba(148,163,184,.18);border-radius:20px;background:rgba(7,17,31,.74);overflow:hidden}.m11-manual-tools>summary{cursor:pointer;list-style:none;padding:14px 16px;font-weight:950;color:#cbd5e1}.m11-manual-tools>summary::-webkit-details-marker{display:none}.m11-manual-tools>summary:after{content:'+';float:right;color:#67e8f9}.m11-manual-tools[open]>summary:after{content:'–'}.m11-manual-tools #registration-desk{margin:0 12px 12px}
+@media(max-width:760px){.m11-mission-main{grid-template-columns:1fr}.m11-mission-budget{text-align:left;min-width:0}.m11-funding-grid,.m11-budget-readout{grid-template-columns:1fr}.m11-mission-footer{align-items:flex-start;flex-direction:column}.m11-strategy-buttons{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 <div aria-label="Open navigation" class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" role="button" tabindex="0">
@@ -5770,17 +5803,13 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 </summary>
 <div class="fm-side-submenu">
 <a href="AuroraCityFC_TransferCentre.html#transfer-overview">Overview</a>
-<a href="AuroraCityFC_TransferCentre.html#investment-release-plan">Monthly Plan</a>
-<a href="AuroraCityFC_TransferCentre.html#income-simulator">Income Simulator</a>
-<a href="AuroraCityFC_TransferCentre.html#dividend-calendar">Dividend Calendar</a>
-<a href="AuroraCityFC_TransferCentre.html#portfolio-control-room">Portfolio Controls</a>
-<a href="AuroraCityFC_TransferCentre.html#payday-execution">Payday Mode</a>
-<a href="AuroraCityFC_TransferCentre.html#incoming-offers">Incoming Offers</a>
+<a href="AuroraCityFC_TransferCentre.html#wealth-mission">Wealth Mission</a>
+<a href="AuroraCityFC_TransferCentre.html#trading-brain-execution">Allocation Room</a>
 <a href="AuroraCityFC_TransferCentre.html#deal-sheet">Deal Sheet</a>
+<a href="AuroraCityFC_TransferCentre.html#payday-execution">Payday Execution</a>
+<a href="AuroraCityFC_TransferCentre.html#incoming-offers">Incoming Offers</a>
 <a href="AuroraCityFC_TransferCentre.html#sell-desk">Sell Desk</a>
-<a href="AuroraCityFC_TransferCentre.html#best-return-allocation">Best Return</a>
-<a href="AuroraCityFC_TransferCentre.html#registration-desk">Registration</a>
-<a href="AuroraCityFC_TransferCentre.html#top-transfer-board">Transfer Board</a>
+<a href="AuroraCityFC_TransferCentre.html#manual-tools">Manual Registration</a>
 <a href="AuroraCityFC_TransferCentre.html#transfer-bench">Bench</a>
 </div>
 </details>
@@ -5821,7 +5850,7 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <div class="aurora-photo-content">
 <div class="aurora-photo-kicker"><span class="aurora-photo-kicker-dot"></span> Live recruitment command</div>
 <h1 class="aurora-photo-title">Transfer <span>Centre</span></h1>
-<p class="aurora-photo-sub">Scout the market, compare income routes, manage the transfer budget and complete the next Aurora City FC signing.</p>
+<p class="aurora-photo-sub">Receive the authorised Wealth HQ budget, choose one allocation strategy, approve the deal sheet and record the completed purchases.</p>
 <div class="aurora-photo-actions">
 <span class="aurora-photo-pill" id="lastUpdated">Last updated: loading…</span>
 <span class="aurora-photo-pill">Window Objective: best verified monthly route</span>
@@ -5831,7 +5860,7 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <div class="aurora-photo-stat">
 <small>Transfer Budget</small>
 <strong id="heroTransferBudget">£3,500.00</strong>
-<span>Released from the two investment pots this month</span>
+<span>Authorised by the current Wealth HQ investment mission</span>
 </div>
 <div class="aurora-photo-stat">
 <small>Approved Signings</small>
@@ -5845,6 +5874,19 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 </div>
 </div>
 </div>
+</section>
+
+<section class="section m11-mission-strip" id="wealth-mission" aria-label="Wealth HQ authorised transfer mission">
+  <div class="m11-mission-main">
+    <div>
+      <span class="m11-eyebrow">WEALTH HQ → TRANSFER CENTRE</span>
+      <h2>Authorised Transfer Mission</h2>
+      <p id="m11MissionDescription">Waiting for the latest payday mission from Aurora Wealth HQ.</p>
+    </div>
+    <div class="m11-mission-budget"><small>Authorised budget</small><strong id="m11MissionBudget">—</strong><span id="m11MissionAccount">Investment account</span></div>
+  </div>
+  <div class="m11-funding-grid" id="m11FundingSources"><div class="m11-funding-card"><small>Funding sources</small><strong>Waiting for Wealth HQ</strong><span>Release the payday mission to load the complete budget.</span></div></div>
+  <div class="m11-mission-footer"><span id="m11MissionStatus">No live mission loaded.</span><button id="m11ReloadMission" type="button">Reload Wealth HQ mission</button></div>
 </section>
 
 <section class="m5-command-shell" id="m5-transfer-command" aria-label="Transfer Centre M5 command dashboard">
@@ -6130,6 +6172,14 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
     <div class="m7-exec-grid">
       <article class="m7-decision-card">
         <div class="m7-decision-label">Data confidence</div><div class="m7-decision-score" id="m7Confidence">—</div><div class="note" id="m7DecisionText">Waiting for Aurora data.</div>
+        <div class="m11-strategy-control" aria-label="Allocation strategy">
+          <span>Choose this month’s allocation strategy</span>
+          <div class="m11-strategy-buttons">
+            <button class="active" data-m11-route="balanced" id="m11BalancedRoute" type="button">Balanced Portfolio</button>
+            <button data-m11-route="maximum" id="m11MaximumRoute" type="button">Maximum Income</button>
+          </div>
+          <small>Trading Brain chooses the shortlist. The Transfer Centre sizes the authorised Wealth HQ budget.</small>
+        </div>
         <div class="m7-decision-meta">
           <div class="m7-mini"><small>Strategy</small><strong id="m7Strategy">—</strong></div><div class="m7-mini"><small>Budget</small><strong id="m7Budget">—</strong></div>
           <div class="m7-mini"><small>Income added</small><strong id="m7Income">—</strong></div><div class="m7-mini"><small>Cash held</small><strong id="m7Holdback">—</strong></div>
@@ -6197,13 +6247,13 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <div class="deal-budget-head">
 <div>
 <div class="broadcast-title"><span class="broadcast-live">Budget</span><h3>This Month’s Allocation</h3></div>
-<p>The budget comes from the ten-month plan. Adjust only the buys you actually intend to make; unallocated cash can remain on hold.</p>
+<p>The budget comes directly from the current Wealth HQ mission. Adjust only the individual purchases; the authorised total cannot be changed here.</p>
 </div>
-<button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset recommendation</button>
+<button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset allocations</button>
 </div>
 <div class="deal-budget-grid">
 <label class="payday-input-line deal-budget-input">
-<span>Transfer budget £</span>
+<span>Authorised Wealth HQ budget £</span>
 <input aria-label="Transfer budget" id="transferBudgetInput" inputmode="decimal" min="0" step="25" type="number" value="3500"/>
 </label>
 <div aria-live="polite" class="allocation-budget-summary">
@@ -10094,6 +10144,125 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
   window.addEventListener('storage',event=>{if(event.key===WEALTH_KEY){addWealthBanner();applyWealthMission({scroll:false});}});
   window.addEventListener('aurora:wealth-mission',()=>{addWealthBanner();applyWealthMission({scroll:false});});
   window.AuroraLoadWealthMission=applyWealthMission;
+})();
+</script>
+
+
+<script id="aurora-m11-clean-workflow-script">
+/* ===================== M11 CLEAN SINGLE PAYDAY WORKFLOW ===================== */
+(function(){
+  const WEALTH_KEY='aurora_wealth_investment_mission_v1';
+  const $=id=>document.getElementById(id);
+  const read=key=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
+  const money=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(value||0));
+  const cleanLabel=value=>String(value||'').replace(/\s+/g,' ').trim();
+
+  function liveMission(){
+    const mission=read(WEALTH_KEY);
+    return mission&&Number(mission.budget)>0?mission:null;
+  }
+  function authorisedBudget(){
+    const mission=liveMission();
+    return mission?Math.max(0,Number(mission.budget)||0):Math.max(0,Number($('transferBudgetInput')?.value)||0);
+  }
+  function forceAuthorisedBudget(){
+    const mission=liveMission(); if(!mission) return;
+    const value=Math.max(0,Number(mission.budget)||0);
+    ['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{const el=$(id);if(el)el.value=value.toFixed(2)});
+    ['heroTransferBudget','m5Budget'].forEach(id=>{const el=$(id);if(el)el.textContent=money(value)});
+  }
+  function renderMission(){
+    const mission=liveMission();
+    const budget=$('m11MissionBudget'),desc=$('m11MissionDescription'),account=$('m11MissionAccount'),sources=$('m11FundingSources'),status=$('m11MissionStatus');
+    if(!mission){
+      if(budget)budget.textContent='—';
+      if(desc)desc.textContent='Return to Aurora Wealth HQ, build the complete transfer budget and release it here.';
+      if(account)account.textContent='No investment mission loaded';
+      if(status)status.textContent='Waiting for Wealth HQ.';
+      return;
+    }
+    const value=Math.max(0,Number(mission.budget)||0);
+    if(budget)budget.textContent=money(value);
+    if(desc)desc.textContent=`Payday ${mission.paydayDate||'—'} • this is the only budget used by the Allocation Room, Deal Sheet and Payday Execution.`;
+    if(account)account.textContent=mission.preferredAccount||mission.preferredPlatform||'Investment account';
+    const rows=Array.isArray(mission.fundingSources)?mission.fundingSources.filter(x=>Number(x.release)>0):[];
+    if(sources)sources.innerHTML=(rows.length?rows:[{name:'Authorised Wealth HQ budget',release:value,available:value,type:'mission'}]).map(source=>`<div class="m11-funding-card"><small>${cleanLabel(source.name||source.id||'Funding source')}</small><strong>${money(source.release||0)}</strong><span>${Number(source.available||0)>0?`${money(source.available)} available before this release`:'Included in this month’s mission'}</span></div>`).join('');
+    if(status)status.textContent=`Mission loaded • ${money(value)} authorised • ${rows.length||1} funding source${(rows.length||1)===1?'':'s'} • no money or broker order has been moved.`;
+  }
+  function currentRoute(){
+    try{return typeof routeMode!=='undefined'&&routeMode==='maximum'?'maximum':'balanced'}catch(_){return 'balanced'}
+  }
+  function syncStrategy(){
+    const mode=currentRoute();
+    document.querySelectorAll('[data-m11-route]').forEach(btn=>btn.classList.toggle('active',btn.dataset.m11Route===mode));
+    const label=$('m7Strategy'); if(label)label.textContent=mode==='maximum'?'Maximum Income':'Balanced Portfolio';
+  }
+  function setRoute(mode){
+    forceAuthorisedBudget();
+    try{
+      routeMode=mode==='maximum'?'maximum':'balanced';
+      if(typeof manualAmounts!=='undefined')manualAmounts.clear();
+      if(typeof renderAll==='function')renderAll();
+    }catch(error){
+      const fallback=$(mode==='maximum'?'applyBestReturn':'applyBalancedRoute');
+      if(fallback&&!fallback.disabled)fallback.click();
+    }
+    syncStrategy();syncBudgetReadout();
+  }
+  function syncBudgetReadout(){
+    forceAuthorisedBudget();
+    const budget=authorisedBudget();
+    const allocatedText=$('allocatedTransferBudget')?.textContent||money(0);
+    const remainingText=$('remainingTransferBudget')?.textContent||money(budget);
+    let box=$('m11BudgetReadout');
+    const host=document.querySelector('#deal-sheet .deal-budget-panel');
+    if(host&&!box){
+      box=document.createElement('div');box.id='m11BudgetReadout';box.className='m11-budget-readout';
+      const grid=host.querySelector('.deal-budget-grid');host.insertBefore(box,grid||host.firstChild);
+    }
+    if(box)box.innerHTML=`<div class="authorised"><small>Wealth HQ authorised</small><strong>${money(budget)}</strong></div><div><small>Allocated</small><strong>${allocatedText}</strong></div><div><small>Still available</small><strong>${remainingText}</strong></div>`;
+    const note=$('allocationBudgetNote');if(note)note.textContent=`${allocatedText} of ${money(budget)} allocated from the current Wealth HQ mission.`;
+  }
+  function cleanNavigation(){
+    document.querySelectorAll('#transferSideMenu .fm-side-submenu a').forEach(a=>{
+      if(a.textContent.trim()==='M5 Command Centre')a.remove();
+    });
+  }
+  function arrangeWorkflow(){
+    const hero=$('transfer-overview'),mission=$('wealth-mission'),allocation=$('trading-brain-execution'),deal=$('deal-sheet'),execution=$('payday-execution');
+    if(hero&&mission&&hero.nextElementSibling!==mission)hero.insertAdjacentElement('afterend',mission);
+    if(mission&&allocation)mission.insertAdjacentElement('afterend',allocation);
+    if(allocation&&deal)allocation.insertAdjacentElement('afterend',deal);
+    if(deal&&execution)deal.insertAdjacentElement('afterend',execution);
+    const strip=document.querySelector('.transfer-control-strip')?.closest('section');if(strip)strip.classList.add('m11-legacy-hidden');
+    const registration=$('registration-desk');
+    if(execution&&registration&&!$('manual-tools')){
+      const details=document.createElement('details');details.id='manual-tools';details.className='m11-manual-tools';details.innerHTML='<summary>Manual / One-Off Registration Tools</summary>';
+      execution.insertAdjacentElement('afterend',details);details.appendChild(registration);
+    }
+  }
+  function lockDuplicateBudgetInput(){
+    const input=$('transferBudgetInput');if(input){input.readOnly=true;input.setAttribute('aria-readonly','true');}
+    const reset=$('resetTransferPlan');if(reset){reset.setAttribute('aria-hidden','true');}
+  }
+  function reloadMission(){
+    if(typeof window.AuroraLoadWealthMission==='function')window.AuroraLoadWealthMission({scroll:false});
+    forceAuthorisedBudget();
+    try{if(typeof renderAll==='function')renderAll()}catch(_){}
+    renderMission();syncStrategy();syncBudgetReadout();
+  }
+  function start(){
+    arrangeWorkflow();cleanNavigation();lockDuplicateBudgetInput();renderMission();forceAuthorisedBudget();syncStrategy();syncBudgetReadout();
+    $('m11ReloadMission')?.addEventListener('click',reloadMission);
+    document.querySelectorAll('[data-m11-route]').forEach(btn=>btn.addEventListener('click',()=>setRoute(btn.dataset.m11Route)));
+    const observer=new MutationObserver(()=>{clearTimeout(window.__auroraM11Sync);window.__auroraM11Sync=setTimeout(()=>{forceAuthorisedBudget();renderMission();syncStrategy();syncBudgetReadout();},80)});
+    ['allocatedTransferBudget','remainingTransferBudget','m7Strategy','m7Budget','heroTransferBudget'].forEach(id=>{const el=$(id);if(el)observer.observe(el,{childList:true,subtree:true,characterData:true})});
+    window.addEventListener('storage',event=>{if(event.key===WEALTH_KEY)setTimeout(reloadMission,50)});
+    window.addEventListener('aurora:wealth-mission',()=>setTimeout(reloadMission,50));
+    setTimeout(reloadMission,180);setTimeout(()=>{arrangeWorkflow();syncBudgetReadout()},900);
+    document.title='Aurora City FC — Transfer Centre';
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
 
