@@ -3435,7 +3435,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
       </div>
       <div class="m37-route" id="m37InvestmentRoute"><strong>Waiting:</strong> Build the live payday plan and Aurora will isolate the investment transfer.</div>
       <div class="m37-actions">
-        <button class="primary" id="m37SendToTradingBrain" type="button">Send Mission to Trading Brain</button>
+        <button class="primary" id="m37SendToTradingBrain" type="button">Release Mission to Transfer Centre</button>
         <button id="m37RefreshHandoff" type="button">Refresh Status</button>
         <a href="TradingBrainMaster.html" target="_self">Open Trading Brain →</a>
       </div>
@@ -8396,15 +8396,16 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     return {plan,mission,investments,budget,platform,completed};
   }
   function linkedStage(snapshot,payload){
-    const decision=read(DECISION_KEY),queue=read(REGISTRATION_KEY);
+    const decision=read(DECISION_KEY),queue=read(REGISTRATION_KEY),transferReceipt=read("aurora_transfer_centre_receipt_v1");
+    if(transferReceipt&&payload&&transferReceipt.wealthMissionId===payload.id)return {label:"Transfer Centre loaded mission",state:"approved"};
     if(queue&&payload&&queue.sourceMissionId===payload.id){
       const items=Array.isArray(queue.items)?queue.items:[];
       const completed=items.filter(item=>["PURCHASED","REGISTERED","COMPLETE"].includes(String(item.status||"").toUpperCase())).length;
       return {label:items.length?`${completed}/${items.length} purchases complete`:"Transfer window approved",state:"approved"};
     }
-    if(decision&&payload&&decision.wealthMissionId===payload.id)return {label:"Trading plan ready",state:"approved"};
-    if(payload)return {label:"Sent to Trading Brain",state:"sent"};
-    return {label:snapshot?.budget>0?"Ready to send":"No investment move",state:"none"};
+    if(decision&&payload&&decision.wealthMissionId===payload.id)return {label:"Transfer plan ready",state:"approved"};
+    if(payload)return {label:"Sent to Transfer Centre",state:"sent"};
+    return {label:snapshot?.budget>0?"Ready to release":"No investment move",state:"none"};
   }
   function render(){
     const snapshot=liveSnapshot();if(!snapshot||!el("m37InvestmentHandoff"))return;
@@ -8415,8 +8416,8 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     el("m37PipelineStage").textContent=stage.label;
     el("m37HandoffStatus").textContent=stage.label.toUpperCase();el("m37HandoffStatus").dataset.state=stage.state;
     const actionNames=snapshot.investments.map(action=>`${accountLabel(action.id?.includes(":t212")?"t212":action.id?.includes(":ig")?"ig":snapshot.platform)} ${gbp(action.amount)}`);
-    el("m37InvestmentRoute").innerHTML=snapshot.budget>0?`<strong>Mission ready:</strong> ${actionNames.join(" • ")||`${accountLabel(snapshot.platform)} ${gbp(snapshot.budget)}`} • Trading Brain will turn this into specific purchase targets.`:`<strong>No investment mission yet:</strong> Increase the Core share contribution or apply a scenario that includes shares.`;
-    const send=el("m37SendToTradingBrain");if(send){send.disabled=snapshot.budget<=0;send.textContent=snapshot.budget>0?`Send ${gbp(snapshot.budget)} Mission to Trading Brain`:"No Investment Allocation to Send"}
+    el("m37InvestmentRoute").innerHTML=snapshot.budget>0?`<strong>Mission ready:</strong> ${actionNames.join(" • ")||`${accountLabel(snapshot.platform)} ${gbp(snapshot.budget)}`} • Transfer Centre will turn this into the live signing plan using Aurora intelligence.`:`<strong>No investment mission yet:</strong> Increase the Core share contribution or apply a scenario that includes shares.`;
+    const send=el("m37SendToTradingBrain");if(send){send.disabled=snapshot.budget<=0;send.textContent=snapshot.budget>0?`Release ${gbp(snapshot.budget)} to Transfer Centre`:"No Investment Allocation to Release"}
     if(payload&&payload.sourceMissionId===snapshot.mission?.id&&snapshot.completed===snapshot.investments.length&&snapshot.investments.length){payload.status="FUNDS_TRANSFERRED";payload.updatedAt=new Date().toISOString();write(WEALTH_KEY,payload)}
   }
   function sendMission(){
@@ -8425,13 +8426,14 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     const payload={
       schemaVersion:1,id:`wealth-${snapshot.mission.id}`,sourceMissionId:snapshot.mission.id,source:"Aurora Wealth HQ",generatedAt:new Date().toISOString(),updatedAt:new Date().toISOString(),
       paydayDate:snapshot.mission.paydayDate,budget:Number(snapshot.budget.toFixed(2)),preferredPlatform:snapshot.platform,preferredAccount:accountLabel(snapshot.platform),
-      actualPay:Number(snapshot.plan.actual||0),expectedPay:Number(snapshot.plan.expected||0),status:"READY_FOR_TRADING_BRAIN",tradingMode:"income",
+      actualPay:Number(snapshot.plan.actual||0),expectedPay:Number(snapshot.plan.expected||0),status:"READY_FOR_TRANSFER_CENTRE",tradingMode:"income",destination:"Aurora FC Transfer Centre",
       investmentActions:snapshot.investments.map(action=>({id:action.id,name:action.name,amount:Number(action.amount||0),meta:action.meta||""}))
     };
     if(!write(WEALTH_KEY,payload)){if(feedback){feedback.textContent="The browser blocked the handoff save.";feedback.className="m37-feedback risk"}return}
-    if(feedback){feedback.textContent=`${gbp(payload.budget)} mission sent. Trading Brain can now load it.`;feedback.className="m37-feedback good"}
+    if(feedback){feedback.textContent=`${gbp(payload.budget)} mission sent. Transfer Centre can now load it.`;feedback.className="m37-feedback good"}
     try{window.dispatchEvent(new CustomEvent("aurora:wealth-mission",{detail:payload}))}catch(_){ }
     render();
+    setTimeout(()=>{ window.location.href="AuroraCityFC_TransferCentre(43).html?from=wealth-hq"; },180);
   }
   el("m37SendToTradingBrain")?.addEventListener("click",sendMission);el("m37RefreshHandoff")?.addEventListener("click",render);
   window.addEventListener("storage",event=>{if([WEALTH_KEY,DECISION_KEY,REGISTRATION_KEY].includes(event.key))render()});
