@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Aurora Tesco Command Simulator — Connected M4</title>
+<title>Aurora Tesco Command Simulator — Connected M2</title>
 <style>
 /* ===================== SECTION: ROOT THEME ===================== */
 :root{
@@ -39,17 +39,18 @@ button{border:1px solid var(--line2);background:rgba(255,255,255,.055);color:var
 /* ===================== AURORA SMART WEALTH CENTRE NAVIGATION ===================== */
 :root{--aurora-smart-dock-height:132px}
 body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-bottom,0px))!important}
+.hq-home-btn{display:none!important}
 .aurora-smart-dock{
   position:fixed;left:50%;bottom:10px;z-index:9998;
   width:min(1180px,calc(100% - 20px));transform:translateX(-50%);
   padding:10px;border:1px solid rgba(98,243,255,.24);border-radius:22px;
-  background:linear-gradient(145deg,rgba(5,14,27,.96),rgba(9,24,41,.97));
+  background:linear-gradient(145deg,rgba(5,14,27,.97),rgba(9,24,41,.98));
   box-shadow:0 22px 58px rgba(0,0,0,.50),0 0 28px rgba(98,243,255,.10);
   backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-  transition:transform .24s ease,opacity .24s ease,bottom .24s ease;
+  transition:transform .22s ease,opacity .22s ease;
   will-change:transform,opacity;
 }
-.aurora-smart-dock.is-hidden{transform:translateX(-50%) translateY(calc(100% + 16px));opacity:0;pointer-events:none}
+.aurora-smart-dock.is-hidden{transform:translateX(-50%) translateY(calc(100% + 18px));opacity:0;pointer-events:none}
 .aurora-smart-dock *{box-sizing:border-box}
 .aurora-smart-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;margin-bottom:9px}
 .aurora-smart-back,.aurora-smart-next{
@@ -72,7 +73,7 @@ body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-b
 .aurora-smart-link:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:999px;background:rgba(145,169,194,.38)}
 .aurora-smart-link:hover{transform:translateY(-2px);border-color:rgba(98,243,255,.34);background:rgba(98,243,255,.07)}
 .aurora-smart-link.active{border-color:rgba(98,243,255,.48);background:linear-gradient(145deg,rgba(98,243,255,.13),rgba(89,255,154,.06));box-shadow:inset 0 0 18px rgba(98,243,255,.06),0 0 18px rgba(98,243,255,.08)}
-.aurora-smart-link.active:before{background:#62f3ff;box-shadow:0 0 12px rgba(98,243,255,.72)}
+.aurora-smart-link.active:before{background:#6aa8ff;box-shadow:0 0 12px rgba(106,168,255,.72)}
 .aurora-smart-icon{grid-row:1/3;font-size:20px;line-height:1}
 .aurora-smart-name{min-width:0;font-size:11px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .aurora-smart-status{min-width:0;color:#91a9c2;font-size:8px;font-weight:950;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -343,59 +344,63 @@ updateSimulator();loadHoldings();setInterval(loadHoldings,60000);
 </script>
 
 
+
 <section class="aurora-smart-dock" id="auroraSmartDock" data-aurora-page="tesco" aria-label="Aurora Wealth Centre smart navigation">
   <div class="aurora-smart-head">
     <button class="aurora-smart-back" type="button" data-aurora-back>← Back</button>
-    <div class="aurora-smart-centre"><strong>Aurora Wealth Centre</strong><span data-aurora-current-label>TESCO SAYE • 2029 PLAN</span></div>
-    <a class="aurora-smart-next" href="AuroraNexusMaster.html" data-aurora-next>Return to Nexus HQ →</a>
+    <div class="aurora-smart-centre"><strong>Aurora Wealth Centre</strong><span>TESCO SAYE • 2029 PLAN</span></div>
+    <a class="aurora-smart-next" href="AuroraNexusMaster.html">Return to Nexus HQ →</a>
   </div>
   <nav class="aurora-smart-grid" aria-label="Aurora command rooms">
     <a class="aurora-smart-link" href="AuroraNexusMaster.html" data-aurora-route="nexus"><span class="aurora-smart-icon">🏟️</span><span class="aurora-smart-name">Nexus HQ</span><span class="aurora-smart-status cyan" data-aurora-status="nexus">HOME</span></a>
     <a class="aurora-smart-link" href="SpendingPlannerMaster.html" data-aurora-route="wealth"><span class="aurora-smart-icon">💷</span><span class="aurora-smart-name">Wealth HQ</span><span class="aurora-smart-status" data-aurora-status="wealth">NO MISSION</span></a>
-    <a class="aurora-smart-link" href="TradingBrainMaster.html" data-aurora-route="brain"><span class="aurora-smart-icon">🧠</span><span class="aurora-smart-name">Trading Brain</span><span class="aurora-smart-status" data-aurora-status="brain">WAITING</span></a>
+    <a class="aurora-smart-link" href="TradingBrainMaster.html" data-aurora-route="brain"><span class="aurora-smart-icon">🧠</span><span class="aurora-smart-name">Trading Brain</span><span class="aurora-smart-status" data-aurora-status="brain">PLAN READY</span></a>
     <a class="aurora-smart-link" href="RegistrationDesk.html" data-aurora-route="registration"><span class="aurora-smart-icon">✅</span><span class="aurora-smart-name">Registration</span><span class="aurora-smart-status" data-aurora-status="registration">EMPTY</span></a>
     <a class="aurora-smart-link active" href="TescoSimMaster.html" data-aurora-route="tesco" aria-current="page"><span class="aurora-smart-icon">🛒</span><span class="aurora-smart-name">Tesco SAYE</span><span class="aurora-smart-status cyan" data-aurora-status="tesco">2029 PLAN</span></a>
   </nav>
 </section>
 
 <script id="auroraSmartDockScript">
-/* ===================== AURORA SMART WEALTH CENTRE ROUTER ===================== */
 (()=>{
-  const dock=document.querySelector('.aurora-smart-dock[data-aurora-page]');
+  const dock=document.getElementById('auroraSmartDock');
   if(!dock)return;
-  const routes={nexus:'AuroraNexusMaster.html',wealth:'SpendingPlannerMaster.html',brain:'TradingBrainMaster.html',registration:'RegistrationDesk.html',tesco:'TescoSimMaster.html'};
   const read=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
   const money=(v)=>Number(v||0).toLocaleString('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:0,maximumFractionDigits:0});
   const setStatus=(name,text,tone)=>{const el=dock.querySelector('[data-aurora-status="'+name+'"]');if(!el)return;el.textContent=text;el.className='aurora-smart-status '+(tone||'')};
-  dock.querySelectorAll('[data-aurora-route]').forEach(link=>{const name=link.dataset.auroraRoute;link.href=routes[name]||'#';link.classList.toggle('active',name==='tesco')});
-  dock.querySelector('[data-aurora-back]')?.addEventListener('click',()=>{const ref=document.referrer;if(history.length>1&&(ref&&new URL(ref,location.href).origin===location.origin))history.back();else location.href=routes.nexus});
-  function refresh(){
-    const mission=read('aurora_wealth_investment_mission_v1');const decision=read('aurora_trading_brain_decision_v1');const queue=read('aurora_pending_registrations_v1');
+  dock.querySelector('[data-aurora-back]')?.addEventListener('click',()=>{
+    const ref=document.referrer;
+    if(history.length>1 && ref && new URL(ref,location.href).origin===location.origin) history.back();
+    else location.href='AuroraNexusMaster.html';
+  });
+  const refresh=()=>{
+    const mission=read('aurora_wealth_investment_mission_v1');
+    const decision=read('aurora_trading_brain_decision_v1');
+    const queue=read('aurora_pending_registrations_v1');
     if(mission){const budget=Number(mission.investmentBudget||mission.amount||0);setStatus('wealth',budget>0?money(budget):'MISSION READY',budget>0?'good':'')}else setStatus('wealth','NO MISSION','watch');
     if(decision&&Array.isArray(decision.purchases)&&decision.purchases.length)setStatus('brain',decision.purchases.length+' PLANNED','good');else setStatus('brain','PLAN READY','cyan');
     if(Array.isArray(queue)&&queue.length){const pending=queue.filter(x=>String(x.status||'').toLowerCase()!=='completed').length;setStatus('registration',pending?pending+' WAITING':'READY',pending?'good':'cyan')}else setStatus('registration','EMPTY','');
-    setStatus('nexus','HOME','cyan');setStatus('tesco','2029 PLAN','cyan');
-  }
+  };
   refresh();window.addEventListener('storage',refresh);
 
-  let lastY=window.scrollY||0;
-  let ticking=false;
-  let scrollTimer=null;
-  const reveal=()=>dock.classList.remove('is-hidden');
-  const conceal=()=>dock.classList.add('is-hidden');
-  const onScroll=()=>{
-    const y=window.scrollY||0;
-    const maxY=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
-    const nearBottom=maxY-y<56;
-    if(nearBottom||y<12)reveal();
-    else if(y>lastY+6)conceal();
-    else if(y<lastY-6)reveal();
-    lastY=y;
-    clearTimeout(scrollTimer);
-    scrollTimer=setTimeout(reveal,140);
-    ticking=false;
-  };
-  window.addEventListener('scroll',()=>{if(!ticking){window.requestAnimationFrame(onScroll);ticking=true}},{passive:true});
+  // Visible on load. Hide only during active downward scrolling, then return.
+  let lastY=window.scrollY||0, ticking=false, timer=null;
+  const show=()=>dock.classList.remove('is-hidden');
+  const hide=()=>dock.classList.add('is-hidden');
+  window.addEventListener('scroll',()=>{
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(()=>{
+      const y=window.scrollY||0;
+      const maxY=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
+      if(y<12 || maxY-y<70 || y<lastY-4) show();
+      else if(y>lastY+4) hide();
+      lastY=y;
+      clearTimeout(timer);
+      timer=setTimeout(show,260);
+      ticking=false;
+    });
+  },{passive:true});
+  show();
 })();
 </script>
 
