@@ -2748,6 +2748,25 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 @media(max-width:560px){.m38-bills-header{display:grid}.m38-add-bill{width:100%}.m38-command-strip{grid-template-columns:1fr 1fr!important}.m38-command-strip .schedule-command-tile{min-height:86px}.m38-queue-panel,.m38-inspector-panel{padding:11px;border-radius:16px}.m38-urgency-tabs{grid-template-columns:1fr 1fr}.m38-urgency-tabs button:last-child{grid-column:1/-1}.m38-bill-card{grid-template-columns:auto minmax(0,1fr);padding:10px}.m38-bill-amount{grid-column:2;text-align:left;display:flex;align-items:center;gap:8px}.m38-bill-amount strong{font-size:14px}.m38-bill-amount small{margin:0}.m38-form-grid{grid-template-columns:1fr}.m38-field.full{grid-column:auto}.m38-funding-readout{grid-template-columns:1fr 1fr}.m38-funding-readout div:last-child{grid-column:1/-1}.m38-history-card{grid-template-columns:minmax(0,1fr) auto}.m38-history-card .delete-btn{grid-column:1/-1;width:100%}}
 </style>
 
+
+
+<style>
+/* ===================== M37 AURORA INVESTMENT HANDOFF ===================== */
+.m37-handoff{
+  margin-top:14px;padding:14px;border-radius:20px;border:1px solid rgba(89,255,154,.20);
+  background:radial-gradient(circle at 96% 0%,rgba(89,255,154,.11),transparent 36%),linear-gradient(145deg,rgba(10,24,39,.96),rgba(4,11,22,.98));
+  box-shadow:inset 0 1px rgba(255,255,255,.03)
+}
+.m37-handoff-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.m37-handoff-head h3{margin:4px 0 5px;font-size:18px}.m37-handoff-head p{margin:0;color:#8fa2b7;font-size:9px;line-height:1.45;max-width:720px}
+.m37-status{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;border:1px solid rgba(86,223,255,.25);background:rgba(86,223,255,.055);color:#98ecff;font-size:8px;font-weight:1000;letter-spacing:.65px;white-space:nowrap}.m37-status:before{content:"";width:7px;height:7px;border-radius:50%;background:#56dfff;box-shadow:0 0 12px rgba(86,223,255,.55)}.m37-status[data-state="sent"],.m37-status[data-state="approved"]{border-color:rgba(78,224,154,.27);background:rgba(78,224,154,.06);color:#98ffc4}.m37-status[data-state="sent"]:before,.m37-status[data-state="approved"]:before{background:#4ee09a}.m37-status[data-state="none"]{border-color:rgba(255,255,255,.10);background:rgba(255,255,255,.025);color:#8fa2b7}.m37-status[data-state="none"]:before{background:#71849a;box-shadow:none}
+.m37-handoff-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:11px}.m37-metric{padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.025)}.m37-metric span{display:block;color:#8195aa;font-size:7px;font-weight:1000;letter-spacing:.65px;text-transform:uppercase}.m37-metric strong{display:block;margin-top:5px;font-size:16px;color:#eef8ff}.m37-metric.primary{border-color:rgba(89,255,154,.22);background:rgba(89,255,154,.045)}.m37-metric.primary strong{color:#98ffc4;font-size:20px}
+.m37-route{margin-top:10px;padding:10px 11px;border-left:3px solid #56dfff;border-radius:12px;background:rgba(86,223,255,.045);color:#b9c9d9;font-size:9px;line-height:1.5}.m37-route strong{color:#f4f9fd}
+.m37-actions{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:10px}.m37-actions button,.m37-actions a{display:flex;align-items:center;justify-content:center;min-height:40px;padding:9px 11px;border-radius:12px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);color:#dce9f4;text-decoration:none;font-size:9px;font-weight:1000}.m37-actions button.primary{border-color:rgba(89,255,154,.34);background:linear-gradient(135deg,rgba(89,255,154,.16),rgba(86,223,255,.08));color:#dfffea}.m37-actions button:disabled{opacity:.42;cursor:not-allowed}.m37-actions a{border-color:rgba(86,223,255,.23);color:#9cecff}.m37-feedback{min-height:16px;margin-top:8px;color:#8ea2b8;font-size:8px}.m37-feedback.good{color:#98ffc4}.m37-feedback.risk{color:#ffb5c0}
+@media(max-width:980px){.m37-handoff-grid{grid-template-columns:1fr 1fr}.m37-actions{grid-template-columns:1fr 1fr}.m37-actions .primary{grid-column:1/-1;grid-row:1}}
+@media(max-width:560px){.m37-handoff-head{display:block}.m37-status{margin-top:9px}.m37-handoff-grid,.m37-actions{grid-template-columns:1fr}.m37-actions .primary{grid-column:auto}.m37-handoff{padding:12px}}
+
+
+</style>
 </head>
 <body>
 
@@ -3321,6 +3340,31 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
         <div class="m33-apply-status" id="m33ApplyStatus" aria-live="polite"></div>
       </aside>
     </div>
+
+    <section class="m37-handoff" id="m37InvestmentHandoff" aria-label="Investment mission handoff">
+      <div class="m37-handoff-head">
+        <div>
+          <div class="m13-eyebrow">CONNECTED AURORA PIPELINE</div>
+          <h3>Investment Mission Handoff</h3>
+          <p>Send the share allocation from this real payday mission straight into Trading Brain. The mission carries the budget, payday and preferred ISA route without changing your saved pot calculations.</p>
+        </div>
+        <span class="m37-status" id="m37HandoffStatus" data-state="none">NOT SENT</span>
+      </div>
+      <div class="m37-handoff-grid">
+        <div class="m37-metric primary"><span>Investment mission</span><strong id="m37InvestmentBudget">£0.00</strong></div>
+        <div class="m37-metric"><span>Preferred account</span><strong id="m37InvestmentAccount">—</strong></div>
+        <div class="m37-metric"><span>Payday</span><strong id="m37InvestmentPayday">—</strong></div>
+        <div class="m37-metric"><span>Pipeline stage</span><strong id="m37PipelineStage">Draft plan</strong></div>
+      </div>
+      <div class="m37-route" id="m37InvestmentRoute"><strong>Waiting:</strong> Build the live payday plan and Aurora will isolate the investment transfer.</div>
+      <div class="m37-actions">
+        <button class="primary" id="m37SendToTradingBrain" type="button">Send Mission to Trading Brain</button>
+        <button id="m37RefreshHandoff" type="button">Refresh Status</button>
+        <a href="TradingBrainMaster.html" target="_self">Open Trading Brain →</a>
+      </div>
+      <div class="m37-feedback" id="m37HandoffFeedback" aria-live="polite"></div>
+    </section>
+
   </section>
 
 
@@ -8207,6 +8251,75 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
   ['holdingBalanceInput','minimumBufferInput','growPotBalanceInput','growPotTargetInput','paydayContributionInput','customAddInput','customRemoveInput'].forEach(x=>id(x)?.addEventListener('input',render));
   window.addEventListener('load',()=>setTimeout(render,180));
   if(document.readyState!=='loading')setTimeout(render,80);else document.addEventListener('DOMContentLoaded',()=>setTimeout(render,80));
+})();
+</script>
+
+
+
+<script>
+/* ===================== M37 CONNECTED INVESTMENT PIPELINE ===================== */
+(function(){
+  const WEALTH_KEY="aurora_wealth_investment_mission_v1";
+  const DECISION_KEY="aurora_trading_brain_decision_v1";
+  const REGISTRATION_KEY="aurora_pending_registrations_v1";
+  const el=id=>document.getElementById(id);
+  const gbp=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));
+  const read=key=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch(_){return null}};
+  const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(error){console.warn(error);return false}};
+  const accountLabel=value=>value==="t212"?"Trading 212 ISA":value==="split"?"Split IG / Trading 212":"IG ISA";
+  function liveSnapshot(){
+    if(typeof window.m22CurrentPlan!=="function"||typeof window.m22EnsureState!=="function")return null;
+    const plan=window.m22CurrentPlan();
+    const mission=window.m22EnsureState();
+    const investments=(plan?.actions||[]).filter(action=>action?.type==="investment");
+    const budget=investments.reduce((sum,action)=>sum+Number(action.amount||0),0);
+    const platform=String(plan?.inputs?.platform||mission?.inputs?.platform||"ig");
+    const completed=investments.filter(action=>typeof window.m22ActionDone==="function"&&window.m22ActionDone(action)).length;
+    return {plan,mission,investments,budget,platform,completed};
+  }
+  function linkedStage(snapshot,payload){
+    const decision=read(DECISION_KEY),queue=read(REGISTRATION_KEY);
+    if(queue&&payload&&queue.sourceMissionId===payload.id){
+      const items=Array.isArray(queue.items)?queue.items:[];
+      const completed=items.filter(item=>["PURCHASED","REGISTERED","COMPLETE"].includes(String(item.status||"").toUpperCase())).length;
+      return {label:items.length?`${completed}/${items.length} purchases complete`:"Transfer window approved",state:"approved"};
+    }
+    if(decision&&payload&&decision.wealthMissionId===payload.id)return {label:"Trading plan ready",state:"approved"};
+    if(payload)return {label:"Sent to Trading Brain",state:"sent"};
+    return {label:snapshot?.budget>0?"Ready to send":"No investment move",state:"none"};
+  }
+  function render(){
+    const snapshot=liveSnapshot();if(!snapshot||!el("m37InvestmentHandoff"))return;
+    const payload=read(WEALTH_KEY);const stage=linkedStage(snapshot,payload);
+    el("m37InvestmentBudget").textContent=gbp(snapshot.budget);
+    el("m37InvestmentAccount").textContent=accountLabel(snapshot.platform);
+    el("m37InvestmentPayday").textContent=snapshot.mission?.paydayDate?new Date(`${snapshot.mission.paydayDate}T12:00:00`).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"—";
+    el("m37PipelineStage").textContent=stage.label;
+    el("m37HandoffStatus").textContent=stage.label.toUpperCase();el("m37HandoffStatus").dataset.state=stage.state;
+    const actionNames=snapshot.investments.map(action=>`${accountLabel(action.id?.includes(":t212")?"t212":action.id?.includes(":ig")?"ig":snapshot.platform)} ${gbp(action.amount)}`);
+    el("m37InvestmentRoute").innerHTML=snapshot.budget>0?`<strong>Mission ready:</strong> ${actionNames.join(" • ")||`${accountLabel(snapshot.platform)} ${gbp(snapshot.budget)}`} • Trading Brain will turn this into specific purchase targets.`:`<strong>No investment mission yet:</strong> Increase the Core share contribution or apply a scenario that includes shares.`;
+    const send=el("m37SendToTradingBrain");if(send){send.disabled=snapshot.budget<=0;send.textContent=snapshot.budget>0?`Send ${gbp(snapshot.budget)} Mission to Trading Brain`:"No Investment Allocation to Send"}
+    if(payload&&payload.sourceMissionId===snapshot.mission?.id&&snapshot.completed===snapshot.investments.length&&snapshot.investments.length){payload.status="FUNDS_TRANSFERRED";payload.updatedAt=new Date().toISOString();write(WEALTH_KEY,payload)}
+  }
+  function sendMission(){
+    const snapshot=liveSnapshot();const feedback=el("m37HandoffFeedback");
+    if(!snapshot||snapshot.budget<=0){if(feedback){feedback.textContent="There is no share allocation in the live payday mission.";feedback.className="m37-feedback risk"}return}
+    const payload={
+      schemaVersion:1,id:`wealth-${snapshot.mission.id}`,sourceMissionId:snapshot.mission.id,source:"Aurora Wealth HQ",generatedAt:new Date().toISOString(),updatedAt:new Date().toISOString(),
+      paydayDate:snapshot.mission.paydayDate,budget:Number(snapshot.budget.toFixed(2)),preferredPlatform:snapshot.platform,preferredAccount:accountLabel(snapshot.platform),
+      actualPay:Number(snapshot.plan.actual||0),expectedPay:Number(snapshot.plan.expected||0),status:"READY_FOR_TRADING_BRAIN",tradingMode:"income",
+      investmentActions:snapshot.investments.map(action=>({id:action.id,name:action.name,amount:Number(action.amount||0),meta:action.meta||""}))
+    };
+    if(!write(WEALTH_KEY,payload)){if(feedback){feedback.textContent="The browser blocked the handoff save.";feedback.className="m37-feedback risk"}return}
+    if(feedback){feedback.textContent=`${gbp(payload.budget)} mission sent. Trading Brain can now load it.`;feedback.className="m37-feedback good"}
+    try{window.dispatchEvent(new CustomEvent("aurora:wealth-mission",{detail:payload}))}catch(_){ }
+    render();
+  }
+  el("m37SendToTradingBrain")?.addEventListener("click",sendMission);el("m37RefreshHandoff")?.addEventListener("click",render);
+  window.addEventListener("storage",event=>{if([WEALTH_KEY,DECISION_KEY,REGISTRATION_KEY].includes(event.key))render()});
+  window.addEventListener("aurora:trading-brain-decision",render);
+  const originalRender=window.m22Render;if(typeof originalRender==="function")window.m22Render=function(){const result=originalRender.apply(this,arguments);setTimeout(render,0);return result};
+  window.addEventListener("load",()=>setTimeout(render,260));if(document.readyState!=="loading")setTimeout(render,160);
 })();
 </script>
 

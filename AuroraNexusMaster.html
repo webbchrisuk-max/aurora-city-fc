@@ -1122,6 +1122,16 @@ body.locked .wrap{filter:none!important;pointer-events:auto!important;user-selec
 @media(max-width:760px){.aurora-hq-dock-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){.aurora-hq-dock-grid{grid-template-columns:1fr}}
 </style>
+
+
+<style>
+/* ===================== M6 AURORA MISSION PIPELINE ===================== */
+.mission-pipeline{border-color:rgba(89,255,154,.22);background:radial-gradient(circle at 94% 0%,rgba(89,255,154,.10),transparent 34%),linear-gradient(145deg,rgba(13,27,45,.92),rgba(5,12,24,.94))}.pipeline-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.pipeline-stage{position:relative;overflow:hidden;min-height:170px;padding:13px;border-radius:18px;border:1px solid rgba(255,255,255,.085);background:linear-gradient(145deg,rgba(255,255,255,.042),rgba(255,255,255,.018));display:flex;flex-direction:column}.pipeline-stage:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--stage-color,#58f4ff)}.pipeline-stage-number{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted);font-size:10px;font-weight:1000;letter-spacing:.8px;text-transform:uppercase}.pipeline-stage-number b{width:25px;height:25px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--stage-color,#58f4ff) 12%,transparent);border:1px solid color-mix(in srgb,var(--stage-color,#58f4ff) 28%,transparent);color:var(--stage-color,#58f4ff)}.pipeline-stage h3{margin-top:10px;font-size:16px}.pipeline-big{margin-top:7px;color:var(--stage-color,#58f4ff);font-size:25px;line-height:1;font-weight:1000;letter-spacing:-.5px}.pipeline-copy{margin-top:6px;color:var(--muted);font-size:11px;line-height:1.4;flex:1}.pipeline-state{display:inline-flex;width:max-content;max-width:100%;margin-top:10px;padding:6px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--stage-color,#58f4ff) 36%,transparent);background:color-mix(in srgb,var(--stage-color,#58f4ff) 8%,transparent);color:var(--stage-color,#58f4ff);font-size:9px;font-weight:1000;letter-spacing:.6px;text-transform:uppercase}.pipeline-link{display:flex;align-items:center;justify-content:center;margin-top:9px;min-height:36px;padding:8px;border-radius:11px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);color:var(--text);text-decoration:none;font-size:10px;font-weight:950}.pipeline-summary{margin-top:10px;padding:11px 12px;border-left:3px solid var(--green);border-radius:13px;background:rgba(89,255,154,.045);color:#bdd0df;font-size:11px;line-height:1.45}.pipeline-summary strong{color:#eafff1}.pipeline-refresh{font-size:10px;padding:8px 10px}
+@media(max-width:1120px){.pipeline-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.pipeline-grid{grid-template-columns:1fr}.pipeline-stage{min-height:145px}}
+
+
+</style>
 </head>
 <body>
 
@@ -1152,6 +1162,29 @@ body.locked .wrap{filter:none!important;pointer-events:auto!important;user-selec
   <div class="kpi"><div class="k">Income Months</div><div class="v" id="incomeMonths">--/12</div><div class="subv" id="gapMeta">Calendar coverage</div></div>
   <div class="kpi"><div class="k">Top Watchlist</div><div class="v" id="topWatchScore">--</div><div class="subv" id="topWatchName">Waiting</div></div>
 </div></section>
+
+
+
+
+<!-- ===================== SECTION: AURORA MISSION PIPELINE ===================== -->
+<section class="card panel mission-pipeline" id="auroraMissionPipeline">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Aurora Mission Pipeline</h2></div><button class="pipeline-refresh" id="refreshMissionPipeline" type="button">Refresh Pipeline</button></div>
+  <div class="pipeline-grid">
+    <article class="pipeline-stage" style="--stage-color:#ffd15e">
+      <div class="pipeline-stage-number"><span>Stage 1</span><b>£</b></div><h3>Payday Mission</h3><div class="pipeline-big" id="pipelineWealthValue">£0.00</div><div class="pipeline-copy" id="pipelineWealthCopy">No investment mission has been sent from Wealth HQ.</div><span class="pipeline-state" id="pipelineWealthState">WAITING</span><a class="pipeline-link" href="SpendingPlannerMaster.html" target="_self">Open Wealth HQ</a>
+    </article>
+    <article class="pipeline-stage" style="--stage-color:#58f4ff">
+      <div class="pipeline-stage-number"><span>Stage 2</span><b>🧠</b></div><h3>Trading Plan</h3><div class="pipeline-big" id="pipelineTradeValue">No plan</div><div class="pipeline-copy" id="pipelineTradeCopy">Trading Brain has not published a decision for the current mission.</div><span class="pipeline-state" id="pipelineTradeState">WAITING</span><a class="pipeline-link" href="TradingBrainMaster.html" target="_self">Open Trading Brain</a>
+    </article>
+    <article class="pipeline-stage" style="--stage-color:#b985ff">
+      <div class="pipeline-stage-number"><span>Stage 3</span><b>✓</b></div><h3>Registration Queue</h3><div class="pipeline-big" id="pipelineRegistrationValue">0 / 0</div><div class="pipeline-copy" id="pipelineRegistrationCopy">No approved purchases are waiting for registration.</div><span class="pipeline-state" id="pipelineRegistrationState">WAITING</span><a class="pipeline-link" href="RegistrationDesk.html" target="_self">Open Registration Desk</a>
+    </article>
+    <article class="pipeline-stage" style="--stage-color:#59ff9a">
+      <div class="pipeline-stage-number"><span>Stage 4</span><b>↗</b></div><h3>Next Income Event</h3><div class="pipeline-big" id="pipelineDividendValue">Scanning</div><div class="pipeline-copy" id="pipelineDividendCopy">Aurora is checking the active dividend calendar.</div><span class="pipeline-state" id="pipelineDividendState">LIVE DATA</span><a class="pipeline-link" href="#" id="pipelineDividendLink">View Dividend Runway</a>
+    </article>
+  </div>
+  <div class="pipeline-summary" id="pipelineSummary"><strong>Pipeline ready:</strong> send a payday investment mission from Wealth HQ to begin the connected flow.</div>
+</section>
 
 
 <!-- ===================== SECTION: AURORA DATA HEALTH ===================== -->
@@ -1624,5 +1657,35 @@ function updateTodayActionDeck(holdingsParsed,bestWatch,bestCore,monthlyIncome){
 const AURORA_ACCESS_CODE=atob("V0UwOUJCWTE5ODI=").trim().toUpperCase();const AURORA_SESSION_KEY="aurora_hq_unlocked";let failedAuroraAttempts=0;function safeGetSession(){try{return localStorage.getItem(AURORA_SESSION_KEY)==="yes"}catch(e){return false}}function safeSetSession(){try{localStorage.setItem(AURORA_SESSION_KEY,"yes")}catch(e){}}function safeClearSession(){try{localStorage.removeItem(AURORA_SESSION_KEY)}catch(e){}}function normaliseAccessCode(v){return String(v||"").trim().replace(/\s+/g,"").toUpperCase()}function unlockAuroraHQ(){document.body.classList.remove("locked");const gate=document.getElementById("auroraBootGate");if(gate)gate.classList.add("hidden");safeSetSession()}function lockAuroraHQ(){safeClearSession();document.body.classList.add("locked");const gate=document.getElementById("auroraBootGate"),input=document.getElementById("auroraAccessInput"),err=document.getElementById("bootError"),btn=document.getElementById("auroraAccessBtn");if(gate)gate.classList.remove("hidden");if(btn)btn.disabled=false;if(input){input.disabled=false;input.value="";setTimeout(()=>input.focus(),120)}if(err)err.innerText=""}function runBootSequence(){const terminal=document.getElementById("bootTerminal"),bar=document.getElementById("bootProgressBar"),badge=document.getElementById("bootStatusBadge");if(!terminal||!bar)return;const lines=["Initialising Aurora Core...","Checking Holdings Sheet... PASSED","Checking Dividend Engine... PASSED","Checking Trading Brain Link... PASSED","Checking Premier League Table... PASSED","Mission Target: £2,000/month loaded","Awaiting access code..."];terminal.innerHTML="";lines.forEach((line,i)=>{setTimeout(()=>{terminal.innerHTML+=`<div class="boot-line">${line}</div>`;terminal.scrollTop=terminal.scrollHeight;bar.style.width=`${Math.min(100,Math.round(((i+1)/lines.length)*100))}%`;if(i===lines.length-1&&badge)badge.innerText="LOCKED"},i*220)})}function initAuroraLogin(){const btn=document.getElementById("auroraAccessBtn"),input=document.getElementById("auroraAccessInput"),err=document.getElementById("bootError"),lockBtn=document.getElementById("lockHqBtn");if(safeGetSession())unlockAuroraHQ();else{runBootSequence();setTimeout(()=>input&&input.focus(),1600)}function check(){const val=normaliseAccessCode(input?.value);if(val===AURORA_ACCESS_CODE){failedAuroraAttempts=0;if(err)err.innerText="ACCESS GRANTED — LAUNCHING AURORA HQ";const badge=document.getElementById("bootStatusBadge"),bar=document.getElementById("bootProgressBar");if(badge)badge.innerText="ACCESS GRANTED";if(bar)bar.style.width="100%";setTimeout(unlockAuroraHQ,250);return}failedAuroraAttempts+=1;if(input){input.value="";input.focus()}if(failedAuroraAttempts>=3){if(err)err.innerText="AURORA SECURITY LOCK — too many failed attempts.";if(btn)btn.disabled=true;if(input)input.disabled=true;setTimeout(()=>{failedAuroraAttempts=0;if(btn)btn.disabled=false;if(input){input.disabled=false;input.focus()}if(err)err.innerText="ACCESS REQUIRED — try again."},4000)}else if(err)err.innerText=`ACCESS DENIED — ${3-failedAuroraAttempts} attempt${3-failedAuroraAttempts===1?"":"s"} before security lock.`}if(btn)btn.addEventListener("click",check);if(input)input.addEventListener("keydown",e=>{if(e.key==="Enter")check()});if(lockBtn)lockBtn.addEventListener("click",lockAuroraHQ)}
 document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove("locked");runNexus();setInterval(runNexus,300000)});
 </script>
+
+
+<script>
+/* ===================== M6 CONNECTED MISSION PIPELINE ===================== */
+(function(){
+  const WEALTH_KEY="aurora_wealth_investment_mission_v1",DECISION_KEY="aurora_trading_brain_decision_v1",QUEUE_KEY="aurora_pending_registrations_v1";
+  const el=id=>document.getElementById(id);const read=key=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch(_){return null}};
+  const gbp=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));
+  const text=(id,value)=>{const node=el(id);if(node)node.textContent=value};
+  function render(){
+    const wealth=read(WEALTH_KEY),decision=read(DECISION_KEY),queue=read(QUEUE_KEY);
+    if(wealth){text("pipelineWealthValue",gbp(wealth.budget));text("pipelineWealthCopy",`${wealth.preferredAccount||"Account review"} • payday ${wealth.paydayDate?new Date(`${wealth.paydayDate}T12:00:00`).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"not set"}`);text("pipelineWealthState",String(wealth.status||"READY").replaceAll("_"," "))}else{text("pipelineWealthValue",gbp(0));text("pipelineWealthCopy","No investment mission has been sent from Wealth HQ.");text("pipelineWealthState","WAITING")}
+    const linkedDecision=decision&&(!wealth||!decision.wealthMissionId||decision.wealthMissionId===wealth.id);
+    if(linkedDecision){const targets=Array.isArray(decision.targets)?decision.targets:[];text("pipelineTradeValue",`${targets.length} target${targets.length===1?"":"s"}`);text("pipelineTradeCopy",`${decision.strategy||"Balanced"} • ${gbp(decision.spent||0)} deployed • ${gbp(decision.holdback||0)} reserve • ${gbp(decision.totalIncome||0)}/yr projected`);text("pipelineTradeState",decision.status==="READY_TO_EXECUTE"?"READY TO EXECUTE":String(decision.status||"READY").replaceAll("_"," "))}else{text("pipelineTradeValue","No plan");text("pipelineTradeCopy","Trading Brain has not published a decision for the current mission.");text("pipelineTradeState","WAITING")}
+    if(queue&&Array.isArray(queue.items)&&queue.items.length){const complete=queue.items.filter(item=>["PURCHASED","REGISTERED","COMPLETE"].includes(String(item.status||"").toUpperCase())).length;text("pipelineRegistrationValue",`${complete} / ${queue.items.length}`);text("pipelineRegistrationCopy",`${gbp(queue.totalAllocated)} approved • ${gbp(queue.projectedAnnualIncome)}/yr projected • ${gbp(queue.reserve)} held back`);text("pipelineRegistrationState",complete===queue.items.length?"COMPLETE":`${queue.items.length-complete} WAITING`)}else{text("pipelineRegistrationValue","0 / 0");text("pipelineRegistrationCopy","No approved purchases are waiting for registration.");text("pipelineRegistrationState","WAITING")}
+    const dividendName=String(el("nextDividendHolding")?.textContent||"").trim(),dividendAmount=String(el("nextDividendAmount")?.textContent||"").trim(),dividendDate=String(el("nextDividendDate")?.textContent||"").trim();
+    if(dividendName&&dividendName!=="--"){text("pipelineDividendValue",dividendAmount&&dividendAmount!=="--"?dividendAmount:dividendName);text("pipelineDividendCopy",`${dividendName}${dividendDate&&dividendDate!=="Waiting for Dividends sheet..."?` • ${dividendDate}`:""}`);text("pipelineDividendState","SCHEDULED")}else{text("pipelineDividendValue","Scanning");text("pipelineDividendCopy","Aurora is checking the active dividend calendar.");text("pipelineDividendState","LIVE DATA")}
+    let summary="<strong>Pipeline ready:</strong> send a payday investment mission from Wealth HQ to begin the connected flow.";
+    if(wealth&&!linkedDecision)summary=`<strong>Next action:</strong> open Trading Brain and load the ${gbp(wealth.budget)} payday investment mission.`;
+    else if(linkedDecision&&(!queue||!queue.items?.length))summary=`<strong>Next action:</strong> Trading Brain has ${decision.targets?.length||0} target${decision.targets?.length===1?"":"s"} ready. Review and approve the transfer window.`;
+    else if(queue?.items?.length){const complete=queue.items.filter(item=>["PURCHASED","REGISTERED","COMPLETE"].includes(String(item.status||"").toUpperCase())).length;summary=complete===queue.items.length?`<strong>Pipeline complete:</strong> every approved purchase is registered. Nexus will pick up the new holdings on the next master-data sync.`:`<strong>Next action:</strong> ${queue.items.length-complete} approved purchase${queue.items.length-complete===1?"":"s"} still need buying and registration.`}
+    const box=el("pipelineSummary");if(box)box.innerHTML=summary;
+  }
+  el("refreshMissionPipeline")?.addEventListener("click",render);el("pipelineDividendLink")?.addEventListener("click",event=>{event.preventDefault();document.getElementById("dividendRunway")?.closest("section")?.scrollIntoView({behavior:"smooth",block:"start"})});
+  window.addEventListener("storage",event=>{if([WEALTH_KEY,DECISION_KEY,QUEUE_KEY].includes(event.key))render()});
+  ["nextDividendHolding","nextDividendAmount","nextDividendDate"].forEach(id=>{const node=el(id);if(node)new MutationObserver(()=>render()).observe(node,{childList:true,subtree:true,characterData:true})});
+  window.addEventListener("load",()=>setTimeout(render,360));if(document.readyState!=="loading")setTimeout(render,180);
+})();
+</script>
+
 </body>
 </html>
