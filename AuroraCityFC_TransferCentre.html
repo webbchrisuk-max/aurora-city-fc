@@ -6124,17 +6124,17 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <section class="section" id="trading-brain-execution">
   <div class="m7-brain-room">
     <div class="m7-brain-head">
-      <div><span class="upgrade-kicker">M7 • Single source of truth</span><h2>Trading Brain Execution Room</h2><p>Trading Brain selects the approved shares. The Transfer Centre then sizes each allocation using portfolio weight, sector exposure, income rate and concentration controls before publishing one execution plan.</p></div>
+      <div><span class="upgrade-kicker">M7 • Wealth mission allocation</span><h2>Transfer Centre Allocation Room</h2><p>The Wealth Planner supplies the live transfer budget. Trading Brain supplies the approved shortlist, and the Transfer Centre sizes each purchase using portfolio weight, sector exposure, income rate and concentration controls.</p></div>
       <span class="m7-source-badge" id="m7BrainSource"><i></i>TRADING BRAIN LINKED</span>
     </div>
     <div class="m7-exec-grid">
       <article class="m7-decision-card">
-        <div class="m7-decision-label">Executive confidence</div><div class="m7-decision-score" id="m7Confidence">—</div><div class="note" id="m7DecisionText">Waiting for Aurora data.</div>
+        <div class="m7-decision-label">Data confidence</div><div class="m7-decision-score" id="m7Confidence">—</div><div class="note" id="m7DecisionText">Waiting for Aurora data.</div>
         <div class="m7-decision-meta">
           <div class="m7-mini"><small>Strategy</small><strong id="m7Strategy">—</strong></div><div class="m7-mini"><small>Budget</small><strong id="m7Budget">—</strong></div>
           <div class="m7-mini"><small>Income added</small><strong id="m7Income">—</strong></div><div class="m7-mini"><small>Cash held</small><strong id="m7Holdback">—</strong></div>
         </div>
-        <div class="m7-actions"><button class="m7-action primary" id="m7ApprovePlan" type="button">Approve plan</button><button class="m7-action" id="m7EditPlan" type="button">Edit allocation</button><button class="m7-action warn" id="m7HoldCash" type="button">Hold cash</button></div>
+        <div class="m7-actions"><button class="m7-action primary" id="m7ApprovePlan" type="button">Approve allocation</button><button class="m7-action" id="m7EditPlan" type="button">Edit allocation</button><button class="m7-action warn" id="m7HoldCash" type="button">Hold cash</button></div>
       </article>
       <article class="m7-targets-panel"><div class="card-title"><h3>Live Top Four</h3><span class="badge blue" id="m7TargetCount">0 TARGETS</span></div><div class="m7-target-grid" id="m7TargetGrid"><div class="loading">Trading Brain is analysing the live market…</div></div></article>
     </div>
@@ -6374,7 +6374,7 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 const AURORA_MASTER_URL = 'https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json';
 let AURORA_MASTER_CACHE = null;
 
-let PLATFORM_RULES = {...(window.AURORA_PLATFORM_RULES || {TRIG:'Trade 212',FSFL:'Trade 212',UKW:'IG ISA',ARCC:'IG ISA',RGL:'Trade 212',GCP:'Trade 212',PHP:'IG ISA / Trade 212',FGEN:'IG ISA',SEQI:'Trade 212',TW:'IG ISA',OSB:'IG ISA'})};
+let PLATFORM_RULES = {...(window.AURORA_PLATFORM_RULES || {TRIG:'IG ISA',FSFL:'Trade 212',UKW:'IG ISA',ARCC:'IG ISA',RGL:'Trade 212',GCP:'Trade 212',PHP:'IG ISA / Trade 212',FGEN:'IG ISA',SEQI:'Trade 212',TW:'IG ISA',OSB:'IG ISA'})};
 let PLATFORM_RULE_DETAILS = {};
 let PLATFORM_RULES_LOADED_AT = '';
 
@@ -6464,7 +6464,7 @@ function parseNum(v){
   if(!s) return NaN;
   return Number(s);
 }
-function cleanTicker(t){ return String(t || '').trim().toUpperCase(); }
+function cleanTicker(t){ return String(t || '').trim().toUpperCase().replace(/^LON:/,'').replace(/\.L$/,'').replace(/\.GB$/,'').replace(/ GB$/,'').replace(/\s+/g,' '); }
 function registrationShortTicker(t){ return shortTicker(cleanTicker(t)); }
 function normalizeRegistrationAccount(account){
   return window.AuroraFC ? AuroraFC.normalizeAccount(account) : String(account||'').trim().toUpperCase().replace(/\s+/g,' ');
@@ -7533,7 +7533,7 @@ function renderBestReturnAllocation(deal){
     return `<div class="best-return-card"><div class="best-return-card-top"><strong>#${index+1} ${displayTicker(item.row.ticker)}</strong><b>${money(item.amount)}</b></div><span>${displayName(item.row)} • ${Number.isFinite(rate)?(rate*100).toFixed(2)+'% income rate':'income check'}</span><span>Projected income: <strong style="display:inline;color:#86efac">${money(item.income)}/yr</strong> <em class="data-confidence ${data.status}"><i></i>${data.score}% verified</em></span></div>`;
   }).join(''):'<div class="loading">No verified maximum-income route is available.</div>';
   if($('bestReturnNote')) $('bestReturnNote').textContent=maxPlan.rows.length
-    ?`Maximum income still respects a 40% monthly cap per company, 50% monthly cap per sector, hard portfolio limits and a minimum meaningful allocation of ${money(maxPlan.minimumEach)}. Cash remains unallocated when no safe £25 block is available.`
+    ?`Maximum income uses portfolio-aware company and sector sizing, while the hard post-buy limits remain decisive. The minimum meaningful allocation is ${money(maxPlan.minimumEach)} and cash is held only when no safe £25 block remains.`
     :'The maximum-income comparison will appear when at least one verified candidate clears every hard gate.';
 }
 
@@ -8106,23 +8106,82 @@ function readTradingBrainDecision(){
   }catch(_){return null;}
 }
 
+function activeWealthMission(){
+  try{
+    const mission=JSON.parse(localStorage.getItem('aurora_wealth_investment_mission_v1')||'null');
+    return mission&&Number(mission.budget)>0?mission:null;
+  }catch(_){return null;}
+}
+function normalisedTargetYield(target){
+  const raw=Number(target?.yield);
+  if(Number.isFinite(raw)&&raw>0) return raw>1?raw/100:raw;
+  const allocation=Number(target?.allocation||0),income=Number(target?.income||0);
+  return allocation>0&&income>0?income/allocation:NaN;
+}
+function livePriceFeedFor(ticker){
+  const key=cleanTicker(ticker);
+  const row=(state.livePrices||[]).find(item=>cleanTicker(item.Symbol??item.symbol??item.ticker)===key);
+  const price=parseNum(row?.Price??row?.price??row?.live_price);
+  return Number.isFinite(price)&&price>0?price:NaN;
+}
+function hydrateSecurityFromTarget(base,target,payload){
+  const row={...(base||{})};
+  const ticker=cleanTicker(target?.ticker||row.ticker);
+  const rowPrice=parseNum(row.live_price??row.price??row.Price);
+  const targetPrice=parseNum(target?.livePrice);
+  const feedPrice=livePriceFeedFor(ticker);
+  const price=rowPrice>0?rowPrice:(targetPrice>0?targetPrice:feedPrice);
+  const rowYield=parseYield(row);
+  const targetYield=normalisedTargetYield(target);
+  const rate=Number.isFinite(rowYield)&&rowYield>0?rowYield:targetYield;
+  const rowDps=parseNum(row.annual_dps??row.Annual_DPS);
+  const dps=rowDps>0?rowDps:(price>0&&Number.isFinite(rate)&&rate>0?price*rate:NaN);
+  const fair=parseNum(row.fair_value??row.fairValue);
+  const targetFair=parseNum(target?.fairValue);
+  row.ticker=ticker;
+  row.name=row.name||target?.name||ticker;
+  if(price>0){row.live_price=price;row.price=price;row.Price=price;}
+  if(Number.isFinite(rate)&&rate>0){row.dividend_yield=rate;row.yield=rate;row.yield_pct=rate;}
+  if(dps>0){row.annual_dps=dps;row.Annual_DPS=dps;}
+  if(!(fair>0)&&targetFair>0) row.fair_value=targetFair;
+  row.account=target?.account||row.account||row.platform||'Account review';
+  row.platform=target?.account||row.platform||row.account||'Account review';
+  if(!row.date_checked&&!row.last_updated&&!row.updated_at) row.last_updated=payload?.generatedAt||new Date().toISOString();
+  row.notes=[row.notes,'Trading Brain live snapshot merged into Transfer Centre.'].filter(Boolean).join(' ');
+  return row;
+}
+function hydrateStateFromDecision(payload){
+  if(!payload||!Array.isArray(payload.targets)) return;
+  const targetMap=new Map(payload.targets.map(target=>[cleanTicker(target.ticker),target]));
+  ['holdings','watchlist','scout'].forEach(collection=>{
+    state[collection]=(state[collection]||[]).map(row=>{
+      const target=targetMap.get(cleanTicker(row.ticker));
+      if(!target){
+        const feed=livePriceFeedFor(row.ticker),current=parseNum(row.live_price??row.price??row.Price);
+        if(!(current>0)&&feed>0) return {...row,live_price:feed,price:feed,Price:feed};
+        return row;
+      }
+      targetMap.delete(cleanTicker(row.ticker));
+      return hydrateSecurityFromTarget(row,target,payload);
+    });
+  });
+  for(const target of targetMap.values()) state.watchlist.push(hydrateSecurityFromTarget(null,target,payload));
+}
 function portfolioWeightTradingBrainTargets(targetRows,budget,payload){
-  const requestedHoldback=Math.max(0,Number(payload?.holdback||0));
-  const spendBudget=roundTo25(Math.max(0,budget-requestedHoldback));
+  // Wealth HQ's released figure is already the investable transfer budget.
+  // Do not inherit an old Trading Brain reserve from a previous £3,000 mission.
+  const spendBudget=roundTo25(Math.max(0,budget));
   if(!targetRows.length||spendBudget<=0) return {rows:[],spent:0,holdback:budget};
   const minimum=Math.min(meaningfulMinimum(spendBudget),roundTo25(spendBudget/targetRows.length));
   const amounts=new Map();
   let spent=0;
 
-  // Give every Trading Brain selection a meaningful starting position where safe.
   for(const item of targetRows){
     const ticker=cleanTicker(item.row.ticker);
     const start=Math.max(25,minimum);
     if(spent+start<=spendBudget){amounts.set(ticker,start);spent+=start;}
   }
 
-  // Size the approved names using the Transfer Centre's portfolio-aware logic.
-  // Existing portfolio share, sector concentration, income rate, valuation and Brain rank all matter.
   while(spent+25<=spendBudget){
     let best=null;
     for(const item of targetRows){
@@ -8132,22 +8191,23 @@ function portfolioWeightTradingBrainTargets(targetRows,budget,payload){
       const snap=exposureSnapshot(others);
       const proposedGate=gateCandidate(item.row,current+25,snap);
       if(proposedGate.status==='block') continue;
-      const stockCap=roundTo25(spendBudget*(proposedGate.status==='caution'?.24:.40));
+      const stockCap=roundTo25(spendBudget*(proposedGate.status==='caution'?.35:.48));
       if(current+25>stockCap) continue;
       const bucket=proposedGate.bucket||item.gate?.bucket||sectorBucket(item.row);
       const sectorAllocated=targetRows.filter(x=>(x.gate?.bucket||sectorBucket(x.row))===bucket).reduce((sum,x)=>sum+(amounts.get(cleanTicker(x.row.ticker))||0),0);
-      if(sectorAllocated+25>roundTo25(spendBudget*.52)) continue;
+      const monthlySectorCap=routeMode==='maximum'?.80:.65;
+      if(sectorAllocated+25>roundTo25(spendBudget*monthlySectorCap)) continue;
 
       const existingValue=holdingValue(item.row);
       const totalBefore=Math.max(1,exposureSnapshot().totalBefore||exposureSnapshot().totalAfter||1);
       const existingShare=existingValue/totalBefore;
-      const underweightBoost=Math.max(-18,Math.min(22,(0.12-existingShare)*120));
+      const underweightBoost=Math.max(-18,Math.min(25,(0.12-existingShare)*125));
       const rate=incomeRate(item.row);
-      const incomeBoost=Number.isFinite(rate)?Math.min(28,rate*180):0;
-      const brainBoost=Math.max(0,14-(Number(item.brainRank||4)-1)*3);
+      const incomeBoost=Number.isFinite(rate)?Math.min(routeMode==='maximum'?42:28,rate*(routeMode==='maximum'?260:180)):0;
+      const brainBoost=Math.max(0,16-(Number(item.brainRank||4)-1)*3);
       const qualityBoost=Math.max(0,Number(item.score||0)-70)*.35;
-      let score=balancedPriorityScore(item.row,snap,current+25)+underweightBoost+incomeBoost+brainBoost+qualityBoost;
-      if(proposedGate.status==='caution') score-=16;
+      let score=(routeMode==='maximum'?incomePriorityScore(item.row):balancedPriorityScore(item.row,snap,current+25))+underweightBoost+incomeBoost+brainBoost+qualityBoost;
+      if(proposedGate.status==='caution') score-=routeMode==='maximum'?8:16;
       if(!best||score>best.score) best={item,ticker,score,gate:proposedGate};
     }
     if(!best) break;
@@ -8166,7 +8226,9 @@ function portfolioWeightTradingBrainTargets(targetRows,budget,payload){
 function dealFromTradingBrain(payload,fallbackDeal){
   if(!payload||payload.isStale) return fallbackDeal;
 
-  const budget=Math.max(0,Number(payload.budget||fallbackDeal?.budget||0));
+  const mission=activeWealthMission();
+  const inputBudget=Math.max(0,parseNum($('transferBudgetInput')?.value)||0);
+  const budget=Math.max(0,Number(mission?.budget||inputBudget||fallbackDeal?.budget||payload.budget||0));
   const snapshot=exposureSnapshot();
   const seen=new Set();
   const approved=(payload.targets||[]).map((target,index)=>{
@@ -8174,16 +8236,8 @@ function dealFromTradingBrain(payload,fallbackDeal){
     if(!ticker||seen.has(ticker)) return null;
     seen.add(ticker);
     const liveRow=findSecurity(ticker);
+    const row=hydrateSecurityFromTarget(liveRow,target,payload);
     const sourceAllocation=Math.max(0,Number(target.allocation||0));
-    const derivedRate=sourceAllocation>0&&Number(target.income)>0?Number(target.income)/sourceAllocation:NaN;
-    const row=liveRow||{
-      ticker,
-      name:target.name||ticker,
-      platform:target.account||'Check platform',
-      dividend_yield:Number.isFinite(derivedRate)?derivedRate:0,
-      yield:Number.isFinite(derivedRate)?derivedRate:0,
-      notes:'Approved by Aurora Trading Brain; awaiting full local security metadata.'
-    };
     const liveGate=gateCandidate(row,sourceAllocation,snapshot);
     const gate={...liveGate,status:liveGate.status==='block'?'caution':(liveGate.status||'pass'),reasons:Array.isArray(liveGate.reasons)&&liveGate.reasons.length?liveGate.reasons:['Approved by Aurora Trading Brain.'],data:liveGate.data||dataConfidence(row)};
     return {row,gate,score:Number(target.score||0),incomeScore:Number(target.score||0),amount:sourceAllocation,income:Number.isFinite(Number(target.income))?Number(target.income):annualIncomeForAmount(row,sourceAllocation),selected:true,brainRank:Number(target.rank||index+1)};
@@ -8199,27 +8253,31 @@ function dealFromTradingBrain(payload,fallbackDeal){
   const selected=new Set(rows.map(item=>cleanTicker(item.row.ticker)));
   const fallbackBench=(fallbackDeal?.bench||[]).filter(item=>!selected.has(cleanTicker(item.row?.ticker)));
   const fallbackWatch=(fallbackDeal?.watch||[]).filter(item=>!selected.has(cleanTicker(item.row?.ticker)));
+  const missionRebased=mission&&payload.wealthMissionId!==mission.id;
 
   return {
     ...fallbackDeal,budget,rows,chosen:rows,holdback,requestedSpent:spent,totalIncome,
-    bench:fallbackBench,watch:fallbackWatch,mode:payload.mode==='income'?'maximum':'balanced',
-    route:`Trading Brain selection • Portfolio-weighted sizing`,
-    reason:'Trading Brain chooses the approved shares. Transfer Centre sizes each purchase using current portfolio weight, sector concentration, income rate, valuation and concentration limits.',
-    status:'Brain selected • portfolio weighted',statusClass:'good',brainLinked:true,portfolioWeighted:true
+    bench:fallbackBench,watch:fallbackWatch,mode:routeMode==='maximum'?'maximum':'balanced',
+    route:`Trading Brain shortlist • ${routeMode==='maximum'?'Maximum-income':'Balanced'} portfolio sizing`,
+    reason:`${missionRebased?'The previous Trading Brain shortlist has been rebased to the current Wealth HQ mission. ':'Trading Brain supplied the approved shortlist. '}The Transfer Centre is sizing the live ${money(budget)} budget using current portfolio weight, sector concentration, income rate, valuation and concentration limits.`,
+    status:holdback>0?`${routeMode==='maximum'?'Maximum income':'Balanced'} route controlled`:`${routeMode==='maximum'?'Maximum income':'Balanced'} route ready`,statusClass:holdback>0?'warn':'good',brainLinked:true,portfolioWeighted:true,missionRebased
   };
 }
 function renderM7TradingBrain(deal,payloadOverride){
   const payload=payloadOverride||readTradingBrainDecision();
   window.AURORA_TRADING_BRAIN_DECISION=payload;
-  if(!payload){if($('m7Confidence'))$('m7Confidence').textContent='OFFLINE';if($('m7DecisionText'))$('m7DecisionText').textContent='Open Trading Brain first to publish the latest decision.';if($('m7TargetGrid'))$('m7TargetGrid').innerHTML='<div class="loading">No Trading Brain decision has been published yet.</div>';return;}
-  if($('m7Confidence')) $('m7Confidence').textContent=payload.isStale?'STALE':(payload.targets.length?`${payload.confidence}%`:'HOLD');
-  if($('m7Strategy')) $('m7Strategy').textContent=payload.strategy;
-  if($('m7Budget')) $('m7Budget').textContent=money(payload.budget);
-  if($('m7Income')) $('m7Income').textContent=`${money(payload.totalIncome)}/yr`;
-  if($('m7Holdback')) $('m7Holdback').textContent=money(payload.holdback);
-  if($('m7TargetCount')) $('m7TargetCount').textContent=`${payload.targets.length} TARGET${payload.targets.length===1?'':'S'}`;
-  if($('m7DecisionText')) $('m7DecisionText').textContent=payload.isStale?'The saved Trading Brain decision is over 24 hours old. Refresh Trading Brain before execution.':(payload.targets.length?`${payload.targets[0].ticker} leads the approved ${String(payload.strategy||'strategy').toLowerCase()} route. This page is now read-only and uses that exact order.`:'Trading Brain recommends holding cash.');
-  const grid=$('m7TargetGrid'); if(grid) grid.innerHTML=payload.targets.length?payload.targets.map(x=>`<article class="m7-target"><div class="m7-target-top"><div class="m7-rank">${x.rank}</div><div style="flex:1"><h3>${escapeHtml(x.ticker)}</h3><div class="m7-target-name">${escapeHtml(x.name)}</div></div><span class="platform-tag ${String(x.account).toLowerCase().includes('212')?'t212':String(x.account).toLowerCase().includes('ig')?'ig':'check'}">${escapeHtml(x.account)}</span></div><div class="m7-target-stats"><div class="m7-target-stat"><small>Score</small><strong>${x.score}/100</strong></div><div class="m7-target-stat"><small>Allocation</small><strong>${money(x.allocation)}</strong></div><div class="m7-target-stat"><small>Income</small><strong>${money(x.income)}/yr</strong></div></div><div class="m7-reason">${escapeHtml(x.reason)}</div></article>`).join(''):'<div class="loading">No buy today. Cash remains protected.</div>';
+  const rows=deal?.rows||[];
+  if(!payload){if($('m7Confidence'))$('m7Confidence').textContent='LOCAL';if($('m7DecisionText'))$('m7DecisionText').textContent='No saved Trading Brain shortlist is available, so the Transfer Centre is using its verified local candidate engine.';if($('m7TargetGrid'))$('m7TargetGrid').innerHTML='<div class="loading">Local Transfer Centre route active.</div>';return;}
+  const averageData=rows.length?Math.round(rows.reduce((sum,item)=>sum+Number(item.gate?.data?.score||dataConfidence(item.row).score||0),0)/rows.length):0;
+  if($('m7Confidence')) $('m7Confidence').textContent=payload.isStale?'STALE':(rows.length?`${averageData}%`:'HOLD');
+  if($('m7Strategy')) $('m7Strategy').textContent=routeMode==='maximum'?'Maximum Income':'Balanced';
+  if($('m7Budget')) $('m7Budget').textContent=money(deal?.budget||0);
+  if($('m7Income')) $('m7Income').textContent=`${money(deal?.totalIncome||0)}/yr`;
+  if($('m7Holdback')) $('m7Holdback').textContent=money(deal?.holdback||0);
+  if($('m7TargetCount')) $('m7TargetCount').textContent=`${rows.length} TARGET${rows.length===1?'':'S'}`;
+  if($('m7DecisionText')) $('m7DecisionText').textContent=payload.isStale?'The saved shortlist is over 24 hours old. Refresh Trading Brain before execution.':(rows.length?`${rows[0].row.ticker} leads the approved shortlist. The displayed allocations are the Transfer Centre's live portfolio-weighted sizes for the current Wealth HQ budget.`:'Aurora recommends holding cash.');
+  const grid=$('m7TargetGrid');
+  if(grid) grid.innerHTML=rows.length?rows.map((item,index)=>{const account=platformFor(item.row.ticker);return `<article class="m7-target"><div class="m7-target-top"><div class="m7-rank">${index+1}</div><div style="flex:1"><h3>${escapeHtml(displayTicker(item.row.ticker))}</h3><div class="m7-target-name">${escapeHtml(displayName(item.row))}</div></div><span class="platform-tag ${String(account).toLowerCase().includes('212')?'t212':String(account).toLowerCase().includes('ig')?'ig':'check'}">${escapeHtml(account)}</span></div><div class="m7-target-stats"><div class="m7-target-stat"><small>Data</small><strong>${item.gate?.data?.score||dataConfidence(item.row).score}%</strong></div><div class="m7-target-stat"><small>Allocation</small><strong>${money(item.amount)}</strong></div><div class="m7-target-stat"><small>Income</small><strong>${money(item.income)}/yr</strong></div></div><div class="m7-reason">${escapeHtml(item.gate?.reasons?.[0]||m7Reason(item))}</div></article>`}).join(''):'<div class="loading">No buy today. Cash remains protected.</div>';
 }
 $('m7ApprovePlan')?.addEventListener('click',()=>{try{localStorage.setItem('aurora_m7_manager_approval',new Date().toISOString())}catch(e){};if($('m7FlowApproval')){$('m7FlowApproval').classList.remove('active');$('m7FlowApproval').classList.add('done');$('m7FlowApproval').textContent='2 • Plan approved';}document.getElementById('deal-sheet')?.scrollIntoView({behavior:'smooth',block:'start'});});
 $('m7EditPlan')?.addEventListener('click',()=>document.getElementById('deal-sheet')?.scrollIntoView({behavior:'smooth',block:'start'}));
@@ -8229,8 +8287,9 @@ function renderAll(){
   if($('lastUpdated')) { if(window.AuroraFC) AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'}); else $('lastUpdated').textContent='Aurora generated: unavailable'; }
   renderDeploymentPlan();
   renderExitFundingRoom();
-  const localDeal = buildDealSheet();
   const brainDecision = readTradingBrainDecision();
+  hydrateStateFromDecision(brainDecision);
+  const localDeal = buildDealSheet();
   const deal = dealFromTradingBrain(brainDecision,localDeal);
   persistTransferSettings();
   publishTransferPlan(deal);
@@ -8268,14 +8327,15 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, auroraTimes, fxRates] = await Promise.all([
+    const [holdings, watchlist, scout, auroraTimes, fxRates, livePrices] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
       fetchTab('AuroraScout').catch(()=>[]),
       fetchTab('AuroraTimes').catch(()=>[]),
-      fetchTab('FXRates').catch(()=>[])
+      fetchTab('FXRates').catch(()=>[]),
+      fetchTab('LivePrices').catch(()=>[])
     ]);
-    state = { holdings, watchlist, scout, auroraTimes, fxRates };
+    state = { holdings, watchlist, scout, auroraTimes, fxRates, livePrices };
     lastLiveRefreshAt = new Date().toISOString();
     renderAll();
     renderSellDeskHoldings();
@@ -9939,7 +9999,7 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
 
 
 <script>
-/* ===================== M9 DIRECT WEALTH HQ → TRANSFER CENTRE BRIDGE ===================== */
+/* ===================== M10 DIRECT WEALTH HQ → TRANSFER CENTRE • AUTHORITATIVE BUDGET ===================== */
 (function(){
   const WEALTH_KEY='aurora_wealth_investment_mission_v1';
   const RECEIPT_KEY='aurora_transfer_centre_receipt_v1';
@@ -9959,6 +10019,23 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     if(releasedCash) releasedCash.value=budget.toFixed(2);
     if(availableCash) availableCash.value=budget.toFixed(2);
     try{
+      routeMode=mission.tradingMode==='income'?'maximum':'balanced';
+      excludedTickers.clear();
+      manualAmounts.clear();
+      const savedSettings=read('aurora_transfer_settings_v3')||{};
+      write('aurora_transfer_settings_v3',{...savedSettings,budget,routeMode,excludedTickers:[],manualAmounts:{},wealthMissionId:mission.id,updatedAt:new Date().toISOString()});
+      const decision=read('aurora_trading_brain_decision_v1');
+      if(decision&&Array.isArray(decision.targets)){
+        decision.previousBudget=Number(decision.budget||0);
+        decision.budget=budget;
+        decision.holdback=0;
+        decision.wealthMissionId=mission.id;
+        decision.sourceMissionId=mission.sourceMissionId||null;
+        decision.rebasedAt=new Date().toISOString();
+        write('aurora_trading_brain_decision_v1',decision);
+      }
+    }catch(error){console.warn('Aurora mission rebase',error);} 
+    try{
       const execution=read('aurora_payday_execution_v1')||{};
       execution.availableCash=budget;
       execution.wealthMissionId=mission.id;
@@ -9973,7 +10050,8 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
       paydayDate:mission.paydayDate||'',
       preferredAccount:mission.preferredAccount||'',
       loadedAt:new Date().toISOString(),
-      status:'TRANSFER_CENTRE_LOADED'
+      status:'TRANSFER_CENTRE_LOADED',
+      fundingSources:Array.isArray(mission.fundingSources)?mission.fundingSources:[]
     };
     write(RECEIPT_KEY,receipt);
     mission.status='TRANSFER_CENTRE_LOADED';
@@ -10004,7 +10082,7 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     const banner=document.createElement('section');
     banner.id='m9WealthMissionBanner';
     banner.style.cssText='margin:14px 0;padding:14px;border:1px solid rgba(52,211,153,.30);border-radius:18px;background:linear-gradient(145deg,rgba(52,211,153,.10),rgba(34,211,238,.045));display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center';
-    banner.innerHTML=`<div><div style="font-size:9px;font-weight:950;letter-spacing:1px;color:#8cffb8">WEALTH HQ BUDGET RELEASED</div><strong style="display:block;margin-top:5px;font-size:22px">${money(mission.budget)} Transfer Window</strong><span style="display:block;margin-top:4px;color:#93a4bd;font-size:11px">Payday ${mission.paydayDate||'—'} • ${mission.preferredAccount||'Investment account'} • Aurora Transfer Centre now owns execution.</span></div><button id="m9ReloadWealthMission" type="button" style="border:1px solid rgba(52,211,153,.35);background:rgba(52,211,153,.10);color:#9affc3;border-radius:12px;padding:10px 13px;font-weight:950">Reload Mission</button>`;
+    banner.innerHTML=`<div><div style="font-size:9px;font-weight:950;letter-spacing:1px;color:#8cffb8">WEALTH HQ BUDGET RELEASED</div><strong style="display:block;margin-top:5px;font-size:22px">${money(mission.budget)} Transfer Window</strong><span style="display:block;margin-top:4px;color:#93a4bd;font-size:11px">Payday ${mission.paydayDate||'—'} • ${mission.preferredAccount||'Investment account'} • The current Wealth HQ budget is authoritative; previous transfer budgets are replaced.</span></div><button id="m9ReloadWealthMission" type="button" style="border:1px solid rgba(52,211,153,.35);background:rgba(52,211,153,.10);color:#9affc3;border-radius:12px;padding:10px 13px;font-weight:950">Reload Mission</button>`;
     const hero=document.querySelector('.transfer-hero');
     if(hero?.parentElement) hero.insertAdjacentElement('afterend',banner); else host.prepend(banner);
     $id('m9ReloadWealthMission')?.addEventListener('click',()=>applyWealthMission({scroll:true}));

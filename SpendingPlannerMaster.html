@@ -3463,7 +3463,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
       <div class="m37-actions">
         <button class="primary" id="m37SendToTradingBrain" type="button">Release Mission to Transfer Centre</button>
         <button id="m37RefreshHandoff" type="button">Refresh Status</button>
-        <a href="AuroraCityFC_TransferCentre(48)_MultiSourceMission.html?from=wealth-hq" target="_self">Open Transfer Centre →</a>
+        <a href="AuroraCityFC_TransferCentre.html?from=wealth-hq" target="_self">Open Transfer Centre →</a>
       </div>
       <div class="m37-feedback" id="m37HandoffFeedback" aria-live="polite"></div>
     </section>
@@ -8410,7 +8410,7 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
 </style>
 
 <script>
-/* ===================== M50 CONNECTED MULTI-SOURCE INVESTMENT PIPELINE ===================== */
+/* ===================== M51 CONNECTED MULTI-SOURCE INVESTMENT PIPELINE • CANONICAL TRANSFER LINK ===================== */
 (function(){
   const WEALTH_KEY="aurora_wealth_investment_mission_v1";
   const FUNDING_KEY="aurora_wealth_investment_funding_v1";
@@ -8479,7 +8479,7 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     if(!write(WEALTH_KEY,payload)){if(feedback){feedback.textContent="The browser blocked the handoff save.";feedback.className="m37-feedback risk"}return}
     if(feedback){feedback.textContent=`${gbp(payload.budget)} combined mission sent to the Transfer Centre: ${payload.fundingSources.map(x=>`${x.name} ${gbp(x.release)}`).join(" • ")}.`;feedback.className="m37-feedback good"}
     try{window.dispatchEvent(new CustomEvent("aurora:wealth-mission",{detail:payload}))}catch(_){ }
-    render();setTimeout(()=>{window.location.href="AuroraCityFC_TransferCentre(48)_MultiSourceMission.html?from=wealth-hq"},180);
+    render();setTimeout(()=>{window.location.href=`AuroraCityFC_TransferCentre.html?from=wealth-hq&mission=${encodeURIComponent(payload.id)}&v=${Date.now()}`},180);
   }
   loadFunding();["m50CapitalBalance","m50CapitalRelease","m50EtfBalance","m50EtfRelease"].forEach(id=>el(id)?.addEventListener("input",render));el("m50SaveFunding")?.addEventListener("click",()=>{saveFunding(true);render()});el("m37SendToTradingBrain")?.addEventListener("click",sendMission);el("m37RefreshHandoff")?.addEventListener("click",render);
   window.addEventListener("storage",event=>{if([WEALTH_KEY,FUNDING_KEY,DECISION_KEY,REGISTRATION_KEY].includes(event.key))render()});window.addEventListener("aurora:trading-brain-decision",render);
@@ -8929,14 +8929,14 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     nexus:'AuroraNexusMaster_Connected_v7.html',
     wealth:'AuroraWealthExecutiveRoom_Connected_v16.html',
     brain:'TradingBrainMaster_Connected_v8.html',
-    transfer:'AuroraCityFC_TransferCentre(48)_MultiSourceMission.html',
+    transfer:'AuroraCityFC_TransferCentre.html',
     registration:'RegistrationDesk.html',
     tesco:'TescoSimMaster_Connected_v3.html'
   }:{
     nexus:'AuroraNexusMaster.html',
     wealth:'SpendingPlannerMaster.html',
     brain:'TradingBrainMaster.html',
-    transfer:'AuroraCityFC_TransferCentre(48)_MultiSourceMission.html',
+    transfer:'AuroraCityFC_TransferCentre.html',
     registration:'RegistrationDesk.html',
     tesco:'TescoSimMaster.html'
   };
