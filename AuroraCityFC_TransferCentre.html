@@ -13,8 +13,8 @@
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
-<title>Aurora City FC — Transfer Centre M10 Route & Offers Fixed</title>
-<!-- Build: Transfer Centre M10 Route Reset + Offer De-duplication • 26 Jul 2026 -->
+<title>Aurora City FC — Transfer Centre M10 Single Source Fixed</title>
+<!-- Build: Transfer Centre M10 Single Source Route + Offer De-duplication • 26 Jul 2026 -->
 <!-- Build: Transfer Centre M9 Direct Wealth HQ Budget Handoff • 26 Jul 2026 -->
 <!-- Build: Transfer Centre M8 Trading Brain Linked Execution Room • 25 Jul 2026 -->
 <!-- Build: Transfer Centre M6 ISA Execution Controls • 25 Jul 2026 -->
@@ -8107,17 +8107,74 @@ function readTradingBrainDecision(){
 }
 function dealFromTradingBrain(payload,fallbackDeal){
   if(!payload||payload.isStale) return fallbackDeal;
-  const analysis=analyseTransferCandidates(Number(payload.budget||fallbackDeal?.budget||0));
-  const pool=[...(analysis.gated||[]),...(analysis.available||[])];
-  const byTicker=new Map(pool.map(item=>[cleanTicker(item.row?.ticker),item]));
-  const rows=(payload.targets||[]).map(target=>{
-    const match=byTicker.get(cleanTicker(target.ticker));
-    if(!match) return null;
-    const amount=Math.max(0,Number(target.allocation||0));
-    return {...match,amount,income:Number.isFinite(Number(target.income))?Number(target.income):annualIncomeForAmount(match.row,amount),gate:match.gate||gateCandidate(match.row,amount,exposureSnapshot())};
-  }).filter(Boolean);
+
+  const budget=Math.max(0,Number(payload.budget||fallbackDeal?.budget||0));
+  const snapshot=exposureSnapshot();
+  const seen=new Set();
+  const rows=(payload.targets||[]).map((target,index)=>{
+    const ticker=cleanTicker(target.ticker);
+    if(!ticker||seen.has(ticker)) return null;
+    seen.add(ticker);
+
+    // The approved Trading Brain payload is the single source of truth.
+    // Resolve richer live data where possible, but never drop an approved target
+    // just because the local candidate pool uses a different alias or gate state.
+    const liveRow=findSecurity(ticker);
+    const allocation=Math.max(0,Number(target.allocation||0));
+    const derivedRate=allocation>0&&Number(target.income)>0?Number(target.income)/allocation:NaN;
+    const row=liveRow||{
+      ticker,
+      name:target.name||ticker,
+      platform:target.account||'Check platform',
+      dividend_yield:Number.isFinite(derivedRate)?derivedRate:0,
+      yield:Number.isFinite(derivedRate)?derivedRate:0,
+      notes:'Approved by Aurora Trading Brain; awaiting full local security metadata.'
+    };
+    const liveGate=gateCandidate(row,allocation,snapshot);
+    const gate={
+      ...liveGate,
+      status:liveGate.status==='block'?'caution':(liveGate.status||'pass'),
+      reasons:Array.isArray(liveGate.reasons)&&liveGate.reasons.length?liveGate.reasons:['Approved by Aurora Trading Brain.'],
+      data:liveGate.data||dataConfidence(row)
+    };
+    const income=Number.isFinite(Number(target.income))?Number(target.income):annualIncomeForAmount(row,allocation);
+    return {
+      row,gate,
+      score:Number(target.score||0),
+      incomeScore:Number(target.score||0),
+      amount:allocation,
+      income,
+      selected:true,
+      brainRank:Number(target.rank||index+1)
+    };
+  }).filter(item=>item&&item.amount>0);
+
   if(!rows.length) return fallbackDeal;
-  return {...fallbackDeal,budget:Number(payload.budget||0),rows,chosen:rows,holdback:Number(payload.holdback||0),requestedSpent:rows.reduce((s,x)=>s+x.amount,0),totalIncome:rows.reduce((s,x)=>s+x.income,0),mode:payload.mode==='income'?'maximum':'balanced',route:`Trading Brain ${payload.strategy||'route'}`,reason:'Read-only execution plan published by Aurora Trading Brain.',status:'Trading Brain linked',statusClass:'good',brainLinked:true};
+  rows.sort((a,b)=>(a.brainRank||999)-(b.brainRank||999));
+  const spent=rows.reduce((sum,item)=>sum+item.amount,0);
+  const totalIncome=rows.reduce((sum,item)=>sum+item.income,0);
+  const holdback=Math.max(0,budget-spent);
+  const selected=new Set(rows.map(item=>cleanTicker(item.row.ticker)));
+  const fallbackBench=(fallbackDeal?.bench||[]).filter(item=>!selected.has(cleanTicker(item.row?.ticker)));
+  const fallbackWatch=(fallbackDeal?.watch||[]).filter(item=>!selected.has(cleanTicker(item.row?.ticker)));
+
+  return {
+    ...fallbackDeal,
+    budget,
+    rows,
+    chosen:rows,
+    holdback,
+    requestedSpent:spent,
+    totalIncome,
+    bench:fallbackBench,
+    watch:fallbackWatch,
+    mode:payload.mode==='income'?'maximum':'balanced',
+    route:`Trading Brain ${payload.strategy||'route'}`,
+    reason:'Exact read-only execution plan published by Aurora Trading Brain. The Deal Sheet and Registration Desk use these same approved targets and allocations.',
+    status:'Trading Brain linked',
+    statusClass:'good',
+    brainLinked:true
+  };
 }
 function renderM7TradingBrain(deal,payloadOverride){
   const payload=payloadOverride||readTradingBrainDecision();
@@ -8684,23 +8741,25 @@ function offerStatusRank(status){
   const value=String(status||'').toUpperCase();
   return ({OPEN:0,COUNTERED:1,'ACCEPTED FOR REVIEW':2,REJECTED:3,EXPIRED:4,WITHDRAWN:5})[value]??9;
 }
+function dedupeIncomingOffers(list){
+  const ranked=[...(Array.isArray(list)?list:[])].sort((a,b)=>{
+    const statusDiff=offerStatusRank(a.status)-offerStatusRank(b.status);
+    if(statusDiff) return statusDiff;
+    return new Date(b.createdAt||b.updatedAt||0)-new Date(a.createdAt||a.updatedAt||0);
+  });
+  const byTicker=new Map();
+  for(const offer of ranked){
+    const ticker=registrationShortTicker(offer?.ticker);
+    if(!ticker) continue;
+    // One visible negotiation per holding. Prefer an open/countered bid, then newest.
+    if(!byTicker.has(ticker)) byTicker.set(ticker,offer);
+  }
+  return [...byTicker.values()];
+}
 function renderIncomingOffers(){
   const grid=$('incomingOfferGrid');if(!grid)return;
-  // De-duplicate repeated offer records returned by regenerated market rounds.
-  // Prefer the newest record for the same offer ID; otherwise collapse identical ticker/status/target offers.
-  const offerMap=new Map();
-  [...incomingOffers].forEach(offer=>{
-    const clause=incomingOfferClauseData(offer);
-    const key=String(offer.offerId||'').trim() || [
-      cleanTicker(offer.ticker||''),
-      String(offer.status||'OPEN').toUpperCase(),
-      Number(clause.targetPrice||offer.targetPrice||offer.offerPrice||0).toFixed(6),
-      String(offer.bidderName||'Aurora Market').trim().toUpperCase()
-    ].join('|');
-    const previous=offerMap.get(key);
-    if(!previous || new Date(offer.createdAt||0)>new Date(previous.createdAt||0)) offerMap.set(key,offer);
-  });
-  const ordered=[...offerMap.values()].sort((a,b)=>offerStatusRank(a.status)-offerStatusRank(b.status)||new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  incomingOffers=dedupeIncomingOffers(incomingOffers);
+  const ordered=[...incomingOffers].sort((a,b)=>offerStatusRank(a.status)-offerStatusRank(b.status)||new Date(b.createdAt||0)-new Date(a.createdAt||0));
   const storedOpen=ordered.filter(o=>['OPEN','COUNTERED'].includes(String(o.status||'').toUpperCase()));
   const activeOffers=storedOpen.filter(o=>incomingOfferClauseData(o).met);
   const waitingOffers=storedOpen.filter(o=>!incomingOfferClauseData(o).met);
@@ -8780,7 +8839,7 @@ async function loadIncomingOffers(autoGenerate=false){
   try{
     const result=await postRegistration({action:'listIncomingOffers',limit:30,includeClosed:true,source:'Aurora City FC Incoming Offers'});
     if(result.queued){grid.innerHTML='<div class="offer-empty">The offer request was sent, but this browser could not read the response. Deploy the updated Apps Script and refresh.</div>';return;}
-    incomingOffers=Array.isArray(result.offers)?result.offers:[];
+    incomingOffers=dedupeIncomingOffers(Array.isArray(result.offers)?result.offers:[]);
     renderIncomingOffers();
     renderExitFundingRoom();
     renderSmartExitDesk();
@@ -9888,12 +9947,8 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     mission.status='TRANSFER_CENTRE_LOADED';
     mission.updatedAt=new Date().toISOString();
     write(WEALTH_KEY,mission);
-    // A fresh Wealth HQ mission must start from the full eligible transfer pool.
-    // Clear any exclusions/manual allocations left over from an older window before rebuilding.
-    try{ manualAmounts.clear(); }catch(_){ }
-    try{ excludedTickers.clear(); }catch(_){ }
-    try{ persistTransferSettings(); }catch(_){ }
     if(typeof window.renderAll==='function'){
+      try{ window.manualAmounts?.clear?.(); }catch(_){ }
       try{ window.renderAll(); }catch(error){ console.warn('Aurora bridge render',error); }
     }
     const note=$id('dealBudgetContext');
