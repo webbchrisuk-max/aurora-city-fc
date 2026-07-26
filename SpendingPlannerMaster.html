@@ -2588,6 +2588,65 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 @media(max-width:1180px){.m32-balance-command{grid-template-columns:1fr!important}.m34-matchday-board{grid-template-columns:repeat(2,1fr)}.m13-kpis{grid-template-columns:repeat(3,1fr)!important}}
 @media(max-width:720px){.m13-content{padding:10px!important}.m32-balance-stats{grid-template-columns:1fr 1fr!important}.m34-matchday-board{grid-template-columns:1fr}.m13-kpis{grid-template-columns:1fr 1fr!important}.m34-section-title{align-items:flex-start;display:grid}}
 </style>
+
+<style>
+/* ===================== M33 PAYDAY DUAL COMMAND CENTRE ===================== */
+#m13PaydayPlan{display:none!important}
+.m33-payday-section{padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important}
+.m33-payday-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:14px;padding:0 2px}
+.m33-payday-head h2{margin:3px 0 5px;font-size:30px;letter-spacing:-1.1px}
+.m33-payday-head p{margin:0;max-width:820px;color:#91a5bd;font-size:11px;line-height:1.55}
+.m33-command-grid{display:grid;grid-template-columns:minmax(0,1.48fr) minmax(360px,.92fr);gap:15px;align-items:start}
+.m33-live-card,.m33-scenario-card{position:relative;border-radius:26px;padding:17px;overflow:hidden}
+.m33-live-card{border:1px solid rgba(245,193,82,.29);background:radial-gradient(circle at 5% 0%,rgba(245,193,82,.11),transparent 31%),radial-gradient(circle at 100% 92%,rgba(34,211,238,.075),transparent 34%),linear-gradient(155deg,rgba(8,22,40,.98),rgba(3,11,23,.99));box-shadow:0 22px 60px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.025)}
+.m33-live-card:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#f5c152,#22d3ee,#34d399);opacity:.9}
+.m33-scenario-card{position:sticky;top:14px;border:1px solid rgba(167,139,250,.32);background:radial-gradient(circle at 95% 0%,rgba(167,139,250,.16),transparent 36%),radial-gradient(circle at 0% 100%,rgba(34,211,238,.07),transparent 34%),linear-gradient(155deg,rgba(14,18,43,.98),rgba(5,10,25,.99));box-shadow:0 22px 60px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.03)}
+.m33-scenario-card:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,#a78bfa,#22d3ee);opacity:.95}
+.m33-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.m33-card-head h3{margin:4px 0 4px;font-size:19px;letter-spacing:-.45px}.m33-card-head p{margin:0;color:#91a5bd;font-size:9px;line-height:1.48;max-width:540px}
+.m33-kicker{display:inline-flex;align-items:center;gap:6px;font-size:8px;font-weight:1000;letter-spacing:1.15px}.m33-kicker:before{content:"";width:7px;height:7px;border-radius:50%}
+.m33-kicker.live{color:#f8d77f}.m33-kicker.live:before{background:#f5c152;box-shadow:0 0 12px rgba(245,193,82,.8);animation:m33Pulse 2.2s ease-in-out infinite}
+.m33-kicker.scenario{color:#c8b7ff}.m33-kicker.scenario:before{background:#a78bfa;box-shadow:0 0 12px rgba(167,139,250,.75)}
+.m33-plan-tag,.m33-sim-badge{display:inline-flex;padding:7px 9px;border-radius:999px;font-size:7px;font-weight:1000;letter-spacing:.65px;white-space:nowrap}
+.m33-plan-tag{color:#ffe6a6;border:1px solid rgba(245,193,82,.28);background:rgba(245,193,82,.075)}
+.m33-sim-badge{color:#d9d0ff;border:1px solid rgba(167,139,250,.30);background:rgba(167,139,250,.09)}
+.m33-live-inputs{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin:0 0 13px!important;gap:8px!important}
+.m33-live-inputs .m22-field{padding:10px;border-radius:14px;background:rgba(255,255,255,.021);border-color:rgba(245,193,82,.11)}
+.m33-live-inputs .m22-field label{font-size:7px;margin-bottom:5px}.m33-live-inputs .m22-field input,.m33-live-inputs .m22-field select{font-size:14px!important;padding:8px 9px!important}
+.m33-live-scoreboard{display:grid;grid-template-columns:1.15fr repeat(3,1fr);gap:8px;margin-bottom:11px}
+.m33-score{padding:12px;border-radius:15px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.024);position:relative;overflow:hidden}
+.m33-score:after{content:"";position:absolute;left:0;bottom:0;right:0;height:2px;background:rgba(125,211,252,.48)}
+.m33-score.main{border-color:rgba(245,193,82,.25);background:rgba(245,193,82,.055)}.m33-score.main:after{background:#f5c152}.m33-score.success:after{background:#34d399}
+.m33-score span,.m33-score small{display:block}.m33-score span{color:#91a5bd;font-size:7px;font-weight:1000;letter-spacing:.65px;text-transform:uppercase}.m33-score strong{display:block;margin-top:5px;font-size:19px}.m33-score small{margin-top:4px;color:#71849d;font-size:7px}
+.m33-hidden-values{display:none!important}
+.m33-progress-wrap,.m33-execution-board{margin-top:11px;padding:12px;border-radius:17px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.018)}
+.m33-progress-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px}.m33-progress-head span{color:#91a5bd;font-size:8px;font-weight:950;text-transform:uppercase;letter-spacing:.6px}.m33-progress-head strong{font-size:9px;color:#eaf4ff}
+.m33-primary-actions{margin-top:11px}.m33-complete{margin-left:auto}
+.m33-advanced{margin-top:12px;border:1px solid rgba(125,211,252,.13);border-radius:17px;background:rgba(255,255,255,.018);overflow:hidden}
+.m33-advanced>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;list-style:none}.m33-advanced>summary::-webkit-details-marker{display:none}
+.m33-advanced>summary span{font-size:10px;font-weight:950;color:#cdefff}.m33-advanced>summary small{font-size:8px;color:#7f93aa}.m33-advanced>summary:after{content:"＋";font-size:18px;color:#22d3ee}.m33-advanced[open]>summary:after{content:"−"}
+.m33-advanced-body{display:grid;gap:12px;padding:0 12px 12px}.m33-advanced .m22-summary-grid{grid-template-columns:repeat(4,1fr)}
+.m33-advanced .m22-protection{grid-template-columns:repeat(3,1fr)!important}.m33-advanced .m25-reconcile{grid-template-columns:repeat(3,1fr)}
+.m33-mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:5px;border-radius:14px;background:rgba(0,0,0,.22);border:1px solid rgba(167,139,250,.14)}
+.m33-mode-tabs button{border:0;border-radius:10px;background:transparent;color:#7f91aa;padding:9px 7px;font-size:8px;font-weight:1000;letter-spacing:.45px;text-transform:uppercase}.m33-mode-tabs button.active{color:#f3efff;background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(34,211,238,.12));box-shadow:inset 0 0 0 1px rgba(167,139,250,.28)}
+.m33-scenario-note{margin:8px 1px 11px;color:#8c9db5;font-size:8px;line-height:1.4}
+.m33-scenario-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.m33-field{padding:10px;border-radius:14px;border:1px solid rgba(167,139,250,.14);background:rgba(255,255,255,.022)}.m33-field.featured{grid-column:1/-1;border-color:rgba(167,139,250,.29);background:rgba(167,139,250,.06)}
+.m33-field label{display:block;color:#96a5bc;font-size:7px;font-weight:1000;letter-spacing:.58px;text-transform:uppercase;margin-bottom:6px}.m33-money-input{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:5px}.m33-money-input span{color:#bba9ff;font-size:14px;font-weight:1000}.m33-money-input input{width:100%;min-width:0;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;font-size:18px!important;font-weight:1000!important;color:#f2f6ff!important}
+.m33-scenario-verdict{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:12px;border-radius:17px;border:1px solid rgba(52,211,153,.26);background:linear-gradient(90deg,rgba(52,211,153,.08),rgba(34,211,238,.035))}.m33-scenario-verdict>div:first-child span{display:block;color:#91a5bd;font-size:7px;text-transform:uppercase;font-weight:1000;letter-spacing:.7px}.m33-scenario-verdict>div:first-child strong{display:block;margin-top:4px;color:#8cffb8;font-size:17px;letter-spacing:.4px}
+.m33-scenario-verdict[data-state="tight"]{border-color:rgba(251,191,36,.30);background:rgba(251,191,36,.07)}.m33-scenario-verdict[data-state="tight"]>div:first-child strong{color:#ffe08a}.m33-scenario-verdict[data-state="risk"]{border-color:rgba(251,113,133,.31);background:rgba(251,113,133,.07)}.m33-scenario-verdict[data-state="risk"]>div:first-child strong{color:#ffadba}
+.m33-verdict-orb{width:52px;height:52px;border-radius:50%;display:flex;align-items:baseline;justify-content:center;padding-top:15px;border:3px solid rgba(52,211,153,.5);background:rgba(0,0,0,.2)}.m33-verdict-orb span{font-size:16px;font-weight:1000}.m33-verdict-orb small{font-size:7px;color:#91a5bd}
+.m33-scenario-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}.m33-scenario-kpis>div{padding:10px;border-radius:13px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02)}.m33-scenario-kpis span{display:block;color:#8193aa;font-size:7px;font-weight:1000;text-transform:uppercase}.m33-scenario-kpis strong{display:block;margin-top:4px;font-size:14px}
+.m33-allocation-stack{display:grid;gap:6px;margin-top:10px}.m33-stack-row{display:grid;grid-template-columns:88px 1fr auto;gap:8px;align-items:center}.m33-stack-row>span{font-size:8px;color:#a2b0c3}.m33-stack-track{height:8px;border-radius:999px;background:rgba(255,255,255,.065);overflow:hidden}.m33-stack-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#a78bfa,#22d3ee);transition:width .28s ease}.m33-stack-row strong{font-size:9px;white-space:nowrap}
+.m33-comparison{margin-top:11px;border:1px solid rgba(167,139,250,.14);border-radius:16px;overflow:hidden}.m33-comparison-head{display:flex;justify-content:space-between;gap:10px;padding:10px 11px;border-bottom:1px solid rgba(167,139,250,.11);background:rgba(167,139,250,.045)}.m33-comparison-head h4{margin:0;font-size:11px}.m33-comparison-head span{color:#bba9ff;font-size:8px;font-weight:950}
+.m33-compare-row{display:grid;grid-template-columns:1.25fr repeat(3,.72fr);gap:6px;align-items:center;padding:7px 9px;border-bottom:1px solid rgba(255,255,255,.045);font-size:8px}.m33-compare-row:last-child{border-bottom:0}.m33-compare-row.head{color:#71849c;font-size:7px;font-weight:1000;text-transform:uppercase;background:rgba(0,0,0,.12)}.m33-compare-row span:not(:first-child){text-align:right}.m33-change.pos{color:#8cffb8}.m33-change.neg{color:#ffadba}.m33-change.zero{color:#8092aa}
+.m33-insight{margin-top:10px;padding:11px 12px;border-radius:15px;border-left:3px solid #a78bfa;background:rgba(167,139,250,.07);color:#cbd5e6;font-size:9px;line-height:1.5}.m33-scenario-actions{display:grid;grid-template-columns:auto 1fr;gap:8px;margin-top:10px}.m33-scenario-actions button{border:1px solid rgba(167,139,250,.24);border-radius:12px;background:rgba(255,255,255,.03);color:#c8d4e5;padding:10px;font-size:9px;font-weight:950}.m33-scenario-actions button.primary{color:#f2edff;background:linear-gradient(135deg,rgba(167,139,250,.24),rgba(34,211,238,.12));border-color:rgba(167,139,250,.38)}.m33-scenario-actions button:disabled{opacity:.42;cursor:not-allowed}
+.m33-apply-status{display:none;margin-top:8px;padding:9px 10px;border-radius:12px;font-size:8px;line-height:1.4}.m33-apply-status.show{display:block;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.24);color:#bfffd7}.m33-apply-status.error{background:rgba(251,113,133,.07);border-color:rgba(251,113,133,.25);color:#ffc0ca}
+@keyframes m33Pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.55}}
+@media(max-width:1180px){.m33-command-grid{grid-template-columns:1fr}.m33-scenario-card{position:relative;top:auto}.m33-live-inputs{grid-template-columns:repeat(3,1fr)!important}}
+@media(max-width:760px){.m33-payday-head,.m33-card-head{display:block}.m33-payday-head .m22-live,.m33-plan-tag,.m33-sim-badge{margin-top:8px}.m33-live-inputs{grid-template-columns:1fr 1fr!important}.m33-live-scoreboard{grid-template-columns:1fr 1fr}.m33-complete{margin-left:0}.m33-advanced .m25-reconcile{grid-template-columns:1fr 1fr}.m33-advanced .m22-grid{grid-template-columns:1fr}.m33-scenario-card{padding:14px}}
+@media(max-width:480px){.m33-live-inputs,.m33-live-scoreboard,.m33-scenario-inputs,.m33-scenario-kpis{grid-template-columns:1fr!important}.m33-field.featured{grid-column:auto}.m33-scenario-actions{grid-template-columns:1fr}.m33-advanced .m22-summary-grid,.m33-advanced .m22-protection,.m33-advanced .m22-wallet,.m33-advanced .m25-reconcile{grid-template-columns:1fr!important}.m33-compare-row{grid-template-columns:1.2fr repeat(3,.8fr);font-size:7px}.m33-stack-row{grid-template-columns:72px 1fr auto}}
+</style>
+
 </head>
 <body>
 
@@ -2946,113 +3005,198 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
     <div class="m27-ledger-list" id="m27LedgerList"></div>
   </section>
 
+  <!-- ===================== M33 PAYDAY MISSION CONTROL + SCENARIO LAB ===================== -->
+  <section class="section card m33-payday-section" id="m15PaydayAllocationCentre">
+    <div class="m33-payday-head">
+      <div>
+        <div class="m13-eyebrow">AURORA PAYDAY OPERATIONS</div>
+        <h2>Payday Mission Control</h2>
+        <p>Build the real payday plan on the left. Test a different wage and allocation on the right without touching the live mission until you choose to apply it.</p>
+      </div>
+      <span class="m15-live-badge m22-live" id="m22MissionBadge">DRAFT PLAN</span>
+    </div>
 
-  <!-- ===================== M22 PAYDAY MISSION CONTROL ===================== -->
-  <section class="section card" id="m15PaydayAllocationCentre">
-    <div class="m22-shell">
-      <div class="m22-hero">
-        <div class="m22-hero-top">
+    <div class="m33-command-grid">
+      <article class="m33-live-card">
+        <div class="m33-card-head">
           <div>
-            <div class="m13-eyebrow">PAYDAY EXECUTION ENGINE</div>
-            <h3>Payday Mission Control</h3>
-            <p>Confirm the wage that arrived, protect every bill and annual renewal due before the following payday, preserve your Holding Pot buffer, then execute each transfer once from your locked current-account payday balance.</p>
+            <span class="m33-kicker live">LIVE PAYDAY PLAN</span>
+            <h3>Real money. Real transfers.</h3>
+            <p>This is the saved mission that updates your Holding Pot, goal pots and payday history.</p>
           </div>
-          <span class="m15-live-badge m22-live" id="m22MissionBadge">DRAFT PLAN</span>
+          <span class="m33-plan-tag">PROTECT → FUND → INVEST</span>
         </div>
 
-        <div class="m22-input-grid" id="m22InputGrid">
+        <div class="m22-input-grid m33-live-inputs" id="m22InputGrid">
           <div class="m22-field"><label for="m22PaydayDate">Payday date</label><input id="m22PaydayDate" type="date"></div>
           <div class="m22-field"><label for="m15ExpectedPay">Expected pay</label><input id="m15ExpectedPay" type="number" min="0" step="0.01" value="2100"></div>
           <div class="m22-field"><label for="m15ActualPay">Actual pay received</label><input id="m15ActualPay" type="number" min="0" step="0.01" value="2100"></div>
           <div class="m22-field"><label for="m22CoreInvestment">Core share contribution</label><input id="m22CoreInvestment" type="number" min="0" step="0.01" value="1500"></div>
           <div class="m22-field"><label for="m22Lifestyle">Lifestyle / Spending Pot</label><input id="m22Lifestyle" type="number" min="0" step="0.01" value="250"></div>
           <div class="m22-field"><label for="m22GoalPots">Regular goal-pot funding</label><input id="m22GoalPots" type="number" min="0" step="0.01" value="250"></div>
-          <div class="m22-field"><label for="m15AllocateExtra">Overtime / extra pay to allocate</label><input id="m15AllocateExtra" type="number" min="0" step="0.01" value="0"></div>
+          <div class="m22-field"><label for="m33LiveHouseBoost">House Pot boost</label><input id="m33LiveHouseBoost" type="number" min="0" step="0.01" value="0"></div>
+          <div class="m22-field"><label for="m33LiveEmergencyBoost">Emergency Fund boost</label><input id="m33LiveEmergencyBoost" type="number" min="0" step="0.01" value="0"></div>
+          <div class="m22-field"><label for="m15AllocateExtra">Auto-route extra pay</label><input id="m15AllocateExtra" type="number" min="0" step="0.01" value="0"></div>
           <div class="m22-field"><label for="m15Strategy">Extra-pay strategy</label><select id="m15Strategy"><option value="priority">Aurora priority — P1, P2, P3</option><option value="critical">Critical pots only, then shares</option><option value="balanced">Balanced across underfunded pots</option><option value="isa">All available extra to shares</option></select></div>
           <div class="m22-field"><label for="m22InvestmentPlatform">Investment account</label><select id="m22InvestmentPlatform"><option value="ig">IG ISA</option><option value="t212">Trading 212 ISA</option><option value="split">Split IG / Trading 212</option></select></div>
         </div>
-      </div>
 
-      <div class="m22-summary-grid">
-        <div class="m22-summary" style="--c:#22d3ee"><span>Expected pay</span><strong id="m15SumExpected">£0.00</strong></div>
-        <div class="m22-summary" style="--c:#60a5fa"><span>Actual pay</span><strong id="m15SumActual">£0.00</strong></div>
-        <div class="m22-summary" style="--c:#34d399"><span>Extra / overtime</span><strong id="m15SumExtra">£0.00</strong></div>
-        <div class="m22-summary" style="--c:#fb7185"><span>Pay shortfall</span><strong id="m22SumShortfall">£0.00</strong></div>
-        <div class="m22-summary" style="--c:#fbbf24"><span>Total Holding Pot move</span><strong id="m15SumHolding">£0.00</strong></div>
-        <div class="m22-summary" style="--c:#a78bfa"><span>Current-account wage</span><strong id="m15SumAvailable">£0.00</strong></div>
-      </div>
+        <div class="m33-live-scoreboard">
+          <div class="m33-score main"><span>Actual pay</span><strong id="m15SumActual">£0.00</strong><small id="m33LivePayNote">Wage available</small></div>
+          <div class="m33-score"><span>Holding move</span><strong id="m15SumHolding">£0.00</strong><small>Bills and protection</small></div>
+          <div class="m33-score"><span>Planned mission</span><strong id="m33PlannedTotal">£0.00</strong><small id="m15AllocationTotal">£0.00 planned</small></div>
+          <div class="m33-score success"><span>Retained</span><strong id="m22WalletBuffered">£0.00</strong><small>Left in current account</small></div>
+        </div>
 
-      <div class="m22-protection">
-        <div class="m22-protect-item"><span>Minimum buffer</span><strong id="m22MinimumBuffer">£0.00</strong></div>
-        <div class="m22-protect-item"><span>Bills before next payday</span><strong id="m22BillsReserve">£0.00</strong></div>
-        <div class="m22-protect-item"><span>Monthly spend remaining</span><strong id="m22RecurringReserve">£0.00</strong></div>
-        <div class="m22-protect-item"><span>Total Holding requirement</span><strong id="m22HoldingRequirement">£0.00</strong></div>
-        <div class="m22-protect-item"><span>Holding Pot now</span><strong id="m22HoldingNow">£0.00</strong></div>
-        <div class="m22-protect-item"><span>Urgent top-up</span><strong id="m22UrgentHolding">£0.00</strong></div>
-        <div class="m22-protect-item"><span>Regular payday contribution</span><strong id="m22RegularHolding">£0.00</strong></div>
-        <div class="m22-protect-item"><span>Long-term commitments</span><strong id="m25LongTermTarget">£0.00</strong></div>
-        <div class="m22-protect-item"><span>Long-term funding gap</span><strong id="m25LongTermGap">£0.00</strong></div>
-      </div>
+        <div class="m33-hidden-values" aria-hidden="true">
+          <span id="m15SumExpected">£0.00</span><span id="m15SumExtra">£0.00</span><span id="m22SumShortfall">£0.00</span><span id="m15SumAvailable">£0.00</span>
+        </div>
 
-      <div class="m22-callout" id="m15Instruction">Aurora is building the payday instruction.</div>
-      <div class="m22-status" id="m22Status"></div>
+        <div class="m22-callout" id="m15Instruction">Aurora is building the payday instruction.</div>
+        <div class="m22-status" id="m22Status"></div>
 
-      <div class="m22-wallet">
-        <div class="m22-wallet-card"><span>Current-account wage</span><strong id="m22WalletTotal">£0.00</strong></div>
-        <div class="m22-wallet-card"><span>Transfers completed</span><strong id="m22WalletExecuted">£0.00</strong></div>
-        <div class="m22-wallet-card"><span>Transfers still planned</span><strong id="m22WalletRemaining">£0.00</strong></div>
-        <div class="m22-wallet-card"><span>Deliberately retained</span><strong id="m22WalletBuffered">£0.00</strong></div>
-      </div>
-      <div><div class="m22-progress"><div class="m22-progress-fill" id="m22ProgressFill"></div></div><div class="m22-progress-meta"><span id="m22ProgressText">0 of 0 moves completed</span><span id="m22LockText">Plan editable</span></div></div>
+        <div class="m33-progress-wrap">
+          <div class="m33-progress-head"><span>Mission execution</span><strong id="m22ProgressText">0 of 0 moves completed</strong></div>
+          <div class="m22-progress"><div class="m22-progress-fill" id="m22ProgressFill"></div></div>
+          <div class="m22-progress-meta"><span id="m22LockText">Plan editable</span><span id="m33MissionSafety">Protected planning active</span></div>
+        </div>
 
-      <div class="m25-reconcile" id="m25ReconcilePanel">
-        <div class="m25-reconcile-card"><span>Wage received</span><strong id="m25RecWage">£0.00</strong></div>
-        <div class="m25-reconcile-card"><span>Transfers completed</span><strong id="m25RecCompleted">£0.00</strong></div>
-        <div class="m25-reconcile-card"><span>Transfers still pending</span><strong id="m25RecPending">£0.00</strong></div>
-        <div class="m25-reconcile-card"><span>Current account now</span><strong id="m25RecCurrent">£0.00</strong></div>
-        <div class="m25-reconcile-card"><span>Deliberately retained</span><strong id="m25RecRetained">£0.00</strong></div>
-        <div class="m25-reconcile-card" id="m25DifferenceCard"><span>Unexplained difference</span><strong id="m25RecDifference">£0.00</strong></div>
-      </div>
-      <div class="m25-reconcile-note" id="m25ReconcileNote">Every pound should equal a completed transfer, a pending transfer or money deliberately retained in the current account.</div>
-
-      <div class="m22-grid">
-        <div class="m22-panel">
-          <div class="m22-panel-head"><h3>Payday execution checklist</h3><small id="m15AllocationTotal">£0.00 planned</small></div>
+        <div class="m33-execution-board">
+          <div class="m22-panel-head"><h3>Payday execution checklist</h3><small>PRESS EACH MOVE ONCE</small></div>
           <div class="m22-action-list" id="m15AllocationList"></div>
         </div>
-        <div class="m22-panel">
-          <div class="m22-panel-head"><h3>Execution order</h3><small>PROTECT → FUND → INVEST</small></div>
-          <div class="m22-route" id="m15Route"></div>
+
+        <div class="m22-actions m33-primary-actions">
+          <button class="m22-btn" id="m15UseFullExtra" type="button">Allocate All Extra</button>
+          <button class="m22-btn" id="m15UseHalfExtra" type="button">Half Extra / Half Buffer</button>
+          <button class="m22-btn" id="m15CopyPlan" type="button">Copy Plan</button>
+          <button class="m22-btn primary m33-complete" id="m22CompletePayday" type="button" disabled>Complete Payday Mission</button>
+          <button class="m22-btn danger" id="m22ResetMission" type="button">Reset Draft</button>
+          <button class="m22-btn primary" id="m22NewMission" type="button" style="display:none">Start Next Payday</button>
         </div>
-      </div>
 
-      <div class="m25-control-grid">
-        <div class="m22-panel">
-          <div class="m22-panel-head"><h3>Due-date sinking-fund engine</h3><small id="m25SinkingTotal">£0.00 THIS PAYDAY</small></div>
-          <div class="m25-sinking-summary" id="m25SinkingSummary"></div>
-          <div class="m25-sinking-list" id="m25SinkingList"></div>
+        <details class="m33-advanced">
+          <summary><span>Open mission intelligence</span><small>Protection, reconciliation, route and receipts</small></summary>
+          <div class="m33-advanced-body">
+            <div class="m22-summary-grid">
+              <div class="m22-summary" style="--c:#22d3ee"><span>Expected pay</span><strong id="m33ExpectedMirror">—</strong></div>
+              <div class="m22-summary" style="--c:#60a5fa"><span>Actual pay</span><strong id="m33ActualMirror">—</strong></div>
+              <div class="m22-summary" style="--c:#34d399"><span>Extra / overtime</span><strong id="m33ExtraMirror">—</strong></div>
+              <div class="m22-summary" style="--c:#fb7185"><span>Pay shortfall</span><strong id="m33ShortfallMirror">—</strong></div>
+            </div>
+
+            <div class="m22-protection">
+              <div class="m22-protect-item"><span>Minimum buffer</span><strong id="m22MinimumBuffer">£0.00</strong></div>
+              <div class="m22-protect-item"><span>Bills before next payday</span><strong id="m22BillsReserve">£0.00</strong></div>
+              <div class="m22-protect-item"><span>Monthly spend remaining</span><strong id="m22RecurringReserve">£0.00</strong></div>
+              <div class="m22-protect-item"><span>Total Holding requirement</span><strong id="m22HoldingRequirement">£0.00</strong></div>
+              <div class="m22-protect-item"><span>Holding Pot now</span><strong id="m22HoldingNow">£0.00</strong></div>
+              <div class="m22-protect-item"><span>Urgent top-up</span><strong id="m22UrgentHolding">£0.00</strong></div>
+              <div class="m22-protect-item"><span>Regular contribution</span><strong id="m22RegularHolding">£0.00</strong></div>
+              <div class="m22-protect-item"><span>Long-term commitments</span><strong id="m25LongTermTarget">£0.00</strong></div>
+              <div class="m22-protect-item"><span>Long-term funding gap</span><strong id="m25LongTermGap">£0.00</strong></div>
+            </div>
+
+            <div class="m22-wallet">
+              <div class="m22-wallet-card"><span>Planned mission total</span><strong id="m22WalletTotal">£0.00</strong></div>
+              <div class="m22-wallet-card"><span>Transfers completed</span><strong id="m22WalletExecuted">£0.00</strong></div>
+              <div class="m22-wallet-card"><span>Transfers still planned</span><strong id="m22WalletRemaining">£0.00</strong></div>
+              <div class="m22-wallet-card"><span>Deliberately retained</span><strong id="m33RetainedMirror">£0.00</strong></div>
+            </div>
+
+            <div class="m25-reconcile" id="m25ReconcilePanel">
+              <div class="m25-reconcile-card"><span>Wage received</span><strong id="m25RecWage">£0.00</strong></div>
+              <div class="m25-reconcile-card"><span>Transfers completed</span><strong id="m25RecCompleted">£0.00</strong></div>
+              <div class="m25-reconcile-card"><span>Transfers still pending</span><strong id="m25RecPending">£0.00</strong></div>
+              <div class="m25-reconcile-card"><span>Current account now</span><strong id="m25RecCurrent">£0.00</strong></div>
+              <div class="m25-reconcile-card"><span>Deliberately retained</span><strong id="m25RecRetained">£0.00</strong></div>
+              <div class="m25-reconcile-card" id="m25DifferenceCard"><span>Unexplained difference</span><strong id="m25RecDifference">£0.00</strong></div>
+            </div>
+            <div class="m25-reconcile-note" id="m25ReconcileNote">Every pound should equal a completed transfer, a pending transfer or money deliberately retained in the current account.</div>
+
+            <div class="m22-grid">
+              <div class="m22-panel">
+                <div class="m22-panel-head"><h3>Execution order</h3><small>LIVE ROUTE</small></div>
+                <div class="m22-route" id="m15Route"></div>
+              </div>
+              <div class="m22-panel">
+                <div class="m22-panel-head"><h3>Due-date sinking-fund engine</h3><small id="m25SinkingTotal">£0.00 THIS PAYDAY</small></div>
+                <div class="m25-sinking-summary" id="m25SinkingSummary"></div>
+                <div class="m25-sinking-list" id="m25SinkingList"></div>
+              </div>
+            </div>
+
+            <div class="m22-panel">
+              <div class="m22-panel-head"><h3>Duplicate-cost audit</h3><small id="m25AuditBadge">CHECKING</small></div>
+              <div class="m25-audit-list" id="m25AuditList"></div>
+            </div>
+
+            <div class="m22-panel">
+              <div class="m22-panel-head"><h3>Recent payday receipts</h3><small>LOCAL HISTORY</small></div>
+              <div class="m22-history" id="m22History"></div>
+            </div>
+          </div>
+        </details>
+
+        <div class="m22-receipt" id="m22Receipt"></div>
+      </article>
+
+      <aside class="m33-scenario-card">
+        <div class="m33-card-head scenario">
+          <div>
+            <span class="m33-kicker scenario">SCENARIO LAB</span>
+            <h3>Test it before you commit.</h3>
+            <p>Nothing here changes the live payday mission until you press Apply Scenario.</p>
+          </div>
+          <span class="m33-sim-badge">SIMULATION ONLY</span>
         </div>
-        <div class="m22-panel">
-          <div class="m22-panel-head"><h3>Duplicate-cost audit</h3><small id="m25AuditBadge">CHECKING</small></div>
-          <div class="m25-audit-list" id="m25AuditList"></div>
+
+        <div class="m33-mode-tabs" role="group" aria-label="Scenario mode">
+          <button type="button" data-m33-mode="baseline">Baseline</button>
+          <button type="button" data-m33-mode="overtime" class="active">Overtime</button>
+          <button type="button" data-m33-mode="custom">Custom</button>
         </div>
-      </div>
 
-      <div class="m22-actions">
-        <button class="m22-btn" id="m15UseFullExtra" type="button">Allocate All Extra Pay</button>
-        <button class="m22-btn" id="m15UseHalfExtra" type="button">Allocate Half, Buffer Half</button>
-        <button class="m22-btn" id="m15CopyPlan" type="button">Copy Payday Plan</button>
-        <button class="m22-btn primary" id="m22CompletePayday" type="button" disabled>Complete Payday</button>
-        <button class="m22-btn danger" id="m22ResetMission" type="button">Reset Draft</button>
-        <button class="m22-btn primary" id="m22NewMission" type="button" style="display:none">Start Next Payday</button>
-      </div>
+        <div class="m33-scenario-note" id="m33ModeNote">Overtime mode starts with your £800 planning assumption.</div>
 
-      <div class="m22-receipt" id="m22Receipt"></div>
+        <div class="m33-scenario-inputs">
+          <div class="m33-field featured"><label for="m33ScenarioPay">Scenario pay received</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioPay" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field"><label for="m33ScenarioShares">Shares</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioShares" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field"><label for="m33ScenarioLifestyle">Spending Pot</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioLifestyle" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field"><label for="m33ScenarioGoals">Other goal pots</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioGoals" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field"><label for="m33ScenarioHouse">House Pot boost</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioHouse" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field"><label for="m33ScenarioEmergency">Emergency Fund boost</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioEmergency" type="number" min="0" step="0.01"></div></div>
+        </div>
 
-      <div class="m22-panel">
-        <div class="m22-panel-head"><h3>Recent payday receipts</h3><small>LOCAL HISTORY</small></div>
-        <div class="m22-history" id="m22History"></div>
-      </div>
+        <div class="m33-scenario-verdict" id="m33ScenarioVerdict" data-state="healthy">
+          <div><span>Scenario status</span><strong id="m33ScenarioStatus">HEALTHY</strong></div>
+          <div class="m33-verdict-orb"><span id="m33ScenarioScore">100</span><small>/100</small></div>
+        </div>
+
+        <div class="m33-scenario-kpis">
+          <div><span>Protection</span><strong id="m33ScenarioProtection">£0.00</strong></div>
+          <div><span>Total allocated</span><strong id="m33ScenarioAllocated">£0.00</strong></div>
+          <div><span>Retained</span><strong id="m33ScenarioRetained">£0.00</strong></div>
+        </div>
+
+        <div class="m33-allocation-stack" id="m33AllocationStack" aria-label="Scenario allocation breakdown"></div>
+
+        <div class="m33-comparison">
+          <div class="m33-comparison-head"><h4>Live plan vs scenario</h4><span id="m33ScenarioDifference">£0.00 change</span></div>
+          <div class="m33-compare-table">
+            <div class="m33-compare-row head"><span>Allocation</span><span>Live</span><span>Scenario</span><span>Change</span></div>
+            <div id="m33ComparisonBody"></div>
+          </div>
+        </div>
+
+        <div class="m33-insight" id="m33ScenarioInsight">Aurora is analysing this scenario.</div>
+
+        <div class="m33-scenario-actions">
+          <button type="button" id="m33ResetScenario">Reset</button>
+          <button type="button" class="primary" id="m33ApplyScenario">Apply Scenario to Live Plan</button>
+        </div>
+        <div class="m33-apply-status" id="m33ApplyStatus" aria-live="polite"></div>
+      </aside>
     </div>
   </section>
 
@@ -6129,7 +6273,7 @@ function m15PotPriority(p){return Math.max(1,Math.min(3,Number(p?.priority||2)))
 function m15PotGap(p){return Math.max(0,Number(p?.target||0)-Number(p?.balance||0))}
 function m22IsoDate(date){if(!(date instanceof Date)||Number.isNaN(date.getTime()))return "";return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`}
 function m22DefaultPayday(){try{return m22IsoDate(getNextPaydayDate())}catch(error){return m22IsoDate(new Date())}}
-function m22FreshMission(paydayDate){return {version:22,id:`payday-${paydayDate||m22DefaultPayday()}-${Date.now()}`,paydayDate:paydayDate||m22DefaultPayday(),inputs:{expected:2100,actual:2100,coreInvestment:1500,lifestyle:250,goalPots:250,extraAllocate:0,strategy:"priority",platform:"ig",extraEdited:false},executed:{},plan:null,completed:false,startedAt:"",completedAt:"",receipt:null}}
+function m22FreshMission(paydayDate){return {version:22,id:`payday-${paydayDate||m22DefaultPayday()}-${Date.now()}`,paydayDate:paydayDate||m22DefaultPayday(),inputs:{expected:2100,actual:2100,coreInvestment:1500,lifestyle:250,goalPots:250,houseBoost:0,emergencyBoost:0,extraAllocate:0,strategy:"priority",platform:"ig",extraEdited:false},executed:{},plan:null,completed:false,startedAt:"",completedAt:"",receipt:null}}
 function m22EnsureState(){
   if(!Array.isArray(plannerState.paydayHistory))plannerState.paydayHistory=[];
   if(!plannerState.paydayMission||plannerState.paydayMission.version!==22)plannerState.paydayMission=m22FreshMission();
@@ -6140,7 +6284,7 @@ function m22EnsureState(){
 function m22Save(){if(typeof savePlannerData==="function")savePlannerData();else try{localStorage.setItem("auroraSpendingPlanner",JSON.stringify(plannerState))}catch(error){console.warn(error)}}
 function m22Escape(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
 function m22ShowStatus(message,isError=false){const box=document.getElementById("m22Status");if(!box)return;box.textContent=message;box.classList.toggle("error",Boolean(isError));box.classList.add("show");clearTimeout(window.m22StatusTimer);window.m22StatusTimer=setTimeout(()=>box.classList.remove("show"),5200)}
-function m22InputSnapshot(){return {expected:m15Value("m15ExpectedPay"),actual:m15Value("m15ActualPay"),coreInvestment:m15Value("m22CoreInvestment"),lifestyle:m15Value("m22Lifestyle"),goalPots:m15Value("m22GoalPots"),extraAllocate:m15Value("m15AllocateExtra"),strategy:document.getElementById("m15Strategy")?.value||"priority",platform:document.getElementById("m22InvestmentPlatform")?.value||"ig",extraEdited:Boolean(document.getElementById("m15AllocateExtra")?.dataset.userEdited==="1")}}
+function m22InputSnapshot(){return {expected:m15Value("m15ExpectedPay"),actual:m15Value("m15ActualPay"),coreInvestment:m15Value("m22CoreInvestment"),lifestyle:m15Value("m22Lifestyle"),goalPots:m15Value("m22GoalPots"),houseBoost:m15Value("m33LiveHouseBoost"),emergencyBoost:m15Value("m33LiveEmergencyBoost"),extraAllocate:m15Value("m15AllocateExtra"),strategy:document.getElementById("m15Strategy")?.value||"priority",platform:document.getElementById("m22InvestmentPlatform")?.value||"ig",extraEdited:Boolean(document.getElementById("m15AllocateExtra")?.dataset.userEdited==="1")}}
 function m22SyncHiddenSimulator(inputs){
   const map={simPayInput:inputs.expected,simInvestInput:inputs.coreInvestment,simLifestyleInput:inputs.lifestyle,simGoalsInput:inputs.goalPots};
   Object.entries(map).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.value=Number(value||0).toFixed(2)});
@@ -6148,7 +6292,7 @@ function m22SyncHiddenSimulator(inputs){
 function m22HydrateInputs(){
   const mission=m22EnsureState(),i=mission.inputs||{};
   const set=(id,value)=>{const el=document.getElementById(id);if(el)el.value=value??""};
-  set("m22PaydayDate",mission.paydayDate||m22DefaultPayday());set("m15ExpectedPay",i.expected);set("m15ActualPay",i.actual);set("m22CoreInvestment",i.coreInvestment);set("m22Lifestyle",i.lifestyle);set("m22GoalPots",i.goalPots);set("m15AllocateExtra",i.extraAllocate);set("m15Strategy",i.strategy);set("m22InvestmentPlatform",i.platform);
+  set("m22PaydayDate",mission.paydayDate||m22DefaultPayday());set("m15ExpectedPay",i.expected);set("m15ActualPay",i.actual);set("m22CoreInvestment",i.coreInvestment);set("m22Lifestyle",i.lifestyle);set("m22GoalPots",i.goalPots);set("m33LiveHouseBoost",i.houseBoost||0);set("m33LiveEmergencyBoost",i.emergencyBoost||0);set("m15AllocateExtra",i.extraAllocate);set("m15Strategy",i.strategy);set("m22InvestmentPlatform",i.platform);
   const extra=document.getElementById("m15AllocateExtra");if(extra)extra.dataset.userEdited=i.extraEdited?"1":"0";
   m22SyncHiddenSimulator(i);
 }
@@ -6203,6 +6347,21 @@ function m22InvestmentActions(amount,platform,prefix="core"){
   if(platform==="split"){const first=Math.round(total*50)/100;return [{id:`${prefix}:investment:ig`,name:"IG ISA",amount:first,type:"investment",meta:"Investment transfer • 50% split"},{id:`${prefix}:investment:t212`,name:"Trading 212 ISA",amount:total-first,type:"investment",meta:"Investment transfer • 50% split"}]}
   const name=platform==="t212"?"Trading 212 ISA":"IG ISA";return [{id:`${prefix}:investment:${platform}`,name,amount:total,type:"investment",meta:prefix==="core"?"Core payday share contribution":"Extra pay routed to investments"}]
 }
+
+function m33FindSpecialPot(kind){
+  const pots=Array.isArray(plannerState.editablePots)?plannerState.editablePots:[];
+  const words=kind==="house"?["house","home","renovation","project"]:["emergency","rainy","safety","reserve"];
+  return pots.find(p=>words.some(word=>String(p?.name||"").toLowerCase().includes(word)))||null;
+}
+function m33BuildSpecialPotAction(amount,kind,prefix="regular"){
+  const requested=Math.max(0,Number(amount||0));if(requested<=.009)return {actions:[],unused:0,used:0};
+  const pot=m33FindSpecialPot(kind);if(!pot)return {actions:[],unused:requested,used:0};
+  const gap=m15PotGap(pot);const used=Math.min(requested,gap);
+  if(used<=.009)return {actions:[],unused:requested,used:0};
+  const label=kind==="house"?"House Pot":"Emergency Fund";
+  return {actions:[{id:`${prefix}:pot:${pot.id||pot.name}`,name:pot.name||label,amount:used,type:"pot",potId:pot.id||pot.name,meta:`Scenario priority boost • ${m15Money(gap)} target gap`}],unused:Math.max(0,requested-used),used};
+}
+
 function m22ComputePlan(){
   const mission=m22EnsureState();const inputs=m22InputSnapshot();const protection=m22BillProtection(mission.paydayDate);
   const expected=inputs.expected,actual=inputs.actual,extra=Math.max(0,actual-expected),shortfall=Math.max(0,expected-actual);
@@ -6210,14 +6369,19 @@ function m22ComputePlan(){
   const urgentHoldingAmount=Math.min(protection.topUp,available);if(urgentHoldingAmount>.009){actions.push({id:"holding:protection",name:"Holding Pot urgent protection",amount:urgentHoldingAmount,type:"holding",holdingKind:"urgent",meta:`Immediate cover for ${m15Money(protection.minimum)} buffer + ${m15Money(protection.bills)} bills + ${m15Money(protection.recurring)} monthly spending`});available-=urgentHoldingAmount}
   const regularHoldingTarget=m24RegularHoldingContribution();
   const regularHoldingAmount=Math.min(regularHoldingTarget,available);if(regularHoldingAmount>.009){actions.push({id:"holding:regular",name:"Holding Pot regular contribution",amount:regularHoldingAmount,type:"holding",holdingKind:"regular",meta:`Long-range planner funding across 13 four-weekly paydays • dashboard move ${m15Money(regularHoldingTarget)}`});available-=regularHoldingAmount}
-  let regularBudget=available;let lifestyle=inputs.lifestyle,goals=inputs.goalPots,core=inputs.coreInvestment;
-  let deficit=Math.max(0,lifestyle+goals+core-regularBudget);
+  let regularBudget=available;
+  let lifestyle=inputs.lifestyle,goals=inputs.goalPots,houseBoost=inputs.houseBoost||0,emergencyBoost=inputs.emergencyBoost||0,core=inputs.coreInvestment;
+  let deficit=Math.max(0,lifestyle+goals+houseBoost+emergencyBoost+core-regularBudget);
   const lifestyleCut=Math.min(lifestyle,deficit);lifestyle-=lifestyleCut;deficit-=lifestyleCut;
   const goalsCut=Math.min(goals,deficit);goals-=goalsCut;deficit-=goalsCut;
+  const houseCut=Math.min(houseBoost,deficit);houseBoost-=houseCut;deficit-=houseCut;
+  const emergencyCut=Math.min(emergencyBoost,deficit);emergencyBoost-=emergencyCut;deficit-=emergencyCut;
   const coreCut=Math.min(core,deficit);core-=coreCut;deficit-=coreCut;
   if(lifestyle>.009){actions.push({id:"regular:lifestyle",name:"Spending Pot",amount:lifestyle,type:"lifestyle",potId:"spending_pot",meta:lifestyleCut>0?`Reduced by ${m15Money(lifestyleCut)} under low-pay protection`:"Four-week lifestyle allocation"});regularBudget-=lifestyle}
-  const goalResult=m22BuildPotActions(goals,"priority","regular",["spending_pot"]);actions.push(...goalResult.actions);regularBudget-=goalResult.actions.reduce((s,a)=>s+a.amount,0);
-  const coreActions=m22InvestmentActions(core,inputs.platform,"core");actions.push(...coreActions);regularBudget-=coreActions.reduce((s,a)=>s+a.amount,0);
+  const houseResult=m33BuildSpecialPotAction(houseBoost,"house","regular");actions.push(...houseResult.actions);regularBudget-=houseResult.used;goals+=houseResult.unused;
+  const emergencyResult=m33BuildSpecialPotAction(emergencyBoost,"emergency","regular");actions.push(...emergencyResult.actions);regularBudget-=emergencyResult.used;goals+=emergencyResult.unused;
+  const goalResult=m22BuildPotActions(goals,"priority","regular",["spending_pot",...(houseResult.actions.map(a=>a.potId)),...(emergencyResult.actions.map(a=>a.potId))]);actions.push(...goalResult.actions);regularBudget-=goalResult.actions.reduce((sum,a)=>sum+a.amount,0);
+  const coreActions=m22InvestmentActions(core,inputs.platform,"core");actions.push(...coreActions);regularBudget-=coreActions.reduce((sum,a)=>sum+a.amount,0);
   available=Math.max(0,regularBudget);
   const extraAvailable=Math.min(extra,available);const extraRequested=Math.min(extraAvailable,inputs.extraAllocate);let extraRemaining=extraRequested;
   if(extraRemaining>.009){
@@ -6226,13 +6390,13 @@ function m22ComputePlan(){
     available-=extraRequested;
   }
   const buffered=Math.max(0,available);if(buffered>.009)actions.push({id:"buffer:retained",name:"Keep buffered",amount:buffered,type:"buffer",meta:"Leave uncommitted in the payday account until the cycle settles"});
-  const planned=actions.reduce((s,a)=>s+a.amount,0);
+  const planned=actions.reduce((sum,a)=>sum+a.amount,0);
   const unresolvedProtection=Math.max(0,protection.topUp-urgentHoldingAmount);
   const unresolvedRegularHolding=Math.max(0,regularHoldingTarget-regularHoldingAmount);
   const holdingAmount=urgentHoldingAmount+regularHoldingAmount;
-  return {logicVersion:24,createdAt:new Date().toISOString(),paydayDate:mission.paydayDate,inputs,protection,expected,actual,extra,shortfall,holdingAmount,urgentHoldingAmount,regularHoldingTarget,regularHoldingAmount,lifestyleCut,goalsCut,coreCut,unresolvedProtection,unresolvedRegularHolding,actions,planned,buffered};
+  return {logicVersion:25,createdAt:new Date().toISOString(),paydayDate:mission.paydayDate,inputs,protection,expected,actual,extra,shortfall,holdingAmount,urgentHoldingAmount,regularHoldingTarget,regularHoldingAmount,lifestyleCut,goalsCut,houseCut,emergencyCut,coreCut,unresolvedProtection,unresolvedRegularHolding,actions,planned,buffered};
 }
-function m22CurrentPlan(){const mission=m22EnsureState();if(mission.plan&&mission.plan.logicVersion!==24&&!m22AnyExecuted()&&!mission.completed)mission.plan=null;return mission.plan||m22ComputePlan()}
+function m22CurrentPlan(){const mission=m22EnsureState();if(mission.plan&&mission.plan.logicVersion!==25&&!m22AnyExecuted()&&!mission.completed)mission.plan=null;return mission.plan||m22ComputePlan()}
 function m22AnyExecuted(){return Object.keys(m22EnsureState().executed||{}).length>0}
 function m22ActionDone(action){const record=m22EnsureState().executed?.[action.id];return Boolean(record&&Math.abs(Number(record.amount||0)-Number(action.amount||0))<.011)}
 function m22ExecutedTotal(plan){return plan.actions.reduce((sum,a)=>sum+(m22ActionDone(a)?a.amount:0),0)}
@@ -6256,7 +6420,7 @@ function m22Instruction(plan){
   if(plan.unresolvedProtection>.009){el.className="m22-callout risk";el.innerHTML=`Actual pay cannot fully cover the urgent Holding Pot requirement. The plan is still short by <strong>${m15Money(plan.unresolvedProtection)}</strong>, so flexible pots and investing have been reduced first.`;return}
   if(plan.unresolvedRegularHolding>.009){el.className="m22-callout risk";el.innerHTML=`Urgent bills are protected, but this wage cannot fully make the regular Holding Pot contribution. <strong>${m15Money(plan.unresolvedRegularHolding)}</strong> remains unfunded after prioritising essential protection.`;return}
   if(plan.shortfall>.009){el.className="m22-callout watch";el.innerHTML=`Pay is <strong>${m15Money(plan.shortfall)} below expected</strong>. Aurora has still reserved <strong>${m15Money(plan.regularHoldingAmount)}</strong> for the regular Holding Pot contribution, then reduced lifestyle by <strong>${m15Money(plan.lifestyleCut)}</strong>, goal pots by <strong>${m15Money(plan.goalsCut)}</strong> and shares by <strong>${m15Money(plan.coreCut)}</strong>.`;return}
-  if(plan.extra>.009){el.className="m22-callout good";el.innerHTML=`You received <strong>${m15Money(plan.extra)} extra</strong>. The mission includes the regular Holding Pot contribution of <strong>${m15Money(plan.regularHoldingAmount)}</strong>, allocates <strong>${m15Money(Math.min(plan.extra,plan.inputs.extraAllocate))}</strong> of the extra, and keeps the remainder buffered.`;return}
+  if(plan.extra>.009){el.className="m22-callout good";el.innerHTML=`You received <strong>${m15Money(plan.extra)} extra</strong>. Aurora has protected the Holding Pot first, followed your chosen live allocations, and left any money not assigned to a transfer safely buffered in the current account.`;return}
   el.className="m22-callout good";el.innerHTML=`Normal payday plan ready. Aurora has included <strong>${m15Money(plan.regularHoldingAmount)}</strong> regular Holding Pot funding before lifestyle, goal pots, shares and the final buffer.`;
 }
 function m22RenderHistory(){const host=document.getElementById("m22History");if(!host)return;const history=(plannerState.paydayHistory||[]).slice(-6).reverse();host.innerHTML=history.length?history.map(item=>`<div class="m22-history-row"><span>${m22Escape(dateLabel(item.paydayDate))}</span><strong>${m22Escape(item.summary||"Payday completed")}</strong><strong>${m15Money(item.actualPay||0)}</strong></div>`).join(""):'<div class="m22-empty">No completed payday receipts yet.</div>'}
@@ -6286,7 +6450,8 @@ function m22Render(){
   }
   const route=document.getElementById("m15Route");if(route)route.innerHTML=plan.actions.map((a,i)=>`<div class="m22-route-step"><div class="m22-step-no">${i+1}</div><div><div class="m22-step-title">${m22Escape(a.name)}</div><div class="m22-step-meta">${m22Escape(a.meta)}</div></div><div class="m22-step-amount">${m15Money(a.amount)}</div></div>`).join("");
   const complete=document.getElementById("m22CompletePayday");if(complete)complete.disabled=mission.completed||!totalCount||doneCount!==totalCount;const reset=document.getElementById("m22ResetMission");if(reset)reset.style.display=mission.completed?"none":"";const next=document.getElementById("m22NewMission");if(next)next.style.display=mission.completed?"":"none";
-  m22RenderReceipt();m22RenderHistory();m22Save();if(typeof m13Render==="function")m13Render();
+  m15Set("m33PlannedTotal",m15Money(plan.planned));m15Set("m33ExpectedMirror",m15Money(plan.expected));m15Set("m33ActualMirror",m15Money(plan.actual));m15Set("m33ExtraMirror",m15Money(plan.extra));m15Set("m33ShortfallMirror",m15Money(plan.shortfall));m15Set("m33RetainedMirror",m15Money(plan.buffered));m15Set("m33LivePayNote",plan.extra>.009?`${m15Money(plan.extra)} above expected`:plan.shortfall>.009?`${m15Money(plan.shortfall)} below expected`:"Wage matches expectation");
+  m22RenderReceipt();m22RenderHistory();m22Save();if(typeof m13Render==="function")m13Render();if(typeof m33RenderScenario==="function")m33RenderScenario();
 }
 function m15Render(){m22Render()}
 function m22InputChanged(event){const mission=m22EnsureState();if(mission.plan||m22AnyExecuted()||mission.completed)return;if(event?.target?.id==="m15AllocateExtra")event.target.dataset.userEdited="1";if(event?.target?.id==="m15ActualPay"||event?.target?.id==="m15ExpectedPay"){const expected=m15Value("m15ExpectedPay"),actual=m15Value("m15ActualPay"),extra=Math.max(0,actual-expected),field=document.getElementById("m15AllocateExtra");if(field&&field.dataset.userEdited!=="1")field.value=extra.toFixed(2)}mission.paydayDate=document.getElementById("m22PaydayDate")?.value||m22DefaultPayday();mission.inputs=m22InputSnapshot();mission.plan=null;m22Save();m22Render()}
@@ -6306,6 +6471,93 @@ document.getElementById("m15UseFullExtra")?.addEventListener("click",()=>{const 
 document.getElementById("m15UseHalfExtra")?.addEventListener("click",()=>{const extra=Math.max(0,m15Value("m15ActualPay")-m15Value("m15ExpectedPay")),f=document.getElementById("m15AllocateExtra");f.value=(extra/2).toFixed(2);f.dataset.userEdited="1";m22InputChanged({target:f})});
 document.getElementById("m15CopyPlan")?.addEventListener("click",m22CopyPlan);document.getElementById("m22CompletePayday")?.addEventListener("click",m22CompletePayday);document.getElementById("m22ResetMission")?.addEventListener("click",m22ResetDraft);document.getElementById("m22NewMission")?.addEventListener("click",m22StartNextMission);
 window.addEventListener("load",()=>{m22HydrateInputs();m22Render()});
+</script>
+
+
+<script>
+/* ===================== M33 PAYDAY SCENARIO LAB ===================== */
+const m33ScenarioState={mode:"overtime",initialised:false,userEdited:false};
+function m33Num(id){return Math.max(0,Number(document.getElementById(id)?.value||0))}
+function m33SetValue(id,value){const el=document.getElementById(id);if(el)el.value=Number(value||0).toFixed(2)}
+function m33LiveBreakdown(plan){
+  const result={holding:Number(plan?.holdingAmount||0),lifestyle:0,goals:0,house:0,emergency:0,shares:0,retained:Number(plan?.buffered||0)};
+  (plan?.actions||[]).forEach(action=>{
+    if(action.type==="lifestyle")result.lifestyle+=Number(action.amount||0);
+    else if(action.type==="investment")result.shares+=Number(action.amount||0);
+    else if(action.type==="pot"){
+      const name=String(action.name||"").toLowerCase();
+      if(name.includes("house")||name.includes("home")||name.includes("renovation"))result.house+=Number(action.amount||0);
+      else if(name.includes("emergency")||name.includes("rainy")||name.includes("safety"))result.emergency+=Number(action.amount||0);
+      else result.goals+=Number(action.amount||0);
+    }
+  });
+  return result;
+}
+function m33SeedScenario(mode=m33ScenarioState.mode){
+  const plan=m22CurrentPlan();const live=m33LiveBreakdown(plan);const expected=Number(plan.expected||2100);const currentExtra=Math.max(0,Number(plan.actual||0)-expected);
+  m33ScenarioState.mode=mode;m33ScenarioState.initialised=true;m33ScenarioState.userEdited=false;
+  let pay=Number(plan.actual||expected);
+  if(mode==="baseline")pay=expected;
+  if(mode==="overtime")pay=expected+(currentExtra>0?currentExtra:800);
+  m33SetValue("m33ScenarioPay",pay);m33SetValue("m33ScenarioShares",live.shares||Number(plan.inputs?.coreInvestment||0));m33SetValue("m33ScenarioLifestyle",live.lifestyle||Number(plan.inputs?.lifestyle||0));m33SetValue("m33ScenarioGoals",live.goals||Number(plan.inputs?.goalPots||0));m33SetValue("m33ScenarioHouse",live.house||Number(plan.inputs?.houseBoost||0));m33SetValue("m33ScenarioEmergency",live.emergency||Number(plan.inputs?.emergencyBoost||0));
+  document.querySelectorAll("[data-m33-mode]").forEach(btn=>btn.classList.toggle("active",btn.dataset.m33Mode===mode));
+  const note=document.getElementById("m33ModeNote");if(note)note.textContent=mode==="baseline"?"Baseline mirrors the expected wage and current allocation priorities.":mode==="overtime"?`Overtime mode starts with ${m15Money(currentExtra>0?currentExtra:800)} above expected pay.`:"Custom mode keeps every value under your control.";
+  m33RenderScenario();
+}
+function m33ComputeScenario(){
+  const plan=m22CurrentPlan();const protection=m22BillProtection(m22EnsureState().paydayDate);const pay=m33Num("m33ScenarioPay");
+  const urgent=Math.min(protection.topUp,pay);let left=Math.max(0,pay-urgent);const regularTarget=m24RegularHoldingContribution();const regular=Math.min(regularTarget,left);left=Math.max(0,left-regular);
+  let lifestyle=m33Num("m33ScenarioLifestyle"),goals=m33Num("m33ScenarioGoals"),house=m33Num("m33ScenarioHouse"),emergency=m33Num("m33ScenarioEmergency"),shares=m33Num("m33ScenarioShares");
+  let deficit=Math.max(0,lifestyle+goals+house+emergency+shares-left);
+  const trim=(key)=>{const cut=Math.min(key.value,deficit);key.value-=cut;deficit-=cut;return cut};
+  const l={value:lifestyle},g={value:goals},h={value:house},e={value:emergency},sh={value:shares};
+  const cuts={lifestyle:trim(l),goals:trim(g),house:trim(h),emergency:trim(e),shares:trim(sh)};lifestyle=l.value;goals=g.value;house=h.value;emergency=e.value;shares=sh.value;
+  const allocated=urgent+regular+lifestyle+goals+house+emergency+shares;const retained=Math.max(0,pay-allocated);const unresolved=Math.max(0,protection.topUp-urgent)+Math.max(0,regularTarget-regular);
+  let state="healthy",label="HEALTHY";if(unresolved>.009){state="risk";label="UNPROTECTED"}else if(Object.values(cuts).reduce((a,b)=>a+b,0)>.009){state="risk";label="AUTO-REDUCED"}else if(retained<100){state="tight";label="TIGHT"}
+  const score=Math.max(0,Math.min(100,Math.round(100-(unresolved/pay*100||0)-(Object.values(cuts).reduce((a,b)=>a+b,0)/(pay||1)*60)-(retained<100?(100-retained)/2:0))));
+  return {plan,pay,urgent,regular,protection:urgent+regular,lifestyle,goals,house,emergency,shares,allocated,retained,unresolved,cuts,state,label,score};
+}
+function m33Diff(value){const n=Number(value||0);return `${n>0?"+":n<0?"−":""}${m15Money(Math.abs(n))}`}
+function m33RenderScenario(){
+  if(!document.getElementById("m33ScenarioPay"))return;
+  if(!m33ScenarioState.initialised){m33SeedScenario("overtime");return}
+  const scenario=m33ComputeScenario(),live=m33LiveBreakdown(scenario.plan);
+  const verdict=document.getElementById("m33ScenarioVerdict");if(verdict)verdict.dataset.state=scenario.state;
+  m15Set("m33ScenarioStatus",scenario.label);m15Set("m33ScenarioScore",String(scenario.score));m15Set("m33ScenarioProtection",m15Money(scenario.protection));m15Set("m33ScenarioAllocated",m15Money(scenario.allocated));m15Set("m33ScenarioRetained",m15Money(scenario.retained));
+  const categories=[
+    ["Holding protection","holding",scenario.protection],
+    ["Spending Pot","lifestyle",scenario.lifestyle],
+    ["Other goal pots","goals",scenario.goals],
+    ["House Pot","house",scenario.house],
+    ["Emergency Fund","emergency",scenario.emergency],
+    ["Shares","shares",scenario.shares],
+    ["Retained","retained",scenario.retained]
+  ];
+  const stack=document.getElementById("m33AllocationStack");if(stack){const max=Math.max(1,...categories.map(row=>row[2]));stack.innerHTML=categories.filter(row=>row[2]>.009).map(([label,key,value])=>`<div class="m33-stack-row"><span>${m22Escape(label)}</span><div class="m33-stack-track"><div class="m33-stack-fill" style="width:${Math.max(3,value/max*100).toFixed(1)}%"></div></div><strong>${m15Money(value)}</strong></div>`).join("")}
+  const body=document.getElementById("m33ComparisonBody");if(body)body.innerHTML=categories.map(([label,key,value])=>{const difference=value-Number(live[key]||0);const cls=difference>0.009?"pos":difference<-.009?"neg":"zero";return `<div class="m33-compare-row"><span>${m22Escape(label)}</span><span>${m15Money(live[key]||0)}</span><span>${m15Money(value)}</span><span class="m33-change ${cls}">${m33Diff(difference)}</span></div>`}).join("");
+  const liveRetained=Number(live.retained||0),retainedChange=scenario.retained-liveRetained;m15Set("m33ScenarioDifference",`${m33Diff(retainedChange)} retained`);
+  const cutTotal=Object.values(scenario.cuts).reduce((a,b)=>a+b,0);const insight=document.getElementById("m33ScenarioInsight");if(insight){
+    if(scenario.unresolved>.009)insight.innerHTML=`<strong>Protection warning:</strong> this wage is ${m15Money(scenario.unresolved)} short of the Holding Pot requirement. Aurora would stop flexible funding before allowing the mission to close.`;
+    else if(cutTotal>.009)insight.innerHTML=`<strong>Overallocated:</strong> Aurora automatically removed ${m15Money(cutTotal)} from flexible allocations so the scenario cannot spend more than the wage received.`;
+    else if(scenario.retained<100)insight.innerHTML=`<strong>Tight finish:</strong> the plan works, but only ${m15Money(scenario.retained)} remains in the current account. A larger retained cushion would make the cycle safer.`;
+    else if(retainedChange>100)insight.innerHTML=`<strong>Stronger buffer:</strong> this scenario keeps ${m15Money(retainedChange)} more in the current account than the live plan while protecting every required move.`;
+    else if(scenario.shares>live.shares)insight.innerHTML=`<strong>Investment opportunity:</strong> shares rise by ${m15Money(scenario.shares-live.shares)} and the plan still retains ${m15Money(scenario.retained)}.`;
+    else insight.innerHTML=`<strong>Balanced scenario:</strong> every required protection move is covered and ${m15Money(scenario.retained)} remains uncommitted.`;
+  }
+  const apply=document.getElementById("m33ApplyScenario"),mission=m22EnsureState();if(apply){const locked=Boolean(mission.plan||m22AnyExecuted()||mission.completed);apply.disabled=locked;apply.textContent=locked?"Live Plan Locked":"Apply Scenario to Live Plan"}
+}
+function m33ShowApply(message,error=false){const box=document.getElementById("m33ApplyStatus");if(!box)return;box.textContent=message;box.className=`m33-apply-status show${error?" error":""}`;clearTimeout(window.m33ApplyTimer);window.m33ApplyTimer=setTimeout(()=>box.classList.remove("show"),4800)}
+function m33ApplyScenario(){
+  const mission=m22EnsureState();if(mission.plan||m22AnyExecuted()||mission.completed){m33ShowApply("The live mission is locked because execution has started.",true);return}
+  const scenario=m33ComputeScenario();
+  m33SetValue("m15ActualPay",scenario.pay);m33SetValue("m22CoreInvestment",scenario.shares);m33SetValue("m22Lifestyle",scenario.lifestyle);m33SetValue("m22GoalPots",scenario.goals);m33SetValue("m33LiveHouseBoost",scenario.house);m33SetValue("m33LiveEmergencyBoost",scenario.emergency);m33SetValue("m15AllocateExtra",0);
+  const extra=document.getElementById("m15AllocateExtra");if(extra)extra.dataset.userEdited="1";
+  mission.inputs=m22InputSnapshot();mission.plan=null;m22Save();m22Render();m33ShowApply("Scenario applied. The left-hand live mission has been rebuilt and is ready for review.");
+}
+document.querySelectorAll("[data-m33-mode]").forEach(btn=>btn.addEventListener("click",()=>m33SeedScenario(btn.dataset.m33Mode)));
+document.querySelectorAll("#m33ScenarioPay,#m33ScenarioShares,#m33ScenarioLifestyle,#m33ScenarioGoals,#m33ScenarioHouse,#m33ScenarioEmergency").forEach(input=>input.addEventListener("input",()=>{m33ScenarioState.mode="custom";m33ScenarioState.userEdited=true;document.querySelectorAll("[data-m33-mode]").forEach(btn=>btn.classList.toggle("active",btn.dataset.m33Mode==="custom"));const note=document.getElementById("m33ModeNote");if(note)note.textContent="Custom mode keeps every value under your control.";m33RenderScenario()}));
+document.getElementById("m33ResetScenario")?.addEventListener("click",()=>m33SeedScenario("overtime"));document.getElementById("m33ApplyScenario")?.addEventListener("click",m33ApplyScenario);
+window.addEventListener("load",()=>setTimeout(()=>m33SeedScenario("overtime"),40));
 </script>
 
 <script>
@@ -6687,15 +6939,23 @@ document.addEventListener("click",event=>{
     const expected=inputs.expected,actual=inputs.actual,extra=Math.max(0,actual-expected),shortfall=Math.max(0,expected-actual);let available=actual;const actions=[];
     const urgentHoldingAmount=Math.min(protection.topUp,available);if(urgentHoldingAmount>.009){actions.push({id:"holding:protection",name:"Holding Pot urgent protection",amount:urgentHoldingAmount,type:"holding",holdingKind:"urgent",meta:`Immediate cover for ${m15Money(protection.minimum)} buffer + ${m15Money(protection.bills)} payments before payday + ${m15Money(protection.recurring)} monthly spending`});available-=urgentHoldingAmount}
     const regularHoldingTarget=sinking.contribution;const regularHoldingAmount=Math.min(regularHoldingTarget,available);if(regularHoldingAmount>.009){actions.push({id:"holding:regular",name:"Holding Pot due-date contribution",amount:regularHoldingAmount,type:"holding",holdingKind:"regular",meta:`Date-aware sinking funds across ${sinking.details.length} future commitment${sinking.details.length===1?"":"s"} • target ${m15Money(regularHoldingTarget)}`});available-=regularHoldingAmount}
-    let regularBudget=available,lifestyle=inputs.lifestyle,goals=inputs.goalPots,core=inputs.coreInvestment;let deficit=Math.max(0,lifestyle+goals+core-regularBudget);
-    const lifestyleCut=Math.min(lifestyle,deficit);lifestyle-=lifestyleCut;deficit-=lifestyleCut;const goalsCut=Math.min(goals,deficit);goals-=goalsCut;deficit-=goalsCut;const coreCut=Math.min(core,deficit);core-=coreCut;deficit-=coreCut;
+    let regularBudget=available,lifestyle=inputs.lifestyle,goals=inputs.goalPots,houseBoost=inputs.houseBoost||0,emergencyBoost=inputs.emergencyBoost||0,core=inputs.coreInvestment;
+    let deficit=Math.max(0,lifestyle+goals+houseBoost+emergencyBoost+core-regularBudget);
+    const lifestyleCut=Math.min(lifestyle,deficit);lifestyle-=lifestyleCut;deficit-=lifestyleCut;
+    const goalsCut=Math.min(goals,deficit);goals-=goalsCut;deficit-=goalsCut;
+    const houseCut=Math.min(houseBoost,deficit);houseBoost-=houseCut;deficit-=houseCut;
+    const emergencyCut=Math.min(emergencyBoost,deficit);emergencyBoost-=emergencyCut;deficit-=emergencyCut;
+    const coreCut=Math.min(core,deficit);core-=coreCut;deficit-=coreCut;
     if(lifestyle>.009){actions.push({id:"regular:lifestyle",name:"Spending Pot",amount:lifestyle,type:"lifestyle",potId:"spending_pot",meta:lifestyleCut>0?`Reduced by ${m15Money(lifestyleCut)} under low-pay protection`:"Four-week lifestyle allocation"});regularBudget-=lifestyle}
-    const goalResult=m22BuildPotActions(goals,"priority","regular",["spending_pot"]);actions.push(...goalResult.actions);regularBudget-=goalResult.actions.reduce((s,a)=>s+a.amount,0);
-    const coreActions=m22InvestmentActions(core,inputs.platform,"core");actions.push(...coreActions);regularBudget-=coreActions.reduce((s,a)=>s+a.amount,0);available=Math.max(0,regularBudget);
+    const houseResult=m33BuildSpecialPotAction(houseBoost,"house","regular");actions.push(...houseResult.actions);regularBudget-=houseResult.used;goals+=houseResult.unused;
+    const emergencyResult=m33BuildSpecialPotAction(emergencyBoost,"emergency","regular");actions.push(...emergencyResult.actions);regularBudget-=emergencyResult.used;goals+=emergencyResult.unused;
+    const specialIds=[...houseResult.actions,...emergencyResult.actions].map(action=>action.potId);
+    const goalResult=m22BuildPotActions(goals,"priority","regular",["spending_pot",...specialIds]);actions.push(...goalResult.actions);regularBudget-=goalResult.actions.reduce((sum,a)=>sum+a.amount,0);
+    const coreActions=m22InvestmentActions(core,inputs.platform,"core");actions.push(...coreActions);regularBudget-=coreActions.reduce((sum,a)=>sum+a.amount,0);available=Math.max(0,regularBudget);
     const extraAvailable=Math.min(extra,available),extraRequested=Math.min(extraAvailable,inputs.extraAllocate);let extraRemaining=extraRequested;
-    if(extraRemaining>.009){if(inputs.strategy==="isa"){actions.push(...m22InvestmentActions(extraRemaining,inputs.platform,"extra"));extraRemaining=0}else{const result=m22BuildPotActions(extraRemaining,inputs.strategy,"extra",["spending_pot"]);actions.push(...result.actions);extraRemaining=result.remaining;if(extraRemaining>.009){actions.push(...m22InvestmentActions(extraRemaining,inputs.platform,"extra"));extraRemaining=0}}available-=extraRequested}
+    if(extraRemaining>.009){if(inputs.strategy==="isa"){actions.push(...m22InvestmentActions(extraRemaining,inputs.platform,"extra"));extraRemaining=0}else{const result=m22BuildPotActions(extraRemaining,inputs.strategy,"extra",["spending_pot",...specialIds]);actions.push(...result.actions);extraRemaining=result.remaining;if(extraRemaining>.009){actions.push(...m22InvestmentActions(extraRemaining,inputs.platform,"extra"));extraRemaining=0}}available-=extraRequested}
     const buffered=Math.max(0,available);actions.push({id:"buffer:retained",name:"Retain in current account",amount:buffered,type:"buffer",meta:"Money deliberately left in the current account after all planned transfers"});
-    const planned=actions.reduce((s,a)=>s+a.amount,0);return {logicVersion:M25_LOGIC_VERSION,createdAt:new Date().toISOString(),paydayDate:mission.paydayDate,inputs,protection,sinking,expected,actual,extra,shortfall,holdingAmount:urgentHoldingAmount+regularHoldingAmount,urgentHoldingAmount,regularHoldingTarget,regularHoldingAmount,lifestyleCut,goalsCut,coreCut,unresolvedProtection:Math.max(0,protection.topUp-urgentHoldingAmount),unresolvedRegularHolding:Math.max(0,regularHoldingTarget-regularHoldingAmount),actions,planned,buffered};
+    const planned=actions.reduce((sum,a)=>sum+a.amount,0);return {logicVersion:M25_LOGIC_VERSION,createdAt:new Date().toISOString(),paydayDate:mission.paydayDate,inputs,protection,sinking,expected,actual,extra,shortfall,holdingAmount:urgentHoldingAmount+regularHoldingAmount,urgentHoldingAmount,regularHoldingTarget,regularHoldingAmount,lifestyleCut,goalsCut,houseCut,emergencyCut,coreCut,unresolvedProtection:Math.max(0,protection.topUp-urgentHoldingAmount),unresolvedRegularHolding:Math.max(0,regularHoldingTarget-regularHoldingAmount),actions,planned,buffered};
   };
   window.m22CurrentPlan=function(){const mission=m22EnsureState();if(mission.plan&&mission.plan.logicVersion!==M25_LOGIC_VERSION&&!m22AnyExecuted()&&!mission.completed)mission.plan=null;return mission.plan||m22ComputePlan()};
   window.m22ActionDone=function(action){return Boolean(m22EnsureState().executed?.[action.id])};
@@ -6747,7 +7007,7 @@ document.addEventListener("click",event=>{
     const progress=document.getElementById("m22ProgressFill");if(progress)progress.style.width=`${pct}%`;m15Set("m22ProgressText",`${doneCount} of ${totalCount} moves completed`);m15Set("m22LockText",mission.completed?"Payday completed":locked?"Plan locked during execution":"Plan editable until first move");m15Set("m22MissionBadge",mission.completed?"PAYDAY COMPLETE":locked?"EXECUTION LIVE":"DRAFT PLAN");m22Instruction(plan);m22SetInputsLocked(locked);
     const list=document.getElementById("m15AllocationList");if(list)list.innerHTML=plan.actions.length?plan.actions.map(action=>{const done=m22ActionDone(action),actual=done?Number(m25ActualForAction(action)||0):Number(action.amount||0),variance=actual-Number(action.amount||0),varianceClass=Math.abs(variance)<.011?"good":variance>0?"watch":"risk",varianceText=Math.abs(variance)<.011?"Matches plan":`${variance>0?"+":"−"}${m15Money(Math.abs(variance))} vs plan`;return `<div class="m22-action-row ${done?"done":""}"><div class="m22-check">${done?"✓":"○"}</div><div><div class="m22-action-name">${m22Escape(action.name)}</div><div class="m22-action-meta">${m22Escape(action.meta)}</div>${done?`<div class="m25-variance ${varianceClass}">${varianceText}</div>`:""}</div><div class="m25-planned">Planned<strong>${m15Money(action.amount)}</strong></div><div class="m25-actual-wrap"><label>Actual ${action.type==="buffer"?"retained":"transferred"}</label><input class="m25-actual-input" data-m25-actual type="number" min="0" step="0.01" value="${actual.toFixed(2)}" ${done||mission.completed?"disabled":""}></div>${done&&!mission.completed?`<button class="m25-undo-btn" type="button" data-m25-undo="${m22Escape(action.id)}">Undo move</button>`:`<button class="m22-execute-btn" type="button" data-m22-execute="${m22Escape(action.id)}" ${done||mission.completed?"disabled":""}>${done?"Completed ✓":action.type==="buffer"?"Confirm retained":"Complete move"}</button>`}</div>`}).join(""):'<div class="m22-empty">No payday moves were created.</div>';
     const route=document.getElementById("m15Route");if(route)route.innerHTML=plan.actions.map((a,i)=>`<div class="m22-route-step"><div class="m22-step-no">${i+1}</div><div><div class="m22-step-title">${m22Escape(a.name)}</div><div class="m22-step-meta">${m22Escape(a.meta)}</div></div><div class="m22-step-amount">${m15Money(a.amount)}</div></div>`).join("");
-    const reconciliation=m25RenderReconciliation(plan);m25RenderSinking(plan);m25RenderAudit();const complete=document.getElementById("m22CompletePayday");if(complete)complete.disabled=mission.completed||!totalCount||doneCount!==totalCount||Math.abs(reconciliation.difference)>=.011;const reset=document.getElementById("m22ResetMission");if(reset)reset.style.display=mission.completed?"none":"";const next=document.getElementById("m22NewMission");if(next)next.style.display=mission.completed?"":"none";m22RenderReceipt();m22RenderHistory();m22Save();if(typeof m13Render==="function")m13Render();
+    const reconciliation=m25RenderReconciliation(plan);m25RenderSinking(plan);m25RenderAudit();const complete=document.getElementById("m22CompletePayday");if(complete)complete.disabled=mission.completed||!totalCount||doneCount!==totalCount||Math.abs(reconciliation.difference)>=.011;const reset=document.getElementById("m22ResetMission");if(reset)reset.style.display=mission.completed?"none":"";const next=document.getElementById("m22NewMission");if(next)next.style.display=mission.completed?"":"none";m15Set("m33PlannedTotal",m15Money(plan.planned));m15Set("m33ExpectedMirror",m15Money(plan.expected));m15Set("m33ActualMirror",m15Money(plan.actual));m15Set("m33ExtraMirror",m15Money(plan.extra));m15Set("m33ShortfallMirror",m15Money(plan.shortfall));m15Set("m33RetainedMirror",m15Money(rec.retained));m15Set("m33LivePayNote",plan.extra>.009?`${m15Money(plan.extra)} above expected`:plan.shortfall>.009?`${m15Money(plan.shortfall)} below expected`:"Wage matches expectation");m22RenderReceipt();m22RenderHistory();m22Save();if(typeof m13Render==="function")m13Render();if(typeof m33RenderScenario==="function")m33RenderScenario();
   };
   window.m22CompletePayday=function(){
     const mission=m22EnsureState(),plan=m22CurrentPlan();if(plan.actions.some(a=>!m22ActionDone(a))){m22ShowStatus("Complete every payday move before closing the mission.",true);return}const rec=m25Reconciliation(plan);if(Math.abs(rec.difference)>=.011){m22ShowStatus(`The current account does not reconcile. Correct the ${m15Money(Math.abs(rec.difference))} difference first.`,true);return}
