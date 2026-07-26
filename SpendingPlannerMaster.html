@@ -2480,6 +2480,27 @@ body{padding:0!important;margin:0!important}
 
 </style>
 
+
+<style>
+/* ===================== M31 AURORA FC QUALITY STATIC DASHBOARD ===================== */
+*,*::before,*::after{animation:none!important;scroll-behavior:auto!important}
+.m30-mode-toggle{display:none!important}
+.m13-hero:before,.m30-command:before,.hero:before{display:none!important}
+.m13-ticker{display:none!important}
+body:before{opacity:.35}
+.m13-hero,.m30-command,.m13-panel,.m13-kpi{box-shadow:0 16px 42px rgba(0,0,0,.28)!important}
+.m31-cashflow-clear{display:grid;grid-template-columns:34px 1fr auto;gap:11px;align-items:center;padding:14px;border:1px solid rgba(52,211,153,.25);border-radius:16px;background:linear-gradient(90deg,rgba(52,211,153,.08),rgba(34,211,238,.025))}
+.m31-cashflow-clear>span{width:32px;height:32px;display:grid;place-items:center;border-radius:11px;background:#34d399;color:#04150d;font-weight:1000}.m31-cashflow-clear strong{display:block;font-size:12px}.m31-cashflow-clear small{display:block;color:#93a4bd;margin-top:3px}.m31-cashflow-clear b{color:#34d399}
+#m13CashflowList>.m13-cashflow-item:nth-of-type(n+5){display:none}
+.m31-cashflow-more{margin-top:9px;border:1px solid rgba(125,211,252,.14);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.018)}
+.m31-cashflow-more summary{list-style:none;cursor:pointer;padding:11px 12px;display:flex;justify-content:space-between;gap:12px;color:#cfe9ff;font-size:10px;font-weight:950}.m31-cashflow-more summary::-webkit-details-marker{display:none}.m31-cashflow-more summary span{color:#22d3ee}.m31-cashflow-hidden{display:grid;gap:7px;padding:0 9px 9px}
+.m31-funding-shell{padding:16px!important}.m31-funding-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.m31-funding-card{display:grid;grid-template-columns:42px 1fr;gap:11px;align-items:center;padding:13px;border:1px solid rgba(125,211,252,.15);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.015));min-height:92px}.m31-funding-card.holding{border-color:rgba(34,211,238,.28)}.m31-funding-card.external{border-color:rgba(167,139,250,.26)}.m31-funding-card.track{border-color:rgba(148,163,184,.18)}
+.m31-funding-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(34,211,238,.18),rgba(96,165,250,.08));border:1px solid rgba(125,211,252,.22);font-weight:1000;color:#dffcff}.m31-funding-card span{display:block;color:#93a4bd;font-size:8px;text-transform:uppercase;letter-spacing:.7px;font-weight:950}.m31-funding-card strong{display:block;margin-top:4px;font-size:20px}.m31-funding-card small{display:block;margin-top:3px;color:#91a5bd;font-size:8px}
+.m31-funding-details{margin-top:12px;border:1px solid rgba(125,211,252,.14);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.015)}.m31-funding-details summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:950;color:#d7edff}.m31-funding-details summary::-webkit-details-marker{display:none}.m31-funding-details summary span{color:#22d3ee;font-size:9px}.m31-funding-editor{padding:0 10px 10px;max-height:360px;overflow:auto}
+@media(max-width:1050px){.m31-funding-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.m31-funding-grid{grid-template-columns:1fr}.m31-cashflow-clear{grid-template-columns:32px 1fr}.m31-cashflow-clear b{grid-column:2}}
+</style>
 </head>
 <body>
 
@@ -5867,7 +5888,17 @@ function m13Render(){
   m13Set("m13Ticker",`Expected pay ${m13GBP(pay)} • IG ISA ${m13GBP(isa)} • Goal pots ${m13GBP(goals)} • Lifestyle ${m13GBP(lifestyle)} • ${m13GBP(beforeTotal)} scheduled before payday • projected balance ${m13GBP(projected)}`);
 
   const list=document.getElementById("m13CashflowList");
-  if(list)list.innerHTML=before.length?before.map(x=>`<div class="m13-cashflow-item"><div class="m13-cashflow-date">${x._d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}).toUpperCase()}</div><div><div class="m13-cashflow-name">${x.name||"Unnamed payment"}</div><div class="m13-cashflow-meta">${x.category||"Scheduled bill"}${x._sourceLabel?` • ${x._sourceLabel}`:""} • unpaid</div></div><div class="m13-cashflow-amount">−${m13GBP(x._cashAmount??x.amount)}</div></div>`).join(""):`<div class="m13-cashflow-item"><div class="m13-cashflow-date">CLEAR</div><div><div class="m13-cashflow-name">Nothing dated before payday</div><div class="m13-cashflow-meta">Weekly and other recurring items are expanded through to payday</div></div><div class="m13-cashflow-amount">${m13GBP(0)}</div></div>`;
+  if(list){
+    if(!before.length){
+      list.innerHTML=`<div class="m31-cashflow-clear"><span>✓</span><div><strong>Cash flow clear</strong><small>No included payments are due before payday.</small></div><b>${m13GBP(0)}</b></div>`;
+    }else{
+      const visible=before.slice(0,4);
+      const hidden=before.slice(4);
+      const rows=visible.map(x=>`<div class="m13-cashflow-item"><div class="m13-cashflow-date">${x._d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}).toUpperCase()}</div><div><div class="m13-cashflow-name">${x.name||"Unnamed payment"}</div><div class="m13-cashflow-meta">${x.category||"Scheduled bill"}${x._sourceLabel?` • ${x._sourceLabel}`:""}</div></div><div class="m13-cashflow-amount">−${m13GBP(x._cashAmount??x.amount)}</div></div>`).join("");
+      const more=hidden.length?`<details class="m31-cashflow-more"><summary>View ${hidden.length} more payment${hidden.length===1?'':'s'} <span>${m13GBP(hidden.reduce((s,x)=>s+Number(x._cashAmount??x.amount||0),0))}</span></summary><div class="m31-cashflow-hidden">${hidden.map(x=>`<div class="m13-cashflow-item"><div class="m13-cashflow-date">${x._d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}).toUpperCase()}</div><div><div class="m13-cashflow-name">${x.name||"Unnamed payment"}</div><div class="m13-cashflow-meta">${x.category||"Scheduled bill"}${x._sourceLabel?` • ${x._sourceLabel}`:""}</div></div><div class="m13-cashflow-amount">−${m13GBP(x._cashAmount??x.amount)}</div></div>`).join('')}</div></details>`:'';
+      list.innerHTML=rows+more;
+    }
+  }
 
   const upcoming=[...unpaid].filter(x=>m13Date(x.due)).sort((a,b)=>m13Date(a.due)-m13Date(b.due)).slice(0,4);
   const up=document.getElementById("m13UpcomingBills");
@@ -7245,15 +7276,14 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     host.innerHTML=`<div class="m30-head"><div><div class="m13-eyebrow">M30 FINANCIAL OPERATING SYSTEM</div><h2>Beast Mode Control Centre</h2><p>One control layer for payday explanations, funding ownership, duplicate prevention and genuine issues that need action.</p></div><span class="m30-beast-chip"><i></i> Beast Mode Live</span></div>
     <div class="m30-grid"><div class="m30-tile" style="--m30c:#ff4f87"><span>Urgent alerts</span><strong>${urgent}</strong><small>Overdue or under-protected items</small></div><div class="m30-tile" style="--m30c:#35f2ff"><span>Holding-funded costs</span><strong>${money(included)}</strong><small>Included in Holding Pot calculations</small></div><div class="m30-tile" style="--m30c:#b98cff"><span>Other-pot funded</span><strong>${money(external)}</strong><small>Tracked without inflating Holding Pot</small></div><div class="m30-tile" style="--m30c:#65ff9d"><span>Funding records</span><strong>${f.length}</strong><small>Upcoming costs with clear ownership</small></div></div>
     <div class="m30-body"><div class="m30-panel"><div class="m30-panel-head"><h3>Needs Attention</h3><span class="m30-count">${a.length} SIGNAL${a.length===1?'':'S'}</span></div><div class="m30-list">${a.map(x=>`<div class="m30-alert ${x.level}"><strong>${esc(x.title)}</strong><div>${esc(x.meta)}</div></div>`).join('')}</div></div><div class="m30-panel"><div class="m30-panel-head"><h3>Why the Payday Plan Says That</h3><span class="m30-count">LIVE EXPLANATION</span></div><div class="m30-list">${e.map(x=>`<div class="m30-explain"><strong>${esc(x.title)}</strong><div>${esc(x.meta)}</div></div>`).join('')}</div></div></div>
-    <div class="m30-panel m30-funding-shell"><div class="m30-panel-head"><h3>Funding Source Command</h3><span class="m30-count">HOLDING POT ONLY = INCLUDED</span></div><div class="m30-list">${f.map(r=>{const source=inferSource(r.item),cls=source==='Holding Pot'?'holding':source==='Track only / already funded'?'track':'external';return `<div class="m30-funding-row"><div><strong>${esc(r.item.name||'Unnamed cost')} • ${money(r.item.amount)}</strong><small>${esc(r.type)}${r.item.due?' • due '+esc(dateLabel(r.item.due)):''} • ${esc(r.item.category||'Other')}</small></div><select class="m30-funding-select" data-m30-section="${r.section}" data-m30-index="${r.index}">${SOURCE_OPTIONS.map(o=>`<option ${o===source?'selected':''}>${esc(o)}</option>`).join('')}</select><span class="m30-source-pill ${cls}">${esc(source)}</span></div>`}).join('')||'<div class="m30-alert good"><strong>No upcoming funding records</strong><div>Add a scheduled, future or yearly cost to begin.</div></div>'}</div></div>`;
+    ${(()=>{const groups={};f.forEach(r=>{const source=inferSource(r.item);(groups[source]||(groups[source]=[])).push(r)});const cards=Object.entries(groups).map(([source,rows])=>{const total=rows.reduce((s,r)=>s+Number(r.item.amount||0),0);const cls=source==='Holding Pot'?'holding':source==='Track only / already funded'?'track':'external';return `<div class="m31-funding-card ${cls}"><div class="m31-funding-icon">${source==='Holding Pot'?'H':source==='House Pot'?'⌂':source==='Dentist Pot'?'D':source==='Season Ticket Pot'?'⚽':source==='Christmas Pot'?'★':'•'}</div><div><span>${esc(source)}</span><strong>${money(total)}</strong><small>${rows.length} upcoming item${rows.length===1?'':'s'}</small></div></div>`}).join('');const editor=f.map(r=>{const source=inferSource(r.item),cls=source==='Holding Pot'?'holding':source==='Track only / already funded'?'track':'external';return `<div class="m30-funding-row"><div><strong>${esc(r.item.name||'Unnamed cost')} • ${money(r.item.amount)}</strong><small>${esc(r.type)}${r.item.due?' • '+esc(dateLabel(r.item.due)):''}</small></div><select class="m30-funding-select" data-m30-section="${r.section}" data-m30-index="${r.index}">${SOURCE_OPTIONS.map(o=>`<option ${o===source?'selected':''}>${esc(o)}</option>`).join('')}</select><span class="m30-source-pill ${cls}">${esc(source)}</span></div>`}).join('');return `<div class="m30-panel m30-funding-shell m31-funding-shell"><div class="m30-panel-head"><h3>Funding Overview</h3><span class="m30-count">CLEAR OWNERSHIP</span></div><div class="m31-funding-grid">${cards||'<div class="m30-alert good"><strong>No upcoming funding records</strong><div>Add a cost to begin.</div></div>'}</div>${f.length?`<details class="m31-funding-details"><summary>Manage funding sources <span>${f.length} records</span></summary><div class="m30-list m31-funding-editor">${editor}</div></details>`:''}</div>`})()}`;
   }
   function install(){
     const dashboard=document.getElementById('m13Dashboard');
     if(dashboard&&!document.getElementById('m30CommandCentre')){const el=document.createElement('section');el.id='m30CommandCentre';el.className='m30-command';const hero=dashboard.querySelector('.m13-hero');hero?.insertAdjacentElement('afterend',el)}
-    if(!document.getElementById('m30ModeToggle')){const b=document.createElement('button');b.id='m30ModeToggle';b.className='m30-mode-toggle';b.type='button';b.textContent='⚡ Beast Animations: ON';document.body.appendChild(b);b.onclick=()=>{document.body.classList.toggle('m30-calm');const off=document.body.classList.contains('m30-calm');b.classList.toggle('off',off);b.textContent=off?'◌ Beast Animations: OFF':'⚡ Beast Animations: ON';localStorage.setItem('aurora_m30_calm',off?'1':'0')}}
-    if(localStorage.getItem('aurora_m30_calm')==='1'){document.body.classList.add('m30-calm');const b=document.getElementById('m30ModeToggle');if(b){b.classList.add('off');b.textContent='◌ Beast Animations: OFF'}}
+    document.body.classList.add('m30-calm');
+    document.getElementById('m30ModeToggle')?.remove();
     document.getElementById('m30CommandCentre')?.addEventListener('change',ev=>{const s=ev.target.closest('.m30-funding-select');if(s)applySource(s.dataset.m30Section,Number(s.dataset.m30Index),s.value)});
-    document.addEventListener('pointermove',ev=>{document.body.style.setProperty('--mx',(ev.clientX/window.innerWidth*100)+'%');document.body.style.setProperty('--my',(ev.clientY/window.innerHeight*100)+'%')},{passive:true});
     renderM30();
   }
   const originalRun=window.runPlanner;if(typeof originalRun==='function')window.runPlanner=function(){const result=originalRun.apply(this,arguments);setTimeout(renderM30,0);return result};
