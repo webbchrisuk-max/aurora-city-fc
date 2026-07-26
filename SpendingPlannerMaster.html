@@ -3028,12 +3028,12 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
         </div>
 
         <div class="m22-input-grid m33-live-inputs" id="m22InputGrid">
-          <div class="m22-field"><label for="m22PaydayDate">Payday date</label><input id="m22PaydayDate" type="date"></div>
+          <div class="m22-field m35-date-field"><label for="m22PaydayDate">Payday date</label><input id="m22PaydayDate" type="date"><small id="m35PaydayHuman">—</small></div>
           <div class="m22-field"><label for="m15ExpectedPay">Expected pay</label><input id="m15ExpectedPay" type="number" min="0" step="0.01" value="2100"></div>
           <div class="m22-field"><label for="m15ActualPay">Actual pay received</label><input id="m15ActualPay" type="number" min="0" step="0.01" value="2100"></div>
           <div class="m22-field"><label for="m22CoreInvestment">Core share contribution</label><input id="m22CoreInvestment" type="number" min="0" step="0.01" value="1500"></div>
           <div class="m22-field"><label for="m22Lifestyle">Lifestyle / Spending Pot</label><input id="m22Lifestyle" type="number" min="0" step="0.01" value="250"></div>
-          <div class="m22-field"><label for="m22GoalPots">Regular goal-pot funding</label><input id="m22GoalPots" type="number" min="0" step="0.01" value="250"></div>
+          <div class="m22-field"><label for="m22GoalPots">Flexible goal-pot budget</label><input id="m22GoalPots" type="number" min="0" step="0.01" value="250"><small class="m35-field-help">Routed into the highest-priority named pots in the checklist.</small></div>
           <div class="m22-field"><label for="m33LiveHouseBoost">House Pot boost</label><input id="m33LiveHouseBoost" type="number" min="0" step="0.01" value="0"></div>
           <div class="m22-field"><label for="m33LiveEmergencyBoost">Emergency Fund boost</label><input id="m33LiveEmergencyBoost" type="number" min="0" step="0.01" value="0"></div>
           <div class="m22-field"><label for="m15AllocateExtra">Auto-route extra pay</label><input id="m15AllocateExtra" type="number" min="0" step="0.01" value="0"></div>
@@ -3044,7 +3044,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
         <div class="m33-live-scoreboard">
           <div class="m33-score main"><span>Actual pay</span><strong id="m15SumActual">£0.00</strong><small id="m33LivePayNote">Wage available</small></div>
           <div class="m33-score"><span>Holding move</span><strong id="m15SumHolding">£0.00</strong><small>Bills and protection</small></div>
-          <div class="m33-score"><span>Planned mission</span><strong id="m33PlannedTotal">£0.00</strong><small id="m15AllocationTotal">£0.00 planned</small></div>
+          <div class="m33-score"><span>Total accounted for</span><strong id="m33PlannedTotal">£0.00</strong><small id="m15AllocationTotal">£0.00 transfers planned</small></div>
           <div class="m33-score success"><span>Retained</span><strong id="m22WalletBuffered">£0.00</strong><small>Left in current account</small></div>
         </div>
 
@@ -3061,9 +3061,13 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
           <div class="m22-progress-meta"><span id="m22LockText">Plan editable</span><span id="m33MissionSafety">Protected planning active</span></div>
         </div>
 
-        <div class="m33-execution-board">
-          <div class="m22-panel-head"><h3>Payday execution checklist</h3><small>PRESS EACH MOVE ONCE</small></div>
-          <div class="m22-action-list" id="m15AllocationList"></div>
+        <div class="m33-execution-board m35-execution-board">
+          <div class="m22-panel-head"><h3>Payday execution checklist</h3><small id="m35ChecklistSummary">0 moves ready</small></div>
+          <div class="m35-checklist-preview" id="m35ChecklistPreview"></div>
+          <details class="m35-full-checklist" id="m35FullChecklist">
+            <summary><span>View full checklist</span><small id="m35FullChecklistMeta">0 moves</small></summary>
+            <div class="m22-action-list" id="m15AllocationList"></div>
+          </details>
         </div>
 
         <div class="m22-actions m33-primary-actions">
@@ -3159,14 +3163,25 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 
         <div class="m33-scenario-note" id="m33ModeNote">Overtime mode starts with your £800 planning assumption.</div>
 
+        <div class="m35-overtime-strip" id="m35OvertimeStrip">
+          <div><span>Normal payday</span><strong id="m35BasePay">£0.00</strong></div>
+          <div><span>Extra overtime</span><strong id="m35OvertimeDisplay">£0.00</strong></div>
+          <div><span>Scenario total</span><strong id="m35ScenarioTotal">£0.00</strong></div>
+        </div>
+        <div class="m35-overtime-route" id="m35OvertimeRoute">The extra-pay route will appear here.</div>
+
         <div class="m33-scenario-inputs">
-          <div class="m33-field featured"><label for="m33ScenarioPay">Scenario pay received</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioPay" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field featured" id="m35ScenarioPayField"><label for="m33ScenarioPay">Scenario pay received</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioPay" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field featured m35-overtime-field" id="m35OvertimeField"><label for="m35OvertimeExtra">Overtime / extra pay</label><div class="m33-money-input"><span>£</span><input id="m35OvertimeExtra" type="number" min="0" step="0.01" value="800"></div></div>
           <div class="m33-field"><label for="m33ScenarioShares">Shares</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioShares" type="number" min="0" step="0.01"></div></div>
           <div class="m33-field"><label for="m33ScenarioLifestyle">Spending Pot</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioLifestyle" type="number" min="0" step="0.01"></div></div>
-          <div class="m33-field"><label for="m33ScenarioGoals">Other goal pots</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioGoals" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field"><label for="m33ScenarioGoals">Other named pots</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioGoals" type="number" min="0" step="0.01"></div></div>
           <div class="m33-field"><label for="m33ScenarioHouse">House Pot boost</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioHouse" type="number" min="0" step="0.01"></div></div>
           <div class="m33-field"><label for="m33ScenarioEmergency">Emergency Fund boost</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioEmergency" type="number" min="0" step="0.01"></div></div>
+          <div class="m33-field"><label for="m33ScenarioRetain">Minimum retained cash</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioRetain" type="number" min="0" step="0.01" value="100"></div></div>
         </div>
+
+        <div class="m35-decision-statement" id="m35DecisionStatement">Aurora is checking whether this scenario is safe.</div>
 
         <div class="m33-scenario-verdict" id="m33ScenarioVerdict" data-state="healthy">
           <div><span>Scenario status</span><strong id="m33ScenarioStatus">HEALTHY</strong></div>
@@ -3191,9 +3206,16 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 
         <div class="m33-insight" id="m33ScenarioInsight">Aurora is analysing this scenario.</div>
 
-        <div class="m33-scenario-actions">
+        <div class="m35-apply-confirm" id="m35ApplyConfirm" hidden>
+          <strong>Apply this scenario to the live payday mission?</strong>
+          <p id="m35ApplyConfirmCopy">Your current live plan will be saved as an undo point.</p>
+          <div><button type="button" id="m35CancelApply">Cancel</button><button type="button" class="primary" id="m35ConfirmApply">Confirm apply</button></div>
+        </div>
+        <div class="m33-scenario-actions m35-sticky-actions">
+          <span class="m35-simulation-label">Simulation only</span>
           <button type="button" id="m33ResetScenario">Reset</button>
-          <button type="button" class="primary" id="m33ApplyScenario">Apply Scenario to Live Plan</button>
+          <button type="button" id="m35UndoScenario" hidden>Undo apply</button>
+          <button type="button" class="primary" id="m33ApplyScenario">Apply Scenario</button>
         </div>
         <div class="m33-apply-status" id="m33ApplyStatus" aria-live="polite"></div>
       </aside>
@@ -7854,5 +7876,140 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
   }
 })();
 </script>
+
+<style>
+/* ===================== M35 PAYDAY CONTROL REFINEMENT ===================== */
+.m35-date-field small,.m35-field-help{display:block;margin-top:6px;color:#7f93aa;font-size:7px;line-height:1.35}
+.m35-date-field small{color:#f1d18a;font-weight:850;letter-spacing:.15px}
+.m35-checklist-preview{display:grid;gap:7px;margin-top:8px}
+.m35-preview-row{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:9px;align-items:center;padding:9px 10px;border-radius:13px;border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.018)}
+.m35-preview-icon{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.16);color:#8fefff;font-size:12px;font-weight:1000}
+.m35-preview-row strong{display:block;font-size:9px;color:#edf5ff}.m35-preview-row small{display:block;margin-top:3px;color:#71849d;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.m35-preview-amount{font-size:10px!important;color:#fff!important;white-space:nowrap}
+.m35-preview-more{padding:7px 9px;color:#8193aa;font-size:8px;text-align:center}
+.m35-full-checklist{margin-top:8px;border-top:1px solid rgba(255,255,255,.065)}
+.m35-full-checklist>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px 2px;cursor:pointer;color:#a9bad0;font-size:8px;font-weight:950;text-transform:uppercase;letter-spacing:.45px}.m35-full-checklist>summary::-webkit-details-marker{display:none}.m35-full-checklist>summary:after{content:'＋';color:#22d3ee;font-size:15px}.m35-full-checklist[open]>summary:after{content:'−'}.m35-full-checklist>summary small{margin-left:auto;color:#6f829a;font-size:7px}
+.m35-full-checklist .m22-action-list{margin-top:8px}
+.m35-overtime-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.m35-overtime-strip>div{padding:9px;border-radius:12px;border:1px solid rgba(167,139,250,.13);background:rgba(255,255,255,.018)}.m35-overtime-strip span{display:block;color:#7f91aa;font-size:7px;text-transform:uppercase;font-weight:950;letter-spacing:.45px}.m35-overtime-strip strong{display:block;margin-top:4px;font-size:12px;color:#f3efff}
+.m35-overtime-route{margin:0 0 10px;padding:9px 10px;border-radius:12px;background:rgba(167,139,250,.055);border:1px solid rgba(167,139,250,.13);color:#aab5c9;font-size:8px;line-height:1.45}
+.m35-overtime-field[hidden],#m35OvertimeStrip[hidden],#m35OvertimeRoute[hidden]{display:none!important}
+#m33ScenarioPay[readonly]{opacity:.78;cursor:not-allowed}
+.m35-decision-statement{margin:10px 0 0;padding:11px 12px;border-radius:15px;border:1px solid rgba(52,211,153,.22);background:linear-gradient(90deg,rgba(52,211,153,.075),rgba(34,211,238,.025));color:#dffbf0;font-size:9px;line-height:1.5}.m35-decision-statement strong{color:#8cffb8}
+.m35-decision-statement[data-state='tight']{border-color:rgba(251,191,36,.25);background:rgba(251,191,36,.055);color:#fff1c1}.m35-decision-statement[data-state='risk']{border-color:rgba(251,113,133,.28);background:rgba(251,113,133,.06);color:#ffd8df}
+.m35-apply-confirm{margin-top:10px;padding:11px;border-radius:15px;border:1px solid rgba(245,193,82,.28);background:linear-gradient(145deg,rgba(245,193,82,.09),rgba(9,16,31,.95));box-shadow:0 14px 35px rgba(0,0,0,.26)}.m35-apply-confirm strong{display:block;color:#ffe4a0;font-size:10px}.m35-apply-confirm p{margin:5px 0 9px;color:#aab6c8;font-size:8px;line-height:1.45}.m35-apply-confirm>div{display:flex;justify-content:flex-end;gap:7px}.m35-apply-confirm button{border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.035);color:#dbe7f5;padding:8px 10px;font-size:8px;font-weight:900}.m35-apply-confirm button.primary{border-color:rgba(245,193,82,.33);background:rgba(245,193,82,.12);color:#ffe4a0}
+.m35-sticky-actions{position:sticky;bottom:0;z-index:8;margin:10px -7px -7px!important;padding:10px 7px 7px!important;background:linear-gradient(180deg,rgba(5,10,25,0),rgba(5,10,25,.96) 28%);backdrop-filter:blur(9px)}
+.m35-simulation-label{margin-right:auto;color:#bba9ff;font-size:7px;font-weight:1000;letter-spacing:.65px;text-transform:uppercase;white-space:nowrap}
+#m35UndoScenario{border-color:rgba(52,211,153,.25)!important;color:#8cffb8!important}
+.m35-route-note{margin-top:6px;color:#7f93aa;font-size:7px;line-height:1.4}
+@media(max-width:900px){.m35-overtime-strip{grid-template-columns:1fr}.m35-sticky-actions{flex-wrap:wrap}.m35-simulation-label{width:100%}}
+</style>
+<script>
+(function(){
+  const GBP=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));
+  const n=id=>Math.max(0,Number(document.getElementById(id)?.value||0));
+  const setValue=(id,value)=>{const el=document.getElementById(id);if(el)el.value=Number(value||0).toFixed(2)};
+  const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
+  function humanDate(value){
+    if(!value)return 'No payday selected';
+    const parts=String(value).split('-').map(Number);if(parts.length!==3||parts.some(Number.isNaN))return value;
+    const d=new Date(parts[0],parts[1]-1,parts[2]);
+    return new Intl.DateTimeFormat('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d);
+  }
+  function classifyPlan(plan){
+    const result={holding:0,lifestyle:0,goals:0,house:0,emergency:0,shares:0,retained:0,potTotal:0,transfers:0,accounted:0};
+    (plan?.actions||[]).forEach(action=>{
+      const amount=Number(action.amount||0);result.accounted+=amount;
+      if(action.type==='holding')result.holding+=amount;
+      else if(action.type==='buffer')result.retained+=amount;
+      else if(action.type==='lifestyle')result.lifestyle+=amount;
+      else if(action.type==='investment')result.shares+=amount;
+      else if(action.type==='pot'){
+        result.potTotal+=amount;const name=String(action.name||'').toLowerCase();
+        if(name.includes('house')||name.includes('home')||name.includes('renovation'))result.house+=amount;
+        else if(name.includes('emergency')||name.includes('rainy')||name.includes('safety'))result.emergency+=amount;
+        else result.goals+=amount;
+      }
+    });
+    result.transfers=Math.max(0,result.accounted-result.retained);return result;
+  }
+  window.m33LiveBreakdown=classifyPlan;
+
+  function setModeUI(mode){
+    const overtime=mode==='overtime',custom=mode==='custom';
+    const field=document.getElementById('m35OvertimeField'),strip=document.getElementById('m35OvertimeStrip'),route=document.getElementById('m35OvertimeRoute'),pay=document.getElementById('m33ScenarioPay');
+    if(field)field.hidden=!overtime;if(strip)strip.hidden=!overtime;if(route)route.hidden=!overtime;if(pay)pay.readOnly=!custom;
+  }
+  window.m33SeedScenario=function(mode=m33ScenarioState.mode){
+    const plan=m22CurrentPlan(),live=classifyPlan(plan),expected=Number(plan.expected||2100),currentExtra=Math.max(0,Number(plan.actual||0)-expected),extra=currentExtra>0?currentExtra:800;
+    m33ScenarioState.mode=mode;m33ScenarioState.initialised=true;m33ScenarioState.userEdited=false;
+    let pay=Number(plan.actual||expected);
+    if(mode==='baseline')pay=expected;
+    if(mode==='overtime')pay=expected+extra;
+    setValue('m35OvertimeExtra',mode==='overtime'?extra:0);setValue('m33ScenarioPay',pay);setValue('m33ScenarioShares',live.shares||Number(plan.inputs?.coreInvestment||0));setValue('m33ScenarioLifestyle',live.lifestyle||Number(plan.inputs?.lifestyle||0));setValue('m33ScenarioGoals',live.goals||Number(plan.inputs?.goalPots||0));setValue('m33ScenarioHouse',live.house||Number(plan.inputs?.houseBoost||0));setValue('m33ScenarioEmergency',live.emergency||Number(plan.inputs?.emergencyBoost||0));setValue('m33ScenarioRetain',Math.max(100,Number(live.retained||0)));
+    document.querySelectorAll('[data-m33-mode]').forEach(btn=>btn.classList.toggle('active',btn.dataset.m33Mode===mode));
+    const note=document.getElementById('m33ModeNote');if(note)note.textContent=mode==='baseline'?'Baseline mirrors the expected wage and current allocation priorities.':mode==='overtime'?`Overtime mode separates the normal ${GBP(expected)} payday from the extra pay.`:'Custom mode keeps every value under your control.';
+    setModeUI(mode);m33RenderScenario();
+  };
+
+  window.m33ComputeScenario=function(){
+    const plan=m22CurrentPlan(),protection=m22BillProtection(m22EnsureState().paydayDate),pay=n('m33ScenarioPay'),retainedTarget=n('m33ScenarioRetain');
+    const urgent=Math.min(protection.topUp,pay);let left=Math.max(0,pay-urgent);const regularTarget=m24RegularHoldingContribution(),regular=Math.min(regularTarget,left);left=Math.max(0,left-regular);
+    let lifestyle=n('m33ScenarioLifestyle'),goals=n('m33ScenarioGoals'),house=n('m33ScenarioHouse'),emergency=n('m33ScenarioEmergency'),shares=n('m33ScenarioShares');
+    const flexibleBudget=Math.max(0,left-retainedTarget);let deficit=Math.max(0,lifestyle+goals+house+emergency+shares-flexibleBudget);
+    const trim=holder=>{const cut=Math.min(holder.value,deficit);holder.value-=cut;deficit-=cut;return cut};
+    const l={value:lifestyle},g={value:goals},h={value:house},e={value:emergency},sh={value:shares};
+    const cuts={lifestyle:trim(l),goals:trim(g),house:trim(h),emergency:trim(e),shares:trim(sh)};lifestyle=l.value;goals=g.value;house=h.value;emergency=e.value;shares=sh.value;
+    const allocated=urgent+regular+lifestyle+goals+house+emergency+shares,retained=Math.max(0,pay-allocated),unresolved=Math.max(0,protection.topUp-urgent)+Math.max(0,regularTarget-regular),retainGap=Math.max(0,retainedTarget-retained),cutTotal=Object.values(cuts).reduce((a,b)=>a+b,0);
+    let state='healthy',label='HEALTHY';if(unresolved>.009){state='risk';label='UNPROTECTED'}else if(cutTotal>.009){state='risk';label='AUTO-REDUCED'}else if(retainGap>.009||retained<100){state='tight';label='TIGHT'}
+    const score=Math.max(0,Math.min(100,Math.round(100-(unresolved/(pay||1)*100)-(cutTotal/(pay||1)*60)-(retainGap/(Math.max(retainedTarget,1))*25)-(retained<100?(100-retained)/2:0))));
+    return {plan,pay,expected:Number(plan.expected||0),overtime:Math.max(0,pay-Number(plan.expected||0)),retainedTarget,urgent,regular,protection:urgent+regular,lifestyle,goals,house,emergency,shares,allocated,retained,unresolved,retainGap,cuts,state,label,score};
+  };
+
+  const originalRenderScenario=window.m33RenderScenario;
+  window.m33RenderScenario=function(){
+    const result=originalRenderScenario.apply(this,arguments);const scenario=m33ComputeScenario(),live=classifyPlan(scenario.plan),cutTotal=Object.values(scenario.cuts).reduce((a,b)=>a+b,0),transfers=Math.max(0,scenario.allocated);
+    setModeUI(m33ScenarioState.mode);setText('m35BasePay',GBP(scenario.expected));setText('m35OvertimeDisplay',GBP(scenario.overtime));setText('m35ScenarioTotal',GBP(scenario.pay));
+    const statement=document.getElementById('m35DecisionStatement');if(statement){statement.dataset.state=scenario.state;if(scenario.unresolved>.009)statement.innerHTML=`<strong>This scenario is not safe yet.</strong> Required Holding Pot protection is short by ${GBP(scenario.unresolved)}.`;else if(cutTotal>.009)statement.innerHTML=`<strong>Aurora has corrected an over-allocation.</strong> ${GBP(cutTotal)} was removed from flexible moves so the plan cannot spend more than the wage received.`;else if(scenario.retained<scenario.retainedTarget-.009)statement.innerHTML=`<strong>This scenario is tight.</strong> It protects the required moves but misses your retained-cash floor by ${GBP(scenario.retainedTarget-scenario.retained)}.`;else statement.innerHTML=`<strong>This scenario is safe.</strong> All required protection is covered, ${GBP(transfers)} would be moved and ${GBP(scenario.retained)} would remain in the current account.`}
+    const route=document.getElementById('m35OvertimeRoute');if(route&&m33ScenarioState.mode==='overtime'){
+      const extra=Math.max(0,scenario.pay-scenario.expected),routes=[];[['shares','shares'],['house','House Pot'],['emergency','Emergency Fund'],['goals','other pots'],['lifestyle','Spending Pot'],['retained','retained cash']].forEach(([key,label])=>{const diff=Number(scenario[key]||0)-Number(live[key]||0);if(diff>.009)routes.push(`${GBP(diff)} to ${label}`)});
+      route.innerHTML=extra>.009?`<strong>Extra ${GBP(extra)} route:</strong> ${routes.length?routes.join(' • '):`${GBP(extra)} currently remains unassigned.`}`:'No overtime has been added to this scenario.';
+    }
+    const confirmCopy=document.getElementById('m35ApplyConfirmCopy');if(confirmCopy)confirmCopy.textContent=`This will rebuild the live mission using ${GBP(scenario.pay)} pay, ${GBP(scenario.allocated)} in planned transfers and ${GBP(scenario.retained)} retained.`;
+    return result;
+  };
+
+  function renderLiveRefinement(){
+    const plan=m22CurrentPlan(),snap=classifyPlan(plan),mission=m22EnsureState();setText('m33PlannedTotal',GBP(snap.accounted));setText('m15AllocationTotal',`${GBP(snap.transfers)} transfers planned`);setText('m35PaydayHuman',humanDate(mission.paydayDate||document.getElementById('m22PaydayDate')?.value));
+    const actions=plan.actions||[],pending=actions.filter(a=>!m22ActionDone(a)),done=actions.length-pending.length,preview=document.getElementById('m35ChecklistPreview');
+    setText('m35ChecklistSummary',`${done} of ${actions.length} completed`);setText('m35FullChecklistMeta',`${actions.length} move${actions.length===1?'':'s'}`);
+    if(preview){
+      const icon=a=>a.type==='holding'?'H':a.type==='investment'?'↗':a.type==='buffer'?'£':a.type==='lifestyle'?'S':'P';
+      preview.innerHTML=pending.length?pending.slice(0,3).map(a=>`<div class="m35-preview-row"><div class="m35-preview-icon">${icon(a)}</div><div><strong>${m22Escape(a.name)}</strong><small>${m22Escape(a.meta||'Ready to complete')}</small></div><strong class="m35-preview-amount">${GBP(a.amount)}</strong></div>`).join('')+(pending.length>3?`<div class="m35-preview-more">+ ${pending.length-3} more move${pending.length-3===1?'':'s'} in the full checklist</div>`:''):`<div class="m35-preview-row"><div class="m35-preview-icon">✓</div><div><strong>All payday moves completed</strong><small>Review reconciliation, then close the mission.</small></div><strong class="m35-preview-amount">READY</strong></div>`;
+    }
+  }
+
+  const originalM22Render=window.m22Render;
+  window.m22Render=function(){const result=originalM22Render.apply(this,arguments);renderLiveRefinement();return result};
+
+  const originalApply=window.m33ApplyScenario;
+  window.m33ApplyScenario=function(){
+    const mission=m22EnsureState();m33ScenarioState.undo={inputs:JSON.parse(JSON.stringify(mission.inputs||{})),paydayDate:mission.paydayDate};const result=originalApply.apply(this,arguments);const undo=document.getElementById('m35UndoScenario');if(undo)undo.hidden=false;return result;
+  };
+
+  function showConfirm(){const scenario=m33ComputeScenario(),mission=m22EnsureState();if(mission.plan||m22AnyExecuted()||mission.completed){m33ShowApply('The live mission is locked because execution has started.',true);return}const panel=document.getElementById('m35ApplyConfirm');if(panel)panel.hidden=false;const copy=document.getElementById('m35ApplyConfirmCopy');if(copy)copy.textContent=`This will replace the editable live plan with ${GBP(scenario.pay)} pay, ${GBP(Math.max(0,scenario.allocated))} in transfers and ${GBP(scenario.retained)} retained. Your current plan will be kept as an undo point.`}
+  function hideConfirm(){const panel=document.getElementById('m35ApplyConfirm');if(panel)panel.hidden=true}
+  function undoApply(){const undo=m33ScenarioState.undo;if(!undo)return;const mission=m22EnsureState();if(m22AnyExecuted()||mission.completed){m33ShowApply('Undo is unavailable after execution has started.',true);return}mission.inputs=JSON.parse(JSON.stringify(undo.inputs));mission.paydayDate=undo.paydayDate;mission.plan=null;m22HydrateInputs();m22Save();m22Render();m33ScenarioState.undo=null;const btn=document.getElementById('m35UndoScenario');if(btn)btn.hidden=true;m33ShowApply('The previous live payday plan has been restored.')}
+
+  function replaceButton(id,handler){const old=document.getElementById(id);if(!old)return;const fresh=old.cloneNode(true);old.parentNode.replaceChild(fresh,old);fresh.addEventListener('click',handler);return fresh}
+  replaceButton('m33ApplyScenario',showConfirm);replaceButton('m33ResetScenario',()=>{hideConfirm();m33SeedScenario('overtime')});
+  document.getElementById('m35ConfirmApply')?.addEventListener('click',()=>{hideConfirm();m33ApplyScenario()});document.getElementById('m35CancelApply')?.addEventListener('click',hideConfirm);document.getElementById('m35UndoScenario')?.addEventListener('click',undoApply);
+  document.getElementById('m35OvertimeExtra')?.addEventListener('input',()=>{m33ScenarioState.mode='overtime';const expected=Number(m22CurrentPlan().expected||0),extra=n('m35OvertimeExtra');setValue('m33ScenarioPay',expected+extra);document.querySelectorAll('[data-m33-mode]').forEach(btn=>btn.classList.toggle('active',btn.dataset.m33Mode==='overtime'));setModeUI('overtime');m33RenderScenario()});
+  document.getElementById('m33ScenarioRetain')?.addEventListener('input',()=>{m33ScenarioState.mode='custom';document.querySelectorAll('[data-m33-mode]').forEach(btn=>btn.classList.toggle('active',btn.dataset.m33Mode==='custom'));setModeUI('custom');const note=document.getElementById('m33ModeNote');if(note)note.textContent='Custom mode keeps every value under your control.';m33RenderScenario()});
+  document.getElementById('m22PaydayDate')?.addEventListener('change',()=>setText('m35PaydayHuman',humanDate(document.getElementById('m22PaydayDate')?.value)));
+  window.addEventListener('load',()=>setTimeout(()=>{renderLiveRefinement();m33SeedScenario(m33ScenarioState.mode||'overtime')},120));
+  if(document.readyState!=='loading')setTimeout(()=>{renderLiveRefinement();m33SeedScenario(m33ScenarioState.mode||'overtime')},120);
+})();
+</script>
+
 </body>
 </html>
