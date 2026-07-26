@@ -991,7 +991,7 @@ body:before{
 
 
 /* ===================== SECTION: FULL PAGE COMMAND POLISH ===================== */
-/* Extends the Scheduled Bills Command Bay styling through the rest of Wealth HQ without changing calculations. */
+/* Extends the Bills Control Centre styling through the rest of Wealth HQ without changing calculations. */
 .section.card:not(.scheduled-bills-command){
   border-color:rgba(98,243,255,.18);
   background:
@@ -2647,6 +2647,107 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 @media(max-width:480px){.m33-live-inputs,.m33-live-scoreboard,.m33-scenario-inputs,.m33-scenario-kpis{grid-template-columns:1fr!important}.m33-field.featured{grid-column:auto}.m33-scenario-actions{grid-template-columns:1fr}.m33-advanced .m22-summary-grid,.m33-advanced .m22-protection,.m33-advanced .m22-wallet,.m33-advanced .m25-reconcile{grid-template-columns:1fr!important}.m33-compare-row{grid-template-columns:1.2fr repeat(3,.8fr);font-size:7px}.m33-stack-row{grid-template-columns:72px 1fr auto}}
 </style>
 
+
+<style>
+/* ===================== M38 BILLS CONTROL CENTRE ===================== */
+.m38-bills-centre{
+  position:relative;overflow:visible!important;
+  border-color:rgba(98,243,255,.24)!important;
+  background:
+    radial-gradient(circle at 96% -8%,rgba(98,243,255,.12),transparent 32%),
+    radial-gradient(circle at 0% 100%,rgba(243,196,91,.07),transparent 30%),
+    linear-gradient(145deg,rgba(10,23,39,.98),rgba(5,13,25,.99))!important;
+}
+.m38-bills-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:14px}
+.m38-bills-header h2{margin:3px 0 5px!important;font-size:clamp(24px,3vw,34px)!important;letter-spacing:-.9px!important}
+.m38-bills-header p{margin:0;color:#93a6bc;max-width:760px;font-size:12px;line-height:1.55}
+.m38-eyebrow{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:950;letter-spacing:1.25px;color:#7eefff}
+.m38-eyebrow span{width:8px;height:8px;border-radius:50%;background:#52f6c4;box-shadow:0 0 14px rgba(82,246,196,.75);animation:m38Pulse 2.2s ease-in-out infinite}
+.m38-add-bill{min-width:190px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,rgba(243,196,91,.18),rgba(243,196,91,.07))!important;border-color:rgba(243,196,91,.38)!important;color:#ffe39a!important}
+.m38-add-bill span{font-size:18px;line-height:1}
+.m38-command-strip{margin-top:16px!important}
+.m38-command-strip .schedule-command-tile{min-height:96px;padding:13px 14px}
+.m38-command-strip .schedule-command-tile .v{font-size:clamp(21px,2.4vw,31px)}
+.m38-hidden-compat{display:none!important}
+.m38-bills-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.8fr);gap:14px;align-items:start;margin-top:4px}
+.m38-queue-panel,.m38-inspector-panel{border:1px solid rgba(255,255,255,.085);border-radius:20px;background:linear-gradient(155deg,rgba(255,255,255,.035),rgba(255,255,255,.014));overflow:hidden}
+.m38-queue-panel{padding:15px;min-height:520px}
+.m38-inspector-panel{position:sticky;top:14px;min-height:520px;padding:15px;background:radial-gradient(circle at 100% 0%,rgba(181,156,255,.10),transparent 34%),linear-gradient(155deg,rgba(12,25,44,.98),rgba(6,14,27,.99))}
+.m38-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.m38-panel-head h3,.m38-inspector-title h3{margin:2px 0 0;font-size:18px;letter-spacing:-.35px}
+.m38-panel-kicker{font-size:8px;letter-spacing:1px;font-weight:950;color:#7eefff}
+.m38-queue-count,.m38-history-count{display:inline-flex;align-items:center;justify-content:center;min-width:58px;padding:6px 9px;border:1px solid rgba(98,243,255,.20);border-radius:999px;background:rgba(98,243,255,.06);color:#9cefff;font-size:9px;font-weight:950}
+.m38-urgency-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:11px;padding:5px;border:1px solid rgba(255,255,255,.075);border-radius:14px;background:rgba(0,0,0,.14)}
+.m38-urgency-tabs button,.m38-category-filters button{appearance:none;border:1px solid transparent;border-radius:10px;background:transparent;color:#8fa3ba;padding:8px 7px;font-size:9px;font-weight:900;cursor:pointer;transition:.18s ease}
+.m38-urgency-tabs button:hover,.m38-category-filters button:hover{color:#eaf5ff;border-color:rgba(98,243,255,.16)}
+.m38-urgency-tabs button.active{color:#061421;background:linear-gradient(135deg,#72f2ff,#68dcbd);box-shadow:0 7px 18px rgba(80,230,220,.15)}
+.m38-category-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;margin-bottom:12px}
+.m38-category-row>span{font-size:9px;font-weight:900;color:#8398b1;text-transform:uppercase;letter-spacing:.8px}
+.m38-category-filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+.m38-category-filters::-webkit-scrollbar{display:none}
+.m38-category-filters button{white-space:nowrap;padding:6px 9px;border-color:rgba(255,255,255,.07);background:rgba(255,255,255,.025)}
+.m38-category-filters button.active{color:#ffe39a;border-color:rgba(243,196,91,.30);background:rgba(243,196,91,.08)}
+.m38-bill-timeline{display:grid;gap:9px}
+.m38-timeline-empty{display:grid;place-items:center;min-height:280px;text-align:center;padding:24px;border:1px dashed rgba(98,243,255,.18);border-radius:16px;color:#91a5bd;background:rgba(255,255,255,.012)}
+.m38-timeline-empty b{display:block;color:#e8f3ff;font-size:15px;margin-bottom:5px}
+.m38-bill-card{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.075);border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.034),rgba(255,255,255,.014));cursor:pointer;transition:transform .18s ease,border-color .18s ease,background .18s ease;overflow:hidden}
+.m38-bill-card:before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:0 4px 4px 0;background:#6feeff;opacity:.62}
+.m38-bill-card:hover{transform:translateY(-1px);border-color:rgba(98,243,255,.25);background:rgba(98,243,255,.035)}
+.m38-bill-card.selected{border-color:rgba(243,196,91,.34);background:linear-gradient(145deg,rgba(243,196,91,.075),rgba(255,255,255,.018));box-shadow:0 0 0 1px rgba(243,196,91,.08) inset}
+.m38-bill-card.overdue:before{background:#ff6b8a}.m38-bill-card.soon:before{background:#ffc857}.m38-bill-card.paid:before{background:#52f6a4}.m38-bill-card.excluded:before{background:#718197}
+.m38-bill-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;border:1px solid rgba(98,243,255,.16);background:radial-gradient(circle at 30% 20%,rgba(98,243,255,.14),rgba(255,255,255,.025));font-size:20px}
+.m38-bill-main{min-width:0}
+.m38-bill-title-row{display:flex;align-items:center;gap:7px;min-width:0}
+.m38-bill-title-row b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#eef7ff}
+.m38-status-chip{display:inline-flex;align-items:center;white-space:nowrap;padding:4px 6px;border-radius:999px;border:1px solid rgba(98,243,255,.18);color:#8edbff;background:rgba(98,243,255,.055);font-size:7px;font-weight:950;letter-spacing:.55px;text-transform:uppercase}
+.m38-status-chip.overdue{color:#ff9caf;border-color:rgba(255,107,138,.28);background:rgba(255,107,138,.07)}
+.m38-status-chip.soon{color:#ffe08a;border-color:rgba(255,200,87,.28);background:rgba(255,200,87,.07)}
+.m38-status-chip.paid{color:#8cffb8;border-color:rgba(80,255,143,.28);background:rgba(80,255,143,.07)}
+.m38-bill-meta{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:6px;color:#849ab3;font-size:9px}
+.m38-bill-meta span{display:inline-flex;align-items:center;gap:4px}
+.m38-bill-amount{text-align:right;white-space:nowrap}
+.m38-bill-amount strong{display:block;font-size:16px;color:#f4fbff;letter-spacing:-.25px}
+.m38-bill-amount small{display:block;margin-top:5px;color:#7f94aa;font-size:8px}
+.m38-source-tag{color:#aeeaff!important}
+.m38-protected-tag{color:#9affc3!important}
+.m38-unprotected-tag{color:#ffcf84!important}
+.m38-inspector-empty{display:grid;place-items:center;text-align:center;min-height:485px;padding:26px;color:#91a5bd}
+.m38-inspector-empty h3{color:#edf7ff;margin:10px 0 4px}.m38-inspector-empty p{max-width:260px;margin:0;font-size:11px;line-height:1.5}
+.m38-empty-orb{width:64px;height:64px;border-radius:22px;display:grid;place-items:center;font-size:28px;font-weight:1000;color:#8ff4ff;border:1px solid rgba(98,243,255,.22);background:radial-gradient(circle at 30% 20%,rgba(98,243,255,.18),rgba(181,156,255,.08));box-shadow:0 16px 34px rgba(0,0,0,.28)}
+.m38-inspector-title{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:13px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.075)}
+.m38-inspector-title p{margin:4px 0 0;color:#91a5bd;font-size:9px}.m38-inspector-title .m38-status-chip{margin-top:1px}
+.m38-inspector-form{display:grid;gap:10px}
+.m38-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.m38-field{display:grid;gap:5px}.m38-field.full{grid-column:1/-1}
+.m38-field label,.m38-switch-copy b{font-size:8px;font-weight:950;letter-spacing:.6px;color:#8195ad;text-transform:uppercase}
+.m38-field input,.m38-field select,.m38-field textarea{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.09);border-radius:11px;background:rgba(255,255,255,.045);color:#eef7ff;padding:9px 10px;font-size:14px;outline:none}
+.m38-field input:focus,.m38-field select:focus,.m38-field textarea:focus{border-color:rgba(98,243,255,.42);box-shadow:0 0 0 3px rgba(98,243,255,.055)}
+.m38-field textarea{min-height:72px;resize:vertical;font-size:12px;line-height:1.4}
+.m38-switch-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 11px;border:1px solid rgba(255,255,255,.075);border-radius:13px;background:rgba(255,255,255,.025)}
+.m38-switch-copy span{display:block;margin-top:3px;color:#8da1b8;font-size:9px;line-height:1.35}
+.m38-switch{position:relative;width:42px;height:24px}.m38-switch input{opacity:0;position:absolute}.m38-switch i{position:absolute;inset:0;border-radius:999px;background:#29384a;border:1px solid rgba(255,255,255,.1);transition:.2s}.m38-switch i:after{content:"";position:absolute;width:18px;height:18px;left:2px;top:2px;border-radius:50%;background:#c4d1df;transition:.2s}.m38-switch input:checked+i{background:rgba(70,229,174,.30);border-color:rgba(70,229,174,.45)}.m38-switch input:checked+i:after{transform:translateX(18px);background:#7cf0c0}
+.m38-funding-readout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:1px}
+.m38-funding-readout div{padding:9px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025)}
+.m38-funding-readout span{display:block;color:#7f93aa;font-size:7px;text-transform:uppercase;letter-spacing:.5px;font-weight:900}.m38-funding-readout b{display:block;margin-top:4px;color:#edf7ff;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.m38-action-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:2px}
+.m38-complete-btn,.m38-delete-bill{border-radius:12px;padding:10px 12px;font-size:10px;font-weight:950;cursor:pointer}
+.m38-complete-btn{border:1px solid rgba(80,255,143,.34);background:linear-gradient(135deg,rgba(80,255,143,.15),rgba(80,255,143,.06));color:#9affc3}
+.m38-delete-bill{border:1px solid rgba(255,107,138,.26);background:rgba(255,107,138,.07);color:#ff9caf}
+.m38-complete-btn:disabled{opacity:.45;cursor:not-allowed}
+.m38-action-note{margin:0;color:#879bb2;font-size:8px;line-height:1.45}
+.m38-archive-drawer{margin-top:14px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.018);overflow:hidden}
+.m38-archive-drawer summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;list-style:none}.m38-archive-drawer summary::-webkit-details-marker{display:none}
+.m38-archive-drawer summary span:first-child{display:grid;gap:2px}.m38-archive-drawer summary b{font-size:13px}.m38-archive-drawer summary small{color:#8398b1;font-size:9px}
+.m38-history-list{display:grid;gap:8px;padding:0 13px 13px;border-top:1px solid rgba(255,255,255,.06)}
+.m38-history-card{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 11px;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:rgba(255,255,255,.022)}
+.m38-history-card:first-child{margin-top:12px}.m38-history-card b{display:block;font-size:11px}.m38-history-card p{margin:3px 0 0;color:#8498ae;font-size:8px}.m38-history-card strong{font-size:12px;color:#9affc3;white-space:nowrap}.m38-history-card .delete-btn{padding:6px 8px!important}
+.m38-history-empty{padding:20px;text-align:center;color:#8498ae;font-size:10px}
+@keyframes m38Pulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+@media(max-width:1050px){.m38-bills-grid{grid-template-columns:minmax(0,1.12fr) minmax(285px,.88fr)}.m38-urgency-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.m38-urgency-tabs button:nth-child(4),.m38-urgency-tabs button:nth-child(5){grid-column:auto}}
+@media(max-width:820px){.m38-bills-grid{grid-template-columns:1fr}.m38-inspector-panel{position:relative;top:auto;min-height:0}.m38-inspector-empty{min-height:230px}.m38-bills-header{align-items:stretch}.m38-add-bill{min-width:165px}.m38-command-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){.m38-bills-header{display:grid}.m38-add-bill{width:100%}.m38-command-strip{grid-template-columns:1fr 1fr!important}.m38-command-strip .schedule-command-tile{min-height:86px}.m38-queue-panel,.m38-inspector-panel{padding:11px;border-radius:16px}.m38-urgency-tabs{grid-template-columns:1fr 1fr}.m38-urgency-tabs button:last-child{grid-column:1/-1}.m38-bill-card{grid-template-columns:auto minmax(0,1fr);padding:10px}.m38-bill-amount{grid-column:2;text-align:left;display:flex;align-items:center;gap:8px}.m38-bill-amount strong{font-size:14px}.m38-bill-amount small{margin:0}.m38-form-grid{grid-template-columns:1fr}.m38-field.full{grid-column:auto}.m38-funding-readout{grid-template-columns:1fr 1fr}.m38-funding-readout div:last-child{grid-column:1/-1}.m38-history-card{grid-template-columns:minmax(0,1fr) auto}.m38-history-card .delete-btn{grid-column:1/-1;width:100%}}
+</style>
+
 </head>
 <body>
 
@@ -3477,191 +3578,88 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
     <div class="helper-note subv" id="growPotProgressMeta">0% of target reached</div>
   </section>
 
- <!-- ===================== SECTION: EDITABLE SCHEDULED BILLS (GROUPED + COLLAPSIBLE) ===================== -->
-<section class="section card scheduled-bills-command" id="m13Bills" class="m13-anchor section card scheduled-bills-command">
-  <h2>Scheduled Bills Command Bay</h2>
-  <div class="scheduled-subtitle">Cleaner grouped bills, quick pressure read, and live category totals — same planner engine, just no spreadsheet dungeon vibes.</div>
-
-  <div class="scheduled-bill-command-strip">
-    <div class="schedule-command-tile cyan"><div class="k">Live Bills</div><div class="v" id="scheduledLiveCount">0</div><div class="subv">Unpaid and included</div></div>
-    <div class="schedule-command-tile watch"><div class="k">Live Total</div><div class="v" id="scheduledLiveTotal">£0</div><div class="subv">Unpaid included bills</div></div>
-    <div class="schedule-command-tile risk"><div class="k">Due Soon</div><div class="v" id="scheduledDueSoon">£0</div><div class="subv">Next 7 days</div></div>
-    <div class="schedule-command-tile good"><div class="k">Next Bill</div><div class="v" id="scheduledNextBill">--</div><div class="subv" id="scheduledNextBillMeta">No pressure yet</div></div>
+ <!-- ===================== SECTION: BILLS CONTROL CENTRE ===================== -->
+<section class="section card scheduled-bills-command m38-bills-centre" id="m13Bills">
+  <div class="m38-bills-header">
+    <div>
+      <div class="m38-eyebrow"><span></span> LIVE BILL OPERATIONS</div>
+      <h2>Bills Control Centre</h2>
+      <p>Upcoming payments are organised by urgency first. Select any bill to edit its funding source, protection rule, frequency and completion action.</p>
+    </div>
+    <button class="add-btn m38-add-bill" id="addScheduledBtn" type="button"><span>＋</span> Add confirmed bill</button>
   </div>
 
-  <div class="grid two-grid" style="margin-bottom:12px;">
-    <button class="add-btn" id="addScheduledBtn">+ Add Scheduled Bill</button>
-    <div class="subv">Use this for confirmed bills with a proper due date, planned amount, paid tracking, rolling and archiving. Funding notes now expand and remain readable after completion.</div>
+  <div class="scheduled-bill-command-strip m38-command-strip">
+    <article class="schedule-command-tile cyan">
+      <div class="k">Due before payday</div>
+      <div class="v" id="scheduledBeforePayday">£0.00</div>
+      <div class="subv" id="scheduledBeforePaydayMeta">0 payments</div>
+    </article>
+    <article class="schedule-command-tile watch">
+      <div class="k">Next 7 days</div>
+      <div class="v" id="scheduledDueSoon">£0.00</div>
+      <div class="subv" id="scheduledDueSoonMeta">No immediate pressure</div>
+    </article>
+    <article class="schedule-command-tile risk" id="scheduledProtectionTile">
+      <div class="k">Protection needed</div>
+      <div class="v" id="scheduledProtectionNeeded">£0.00</div>
+      <div class="subv">Holding Pot top-up required</div>
+    </article>
+    <article class="schedule-command-tile good" id="scheduledFundingTile">
+      <div class="k">Funding status</div>
+      <div class="v" id="scheduledFundingStatus">Protected</div>
+      <div class="subv" id="scheduledFundingStatusMeta">All selected bills covered</div>
+    </article>
   </div>
-  <div class="m18-sort-note">Bills are automatically grouped by the exact category you enter and ordered by due date. Changing “Direct Debit” to “Subscription” will immediately create or move it into the Subscription category.</div>
-  <div id="m18DynamicBillGroups"></div>
 
-  <!-- ===================== CATEGORY: DIRECT DEBITS ===================== -->
-  <div class="bill-group">
-    <h3 class="bill-group-title" onclick="toggleSection('ddTable')"><span>Direct Debits</span><span class="bill-group-meta" id="ddMeta">--</span></h3>
-    <div id="ddTable" class="collapsible open">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th>
-              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="scheduledBillsBody_dd"></tbody>
-        </table>
+  <div class="m38-hidden-compat" aria-hidden="true">
+    <span id="scheduledLiveCount">0</span><span id="scheduledLiveTotal">£0.00</span>
+    <span id="scheduledNextBill">—</span><span id="scheduledNextBillMeta">—</span>
+  </div>
+
+  <div class="m38-bills-grid">
+    <section class="m38-queue-panel" aria-label="Upcoming bill timeline">
+      <div class="m38-panel-head">
+        <div>
+          <span class="m38-panel-kicker">PAYMENT QUEUE</span>
+          <h3>Upcoming timeline</h3>
+        </div>
+        <span class="m38-queue-count" id="m38QueueCount">0 bills</span>
       </div>
-    </div>
-  </div>
-  
-  <!-- ===================== CATEGORY: DENTIST ===================== -->
-<div class="bill-group">
-  <h3 class="bill-group-title" onclick="toggleSection('dentistTable')"><span>Dentist</span><span class="bill-group-meta" id="dentistMeta">--</span></h3>
-  <div id="dentistTable" class="collapsible open">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-            <th>Actual Paid</th><th>Included</th><th>Category</th>
-            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="scheduledBillsBody_dentist"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
 
-<!-- ===================== CATEGORY: REPAYMENTS ===================== -->
-<div class="bill-group">
-  <h3 class="bill-group-title" onclick="toggleSection('repaymentTable')"><span>Repayments</span><span class="bill-group-meta" id="repaymentMeta">--</span></h3>
-  <div id="repaymentTable" class="collapsible open">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-            <th>Actual Paid</th><th>Included</th><th>Category</th>
-            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="scheduledBillsBody_repayment"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== CATEGORY: HOME ===================== -->
-<div class="bill-group">
-  <h3 class="bill-group-title" onclick="toggleSection('homeTable')"><span>Home</span><span class="bill-group-meta" id="homeMeta">--</span></h3>
-  <div id="homeTable" class="collapsible open">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-            <th>Actual Paid</th><th>Included</th><th>Category</th>
-            <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="scheduledBillsBody_home"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-  <!-- ===================== CATEGORY: HOLIDAYS ===================== -->
-  <div class="bill-group">
-    <h3 class="bill-group-title" onclick="toggleSection('holidayTable')"><span>Holidays</span><span class="bill-group-meta" id="holidayMeta">--</span></h3>
-    <div id="holidayTable" class="collapsible open">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th>
-              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="scheduledBillsBody_holiday"></tbody>
-        </table>
+      <div class="m38-urgency-tabs" id="m38UrgencyTabs" aria-label="Bill timing filter">
+        <button type="button" data-m38-urgency="before" class="active">Before payday</button>
+        <button type="button" data-m38-urgency="next">Next cycle</button>
+        <button type="button" data-m38-urgency="later">Later</button>
+        <button type="button" data-m38-urgency="paid">Paid</button>
+        <button type="button" data-m38-urgency="all">All</button>
       </div>
-    </div>
-  </div>
 
-  <!-- ===================== CATEGORY: CAR / MAINTENANCE ===================== -->
-  <div class="bill-group">
-    <h3 class="bill-group-title" onclick="toggleSection('carTable')"><span>Car & Maintenance</span><span class="bill-group-meta" id="carMeta">--</span></h3>
-    <div id="carTable" class="collapsible open">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th>
-              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="scheduledBillsBody_car"></tbody>
-        </table>
+      <div class="m38-category-row">
+        <span>Filter</span>
+        <div class="m38-category-filters" id="m38CategoryFilters"></div>
       </div>
-    </div>
-  </div>
 
-  <!-- ===================== CATEGORY: OTHER ===================== -->
-  <div class="bill-group">
-    <h3 class="bill-group-title" onclick="toggleSection('otherTable')"><span>Other</span><span class="bill-group-meta" id="otherMeta">--</span></h3>
-    <div id="otherTable" class="collapsible open">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th>Due Date</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th>
-              <th>Notes</th><th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="scheduledBillsBody_other"></tbody>
-        </table>
+      <div class="m38-bill-timeline" id="m18DynamicBillGroups"></div>
+    </section>
+
+    <aside class="m38-inspector-panel" id="m38BillInspector" aria-label="Selected bill inspector">
+      <div class="m38-inspector-empty">
+        <div class="m38-empty-orb">£</div>
+        <h3>Select a payment</h3>
+        <p>Choose a bill from the timeline to inspect its funding and edit the plan.</p>
       </div>
-    </div>
+    </aside>
   </div>
 
+  <details class="m38-archive-drawer" id="archivedBillsPanel">
+    <summary>
+      <span><b>Payment history</b><small>Completed and archived bill records</small></span>
+      <span class="m38-history-count" id="archivedBillsCount">0</span>
+    </summary>
+    <div class="m38-history-list" id="archivedBillsBody"></div>
+  </details>
 </section>
-
-<!-- ===================== SECTION: ARCHIVED BILLS ===================== -->
-  <section class="section card">
-    <details id="archivedBillsPanel">
-      <summary style="cursor:pointer; font-weight:700; font-size:18px; list-style:none;">
-        Archived Bills
-        <span class="subv" id="archivedBillsCount" style="display:inline-block; margin-left:8px;">(0)</span>
-      </summary>
-
-      <div class="subv" style="margin:12px 0 12px;">
-        Completed items moved out of the live planner but kept for history.
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Due Date</th>
-              <th>Planned</th>
-              <th>Actual Paid</th>
-              <th>Category</th>
-              <th>Notes</th>
-              <th>Archived On</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody id="archivedBillsBody"></tbody>
-        </table>
-      </div>
-    </details>
-  </section>
 
   <!-- ===================== SECTION: EDITABLE FUTURE COSTS ===================== -->
   <section class="section card">
@@ -4380,24 +4378,37 @@ function getDaysToNextPayday() {
   return Math.round((next.getTime() - today.getTime()) / 86400000);
 }
 
+function m38FindFundingPot(sourceName) {
+  const wanted = String(sourceName || "").trim().toLocaleLowerCase("en-GB");
+  if (!wanted || !Array.isArray(plannerState?.editablePots)) return null;
+  return plannerState.editablePots.find(pot =>
+    String(pot?.name || "").trim().toLocaleLowerCase("en-GB") === wanted ||
+    String(pot?.id || "").trim().toLocaleLowerCase("en-GB") === wanted
+  ) || null;
+}
+
+function m38DeductFundingSource(bill, amount) {
+  const paid = Math.max(0, Number(amount || 0));
+  if (!paid) return;
+  const source = String(bill?.fundingSource || (bill?.included === false ? "Current Account" : "Holding Pot"));
+  if (source === "Holding Pot") {
+    plannerState.holdingBalance = Math.max(0, Number(plannerState.holdingBalance || 0) - paid);
+    const holdingInput = document.getElementById("holdingBalanceInput");
+    if (holdingInput) holdingInput.value = Number(plannerState.holdingBalance || 0).toFixed(2);
+    return;
+  }
+  if (source === "Current Account") return;
+  const pot = m38FindFundingPot(source);
+  if (pot) pot.balance = Math.max(0, Number(pot.balance || 0) - paid);
+}
+
 function applyPaidScheduledDeductions() {
-  plannerState.scheduledBills.forEach(bill => {
+  (plannerState.scheduledBills || []).forEach(bill => {
     if (bill.paid && !bill.deducted && Number(bill.actualPaid || 0) > 0) {
-      const amountToDeduct = Number(bill.actualPaid || 0);
-
-      if (amountToDeduct > 0) {
-        plannerState.holdingBalance = Math.max(
-          0,
-          Number(plannerState.holdingBalance || 0) - amountToDeduct
-        );
-      }
-
+      m38DeductFundingSource(bill, Number(bill.actualPaid || 0));
       bill.deducted = true;
     }
-
-    if (!bill.paid && bill.deducted) {
-      bill.deducted = false;
-    }
+    if (!bill.paid && bill.deducted) bill.deducted = false;
   });
 }
 
@@ -4460,95 +4471,189 @@ function m20NextRollLabel(bill) {
   return next ? next.toLocaleDateString("en-GB",{day:"2-digit",month:"short"}) : "—";
 }
 
+let m38SelectedBillId = null;
+let m38UrgencyFilter = "before";
+let m38CategoryFilter = "all";
+
+function m38FundingSource(bill) {
+  const existing = String(bill?.fundingSource || "").trim();
+  if (existing) return existing;
+  const notes = String(bill?.notes || "").toLocaleLowerCase("en-GB");
+  const category = String(bill?.category || "").toLocaleLowerCase("en-GB");
+  const pot = (plannerState.editablePots || []).find(item => {
+    const name = String(item?.name || "").toLocaleLowerCase("en-GB");
+    return name && (notes.includes(name) || category.includes(name.replace(/ pot$/,"")));
+  });
+  return pot ? String(pot.name) : (bill?.included === false ? "Current Account" : "Holding Pot");
+}
+
+function m38NormaliseBill(bill) {
+  bill.name = String(bill?.name || "Unnamed bill");
+  bill.due = String(bill?.due || "");
+  bill.amount = Number(bill?.amount || 0);
+  bill.actualPaid = Number(bill?.actualPaid || 0);
+  bill.paid = Boolean(bill?.paid);
+  bill.deducted = Boolean(bill?.deducted);
+  bill.included = bill?.included !== false;
+  bill.category = m18CategoryName(bill?.category);
+  bill.notes = String(bill?.notes || "");
+  bill.recurrence = String(bill?.recurrence || "monthly");
+  bill.fundingSource = m38FundingSource(bill);
+  return bill;
+}
+
+function m38Today() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+function m38FollowingPayday() {
+  const p = getNextPaydayDate();
+  const next = new Date(p); next.setDate(next.getDate() + 28); next.setHours(23,59,59,999); return next;
+}
+function m38Bucket(bill) {
+  if (bill.paid) return "paid";
+  if (!bill.due) return "later";
+  const due = parseLocalDate(bill.due); if (Number.isNaN(due.getTime())) return "later";
+  due.setHours(23,59,59,999);
+  const payday = getNextPaydayDate(); payday.setHours(23,59,59,999);
+  if (due <= payday) return "before";
+  if (due <= m38FollowingPayday()) return "next";
+  return "later";
+}
+function m38DaysText(bill) {
+  if (!bill.due) return "Date not set";
+  const days = getDaysLeft(bill.due);
+  if (days === null) return "Date not set";
+  if (days < 0) return `${Math.abs(days)} day${Math.abs(days)===1?"":"s"} overdue`;
+  if (days === 0) return "Due today";
+  if (days === 1) return "Due tomorrow";
+  return `Due in ${days} days`;
+}
+function m38CardClass(bill) {
+  if (bill.paid) return "paid";
+  if (!bill.included) return "excluded";
+  const days = bill.due ? getDaysLeft(bill.due) : null;
+  if (days !== null && days < 0) return "overdue";
+  if (days !== null && days <= 7) return "soon";
+  return "planned";
+}
+function m38StatusLabel(bill) {
+  const cls = m38CardClass(bill);
+  return cls === "paid" ? "Paid" : cls === "overdue" ? "Overdue" : cls === "soon" ? "Due soon" : cls === "excluded" ? "Not protected" : "Planned";
+}
+function m38BillIcon(bill) {
+  const text = `${bill?.category||""} ${bill?.name||""}`.toLocaleLowerCase("en-GB");
+  if (/house|home|council|water|energy|broadband|boiler/.test(text)) return "⌂";
+  if (/car|mot|insurance|petrol|vehicle/.test(text)) return "🚗";
+  if (/dent/.test(text)) return "✚";
+  if (/football|coventry|ticket|season/.test(text)) return "⚽";
+  if (/subscription|playstation|apple|amazon|chatgpt|vodafone|tv/.test(text)) return "◉";
+  if (/repay|flex|loan|credit/.test(text)) return "↘";
+  if (/holiday|travel/.test(text)) return "✈";
+  return "£";
+}
+function m38FundingOptions(selected) {
+  const values = ["Holding Pot","Current Account",...(plannerState.editablePots||[]).map(p=>String(p.name||"")).filter(Boolean)];
+  return [...new Set(values)].map(value=>`<option value="${m18Escape(value)}" ${value===selected?"selected":""}>${m18Escape(value)}</option>`).join("");
+}
+function m38RecurrenceLabel(value) {
+  return ({none:"One-off",weekly:"Weekly",fortnightly:"Fortnightly","four-weekly":"Every 4 weeks",monthly:"Monthly",yearly:"Yearly"})[value] || "Monthly";
+}
+function m38SelectedBill() {
+  return (plannerState.scheduledBills || []).find(bill => String(bill.id) === String(m38SelectedBillId)) || null;
+}
+function m38SelectFallback(items) {
+  if (!items.length) return;
+  const visible = items.some(item => String(item.bill.id) === String(m38SelectedBillId));
+  if (!visible) m38SelectedBillId = items[0].bill.id;
+}
+
+function m38RenderInspector() {
+  const host = document.getElementById("m38BillInspector");
+  if (!host) return;
+  const bill = m38SelectedBill();
+  if (!bill) {
+    host.innerHTML = `<div class="m38-inspector-empty"><div class="m38-empty-orb">£</div><h3>Select a payment</h3><p>Choose a bill from the timeline to inspect its funding and edit the plan.</p></div>`;
+    return;
+  }
+  const index = plannerState.scheduledBills.indexOf(bill);
+  const statusClass = m38CardClass(bill);
+  const next = bill.recurrence === "none" ? "Moves to history after payment" : `Next date: ${m20NextRollLabel(bill)}`;
+  const paydayImpact = bill.included ? Number(bill.amount||0) : 0;
+  host.innerHTML = `
+    <div class="m38-inspector-title">
+      <div><span class="m38-panel-kicker">BILL FUNDING INSPECTOR</span><h3>${m18Escape(bill.name)}</h3><p>${m38DaysText(bill)} • ${m38RecurrenceLabel(bill.recurrence)}</p></div>
+      <span class="m38-status-chip ${statusClass}">${m38StatusLabel(bill)}</span>
+    </div>
+    <div class="m38-inspector-form">
+      <div class="m38-form-grid">
+        <div class="m38-field full"><label for="m38Name">Bill name</label><input id="m38Name" type="text" value="${m18Escape(bill.name)}" data-section="scheduled" data-index="${index}" data-field="name"></div>
+        <div class="m38-field"><label for="m38Due">Due date</label><input id="m38Due" type="date" value="${m18Escape(bill.due)}" data-section="scheduled" data-index="${index}" data-field="due"></div>
+        <div class="m38-field"><label for="m38Amount">Planned amount</label><input id="m38Amount" type="number" min="0" step="0.01" value="${Number(bill.amount||0)}" data-section="scheduled" data-index="${index}" data-field="amount"></div>
+        <div class="m38-field"><label for="m38Category">Category</label><input id="m38Category" type="text" value="${m18Escape(bill.category)}" data-section="scheduled" data-index="${index}" data-field="category"></div>
+        <div class="m38-field"><label for="m38Frequency">Frequency</label><select id="m38Frequency" data-section="scheduled" data-index="${index}" data-field="recurrence">
+          <option value="none" ${bill.recurrence==="none"?"selected":""}>One-off</option><option value="weekly" ${bill.recurrence==="weekly"?"selected":""}>Weekly</option><option value="fortnightly" ${bill.recurrence==="fortnightly"?"selected":""}>Fortnightly</option><option value="four-weekly" ${bill.recurrence==="four-weekly"?"selected":""}>Every 4 weeks</option><option value="monthly" ${bill.recurrence==="monthly"?"selected":""}>Monthly</option><option value="yearly" ${bill.recurrence==="yearly"?"selected":""}>Yearly</option>
+        </select></div>
+        <div class="m38-field full"><label for="m38FundingSource">Funding source</label><select id="m38FundingSource" data-section="scheduled" data-index="${index}" data-field="fundingSource">${m38FundingOptions(bill.fundingSource)}</select></div>
+        <div class="m38-field"><label for="m38ActualPaid">Actual payment</label><input id="m38ActualPaid" type="number" min="0" step="0.01" value="${Number(bill.actualPaid||0)}" placeholder="Defaults to planned" data-section="scheduled" data-index="${index}" data-field="actualPaid"></div>
+        <div class="m38-field"><label>Completion rule</label><input type="text" value="${m18Escape(next)}" disabled></div>
+        <div class="m38-field full"><label for="m38Notes">Funding note</label><textarea id="m38Notes" rows="3" placeholder="Example: Covered by Dentist Pot — exclude from Holding Pot contribution." data-section="scheduled" data-index="${index}" data-field="notes">${m18Escape(bill.notes)}</textarea></div>
+      </div>
+      <div class="m38-switch-row">
+        <div class="m38-switch-copy"><b>Include in Holding Pot contribution</b><span>Aurora protects this amount in the payday calculation when enabled.</span></div>
+        <label class="m38-switch"><input type="checkbox" ${bill.included?"checked":""} data-section="scheduled" data-index="${index}" data-field="included"><i></i></label>
+      </div>
+      <div class="m38-funding-readout">
+        <div><span>Funding source</span><b>${m18Escape(bill.fundingSource)}</b></div>
+        <div><span>Payday impact</span><b>£${formatMoney(paydayImpact)}</b></div>
+        <div><span>Next action</span><b>${bill.paid?"Finish record":"Complete payment"}</b></div>
+      </div>
+      <div class="m38-action-row">
+        <button type="button" class="m38-complete-btn" data-m38-complete="${index}">${bill.recurrence==="none"?"Complete & archive":"Complete & schedule next"}</button>
+        <button type="button" class="m38-delete-bill" data-delete-section="scheduled" data-delete-index="${index}">Delete</button>
+      </div>
+      <p class="m38-action-note">Completing a payment deducts the actual amount from its chosen tracked pot. Current Account payments are recorded without changing the Holding Pot.</p>
+    </div>`;
+}
+
 function renderScheduledBills() {
   const host = document.getElementById("m18DynamicBillGroups");
   if (!host) return;
+  plannerState.scheduledBills = (plannerState.scheduledBills || []).map(m38NormaliseBill);
+  const indexed = plannerState.scheduledBills.map((bill,index)=>({bill,index}));
+  document.querySelectorAll("[data-m38-urgency]").forEach(button => button.classList.toggle("active", button.dataset.m38Urgency === m38UrgencyFilter));
+  const categories = [...new Set(indexed.map(item=>m18CategoryName(item.bill.category)))].sort((a,b)=>a.localeCompare(b,"en-GB"));
+  const categoryHost = document.getElementById("m38CategoryFilters");
+  if (categoryHost) categoryHost.innerHTML = ["all",...categories].map(category => {
+    const label = category === "all" ? "All" : category;
+    return `<button type="button" data-m38-category="${m18Escape(category)}" class="${m38CategoryFilter===category?"active":""}">${m18Escape(label)}</button>`;
+  }).join("");
 
-  const indexedBills = (plannerState.scheduledBills || []).map((bill, index) => ({
-    bill, index, category:m18CategoryName(bill.category)
-  }));
-
-  const groups = new Map();
-  indexedBills.forEach(item => {
-    const key = item.category.toLocaleLowerCase("en-GB");
-    if (!groups.has(key)) groups.set(key, { name:item.category, items:[] });
-    groups.get(key).items.push(item);
+  let filtered = indexed.filter(item => (m38UrgencyFilter === "all" || m38Bucket(item.bill) === m38UrgencyFilter));
+  if (m38CategoryFilter !== "all") filtered = filtered.filter(item => m18CategoryName(item.bill.category) === m38CategoryFilter);
+  filtered.sort((a,b)=>{
+    const ar = a.bill.paid ? 2 : (a.bill.included ? 0 : 1), br = b.bill.paid ? 2 : (b.bill.included ? 0 : 1);
+    return ar-br || m18DueTimestamp(a.bill)-m18DueTimestamp(b.bill) || String(a.bill.name).localeCompare(String(b.bill.name),"en-GB");
   });
+  m38SelectFallback(filtered);
+  const queueCount = document.getElementById("m38QueueCount");
+  if (queueCount) queueCount.textContent = `${filtered.length} bill${filtered.length===1?"":"s"}`;
 
-  const sortedGroups = [...groups.values()].sort((a,b) => {
-    const aLive = a.items.filter(x => x.bill.included && !x.bill.paid);
-    const bLive = b.items.filter(x => x.bill.included && !x.bill.paid);
-    const aDue = Math.min(...(aLive.length ? aLive : a.items).map(x => m18DueTimestamp(x.bill)));
-    const bDue = Math.min(...(bLive.length ? bLive : b.items).map(x => m18DueTimestamp(x.bill)));
-    return aDue - bDue || a.name.localeCompare(b.name, "en-GB");
-  });
-
-  if (!sortedGroups.length) {
-    host.innerHTML = '<div class="m18-empty">No scheduled bills have been added yet.</div>';
+  if (!filtered.length) {
+    host.innerHTML = `<div class="m38-timeline-empty"><div><b>No payments in this view</b>Try another timing or category filter, or add a confirmed bill.</div></div>`;
+    m38RenderInspector();
     return;
   }
-
-  host.innerHTML = sortedGroups.map((group, groupIndex) => {
-    const items = [...group.items].sort((a,b) => {
-      const as = m18BillStatus(a.bill), bs = m18BillStatus(b.bill);
-      const aLiveRank = a.bill.paid ? 2 : (a.bill.included ? 0 : 1);
-      const bLiveRank = b.bill.paid ? 2 : (b.bill.included ? 0 : 1);
-      return aLiveRank - bLiveRank
-        || m18DueTimestamp(a.bill) - m18DueTimestamp(b.bill)
-        || as.rank - bs.rank
-        || String(a.bill.name||"").localeCompare(String(b.bill.name||""), "en-GB");
-    });
-
-    const live = items.filter(x => x.bill.included && !x.bill.paid);
-    const total = live.reduce((sum,x)=>sum + Number(x.bill.amount||0),0);
-    const bodyId = `m18GroupBody_${groupIndex}`;
-
-    const rows = items.map(({bill,index}) => {
-      const status = m18BillStatus(bill);
-      return `<tr class="m18-row-${status.cls}">
-        <td><input class="table-input" type="text" value="${m18Escape(bill.name)}" data-section="scheduled" data-index="${index}" data-field="name"></td>
-        <td><input class="table-input" type="date" value="${m18Escape(bill.due)}" data-section="scheduled" data-index="${index}" data-field="due"></td>
-        <td><span class="m18-status ${status.cls}">${status.label}</span></td>
-        <td><input class="table-input" type="number" step="0.01" value="${Number(bill.amount||0)}" data-section="scheduled" data-index="${index}" data-field="amount"></td>
-        <td><div class="check-wrap"><input type="checkbox" ${bill.paid ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="paid"><span>${bill.paid ? "Yes" : "No"}</span></div></td>
-        <td><input class="table-input" type="number" step="0.01" value="${Number(bill.actualPaid||0)}" data-section="scheduled" data-index="${index}" data-field="actualPaid"></td>
-        <td><div class="check-wrap"><input type="checkbox" ${bill.included ? "checked" : ""} data-section="scheduled" data-index="${index}" data-field="included"><span>${bill.included ? "Yes" : "No"}</span></div></td>
-        <td><input class="table-input m18-category-input" type="text" value="${m18Escape(bill.category)}" data-section="scheduled" data-index="${index}" data-field="category"></td>
-        <td><select class="table-input m20-frequency-select" data-section="scheduled" data-index="${index}" data-field="recurrence">
-          <option value="none" ${bill.recurrence==="none"?"selected":""}>One-off</option>
-          <option value="weekly" ${bill.recurrence==="weekly"?"selected":""}>Weekly</option>
-          <option value="fortnightly" ${bill.recurrence==="fortnightly"?"selected":""}>Fortnightly</option>
-          <option value="four-weekly" ${bill.recurrence==="four-weekly"?"selected":""}>Every 4 weeks</option>
-          <option value="monthly" ${(!bill.recurrence||bill.recurrence==="monthly")?"selected":""}>Monthly</option>
-          <option value="yearly" ${bill.recurrence==="yearly"?"selected":""}>Yearly</option>
-        </select></td>
-        <td><span class="m20-next-date">${m20NextRollLabel(bill)}</span></td>
-        <td class="m28-note-cell"><label class="m28-notes-label" for="m28ScheduledNote_${index}">Funding note</label><textarea id="m28ScheduledNote_${index}" class="m28-notes-textarea" rows="3" placeholder="Example: Covered by Car Costs Pot — do not fund through Holding Pot." data-section="scheduled" data-index="${index}" data-field="notes">${m18Escape(bill.notes)}</textarea></td>
-        <td><button class="quick-btn" data-roll-section="scheduled" data-roll-index="${index}" ${bill.paid && bill.recurrence!=="none" ? "" : "disabled"}>Roll →</button></td>
-        <td><button class="quick-btn" data-archive-section="scheduled" data-archive-index="${index}" ${bill.paid ? "" : "disabled"}>Archive</button></td>
-        <td><button class="delete-btn" data-delete-section="scheduled" data-delete-index="${index}">Delete</button></td>
-      </tr>`;
-    }).join("");
-
-    return `<div class="m18-bill-group">
-      <div class="m18-bill-group-head" data-m18-toggle="${bodyId}">
-        <h3><span class="m18-category-dot"></span>${m18Escape(group.name)}</h3>
-        <span class="m18-group-meta">${live.length} live • £${formatMoney(total)} • ${items.length} total</span>
+  host.innerHTML = filtered.map(({bill,index})=>{
+    const cls = m38CardClass(bill), selected = String(bill.id)===String(m38SelectedBillId);
+    const source = m38FundingSource(bill);
+    return `<article class="m38-bill-card ${cls} ${selected?"selected":""}" data-m38-select="${m18Escape(bill.id)}">
+      <div class="m38-bill-icon">${m38BillIcon(bill)}</div>
+      <div class="m38-bill-main">
+        <div class="m38-bill-title-row"><b>${m18Escape(bill.name)}</b><span class="m38-status-chip ${cls}">${m38StatusLabel(bill)}</span></div>
+        <div class="m38-bill-meta"><span>▣ ${bill.due?dateLabel(bill.due):"No date"}</span><span>↻ ${m38RecurrenceLabel(bill.recurrence)}</span><span class="m38-source-tag">● ${m18Escape(source)}</span><span class="${bill.included?"m38-protected-tag":"m38-unprotected-tag"}">${bill.included?"✓ Protected":"○ Not in contribution"}</span></div>
       </div>
-      <div class="m18-group-body" id="${bodyId}">
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th>Name</th><th>Due Date</th><th>Status</th><th>Planned</th><th>Paid?</th>
-              <th>Actual Paid</th><th>Included</th><th>Category</th><th>Frequency</th><th>Next Roll</th><th>Notes</th>
-              <th>Roll</th><th>Archive</th><th>Delete</th>
-            </tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-      </div>
-    </div>`;
+      <div class="m38-bill-amount"><strong>£${formatMoney(bill.amount||0)}</strong><small>${m38DaysText(bill)}</small></div>
+    </article>`;
   }).join("");
+  m38RenderInspector();
 }
 
 
@@ -4557,72 +4662,55 @@ function getScheduledGroupKey(bill) {
 }
 
 function updateScheduledBillsCommander() {
-  const groups = {
-    dd: { meta:"ddMeta", count:0, total:0 },
-    dentist: { meta:"dentistMeta", count:0, total:0 },
-    repayment: { meta:"repaymentMeta", count:0, total:0 },
-    home: { meta:"homeMeta", count:0, total:0 },
-    holiday: { meta:"holidayMeta", count:0, total:0 },
-    car: { meta:"carMeta", count:0, total:0 },
-    other: { meta:"otherMeta", count:0, total:0 }
-  };
-
-  const liveBills = (plannerState.scheduledBills || []).filter(b => b.included && !b.paid);
-  liveBills.forEach(bill => {
-    const key = getScheduledGroupKey(bill);
-    if (groups[key]) {
-      groups[key].count += 1;
-      groups[key].total += Number(bill.amount || 0);
-    }
+  const bills = (plannerState.scheduledBills || []).map(m38NormaliseBill);
+  const unpaid = bills.filter(bill=>!bill.paid);
+  const payday = getNextPaydayDate(); payday.setHours(23,59,59,999);
+  const today = m38Today();
+  const next7 = new Date(today); next7.setDate(next7.getDate()+7); next7.setHours(23,59,59,999);
+  const dueBefore = unpaid.filter(bill=>{
+    if(!bill.due) return false; const due=parseLocalDate(bill.due); if(Number.isNaN(due.getTime())) return false; due.setHours(23,59,59,999); return due<=payday;
   });
-
-  Object.values(groups).forEach(group => {
-    const label = group.count ? `${group.count} • £${formatMoney0(group.total)}` : "clear";
-    setText(group.meta, label);
+  const dueSoon = unpaid.filter(bill=>{
+    if(!bill.due) return false; const due=parseLocalDate(bill.due); if(Number.isNaN(due.getTime())) return false; due.setHours(23,59,59,999); return due<=next7;
   });
-
-  const dueSoon = liveBills
-    .filter(b => b.due)
-    .map(b => ({...b, daysLeft:getDaysLeft(b.due)}))
-    .filter(b => b.daysLeft !== null && b.daysLeft >= 0 && b.daysLeft <= 7);
-  const dueSoonTotal = dueSoon.reduce((sum,b)=>sum + Number(b.amount || 0),0);
-  const nextBill = liveBills
-    .filter(b => b.due)
-    .map(b => ({...b, daysLeft:getDaysLeft(b.due)}))
-    .filter(b => b.daysLeft !== null)
-    .sort((a,b)=>a.daysLeft-b.daysLeft)[0];
-
-  setText("scheduledLiveCount", liveBills.length);
-  setText("scheduledLiveTotal", `£${formatMoney0(liveBills.reduce((sum,b)=>sum + Number(b.amount || 0),0))}`);
-  setText("scheduledDueSoon", `£${formatMoney0(dueSoonTotal)}`);
-  setText("scheduledNextBill", nextBill ? nextBill.name : "Clear");
-  setText("scheduledNextBillMeta", nextBill ? `${nextBill.daysLeft} day(s) • £${formatMoney(nextBill.amount || 0)}` : "No live scheduled pressure");
+  const protectedBefore = dueBefore.filter(bill=>bill.included && m38FundingSource(bill)==="Holding Pot");
+  const beforeTotal = dueBefore.reduce((sum,bill)=>sum+Number(bill.amount||0),0);
+  const soonTotal = dueSoon.reduce((sum,bill)=>sum+Number(bill.amount||0),0);
+  const protectedTotal = protectedBefore.reduce((sum,bill)=>sum+Number(bill.amount||0),0);
+  const holding = Number(plannerState.holdingBalance||0);
+  const minimum = Number(plannerState.minimumBuffer||0);
+  const topUp = Math.max(0, protectedTotal + minimum - holding);
+  const nextBill = unpaid.filter(b=>b.due).sort((a,b)=>m18DueTimestamp(a)-m18DueTimestamp(b))[0];
+  setText("scheduledBeforePayday",`£${formatMoney(beforeTotal)}`);
+  setText("scheduledBeforePaydayMeta",`${dueBefore.length} payment${dueBefore.length===1?"":"s"} before ${payday.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}`);
+  setText("scheduledDueSoon",`£${formatMoney(soonTotal)}`);
+  setText("scheduledDueSoonMeta",dueSoon.length?`${dueSoon.length} payment${dueSoon.length===1?"":"s"} need attention`:"No immediate pressure");
+  setText("scheduledProtectionNeeded",`£${formatMoney(topUp)}`);
+  setText("scheduledFundingStatus",topUp>0?"Top-up needed":protectedTotal?"Protected":"Clear");
+  setText("scheduledFundingStatusMeta",topUp>0?`Add £${formatMoney(topUp)} to protect selected bills`:protectedTotal?`£${formatMoney(protectedTotal)} protected through Holding Pot`:"No Holding Pot bills before payday");
+  setText("scheduledLiveCount",unpaid.filter(b=>b.included).length);
+  setText("scheduledLiveTotal",`£${formatMoney(unpaid.filter(b=>b.included).reduce((s,b)=>s+Number(b.amount||0),0))}`);
+  setText("scheduledNextBill",nextBill?nextBill.name:"Clear");
+  setText("scheduledNextBillMeta",nextBill?`${m38DaysText(nextBill)} • £${formatMoney(nextBill.amount||0)}`:"No live scheduled pressure");
+  const protectionTile=document.getElementById("scheduledProtectionTile"), fundingTile=document.getElementById("scheduledFundingTile");
+  if(protectionTile){protectionTile.classList.toggle("risk",topUp>0);protectionTile.classList.toggle("good",topUp===0)}
+  if(fundingTile){fundingTile.classList.toggle("risk",topUp>0);fundingTile.classList.toggle("good",topUp===0)}
 }
-
 
 function renderArchivedBills() {
-  const body = document.getElementById("archivedBillsBody");
+  const host = document.getElementById("archivedBillsBody");
   const countEl = document.getElementById("archivedBillsCount");
-  if (!body) return;
-
-  body.innerHTML = "";
-  if (countEl) countEl.innerText = `(${plannerState.archivedBills.length})`;
-
-  plannerState.archivedBills.forEach((bill, index) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${bill.name || ""}</td>
-      <td>${bill.due ? dateLabel(bill.due) : "No date yet"}</td>
-      <td>£${formatMoney(bill.amount || 0)}</td>
-      <td>£${formatMoney(bill.actualPaid || 0)}</td>
-      <td>${bill.category || ""}</td>
-      <td><div class="m28-note-display ${String(bill.notes || "").trim() ? "" : "is-empty"}">${String(bill.notes || "").trim() ? m18Escape(bill.notes) : "No funding note recorded"}</div></td>
-      <td>${bill.archivedAt ? new Date(bill.archivedAt).toLocaleDateString("en-GB") : "-"}</td>
-      <td><button class="delete-btn" data-delete-section="archived" data-delete-index="${index}">Delete</button></td>
-    `;
-    body.appendChild(tr);
-  });
+  if (!host) return;
+  const items = plannerState.archivedBills || [];
+  if (countEl) countEl.textContent = String(items.length);
+  if (!items.length) { host.innerHTML = '<div class="m38-history-empty">No completed bill records yet.</div>'; return; }
+  host.innerHTML = items.map((bill,index)=>`<article class="m38-history-card">
+    <div><b>${m18Escape(bill.name||"Completed bill")}</b><p>${bill.due?dateLabel(bill.due):"No due date"} • ${m18Escape(bill.category||"Other")} • ${m18Escape(bill.fundingSource||"Holding Pot")}</p></div>
+    <strong>£${formatMoney(bill.actualPaid||bill.amount||0)}</strong>
+    <button class="delete-btn" type="button" data-delete-section="archived" data-delete-index="${index}">Delete record</button>
+  </article>`).join("");
 }
+
 
 function renderFutureCosts() {
   const body = document.getElementById("futureCostsBody");
@@ -4638,6 +4726,7 @@ function renderFutureCosts() {
       <td><div class="check-wrap"><input type="checkbox" ${bill.included ? "checked" : ""} data-section="future" data-index="${index}" data-field="included"><span>${bill.included ? "Yes" : "No"}</span></div></td>
       <td><input class="table-input" type="text" value="${bill.category || ""}" data-section="future" data-index="${index}" data-field="category"></td>
       <td class="m28-note-cell"><label class="m28-notes-label" for="m28FutureNote_${index}">Funding note</label><textarea id="m28FutureNote_${index}" class="m28-notes-textarea" rows="3" placeholder="State which pot covers this cost, or why it is excluded." data-section="future" data-index="${index}" data-field="notes">${m18Escape(bill.notes)}</textarea></td>
+      <td><button class="quick-btn" type="button" data-convert-future="${index}">Convert to bill</button></td>
       <td><button class="delete-btn" data-delete-section="future" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
@@ -5400,7 +5489,7 @@ function handleTableEdit(e) {
   }
 
   savePlannerData();
-  if (section === "scheduled" && (field === "category" || field === "due" || field === "recurrence") && e.type === "change") {
+  if (section === "scheduled" && ["name","due","amount","actualPaid","category","recurrence","fundingSource","notes"].includes(field) && e.type === "change") {
     runPlanner();
     return;
   }
@@ -5486,51 +5575,72 @@ function m28AutoGrowNotes(element) {
   element.style.height = `${Math.max(78, element.scrollHeight)}px`;
 }
 
+function m38CompleteScheduledPayment(index) {
+  const bill = plannerState.scheduledBills?.[index];
+  if (!bill) return;
+  const actual = Math.max(0, Number(bill.actualPaid || bill.amount || 0));
+  if (actual <= 0) { alert("Enter a planned or actual payment amount first."); return; }
+  const action = (bill.recurrence || "monthly") === "none" ? "complete and archive" : "complete and schedule the next date for";
+  if (!confirm(`£${formatMoney(actual)} will be recorded from ${m38FundingSource(bill)}. ${action.charAt(0).toUpperCase()+action.slice(1)} ${bill.name}?`)) return;
+  if (!bill.deducted) m38DeductFundingSource(bill, actual);
+  const completed = {...bill, paid:true, actualPaid:actual, deducted:true, archivedAt:new Date().toISOString(), completedAt:new Date().toISOString()};
+  if (!Array.isArray(plannerState.archivedBills)) plannerState.archivedBills = [];
+  plannerState.archivedBills.unshift(completed);
+  const recurrence = bill.recurrence || "monthly";
+  if (recurrence === "none") {
+    plannerState.scheduledBills.splice(index,1);
+    m38SelectedBillId = null;
+  } else {
+    const nextDate = m20AddRecurrence(bill.due, recurrence);
+    if (nextDate) bill.due = m20DateInputValue(nextDate);
+    bill.paid = false; bill.actualPaid = 0; bill.deducted = false;
+  }
+  savePlannerData(); runPlanner();
+}
+
+function m38ConvertFuture(index) {
+  const future = plannerState.futureCosts?.[index];
+  if (!future) return;
+  const bill = {
+    id:`scheduled_${Date.now()}`, name:String(future.name||"New Scheduled Bill"), due:String(future.due||""),
+    amount:Number(future.amount||0), paid:false, actualPaid:0, deducted:false,
+    included:future.included!==false, category:m18CategoryName(future.category), notes:String(future.notes||""),
+    recurrence:"none", fundingSource:future.included===false?"Current Account":"Holding Pot"
+  };
+  plannerState.scheduledBills.push(bill); plannerState.futureCosts.splice(index,1); m38SelectedBillId=bill.id; m38UrgencyFilter="all"; m38CategoryFilter="all";
+  savePlannerData(); runPlanner();
+  document.getElementById("m13Bills")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
 function bindTableInputs() {
   document.querySelectorAll("[data-section]").forEach(el => {
     const field = el.dataset.field;
-
-    el.oninput = null;
-    el.onchange = null;
-
+    el.oninput = null; el.onchange = null;
     if (field === "notes" && el.tagName === "TEXTAREA") {
       m28AutoGrowNotes(el);
-      el.oninput = event => {
-        m28AutoGrowNotes(el);
-        handleTableEdit(event);
-      };
+      el.oninput = event => { m28AutoGrowNotes(el); handleTableEdit(event); };
       el.onchange = handleTableEdit;
     } else if (field === "included" || field === "paid") {
       el.onchange = handleTableEdit;
     } else {
-      el.oninput = handleTableEdit;
-      el.onchange = handleTableEdit;
+      el.oninput = handleTableEdit; el.onchange = handleTableEdit;
     }
   });
-
-  document.querySelectorAll(".delete-btn").forEach(btn => {
-    btn.onclick = handleDelete;
-  });
-
-  document.querySelectorAll("[data-archive-section]").forEach(btn => {
-    btn.onclick = handleArchive;
-  });
-
-  document.querySelectorAll("[data-roll-section]").forEach(btn => {
-    btn.onclick = handleRollForward;
-  });
-
-  document.querySelectorAll("[data-m21-paid]").forEach(input => {
-    input.onchange = handleYearlyRecurringPaid;
-  });
-
-  document.querySelectorAll("[data-m21-undo]").forEach(btn => {
-    btn.onclick = handleYearlyRecurringUndo;
-  });
+  document.querySelectorAll(".delete-btn").forEach(btn => { btn.onclick = handleDelete; });
+  document.querySelectorAll("[data-archive-section]").forEach(btn => { btn.onclick = handleArchive; });
+  document.querySelectorAll("[data-roll-section]").forEach(btn => { btn.onclick = handleRollForward; });
+  document.querySelectorAll("[data-m21-paid]").forEach(input => { input.onchange = handleYearlyRecurringPaid; });
+  document.querySelectorAll("[data-m21-undo]").forEach(btn => { btn.onclick = handleYearlyRecurringUndo; });
+  document.querySelectorAll("[data-m38-select]").forEach(card => { card.onclick = () => { m38SelectedBillId=card.dataset.m38Select; renderScheduledBills(); bindTableInputs(); }; });
+  document.querySelectorAll("[data-m38-urgency]").forEach(btn => { btn.onclick = () => { m38UrgencyFilter=btn.dataset.m38Urgency; document.querySelectorAll("[data-m38-urgency]").forEach(x=>x.classList.toggle("active",x===btn)); renderScheduledBills(); bindTableInputs(); }; });
+  document.querySelectorAll("[data-m38-category]").forEach(btn => { btn.onclick = () => { m38CategoryFilter=btn.dataset.m38Category; renderScheduledBills(); bindTableInputs(); }; });
+  document.querySelectorAll("[data-m38-complete]").forEach(btn => { btn.onclick = () => m38CompleteScheduledPayment(Number(btn.dataset.m38Complete)); });
+  document.querySelectorAll("[data-convert-future]").forEach(btn => { btn.onclick = () => m38ConvertFuture(Number(btn.dataset.convertFuture)); });
 }
 
+
 function addScheduledBill() {
-  plannerState.scheduledBills.push({
+  const bill = {
     id: `scheduled_${Date.now()}`,
     name: "New Scheduled Bill",
     due: "",
@@ -5541,11 +5651,18 @@ function addScheduledBill() {
     included: true,
     category: "Other",
     notes: "",
-    recurrence: "monthly"
-  });
+    recurrence: "monthly",
+    fundingSource: "Holding Pot"
+  };
+  plannerState.scheduledBills.push(bill);
+  m38SelectedBillId = bill.id;
+  m38UrgencyFilter = "all";
+  m38CategoryFilter = "all";
   savePlannerData();
   runPlanner();
+  document.getElementById("m38BillInspector")?.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
+
 
 function addFutureCost() {
   plannerState.futureCosts.push({
@@ -6205,7 +6322,7 @@ const M14_VIEWS = {
     title:"Bills & Spending",
     subtitle:"Manage scheduled payments, actual spending, future costs and recurring commitments.",
     headings:[
-      "Next 7 Days Bills","Scheduled Bills Command Bay","Editable Future Costs",
+      "Next 7 Days Bills","Bills Control Centre","Editable Future Costs",
       "Editable Yearly Recurring Costs","Editable Recurring Monthly Costs"
     ]
   },
@@ -6676,7 +6793,7 @@ function m16ApplyGridClasses(target){
   visible.forEach((section,index)=>{
     section.classList.remove("m16-wide","m16-third");
     const heading=(section.querySelector("h2,.m15-hero h3,.m22-hero h3")?.textContent||"").trim();
-    if(target==="m13Bills"&&["Scheduled Bills Command Bay","Editable Future Costs"].includes(heading))section.classList.add("m16-wide");
+    if(target==="m13Bills"&&["Bills Control Centre","Editable Future Costs"].includes(heading))section.classList.add("m16-wide");
     if(target==="m13PotHealth"&&heading==="Pot Health Radar")section.classList.add("m16-wide");
     if(target==="m13Funding"&&["Financial Freedom Flight Path","Funding Engine"].includes(heading))section.classList.add("m16-wide");
     if(target==="m13History")section.classList.add("m16-wide");
