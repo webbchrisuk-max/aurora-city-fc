@@ -1121,6 +1121,7 @@ body.locked .wrap{filter:none!important;pointer-events:auto!important;user-selec
 }
 @media(max-width:760px){.aurora-hq-dock-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){.aurora-hq-dock-grid{grid-template-columns:1fr}}
+.aurora-hq-dock{display:none!important}
 </style>
 
 
@@ -1145,6 +1146,8 @@ body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-b
   box-shadow:0 22px 58px rgba(0,0,0,.50),0 0 28px rgba(98,243,255,.10);
   backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
 }
+.aurora-smart-dock{transition:transform .24s ease,opacity .24s ease,bottom .24s ease;will-change:transform,opacity}
+.aurora-smart-dock.is-hidden{transform:translateX(-50%) translateY(calc(100% + 16px));opacity:0;pointer-events:none}
 .aurora-smart-dock *{box-sizing:border-box}
 .aurora-smart-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;margin-bottom:9px}
 .aurora-smart-back,.aurora-smart-next{
@@ -1375,12 +1378,6 @@ body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-b
 <section class="card panel">
   <div class="section-head"><div class="left"><span class="orb"></span><h2>Advanced Dividend Roadmap</h2></div><span class="badge good">2033 TARGET</span></div>
   <div class="roadmap-wrap" id="roadmapRows"></div>
-</section>
-
-
-<section class="aurora-hq-dock" aria-label="Aurora connected headquarters">
-  <div class="aurora-hq-dock-title"><strong>Aurora Connected HQ</strong><span>Move between the four command systems</span></div>
-  <div class="aurora-hq-dock-grid"><a class="aurora-hq-link active" href="AuroraNexusMaster.html" target="_self">🏟️ Nexus HQ</a><a class="aurora-hq-link" href="SpendingPlannerMaster.html" target="_self">💷 Wealth HQ</a><a class="aurora-hq-link" href="TradingBrainMaster.html" target="_self">🧠 Trading Brain</a><a class="aurora-hq-link" href="TescoSimMaster.html" target="_self">🛒 Tesco Simulator</a></div>
 </section>
 
 
@@ -1776,9 +1773,9 @@ document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove
   const page=dock.dataset.auroraPage||'nexus';
   const local=location.protocol==='file:';
   const routes=local?{
-    nexus:'AuroraNexusMaster_Connected_v4.html',
-    wealth:'AuroraWealthExecutiveRoom_Connected_v11.html',
-    brain:'TradingBrainMaster_Connected_v5.html',
+    nexus:'AuroraNexusMaster_Connected_v6.html',
+    wealth:'AuroraWealthExecutiveRoom_Connected_v14.html',
+    brain:'TradingBrainMaster_Connected_v7.html',
     registration:'RegistrationDesk.html',
     tesco:'TescoSimMaster.html'
   }:{
@@ -1793,8 +1790,8 @@ document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove
   const read=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
   const money=(v)=>Number(v||0).toLocaleString('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:0,maximumFractionDigits:0});
   const setStatus=(name,text,tone)=>{
-    const el=dock.querySelector(`[data-aurora-status="${name}"]`);if(!el)return;
-    el.textContent=text;el.className=`aurora-smart-status ${tone||''}`.trim();
+    const el=dock.querySelector('[data-aurora-status="'+name+'"]');if(!el)return;
+    el.textContent=text;el.className='aurora-smart-status '+(tone||'');
   };
   dock.querySelectorAll('[data-aurora-route]').forEach(link=>{
     const name=link.dataset.auroraRoute;link.href=routes[name]||'#';link.classList.toggle('active',name===page);
@@ -1812,25 +1809,43 @@ document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove
     const decision=read('aurora_trading_brain_decision_v1');
     const queue=read('aurora_pending_registrations_v1');
     if(mission){
-      const amount=mission.investmentAmount??mission.amount??mission.totalInvestment??0;
-      const status=String(mission.status||'READY').replaceAll('_',' ');
-      setStatus('wealth',`${money(amount)} ${status}`,'good');
-    }else setStatus('wealth','NO MISSION','watch');
-    if(decision){
-      const count=Array.isArray(decision.allocations)?decision.allocations.length:Array.isArray(decision.items)?decision.items.length:0;
-      setStatus('brain',count?`${count} PICKS READY`:'PLAN READY','good');
-    }else setStatus('brain','WAITING','watch');
-    if(queue&&Array.isArray(queue.items)&&queue.items.length){
-      const complete=queue.items.filter(x=>['PURCHASED','REGISTERED','COMPLETE'].includes(String(x.status||'').toUpperCase())).length;
-      const left=Math.max(0,queue.items.length-complete);
-      setStatus('registration',left?`${left} WAITING`:'COMPLETE',left?'watch':'good');
+      const budget=Number(mission.investmentBudget||mission.amount||0);
+      setStatus('wealth',budget>0?money(budget):'MISSION READY',budget>0?'good':'');
+    }else setStatus('wealth',page==='wealth'?'OPEN':'NO MISSION',mission?'good':'warn');
+    if(decision && Array.isArray(decision.purchases) && decision.purchases.length){
+      setStatus('brain',decision.purchases.length+' PLANNED','good');
+    }else setStatus('brain',page==='brain'?'OPEN':'PLAN READY','cyan');
+    if(Array.isArray(queue) && queue.length){
+      const pending=queue.filter(x=>String(x.status||'').toLowerCase()!=='completed').length;
+      setStatus('registration',pending?pending+' WAITING':'READY',pending?'good':'cyan');
     }else setStatus('registration','EMPTY','');
+    setStatus('nexus',page==='nexus'?'HOME':'HOME','cyan');
+    setStatus('tesco','2029 PLAN','cyan');
   }
   refresh();
-  window.addEventListener('storage',e=>{if(['aurora_wealth_investment_mission_v1','aurora_trading_brain_decision_v1','aurora_pending_registrations_v1'].includes(e.key))refresh()});
-  window.addEventListener('aurora:wealth-mission',refresh);
-  window.addEventListener('aurora:registration-queue',refresh);
-  setInterval(refresh,5000);
+  window.addEventListener('storage',refresh);
+
+  // auto-hide when scrolling down, show when scrolling up / when scroll ends / near bottom
+  let lastY=window.scrollY||0;
+  let ticking=false;
+  let scrollTimer=null;
+  const reveal=()=>dock.classList.remove('is-hidden');
+  const conceal=()=>dock.classList.add('is-hidden');
+  const onScroll=()=>{
+    const y=window.scrollY||0;
+    const maxY=Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const nearBottom=maxY - y < 56;
+    if(nearBottom || y < 12){ reveal(); }
+    else if(y > lastY + 6){ conceal(); }
+    else if(y < lastY - 6){ reveal(); }
+    lastY=y;
+    clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(reveal, 140);
+    ticking=false;
+  };
+  window.addEventListener('scroll',()=>{
+    if(!ticking){ window.requestAnimationFrame(onScroll); ticking=true; }
+  },{passive:true});
 })();
 </script>
 
