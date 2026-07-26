@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Build: Nexus M4 Active-Holding Dividend Filter • 25 Jul 2026 -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Aurora Nexus HQ — Connected M5</title>
+<style>
+/* ===================== SECTION: ROOT THEME ===================== */
+:root{
+  --bg:#030712;
+  --panel:rgba(9,18,32,.92);
+  --panel2:rgba(14,28,47,.92);
+  --line:rgba(88,244,255,.18);
+  --line2:rgba(255,255,255,.09);
+  --text:#eaf7ff;
+  --muted:#91a9c2;
+  --soft:#b8cee3;
+  --cyan:#58f4ff;
+  --green:#59ff9a;
+  --amber:#ffd15e;
+  --red:#ff5f83;
+  --blue:#6aa8ff;
+  --purple:#b985ff;
+  --shadow:0 24px 70px rgba(0,0,0,.42);
+  --r:24px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;overflow-x:hidden}
+body{
+  padding:14px;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(185,133,255,.17),transparent 30%),
+    radial-gradient(circle at 88% 4%,rgba(88,244,255,.16),transparent 31%),
+    radial-gradient(circle at 48% 112%,rgba(89,255,154,.10),transparent 36%),
+    linear-gradient(180deg,#020611,#081321 48%,#02050c);
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:46px 46px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent 90%)}
+.wrap{position:relative;z-index:1;max-width:1460px;margin:0 auto;display:grid;gap:14px}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(38px,5vw,76px);letter-spacing:-2.2px;line-height:.9}
+h2{font-size:22px;letter-spacing:-.4px}
+h3{font-size:16px}
+.card{background:linear-gradient(145deg,rgba(13,27,45,.92),rgba(5,12,24,.94));border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+.panel{padding:18px}
+.k{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;font-weight:950}
+.v{font-weight:1000}
+.subv,.muted{color:var(--muted);font-size:12px;line-height:1.45}.soft{color:var(--soft)}
+.good{color:var(--green)}.watch{color:var(--amber)}.risk{color:var(--red)}.cyan{color:var(--cyan)}.purple{color:var(--purple)}.blue{color:var(--blue)}
+.badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 12px;border:1px solid currentColor;font-weight:1000;font-size:11px;letter-spacing:.8px;background:rgba(255,255,255,.035);white-space:nowrap;text-transform:uppercase}
+.badge.good{color:var(--green);background:rgba(89,255,154,.08)}.badge.watch{color:var(--amber);background:rgba(255,209,94,.08)}.badge.risk{color:var(--red);background:rgba(255,95,131,.08)}.badge.cyan{color:var(--cyan);background:rgba(88,244,255,.08)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.left{display:flex;align-items:center;gap:10px}.orb{width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan)}
+button,a.launch{border:1px solid var(--line2);background:rgba(255,255,255,.055);color:var(--text);border-radius:14px;padding:11px 12px;font-weight:950;cursor:pointer;transition:.18s ease;text-decoration:none;text-align:center}button:hover,a.launch:hover{transform:translateY(-1px);border-color:rgba(88,244,255,.38);box-shadow:0 0 18px rgba(88,244,255,.12)}
+
+/* ===================== SECTION: HERO COMMAND COCKPIT ===================== */
+.hero{position:relative;overflow:hidden;border-radius:32px;padding:24px;border:1px solid rgba(88,244,255,.2);box-shadow:0 0 34px rgba(88,244,255,.13),var(--shadow);background:linear-gradient(135deg,rgba(12,30,52,.98),rgba(4,8,18,.97))}
+/* ===================== SECTION: HERO AMBIENT AURORA ANIMATION ===================== */
+.hero:before{
+  content:"";
+  position:absolute;
+  inset:-32%;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 18% 22%,rgba(88,244,255,.18),transparent 28%),
+    radial-gradient(circle at 78% 16%,rgba(89,255,154,.14),transparent 30%),
+    radial-gradient(circle at 50% 92%,rgba(185,133,255,.12),transparent 34%);
+  opacity:.78;
+  filter:blur(18px);
+  animation:heroAuraBreath 9s ease-in-out infinite;
+}
+.hero:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:32px;
+  background:linear-gradient(135deg,rgba(88,244,255,.10),transparent 35%,rgba(89,255,154,.08));
+  opacity:.38;
+  animation:heroSoftGlow 7s ease-in-out infinite;
+}
+.hero h1{
+  position:relative;
+  display:inline-block;
+  background:linear-gradient(90deg,#eaf7ff 0%,var(--cyan) 28%,var(--green) 52%,var(--purple) 76%,#eaf7ff 100%);
+  background-size:240% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 0 24px rgba(88,244,255,.12);
+  animation:titleAuroraFlow 8s ease-in-out infinite,titleBreath 5.5s ease-in-out infinite;
+}
+@keyframes heroAuraBreath{
+  0%,100%{transform:scale(1) rotate(0deg);opacity:.58}
+  50%{transform:scale(1.08) rotate(2deg);opacity:.90}
+}
+@keyframes heroSoftGlow{
+  0%,100%{opacity:.28}
+  50%{opacity:.52}
+}
+@keyframes titleAuroraFlow{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+@keyframes titleBreath{
+  0%,100%{filter:drop-shadow(0 0 8px rgba(88,244,255,.13))}
+  50%{filter:drop-shadow(0 0 22px rgba(89,255,154,.22))}
+}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.08fr .92fr;gap:18px;align-items:stretch}
+.hero-topline{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.big-sub{font-size:15px;color:var(--muted);max-width:820px;margin-top:14px;line-height:1.5}
+.command-ticket{border-radius:25px;padding:17px;border:1px solid rgba(89,255,154,.25);background:radial-gradient(circle at top right,rgba(89,255,154,.13),transparent 35%),rgba(255,255,255,.035);display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+.ticket-title{font-size:clamp(32px,3.7vw,54px);font-weight:1000;line-height:.94;color:var(--green);letter-spacing:-1.3px}.ticket-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.ticket-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.mini{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px}.mini .v{font-size:23px;margin-top:5px}
+
+/* ===================== SECTION: KPI STRIP ===================== */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.kpi{padding:15px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}.kpi .v{font-size:clamp(22px,2.3vw,34px);margin-top:6px}
+
+
+/* ===================== SECTION: DATA HEALTH PANEL ===================== */
+.data-health-panel{
+  border-color:rgba(88,244,255,.24);
+  background:
+    radial-gradient(circle at 92% 0%,rgba(88,244,255,.11),transparent 34%),
+    linear-gradient(145deg,rgba(13,27,45,.92),rgba(5,12,24,.94));
+}
+.data-health-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.health-tile{
+  position:relative;
+  overflow:hidden;
+  min-height:92px;
+  padding:13px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+}
+.health-tile:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at top right,rgba(88,244,255,.11),transparent 44%);
+  pointer-events:none;
+}
+.health-tile > *{position:relative;z-index:1}
+.health-tile.good{border-color:rgba(89,255,154,.38);box-shadow:0 0 18px rgba(89,255,154,.08)}
+.health-tile.watch{border-color:rgba(255,209,94,.34);box-shadow:0 0 18px rgba(255,209,94,.06)}
+.health-tile.risk{border-color:rgba(255,95,131,.38);box-shadow:0 0 18px rgba(255,95,131,.08)}
+.health-status{
+  margin-top:7px;
+  font-size:24px;
+  font-weight:1000;
+  letter-spacing:-.6px;
+}
+.health-meta{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+@media(max-width:1000px){.data-health-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:650px){.data-health-grid{grid-template-columns:1fr;}}
+
+/* ===================== SECTION: CLEAN TOP COMMAND GRID ===================== */
+.top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.rows{display:grid;gap:8px}.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 12px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}.row strong{font-size:16px}.value{text-align:right;font-weight:1000}.progress{height:10px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-top:10px}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:999px}
+.action-grid{display:grid;grid-template-columns:1.15fr repeat(4,1fr);gap:10px}.action-main{padding:17px;border-radius:20px;border:1px solid rgba(89,255,154,.27);background:radial-gradient(circle at top right,rgba(89,255,154,.12),transparent 35%),rgba(255,255,255,.04)}.action-main .big{font-size:clamp(32px,3.4vw,48px);font-weight:1000;line-height:.93;color:var(--green);margin-top:7px;letter-spacing:-1px}.action-tile{padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);min-width:0}.action-tile .name{margin-top:8px;font-weight:1000;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scoreline{margin-top:6px;color:var(--cyan);font-weight:950;font-size:13px;line-height:1.35}.note{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
+
+/* ===================== SECTION: DIVIDEND RUNWAY ===================== */
+.runway-wrap{display:grid;gap:12px}.runway-line{display:grid;grid-template-columns:repeat(12,minmax(72px,1fr));gap:7px;overflow-x:auto;padding-bottom:4px}.month-tile{min-height:96px;border-radius:16px;padding:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);position:relative;overflow:hidden}.month-tile:before{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--red);opacity:.85}.month-tile.covered:before{background:linear-gradient(90deg,var(--cyan),var(--green))}.month-tile.weak:before{background:var(--amber)}.month-name{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:1000}.month-cash{font-size:18px;font-weight:1000;margin-top:8px}.month-count{font-size:11px;color:var(--muted);margin-top:4px}.runway-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+
+/* ===================== SECTION: PREMIER LEAGUE TABLES ===================== */
+.league-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.league-panel{
+  position:relative;overflow:hidden;padding:14px;border-radius:20px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.018));
+}
+.league-panel:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.9}
+.league-panel.top{border-color:rgba(106,168,255,.58);box-shadow:0 0 26px rgba(106,168,255,.14),inset 0 0 22px rgba(106,168,255,.045)}
+.league-panel.top:before{background:radial-gradient(circle at 8% 0%,rgba(106,168,255,.22),transparent 38%),linear-gradient(90deg,rgba(106,168,255,.10),transparent 38%)}
+.league-panel.promotion{border-color:rgba(89,255,154,.60);box-shadow:0 0 26px rgba(89,255,154,.13),inset 0 0 22px rgba(89,255,154,.045)}
+.league-panel.promotion:before{background:radial-gradient(circle at 8% 0%,rgba(89,255,154,.22),transparent 38%),linear-gradient(90deg,rgba(89,255,154,.10),transparent 38%)}
+.league-panel.relegation{border-color:rgba(255,95,131,.58);box-shadow:0 0 26px rgba(255,95,131,.13),inset 0 0 22px rgba(255,95,131,.045)}
+.league-panel.relegation:before{background:radial-gradient(circle at 8% 0%,rgba(255,95,131,.22),transparent 38%),linear-gradient(90deg,rgba(255,95,131,.10),transparent 38%)}
+.league-panel:not(.top):not(.promotion):not(.relegation){border-color:rgba(255,209,94,.42);box-shadow:0 0 22px rgba(255,209,94,.08),inset 0 0 18px rgba(255,209,94,.035)}
+.league-panel:not(.top):not(.promotion):not(.relegation):before{background:radial-gradient(circle at 8% 0%,rgba(255,209,94,.13),transparent 38%)}
+.league-panel>.k,.league-panel>.subv,.league-panel>.league-table,.league-panel>.transfer-box{position:relative;z-index:1}
+.league-panel.top>.k{color:var(--blue);text-shadow:0 0 14px rgba(106,168,255,.30)}
+.league-panel.promotion>.k{color:var(--green);text-shadow:0 0 14px rgba(89,255,154,.28)}
+.league-panel.relegation>.k{color:var(--red);text-shadow:0 0 14px rgba(255,95,131,.28)}
+.league-panel:not(.top):not(.promotion):not(.relegation)>.k{color:var(--amber);text-shadow:0 0 12px rgba(255,209,94,.20)}
+.league-table{display:grid;gap:8px;margin-top:12px}
+.league-row{
+  position:relative;overflow:hidden;display:grid;grid-template-columns:42px minmax(0,1fr) 86px 78px 78px;
+  gap:8px;align-items:center;padding:11px;border-radius:14px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.085);
+}
+.league-row:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:rgba(255,255,255,.16)}
+.league-row.head{font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);font-weight:950;background:rgba(0,0,0,.16);border-color:rgba(255,255,255,.09)}
+.league-row.head:before{background:rgba(255,255,255,.16)}
+.league-pos{font-weight:1000;color:var(--muted)}
+.league-name{font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.league-meta{font-size:11px;color:var(--muted);line-height:1.35;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.num{text-align:right;font-weight:1000}
+.league-row.elite{border-color:rgba(89,255,154,.55);background:linear-gradient(90deg,rgba(89,255,154,.18),rgba(89,255,154,.055) 48%,rgba(255,255,255,.025));box-shadow:inset 0 0 18px rgba(89,255,154,.06)}
+.league-row.elite:before{background:var(--green);box-shadow:0 0 14px rgba(89,255,154,.72)}
+.league-row.ready{border-color:rgba(255,209,94,.52);background:linear-gradient(90deg,rgba(255,209,94,.17),rgba(255,209,94,.055) 48%,rgba(255,255,255,.025));box-shadow:inset 0 0 18px rgba(255,209,94,.055)}
+.league-row.ready:before{background:var(--amber);box-shadow:0 0 14px rgba(255,209,94,.70)}
+.league-row.drop{border-color:rgba(255,95,131,.55);background:linear-gradient(90deg,rgba(255,95,131,.18),rgba(255,95,131,.055) 48%,rgba(255,255,255,.025));box-shadow:inset 0 0 18px rgba(255,95,131,.06)}
+.league-row.drop:before{background:var(--red);box-shadow:0 0 14px rgba(255,95,131,.70)}
+.league-panel.top .league-row.elite .league-pos,.league-panel.top .league-row.elite .num{color:var(--blue);text-shadow:0 0 10px rgba(106,168,255,.25)}
+.league-panel.top .league-row,.league-panel.top .league-row.elite,.league-panel.top .league-row.ready{border-color:rgba(106,168,255,.52);background:linear-gradient(90deg,rgba(106,168,255,.18),rgba(106,168,255,.055) 48%,rgba(255,255,255,.025))}
+.league-panel.top .league-row:before{background:var(--blue);box-shadow:0 0 14px rgba(106,168,255,.70)}
+.league-panel.promotion .league-row,.league-panel.promotion .league-row.elite,.league-panel.promotion .league-row.ready{border-color:rgba(89,255,154,.52);background:linear-gradient(90deg,rgba(89,255,154,.18),rgba(89,255,154,.055) 48%,rgba(255,255,255,.025))}
+.league-panel.promotion .league-row:before{background:var(--green);box-shadow:0 0 14px rgba(89,255,154,.70)}
+.league-panel.promotion .league-pos,.league-panel.promotion .num{color:var(--green);text-shadow:0 0 10px rgba(89,255,154,.23)}
+.league-panel.relegation .league-row .league-pos,.league-panel.relegation .league-row .num{color:var(--red);text-shadow:0 0 10px rgba(255,95,131,.23)}
+.league-panel:not(.top):not(.promotion):not(.relegation) .league-row:not(.head){border-color:rgba(255,209,94,.28);background:linear-gradient(90deg,rgba(255,209,94,.105),rgba(255,255,255,.025))}
+.league-panel:not(.top):not(.promotion):not(.relegation) .league-row:not(.head):before{background:var(--amber);box-shadow:0 0 12px rgba(255,209,94,.55)}
+.transfer-box{margin-top:12px;padding:13px;border-radius:16px;border:1px solid rgba(88,244,255,.28);background:linear-gradient(135deg,rgba(88,244,255,.10),rgba(255,209,94,.055));font-weight:900;line-height:1.45;box-shadow:inset 0 0 18px rgba(88,244,255,.045)}
+
+
+/* ===================== SECTION: PREMIER LEAGUE TITLE POLISH ===================== */
+.league-title{
+  display:inline-flex;align-items:center;gap:8px;width:max-content;max-width:100%;
+  margin:0 0 6px 0;padding:8px 12px;border-radius:999px;
+  font-size:13px;font-weight:1000;letter-spacing:1px;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);
+  box-shadow:0 0 18px rgba(255,255,255,.05), inset 0 0 16px rgba(255,255,255,.035);
+}
+.league-title.champions{
+  color:var(--blue);border-color:rgba(106,168,255,.58);
+  background:linear-gradient(90deg,rgba(106,168,255,.22),rgba(106,168,255,.06));
+  text-shadow:0 0 14px rgba(106,168,255,.48);
+  box-shadow:0 0 22px rgba(106,168,255,.20), inset 0 0 16px rgba(106,168,255,.08);
+}
+.league-title.midtable{
+  color:var(--amber);border-color:rgba(255,209,94,.58);
+  background:linear-gradient(90deg,rgba(255,209,94,.20),rgba(255,209,94,.055));
+  text-shadow:0 0 14px rgba(255,209,94,.42);
+  box-shadow:0 0 20px rgba(255,209,94,.16), inset 0 0 14px rgba(255,209,94,.07);
+}
+.league-title.promotion-title{
+  color:var(--green);border-color:rgba(89,255,154,.58);
+  background:linear-gradient(90deg,rgba(89,255,154,.22),rgba(89,255,154,.06));
+  text-shadow:0 0 14px rgba(89,255,154,.44);
+  box-shadow:0 0 22px rgba(89,255,154,.18), inset 0 0 16px rgba(89,255,154,.08);
+}
+.league-title.relegation-title{
+  color:var(--red);border-color:rgba(255,95,131,.58);
+  background:linear-gradient(90deg,rgba(255,95,131,.22),rgba(255,95,131,.06));
+  text-shadow:0 0 14px rgba(255,95,131,.44);
+  box-shadow:0 0 22px rgba(255,95,131,.18), inset 0 0 16px rgba(255,95,131,.08);
+}
+
+/* ===================== SECTION: BIGGEST DISCOUNTS CLEAN CHART ===================== */
+.discount-list{display:grid;gap:9px;margin-top:12px}.discount-row{display:grid;grid-template-columns:190px 1fr 80px;gap:12px;align-items:center;padding:11px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}.discount-name{font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar-track{height:14px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}.bar-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--green))}.bar-num{text-align:right;font-weight:1000;color:var(--green)}
+
+/* ===================== SECTION: LIVE HOLDINGS SEPARATED TABLES ===================== */
+.holdings-terminal{display:grid;gap:10px}.holding-group{margin-top:8px;padding:10px 12px;border-radius:16px;border:1px solid rgba(88,244,255,.18);background:linear-gradient(90deg,rgba(88,244,255,.08),rgba(255,255,255,.025));display:flex;justify-content:space-between;gap:10px;align-items:center}.holding-group-title{font-weight:1000;color:var(--cyan)}.holding-group-meta{color:var(--muted);font-size:11px;font-weight:900;text-align:right}.holding-row{display:grid;grid-template-columns:minmax(0,1.4fr) .75fr .75fr .85fr .8fr .75fr .7fr .8fr .8fr .75fr;gap:8px;align-items:center;padding:11px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.075)}.holding-row.head{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.8px;font-weight:950;background:rgba(255,255,255,.025)}.holding-name{font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.holding-meta{color:var(--muted);font-size:11px;line-height:1.35;margin-top:3px}.holding-value{text-align:right;font-weight:950}.pill{display:inline-flex;justify-content:center;align-items:center;min-width:54px;padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);font-weight:1000;font-size:11px}.pill.buy{color:var(--green);background:rgba(89,255,154,.08);border-color:rgba(89,255,154,.38)}.pill.hold{color:var(--amber);background:rgba(255,209,94,.08);border-color:rgba(255,209,94,.35)}.pill.wait{color:var(--red);background:rgba(255,95,131,.08);border-color:rgba(255,95,131,.35)}.positive-row{border-color:rgba(89,255,154,.18)}.negative-row{border-color:rgba(255,95,131,.18)}
+
+/* ===================== SECTION: NEXT DIVIDEND + ROADMAP ===================== */
+.next-dividend{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;align-items:stretch}.next-main{padding:16px;border-radius:20px;border:1px solid rgba(88,244,255,.2);background:radial-gradient(circle at top right,rgba(88,244,255,.10),transparent 35%),rgba(255,255,255,.035)}.next-main .big{margin-top:9px;font-size:clamp(28px,3.4vw,48px);line-height:.95;font-weight:1000;color:var(--green)}.next-meta{display:grid;gap:8px}
+.roadmap-wrap{display:grid;gap:10px}.roadmap-row{display:grid;grid-template-columns:86px 1fr 125px 120px;gap:10px;align-items:center;padding:12px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}.roadmap-year{font-size:19px;font-weight:1000}.road-track{height:12px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}.road-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--green));width:0%}.road-status{text-align:right;font-weight:1000}.road-extra{text-align:right;color:var(--muted);font-size:12px;font-weight:900}
+.launch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.footer{text-align:center;padding:10px 0 20px}.lock-hq-btn{position:fixed;right:14px;bottom:14px;z-index:50;padding:10px 12px;font-size:11px;opacity:.72}.lock-hq-btn:hover{opacity:1}
+
+/* ===================== SECTION: AURORA BOOT LOGIN SCREEN ===================== */
+body.locked .wrap{filter:blur(10px) brightness(.55);pointer-events:none;user-select:none;transition:.35s ease}.boot-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 20% 10%,rgba(185,133,255,.22),transparent 30%),radial-gradient(circle at 80% 20%,rgba(88,244,255,.18),transparent 32%),linear-gradient(180deg,rgba(2,6,17,.96),rgba(3,7,18,.985));color:var(--text)}.boot-gate.hidden{opacity:0;pointer-events:none;transition:.45s ease;visibility:hidden}.boot-card{width:min(560px,100%);border:1px solid rgba(88,244,255,.25);border-radius:28px;padding:22px;background:linear-gradient(145deg,rgba(13,27,45,.94),rgba(4,9,19,.96));box-shadow:0 0 46px rgba(88,244,255,.18),0 26px 70px rgba(0,0,0,.55);overflow:hidden;position:relative}.boot-logo{font-size:clamp(32px,6vw,56px);font-weight:1000;letter-spacing:-1.8px;line-height:.88;color:var(--green);text-shadow:0 0 24px rgba(89,255,154,.16)}.boot-sub{color:var(--muted);font-size:13px;line-height:1.45;margin-top:8px}.boot-inner{position:relative;z-index:1;display:grid;gap:15px}.boot-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.boot-terminal{border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.22);border-radius:18px;padding:13px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.7;color:#bdefff;min-height:136px}.boot-line:before{content:"> ";color:var(--green)}.boot-progress{height:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.06);border-radius:999px;overflow:hidden}.boot-progress div{height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--green));border-radius:999px;box-shadow:0 0 24px rgba(89,255,154,.24);transition:width .35s ease}.boot-login{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.boot-login input{background:rgba(255,255,255,.06);border:1px solid rgba(88,244,255,.18);color:var(--text);border-radius:15px;padding:13px 14px;font-weight:900;letter-spacing:1.4px;outline:none}.boot-login button,.lock-hq-btn{border:1px solid rgba(89,255,154,.35);background:rgba(89,255,154,.09);color:var(--green);border-radius:15px;font-weight:1000;cursor:pointer}.boot-error{min-height:18px;color:var(--red);font-size:12px;font-weight:900;letter-spacing:.4px}
+
+/* ===================== SECTION: RESPONSIVE ===================== */
+@media(max-width:1200px){.hero-grid,.top-grid,.league-grid,.next-dividend{grid-template-columns:1fr}.action-grid{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:repeat(3,1fr)}.runway-bar{grid-template-columns:repeat(6,1fr)}.runway-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:850px){body{padding:10px}.hero,.panel{padding:13px;border-radius:20px}.kpi-grid,.action-grid,.launch-grid{grid-template-columns:1fr}.runway-bar{grid-template-columns:repeat(3,1fr)}.holding-row{grid-template-columns:1fr 1fr}.holding-row.head{display:none}.holding-value{text-align:left}.discount-row{grid-template-columns:1fr}.bar-num{text-align:left}.roadmap-row{grid-template-columns:1fr}.road-status,.road-extra{text-align:left}.boot-login{grid-template-columns:1fr}}
+
+
+/* ===================== SECTION: MOBILE FRIENDLY SAFE PATCH ===================== */
+/* Mobile-only layout fixes. Desktop visuals and dashboard logic stay unchanged. */
+@media(max-width:760px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden!important;}
+  body{padding:8px 8px calc(22px + env(safe-area-inset-bottom));}
+  .wrap{width:100%;max-width:100%;gap:10px;overflow:hidden;}
+
+  .hero,.card,.panel{border-radius:18px!important;}
+  .hero,.panel{padding:12px!important;}
+  h1{font-size:clamp(34px,13vw,52px)!important;letter-spacing:-1.35px!important;line-height:.92!important;}
+  h2{font-size:17px!important;}
+  h3{font-size:14px!important;}
+  .big-sub,.subv,.muted,.note,.scoreline,.league-meta,.holding-meta{font-size:11px!important;line-height:1.36!important;}
+
+  .section-head{align-items:flex-start!important;flex-wrap:wrap!important;gap:8px!important;margin-bottom:10px!important;}
+  .section-head .left{min-width:0;align-items:flex-start!important;}
+  .badge{font-size:9px!important;padding:5px 8px!important;white-space:normal!important;text-align:center;}
+  button,a.launch{min-width:0;padding:10px!important;border-radius:13px!important;font-size:12px!important;}
+
+  .hero-grid,.top-grid,.action-grid,.league-grid,.next-dividend,.runway-summary,.launch-grid{grid-template-columns:1fr!important;gap:10px!important;}
+  .hero-topline{gap:7px!important;margin-bottom:12px!important;}
+  .command-ticket{border-radius:18px!important;padding:12px!important;}
+  .ticket-main{display:grid!important;grid-template-columns:1fr!important;gap:9px!important;}
+  .ticket-title{font-size:clamp(28px,10vw,42px)!important;}
+  .ticket-grid,.kpi-grid,.data-health-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  .mini,.kpi,.health-tile,.action-tile,.action-main{border-radius:14px!important;padding:10px!important;min-width:0!important;}
+  .mini .v,.kpi .v,.health-status{font-size:clamp(18px,6vw,25px)!important;}
+  .action-main .big{font-size:clamp(28px,9vw,40px)!important;}
+  .action-tile .name{font-size:15px!important;white-space:normal!important;overflow-wrap:anywhere;}
+
+  .row{grid-template-columns:1fr!important;gap:5px!important;padding:10px!important;border-radius:13px!important;}
+  .value{text-align:left!important;}
+
+  .runway-line{display:flex!important;gap:8px!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch;padding:2px 2px 8px 2px;}
+  .month-tile{flex:0 0 126px;min-height:92px;border-radius:14px!important;}
+
+  .league-panel{border-radius:16px!important;padding:10px!important;}
+  .league-title{width:100%!important;justify-content:flex-start!important;font-size:11px!important;padding:7px 9px!important;white-space:normal!important;}
+  .league-row.head{display:none!important;}
+  .league-row{grid-template-columns:32px minmax(0,1fr)!important;gap:7px!important;padding:10px!important;border-radius:13px!important;}
+  .league-pos{grid-row:1 / span 4;}
+  .league-name{font-size:14px!important;white-space:normal!important;overflow-wrap:anywhere;}
+  .league-row .num{grid-column:2!important;text-align:left!important;font-size:12px!important;display:inline-flex!important;margin-right:8px;}
+  .league-row .num:nth-of-type(1)::before{content:'Score ';color:var(--muted);font-weight:900;margin-right:4px;}
+  .league-row .num:nth-of-type(2)::before{content:'Income ';color:var(--muted);font-weight:900;margin-right:4px;}
+  .league-row .num:nth-of-type(3)::before{content:'Yield ';color:var(--muted);font-weight:900;margin-right:4px;}
+  .transfer-box{font-size:12px!important;padding:10px!important;border-radius:13px!important;}
+
+  .discount-row{grid-template-columns:1fr!important;gap:7px!important;padding:10px!important;}
+  .discount-name{white-space:normal!important;overflow-wrap:anywhere;}
+  .bar-num{text-align:left!important;}
+
+  .holding-group{display:grid!important;grid-template-columns:1fr!important;gap:4px!important;padding:9px!important;}
+  .holding-group-meta{text-align:left!important;}
+  .holding-row.head{display:none!important;}
+  .holding-row{grid-template-columns:1fr 1fr!important;gap:8px!important;padding:10px!important;border-radius:13px!important;}
+  .holding-name{grid-column:1/-1;white-space:normal!important;overflow-wrap:anywhere;}
+  .holding-value{text-align:left!important;font-size:12px!important;}
+  .pill{min-width:0!important;font-size:10px!important;padding:5px 7px!important;}
+
+  .roadmap-row{grid-template-columns:1fr!important;gap:8px!important;padding:10px!important;border-radius:13px!important;}
+  .road-status,.road-extra{text-align:left!important;}
+  .boot-card{border-radius:20px!important;padding:16px!important;}
+  .boot-login{grid-template-columns:1fr!important;}
+  .lock-hq-btn{right:8px!important;bottom:8px!important;font-size:10px!important;padding:8px 10px!important;}
+}
+
+@media(max-width:420px){
+  .ticket-grid,.kpi-grid,.data-health-grid,.holding-row{grid-template-columns:1fr!important;}
+  h1{font-size:clamp(32px,14vw,46px)!important;}
+  .month-tile{flex-basis:118px;}
+}
+
+
+
+/* ===================== SECTION: MOBILE PREMIER LEAGUE ORDER FIX ===================== */
+/* Mobile only: show the promotion challengers before the mid-table block. */
+@media(max-width:760px){
+  .league-panel.top{order:1;}
+  .league-panel.promotion{order:2;}
+  .league-panel:not(.top):not(.promotion):not(.relegation){order:3;}
+  .league-panel.relegation{order:4;}
+}
+
+
+
+/* ===================== SECTION: MOBILE HOLDINGS TABLE COMPACT FIX ===================== */
+/* Keeps Live Holdings as a proper scrollable table on mobile, not giant stacked cards. */
+@media(max-width:760px){
+  .holdings-terminal{
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:8px;
+    gap:8px!important;
+  }
+
+  .holding-group{
+    position:sticky;
+    left:0;
+    z-index:2;
+    min-width:860px;
+    display:flex!important;
+    justify-content:space-between!important;
+    align-items:center!important;
+    padding:9px 10px!important;
+    border-radius:14px!important;
+  }
+
+  .holding-group-meta{
+    text-align:right!important;
+    font-size:10px!important;
+  }
+
+  .holding-row.head{
+    display:grid!important;
+    position:sticky;
+    left:0;
+    z-index:1;
+    color:var(--muted)!important;
+    font-size:9px!important;
+    text-transform:uppercase;
+    letter-spacing:.75px;
+    font-weight:950;
+    background:rgba(255,255,255,.035)!important;
+  }
+
+  .holding-row{
+    grid-template-columns:minmax(160px,1.45fr) 84px 78px 90px 88px 82px 66px 82px 72px 58px!important;
+    min-width:860px;
+    gap:7px!important;
+    align-items:center!important;
+    padding:9px 10px!important;
+    border-radius:13px!important;
+  }
+
+  .holding-name{
+    grid-column:auto!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    font-size:12px!important;
+  }
+
+  .holding-meta{
+    font-size:9px!important;
+    line-height:1.22!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  .holding-value{
+    text-align:right!important;
+    font-size:11px!important;
+    line-height:1.2!important;
+  }
+
+  .holding-value .holding-meta{
+    font-size:8.5px!important;
+  }
+
+  .pill{
+    min-width:44px!important;
+    padding:4px 6px!important;
+    font-size:9px!important;
+  }
+}
+
+@media(max-width:420px){
+  .holding-row{
+    grid-template-columns:minmax(150px,1.4fr) 78px 72px 84px 82px 76px 60px 76px 66px 54px!important;
+    min-width:800px;
+  }
+  .holding-group{min-width:800px;}
+}
+
+
+
+/* ===================== SECTION: MOBILE PREMIER TABLE LABEL FIX ===================== */
+/* Corrects mobile stacked table labels: Score, Annual, Yield. Desktop unchanged. */
+@media(max-width:760px){
+  .league-row .num:nth-of-type(3)::before,
+  .league-row .num:nth-child(3)::before{content:'Score ';color:var(--muted);font-weight:900;margin-right:4px;}
+  .league-row .num:nth-of-type(4)::before,
+  .league-row .num:nth-child(4)::before{content:'Annual ';color:var(--muted);font-weight:900;margin-right:4px;}
+  .league-row .num:nth-of-type(5)::before,
+  .league-row .num:nth-child(5)::before{content:'Yield ';color:var(--muted);font-weight:900;margin-right:4px;}
+}
+
+
+
+/* ===================== SECTION: MOBILE LEAGUE WIDTH FIX ===================== */
+/* Keeps Premier League cards inside phone screen. No desktop/script changes. */
+@media(max-width:760px){
+  .league-grid,
+  .league-panel,
+  .league-table,
+  .league-row{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+  }
+
+  .league-panel{
+    padding:9px !important;
+  }
+
+  .league-title{
+    width:auto !important;
+    max-width:100% !important;
+    display:flex !important;
+    flex-wrap:wrap !important;
+    overflow:hidden !important;
+    line-height:1.25 !important;
+  }
+
+  .league-row{
+    display:grid !important;
+    grid-template-columns:42px minmax(0,1fr) !important;
+    padding:9px !important;
+    gap:6px !important;
+  }
+
+  .league-row > *{
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+
+  .league-name{
+    font-size:13px !important;
+    line-height:1.12 !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+  }
+
+  .league-meta{
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+  }
+
+  .league-row .num{
+    grid-column:2 !important;
+    width:100% !important;
+    max-width:100% !important;
+    display:block !important;
+    text-align:left !important;
+    margin:0 !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    font-size:12px !important;
+    line-height:1.25 !important;
+  }
+}
+
+@media(max-width:390px){
+  .league-row{
+    grid-template-columns:36px minmax(0,1fr) !important;
+    padding:8px !important;
+  }
+  .league-panel{
+    padding:8px !important;
+  }
+}
+
+
+
+/* ===================== SECTION: FINAL PHONE CONTAINMENT PATCH ===================== */
+/* Keeps Nexus HQ inside phone width without touching desktop layout or JS logic. */
+@media(max-width:760px){
+  html,body{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:hidden!important;
+  }
+  body{
+    padding-left:6px!important;
+    padding-right:6px!important;
+  }
+  .wrap,
+  .hero,
+  .card,
+  .panel,
+  section,
+  .league-grid,
+  .league-panel,
+  .league-table,
+  .data-health-panel,
+  .runway-wrap,
+  .next-dividend,
+  .roadmap-wrap,
+  .launch-grid,
+  .holdings-terminal{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+
+  /* Data health and dividend summary stack cleanly instead of pushing the page wider. */
+  .data-health-grid,
+  .runway-summary,
+  .next-meta,
+  .launch-grid{
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+  .health-tile,
+  .mini,
+  .next-main,
+  .roadmap-row{
+    min-width:0!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+  }
+  #actionNextDividend,
+  #nextDividend,
+  #nextDividendHolding,
+  .next-main .big{
+    max-width:100%!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    word-break:normal!important;
+    font-size:clamp(22px,7vw,30px)!important;
+    line-height:1.04!important;
+  }
+
+  /* Premier League: true phone cards, no sideways overflow. */
+  .league-panel{
+    padding:9px!important;
+    border-radius:16px!important;
+  }
+  .league-title{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  .league-row.head{
+    display:none!important;
+  }
+  .league-row{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    display:grid!important;
+    grid-template-columns:42px minmax(0,1fr)!important;
+    gap:7px!important;
+    align-items:center!important;
+    padding:10px!important;
+    border-radius:14px!important;
+  }
+  .league-row .league-pos{
+    grid-column:1!important;
+    grid-row:1 / span 5!important;
+    align-self:center!important;
+    min-width:0!important;
+  }
+  .league-row > div:nth-child(2){
+    grid-column:2!important;
+    min-width:0!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+  }
+  .league-name,
+  .league-meta{
+    max-width:100%!important;
+    min-width:0!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    text-overflow:clip!important;
+  }
+  .league-name{
+    font-size:14px!important;
+    line-height:1.08!important;
+  }
+  .league-meta{
+    font-size:11px!important;
+    line-height:1.25!important;
+  }
+  .league-row .num{
+    grid-column:2!important;
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:2px 0 0 0!important;
+    padding:0!important;
+    text-align:left!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    font-size:12px!important;
+    line-height:1.25!important;
+  }
+  .league-row .num:nth-child(3)::before{content:'Score '!important;color:var(--muted)!important;font-weight:950!important;margin-right:4px!important;}
+  .league-row .num:nth-child(4)::before{content:'Annual '!important;color:var(--muted)!important;font-weight:950!important;margin-right:4px!important;}
+  .league-row .num:nth-child(5)::before{content:'Yield '!important;color:var(--muted)!important;font-weight:950!important;margin-right:4px!important;}
+  .transfer-box{
+    max-width:100%!important;
+    overflow-wrap:anywhere!important;
+  }
+
+  /* Live holdings: compact mobile table, not giant cards and not wider than phone. */
+  .holdings-terminal{
+    display:grid!important;
+    gap:8px!important;
+  }
+  .holding-group{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:4px!important;
+    padding:9px!important;
+    border-radius:14px!important;
+    overflow:hidden!important;
+  }
+  .holding-group-title,
+  .holding-group-meta{
+    max-width:100%!important;
+    min-width:0!important;
+    text-align:left!important;
+    overflow-wrap:anywhere!important;
+  }
+  .holding-row,
+  .holding-row.head{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 74px 74px!important;
+    gap:6px!important;
+    align-items:center!important;
+    padding:8px!important;
+    border-radius:12px!important;
+  }
+  .holding-row.head{
+    color:var(--muted)!important;
+    font-size:9px!important;
+    text-transform:uppercase!important;
+    letter-spacing:.7px!important;
+    font-weight:950!important;
+    background:rgba(255,255,255,.025)!important;
+  }
+  .holding-row.head > div:nth-child(1)::after{content:''!important;}
+  .holding-row > div:nth-child(n+4),
+  .holding-row.head > div:nth-child(n+4){
+    display:none!important;
+  }
+  .holding-name{
+    max-width:100%!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    font-size:12px!important;
+    line-height:1.15!important;
+  }
+  .holding-meta{
+    max-width:100%!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    font-size:9px!important;
+    line-height:1.2!important;
+  }
+  .holding-value{
+    text-align:right!important;
+    font-size:11px!important;
+    line-height:1.15!important;
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .holding-value .holding-meta{
+    text-align:right!important;
+    white-space:normal!important;
+  }
+
+  /* Launch pad buttons must show text and not become blank rails. */
+  a.launch{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-height:44px!important;
+    color:var(--text)!important;
+    overflow:visible!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+}
+
+@media(max-width:390px){
+  .holding-row,
+  .holding-row.head{
+    grid-template-columns:minmax(0,1fr) 68px 68px!important;
+    gap:5px!important;
+  }
+  .league-row{
+    grid-template-columns:36px minmax(0,1fr)!important;
+  }
+}
+
+
+
+/* ===================== SECTION: FINAL MOBILE HOLDINGS HORIZONTAL SCROLL LOCK ===================== */
+/* Makes Live Holdings behave like Dividend Runway: swipe inside this panel only. */
+@media(max-width:760px){
+  #holdingsTable.holdings-terminal,
+  .holdings-terminal{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    -webkit-overflow-scrolling:touch;
+    padding:0 0 10px 0!important;
+    overscroll-behavior-x:contain;
+  }
+
+  .holding-group{
+    position:relative!important;
+    left:auto!important;
+    z-index:auto!important;
+    width:920px!important;
+    min-width:920px!important;
+    max-width:none!important;
+    display:flex!important;
+    grid-template-columns:unset!important;
+    justify-content:space-between!important;
+    align-items:center!important;
+    gap:10px!important;
+    padding:9px 10px!important;
+    margin-top:8px!important;
+    border-radius:14px!important;
+    overflow:hidden!important;
+  }
+
+  .holding-group-title{
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    overflow-wrap:normal!important;
+  }
+
+  .holding-group-meta{
+    text-align:right!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    overflow-wrap:normal!important;
+    font-size:10px!important;
+  }
+
+  .holding-row,
+  .holding-row.head{
+    display:grid!important;
+    width:920px!important;
+    min-width:920px!important;
+    max-width:none!important;
+    grid-template-columns:210px 82px 82px 86px 86px 80px 70px 86px 82px 70px!important;
+    gap:7px!important;
+    align-items:center!important;
+    padding:9px 10px!important;
+    border-radius:13px!important;
+    overflow:visible!important;
+  }
+
+  .holding-row.head{
+    color:var(--muted)!important;
+    font-size:9px!important;
+    text-transform:uppercase!important;
+    letter-spacing:.7px!important;
+    font-weight:950!important;
+    background:rgba(255,255,255,.035)!important;
+  }
+
+  .holding-row > div,
+  .holding-row.head > div{
+    display:block!important;
+    min-width:0!important;
+  }
+
+  .holding-row.head > div:nth-child(1)::after{
+    content:''!important;
+  }
+
+  .holding-row > div:nth-child(n+4),
+  .holding-row.head > div:nth-child(n+4){
+    display:block!important;
+  }
+
+  .holding-name{
+    grid-column:auto!important;
+    max-width:100%!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    overflow-wrap:normal!important;
+    font-size:12px!important;
+  }
+
+  .holding-meta{
+    max-width:100%!important;
+    font-size:9px!important;
+    line-height:1.22!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    overflow-wrap:normal!important;
+  }
+
+  .holding-value{
+    text-align:right!important;
+    font-size:11px!important;
+    line-height:1.2!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  .holding-value .holding-meta{
+    font-size:8.5px!important;
+    text-align:right!important;
+  }
+
+  .pill{
+    min-width:44px!important;
+    padding:4px 6px!important;
+    font-size:9px!important;
+    white-space:nowrap!important;
+  }
+}
+
+@media(max-width:420px){
+  .holding-group{width:880px!important;min-width:880px!important;}
+  .holding-row,
+  .holding-row.head{
+    width:880px!important;
+    min-width:880px!important;
+    grid-template-columns:190px 78px 78px 84px 84px 76px 66px 82px 78px 64px!important;
+  }
+}
+
+
+
+/* ===================== SECTION: MOBILE HOLDINGS TABLE END-COLUMN FIX ===================== */
+/* Keeps the Live Holdings table as one clean sideways-scroll table and stops the final columns mixing/overlapping. */
+@media(max-width:760px){
+  .holdings-terminal,
+  #holdingsTable.holdings-terminal{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-x:contain!important;
+    padding:0 0 16px 0!important;
+  }
+
+  .holding-group,
+  .holding-row,
+  .holding-row.head{
+    box-sizing:border-box!important;
+    width:1160px!important;
+    min-width:1160px!important;
+    max-width:1160px!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+
+  .holding-group{
+    display:flex!important;
+    justify-content:space-between!important;
+    align-items:center!important;
+    gap:12px!important;
+    padding:10px 12px!important;
+    border-radius:14px!important;
+    overflow:hidden!important;
+  }
+
+  .holding-row,
+  .holding-row.head{
+    display:grid!important;
+    grid-template-columns:230px 96px 96px 110px 110px 106px 90px 110px 110px 92px!important;
+    gap:8px!important;
+    align-items:center!important;
+    padding:10px 12px!important;
+    border-radius:13px!important;
+    overflow:hidden!important;
+  }
+
+  .holding-row.head{
+    position:sticky!important;
+    top:0!important;
+    z-index:2!important;
+    display:grid!important;
+    background:rgba(8,18,32,.98)!important;
+    border-color:rgba(88,244,255,.18)!important;
+  }
+
+  .holding-row > div,
+  .holding-row.head > div{
+    min-width:0!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+  }
+
+  .holding-name,
+  .holding-group-title,
+  .holding-group-meta,
+  .holding-value,
+  .holding-value .holding-meta,
+  .holding-meta{
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    overflow-wrap:normal!important;
+  }
+
+  .holding-name{
+    font-size:12px!important;
+    line-height:1.12!important;
+  }
+
+  .holding-meta{
+    font-size:8.5px!important;
+    line-height:1.18!important;
+  }
+
+  .holding-value{
+    text-align:right!important;
+    font-size:11px!important;
+    line-height:1.16!important;
+  }
+
+  .holding-row.head .holding-value,
+  .holding-row.head > div{
+    text-align:right!important;
+    font-size:9px!important;
+    line-height:1.1!important;
+    letter-spacing:.55px!important;
+  }
+
+  .holding-row.head > div:first-child{
+    text-align:left!important;
+  }
+
+  .pill{
+    min-width:56px!important;
+    max-width:92px!important;
+    padding:4px 7px!important;
+    font-size:9px!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+  }
+
+  .lock-hq-btn{
+    bottom:calc(10px + env(safe-area-inset-bottom))!important;
+    right:10px!important;
+    opacity:.62!important;
+  }
+}
+
+@media(max-width:420px){
+  .holding-group,
+  .holding-row,
+  .holding-row.head{
+    width:1120px!important;
+    min-width:1120px!important;
+    max-width:1120px!important;
+  }
+  .holding-row,
+  .holding-row.head{
+    grid-template-columns:215px 92px 92px 106px 106px 102px 86px 106px 106px 86px!important;
+  }
+}
+
+
+/* ===================== SECTION: PREMIER LEAGUE COLOUR LOCK PATCH ===================== */
+/* Colour-only patch. Does not touch dividend runway/date logic or data parsing. */
+.league-panel.top .league-row:not(.head) .league-pos,
+.league-panel.top .league-row:not(.head) .num{
+  color:var(--blue)!important;
+  text-shadow:0 0 10px rgba(106,168,255,.25)!important;
+}
+.league-panel:not(.top):not(.promotion):not(.relegation) .league-row:not(.head) .league-pos,
+.league-panel:not(.top):not(.promotion):not(.relegation) .league-row:not(.head) .num{
+  color:var(--amber)!important;
+  text-shadow:0 0 10px rgba(255,209,94,.23)!important;
+}
+.league-panel.promotion .league-row:not(.head) .league-pos,
+.league-panel.promotion .league-row:not(.head) .num{
+  color:var(--green)!important;
+  text-shadow:0 0 10px rgba(89,255,154,.23)!important;
+}
+.league-panel.relegation .league-row:not(.head) .league-pos,
+.league-panel.relegation .league-row:not(.head) .num{
+  color:var(--red)!important;
+  text-shadow:0 0 10px rgba(255,95,131,.23)!important;
+}
+
+
+/* ===================== SECTION: OFFLINE UNLOCK PATCH ===================== */
+body.locked .wrap{filter:none!important;pointer-events:auto!important;user-select:auto!important}
+.boot-gate,.lock-hq-btn{display:none!important}
+
+
+/* ===================== AURORA CONNECTED HQ DOCK ===================== */
+.aurora-hq-dock{
+  margin:18px auto 8px;
+  padding:14px;
+  border:1px solid rgba(98,243,255,.18);
+  border-radius:20px;
+  background:linear-gradient(145deg,rgba(13,27,45,.94),rgba(5,12,24,.96));
+  box-shadow:0 14px 38px rgba(0,0,0,.26);
+}
+.aurora-hq-dock-title{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;
+}
+.aurora-hq-dock-title strong{font-size:15px}
+.aurora-hq-dock-title span{color:#96abc5;font-size:11px}
+.aurora-hq-dock-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;
+}
+.aurora-hq-link{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  min-height:44px;padding:10px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.04);
+  color:#e9f4ff!important;text-decoration:none!important;font-weight:900;font-size:12px;
+}
+.aurora-hq-link:hover,.aurora-hq-link.active{
+  border-color:rgba(98,243,255,.42);
+  background:rgba(98,243,255,.09);
+  color:#62f3ff!important;
+  box-shadow:0 0 18px rgba(98,243,255,.10);
+}
+@media(max-width:760px){.aurora-hq-dock-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){.aurora-hq-dock-grid{grid-template-columns:1fr}}
+.aurora-hq-dock{display:none!important}
+</style>
+
+
+<style>
+/* ===================== M6 AURORA MISSION PIPELINE ===================== */
+.mission-pipeline{border-color:rgba(89,255,154,.22);background:radial-gradient(circle at 94% 0%,rgba(89,255,154,.10),transparent 34%),linear-gradient(145deg,rgba(13,27,45,.92),rgba(5,12,24,.94))}.pipeline-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.pipeline-stage{position:relative;overflow:hidden;min-height:170px;padding:13px;border-radius:18px;border:1px solid rgba(255,255,255,.085);background:linear-gradient(145deg,rgba(255,255,255,.042),rgba(255,255,255,.018));display:flex;flex-direction:column}.pipeline-stage:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--stage-color,#58f4ff)}.pipeline-stage-number{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted);font-size:10px;font-weight:1000;letter-spacing:.8px;text-transform:uppercase}.pipeline-stage-number b{width:25px;height:25px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--stage-color,#58f4ff) 12%,transparent);border:1px solid color-mix(in srgb,var(--stage-color,#58f4ff) 28%,transparent);color:var(--stage-color,#58f4ff)}.pipeline-stage h3{margin-top:10px;font-size:16px}.pipeline-big{margin-top:7px;color:var(--stage-color,#58f4ff);font-size:25px;line-height:1;font-weight:1000;letter-spacing:-.5px}.pipeline-copy{margin-top:6px;color:var(--muted);font-size:11px;line-height:1.4;flex:1}.pipeline-state{display:inline-flex;width:max-content;max-width:100%;margin-top:10px;padding:6px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--stage-color,#58f4ff) 36%,transparent);background:color-mix(in srgb,var(--stage-color,#58f4ff) 8%,transparent);color:var(--stage-color,#58f4ff);font-size:9px;font-weight:1000;letter-spacing:.6px;text-transform:uppercase}.pipeline-link{display:flex;align-items:center;justify-content:center;margin-top:9px;min-height:36px;padding:8px;border-radius:11px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);color:var(--text);text-decoration:none;font-size:10px;font-weight:950}.pipeline-summary{margin-top:10px;padding:11px 12px;border-left:3px solid var(--green);border-radius:13px;background:rgba(89,255,154,.045);color:#bdd0df;font-size:11px;line-height:1.45}.pipeline-summary strong{color:#eafff1}.pipeline-refresh{font-size:10px;padding:8px 10px}
+@media(max-width:1120px){.pipeline-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.pipeline-grid{grid-template-columns:1fr}.pipeline-stage{min-height:145px}}
+
+
+</style>
+
+<style>
+/* ===================== AURORA SMART WEALTH CENTRE NAVIGATION ===================== */
+:root{--aurora-smart-dock-height:132px}
+body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-bottom,0px))!important}
+.aurora-smart-dock{
+  position:fixed;left:50%;bottom:10px;z-index:9998;
+  width:min(1180px,calc(100% - 20px));transform:translateX(-50%);
+  padding:10px;border:1px solid rgba(98,243,255,.24);border-radius:22px;
+  background:linear-gradient(145deg,rgba(5,14,27,.96),rgba(9,24,41,.97));
+  box-shadow:0 22px 58px rgba(0,0,0,.50),0 0 28px rgba(98,243,255,.10);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+}
+.aurora-smart-dock{transition:transform .24s ease,opacity .24s ease,bottom .24s ease;will-change:transform,opacity}
+.aurora-smart-dock.is-hidden{transform:translateX(-50%) translateY(calc(100% + 16px));opacity:0;pointer-events:none}
+.aurora-smart-dock *{box-sizing:border-box}
+.aurora-smart-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;margin-bottom:9px}
+.aurora-smart-back,.aurora-smart-next{
+  min-height:36px;padding:8px 11px;border-radius:12px;border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.045);color:#edf8ff!important;text-decoration:none!important;
+  font-size:11px;font-weight:950;letter-spacing:.15px;cursor:pointer;white-space:nowrap;
+}
+.aurora-smart-back:hover,.aurora-smart-next:hover{border-color:rgba(98,243,255,.42);background:rgba(98,243,255,.09);transform:translateY(-1px)}
+.aurora-smart-next{border-color:rgba(89,255,154,.28);color:#59ff9a!important;background:rgba(89,255,154,.07)}
+.aurora-smart-centre{min-width:0;text-align:center}
+.aurora-smart-centre strong{display:block;color:#f1f8ff;font-size:13px;line-height:1.1}
+.aurora-smart-centre span{display:block;margin-top:2px;color:#91a9c2;font-size:9px;font-weight:950;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-smart-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.aurora-smart-link{
+  position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;
+  column-gap:8px;align-items:center;min-width:0;min-height:56px;padding:8px 9px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);
+  color:#eaf7ff!important;text-decoration:none!important;overflow:hidden;transition:.18s ease;
+}
+.aurora-smart-link:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:999px;background:rgba(145,169,194,.38)}
+.aurora-smart-link:hover{transform:translateY(-2px);border-color:rgba(98,243,255,.34);background:rgba(98,243,255,.07)}
+.aurora-smart-link.active{border-color:rgba(98,243,255,.48);background:linear-gradient(145deg,rgba(98,243,255,.13),rgba(89,255,154,.06));box-shadow:inset 0 0 18px rgba(98,243,255,.06),0 0 18px rgba(98,243,255,.08)}
+.aurora-smart-link.active:before{background:#62f3ff;box-shadow:0 0 12px rgba(98,243,255,.72)}
+.aurora-smart-icon{grid-row:1/3;font-size:20px;line-height:1}
+.aurora-smart-name{min-width:0;font-size:11px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-smart-status{min-width:0;color:#91a9c2;font-size:8px;font-weight:950;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-smart-status.good{color:#59ff9a}.aurora-smart-status.watch{color:#ffd15e}.aurora-smart-status.cyan{color:#62f3ff}.aurora-smart-status.risk{color:#ff6b8a}
+.aurora-smart-link[data-aurora-route="wealth"]:before{background:#ffd15e}
+.aurora-smart-link[data-aurora-route="brain"]:before{background:#b985ff}
+.aurora-smart-link[data-aurora-route="registration"]:before{background:#59ff9a}
+.aurora-smart-link[data-aurora-route="tesco"]:before{background:#6aa8ff}
+@media(max-width:760px){
+  :root{--aurora-smart-dock-height:136px}
+  .aurora-smart-dock{bottom:6px;width:calc(100% - 12px);padding:8px;border-radius:18px}
+  .aurora-smart-head{grid-template-columns:auto minmax(0,1fr) auto;gap:6px;margin-bottom:7px}
+  .aurora-smart-back,.aurora-smart-next{min-height:32px;padding:7px 8px;font-size:10px}
+  .aurora-smart-centre strong{font-size:11px}.aurora-smart-centre span{font-size:8px}
+  .aurora-smart-grid{gap:5px}
+  .aurora-smart-link{display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:58px;padding:7px 4px;text-align:center}
+  .aurora-smart-link:before{left:8px;right:8px;top:auto;bottom:0;width:auto;height:3px}
+  .aurora-smart-icon{font-size:18px}.aurora-smart-name{font-size:9px;max-width:100%}.aurora-smart-status{font-size:7px;max-width:100%}
+}
+@media(max-width:430px){
+  :root{--aurora-smart-dock-height:128px}
+  .aurora-smart-next{max-width:100px;white-space:normal;line-height:1.1;text-align:center}
+  .aurora-smart-centre span{display:none}
+  .aurora-smart-link{min-height:54px}
+  .aurora-smart-name{font-size:8px}.aurora-smart-status{font-size:6.5px}
+}
+</style>
+<!-- Build: Aurora Connected Finance Department System • 26 Jul 2026 -->
+</head>
+<body>
+
+<!-- ===================== SECTION: OFFLINE MODE: LOCK SCREEN REMOVED ===================== -->
+<div class="wrap">
+
+<!-- ===================== SECTION: HERO COMMAND COCKPIT ===================== -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-topline"><span class="badge good">● AURORA NEXUS HQ</span><span class="badge cyan" id="syncBadge">SYNCING</span><span class="badge watch" id="clockBadge">--:--</span></div>
+      <h1>Aurora<br>Nexus HQ</h1>
+      <p class="big-sub">Clean command centre for the decision: today’s action, live holdings, Premier League table, promotion pressure, dividend runway and the roadmap to £2,000/month.</p>
+    </div>
+    <div class="command-ticket">
+      <div class="ticket-main"><div><div class="k">Command Decision</div><div class="ticket-title" id="commandDecision">Loading</div><div class="subv" id="commandReason">Waiting for live sheet feeds...</div></div><span class="badge good" id="commandRoute">HQ</span></div>
+      <div class="ticket-grid"><div class="mini"><div class="k">Next Buy</div><div class="v" id="nextBuy">--</div></div><div class="mini"><div class="k">£500 Income</div><div class="v" id="nextBuyIncome">--</div></div><div class="mini"><div class="k">Watch Pressure</div><div class="v" id="watchPressure">--</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: KPI STRIP ===================== -->
+<section class="card panel"><div class="kpi-grid">
+  <div class="kpi"><div class="k">Portfolio Value</div><div class="v">£<span id="portfolioValue">0</span></div><div class="subv">Holdings sheet</div></div>
+  <div class="kpi"><div class="k">Annual Income</div><div class="v">£<span id="annualIncome">0</span></div><div class="subv">Dividend run-rate</div></div>
+  <div class="kpi"><div class="k">Monthly Income</div><div class="v">£<span id="monthlyIncome">0</span></div><div class="subv">Average monthly</div></div>
+  <div class="kpi"><div class="k">Mission Progress</div><div class="v" id="missionPct">0%</div><div class="subv">To £2,000/month</div></div>
+  <div class="kpi"><div class="k">Income Months</div><div class="v" id="incomeMonths">--/12</div><div class="subv" id="gapMeta">Calendar coverage</div></div>
+  <div class="kpi"><div class="k">Top Watchlist</div><div class="v" id="topWatchScore">--</div><div class="subv" id="topWatchName">Waiting</div></div>
+</div></section>
+
+
+
+
+<!-- ===================== SECTION: AURORA MISSION PIPELINE ===================== -->
+<section class="card panel mission-pipeline" id="auroraMissionPipeline">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Aurora Mission Pipeline</h2></div><button class="pipeline-refresh" id="refreshMissionPipeline" type="button">Refresh Pipeline</button></div>
+  <div class="pipeline-grid">
+    <article class="pipeline-stage" style="--stage-color:#ffd15e">
+      <div class="pipeline-stage-number"><span>Stage 1</span><b>£</b></div><h3>Payday Mission</h3><div class="pipeline-big" id="pipelineWealthValue">£0.00</div><div class="pipeline-copy" id="pipelineWealthCopy">No investment mission has been sent from Finance Department.</div><span class="pipeline-state" id="pipelineWealthState">WAITING</span><a class="pipeline-link" href="AuroraCityFC_FinanceDepartment.html" target="_self">Open Finance Department</a>
+    </article>
+    <article class="pipeline-stage" style="--stage-color:#58f4ff">
+      <div class="pipeline-stage-number"><span>Stage 2</span><b>🧠</b></div><h3>Trading Plan</h3><div class="pipeline-big" id="pipelineTradeValue">No plan</div><div class="pipeline-copy" id="pipelineTradeCopy">Scouting Centre has not published a decision for the current mission.</div><span class="pipeline-state" id="pipelineTradeState">WAITING</span><a class="pipeline-link" href="AuroraCityFC_ScoutingCentre.html" target="_self">Open Scouting Centre</a>
+    </article>
+    <article class="pipeline-stage" style="--stage-color:#b985ff">
+      <div class="pipeline-stage-number"><span>Stage 3</span><b>✓</b></div><h3>Registration Queue</h3><div class="pipeline-big" id="pipelineRegistrationValue">0 / 0</div><div class="pipeline-copy" id="pipelineRegistrationCopy">No approved purchases are waiting for registration.</div><span class="pipeline-state" id="pipelineRegistrationState">WAITING</span><a class="pipeline-link" href="AuroraCityFC_TransferCentre.html#registration-desk" target="_self">Open Registration Desk</a>
+    </article>
+    <article class="pipeline-stage" style="--stage-color:#59ff9a">
+      <div class="pipeline-stage-number"><span>Stage 4</span><b>↗</b></div><h3>Next Income Event</h3><div class="pipeline-big" id="pipelineDividendValue">Scanning</div><div class="pipeline-copy" id="pipelineDividendCopy">Aurora is checking the active dividend calendar.</div><span class="pipeline-state" id="pipelineDividendState">LIVE DATA</span><a class="pipeline-link" href="#" id="pipelineDividendLink">View Dividend Runway</a>
+    </article>
+  </div>
+  <div class="pipeline-summary" id="pipelineSummary"><strong>Pipeline ready:</strong> send a payday investment mission from Finance Department to begin the connected flow.</div>
+</section>
+
+
+<!-- ===================== SECTION: AURORA DATA HEALTH ===================== -->
+<section class="card panel data-health-panel">
+  <div class="section-head">
+    <div class="left"><span class="orb"></span><h2>Aurora Data Health</h2></div>
+    <span class="badge cyan" id="dataHealthBadge">CHECKING</span>
+  </div>
+  <div class="data-health-grid">
+    <div class="health-tile" id="healthHoldingsTile">
+      <div class="k">Holdings Feed</div>
+      <div class="health-status" id="healthHoldings">--</div>
+      <div class="health-meta" id="healthHoldingsMeta">Waiting for Holdings tab...</div>
+    </div>
+    <div class="health-tile" id="healthDividendsTile">
+      <div class="k">Dividends Feed</div>
+      <div class="health-status" id="healthDividends">--</div>
+      <div class="health-meta" id="healthDividendsMeta">Waiting for Dividends tab...</div>
+    </div>
+    <div class="health-tile" id="healthWatchlistTile">
+      <div class="k">Watchlist Feed</div>
+      <div class="health-status" id="healthWatchlist">--</div>
+      <div class="health-meta" id="healthWatchlistMeta">Waiting for Watchlist tab...</div>
+    </div>
+    <div class="health-tile" id="healthDailyTile">
+      <div class="k">Daily Price Summary</div>
+      <div class="health-status" id="healthDaily">--</div>
+      <div class="health-meta" id="healthDailyMeta">Waiting for DailyPriceSummary tab...</div>
+    </div>
+    <div class="health-tile" id="healthMissingPricesTile">
+      <div class="k">Missing Prices</div>
+      <div class="health-status" id="healthMissingPrices">--</div>
+      <div class="health-meta">Holdings with no usable live or summary price</div>
+    </div>
+    <div class="health-tile" id="healthDividendDatesTile">
+      <div class="k">Missing Dividend Dates</div>
+      <div class="health-status" id="healthDividendDates">--</div>
+      <div class="health-meta">Dividend rows missing pay and ex-dividend dates</div>
+    </div>
+    <div class="health-tile good">
+      <div class="k">Master JSON</div>
+      <div class="health-status" id="healthMaster">--</div>
+      <div class="health-meta">AuroraMaster.json status</div>
+    </div>
+    <div class="health-tile good">
+      <div class="k">Last Sync</div>
+      <div class="health-status" id="healthLastSync">--</div>
+      <div class="health-meta">Local browser refresh time</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: TODAY'S BEST ACTION ===================== -->
+<section class="card panel">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Today’s Best Action</h2></div><span class="badge good" id="todayActionBadge">SCANNING</span></div>
+  <div class="action-grid">
+    <div class="action-main"><div class="k">Aurora Decision</div><div class="big" id="todayActionMain">Loading</div><div class="note" id="todayActionNote">Checking income, growth, valuation and dividend signals...</div></div>
+    <div class="action-tile"><div class="k">Best Income Buy</div><div class="name" id="bestIncomeBuy">--</div><div class="scoreline" id="bestIncomeMeta">--</div></div>
+    <div class="action-tile"><div class="k">Best Growth Buy</div><div class="name" id="bestGrowthBuy">--</div><div class="scoreline" id="bestGrowthMeta">--</div></div>
+    <div class="action-tile"><div class="k">Most Undervalued</div><div class="name" id="mostUndervalued">--</div><div class="scoreline" id="mostUndervaluedMeta">--</div></div>
+    <div class="action-tile"><div class="k">Next Dividend</div><div class="name" id="actionNextDividend">--</div><div class="scoreline" id="actionNextDividendMeta">--</div></div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: TRADING BRAIN SIGNAL ===================== -->
+<section class="card panel">
+    <div class="section-head"><div class="left"><span class="orb"></span><h2>Scouting Centre Signal</h2></div><span class="badge watch" id="tradeSignal">SCANNING</span></div>
+    <div class="rows">
+      <div class="row"><div><strong>Best core route</strong><div class="subv" id="bestCoreMeta">Waiting</div></div><div class="value" id="bestCore">--</div></div>
+      <div class="row"><div><strong>Best watchlist route</strong><div class="subv" id="bestWatchMeta">Waiting</div></div><div class="value" id="bestWatch">--</div></div>
+      <div class="row"><div><strong>Income winner</strong><div class="subv" id="winnerMeta">Waiting</div></div><div class="value" id="winnerName">--</div></div>
+      <div class="progress"><div id="tradeConfidence"></div></div>
+      <div class="subv" id="tradeComment">Aurora will compare core income against watchlist income.</div>
+    </div>
+  </section>
+
+<!-- ===================== SECTION: DIVIDEND RUNWAY ===================== -->
+<section class="card panel">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Dividend Runway</h2></div><span class="badge good" id="runwayBadge">12 MONTH VIEW</span></div>
+  <div class="runway-wrap">
+    <div class="runway-line" id="dividendRunway"></div>
+    <div class="runway-summary">
+      <div class="mini"><div class="k">Best Month</div><div class="v" id="bestMonth">--</div><div class="subv" id="bestMonthMeta">Waiting</div></div>
+      <div class="mini"><div class="k">Weakest Month</div><div class="v" id="weakestMonth">--</div><div class="subv" id="weakestMonthMeta">Waiting</div></div>
+      <div class="mini"><div class="k">Next Ex-Dividend</div><div class="v" id="nextDividend">--</div><div class="subv" id="nextDividendMeta">Waiting</div></div>
+      <div class="mini"><div class="k">Gap Count</div><div class="v" id="gapCount">--</div><div class="subv">Months with no scheduled cash</div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== SECTION: AURORA HQ PREMIER LEAGUE ===================== -->
+<section class="card panel">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Aurora HQ Premier League</h2></div><span class="badge good" id="premierLeagueBadge">LIVE TABLE</span></div>
+  <div class="league-grid">
+    <div class="league-panel top"><div class="league-title champions">🏆 Top 4 — Champions League</div><div class="subv">Current holdings with the strongest score / buy signal.</div><div class="league-table" id="premierTopFour"></div></div>
+    <div class="league-panel"><div class="league-title midtable">🛡️ Mid Table — Safe / Monitor</div><div class="subv">Current holdings doing the job but not leading the squad.</div><div class="league-table" id="premierMidTable"></div></div>
+    <div class="league-panel promotion"><div class="league-title promotion-title">⬆ Promotion Challengers — Watchlist</div><div class="subv">Non-owned candidates pushing for a future place.</div><div class="league-table" id="premierPromotion"></div></div>
+    <div class="league-panel relegation"><div class="league-title relegation-title">⚠ Bottom 3 — Relegation Watch</div><div class="subv">Not automatic sells — just review warnings.</div><div class="league-table" id="premierRelegation"></div><div class="transfer-box" id="premierTransferPressure">Waiting for league data...</div></div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: BIGGEST DISCOUNTS ===================== -->
+<section class="card panel">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Biggest Fair Value Discounts</h2></div><span class="badge cyan">BARGAIN RADAR</span></div>
+  <div class="discount-list" id="discountList"></div>
+</section>
+
+<!-- ===================== SECTION: LIVE HOLDINGS TABLES ===================== -->
+<section class="card panel">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Live Holdings Tables</h2></div><span class="badge good" id="holdingCount">0 HOLDINGS</span></div>
+  <div class="holdings-terminal" id="holdingsTable"></div>
+</section>
+
+<!-- ===================== SECTION: NEXT DIVIDEND DUE ===================== -->
+<section class="card panel">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Next Dividend Due</h2></div><span class="badge good" id="nextDividendBadge">SCANNING</span></div>
+  <div class="next-dividend">
+    <div class="next-main"><div class="k">Next Payment</div><div class="big" id="nextDividendHolding">--</div><div class="subv" id="nextDividendDate">Waiting for Dividends sheet...</div></div>
+    <div class="next-meta"><div class="row"><div><strong>Amount</strong><div class="subv">Expected dividend cash</div></div><div class="value good" id="nextDividendAmount">--</div></div><div class="row"><div><strong>Status</strong><div class="subv">From dividend tracker</div></div><div class="value watch" id="nextDividendStatus">--</div></div><div class="row"><div><strong>Days Away</strong><div class="subv">From today</div></div><div class="value cyan" id="nextDividendDays">--</div></div></div>
+  </div>
+</section>
+
+<!-- ===================== SECTION: ADVANCED ROADMAP ===================== -->
+<section class="card panel">
+  <div class="section-head"><div class="left"><span class="orb"></span><h2>Advanced Dividend Roadmap</h2></div><span class="badge good">2033 TARGET</span></div>
+  <div class="roadmap-wrap" id="roadmapRows"></div>
+</section>
+
+
+<div class="muted footer">Aurora Nexus HQ • Premier Command Centre v3 • Offline snapshot embedded</div>
+</div>
+
+
+<!-- ===================== SECTION: OFFLINE SNAPSHOT DATA ===================== -->
+<script id="auroraOfflineData" type="application/json">
+{"Holdings":[{"status":"BUY","buy_strength":"78","ticker":"LON:FSFL","name":"FORESIGHT SOLAR FUND","account":"TRADE 212","sector":"INFRASTRUCTURE","role":"RENEWABLE INCOME","shares":"778.7414577","live_price":"0.736","current_value":"573.1537129","book_cost":"534.29","average_price":"0.6860942033","profit_loss":"38.86371287","annual_dps":"0.081","annual_dps_total":"63.07805807","yield_pct":"11.01%","annual_target":"2000.00","low_52w":"0.85","high_52w":"0.924","fair_value":"0.89","valuation_status":"Undervalued","payout_ratio":"-138.36%","payout_risk":"INFRA CHECK","dividend_growth_5y":"3.22%","valuation_score":"87","yield_score":"100","payout_score":"70","growth_score":"56","role_score":"80","date_checked":"10/06/2026","squad_role":"Income Forward","promotion_impact_score":"83","trial_status":"First-Team Candidate","trial_rank":"1","trial_verdict":"Consider Buy","manager_note":"Strong squad fit. Consider if valuation and cash allow.","chemistry_role":"Infrastructure / Renewable Income","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"BUY","buy_strength":"76","ticker":"LON:TW","name":"TAYLOR WIMPEY","account":"IG ISA","sector":"HOUSEBUILDERS","role":"INCOME ACCELERATOR","shares":"3","live_price":"0.7484","current_value":"2.2452","book_cost":"2.29","average_price":"0.7633333333","profit_loss":"-0.04","annual_dps":"0.0762","annual_dps_total":"0.2286","yield_pct":"10.18%","annual_target":"1500.00","low_52w":"0.75","high_52w":"1.2385","fair_value":"0.99","valuation_status":"Undervalued","payout_ratio":"329.08%","payout_risk":"VERY HIGH","dividend_growth_5y":"12.97%","valuation_score":"95","yield_score":"100","payout_score":"35","growth_score":"76","role_score":"85","date_checked":"10/06/2026","squad_role":"Income Accelerator","promotion_impact_score":"69","trial_status":"Squad Rotation","trial_rank":"7","trial_verdict":"Hold / Monitor","manager_note":"Useful rotation. Monitor before adding fresh money.","chemistry_role":"General Squad Role","chemistry_risk":"High Payout Risk","squad_balance_note":"No major chemistry issue."},{"status":"BUY","buy_strength":"75","ticker":"LON:UKW","name":"GREENCOAT WIND","account":"IG ISA","sector":"RENEWABLE ENERGY","role":"INCOME GENERATOR","shares":"1","live_price":"1.035","current_value":"1.035","book_cost":"1.04","average_price":"1.04","profit_loss":"-0.01","annual_dps":"0.1072","annual_dps_total":"0.1072","yield_pct":"10.36%","annual_target":"1000.00","low_52w":"0.92","high_52w":"1.28","fair_value":"1.10","valuation_status":"Undervalued","payout_ratio":"-117.87%","payout_risk":"INFRA CHECK","dividend_growth_5y":"7.85%","valuation_score":"76","yield_score":"100","payout_score":"70","growth_score":"66","role_score":"80","date_checked":"10/06/2026","squad_role":"System Player","promotion_impact_score":"80","trial_status":"First-Team Candidate","trial_rank":"2","trial_verdict":"Consider Buy","manager_note":"Strong squad fit. Consider if valuation and cash allow.","chemistry_role":"Infrastructure / Renewable Income","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"ACCUMULATE","buy_strength":"70","ticker":"LON:PHP","name":"PRIMARY HEALTH PROPERTIES","account":"IG ISA","sector":"REIT","role":"HEALTHCARE REIT","shares":"802","live_price":"0.9255","current_value":"742.251","book_cost":"749.41","average_price":"0.9344264339","profit_loss":"-7.159","annual_dps":"0.072","annual_dps_total":"57.744","yield_pct":"7.78%","annual_target":"2000.00","low_52w":"0.87","high_52w":"1.095","fair_value":"0.98","valuation_status":"Undervalued","payout_ratio":"98.31%","payout_risk":"REIT CHECK","dividend_growth_5y":"3.77%","valuation_score":"76","yield_score":"78","payout_score":"70","growth_score":"58","role_score":"80","date_checked":"10/06/2026","squad_role":"Defensive Income","promotion_impact_score":"74","trial_status":"Squad Rotation","trial_rank":"3","trial_verdict":"Hold / Monitor","manager_note":"Useful rotation. Monitor before adding fresh money.","chemistry_role":"REIT / Property Income","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"ACCUMULATE","buy_strength":"70","ticker":"LON:PHP","name":"PRIMARY HEALTH PROPERTIES","account":"TRADE 212","sector":"REIT","role":"HEALTHCARE REIT","shares":"453.6928664","live_price":"0.9255","current_value":"419.8927479","book_cost":"457.78","average_price":"1.009008591","profit_loss":"-37.88725212","annual_dps":"0.072","annual_dps_total":"32.66588638","yield_pct":"7.78%","annual_target":"2000.00","low_52w":"0.87","high_52w":"1.095","fair_value":"0.98","valuation_status":"Undervalued","payout_ratio":"98.31%","payout_risk":"REIT CHECK","dividend_growth_5y":"3.77%","valuation_score":"76","yield_score":"78","payout_score":"70","growth_score":"58","role_score":"80","date_checked":"10/06/2026","squad_role":"Defensive Income","promotion_impact_score":"74","trial_status":"Squad Rotation","trial_rank":"3","trial_verdict":"Hold / Monitor","manager_note":"Useful rotation. Monitor before adding fresh money.","chemistry_role":"REIT / Property Income","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"ACCUMULATE","buy_strength":"66","ticker":"LON:FGEN","name":"FORESIGHT ENVIRONMENTAL INFRASTRUCTURE","account":"IG ISA","sector":"INFRASTRUCTURE","role":"INFRASTRUCTURE INCOME","shares":"1590","live_price":"0.844","current_value":"1341.96","book_cost":"1270.04","average_price":"0.7987672956","profit_loss":"71.92","annual_dps":"0.0796","annual_dps_total":"126.564","yield_pct":"9.43%","annual_target":"1500.00","low_52w":"0.62","high_52w":"0.859","fair_value":"0.74","valuation_status":"Overvalued","payout_ratio":"689.66%","payout_risk":"INFRA CHECK","dividend_growth_5y":"3.26%","valuation_score":"55","yield_score":"94","payout_score":"70","growth_score":"57","role_score":"80","date_checked":"10/06/2026","squad_role":"System Player","promotion_impact_score":"73","trial_status":"Squad Rotation","trial_rank":"5","trial_verdict":"Hold / Monitor","manager_note":"Useful rotation. Monitor before adding fresh money.","chemistry_role":"Infrastructure / Renewable Income","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"ACCUMULATE","buy_strength":"66","ticker":"LON:SUPR","name":"SUPERMARKET INCOME REIT","account":"IG ISA","sector":"REIT","role":"INCOME STABILISER","shares":"15615","live_price":"0.853","current_value":"13319.595","book_cost":"12548.53","average_price":"0.803620237","profit_loss":"771.065","annual_dps":"0.0618","annual_dps_total":"965.007","yield_pct":"7.25%","annual_target":"3500.00","low_52w":"0.76","high_52w":"0.891","fair_value":"0.83","valuation_status":"Neutral","payout_ratio":"120.70%","payout_risk":"REIT CHECK","dividend_growth_5y":"1.00%","valuation_score":"67","yield_score":"72","payout_score":"70","growth_score":"52","role_score":"90","date_checked":"10/06/2026","squad_role":"Vice-Captain / Stabiliser","promotion_impact_score":"72","trial_status":"Squad Rotation","trial_rank":"6","trial_verdict":"Hold / Monitor","manager_note":"Useful rotation. Monitor before adding fresh money.","chemistry_role":"REIT / Property Income","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"HOLD","buy_strength":"61","ticker":"LON:SDLF","name":"STANDARD LIFE HOLDINGS","account":"IG ISA","sector":"FINANCIALS","role":"INCOME ANCHOR","shares":"1692","live_price":"7.925","current_value":"13409.1","book_cost":"11111.08","average_price":"6.566832151","profit_loss":"2298.02","annual_dps":"0.554","annual_dps_total":"937.368","yield_pct":"6.99%","annual_target":"4000.00","low_52w":"6.16","high_52w":"8.043","fair_value":"7.10","valuation_status":"Overvalued","payout_ratio":"-130.24%","payout_risk":"CASHFLOW CHECK","dividend_growth_5y":"3.12%","valuation_score":"58","yield_score":"70","payout_score":"60","growth_score":"56","role_score":"95","date_checked":"10/06/2026","squad_role":"Experienced Holding Midfielder","promotion_impact_score":"67","trial_status":"Squad Rotation","trial_rank":"8","trial_verdict":"Hold / Monitor","manager_note":"Useful rotation. Monitor before adding fresh money.","chemistry_role":"Core UK Income","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"HOLD","buy_strength":"59","ticker":"LON:LGEN","name":"LEGAL & GENERAL","account":"IG ISA","sector":"FINANCIALS","role":"CORE BUILDER","shares":"8102","live_price":"2.8","current_value":"22685.6","book_cost":"19706.12","average_price":"2.432253765","profit_loss":"2979.48","annual_dps":"0.2179","annual_dps_total":"1765.4258","yield_pct":"7.78%","annual_target":"4500.00","low_52w":"2.29","high_52w":"2.795","fair_value":"2.54","valuation_status":"Overvalued","payout_ratio":"215.37%","payout_risk":"VERY HIGH","dividend_growth_5y":"4.39%","valuation_score":"60","yield_score":"78","payout_score":"35","growth_score":"59","role_score":"95","date_checked":"10/06/2026","squad_role":"Captain / Leader","promotion_impact_score":"55","trial_status":"Monitor","trial_rank":"9","trial_verdict":"No Buy","manager_note":"Not a promotion buy right now.","chemistry_role":"Core UK Income","chemistry_risk":"High Payout Risk","squad_balance_note":"No major chemistry issue."},{"status":"HOLD","buy_strength":"54","ticker":"LON:TSCO","name":"TESCO PLC","account":"EQUINITI","sector":"CONSUMER DEFENCE","role":"GROWTH & DIVIDEND","shares":"14363","live_price":"4.715","current_value":"67721.545","book_cost":"31598.6","average_price":"2.2","profit_loss":"36122.945","annual_dps":"0","annual_dps_total":"0","yield_pct":"0.00%","annual_target":"1000.00","low_52w":"3.83","high_52w":"5.08","fair_value":"4.45","valuation_status":"Overvalued","payout_ratio":"52.43%","payout_risk":"LOW","dividend_growth_5y":"4.58%","valuation_score":"64","yield_score":"0","payout_score":"90","growth_score":"59","role_score":"75","date_checked":"10/06/2026","squad_role":"Club Legend","promotion_impact_score":"53","trial_status":"Monitor","trial_rank":"10","trial_verdict":"No Buy","manager_note":"Not a promotion buy right now.","chemistry_role":"General Squad Role","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"HOLD","buy_strength":"54","ticker":"LON:MNG","name":"M&G PLC","account":"IG ISA","sector":"FINANCIALS","role":"INCOME ACCELERATOR","shares":"5737","live_price":"3.198","current_value":"18346.926","book_cost":"13258.48","average_price":"2.311047586","profit_loss":"5088.446","annual_dps":"0.205","annual_dps_total":"1176.085","yield_pct":"6.41%","annual_target":"4000.00","low_52w":"2.47","high_52w":"3.244","fair_value":"2.86","valuation_status":"Overvalued","payout_ratio":"159.60%","payout_risk":"VERY HIGH","dividend_growth_5y":"2.40%","valuation_score":"58","yield_score":"64","payout_score":"35","growth_score":"55","role_score":"85","date_checked":"10/06/2026","squad_role":"Senior Striker / High Scrutiny","promotion_impact_score":"48","trial_status":"Monitor","trial_rank":"11","trial_verdict":"No Buy","manager_note":"Not a promotion buy right now.","chemistry_role":"Core UK Income","chemistry_risk":"High Payout Risk","squad_balance_note":"No major chemistry issue."},{"status":"WAIT / REVIEW","buy_strength":"43","ticker":"LON:VWRA","name":"VANGUARD FTSE ALL-WORLD","account":"TRADE 212","sector":"GLOBAL EQUINITY ETF","role":"GLOBAL GROWTH ENGINE","shares":"40.42249269","live_price":"140.33","current_value":"5672.42","book_cost":"5274.69","average_price":"130.488984","profit_loss":"397.73","annual_dps":"0","annual_dps_total":"0","yield_pct":"0.00%","annual_target":"N/A","low_52w":"109.21","high_52w":"143.238806","fair_value":"126.22","valuation_status":"Overvalued","payout_ratio":"","payout_risk":"","dividend_growth_5y":"","valuation_score":"59","yield_score":"0","payout_score":"50","growth_score":"50","role_score":"70","date_checked":"","squad_role":"Growth Academy","promotion_impact_score":"42","trial_status":"Monitor","trial_rank":"12","trial_verdict":"No Buy","manager_note":"Not a promotion buy right now.","chemistry_role":"Growth Balance","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"WAIT / REVIEW","buy_strength":"41","ticker":"LON:IITU","name":"ISHARES S&P 500","account":"TRADE 212","sector":"TECHNOLOGY ETF","role":"TECHNOLOGY GROWTH ENGINE","shares":"64.18067352","live_price":"36.85","current_value":"2365.057819","book_cost":"1870.61","average_price":"29.1460014","profit_loss":"494.45","annual_dps":"0","annual_dps_total":"0","yield_pct":"0.00%","annual_target":"N/A","low_52w":"25.28","high_52w":"40.0397","fair_value":"32.66","valuation_status":"Overvalued","payout_ratio":"","payout_risk":"","dividend_growth_5y":"","valuation_score":"57","yield_score":"0","payout_score":"50","growth_score":"50","role_score":"65","date_checked":"","squad_role":"Growth Academy","promotion_impact_score":"40","trial_status":"Monitor","trial_rank":"13","trial_verdict":"No Buy","manager_note":"Not a promotion buy right now.","chemistry_role":"Growth Balance","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."}],"Dividends":[{"account":"IG ISA","ticker":"FGEN.L","name":"FORESIGHT ENVIRONMENTAL INFRASTRUCTURE","ex_date":"04/06/2026","pay_date":"26/06/2026","dps":"0.02","shares":"558","shares_at_ex_date":"558.00","dividend_due":"11.16","dividend_received":"","status":"Confirmed","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q2","days_to_ex":"-9","days_to_pay":"13","payment_stage":"LOCKED IN","income_month":"Jun","income_year":"2026","share_count_note":""},{"account":"TRADE 212","ticker":"PHP.L","name":"PRIMARY HEALTH PROPERTIES","ex_date":"03/07/2026","pay_date":"14/08/2026","dps":"0.02","shares":"543","shares_at_ex_date":"428.18","dividend_due":"8.56","dividend_received":"","status":"Confirmed","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q3","days_to_ex":"20","days_to_pay":"62","payment_stage":"UPCOMING EX-DIV","income_month":"Aug","income_year":"2026","share_count_note":"Ex-date share count differs"},{"account":"IG ISA","ticker":"PHP.L","name":"PRIMARY HEALTH PROPERTIES","ex_date":"03/07/2026","pay_date":"14/08/2026","dps":"0.02","shares":"802","shares_at_ex_date":"802.00","dividend_due":"16.04","dividend_received":"","status":"Confirmed","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q3","days_to_ex":"20","days_to_pay":"62","payment_stage":"UPCOMING EX-DIV","income_month":"Aug","income_year":"2026","share_count_note":""},{"account":"IG ISA","ticker":"SUPR.L","name":"SUPERMARKET INCOME REIT","ex_date":"24/07/2026","pay_date":"21/08/2026","dps":"0.02","shares":"15463","shares_at_ex_date":"15463","dividend_due":"309.26","dividend_received":"","status":"Estimated","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q3","days_to_ex":"41","days_to_pay":"69","payment_stage":"UPCOMING EX-DIV","income_month":"Aug","income_year":"2026","share_count_note":""},{"account":"TRADE 212","ticker":"FSFL.L","name":"FORESIGHT SOLAR FUND","ex_date":"23/07/2026","pay_date":"21/08/2026","dps":"0.02","shares":"778.7414577","shares_at_ex_date":"778.7414577","dividend_due":"15.57","dividend_received":"","status":"Confirmed","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q3","days_to_ex":"40","days_to_pay":"69","payment_stage":"UPCOMING EX-DIV","income_month":"Aug","income_year":"2026","share_count_note":""},{"account":"IG ISA","ticker":"LGEN.L","name":"LEGAL & GENERAL GROUP","ex_date":"20/08/2026","pay_date":"25/09/2026","dps":"0.06","shares":"7762","shares_at_ex_date":"7762.00","dividend_due":"465.72","dividend_received":"","status":"Estimated","frequency":"Semi-Annual","notes":"","previous_dps":"","dps_change":"0.06","dps_change_pct":"","dividend_trend":"","dividend_period":"Interim","days_to_ex":"68","days_to_pay":"104","payment_stage":"UPCOMING EX-DIV","income_month":"Sep","income_year":"2026","share_count_note":""},{"account":"IG ISA","ticker":"FGEN.L","name":"FORESIGHT ENVIRONMENTAL INFRASTRUCTURE","ex_date":"04/09/2026","pay_date":"25/09/2026","dps":"0.02","shares":"1590","shares_at_ex_date":"1590.00","dividend_due":"31.80","dividend_received":"","status":"Estimated","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q3","days_to_ex":"83","days_to_pay":"104","payment_stage":"UPCOMING EX-DIV","income_month":"Sep","income_year":"2026","share_count_note":""},{"account":"IG ISA","ticker":"MNG.L","name":"M&G PLC","ex_date":"11/09/2026","pay_date":"16/10/2026","dps":"0.07","shares":"5737","shares_at_ex_date":"5737.00","dividend_due":"401.59","dividend_received":"","status":"Estimated","frequency":"Semi-Annual","notes":"","previous_dps":"","dps_change":"0.07","dps_change_pct":"","dividend_trend":"","dividend_period":"Interim","days_to_ex":"90","days_to_pay":"125","payment_stage":"UPCOMING EX-DIV","income_month":"Oct","income_year":"2026","share_count_note":""},{"account":"IG ISA","ticker":"SDLF.L","name":"STANDARD LIFE","ex_date":"25/09/2026","pay_date":"30/10/2026","dps":"0.27","shares":"1692","shares_at_ex_date":"1692.00","dividend_due":"456.84","dividend_received":"","status":"Estimated","frequency":"Semi-Annual","notes":"","previous_dps":"","dps_change":"0.27","dps_change_pct":"","dividend_trend":"","dividend_period":"Interim","days_to_ex":"104","days_to_pay":"139","payment_stage":"UPCOMING EX-DIV","income_month":"Oct","income_year":"2026","share_count_note":""},{"account":"TRADE 212","ticker":"PHP.L","name":"PRIMARY HEALTH PROPERTIES","ex_date":"09/10/2026","pay_date":"20/11/2026","dps":"0.02","shares":"543","shares_at_ex_date":"428.18","dividend_due":"8.56","dividend_received":"","status":"Estimated","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q4","days_to_ex":"118","days_to_pay":"160","payment_stage":"UPCOMING EX-DIV","income_month":"Nov","income_year":"2026","share_count_note":""},{"account":"IG ISA","ticker":"SUPR.L","name":"SUPERMARKET INCOME REIT","ex_date":"23/10/2026","pay_date":"20/11/2026","dps":"0.02","shares":"15463","shares_at_ex_date":"15463","dividend_due":"309.26","dividend_received":"","status":"Estimated","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q4","days_to_ex":"132","days_to_pay":"160","payment_stage":"UPCOMING EX-DIV","income_month":"Nov","income_year":"2026","share_count_note":""},{"account":"TRADE 212","ticker":"FSFL.L","name":"FORESIGHT SOLAR FUND","ex_date":"30/10/2026","pay_date":"24/11/2026","dps":"0.02","shares":"778.7414577","shares_at_ex_date":"778.7414577","dividend_due":"15.57","dividend_received":"","status":"Estimated","frequency":"Quarterly","notes":"","previous_dps":"","dps_change":"0.02","dps_change_pct":"","dividend_trend":"","dividend_period":"Q4","days_to_ex":"139","days_to_pay":"164","payment_stage":"UPCOMING EX-DIV","income_month":"Nov","income_year":"2026","share_count_note":""}],"Watchlist":[{"status":"STRONG BUY","buy_strength":"91","ticker":"LON:RGL","name":"REGIONAL REIT","live_price":"0.9050","annual_dps":"0.0950","low_52w":"0.8550","high_52w":"1.2860","valuation_status":"Undervalued","valuation_score":"85","yield_score":"100","notes":"","date_checked":"13/06/2026","squad_role":"Trialist / Statement Candidate","promotion_impact_score":"96","trial_status":"Elite Trialist","trial_rank":"1","trial_verdict":"Sign if budget allows","manager_note":"Major upgrade. Shortlist priority.","chemistry_role":"REIT / High Income","chemistry_risk":"Concentration Watch","squad_balance_note":"Good candidate, but check sector concentration before buying."},{"status":"STRONG BUY","buy_strength":"86","ticker":"LON:RKT","name":"RECKITT","live_price":"46.3800","annual_dps":"4.5100","low_52w":"36.6400","high_52w":"65.1400","valuation_status":"Undervalued","valuation_score":"79","yield_score":"97","notes":"Promoted from Aurora Scout — FTSE 100 shortlist.","date_checked":"13/06/2026","squad_role":"Quality Candidate","promotion_impact_score":"90","trial_status":"Elite Trialist","trial_rank":"2","trial_verdict":"Sign if budget allows","manager_note":"Major upgrade. Shortlist priority.","chemistry_role":"Quality Defensive Balance","chemistry_risk":"Balance Booster","squad_balance_note":"Helps squad quality and balances the income engine."},{"status":"STRONG BUY","buy_strength":"85","ticker":"LON:ULVR","name":"UNILEVER","live_price":"43.8600","annual_dps":"4.1672","low_52w":"40.6840","high_52w":"55.2490","valuation_status":"Undervalued","valuation_score":"79","yield_score":"95","notes":"","date_checked":"13/06/2026","squad_role":"Quality Candidate","promotion_impact_score":"89","trial_status":"First-Team Trialist","trial_rank":"3","trial_verdict":"Strong Sign Candidate","manager_note":"Strong first-team trialist. Monitor price.","chemistry_role":"Quality Defensive Balance","chemistry_risk":"Balance Booster","squad_balance_note":"Helps squad quality and balances the income engine."},{"status":"BUY","buy_strength":"84","ticker":"LON:TRIG","name":"THE RENEWABLES INFRASTRUCTURE GROUP","live_price":"0.7410","annual_dps":"0.0755","low_52w":"0.6320","high_52w":"0.9030","valuation_status":"Neutral","valuation_score":"73","yield_score":"100","notes":"","date_checked":"13/06/2026","squad_role":"System Player / Trialist","promotion_impact_score":"85","trial_status":"First-Team Trialist","trial_rank":"4","trial_verdict":"Strong Sign Candidate","manager_note":"Strong first-team trialist. Monitor price.","chemistry_role":"Infrastructure Income","chemistry_risk":"Concentration Watch","squad_balance_note":"Good candidate, but check sector concentration before buying."},{"status":"BUY","buy_strength":"78","ticker":"LON:GCP","name":"GCP INFRASTRUCTURE","live_price":"0.7890","annual_dps":"0.0700","low_52w":"0.6960","high_52w":"0.8900","valuation_status":"Neutral","valuation_score":"71","yield_score":"89","notes":"","date_checked":"13/06/2026","squad_role":"Rotation / Watchlist Candidate","promotion_impact_score":"77","trial_status":"Promotion Candidate","trial_rank":"5","trial_verdict":"Monitor / Possible Buy","manager_note":"Useful promotion option. Compare income gap.","chemistry_role":"Infrastructure Income","chemistry_risk":"Concentration Watch","squad_balance_note":"Good candidate, but check sector concentration before buying."},{"status":"BUY","buy_strength":"76","ticker":"LON:SBRY","name":"SAINSBURY'S","live_price":"3.1380","annual_dps":"0.2500","low_52w":"2.7580","high_52w":"3.7073","valuation_status":"Neutral","valuation_score":"73","yield_score":"80","notes":"Promoted from Aurora Scout — FTSE 100 shortlist.","date_checked":"13/06/2026","squad_role":"Rotation / Watchlist Candidate","promotion_impact_score":"74","trial_status":"Monitor","trial_rank":"6","trial_verdict":"Keep Watching","manager_note":"Watch only. Not first choice.","chemistry_role":"Quality Defensive Balance","chemistry_risk":"Balance Booster","squad_balance_note":"Helps squad quality and balances the income engine."},{"status":"ACCUMULATE","buy_strength":"72","ticker":"LON:IMB","name":"IMPERIAL BRANDS","live_price":"27.9900","annual_dps":"1.6400","low_52w":"26.2600","high_52w":"36.3200","valuation_status":"Undervalued","valuation_score":"81","yield_score":"59","notes":"Promoted from Aurora Scout — FTSE 100 shortlist.","date_checked":"13/06/2026","squad_role":"Scout Monitor","promotion_impact_score":"65","trial_status":"Monitor","trial_rank":"8","trial_verdict":"Keep Watching","manager_note":"Watch only. Not first choice.","chemistry_role":"General Watchlist Role","chemistry_risk":"Normal","squad_balance_note":"No major chemistry issue."},{"status":"ACCUMULATE","buy_strength":"72","ticker":"LON:LMP","name":"LONDONMETRIC PROPERTY","live_price":"1.8410","annual_dps":"0.1200","low_52w":"1.7530","high_52w":"2.1620","valuation_status":"Undervalued","valuation_score":"76","yield_score":"65","notes":"Promoted from Aurora Scout — FTSE 100 shortlist.","date_checked":"13/06/2026","squad_role":"Scout Monitor","promotion_impact_score":"66","trial_status":"Monitor","trial_rank":"7","trial_verdict":"Keep Watching","manager_note":"Watch only. Not first choice.","chemistry_role":"Property Income","chemistry_risk":"Concentration Watch","squad_balance_note":"Good candidate, but check sector concentration before buying."},{"status":"ACCUMULATE","buy_strength":"69","ticker":"LON:AV","name":"AVIVA","live_price":"6.2700","annual_dps":"0.3930","low_52w":"5.9030","high_52w":"7.0060","valuation_status":"Neutral","valuation_score":"73","yield_score":"63","notes":"","date_checked":"13/06/2026","squad_role":"Rotation / Watchlist Candidate","promotion_impact_score":"63","trial_status":"Deep Watch","trial_rank":"10","trial_verdict":"Do Not Sign Yet","manager_note":"Deep scout only.","chemistry_role":"Financial Income","chemistry_risk":"Cyclical / Financial Watch","squad_balance_note":"Useful, but monitor cycle and payout risk."}],"DailyPriceSummary":[{"Date":"2026-06-12","Ticker":"LON:AV","Name":"Aviva","Open Price":"6.2620","Close Price":"6.2780","Change":"0.0160","Change %":"0.26%"},{"Date":"2026-06-12","Ticker":"LON:FGEN","Name":"Foresight Environmental","Open Price":"0.8330","Close Price":"0.8440","Change":"0.0110","Change %":"1.32%"},{"Date":"2026-06-12","Ticker":"LON:FSFL","Name":"Foresight Solar","Open Price":"0.7250","Close Price":"0.7360","Change":"0.0110","Change %":"1.52%"},{"Date":"2026-06-12","Ticker":"LON:IITU","Name":"Ishares S&P 500","Open Price":"35.9600","Close Price":"36.8500","Change":"0.8900","Change %":"2.47%"},{"Date":"2026-06-12","Ticker":"LON:LGEN","Name":"Legal & General","Open Price":"2.7790","Close Price":"2.8070","Change":"0.0280","Change %":"1.01%"},{"Date":"2026-06-12","Ticker":"LON:MNG","Name":"M&G PLC","Open Price":"3.1860","Close Price":"3.2092","Change":"0.0232","Change %":"0.73%"},{"Date":"2026-06-12","Ticker":"LON:NG","Name":"National Grid","Open Price":"12.1190","Close Price":"12.0900","Change":"-0.0290","Change %":"-0.24%"},{"Date":"2026-06-12","Ticker":"LON:PHP","Name":"Pimary Health Properties","Open Price":"0.9170","Close Price":"0.9255","Change":"0.0085","Change %":"0.93%"},{"Date":"2026-06-12","Ticker":"LON:SDLF","Name":"Standard Life Holdings","Open Price":"7.8550","Close Price":"7.9000","Change":"0.0450","Change %":"0.57%"},{"Date":"2026-06-12","Ticker":"LON:SUPR","Name":"Supermarket Income Reit","Open Price":"0.8467","Close Price":"0.8530","Change":"0.0063","Change %":"0.74%"},{"Date":"2026-06-12","Ticker":"LON:TSCO","Name":"Tesco","Open Price":"4.6890","Close Price":"4.7300","Change":"0.0410","Change %":"0.87%"},{"Date":"2026-06-12","Ticker":"LON:TW","Name":"Taylor Wimpey","Open Price":"0.7516","Close Price":"0.7454","Change":"-0.0062","Change %":"-0.82%"},{"Date":"2026-06-12","Ticker":"LON:UKW","Name":"Greeencoat Wind","Open Price":"1.0380","Close Price":"1.0350","Change":"-0.0030","Change %":"-0.29%"},{"Date":"2026-06-12","Ticker":"LON:VWRA","Name":"Vanguard All World","Open Price":"136.1704","Close Price":"139.2000","Change":"3.0296","Change %":"2.22%"}]}
+</script>
+
+<script>
+/* ===================== SECTION: DATA SOURCE ===================== */
+const SHEET_ID="10MdgQKc4tParno7pNkz40eBGz308wxHu1u3gvJe_WsE";
+const AURORA_MASTER_URL="https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+const HOLDINGS_URL=AURORA_MASTER_URL;
+const DIVIDENDS_URL=AURORA_MASTER_URL;
+const WATCHLIST_URL=AURORA_MASTER_URL;
+const DAILY_PRICE_SUMMARY_URL=AURORA_MASTER_URL;
+const MASTER_MONTHLY_GOAL=2000, PER_HOLDING_ANNUAL_TARGET=3000, DEFAULT_BUY_AMOUNT=500;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const TICKER_NAMES={LGEN:"LEGAL & GENERAL","LGEN.L":"LEGAL & GENERAL",MNG:"M&G PLC","MNG.L":"M&G PLC",SDLF:"STANDARD LIFE HOLDINGS","SDLF.L":"STANDARD LIFE HOLDINGS",SUPR:"SUPERMARKET INCOME REIT","SUPR.L":"SUPERMARKET INCOME REIT",FGEN:"FORESIGHT ENVIRONMENTAL INFRASTRUCTURE","FGEN.L":"FORESIGHT ENVIRONMENTAL INFRASTRUCTURE",FJGN:"FORESIGHT ENVIRONMENTAL INFRASTRUCTURE",FSFL:"FORESIGHT SOLAR FUND","FSFL.L":"FORESIGHT SOLAR FUND",PHP:"PRIMARY HEALTH PROPERTIES","PHP.L":"PRIMARY HEALTH PROPERTIES",TSCO:"TESCO PLC","TSCO.L":"TESCO PLC",VWRA:"VANGUARD FTSE ALL-WORLD","VWRA.L":"VANGUARD FTSE ALL-WORLD",IITU:"ISHARES S&P 500","IITU.L":"ISHARES S&P 500",AV:"AVIVA","AV.L":"AVIVA",NG:"NATIONAL GRID","NG.L":"NATIONAL GRID",UKW:"GREENCOAT UK WIND",TW:"TAYLOR WIMPEY",RGL:"REGIONAL REIT",TRIG:"RENEWABLES INFRASTRUCTURE GROUP"};
+
+/* ===================== SECTION: HELPERS ===================== */
+function setText(id,v){const el=document.getElementById(id);if(el)el.innerText=v}
+function parseNum(v){const n=parseFloat(String(v??"").replace(/[^0-9.-]/g,""));return Number.isFinite(n)?n:0}
+function money(v,d=0){return Number(v||0).toLocaleString("en-GB",{minimumFractionDigits:d,maximumFractionDigits:d})}
+function cleanTicker(t){return String(t||"").toUpperCase().replace("LON:","").replace(".L","").replace(".GB","").trim()}
+function normaliseHoldingIdentity(v){
+  return String(v||"")
+    .toUpperCase()
+    .replace(/^LON:/,"")
+    .replace(/\.(L|GB)$/,"")
+    .replace(/&/g,"AND")
+    .replace(/\b(PLC|LTD|LIMITED|HOLDINGS?|GROUP|ORDINARY|SHARES?)\b/g," ")
+    .replace(/[^A-Z0-9]+/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+function filterDividendsToActiveHoldings(dividends,holdingsParsed){
+  const activeTickers=new Set();
+  const activeNames=new Set();
+
+  (holdingsParsed||[]).forEach(h=>{
+    const ticker=cleanTicker(h?.ticker);
+    const name=normaliseHoldingIdentity(h?.name);
+    if(ticker)activeTickers.add(ticker);
+    if(name)activeNames.add(name);
+  });
+
+  return (dividends||[]).filter(row=>{
+    const rawTicker=getCell(row,["ticker","Ticker","epic","EPIC","symbol","Symbol"]);
+    const rawName=getCell(row,["name","Name","company","Company","holding","Holding"]);
+    const ticker=cleanTicker(rawTicker);
+    const name=normaliseHoldingIdentity(rawName || rawTicker);
+
+    if(ticker && activeTickers.has(ticker))return true;
+    if(name && activeNames.has(name))return true;
+
+    // Some dividend rows use a company name in the ticker field.
+    for(const activeName of activeNames){
+      if(name && (name===activeName || name.includes(activeName) || activeName.includes(name)))return true;
+    }
+    return false;
+  });
+}
+
+function getCell(row,names){const keys=Object.keys(row||{});for(const name of names){const found=keys.find(k=>k.trim().toLowerCase()===name.trim().toLowerCase());if(found)return row[found]}return ""}
+function tickerName(t){const raw=String(t||"").toUpperCase().trim();const stripped=cleanTicker(raw);return TICKER_NAMES[raw]||TICKER_NAMES[stripped]||stripped||"Unknown"}
+function normalisePriceForTicker(ticker,v){const n=parseNum(v);if(!Number.isFinite(n)||n<=0)return 0;const t=cleanTicker(ticker);const pence=new Set(["LGEN","MNG","SUPR","PHP","FSFL","FGEN","FJGN","TSCO","AV","NG","PHNX","SDLF","UKW","RGL","TRIG","TW"]);if(n>1000)return n/100;if(n>20&&pence.has(t))return n/100;return n}
+function normaliseDpsForTicker(ticker,v){const n=parseNum(v);if(!Number.isFinite(n)||n<0)return 0;const t=cleanTicker(ticker);const pence=new Set(["LGEN","MNG","SUPR","PHP","FSFL","FGEN","FJGN","TSCO","AV","NG","PHNX","SDLF","UKW","RGL","TRIG","TW"]);if(n>2&&pence.has(t))return n/100;return n}
+function formatSharePriceDisplay(ticker,price){const p=Number(price||0);if(!p||p<=0)return"--";const t=cleanTicker(ticker);const pence=new Set(["LGEN","MNG","SUPR","PHP","FSFL","FGEN","FJGN","TSCO","AV","NG","PHNX","SDLF","UKW","RGL","TRIG","TW"]);if(p<1.5||pence.has(t))return`${(p*100).toFixed(2)}p`;return`£${money(p,3)}`}
+function formatSharePriceChangeDisplay(ticker,change,price){const c=Number(change||0);if(!Number.isFinite(c)||c===0)return"£0.00";const sign=c>0?"+":"";const t=cleanTicker(ticker);const pence=new Set(["LGEN","MNG","SUPR","PHP","FSFL","FGEN","FJGN","TSCO","AV","NG","PHNX","SDLF","UKW","RGL","TRIG","TW"]);if(Math.abs(Number(price||0))<1.5||pence.has(t))return`${sign}${(c*100).toFixed(2)}p`;return`${sign}£${money(c,3)}`}
+function discountToFair(price,fair){return fair>0?((fair-price)/fair)*100:0}
+function statusClass(v){const s=String(v||"").toUpperCase();if(s.includes("BUY"))return"buy";if(s.includes("HOLD")||s.includes("ACCUM"))return"hold";return"wait"}
+function updateClock(){setText("clockBadge",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}))}setInterval(updateClock,30000);updateClock();
+const AURORA_FEED_HEALTH={};
+function getOfflineSnapshot(label){
+  try{
+    const el=document.getElementById("auroraOfflineData");
+    if(!el)return null;
+    const data=JSON.parse(el.textContent||"{}");
+    return Array.isArray(data[label])?data[label]:null;
+  }catch(e){return null}
+}
+async function fetchSheetJson(url,label,fallback=[]){
+  try{
+    const res=await fetch(url,{cache:"no-store"});
+    if(!res.ok)throw new Error(`${label} ${res.status}`);
+    const data=await res.json();
+    const rows=Array.isArray(data)?data:(Array.isArray(data?.[label])?data[label]:[]);
+    const ok=Array.isArray(rows);
+    AURORA_FEED_HEALTH[label]={ok,count:ok?rows.length:0,error:ok?"Apps Script feed":"Invalid feed shape"};
+    if(ok&&rows.length)return rows;
+  }catch(err){
+    console.warn("Aurora feed warning",label,err);
+    AURORA_FEED_HEALTH[label]={ok:false,count:0,error:err?.message||String(err)};
+  }
+  const offline=getOfflineSnapshot(label);
+  if(offline){
+    AURORA_FEED_HEALTH[label]={ok:true,count:offline.length,error:"Offline snapshot fallback"};
+    return offline;
+  }
+  return fallback;
+}
+
+function setHealthTile(id,status,meta,state="good"){
+  setText(id,status);
+  const metaEl=document.getElementById(`${id}Meta`);
+  if(metaEl)metaEl.innerText=meta;
+  const tile=document.getElementById(`${id}Tile`);
+  if(tile){tile.classList.remove("good","watch","risk");tile.classList.add(state);}
+}
+function updateDataHealthPanel(rawHoldings,parsedHoldings,dividends,watchlist,dailyPriceSummary,auroraMaster){
+  const h=AURORA_FEED_HEALTH||{};
+  const feedState=(label,ids,cleanName)=>{
+    const item=h[label]||{ok:false,count:0,error:"Not checked"};
+    setHealthTile(ids,item.ok?"LIVE":"ERROR",item.ok?`${item.count} rows loaded from ${cleanName}`:item.error,""+(item.ok?"good":"risk"));
+    return item.ok;
+  };
+  const okHoldings=feedState("Holdings","healthHoldings","Holdings");
+  const okDividends=feedState("Dividends","healthDividends","Dividends");
+  const okWatchlist=feedState("Watchlist","healthWatchlist","Watchlist");
+  const okDaily=feedState("DailyPriceSummary","healthDaily","DailyPriceSummary");
+
+  const missingPrices=(parsedHoldings||[]).filter(x=>!Number(x.price||0)).length;
+  setText("healthMissingPrices",missingPrices);
+  const missTile=document.getElementById("healthMissingPricesTile");
+  if(missTile){missTile.classList.remove("good","watch","risk");missTile.classList.add(missingPrices===0?"good":missingPrices<=2?"watch":"risk");}
+
+  const missingDividendDates=(dividends||[]).filter(row=>{
+    const ticker=getCell(row,["ticker","Ticker","name","Name"]);
+    if(!ticker)return false;
+    const pay=getCell(row,["pay_date","pay date","payment_date","payment date","date","Date"]);
+    const ex=getCell(row,["ex_dividend_date","ex dividend date","ex_date","ex date","ex-dividend date","ex dividend","Ex Dividend Date","Ex-Date"]);
+    return !pay && !ex;
+  }).length;
+  setText("healthDividendDates",missingDividendDates);
+  const divTile=document.getElementById("healthDividendDatesTile");
+  if(divTile){divTile.classList.remove("good","watch","risk");divTile.classList.add(missingDividendDates===0?"good":missingDividendDates<=3?"watch":"risk");}
+
+  setText("healthMaster",auroraMaster?"LIVE":"CHECK");
+  const masterTile=document.getElementById("healthMaster")?.closest(".health-tile");
+  if(masterTile){masterTile.classList.remove("good","watch","risk");masterTile.classList.add(auroraMaster?"good":"watch");}
+
+  setText("healthLastSync",new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+
+  const allGood=okHoldings&&okDividends&&okWatchlist&&okDaily&&missingPrices===0;
+  const badge=document.getElementById("dataHealthBadge");
+  if(badge){
+    badge.className=`badge ${allGood?"good":(okHoldings&&okDividends?"watch":"risk")}`;
+    badge.innerText=allGood?"ALL CLEAR":(okHoldings&&okDividends?"CHECK WARNINGS":"FEED ISSUE");
+  }
+}
+
+function parseDate(v){
+  if(v===null||v===undefined||v==="")return null;
+  const raw=String(v).trim();
+  if(!raw)return null;
+
+  // Google Sheets / OpenSheet can export real date cells as serial numbers.
+  // Serial 1 = 1899-12-31 in the Sheets/Excel-style date system used here.
+  // Without this, serial dates become ancient JavaScript dates and the runway only counts a few months.
+  const serial=Number(raw.replace(/,/g,""));
+  if(Number.isFinite(serial)&&serial>20000&&serial<80000){
+    const base=new Date(Date.UTC(1899,11,30));
+    const d=new Date(base.getTime()+serial*86400000);
+    return new Date(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());
+  }
+
+  const dmy=raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})$/);
+  if(dmy){
+    const y=dmy[3].length===2?Number(`20${dmy[3]}`):Number(dmy[3]);
+    const d=new Date(y,Number(dmy[2])-1,Number(dmy[1]));
+    return isNaN(d)?null:d;
+  }
+
+  const ymd=raw.match(/^(\d{4})[\/.-](\d{1,2})[\/.-](\d{1,2})$/);
+  if(ymd){
+    const d=new Date(Number(ymd[1]),Number(ymd[2])-1,Number(ymd[3]));
+    return isNaN(d)?null:d;
+  }
+
+  const d=new Date(raw);
+  return isNaN(d)?null:d;
+}
+function daysAway(date){const today=new Date();today.setHours(0,0,0,0);const d=parseDate(date);if(!d||isNaN(d))return null;d.setHours(0,0,0,0);return Math.ceil((d-today)/(1000*60*60*24))}
+
+/* ===================== SECTION: DAILY PRICE SUMMARY ===================== */
+function summaryDateValue(row){const d=parseDate(getCell(row,["date","Date","summary_date","summary date","logged_date","logged date"]));return d?d.getTime():0}
+function buildDailyPriceSummaryMap(rows){const map={};(rows||[]).forEach(row=>{const ticker=cleanTicker(getCell(row,["ticker","Ticker","symbol","Symbol"]));if(!ticker)return;const dateVal=summaryDateValue(row);const old=map[ticker]?summaryDateValue(map[ticker]):-1;if(!map[ticker]||dateVal>=old)map[ticker]=row});return map}
+function priceSummaryForTicker(map,ticker){const clean=cleanTicker(ticker);return map[clean]||map[`${clean}.L`]||map[`${clean}.GB`]||null}
+function parseDailyPriceSummary(ticker,row,shares){if(!row)return{openPrice:0,closePrice:0,changePerShare:0,changeGbp:0,changePct:0,hasSummary:false};const openPrice=normalisePriceForTicker(ticker,getCell(row,["open_price","open price","open","Open"]));const closePrice=normalisePriceForTicker(ticker,getCell(row,["close_price","close price","close","Close","price","Price","latest_price","latest price"]));let changePerShare=normalisePriceForTicker(ticker,getCell(row,["change_per_share","change per share","price_change","price change","change_price","change price"]));if(!changePerShare&&openPrice>0&&closePrice>0)changePerShare=closePrice-openPrice;const suppliedHoldingChange=parseNum(getCell(row,["holding_change_gbp","holding change gbp","value_change_gbp","value change gbp","holding_change","holding change","position_change","position change"]));const suppliedChange=parseNum(getCell(row,["change_gbp","change gbp","change £","change"]));const changeGbp=suppliedHoldingChange||(shares>0&&changePerShare?changePerShare*shares:suppliedChange);const rawPct=getCell(row,["change_pct","change pct","change percentage","change_%","change %","Change %"]);let changePct=parseNum(rawPct);if(rawPct&&!String(rawPct).includes("%")&&Math.abs(changePct)<=1)changePct*=100;if(!changePct&&openPrice>0&&closePrice>0)changePct=((closePrice-openPrice)/openPrice)*100;return{openPrice,closePrice,changePerShare,changeGbp,changePct,hasSummary:true}}
+
+/* ===================== SECTION: SCORE ENGINES ===================== */
+function scoreWatch(row){const ticker=getCell(row,["ticker","Ticker"])||"";const name=getCell(row,["name","Name"])||tickerName(ticker);const livePrice=normalisePriceForTicker(ticker,getCell(row,["live_price","live price","price"]));const annualDps=normaliseDpsForTicker(ticker,getCell(row,["annual_dps","annual dps","dps","annual dividend per share"]));const low52=normalisePriceForTicker(ticker,getCell(row,["low_52w","low 52w","low52"]));const high52=normalisePriceForTicker(ticker,getCell(row,["high_52w","high 52w","high52"]));const sheetFairValue=normalisePriceForTicker(ticker,getCell(row,["fair_value","fair value"]));const fairValue=sheetFairValue||(low52>0&&high52>low52?low52+(high52-low52)*.5:0);const sheetScore=parseNum(getCell(row,["buy_strength","buy strength","score","Score"]));const sheetStatus=getCell(row,["status","Status"]);let score=0;if(sheetScore>0){score=Math.round(Math.max(0,Math.min(100,sheetScore)))}else{if(livePrice>0&&annualDps>0){const y=(annualDps/livePrice)*100;score+=Math.min(40,y*4)}if(low52>0&&high52>low52){const pos=((livePrice-low52)/(high52-low52))*100;score+=Math.max(0,30-pos*.3)}if(fairValue>0){const discount=((fairValue-livePrice)/fairValue)*100;score+=Math.max(0,discount)}score=Math.round(Math.max(0,Math.min(100,score)))}const income500=livePrice>0?(DEFAULT_BUY_AMOUNT/livePrice)*annualDps:0;const yieldPct=livePrice>0?(annualDps/livePrice)*100:0;const discount=fairValue>0?((fairValue-livePrice)/fairValue)*100:0;return{ticker:cleanTicker(ticker),name,livePrice,annualDps,score,income500,yieldPct,fairValue,discount,status:sheetStatus||"REVIEW"}}
+function isGrowthHolding(x){const t=cleanTicker(x.ticker);const role=String(x.role||"").toUpperCase();const sector=String(x.sector||"").toUpperCase();return["VWRA","VWRP","VWRL","IITU"].includes(t)||role.includes("GROWTH")||sector.includes("ETF")}
+function premierStatusBoost(status){return 0}
+function premierHoldingScore(x){
+  /* ===================== SECTION: PREMIER LEAGUE SCORE LOCK =====================
+     Locked rule: Premier League score must mirror the Holdings sheet buy_strength exactly.
+     No HTML-side boosts from status, fair-value discount, yield, income, or role. */
+  const sheetScore=Number(x.buyStrength||0);
+  if(sheetScore>0)return Math.round(Math.max(0,Math.min(100,sheetScore)));
+  return 50;
+}
+function annualTargetFor(x){const t=Number(x?.annualTarget||0);return t>0?t:(isGrowthHolding(x)?0:PER_HOLDING_ANNUAL_TARGET)}
+function incomeProgressPct(x){const t=annualTargetFor(x);return t>0?Math.max(0,Math.min(100,(Number(x?.annual||0)/t)*100)):0}
+function targetGapFor(x){const t=annualTargetFor(x);return t>0?Math.max(0,t-Number(x?.annual||0)):0}
+function isBuyStatus(x){const s=String(x?.status||"").toUpperCase();return s.includes("BUY")||s.includes("ACCUM")}
+function firstSheetOpportunity(rows){const active=(rows||[]).filter(x=>!isGrowthHolding(x)&&x.price>0&&x.dps>0);return active.find(x=>isBuyStatus(x)&&targetGapFor(x)>0)||active.find(x=>isBuyStatus(x))||active.find(x=>targetGapFor(x)>0)||active[0]||null}
+
+/* ===================== SECTION: COMBINE HOLDINGS ===================== */
+function combineHoldingsByTicker(rows){const map={};(rows||[]).forEach(x=>{const ticker=cleanTicker(x.ticker);if(!ticker)return;if(!map[ticker]){map[ticker]={...x,ticker,accountsSet:new Set(),sourceRows:0};}const e=map[ticker];e.accountsSet.add(String(x.account||"Account n/a").trim());e.sourceRows+=1;if(e!==x){e.shares=Number(e.shares||0)+Number(x.shares||0);e.value=Number(e.value||0)+Number(x.value||0);e.annual=Number(e.annual||0)+Number(x.annual||0);e.changeGbp=Number(e.changeGbp||0)+Number(x.changeGbp||0);e.price=e.shares>0?e.value/e.shares:(Number(e.price||0)||Number(x.price||0));e.dps=e.shares>0?e.annual/e.shares:Math.max(Number(e.dps||0),Number(x.dps||0));e.y=e.value>0?(e.annual/e.value)*100:Math.max(Number(e.y||0),Number(x.y||0));e.buyStrength=Math.max(Number(e.buyStrength||0),Number(x.buyStrength||0));e.discount=Math.max(Number(e.discount||-999),Number(x.discount||-999));e.fairValue=Number(e.fairValue||0)||Number(x.fairValue||0);e.annualTarget=Math.max(Number(e.annualTarget||0),Number(x.annualTarget||0));if(statusRank(x.status)>statusRank(e.status))e.status=x.status;e.account=[...e.accountsSet].filter(Boolean).join(" + ");e.name=e.name||x.name||tickerName(ticker)}});return Object.values(map).map(x=>({...x,combinedRows:Number(x.sourceRows||1),combinedAccounts:[...(x.accountsSet||new Set())]}))}
+function statusRank(s){const u=String(s||"").toUpperCase();if(u.includes("BUY"))return 5;if(u.includes("ACCUM"))return 4;if(u.includes("HOLD"))return 3;if(u.includes("WAIT"))return 2;if(u.includes("AVOID")||u.includes("EXPENS"))return 1;return 0}
+
+/* ===================== SECTION: RENDERERS ===================== */
+function renderLeagueRows(rows,offset=0,relegation=false){const head=`<div class="league-row head"><div>#</div><div>Holding</div><div class="num">Score</div><div class="num">Income</div><div class="num">Yield</div></div>`;if(!rows.length)return`<div class="subv">No holdings available.</div>`;return head+rows.map((x,i)=>{const score=x.premierScore;const cls=relegation?"drop":score>=85?"elite":score>=70?"ready":"";const accountMeta=Number(x.combinedRows||1)>1?` • ${Number(x.combinedRows||1)} accounts combined`:"";return`<div class="league-row ${cls}"><div class="league-pos">#${offset+i+1}</div><div><div class="league-name" title="${x.name}">${x.name}</div><div class="league-meta">${x.ticker} • ${x.status||"HOLD"}${accountMeta}</div></div><div class="num">${score}</div><div class="num">£${money(x.annual,0)}</div><div class="num">${Number(x.y||0).toFixed(2)}%</div></div>`}).join("")}
+function renderPromotionRows(rows,offset=0){
+  const head=`<div class="league-row head"><div>#</div><div>Challenger</div><div class="num">Score</div><div class="num">Yield Score</div><div class="num">Yield</div></div>`;
+  if(!rows.length)return`<div class="subv">No watchlist challengers available.</div>`;
+  return head+rows.slice(0,5).map((w,i)=>{
+    const score=Number(w.premierScore??w.score??0);
+    const yieldScore=Number(w.yieldScore??w.income500??0);
+    const y=Number(w.y??w.yieldPct??0);
+    const cls=score>=80?"elite":score>=70?"ready":"";
+    return`<div class="league-row ${cls}"><div class="league-pos">#${offset+i+1}</div><div><div class="league-name" title="${w.name}">${w.name}</div><div class="league-meta">${w.ticker} • WATCHLIST PROMOTION</div></div><div class="num">${score}</div><div class="num">${Math.round(yieldScore)}</div><div class="num">${y.toFixed(2)}%</div></div>`
+  }).join("")
+}
+function renderMixedLeagueRows(rows,offset=0){
+  const head=`<div class="league-row head"><div>#</div><div>Stock</div><div class="num">Score</div><div class="num">Income / Yield Score</div><div class="num">Yield</div></div>`;
+  if(!rows.length)return`<div class="subv">No mid-table stocks available.</div>`;
+  return head+rows.map((x,i)=>{
+    const score=Number(x.premierScore??x.score??0);
+    const isWatch=String(x.leagueSource||"").toUpperCase()==="WATCHLIST";
+    const cls=score>=85?"elite":score>=70?"ready":"";
+    const accountMeta=!isWatch&&Number(x.combinedRows||1)>1?` • ${Number(x.combinedRows||1)} accounts combined`:"";
+    const middle=isWatch?`${Math.round(Number(x.yieldScore??x.income500??0))}`:`£${money(Number(x.annual||0),0)}`;
+    const meta=isWatch?`${x.ticker} • WATCHLIST`:`${x.ticker} • ${x.status||"HOLD"}${accountMeta}`;
+    const y=Number(x.y??x.yieldPct??0);
+    return`<div class="league-row ${cls}"><div class="league-pos">#${offset+i+1}</div><div><div class="league-name" title="${x.name}">${x.name}</div><div class="league-meta">${meta}</div></div><div class="num">${score}</div><div class="num">${middle}</div><div class="num">${y.toFixed(2)}%</div></div>`
+  }).join("")
+}
+function updatePremierLeague(holdings,watchRows){
+  /* ===================== SECTION: PREMIER LEAGUE LOCKED LOGIC =====================
+     1-4   Champions League       = Top 4 HOLDINGS by buy_strength
+     5-9   Promotion Challengers  = Top 5 WATCHLIST rows only
+     10-14 Mid-table              = Best 5 remaining mixed Holdings + Watchlist
+     15-17 Relegation Watch       = Bottom 3 HOLDINGS by buy_strength
+     Dividend runway/date logic is not touched here. */
+  const league=combineHoldingsByTicker(holdings)
+    .filter(x=>x.ticker&&(x.shares>0||x.value>0||x.annual>0))
+    .map(x=>({...x,premierScore:premierHoldingScore(x),leagueSource:"HOLDING",leagueKey:cleanTicker(x.ticker)}))
+    .sort((a,b)=>b.premierScore-a.premierScore||b.annual-a.annual||b.value-a.value);
+
+  const watchLeague=(watchRows||[])
+    .filter(x=>x&&x.ticker)
+    .map(x=>({
+      ticker:cleanTicker(x.ticker),
+      name:x.name||tickerName(x.ticker),
+      status:"WATCHLIST",
+      premierScore:Number(x.score||0),
+      yieldScore:Number(x.income500||0),
+      annual:0,
+      y:Number(x.yieldPct||0),
+      value:0,
+      combinedRows:0,
+      leagueSource:"WATCHLIST",
+      leagueKey:cleanTicker(x.ticker)
+    }))
+    .sort((a,b)=>b.premierScore-a.premierScore||b.yieldScore-a.yieldScore);
+
+  const topFour=league.slice(0,4);
+  const promotionRows=watchLeague.slice(0,5);
+  const bottomThree=league.length>3?[...league].sort((a,b)=>a.premierScore-b.premierScore||a.annual-b.annual).slice(0,3):[];
+
+  const usedHoldings=new Set([...topFour,...bottomThree].map(x=>cleanTicker(x.ticker)));
+  const usedWatch=new Set(promotionRows.map(x=>cleanTicker(x.ticker)));
+
+  const remainingHoldings=league.filter(x=>!usedHoldings.has(cleanTicker(x.ticker)));
+  const remainingWatch=watchLeague.filter(x=>!usedWatch.has(cleanTicker(x.ticker)));
+  const midTable=[...remainingHoldings,...remainingWatch]
+    .sort((a,b)=>b.premierScore-a.premierScore||b.annual-a.annual||b.value-a.value)
+    .slice(0,5);
+
+  document.getElementById("premierTopFour").innerHTML=renderLeagueRows(topFour,0,false);
+  document.getElementById("premierPromotion").innerHTML=renderPromotionRows(promotionRows,4);
+  document.getElementById("premierMidTable").innerHTML=renderMixedLeagueRows(midTable,9);
+  document.getElementById("premierRelegation").innerHTML=renderLeagueRows(bottomThree,14,true);
+
+  const strongest=promotionRows[0]||watchLeague[0];
+  const weakest=bottomThree[0]||league[league.length-1];
+  const box=document.getElementById("premierTransferPressure");
+  if(strongest&&weakest){
+    const gap=Number(strongest.premierScore||0)-Number(weakest.premierScore||0);
+    box.innerHTML=`<span class="cyan">Transfer Pressure:</span> ${strongest.name} is the top watchlist promotion challenger (${strongest.premierScore}) and is ${gap>=0?"+":""}${gap} pts vs ${weakest.name} (${weakest.premierScore}). Promotion is watchlist-only; relegation is holdings-only.`;
+  }else box.innerHTML="Transfer Pressure: Waiting for holdings and watchlist data.";
+  setText("premierLeagueBadge",`${topFour.length+promotionRows.length+midTable.length+bottomThree.length}/17 SLOTS`);
+}
+
+function renderDiscounts(rows){
+  const combined=combineHoldingsByTicker(rows||[]).map(x=>{
+    const discount=discountToFair(Number(x.price||0),Number(x.fairValue||0));
+    return {...x,discount};
+  });
+  const list=combined.filter(x=>Number.isFinite(x.discount)&&x.discount>0&&x.fairValue>0).sort((a,b)=>b.discount-a.discount).slice(0,8);
+  const max=Math.max(1,...list.map(x=>x.discount));
+  document.getElementById("discountList").innerHTML=list.length?list.map(x=>`<div class="discount-row"><div><div class="discount-name" title="${x.name}">${x.name}</div><div class="subv">${x.ticker}${x.combinedRows>1?` • ${x.combinedRows} accounts combined`:""} • fair ${formatSharePriceDisplay(x.ticker,x.fairValue)}</div></div><div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,(x.discount/max)*100)}%"></div></div><div class="bar-num">+${x.discount.toFixed(1)}%</div></div>`).join(""):`<div class="subv">No positive fair-value discounts found.</div>`
+}
+function groupHolding(x){const ticker=String(x.ticker||"").toUpperCase();const name=String(x.name||"").toUpperCase();const account=String(x.account||"").toUpperCase();const role=String(x.role||"").toUpperCase();if(ticker.includes("TSCO")||name.includes("TESCO")||account.includes("TESCO"))return"Tesco Share Account";if(ticker.includes("VWRA")||ticker.includes("VWR")||ticker.includes("IITU")||name.includes("VANGUARD")||name.includes("ISHARES")||role.includes("GROWTH"))return"ETF Growth Engine";if(account.includes("TRADE")||account.includes("T212")||account.includes("212"))return"Trade212 Holdings";if(account.includes("IG"))return"IG ISA Income Pillars";return"Other Holdings"}
+function renderHoldingsTable(rows){const groupOrder=["IG ISA Income Pillars","Trade212 Holdings","ETF Growth Engine","Tesco Share Account","Other Holdings"];const grouped=Object.fromEntries(groupOrder.map(g=>[g,[]]));rows.forEach(x=>{const g=groupHolding(x);if(!grouped[g])grouped[g]=[];grouped[g].push(x)});const header=`<div class="holding-row head"><div>Holding</div><div class="holding-value">Live Price</div><div class="holding-value">Price Chg</div><div class="holding-value">Value</div><div class="holding-value">Value Chg</div><div class="holding-value">Income</div><div class="holding-value">Yield</div><div class="holding-value">Fair Value</div><div class="holding-value">Status</div><div class="holding-value">Strength</div></div>`;document.getElementById("holdingsTable").innerHTML=groupOrder.map(groupName=>{const items=(grouped[groupName]||[]).sort((a,b)=>b.value-a.value);if(!items.length)return"";const groupValue=items.reduce((s,x)=>s+x.value,0);const groupIncome=items.reduce((s,x)=>s+x.annual,0);return`<div class="holding-group"><div class="holding-group-title">${groupName}</div><div class="holding-group-meta">${items.length} holdings • £${money(groupValue,0)} value • £${money(groupIncome,0)}/yr income</div></div>${header}${items.map(renderHoldingRow).join("")}`}).join("")}
+function renderHoldingRow(x){const valueCls=x.changeGbp>0?"good":x.changeGbp<0?"risk":"subv";const priceCls=x.priceSummary.changePerShare>0?"good":x.priceSummary.changePerShare<0?"risk":"subv";const rowCls=x.changeGbp>0?"positive-row":x.changeGbp<0?"negative-row":"";const sign=x.changeGbp>0?"+":"";const pctSign=x.changePct>0?"+":"";const fair=x.fairValue>0?`${formatSharePriceDisplay(x.ticker,x.fairValue)}<div class="holding-meta ${x.discount>=0?'good':'risk'}">${x.discount>=0?'+':''}${x.discount.toFixed(1)}%</div>`:`<span class="subv">N/A</span>`;const pill=statusClass(x.status);return`<div class="holding-row ${rowCls}"><div><div class="holding-name" title="${x.name}">${x.name}</div><div class="holding-meta">${x.ticker} • ${x.account||"Account n/a"} • ${x.role||"Role n/a"}</div></div><div class="holding-value">${formatSharePriceDisplay(x.ticker,x.price)}<div class="holding-meta">Live price</div></div><div class="holding-value ${priceCls}">${formatSharePriceChangeDisplay(x.ticker,x.priceSummary.changePerShare,x.price)}<div class="holding-meta ${priceCls}">${x.priceSummary.hasSummary?`${pctSign}${x.changePct.toFixed(2)}%`:"No daily log"}</div></div><div class="holding-value">£${money(x.value,0)}<div class="holding-meta">${x.shares.toFixed(4)} sh</div></div><div class="holding-value ${valueCls}">${sign}£${money(x.changeGbp,2)}<div class="holding-meta ${valueCls}">Value change</div></div><div class="holding-value">£${money(x.annual,0)}<div class="holding-meta">${x.annualTarget>0?`Target £${money(x.annualTarget,0)}`:x.role||"—"}</div></div><div class="holding-value">${x.y.toFixed(2)}%<div class="holding-meta">DPS ${formatSharePriceDisplay(x.ticker,x.dps)}</div></div><div class="holding-value">${fair}</div><div class="holding-value"><span class="pill ${pill}">${x.status||"HOLD"}</span><div class="holding-meta">${x.sector||"Sector n/a"}</div></div><div class="holding-value"><span class="pill ${Number(x.buyStrength)>=70?'buy':'wait'}">${money(x.buyStrength,0)}</span><div class="holding-meta">/100</div></div></div>`}
+function renderRoadmap(currentMonthly){const targets=[{year:2026,min:250,target:"£250–£350/month"},{year:2027,min:350,target:"£350–£500/month"},{year:2028,min:500,target:"£500–£700/month"},{year:2029,min:800,target:"£800–£1,100/month"},{year:2030,min:1150,target:"£1,150–£1,400/month"},{year:2031,min:1400,target:"£1,400–£1,600/month"},{year:2032,min:1600,target:"£1,600–£1,800/month"},{year:2033,min:2000,target:"£2,000/month"}];document.getElementById("roadmapRows").innerHTML=targets.map(t=>{const pct=Math.min(100,(currentMonthly/t.min)*100);let status="Needs Build",cls="risk";if(currentMonthly>=t.min){status="Ahead / Achieved";cls="good"}else if(currentMonthly>=t.min*.75){status="On Track";cls="watch"}const gap=Math.max(0,t.min-currentMonthly);return`<div class="roadmap-row"><div><div class="roadmap-year">${t.year}</div><div class="subv">${t.target}</div></div><div class="road-track"><div class="road-fill" style="width:${pct}%"></div></div><div class="road-status ${cls}">${status}</div><div class="road-extra">${gap>0?`£${money(gap,0)}/m gap`:"Target hit"}</div></div>`}).join("")}
+function updateNextDividendPanel(dividends){const today=new Date();today.setHours(0,0,0,0);const rows=(dividends||[]).map(row=>{const payDate=getCell(row,["pay_date","pay date","payment_date","payment date","date","Date"]);const amount=parseNum(getCell(row,["dividend_due","dividend due"]))||parseNum(getCell(row,["dividend_received","dividend received"]))||parseNum(getCell(row,["total_dividend","total dividend","amount","Amount"]));const ticker=getCell(row,["ticker","Ticker"])||getCell(row,["name","Name"])||"--";const status=getCell(row,["status","Status"])||"Scheduled";const d=parseDate(payDate);return{payDate,amount,ticker,status,d,days:daysAway(payDate)}}).filter(x=>x.d&&!isNaN(x.d)&&x.d>=today&&x.amount>0).sort((a,b)=>a.d-b.d);const next=rows[0];if(!next){setText("nextDividendHolding","No upcoming dividend");setText("nextDividendDate","No future pay_date found");setText("nextDividendAmount","--");setText("nextDividendStatus","--");setText("nextDividendDays","--");setText("nextDividendBadge","NONE FOUND");setText("actionNextDividend","None found");setText("actionNextDividendMeta","Check Dividends tab");setText("nextCashMini","--");return}setText("nextDividendHolding",tickerName(next.ticker));setText("nextDividendDate",next.d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}));setText("nextDividendAmount",`£${money(next.amount,2)}`);setText("nextDividendStatus",next.status);setText("nextDividendDays",next.days===0?"Today":`${next.days} days`);setText("nextDividendBadge","NEXT CASH");setText("actionNextDividend",tickerName(next.ticker));setText("actionNextDividendMeta",`£${money(next.amount,2)} • ${next.days===0?"Today":`${next.days} days`}`);setText("nextCashMini",`£${money(next.amount,2)}`)}
+function nextExDividendFromRows(dividends){
+  const today=new Date();
+  today.setHours(0,0,0,0);
+  return (dividends||[])
+    .map(row=>{
+      const exDate=getCell(row,["ex_dividend_date","ex dividend date","ex_date","ex date","ex-dividend date","ex dividend","Ex Dividend Date","Ex-Date"]);
+      const amount=parseNum(getCell(row,["dividend_due","dividend due"]))||parseNum(getCell(row,["dividend_received","dividend received"]))||parseNum(getCell(row,["total_dividend","total dividend","amount","Amount"]));
+      const ticker=getCell(row,["ticker","Ticker"])||getCell(row,["name","Name"])||"--";
+      const d=parseDate(exDate);
+      return {d,amount,ticker};
+    })
+    .filter(x=>x.d&&!isNaN(x.d)&&x.d>=today)
+    .sort((a,b)=>a.d-b.d)[0] || null;
+}
+function renderRunway(dividends){const now=new Date();const year=now.getFullYear();const byMonth=Array.from({length:12},()=>({amount:0,count:0,next:null}));(dividends||[]).forEach(row=>{const pay=getCell(row,["pay_date","pay date","payment_date","payment date","date","Date"]);const amount=parseNum(getCell(row,["dividend_due","dividend due"]))||parseNum(getCell(row,["dividend_received","dividend received"]))||parseNum(getCell(row,["total_dividend","total dividend","amount","Amount"]));if(!pay||amount<=0)return;const d=parseDate(pay);if(!d||isNaN(d)||d.getFullYear()!==year)return;const m=byMonth[d.getMonth()];m.amount+=amount;m.count++;if(!m.next||d<m.next.d)m.next={d,ticker:getCell(row,["ticker","Ticker"])||"--",amount}});const max=Math.max(...byMonth.map(m=>m.amount),1);document.getElementById("dividendRunway").innerHTML=byMonth.map((m,i)=>{const cls=m.amount<=0?"":m.amount<max*.35?"weak":"covered";return `<div class="month-tile ${cls}"><div class="month-name">${MONTHS[i]}</div><div class="month-cash">£${money(m.amount,0)}</div><div class="month-count">${m.count?`${m.count} payment${m.count>1?"s":""}`:"No cash scheduled"}</div></div>`}).join("");const covered=byMonth.filter(m=>m.amount>0).length;setText("coveredMonths",`${covered}/12`);setText("incomeMonths",`${covered}/12`);setText("gapCount",`${12-covered}`);setText("gapMeta",`${12-covered} income gaps`);setText("runwayBadge",`${covered}/12 COVERED`);const best=byMonth.map((m,i)=>({...m,i})).sort((a,b)=>b.amount-a.amount)[0];const weakest=byMonth.map((m,i)=>({...m,i})).sort((a,b)=>a.amount-b.amount)[0];setText("bestMonth",MONTHS[best.i]);setText("bestMonthMeta",`£${money(best.amount,2)} expected`);setText("weakestMonth",MONTHS[weakest.i]);setText("weakestMonthMeta",weakest.amount>0?`£${money(weakest.amount,2)} expected`:"No scheduled cash");const nextEx=nextExDividendFromRows(dividends);if(nextEx){const days=daysAway(nextEx.d);setText("nextDividend",tickerName(nextEx.ticker));setText("nextDividendMeta",`Ex-div ${nextEx.d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}${days===0?" • Today":days>0?` • ${days} days`:""}`)}else{setText("nextDividend","None");setText("nextDividendMeta","No future ex-div date found")}}
+
+/* ===================== SECTION: MAIN ENGINE ===================== */
+async function runNexus(){try{setText("syncBadge","SYNCING");const[holdings,dividends,watchlist,dailyPriceSummary,auroraMaster]=await Promise.all([fetchSheetJson(HOLDINGS_URL,"Holdings"),fetchSheetJson(DIVIDENDS_URL,"Dividends"),fetchSheetJson(WATCHLIST_URL,"Watchlist"),fetchSheetJson(DAILY_PRICE_SUMMARY_URL,"DailyPriceSummary"),fetch(AURORA_MASTER_URL,{cache:"no-store"}).then(r=>r.json()).catch(()=>({offline_snapshot:true}))]);const map=buildDailyPriceSummaryMap(dailyPriceSummary);const holdingsParsed=holdings.map(row=>{const ticker=getCell(row,["ticker","Ticker"]);const name=getCell(row,["name","Name"])||tickerName(ticker);const shares=parseNum(getCell(row,["shares","Shares"]));const ps=parseDailyPriceSummary(ticker,priceSummaryForTicker(map,ticker),shares);const sheetPrice=normalisePriceForTicker(ticker,getCell(row,["live_price","live price","price"]));const price=sheetPrice||ps.closePrice;const dps=normaliseDpsForTicker(ticker,getCell(row,["annual dividend per share","annual_dividend_per_share","annual_dps","dps"]));const annualSheet=parseNum(getCell(row,["annual_dps_total","annual dps total","annual_dividend_total","annual dividend total"]));const role=getCell(row,["role","Role"]);const sector=getCell(row,["sector","Sector"]);const account=getCell(row,["account","Account"]);const fairValue=normalisePriceForTicker(ticker,getCell(row,["fair_value","fair value"]));const status=getCell(row,["status","Status"]);const buyStrength=parseNum(getCell(row,["buy_strength","buy strength"]));const annualTarget=parseNum(getCell(row,["annual_target","annual target","annual_income_target","annual income target"]));const value=shares*price;const annual=annualSheet>0?annualSheet:shares*dps;const y=price>0?(dps/price)*100:0;const discount=discountToFair(price,fairValue);return{ticker:cleanTicker(ticker),name,shares,price,dps,value,annual,y,changeGbp:ps.changeGbp,changePct:ps.changePct,role,sector,account,fairValue,status,buyStrength,annualTarget,discount,priceSummary:ps}}).filter(x=>x.ticker&&(x.shares>0||x.value>0||x.annual>0));const activeDividends=filterDividendsToActiveHoldings(dividends,holdingsParsed);updateDataHealthPanel(holdings,holdingsParsed,activeDividends,watchlist,dailyPriceSummary,auroraMaster);const portfolioValue=holdingsParsed.reduce((s,x)=>s+x.value,0);const annualIncome=holdingsParsed.reduce((s,x)=>s+x.annual,0);const monthlyIncome=annualIncome/12;const missionPct=Math.min(100,(monthlyIncome/MASTER_MONTHLY_GOAL)*100);setText("portfolioValue",money(portfolioValue,0));setText("annualIncome",money(annualIncome,0));setText("monthlyIncome",money(monthlyIncome,0));setText("missionPct",`${missionPct.toFixed(1)}%`);setText("holdingCount",`${holdingsParsed.length} HOLDINGS`);const watchRows=watchlist.map(scoreWatch).filter(x=>x.ticker&&x.livePrice>0).sort((a,b)=>b.score-a.score);const bestWatch=watchRows[0];const withIncome=holdingsParsed.map(x=>({...x,income500:x.price>0?(DEFAULT_BUY_AMOUNT/x.price)*x.dps:0}));const bestCore=withIncome.filter(x=>!isGrowthHolding(x)&&x.income500>0).sort((a,b)=>b.income500-a.income500||(b.buyStrength||0)-(a.buyStrength||0))[0]||firstSheetOpportunity(withIncome);if(bestWatch){setText("topWatchScore",`${bestWatch.score}/100`);setText("topWatchName",bestWatch.name);setText("bestWatch",bestWatch.name);setText("bestWatchMeta",`Score ${bestWatch.score} • £${bestWatch.income500.toFixed(2)}/yr from £500`)}if(bestCore){setText("bestCore",bestCore.name);setText("bestCoreMeta",`${bestCore.status||"HOLD"} • income route • £${bestCore.income500.toFixed(2)}/yr from £${DEFAULT_BUY_AMOUNT} • ${incomeProgressPct(bestCore).toFixed(1)}% target`)}const useWatch=bestWatch&&bestCore&&bestWatch.income500>bestCore.income500;const winner=useWatch?bestWatch:bestCore;const winnerIncome=useWatch?bestWatch.income500:(bestCore?.income500||0);setText("winnerName",winner?.name||"--");setText("winnerMeta",useWatch?`Watchlist creates stronger income from £${DEFAULT_BUY_AMOUNT}`:`Core creates stronger income from £${DEFAULT_BUY_AMOUNT}`);setText("nextBuy",winner?.name||"--");setText("nextBuyIncome",`£${winnerIncome.toFixed(2)}`);setText("watchPressure",bestWatch?`${bestWatch.score}/100`:"--");setText("commandDecision",useWatch?"Review Watchlist":"Core Route");setText("commandReason",useWatch?`${bestWatch.name} is pressuring the core with £${bestWatch.income500.toFixed(2)}/yr from £${DEFAULT_BUY_AMOUNT}.`:`${bestCore?.name||"Core"} is the stronger active holding income route and would add £${(bestCore?.income500||0).toFixed(2)}/yr from £${DEFAULT_BUY_AMOUNT}.`);setText("commandRoute",useWatch?"WATCHLIST EDGE":"CORE EDGE");setText("tradeSignal",useWatch?"WATCHLIST":"CORE");document.getElementById("tradeConfidence").style.width=`${Math.max(8,Math.min(100,useWatch?bestWatch.score:65))}%`;setText("tradeComment",useWatch?"Promotion candidate spotted. Review role, risk and persistence before buying.":"Core income route is stronger than the watchlist candidate right now; watchlist remains a promotion league, not the income winner.");updateTodayActionDeck(holdingsParsed,bestWatch,bestCore,monthlyIncome);updatePremierLeague(holdingsParsed,watchRows);renderDiscounts(holdingsParsed);renderHoldingsTable(holdingsParsed);updateNextDividendPanel(activeDividends);renderRunway(activeDividends);renderRoadmap(monthlyIncome);setText("syncBadge","LIVE")}catch(err){console.error(err);setText("syncBadge","ERROR");setText("dataHealthBadge","SCRIPT ERROR");const dh=document.getElementById("dataHealthBadge");if(dh)dh.className="badge risk";setText("commandDecision","Check Logic");setText("commandReason",`Aurora hit a script issue: ${err?.message||err}.`)}}
+function updateTodayActionDeck(holdingsParsed,bestWatch,bestCore,monthlyIncome){const active=(holdingsParsed||[]).filter(x=>x.shares>0||x.value>0||x.annual>0).map(x=>({...x,income500:x.price>0&&x.dps>0?(DEFAULT_BUY_AMOUNT/x.price)*x.dps:0}));const combinedActive=combineHoldingsByTicker(active).map(x=>{const discount=discountToFair(Number(x.price||0),Number(x.fairValue||0));return {...x,discount,income500:x.price>0&&x.dps>0?(DEFAULT_BUY_AMOUNT/x.price)*x.dps:0}});const incomeCandidates=active.filter(x=>!isGrowthHolding(x)&&x.dps>0&&x.income500>0).sort((a,b)=>b.income500-a.income500||(b.buyStrength||0)-(a.buyStrength||0));const sheetOrderBuy=firstSheetOpportunity(active);const growthCandidates=active.filter(isGrowthHolding).sort((a,b)=>(b.buyStrength||0)-(a.buyStrength||0)||b.discount-a.discount);const undervalued=combinedActive.filter(x=>x.fairValue>0).sort((a,b)=>b.discount-a.discount)[0];const bestIncome=incomeCandidates[0]||sheetOrderBuy;const bestGrowth=growthCandidates[0];if(bestIncome){setText("bestIncomeBuy",bestIncome.name);setText("bestIncomeMeta",`${bestIncome.status||"HOLD"} • income winner • +£${bestIncome.income500.toFixed(2)}/yr from £${DEFAULT_BUY_AMOUNT} • ${incomeProgressPct(bestIncome).toFixed(1)}% target`)}if(bestGrowth){setText("bestGrowthBuy",bestGrowth.name);setText("bestGrowthMeta",`${money(bestGrowth.buyStrength,0)}/100 • ${bestGrowth.status||"HOLD"} • ${bestGrowth.discount>=0?"+":""}${bestGrowth.discount.toFixed(1)}% FV`)}if(undervalued){setText("mostUndervalued",undervalued.name);setText("mostUndervaluedMeta",`${undervalued.discount>=0?"+":""}${undervalued.discount.toFixed(1)}% to fair value${undervalued.combinedRows>1?` • ${undervalued.combinedRows} accounts combined`:""}`)}let main="Hold Discipline",badge="HOLD FIRE",note="Most income pillars are not screaming buy. Keep the ISA engine disciplined and avoid chasing green candles.";if(sheetOrderBuy&&sheetOrderBuy.buyStrength>=85){main=sheetOrderBuy.name;badge="VALUE SIGNAL";note=`${sheetOrderBuy.name} has the strongest buy-strength/value signal at ${money(sheetOrderBuy.buyStrength,0)}/100. Income winner remains ${bestIncome?.name||"--"} at +£${(bestIncome?.income500||0).toFixed(2)}/year from £${DEFAULT_BUY_AMOUNT}.`}else if(bestIncome&&(bestIncome.buyStrength>=75||String(bestIncome.status||"").toUpperCase().includes("ACCUM"))){main=bestIncome.name;badge="INCOME MOVE";note=`${bestIncome.name} is the cleanest income candidate today: ${bestIncome.status}, yield ${bestIncome.y.toFixed(2)}%, +£${bestIncome.income500.toFixed(2)}/year from £${DEFAULT_BUY_AMOUNT}.`}setText("todayActionMain",main);setText("todayActionBadge",badge);setText("todayActionNote",note)}
+
+/* ===================== SECTION: LOGIN + STARTUP ===================== */
+const AURORA_ACCESS_CODE=atob("V0UwOUJCWTE5ODI=").trim().toUpperCase();const AURORA_SESSION_KEY="aurora_hq_unlocked";let failedAuroraAttempts=0;function safeGetSession(){try{return localStorage.getItem(AURORA_SESSION_KEY)==="yes"}catch(e){return false}}function safeSetSession(){try{localStorage.setItem(AURORA_SESSION_KEY,"yes")}catch(e){}}function safeClearSession(){try{localStorage.removeItem(AURORA_SESSION_KEY)}catch(e){}}function normaliseAccessCode(v){return String(v||"").trim().replace(/\s+/g,"").toUpperCase()}function unlockAuroraHQ(){document.body.classList.remove("locked");const gate=document.getElementById("auroraBootGate");if(gate)gate.classList.add("hidden");safeSetSession()}function lockAuroraHQ(){safeClearSession();document.body.classList.add("locked");const gate=document.getElementById("auroraBootGate"),input=document.getElementById("auroraAccessInput"),err=document.getElementById("bootError"),btn=document.getElementById("auroraAccessBtn");if(gate)gate.classList.remove("hidden");if(btn)btn.disabled=false;if(input){input.disabled=false;input.value="";setTimeout(()=>input.focus(),120)}if(err)err.innerText=""}function runBootSequence(){const terminal=document.getElementById("bootTerminal"),bar=document.getElementById("bootProgressBar"),badge=document.getElementById("bootStatusBadge");if(!terminal||!bar)return;const lines=["Initialising Aurora Core...","Checking Holdings Sheet... PASSED","Checking Dividend Engine... PASSED","Checking Scouting Centre Link... PASSED","Checking Premier League Table... PASSED","Mission Target: £2,000/month loaded","Awaiting access code..."];terminal.innerHTML="";lines.forEach((line,i)=>{setTimeout(()=>{terminal.innerHTML+=`<div class="boot-line">${line}</div>`;terminal.scrollTop=terminal.scrollHeight;bar.style.width=`${Math.min(100,Math.round(((i+1)/lines.length)*100))}%`;if(i===lines.length-1&&badge)badge.innerText="LOCKED"},i*220)})}function initAuroraLogin(){const btn=document.getElementById("auroraAccessBtn"),input=document.getElementById("auroraAccessInput"),err=document.getElementById("bootError"),lockBtn=document.getElementById("lockHqBtn");if(safeGetSession())unlockAuroraHQ();else{runBootSequence();setTimeout(()=>input&&input.focus(),1600)}function check(){const val=normaliseAccessCode(input?.value);if(val===AURORA_ACCESS_CODE){failedAuroraAttempts=0;if(err)err.innerText="ACCESS GRANTED — LAUNCHING AURORA HQ";const badge=document.getElementById("bootStatusBadge"),bar=document.getElementById("bootProgressBar");if(badge)badge.innerText="ACCESS GRANTED";if(bar)bar.style.width="100%";setTimeout(unlockAuroraHQ,250);return}failedAuroraAttempts+=1;if(input){input.value="";input.focus()}if(failedAuroraAttempts>=3){if(err)err.innerText="AURORA SECURITY LOCK — too many failed attempts.";if(btn)btn.disabled=true;if(input)input.disabled=true;setTimeout(()=>{failedAuroraAttempts=0;if(btn)btn.disabled=false;if(input){input.disabled=false;input.focus()}if(err)err.innerText="ACCESS REQUIRED — try again."},4000)}else if(err)err.innerText=`ACCESS DENIED — ${3-failedAuroraAttempts} attempt${3-failedAuroraAttempts===1?"":"s"} before security lock.`}if(btn)btn.addEventListener("click",check);if(input)input.addEventListener("keydown",e=>{if(e.key==="Enter")check()});if(lockBtn)lockBtn.addEventListener("click",lockAuroraHQ)}
+document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove("locked");runNexus();setInterval(runNexus,300000)});
+</script>
+
+
+<script>
+/* ===================== M6 CONNECTED MISSION PIPELINE ===================== */
+(function(){
+  const WEALTH_KEY="aurora_wealth_investment_mission_v1",DECISION_KEY="aurora_trading_brain_decision_v1",QUEUE_KEY="aurora_pending_registrations_v1";
+  const el=id=>document.getElementById(id);const read=key=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch(_){return null}};
+  const gbp=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));
+  const text=(id,value)=>{const node=el(id);if(node)node.textContent=value};
+  function render(){
+    const wealth=read(WEALTH_KEY),decision=read(DECISION_KEY),queue=read(QUEUE_KEY);
+    if(wealth){text("pipelineWealthValue",gbp(wealth.budget));text("pipelineWealthCopy",`${wealth.preferredAccount||"Account review"} • payday ${wealth.paydayDate?new Date(`${wealth.paydayDate}T12:00:00`).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"not set"}`);text("pipelineWealthState",String(wealth.status||"READY").replaceAll("_"," "))}else{text("pipelineWealthValue",gbp(0));text("pipelineWealthCopy","No investment mission has been sent from Finance Department.");text("pipelineWealthState","WAITING")}
+    const linkedDecision=decision&&(!wealth||!decision.wealthMissionId||decision.wealthMissionId===wealth.id);
+    if(linkedDecision){const targets=Array.isArray(decision.targets)?decision.targets:[];text("pipelineTradeValue",`${targets.length} target${targets.length===1?"":"s"}`);text("pipelineTradeCopy",`${decision.strategy||"Balanced"} • ${gbp(decision.spent||0)} deployed • ${gbp(decision.holdback||0)} reserve • ${gbp(decision.totalIncome||0)}/yr projected`);text("pipelineTradeState",decision.status==="READY_TO_EXECUTE"?"READY TO EXECUTE":String(decision.status||"READY").replaceAll("_"," "))}else{text("pipelineTradeValue","No plan");text("pipelineTradeCopy","Scouting Centre has not published a decision for the current mission.");text("pipelineTradeState","WAITING")}
+    if(queue&&Array.isArray(queue.items)&&queue.items.length){const complete=queue.items.filter(item=>["PURCHASED","REGISTERED","COMPLETE"].includes(String(item.status||"").toUpperCase())).length;text("pipelineRegistrationValue",`${complete} / ${queue.items.length}`);text("pipelineRegistrationCopy",`${gbp(queue.totalAllocated)} approved • ${gbp(queue.projectedAnnualIncome)}/yr projected • ${gbp(queue.reserve)} held back`);text("pipelineRegistrationState",complete===queue.items.length?"COMPLETE":`${queue.items.length-complete} WAITING`)}else{text("pipelineRegistrationValue","0 / 0");text("pipelineRegistrationCopy","No approved purchases are waiting for registration.");text("pipelineRegistrationState","WAITING")}
+    const dividendName=String(el("nextDividendHolding")?.textContent||"").trim(),dividendAmount=String(el("nextDividendAmount")?.textContent||"").trim(),dividendDate=String(el("nextDividendDate")?.textContent||"").trim();
+    if(dividendName&&dividendName!=="--"){text("pipelineDividendValue",dividendAmount&&dividendAmount!=="--"?dividendAmount:dividendName);text("pipelineDividendCopy",`${dividendName}${dividendDate&&dividendDate!=="Waiting for Dividends sheet..."?` • ${dividendDate}`:""}`);text("pipelineDividendState","SCHEDULED")}else{text("pipelineDividendValue","Scanning");text("pipelineDividendCopy","Aurora is checking the active dividend calendar.");text("pipelineDividendState","LIVE DATA")}
+    let summary="<strong>Pipeline ready:</strong> send a payday investment mission from Finance Department to begin the connected flow.";
+    if(wealth&&!linkedDecision)summary=`<strong>Next action:</strong> open Scouting Centre and load the ${gbp(wealth.budget)} payday investment mission.`;
+    else if(linkedDecision&&(!queue||!queue.items?.length))summary=`<strong>Next action:</strong> Scouting Centre has ${decision.targets?.length||0} target${decision.targets?.length===1?"":"s"} ready. Review and approve the transfer window.`;
+    else if(queue?.items?.length){const complete=queue.items.filter(item=>["PURCHASED","REGISTERED","COMPLETE"].includes(String(item.status||"").toUpperCase())).length;summary=complete===queue.items.length?`<strong>Pipeline complete:</strong> every approved purchase is registered. Nexus will pick up the new holdings on the next master-data sync.`:`<strong>Next action:</strong> ${queue.items.length-complete} approved purchase${queue.items.length-complete===1?"":"s"} still need buying and registration.`}
+    const box=el("pipelineSummary");if(box)box.innerHTML=summary;
+  }
+  el("refreshMissionPipeline")?.addEventListener("click",render);el("pipelineDividendLink")?.addEventListener("click",event=>{event.preventDefault();document.getElementById("dividendRunway")?.closest("section")?.scrollIntoView({behavior:"smooth",block:"start"})});
+  window.addEventListener("storage",event=>{if([WEALTH_KEY,DECISION_KEY,QUEUE_KEY].includes(event.key))render()});
+  ["nextDividendHolding","nextDividendAmount","nextDividendDate"].forEach(id=>{const node=el(id);if(node)new MutationObserver(()=>render()).observe(node,{childList:true,subtree:true,characterData:true})});
+  window.addEventListener("load",()=>setTimeout(render,360));if(document.readyState!=="loading")setTimeout(render,180);
+})();
+</script>
+
+
+
+<section class="aurora-smart-dock" data-aurora-page="nexus" aria-label="Aurora Wealth Centre smart navigation">
+  <div class="aurora-smart-head">
+    <button class="aurora-smart-back" type="button" data-aurora-back>← Back</button>
+    <div class="aurora-smart-centre"><strong>Aurora Wealth Centre</strong><span data-aurora-current-label>CONNECTED COMMAND SYSTEM</span></div>
+    <a class="aurora-smart-next" href="#" data-aurora-next>Next step →</a>
+  </div>
+  <nav class="aurora-smart-grid" aria-label="Aurora command rooms">
+    <a class="aurora-smart-link" href="#" data-aurora-route="nexus"><span class="aurora-smart-icon">🏟️</span><span class="aurora-smart-name">Nexus HQ</span><span class="aurora-smart-status cyan" data-aurora-status="nexus">HOME</span></a>
+    <a class="aurora-smart-link" href="#" data-aurora-route="wealth"><span class="aurora-smart-icon">💷</span><span class="aurora-smart-name">Finance Department</span><span class="aurora-smart-status" data-aurora-status="wealth">NO MISSION</span></a>
+    <a class="aurora-smart-link" href="#" data-aurora-route="brain"><span class="aurora-smart-icon">🧠</span><span class="aurora-smart-name">Scouting Centre</span><span class="aurora-smart-status" data-aurora-status="brain">WAITING</span></a>
+    <a class="aurora-smart-link" href="#" data-aurora-route="registration"><span class="aurora-smart-icon">✅</span><span class="aurora-smart-name">Registration</span><span class="aurora-smart-status" data-aurora-status="registration">EMPTY</span></a>
+    <a class="aurora-smart-link" href="#" data-aurora-route="tesco"><span class="aurora-smart-icon">🛒</span><span class="aurora-smart-name">Tesco SAYE</span><span class="aurora-smart-status cyan" data-aurora-status="tesco">2029 PLAN</span></a>
+  </nav>
+</section>
+
+
+<script>
+/* ===================== AURORA SMART WEALTH CENTRE ROUTER ===================== */
+(()=>{
+  const dock=document.querySelector('.aurora-smart-dock[data-aurora-page]');
+  if(!dock)return;
+  const page=dock.dataset.auroraPage||'nexus';
+  const local=location.protocol==='file:';
+  const routes=local?{
+    nexus:'AuroraCityFC_NexusMaster.html',
+    wealth:'AuroraCityFC_FinanceDepartment.html',
+    brain:'AuroraCityFC_ScoutingCentre.html',
+    registration:'AuroraCityFC_TransferCentre.html#registration-desk',
+    tesco:'TescoSimMaster.html'
+  }:{
+    nexus:'AuroraCityFC_NexusMaster.html',
+    wealth:'AuroraCityFC_FinanceDepartment.html',
+    brain:'AuroraCityFC_ScoutingCentre.html',
+    registration:'AuroraCityFC_TransferCentre.html#registration-desk',
+    tesco:'TescoSimMaster.html'
+  };
+  const labels={nexus:'NEXUS HQ • SYSTEM OVERVIEW',wealth:'WEALTH HQ • PAYDAY & POTS',brain:'TRADING BRAIN • DEPLOYMENT',registration:'REGISTRATION DESK • PURCHASES',tesco:'TESCO SAYE • 2029 PLAN'};
+  const nextMap={nexus:['wealth','Open Finance Department →'],wealth:['brain','Next: Scouting Centre →'],brain:['registration','Next: Registration →'],registration:['nexus','Return to Nexus HQ →'],tesco:['nexus','Return to Nexus HQ →']};
+  const read=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
+  const money=(v)=>Number(v||0).toLocaleString('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:0,maximumFractionDigits:0});
+  const setStatus=(name,text,tone)=>{
+    const el=dock.querySelector('[data-aurora-status="'+name+'"]');if(!el)return;
+    el.textContent=text;el.className='aurora-smart-status '+(tone||'');
+  };
+  dock.querySelectorAll('[data-aurora-route]').forEach(link=>{
+    const name=link.dataset.auroraRoute;link.href=routes[name]||'#';link.classList.toggle('active',name===page);
+    if(name===page)link.setAttribute('aria-current','page');
+  });
+  const current=dock.querySelector('[data-aurora-current-label]');if(current)current.textContent=labels[page]||labels.nexus;
+  const [nextRoute,nextText]=nextMap[page]||nextMap.nexus;const next=dock.querySelector('[data-aurora-next]');if(next){next.href=routes[nextRoute];next.textContent=nextText}
+  dock.querySelector('[data-aurora-back]')?.addEventListener('click',()=>{
+    const ref=document.referrer;
+    if(history.length>1 && (local || (ref && new URL(ref,location.href).origin===location.origin)))history.back();
+    else location.href=routes.nexus;
+  });
+  function refresh(){
+    const mission=read('aurora_wealth_investment_mission_v1');
+    const decision=read('aurora_trading_brain_decision_v1');
+    const queue=read('aurora_pending_registrations_v1');
+    if(mission){
+      const budget=Number(mission.investmentBudget||mission.amount||0);
+      setStatus('wealth',budget>0?money(budget):'MISSION READY',budget>0?'good':'');
+    }else setStatus('wealth',page==='wealth'?'OPEN':'NO MISSION',mission?'good':'warn');
+    if(decision && Array.isArray(decision.purchases) && decision.purchases.length){
+      setStatus('brain',decision.purchases.length+' PLANNED','good');
+    }else setStatus('brain',page==='brain'?'OPEN':'PLAN READY','cyan');
+    if(Array.isArray(queue) && queue.length){
+      const pending=queue.filter(x=>String(x.status||'').toLowerCase()!=='completed').length;
+      setStatus('registration',pending?pending+' WAITING':'READY',pending?'good':'cyan');
+    }else setStatus('registration','EMPTY','');
+    setStatus('nexus',page==='nexus'?'HOME':'HOME','cyan');
+    setStatus('tesco','2029 PLAN','cyan');
+  }
+  refresh();
+  window.addEventListener('storage',refresh);
+
+  // auto-hide when scrolling down, show when scrolling up / when scroll ends / near bottom
+  let lastY=window.scrollY||0;
+  let ticking=false;
+  let scrollTimer=null;
+  const reveal=()=>dock.classList.remove('is-hidden');
+  const conceal=()=>dock.classList.add('is-hidden');
+  const onScroll=()=>{
+    const y=window.scrollY||0;
+    const maxY=Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const nearBottom=maxY - y < 56;
+    if(nearBottom || y < 12){ reveal(); }
+    else if(y > lastY + 6){ conceal(); }
+    else if(y < lastY - 6){ reveal(); }
+    lastY=y;
+    clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(reveal, 140);
+    ticking=false;
+  };
+  window.addEventListener('scroll',()=>{
+    if(!ticking){ window.requestAnimationFrame(onScroll); ticking=true; }
+  },{passive:true});
+})();
+</script>
+
+<!-- ===================== NEXUS FINANCE PIPELINE RELABEL ===================== -->
+<script id="aurora-nexus-finance-pipeline-script">
+(()=>{
+ function init(){
+  document.querySelectorAll('#auroraMissionPipeline .pipeline-stage').forEach((stage,i)=>{const h=stage.querySelector('h3'),link=stage.querySelector('.pipeline-link');if(i===0){if(h)h.textContent='Finance Mission';if(link){link.textContent='Open Finance Department';link.href='AuroraCityFC_FinanceDepartment.html'}}else if(i===1){if(h)h.textContent='Scouting Intelligence';if(link){link.textContent='Open Scouting Centre';link.href='AuroraCityFC_ScoutingCentre.html'}}else if(i===2){if(h)h.textContent='Transfer & Registration';if(link){link.textContent='Open Transfer Centre';link.href='AuroraCityFC_TransferCentre.html#registration-desk'}}});
+  document.querySelectorAll('*').forEach(el=>{if(el.childElementCount===0&&typeof el.textContent==='string'){el.textContent=el.textContent.replace(/Wealth HQ/g,'Finance Department').replace(/Trading Brain/g,'Scouting Centre')}});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+<!-- ===================== AURORA CONNECTED SYSTEM V1 ===================== -->
+<style id="aurora-connected-system-style">
+:root{--aurora-system-dock-h:118px}
+body{padding-bottom:calc(var(--aurora-system-dock-h) + env(safe-area-inset-bottom,0px))!important}
+.aurora-smart-dock{display:none!important}
+.aurora-connected-card{position:relative;z-index:5;margin:12px auto;padding:11px 13px;border:1px solid rgba(98,243,255,.22);border-radius:17px;background:linear-gradient(135deg,rgba(7,22,39,.94),rgba(4,12,24,.96));box-shadow:0 12px 34px rgba(0,0,0,.25);color:#eaf7ff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.aurora-connected-card-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+.aurora-connected-card small{display:block;color:#67e8f9;font-size:9px;font-weight:1000;letter-spacing:.12em;text-transform:uppercase}
+.aurora-connected-card strong{display:block;margin-top:4px;font-size:15px;letter-spacing:-.02em}.aurora-connected-card span{display:block;margin-top:3px;color:#9fb2c8;font-size:11px;line-height:1.35}
+.aurora-connected-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.aurora-connected-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:35px;padding:7px 10px;border:1px solid rgba(255,255,255,.11);border-radius:11px;background:rgba(255,255,255,.045);color:#eef8ff!important;text-decoration:none!important;font-size:10px;font-weight:950}.aurora-connected-actions a.primary{border-color:rgba(89,255,154,.30);color:#86efac!important;background:rgba(89,255,154,.07)}
+.aurora-system-dock{position:fixed;left:50%;bottom:8px;z-index:10020;width:min(1320px,calc(100% - 16px));transform:translateX(-50%);padding:9px;border:1px solid rgba(98,243,255,.23);border-radius:20px;background:linear-gradient(145deg,rgba(4,13,25,.965),rgba(8,24,42,.975));box-shadow:0 22px 60px rgba(0,0,0,.52),0 0 26px rgba(98,243,255,.08);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);transition:transform .24s ease,opacity .24s ease;will-change:transform,opacity;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.aurora-system-dock.is-hidden{transform:translateX(-50%) translateY(calc(100% + 20px));opacity:0;pointer-events:none}
+.aurora-system-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;margin-bottom:7px}.aurora-system-back,.aurora-system-next{min-height:32px;padding:7px 9px;border:1px solid rgba(255,255,255,.10);border-radius:11px;background:rgba(255,255,255,.04);color:#edf8ff!important;text-decoration:none!important;font-size:10px;font-weight:950;cursor:pointer;white-space:nowrap}.aurora-system-next{border-color:rgba(89,255,154,.28);color:#86efac!important;background:rgba(89,255,154,.07)}
+.aurora-system-centre{min-width:0;text-align:center}.aurora-system-centre strong{display:block;color:#f2f8ff;font-size:12px}.aurora-system-centre span{display:block;margin-top:2px;color:#91a9c2;font-size:8px;font-weight:950;letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-system-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}.aurora-system-link{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;min-height:50px;padding:5px 3px;border:1px solid rgba(255,255,255,.075);border-radius:11px;background:rgba(255,255,255,.03);color:#eaf7ff!important;text-decoration:none!important;text-align:center;overflow:hidden}.aurora-system-link:hover,.aurora-system-link.active{border-color:rgba(98,243,255,.42);background:linear-gradient(145deg,rgba(98,243,255,.11),rgba(89,255,154,.045));box-shadow:inset 0 0 16px rgba(98,243,255,.05)}.aurora-system-link.active:after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:3px;border-radius:999px;background:#62f3ff;box-shadow:0 0 10px rgba(98,243,255,.7)}.aurora-system-icon{font-size:16px;line-height:1}.aurora-system-name{max-width:100%;font-size:8px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aurora-system-status{max-width:100%;color:#91a9c2;font-size:6.5px;font-weight:950;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aurora-system-status.good{color:#86efac}.aurora-system-status.watch{color:#fde68a}.aurora-system-status.cyan{color:#67e8f9}.aurora-system-status.risk{color:#fda4af}
+body.aurora-transfer-test-active .aurora-system-dock{border-color:rgba(251,191,36,.52);box-shadow:0 22px 60px rgba(0,0,0,.52),0 0 30px rgba(251,191,36,.13)}
+@media(max-width:900px){:root{--aurora-system-dock-h:116px}.aurora-system-grid{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.aurora-system-grid::-webkit-scrollbar{display:none}.aurora-system-link{flex:0 0 83px}.aurora-connected-card-inner{grid-template-columns:1fr}.aurora-connected-actions{justify-content:flex-start}}
+@media(max-width:480px){:root{--aurora-system-dock-h:112px}.aurora-system-dock{bottom:5px;width:calc(100% - 10px);padding:7px;border-radius:17px}.aurora-system-head{grid-template-columns:auto minmax(0,1fr) auto;gap:5px}.aurora-system-back,.aurora-system-next{padding:6px 7px;font-size:9px}.aurora-system-centre strong{font-size:10px}.aurora-system-centre span{display:none}.aurora-system-link{flex-basis:76px;min-height:48px}.aurora-system-name{font-size:7.5px}}
+</style>
+<section class="aurora-system-dock" data-aurora-current-page="nexus" aria-label="Aurora connected navigation">
+  <div class="aurora-system-head">
+    <button class="aurora-system-back" type="button">← Back</button>
+    <div class="aurora-system-centre"><strong>Aurora Nexus HQ</strong><span data-aurora-finance-summary>Finance Department linked • checking mission</span></div>
+    <a class="aurora-system-next" href="AuroraCityFC_FinanceDepartment.html">Open Finance →</a>
+  </div>
+  <nav class="aurora-system-grid" aria-label="Aurora departments"><a class="aurora-system-link active" href="AuroraCityFC_NexusMaster.html" data-aurora-route="nexus" aria-current="page"><span class="aurora-system-icon">🌌</span><span class="aurora-system-name">Aurora Nexus HQ</span><span class="aurora-system-status" data-aurora-nav-status="nexus">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_FinanceDepartment.html" data-aurora-route="finance"><span class="aurora-system-icon">💷</span><span class="aurora-system-name">Finance Department</span><span class="aurora-system-status" data-aurora-nav-status="finance">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_ManagerDashboard.html" data-aurora-route="manager"><span class="aurora-system-icon">🎮</span><span class="aurora-system-name">Manager Dashboard</span><span class="aurora-system-status" data-aurora-nav-status="manager">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_TransferCentre.html" data-aurora-route="transfer"><span class="aurora-system-icon">🔄</span><span class="aurora-system-name">Transfer Centre</span><span class="aurora-system-status" data-aurora-nav-status="transfer">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_SquadHub.html" data-aurora-route="squad"><span class="aurora-system-icon">👥</span><span class="aurora-system-name">Squad Hub</span><span class="aurora-system-status" data-aurora-nav-status="squad">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_Boardroom.html" data-aurora-route="boardroom"><span class="aurora-system-icon">🏛️</span><span class="aurora-system-name">Boardroom</span><span class="aurora-system-status" data-aurora-nav-status="boardroom">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_AnalysisRoom.html" data-aurora-route="analysis"><span class="aurora-system-icon">📊</span><span class="aurora-system-name">Analysis Room</span><span class="aurora-system-status" data-aurora-nav-status="analysis">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_TrainingGround.html" data-aurora-route="training"><span class="aurora-system-icon">🏋️</span><span class="aurora-system-name">Training Ground</span><span class="aurora-system-status" data-aurora-nav-status="training">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_ScoutingCentre.html" data-aurora-route="scouting"><span class="aurora-system-icon">🔎</span><span class="aurora-system-name">Scouting Centre</span><span class="aurora-system-status" data-aurora-nav-status="scouting">LINKED</span></a><a class="aurora-system-link" href="AuroraCityFC_MediaCentre.html" data-aurora-route="media"><span class="aurora-system-icon">📡</span><span class="aurora-system-name">Media Centre</span><span class="aurora-system-status" data-aurora-nav-status="media">LINKED</span></a></nav>
+</section>
+<script id="aurora-connected-system-script">
+(()=>{
+  const PAGE='nexus';
+  const ROUTES={"nexus":"AuroraCityFC_NexusMaster.html","finance":"AuroraCityFC_FinanceDepartment.html","manager":"AuroraCityFC_ManagerDashboard.html","transfer":"AuroraCityFC_TransferCentre.html","squad":"AuroraCityFC_SquadHub.html","boardroom":"AuroraCityFC_Boardroom.html","analysis":"AuroraCityFC_AnalysisRoom.html","training":"AuroraCityFC_TrainingGround.html","scouting":"AuroraCityFC_ScoutingCentre.html","media":"AuroraCityFC_MediaCentre.html"};
+  const FINANCE_KEY='aurora_finance_department_mission_v1';
+  const LEGACY_KEY='aurora_wealth_investment_mission_v1';
+  const TEST_KEY='aurora_transfer_test_mode_v1';
+  const read=key=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
+  const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}};
+  const money=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:0,maximumFractionDigits:0}).format(Number(value||0));
+  const mission=()=>read(FINANCE_KEY)||read(LEGACY_KEY);
+  function mirrorMission(){const canonical=read(FINANCE_KEY),legacy=read(LEGACY_KEY);if(canonical&&!legacy)write(LEGACY_KEY,canonical);else if(legacy&&!canonical)write(FINANCE_KEY,{...legacy,source:legacy.source||'Finance Department'});}
+  function patchLinks(){
+    const map=[
+      [/(?:AuroraCityFC_)?NexusMaster(?:_Connected_v\\d+|\\(\\d+\\))?\\.html/i,ROUTES.nexus],
+      [/(?:SpendingPlannerMaster[^?#\"']*|AuroraWealthExecutiveRoom_Connected_v\\d+)\\.html/i,ROUTES.finance],
+      [/AuroraCityFC_ManagerDashboard(?:\\(\\d+\\))?\\.html/i,ROUTES.manager],
+      [/AuroraCityFC_TransferCentre(?:\\(\\d+\\)[^?#\"']*)?\\.html/i,ROUTES.transfer],
+      [/AuroraCityFC_SquadHub(?:\\(\\d+\\))?\\.html/i,ROUTES.squad],
+      [/AuroraCityFC_Boardroom(?:\\(\\d+\\))?\\.html/i,ROUTES.boardroom],
+      [/AuroraCityFC_AnalysisRoom(?:\\(\\d+\\))?\\.html/i,ROUTES.analysis],
+      [/AuroraCityFC_TrainingGround(?:\\(\\d+\\))?\\.html/i,ROUTES.training],
+      [/AuroraCityFC_ScoutingCentre(?:\\(\\d+\\))?\\.html/i,ROUTES.scouting],
+      [/AuroraCityFC_MediaCentre(?:\\(\\d+\\))?\\.html/i,ROUTES.media],
+      [/TradingBrainMaster(?:_Connected_v\\d+)?\\.html/i,ROUTES.scouting],
+      [/RegistrationDesk\\.html/i,ROUTES.transfer+'#registration-desk']
+    ];
+    document.querySelectorAll('a[href]').forEach(a=>{let href=a.getAttribute('href')||'';map.forEach(([rx,to])=>{href=href.replace(rx,to)});a.setAttribute('href',href)});
+  }
+  function addFinanceSidebarLink(){
+    const host=document.querySelector('.fm-side-scroll');if(!host||host.querySelector('[data-aurora-finance-sidebar]'))return;
+    const a=document.createElement('a');a.href=ROUTES.finance;a.dataset.auroraFinanceSidebar='1';a.className='fm-side-link'+(PAGE==='finance'?' active':'');a.innerHTML='<span class="fm-side-icon">£</span><span>Finance Department</span>';
+    const firstGroup=host.querySelector('.fm-nav-group');if(firstGroup)firstGroup.insertAdjacentElement('afterend',a);else host.prepend(a);
+  }
+  function addConnectedCard(){
+    if(document.getElementById('auroraConnectedFinanceCard'))return;
+    const card=document.createElement('section');card.id='auroraConnectedFinanceCard';card.className='aurora-connected-card';
+    card.innerHTML='<div class="aurora-connected-card-inner"><div><small>Connected finance pipeline</small><strong data-card-title>Finance Department linked</strong><span data-card-copy>Checking the current payday investment mission…</span></div><div class="aurora-connected-actions"><a href="'+ROUTES.finance+'">Open Finance</a><a class="primary" href="'+ROUTES.transfer+'">Open Transfer Centre</a></div></div>';
+    const target=document.querySelector('.transfer-hero,.hq-hero,.hero,.hero-card');
+    if(target&&target.parentElement)target.insertAdjacentElement('afterend',card);else document.body.insertAdjacentElement('afterbegin',card);
+  }
+  function refresh(){
+    mirrorMission();const m=mission();const test=read(TEST_KEY);const budget=Number(m?.budget||m?.investmentBudget||m?.amount||0);const account=m?.preferredAccount||m?.preferredPlatform||'Investment account';
+    const summary=document.querySelector('[data-aurora-finance-summary]');
+    if(summary)summary.textContent=m&&budget>0?`Finance Department linked • ${money(budget)} authorised • ${account}`:'Finance Department linked • no mission released';
+    const title=document.querySelector('#auroraConnectedFinanceCard [data-card-title]');const copy=document.querySelector('#auroraConnectedFinanceCard [data-card-copy]');
+    if(title)title.textContent=m&&budget>0?`${money(budget)} investment mission authorised`:'Finance Department linked';
+    if(copy)copy.textContent=m&&budget>0?`${account} • payday ${m.paydayDate||'not set'} • ${Array.isArray(m.fundingSources)?m.fundingSources.length:1} funding source${Array.isArray(m.fundingSources)&&m.fundingSources.length===1?'':'s'}`:'Build the payday plan in Finance Department, then release the complete budget to the Transfer Centre.';
+    document.querySelectorAll('[data-aurora-nav-status]').forEach(el=>{const name=el.dataset.auroraNavStatus;el.className='aurora-system-status';if(name==='finance'){el.textContent=budget>0?money(budget):'NO MISSION';el.classList.add(budget>0?'good':'watch')}else if(name==='transfer'){el.textContent=budget>0?'BUDGET READY':'WAITING';el.classList.add(budget>0?'cyan':'')}else if(name===PAGE){el.textContent='OPEN';el.classList.add('cyan')}else el.textContent='LINKED'});
+    document.body.classList.toggle('aurora-transfer-test-active',!!test?.active);
+  }
+  function init(){
+    document.querySelectorAll('.aurora-smart-dock').forEach(el=>el.style.setProperty('display','none','important'));
+    patchLinks();addFinanceSidebarLink();addConnectedCard();refresh();
+    const dock=document.querySelector('.aurora-system-dock');dock?.querySelector('.aurora-system-back')?.addEventListener('click',()=>{if(history.length>1)history.back();else location.href=ROUTES.nexus});
+    let lastY=scrollY||0,ticking=false,timer;const show=()=>dock?.classList.remove('is-hidden'),hide=()=>dock?.classList.add('is-hidden');
+    addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{const y=scrollY||0,max=Math.max(0,document.documentElement.scrollHeight-innerHeight),nearBottom=max-y<70;if(nearBottom||y<12||y<lastY-6)show();else if(y>lastY+6)hide();lastY=y;clearTimeout(timer);timer=setTimeout(show,180);ticking=false})},{passive:true});
+    addEventListener('storage',e=>{if([FINANCE_KEY,LEGACY_KEY,TEST_KEY].includes(e.key))refresh()});addEventListener('aurora:finance-mission',refresh);addEventListener('aurora:wealth-mission',refresh);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
+</body>
+</html>
