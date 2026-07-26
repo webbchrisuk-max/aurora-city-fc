@@ -3579,9 +3579,9 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
         <div class="m36-transfer-grid">
           <article class="m36-transfer-card contribution">
             <div class="m36-transfer-icon">＋</div>
-            <div class="m36-transfer-copy"><span>Regular payday contribution</span><small>Your standard Holding Pot move</small></div>
+            <div class="m36-transfer-copy"><span>Regular payday contribution</span><small>Saved rate only — it is not money moved until you press the button.</small></div>
             <label class="m36-compact-field" for="paydayContributionInput"><b>£</b><input id="paydayContributionInput" type="number" step="1" value="140" /></label>
-            <button class="m36-action-btn positive" id="addPaydayBtn" type="button">Add payday contribution</button>
+            <button class="m36-action-btn positive" id="addPaydayBtn" type="button">Add payday contribution</button><small class="m41-contribution-status" id="m41ContributionStatus">Rate saved separately from the live Holding Pot balance.</small>
           </article>
           <article class="m36-transfer-card custom">
             <div class="m36-transfer-icon">↗</div>
@@ -8465,6 +8465,7 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
 .m40-bill-row b{color:#bfefff;font-size:9px;white-space:nowrap}
 .m40-empty{padding:10px 0;color:#7890a8;font-size:8px}
 @media(max-width:720px){.m40-breakdown-body{grid-template-columns:1fr}}
+.m41-contribution-status{display:block;margin-top:8px;color:#7f94aa;font-size:7.5px;line-height:1.35}.m41-contribution-status.good{color:#7ff0b5}.m41-contribution-status.warn{color:#ffd98a}
 </style>
 
 <script>
@@ -8724,6 +8725,15 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     const finalCard=document.getElementById('finalContributionCard');if(finalCard)finalCard.dataset.state=paydayTotal>.005?'fund':'covered';
   }
 
+  window.m40RenderClarity=renderClarity;
+  const baseUpdatePlannerTotals=typeof window.updatePlannerTotals==='function'?window.updatePlannerTotals:null;
+  if(baseUpdatePlannerTotals){
+    window.updatePlannerTotals=function(){
+      const result=baseUpdatePlannerTotals.apply(this,arguments);
+      renderClarity();
+      return result;
+    };
+  }
   window.m22Render=function(){const result=previousRender?previousRender.apply(this,arguments):undefined;renderClarity();return result};
   window.m22RenderReceipt=function(){
     if(previousReceipt)previousReceipt.apply(this,arguments);
@@ -8746,6 +8756,33 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     return {plan,pay,expected:n(plan.expected),overtime:Math.max(0,pay-n(plan.expected)),retainedTarget,urgent:cycle,regular,protection:cycle+regular,lifestyle,goals,house,emergency,shares,allocated,retained,unresolved,retainGap,cuts,state,label,score};
   };
   if(previousScenarioRender)window.m33RenderScenario=function(){const result=previousScenarioRender.apply(this,arguments);renderClarity();return result};
+
+  function contributionRate(){return Math.max(0,n(document.getElementById('paydayContributionInput')?.value))}
+  function contributionStatus(message,tone){
+    const el=document.getElementById('m41ContributionStatus');if(!el)return;
+    el.textContent=message;el.className='m41-contribution-status '+(tone||'');
+  }
+  function persistContributionRate(){
+    if(typeof plannerState==='undefined')return;
+    plannerState.paydayContribution=contributionRate();
+    if(typeof savePlannerData==='function')savePlannerData();
+    renderClarity();
+    contributionStatus('Saved rate: '+m15Money(plannerState.paydayContribution)+' per payday. This has not changed the Holding Pot balance.','good');
+  }
+  const rateInput=document.getElementById('paydayContributionInput');
+  rateInput?.addEventListener('input',persistContributionRate);
+  rateInput?.addEventListener('change',persistContributionRate);
+  document.getElementById('holdingBalanceInput')?.addEventListener('input',()=>requestAnimationFrame(renderClarity));
+  document.getElementById('minimumBufferInput')?.addEventListener('input',()=>requestAnimationFrame(renderClarity));
+  document.getElementById('addPaydayBtn')?.addEventListener('click',()=>{
+    const moved=contributionRate();
+    setTimeout(()=>{
+      if(typeof savePlannerData==='function')savePlannerData();
+      renderClarity();
+      contributionStatus(moved>0?m15Money(moved)+' added to the Holding Pot. New balance: '+m15Money(plannerState?.holdingBalance||0)+'.':'Enter an amount before recording the transfer.',moved>0?'good':'warn');
+    },0);
+  });
+  contributionStatus('Saved rate: '+m15Money(contributionRate())+' per payday. It is not counted as a transfer until you press Add payday contribution.');
 
   const mission=m22EnsureState();if(mission.plan&&mission.plan.logicVersion!==M40_LOGIC_VERSION&&!m22AnyExecuted()&&!mission.completed)mission.plan=null;
   ensureDom();
@@ -8780,11 +8817,11 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
   const page=dock.dataset.auroraPage||'nexus';
   const local=location.protocol==='file:';
   const routes=local?{
-    nexus:'AuroraNexusMaster.html',
-    wealth:'SpendingPlannerMaster.html',
-    brain:'TradingBrainMaster.html',
+    nexus:'AuroraNexusMaster_Connected_v7.html',
+    wealth:'AuroraWealthExecutiveRoom_Connected_v16.html',
+    brain:'TradingBrainMaster_Connected_v8.html',
     registration:'RegistrationDesk.html',
-    tesco:'TescoSimMaster.html'
+    tesco:'TescoSimMaster_Connected_v3.html'
   }:{
     nexus:'AuroraNexusMaster.html',
     wealth:'SpendingPlannerMaster.html',
