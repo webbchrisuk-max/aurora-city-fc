@@ -3855,7 +3855,7 @@ const defaultEditablePots = [
 ];
 function freshEditablePots(){return JSON.parse(JSON.stringify(defaultEditablePots));}
 function migrateLegacyPots(parsed){
-  if(Array.isArray(parsed?.editablePots)) return parsed.editablePots;
+  if(Array.isArray(parsed?.editablePots) && parsed.editablePots.length) return parsed.editablePots;
   const mp=parsed?.monzoPots;
   if(!mp || typeof mp!=="object") return freshEditablePots();
   return Object.entries(mp).map(([id,p])=>({
@@ -7533,7 +7533,13 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
   }
   function renderCarousel(){
     const grid=setupShell();if(!grid)return;
-    const pots=[...(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[])];
+    const liveState=(typeof plannerState!=='undefined'&&plannerState)?plannerState:null;
+    if(liveState&&(!Array.isArray(liveState.editablePots)||!liveState.editablePots.length)){
+      liveState.editablePots=typeof freshEditablePots==='function'?freshEditablePots():[];
+      if(typeof savePlannerData==='function')savePlannerData();
+      if(typeof renderPotEditor==='function')renderPotEditor();
+    }
+    const pots=[...(Array.isArray(liveState?.editablePots)?liveState.editablePots:[])];
     pots.sort((a,b)=>{const pa=typeof normalisePotPriority==='function'?normalisePotPriority(a.priority):Number(a.priority||2),pb=typeof normalisePotPriority==='function'?normalisePotPriority(b.priority):Number(b.priority||2);if(pa!==pb)return pa-pb;const ar=Number(a.target||0)>0?Number(a.balance||0)/Number(a.target||1):1,br=Number(b.target||0)>0?Number(b.balance||0)/Number(b.target||1):1;return ar-br||String(a.name||'').localeCompare(String(b.name||''),'en-GB')});
     const houseMetrics=typeof window.m27HouseMetrics==='function'?window.m27HouseMetrics():null;
     grid.innerHTML=pots.map(p=>{
@@ -7549,8 +7555,31 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
   }
   const prior=window.renderPotHealthRadar;
   window.renderPotHealthRadar=function(){renderCarousel()};
-  window.addEventListener('load',()=>setTimeout(renderCarousel,50));
-  document.addEventListener('click',e=>{if(e.target.closest('#savePotsBtn,#addPotBtn,#resetPotsBtn,.pot-editor-row button'))setTimeout(renderCarousel,80)});
+  function ensurePotsAndRender(){
+    try{
+      if(typeof plannerState!=='undefined'){
+        if(!Array.isArray(plannerState.editablePots)||!plannerState.editablePots.length){
+          plannerState.editablePots=typeof freshEditablePots==='function'?freshEditablePots():[];
+          if(typeof savePlannerData==='function')savePlannerData();
+        }
+        if(typeof renderPotEditor==='function')renderPotEditor();
+      }
+      renderCarousel();
+    }catch(err){console.error('Aurora pot carousel recovery failed',err)}
+  }
+  window.addEventListener('load',()=>setTimeout(ensurePotsAndRender,250));
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(ensurePotsAndRender,120));
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#savePotsBtn,#addPotBtn,#resetPotsBtn,.pot-editor-row button,[data-target="m13PotHealth"]')){
+      setTimeout(ensurePotsAndRender,160);
+    }
+  });
+  const potHost=document.getElementById('potHealthRadar');
+  if(potHost){
+    new MutationObserver(()=>{
+      if(!potHost.querySelector('.pot-radar-card')) setTimeout(ensurePotsAndRender,30);
+    }).observe(potHost,{childList:true});
+  }
 })();
 </script>
 </body>
