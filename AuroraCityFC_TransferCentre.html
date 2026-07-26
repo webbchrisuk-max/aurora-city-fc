@@ -6124,7 +6124,7 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <section class="section" id="trading-brain-execution">
   <div class="m7-brain-room">
     <div class="m7-brain-head">
-      <div><span class="upgrade-kicker">M7 • Single source of truth</span><h2>Trading Brain Execution Room</h2><p>The Transfer Centre no longer creates a separate shortlist. This board is rendered from the same approved deal object used by the Deal Sheet, Registration Desk and every downstream execution control.</p></div>
+      <div><span class="upgrade-kicker">M7 • Single source of truth</span><h2>Trading Brain Execution Room</h2><p>Trading Brain selects the approved shares. The Transfer Centre then sizes each allocation using portfolio weight, sector exposure, income rate and concentration controls before publishing one execution plan.</p></div>
       <span class="m7-source-badge" id="m7BrainSource"><i></i>TRADING BRAIN LINKED</span>
     </div>
     <div class="m7-exec-grid">
@@ -8105,23 +8105,77 @@ function readTradingBrainDecision(){
     return {...payload,isStale:!Number.isFinite(age)||age>24*60*60*1000,ageMs:age};
   }catch(_){return null;}
 }
+
+function portfolioWeightTradingBrainTargets(targetRows,budget,payload){
+  const requestedHoldback=Math.max(0,Number(payload?.holdback||0));
+  const spendBudget=roundTo25(Math.max(0,budget-requestedHoldback));
+  if(!targetRows.length||spendBudget<=0) return {rows:[],spent:0,holdback:budget};
+  const minimum=Math.min(meaningfulMinimum(spendBudget),roundTo25(spendBudget/targetRows.length));
+  const amounts=new Map();
+  let spent=0;
+
+  // Give every Trading Brain selection a meaningful starting position where safe.
+  for(const item of targetRows){
+    const ticker=cleanTicker(item.row.ticker);
+    const start=Math.max(25,minimum);
+    if(spent+start<=spendBudget){amounts.set(ticker,start);spent+=start;}
+  }
+
+  // Size the approved names using the Transfer Centre's portfolio-aware logic.
+  // Existing portfolio share, sector concentration, income rate, valuation and Brain rank all matter.
+  while(spent+25<=spendBudget){
+    let best=null;
+    for(const item of targetRows){
+      const ticker=cleanTicker(item.row.ticker);
+      const current=amounts.get(ticker)||0;
+      const others=targetRows.filter(x=>cleanTicker(x.row.ticker)!==ticker).map(x=>({row:x.row,amount:amounts.get(cleanTicker(x.row.ticker))||0}));
+      const snap=exposureSnapshot(others);
+      const proposedGate=gateCandidate(item.row,current+25,snap);
+      if(proposedGate.status==='block') continue;
+      const stockCap=roundTo25(spendBudget*(proposedGate.status==='caution'?.24:.40));
+      if(current+25>stockCap) continue;
+      const bucket=proposedGate.bucket||item.gate?.bucket||sectorBucket(item.row);
+      const sectorAllocated=targetRows.filter(x=>(x.gate?.bucket||sectorBucket(x.row))===bucket).reduce((sum,x)=>sum+(amounts.get(cleanTicker(x.row.ticker))||0),0);
+      if(sectorAllocated+25>roundTo25(spendBudget*.52)) continue;
+
+      const existingValue=holdingValue(item.row);
+      const totalBefore=Math.max(1,exposureSnapshot().totalBefore||exposureSnapshot().totalAfter||1);
+      const existingShare=existingValue/totalBefore;
+      const underweightBoost=Math.max(-18,Math.min(22,(0.12-existingShare)*120));
+      const rate=incomeRate(item.row);
+      const incomeBoost=Number.isFinite(rate)?Math.min(28,rate*180):0;
+      const brainBoost=Math.max(0,14-(Number(item.brainRank||4)-1)*3);
+      const qualityBoost=Math.max(0,Number(item.score||0)-70)*.35;
+      let score=balancedPriorityScore(item.row,snap,current+25)+underweightBoost+incomeBoost+brainBoost+qualityBoost;
+      if(proposedGate.status==='caution') score-=16;
+      if(!best||score>best.score) best={item,ticker,score,gate:proposedGate};
+    }
+    if(!best) break;
+    amounts.set(best.ticker,(amounts.get(best.ticker)||0)+25);
+    spent+=25;
+  }
+
+  const rows=targetRows.map(item=>{
+    const amount=amounts.get(cleanTicker(item.row.ticker))||0;
+    const gate=gateCandidate(item.row,amount,exposureSnapshot(targetRows.filter(x=>x!==item).map(x=>({row:x.row,amount:amounts.get(cleanTicker(x.row.ticker))||0}))));
+    return {...item,amount,gate:{...item.gate,...gate,status:gate.status==='block'?'caution':gate.status},income:annualIncomeForAmount(item.row,amount)};
+  }).filter(item=>item.amount>0);
+  return {rows,spent:rows.reduce((s,x)=>s+x.amount,0),holdback:Math.max(0,budget-rows.reduce((s,x)=>s+x.amount,0))};
+}
+
 function dealFromTradingBrain(payload,fallbackDeal){
   if(!payload||payload.isStale) return fallbackDeal;
 
   const budget=Math.max(0,Number(payload.budget||fallbackDeal?.budget||0));
   const snapshot=exposureSnapshot();
   const seen=new Set();
-  const rows=(payload.targets||[]).map((target,index)=>{
+  const approved=(payload.targets||[]).map((target,index)=>{
     const ticker=cleanTicker(target.ticker);
     if(!ticker||seen.has(ticker)) return null;
     seen.add(ticker);
-
-    // The approved Trading Brain payload is the single source of truth.
-    // Resolve richer live data where possible, but never drop an approved target
-    // just because the local candidate pool uses a different alias or gate state.
     const liveRow=findSecurity(ticker);
-    const allocation=Math.max(0,Number(target.allocation||0));
-    const derivedRate=allocation>0&&Number(target.income)>0?Number(target.income)/allocation:NaN;
+    const sourceAllocation=Math.max(0,Number(target.allocation||0));
+    const derivedRate=sourceAllocation>0&&Number(target.income)>0?Number(target.income)/sourceAllocation:NaN;
     const row=liveRow||{
       ticker,
       name:target.name||ticker,
@@ -8130,50 +8184,28 @@ function dealFromTradingBrain(payload,fallbackDeal){
       yield:Number.isFinite(derivedRate)?derivedRate:0,
       notes:'Approved by Aurora Trading Brain; awaiting full local security metadata.'
     };
-    const liveGate=gateCandidate(row,allocation,snapshot);
-    const gate={
-      ...liveGate,
-      status:liveGate.status==='block'?'caution':(liveGate.status||'pass'),
-      reasons:Array.isArray(liveGate.reasons)&&liveGate.reasons.length?liveGate.reasons:['Approved by Aurora Trading Brain.'],
-      data:liveGate.data||dataConfidence(row)
-    };
-    const income=Number.isFinite(Number(target.income))?Number(target.income):annualIncomeForAmount(row,allocation);
-    return {
-      row,gate,
-      score:Number(target.score||0),
-      incomeScore:Number(target.score||0),
-      amount:allocation,
-      income,
-      selected:true,
-      brainRank:Number(target.rank||index+1)
-    };
-  }).filter(item=>item&&item.amount>0);
+    const liveGate=gateCandidate(row,sourceAllocation,snapshot);
+    const gate={...liveGate,status:liveGate.status==='block'?'caution':(liveGate.status||'pass'),reasons:Array.isArray(liveGate.reasons)&&liveGate.reasons.length?liveGate.reasons:['Approved by Aurora Trading Brain.'],data:liveGate.data||dataConfidence(row)};
+    return {row,gate,score:Number(target.score||0),incomeScore:Number(target.score||0),amount:sourceAllocation,income:Number.isFinite(Number(target.income))?Number(target.income):annualIncomeForAmount(row,sourceAllocation),selected:true,brainRank:Number(target.rank||index+1)};
+  }).filter(Boolean).sort((a,b)=>(a.brainRank||999)-(b.brainRank||999));
 
+  if(!approved.length) return fallbackDeal;
+  const weighted=portfolioWeightTradingBrainTargets(approved,budget,payload);
+  const rows=weighted.rows;
   if(!rows.length) return fallbackDeal;
-  rows.sort((a,b)=>(a.brainRank||999)-(b.brainRank||999));
-  const spent=rows.reduce((sum,item)=>sum+item.amount,0);
+  const spent=weighted.spent;
   const totalIncome=rows.reduce((sum,item)=>sum+item.income,0);
-  const holdback=Math.max(0,budget-spent);
+  const holdback=weighted.holdback;
   const selected=new Set(rows.map(item=>cleanTicker(item.row.ticker)));
   const fallbackBench=(fallbackDeal?.bench||[]).filter(item=>!selected.has(cleanTicker(item.row?.ticker)));
   const fallbackWatch=(fallbackDeal?.watch||[]).filter(item=>!selected.has(cleanTicker(item.row?.ticker)));
 
   return {
-    ...fallbackDeal,
-    budget,
-    rows,
-    chosen:rows,
-    holdback,
-    requestedSpent:spent,
-    totalIncome,
-    bench:fallbackBench,
-    watch:fallbackWatch,
-    mode:payload.mode==='income'?'maximum':'balanced',
-    route:`Trading Brain ${payload.strategy||'route'}`,
-    reason:'Exact read-only execution plan published by Aurora Trading Brain. The Deal Sheet and Registration Desk use these same approved targets and allocations.',
-    status:'Trading Brain linked',
-    statusClass:'good',
-    brainLinked:true
+    ...fallbackDeal,budget,rows,chosen:rows,holdback,requestedSpent:spent,totalIncome,
+    bench:fallbackBench,watch:fallbackWatch,mode:payload.mode==='income'?'maximum':'balanced',
+    route:`Trading Brain selection • Portfolio-weighted sizing`,
+    reason:'Trading Brain chooses the approved shares. Transfer Centre sizes each purchase using current portfolio weight, sector concentration, income rate, valuation and concentration limits.',
+    status:'Brain selected • portfolio weighted',statusClass:'good',brainLinked:true,portfolioWeighted:true
   };
 }
 function renderM7TradingBrain(deal,payloadOverride){
@@ -9952,7 +9984,10 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
       try{ window.renderAll(); }catch(error){ console.warn('Aurora bridge render',error); }
     }
     const note=$id('dealBudgetContext');
-    if(note) note.textContent=`Loaded from Wealth HQ • ${money(budget)} • ${mission.preferredAccount||'Investment account'}`;
+    const sourceText=Array.isArray(mission.fundingSources)&&mission.fundingSources.length
+      ? mission.fundingSources.map(source=>`${source.name||source.id} ${money(source.release||0)}`).join(' • ')
+      : `${money(budget)} authorised budget`;
+    if(note) note.textContent=`Loaded from Wealth HQ • ${sourceText} • Total ${money(budget)} • ${mission.preferredAccount||'Investment account'}`;
     const hero=$id('heroTransferBudget');
     if(hero) hero.textContent=money(budget);
     if(options.scroll!==false){
