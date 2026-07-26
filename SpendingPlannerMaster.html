@@ -7468,6 +7468,13 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
 .pot-card-note{color:#b9c9da;font-size:10px;line-height:1.5;min-height:30px}
 .pot-card-progress-meta{display:flex;justify-content:space-between;gap:10px;color:#91a5bd;font-size:9px;font-weight:850}
 .pot-card-progress-meta strong{color:#eaf4ff}
+.pot-house-financials{display:grid;gap:5px;margin-top:3px;padding:10px 11px;border-radius:13px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.025)}
+.pot-house-line{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:10px;color:#91a5bd}
+.pot-house-line strong{font-size:12px;color:#eef8ff}
+.pot-house-spent strong{color:#ff718b}
+.pot-house-spent span{color:#ff9aab}
+.pot-house-total{padding-top:6px;margin-top:2px;border-top:1px solid rgba(255,255,255,.08)}
+.pot-house-total strong{font-size:14px;color:#8cffb8}
 .pot-carousel-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
 .pot-carousel-buttons{display:flex;gap:8px}
 .pot-carousel-btn{width:40px;height:40px;border-radius:13px;border:1px solid rgba(125,211,252,.22);background:rgba(8,23,43,.9);color:#dff7ff;font-size:20px;font-weight:900;display:grid;place-items:center;cursor:pointer}
@@ -7544,12 +7551,17 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     const houseMetrics=typeof window.m27HouseMetrics==='function'?window.m27HouseMetrics():null;
     grid.innerHTML=pots.map(p=>{
       const name=String(p.name||'Unnamed Pot'),isHouse=String(p.id||'')==='house_fund'||name.toLowerCase().includes('house');
-      const current=isHouse&&houseMetrics?Number(houseMetrics.funded||0):Number(p.balance||0),target=Number(p.target||0),progress=target>0?Math.min(100,current/target*100):(current>0?100:0),cls=progress>=85?'good':progress>=45?'watch':'risk';
+      const cash=isHouse&&houseMetrics?Number(houseMetrics.cash||0):Number(p.balance||0);
+      const spent=isHouse&&houseMetrics?Number(houseMetrics.spent||0):0;
+      const funded=isHouse&&houseMetrics?Number(houseMetrics.funded||0):cash;
+      const target=Number(p.target||0),progress=target>0?Math.min(100,funded/target*100):(funded>0?100:0),cls=progress>=85?'good':progress>=45?'watch':'risk';
       const priority=typeof normalisePotPriority==='function'?normalisePotPriority(p.priority):Number(p.priority||2),priorityText=typeof priorityLabel==='function'?priorityLabel(priority):'';
       const state=progress>=85?'On target':progress>=45?'Building':'Needs funding';
       const note=String(p.note||'Personal savings goal');
-      const detail=isHouse&&houseMetrics?`£${formatMoney(houseMetrics.cash)} cash + £${formatMoney(houseMetrics.spent)} spent`:(target>0?`Target £${formatMoney(target)}`:'Open target');
-      return `<article class="pot-radar-card ${cls} priority-${priority}"><div class="pot-card-picture"><img src="${pictureData(name)}" alt="${esc(name)} illustrated goal card"><span class="pot-card-status"><i></i>${state}</span></div><div class="pot-card-body"><div class="pot-card-title-row"><div><div class="pot-card-title">${esc(name)}</div><div class="pot-card-target">P${priority} ${esc(priorityText)}</div></div><span class="pot-priority-rank">P${priority}</span></div><div><div class="pot-card-value">£${formatMoney(current)}</div><div class="pot-card-target">${detail}</div></div><div class="pot-card-note">${esc(note)}</div><div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div><div class="pot-card-progress-meta"><span>Funding progress</span><strong>${progress.toFixed(0)}%</strong></div></div></article>`;
+      const moneyBlock=isHouse&&houseMetrics
+        ? `<div><div class="pot-card-target">TOTAL BALANCE</div><div class="pot-card-value">£${formatMoney(cash)}</div><div class="pot-house-financials"><div class="pot-house-line pot-house-spent"><span>Spent</span><strong>−£${formatMoney(spent)}</strong></div><div class="pot-house-line pot-house-total"><span>Total funded</span><strong>£${formatMoney(funded)}</strong></div><div class="pot-house-line"><span>Project target</span><strong>£${formatMoney(target)}</strong></div></div></div>`
+        : `<div><div class="pot-card-value">£${formatMoney(cash)}</div><div class="pot-card-target">${target>0?`Target £${formatMoney(target)}`:'Open target'}</div></div>`;
+      return `<article class="pot-radar-card ${cls} priority-${priority}"><div class="pot-card-picture"><img src="${pictureData(name)}" alt="${esc(name)} illustrated goal card"><span class="pot-card-status"><i></i>${state}</span></div><div class="pot-card-body"><div class="pot-card-title-row"><div><div class="pot-card-title">${esc(name)}</div><div class="pot-card-target">P${priority} ${esc(priorityText)}</div></div><span class="pot-priority-rank">P${priority}</span></div>${moneyBlock}<div class="pot-card-note">${esc(note)}</div><div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div><div class="pot-card-progress-meta"><span>Funding progress</span><strong>${progress.toFixed(0)}%</strong></div></div></article>`;
     }).join('')||'<div class="subv">Add pots in the Editable Pot Manager to build your carousel.</div>';
     setTimeout(updateDots,0);
   }
