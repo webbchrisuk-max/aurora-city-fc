@@ -1368,6 +1368,69 @@ h2{font-size:18px}.big-sub{font-size:12px;margin-top:8px}.panel{padding:12px}.se
 
 
 </style>
+
+<style>
+/* ===================== AURORA SMART WEALTH CENTRE NAVIGATION ===================== */
+:root{--aurora-smart-dock-height:132px}
+body{padding-bottom:calc(var(--aurora-smart-dock-height) + env(safe-area-inset-bottom,0px))!important}
+.aurora-smart-dock{
+  position:fixed;left:50%;bottom:10px;z-index:9998;
+  width:min(1180px,calc(100% - 20px));transform:translateX(-50%);
+  padding:10px;border:1px solid rgba(98,243,255,.24);border-radius:22px;
+  background:linear-gradient(145deg,rgba(5,14,27,.96),rgba(9,24,41,.97));
+  box-shadow:0 22px 58px rgba(0,0,0,.50),0 0 28px rgba(98,243,255,.10);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+}
+.aurora-smart-dock *{box-sizing:border-box}
+.aurora-smart-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;margin-bottom:9px}
+.aurora-smart-back,.aurora-smart-next{
+  min-height:36px;padding:8px 11px;border-radius:12px;border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.045);color:#edf8ff!important;text-decoration:none!important;
+  font-size:11px;font-weight:950;letter-spacing:.15px;cursor:pointer;white-space:nowrap;
+}
+.aurora-smart-back:hover,.aurora-smart-next:hover{border-color:rgba(98,243,255,.42);background:rgba(98,243,255,.09);transform:translateY(-1px)}
+.aurora-smart-next{border-color:rgba(89,255,154,.28);color:#59ff9a!important;background:rgba(89,255,154,.07)}
+.aurora-smart-centre{min-width:0;text-align:center}
+.aurora-smart-centre strong{display:block;color:#f1f8ff;font-size:13px;line-height:1.1}
+.aurora-smart-centre span{display:block;margin-top:2px;color:#91a9c2;font-size:9px;font-weight:950;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-smart-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.aurora-smart-link{
+  position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;
+  column-gap:8px;align-items:center;min-width:0;min-height:56px;padding:8px 9px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);
+  color:#eaf7ff!important;text-decoration:none!important;overflow:hidden;transition:.18s ease;
+}
+.aurora-smart-link:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:999px;background:rgba(145,169,194,.38)}
+.aurora-smart-link:hover{transform:translateY(-2px);border-color:rgba(98,243,255,.34);background:rgba(98,243,255,.07)}
+.aurora-smart-link.active{border-color:rgba(98,243,255,.48);background:linear-gradient(145deg,rgba(98,243,255,.13),rgba(89,255,154,.06));box-shadow:inset 0 0 18px rgba(98,243,255,.06),0 0 18px rgba(98,243,255,.08)}
+.aurora-smart-link.active:before{background:#62f3ff;box-shadow:0 0 12px rgba(98,243,255,.72)}
+.aurora-smart-icon{grid-row:1/3;font-size:20px;line-height:1}
+.aurora-smart-name{min-width:0;font-size:11px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-smart-status{min-width:0;color:#91a9c2;font-size:8px;font-weight:950;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-smart-status.good{color:#59ff9a}.aurora-smart-status.watch{color:#ffd15e}.aurora-smart-status.cyan{color:#62f3ff}.aurora-smart-status.risk{color:#ff6b8a}
+.aurora-smart-link[data-aurora-route="wealth"]:before{background:#ffd15e}
+.aurora-smart-link[data-aurora-route="brain"]:before{background:#b985ff}
+.aurora-smart-link[data-aurora-route="registration"]:before{background:#59ff9a}
+.aurora-smart-link[data-aurora-route="tesco"]:before{background:#6aa8ff}
+@media(max-width:760px){
+  :root{--aurora-smart-dock-height:136px}
+  .aurora-smart-dock{bottom:6px;width:calc(100% - 12px);padding:8px;border-radius:18px}
+  .aurora-smart-head{grid-template-columns:auto minmax(0,1fr) auto;gap:6px;margin-bottom:7px}
+  .aurora-smart-back,.aurora-smart-next{min-height:32px;padding:7px 8px;font-size:10px}
+  .aurora-smart-centre strong{font-size:11px}.aurora-smart-centre span{font-size:8px}
+  .aurora-smart-grid{gap:5px}
+  .aurora-smart-link{display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:58px;padding:7px 4px;text-align:center}
+  .aurora-smart-link:before{left:8px;right:8px;top:auto;bottom:0;width:auto;height:3px}
+  .aurora-smart-icon{font-size:18px}.aurora-smart-name{font-size:9px;max-width:100%}.aurora-smart-status{font-size:7px;max-width:100%}
+}
+@media(max-width:430px){
+  :root{--aurora-smart-dock-height:128px}
+  .aurora-smart-next{max-width:100px;white-space:normal;line-height:1.1;text-align:center}
+  .aurora-smart-centre span{display:none}
+  .aurora-smart-link{min-height:54px}
+  .aurora-smart-name{font-size:8px}.aurora-smart-status{font-size:6.5px}
+}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -2720,6 +2783,90 @@ updateModeButtons();runBrain();loadGlobalWatchlistLive();
   window.addEventListener("storage",event=>{if([WEALTH_KEY,DECISION_KEY,QUEUE_KEY].includes(event.key)){renderWealthMission();renderQueue()}});
   window.addEventListener("load",()=>setTimeout(()=>{renderWealthMission();renderQueue();const mission=read(WEALTH_KEY),input=el("totalInvestment");if(mission&&Number(mission.budget||0)>0&&input&&Math.abs(Number(input.value||0)-Number(mission.budget||0))>.01)loadMission(true)},320));
   if(document.readyState!=="loading")setTimeout(()=>{renderWealthMission();renderQueue()},180);
+})();
+</script>
+
+
+
+<section class="aurora-smart-dock" data-aurora-page="brain" aria-label="Aurora Wealth Centre smart navigation">
+  <div class="aurora-smart-head">
+    <button class="aurora-smart-back" type="button" data-aurora-back>← Back</button>
+    <div class="aurora-smart-centre"><strong>Aurora Wealth Centre</strong><span data-aurora-current-label>CONNECTED COMMAND SYSTEM</span></div>
+    <a class="aurora-smart-next" href="#" data-aurora-next>Next step →</a>
+  </div>
+  <nav class="aurora-smart-grid" aria-label="Aurora command rooms">
+    <a class="aurora-smart-link" href="#" data-aurora-route="nexus"><span class="aurora-smart-icon">🏟️</span><span class="aurora-smart-name">Nexus HQ</span><span class="aurora-smart-status cyan" data-aurora-status="nexus">HOME</span></a>
+    <a class="aurora-smart-link" href="#" data-aurora-route="wealth"><span class="aurora-smart-icon">💷</span><span class="aurora-smart-name">Wealth HQ</span><span class="aurora-smart-status" data-aurora-status="wealth">NO MISSION</span></a>
+    <a class="aurora-smart-link" href="#" data-aurora-route="brain"><span class="aurora-smart-icon">🧠</span><span class="aurora-smart-name">Trading Brain</span><span class="aurora-smart-status" data-aurora-status="brain">WAITING</span></a>
+    <a class="aurora-smart-link" href="#" data-aurora-route="registration"><span class="aurora-smart-icon">✅</span><span class="aurora-smart-name">Registration</span><span class="aurora-smart-status" data-aurora-status="registration">EMPTY</span></a>
+    <a class="aurora-smart-link" href="#" data-aurora-route="tesco"><span class="aurora-smart-icon">🛒</span><span class="aurora-smart-name">Tesco SAYE</span><span class="aurora-smart-status cyan" data-aurora-status="tesco">2029 PLAN</span></a>
+  </nav>
+</section>
+
+
+<script>
+/* ===================== AURORA SMART WEALTH CENTRE ROUTER ===================== */
+(()=>{
+  const dock=document.querySelector('.aurora-smart-dock[data-aurora-page]');
+  if(!dock)return;
+  const page=dock.dataset.auroraPage||'nexus';
+  const local=location.protocol==='file:';
+  const routes=local?{
+    nexus:'AuroraNexusMaster_Connected_v4.html',
+    wealth:'AuroraWealthExecutiveRoom_Connected_v11.html',
+    brain:'TradingBrainMaster_Connected_v5.html',
+    registration:'RegistrationDesk.html',
+    tesco:'TescoSimMaster.html'
+  }:{
+    nexus:'AuroraNexusMaster.html',
+    wealth:'SpendingPlannerMaster.html',
+    brain:'TradingBrainMaster.html',
+    registration:'RegistrationDesk.html',
+    tesco:'TescoSimMaster.html'
+  };
+  const labels={nexus:'NEXUS HQ • SYSTEM OVERVIEW',wealth:'WEALTH HQ • PAYDAY & POTS',brain:'TRADING BRAIN • DEPLOYMENT',registration:'REGISTRATION DESK • PURCHASES',tesco:'TESCO SAYE • 2029 PLAN'};
+  const nextMap={nexus:['wealth','Open Wealth HQ →'],wealth:['brain','Next: Trading Brain →'],brain:['registration','Next: Registration →'],registration:['nexus','Return to Nexus HQ →'],tesco:['nexus','Return to Nexus HQ →']};
+  const read=(key)=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
+  const money=(v)=>Number(v||0).toLocaleString('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:0,maximumFractionDigits:0});
+  const setStatus=(name,text,tone)=>{
+    const el=dock.querySelector(`[data-aurora-status="${name}"]`);if(!el)return;
+    el.textContent=text;el.className=`aurora-smart-status ${tone||''}`.trim();
+  };
+  dock.querySelectorAll('[data-aurora-route]').forEach(link=>{
+    const name=link.dataset.auroraRoute;link.href=routes[name]||'#';link.classList.toggle('active',name===page);
+    if(name===page)link.setAttribute('aria-current','page');
+  });
+  const current=dock.querySelector('[data-aurora-current-label]');if(current)current.textContent=labels[page]||labels.nexus;
+  const [nextRoute,nextText]=nextMap[page]||nextMap.nexus;const next=dock.querySelector('[data-aurora-next]');if(next){next.href=routes[nextRoute];next.textContent=nextText}
+  dock.querySelector('[data-aurora-back]')?.addEventListener('click',()=>{
+    const ref=document.referrer;
+    if(history.length>1 && (local || (ref && new URL(ref,location.href).origin===location.origin)))history.back();
+    else location.href=routes.nexus;
+  });
+  function refresh(){
+    const mission=read('aurora_wealth_investment_mission_v1');
+    const decision=read('aurora_trading_brain_decision_v1');
+    const queue=read('aurora_pending_registrations_v1');
+    if(mission){
+      const amount=mission.investmentAmount??mission.amount??mission.totalInvestment??0;
+      const status=String(mission.status||'READY').replaceAll('_',' ');
+      setStatus('wealth',`${money(amount)} ${status}`,'good');
+    }else setStatus('wealth','NO MISSION','watch');
+    if(decision){
+      const count=Array.isArray(decision.allocations)?decision.allocations.length:Array.isArray(decision.items)?decision.items.length:0;
+      setStatus('brain',count?`${count} PICKS READY`:'PLAN READY','good');
+    }else setStatus('brain','WAITING','watch');
+    if(queue&&Array.isArray(queue.items)&&queue.items.length){
+      const complete=queue.items.filter(x=>['PURCHASED','REGISTERED','COMPLETE'].includes(String(x.status||'').toUpperCase())).length;
+      const left=Math.max(0,queue.items.length-complete);
+      setStatus('registration',left?`${left} WAITING`:'COMPLETE',left?'watch':'good');
+    }else setStatus('registration','EMPTY','');
+  }
+  refresh();
+  window.addEventListener('storage',e=>{if(['aurora_wealth_investment_mission_v1','aurora_trading_brain_decision_v1','aurora_pending_registrations_v1'].includes(e.key))refresh()});
+  window.addEventListener('aurora:wealth-mission',refresh);
+  window.addEventListener('aurora:registration-queue',refresh);
+  setInterval(refresh,5000);
 })();
 </script>
 
