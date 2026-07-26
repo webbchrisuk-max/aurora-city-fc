@@ -13,7 +13,8 @@
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style">
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
-<title>Aurora City FC — Transfer Centre M9 Wealth HQ Linked</title>
+<title>Aurora City FC — Transfer Centre M10 Route & Offers Fixed</title>
+<!-- Build: Transfer Centre M10 Route Reset + Offer De-duplication • 26 Jul 2026 -->
 <!-- Build: Transfer Centre M9 Direct Wealth HQ Budget Handoff • 26 Jul 2026 -->
 <!-- Build: Transfer Centre M8 Trading Brain Linked Execution Room • 25 Jul 2026 -->
 <!-- Build: Transfer Centre M6 ISA Execution Controls • 25 Jul 2026 -->
@@ -8685,7 +8686,21 @@ function offerStatusRank(status){
 }
 function renderIncomingOffers(){
   const grid=$('incomingOfferGrid');if(!grid)return;
-  const ordered=[...incomingOffers].sort((a,b)=>offerStatusRank(a.status)-offerStatusRank(b.status)||new Date(b.createdAt||0)-new Date(a.createdAt||0));
+  // De-duplicate repeated offer records returned by regenerated market rounds.
+  // Prefer the newest record for the same offer ID; otherwise collapse identical ticker/status/target offers.
+  const offerMap=new Map();
+  [...incomingOffers].forEach(offer=>{
+    const clause=incomingOfferClauseData(offer);
+    const key=String(offer.offerId||'').trim() || [
+      cleanTicker(offer.ticker||''),
+      String(offer.status||'OPEN').toUpperCase(),
+      Number(clause.targetPrice||offer.targetPrice||offer.offerPrice||0).toFixed(6),
+      String(offer.bidderName||'Aurora Market').trim().toUpperCase()
+    ].join('|');
+    const previous=offerMap.get(key);
+    if(!previous || new Date(offer.createdAt||0)>new Date(previous.createdAt||0)) offerMap.set(key,offer);
+  });
+  const ordered=[...offerMap.values()].sort((a,b)=>offerStatusRank(a.status)-offerStatusRank(b.status)||new Date(b.createdAt||0)-new Date(a.createdAt||0));
   const storedOpen=ordered.filter(o=>['OPEN','COUNTERED'].includes(String(o.status||'').toUpperCase()));
   const activeOffers=storedOpen.filter(o=>incomingOfferClauseData(o).met);
   const waitingOffers=storedOpen.filter(o=>!incomingOfferClauseData(o).met);
@@ -9873,8 +9888,12 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     mission.status='TRANSFER_CENTRE_LOADED';
     mission.updatedAt=new Date().toISOString();
     write(WEALTH_KEY,mission);
+    // A fresh Wealth HQ mission must start from the full eligible transfer pool.
+    // Clear any exclusions/manual allocations left over from an older window before rebuilding.
+    try{ manualAmounts.clear(); }catch(_){ }
+    try{ excludedTickers.clear(); }catch(_){ }
+    try{ persistTransferSettings(); }catch(_){ }
     if(typeof window.renderAll==='function'){
-      try{ window.manualAmounts?.clear?.(); }catch(_){ }
       try{ window.renderAll(); }catch(error){ console.warn('Aurora bridge render',error); }
     }
     const note=$id('dealBudgetContext');
