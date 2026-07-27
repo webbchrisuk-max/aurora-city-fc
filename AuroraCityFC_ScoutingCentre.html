@@ -4297,35 +4297,20 @@ body.aurora-transfer-test-active .aurora-system-dock{border-color:rgba(251,191,3
     window.addEventListener('resize',function(){
       if(window.innerWidth>820) closeMobile();
     });
-    
+    // Sidebar stability fix: never auto-collapse the desktop navigation on scroll.
+    // On mobile, scrolling closes the temporary drawer only.
     var lastY=Math.max(0,window.scrollY||0);
     var scrollTick=false;
-    var lastDirection='';
-    function autoSidebarOnScroll(){
+    function keepSidebarStableOnScroll(){
       var y=Math.max(0,window.scrollY||0);
-      var delta=y-lastY;
-      if(window.innerWidth<=820){
-        if(Math.abs(delta)>3) closeMobile();
-      }else{
-        if(y<=24){
-          document.body.classList.remove('aufc-nav-collapsed');
-          lastDirection='up';
-        }else if(delta>7 && lastDirection!=='down'){
-          document.body.classList.add('aufc-nav-collapsed');
-          lastDirection='down';
-        }else if(delta<-7 && lastDirection!=='up'){
-          document.body.classList.remove('aufc-nav-collapsed');
-          lastDirection='up';
-        }
-        sync();
-      }
+      if(window.innerWidth<=820 && Math.abs(y-lastY)>3) closeMobile();
       lastY=y;
       scrollTick=false;
     }
     window.addEventListener('scroll',function(){
       if(!scrollTick){
         scrollTick=true;
-        window.requestAnimationFrame(autoSidebarOnScroll);
+        window.requestAnimationFrame(keepSidebarStableOnScroll);
       }
     },{passive:true});
     sync();
