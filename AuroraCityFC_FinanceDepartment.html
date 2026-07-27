@@ -3023,6 +3023,29 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 }
 </style>
 
+
+<style id="m27RoomLedgerUpgradeStyles">
+/* ===================== M27 ROOM-BY-ROOM HOUSE LEDGER UPGRADE ===================== */
+.m27-room-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:17px 0 10px;padding-top:14px;border-top:1px solid rgba(125,211,252,.10)}
+.m27-room-head h3{margin:0;font-size:17px}.m27-room-head small{display:block;margin-top:3px;color:#91a5bd;font-size:9px}
+.m27-add-room-btn{border:1px solid rgba(167,139,250,.32)!important;background:rgba(167,139,250,.08)!important;color:#d8ccff!important;border-radius:11px!important;padding:9px 11px!important;font-size:9px!important;font-weight:950!important}
+.m27-room-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.m27-room-card{position:relative;overflow:hidden;min-height:150px;padding:13px;border:1px solid rgba(125,211,252,.14);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.014))}
+.m27-room-card:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--room-accent,#22d3ee)}
+.m27-room-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.m27-room-name{font-size:13px;font-weight:1000}.m27-room-count{font-size:8px;color:#91a5bd}
+.m27-room-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.m27-room-stat{padding:8px;border-radius:11px;border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.022)}.m27-room-stat span{display:block;color:#8195aa;font-size:7px;text-transform:uppercase;font-weight:950}.m27-room-stat strong{display:block;margin-top:4px;font-size:12px}
+.m27-room-bar{height:8px;margin-top:10px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}.m27-room-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#22d3ee,#34d399)}
+.m27-room-foot{display:flex;justify-content:space-between;gap:8px;margin-top:7px;color:#8fa2b8;font-size:8px}.m27-room-foot b.good{color:#8cffb8}.m27-room-foot b.risk{color:#ffadba}
+.m27-form-room{grid-template-columns:1.15fr .7fr .65fr .65fr .72fr .78fr .9fr auto!important}
+.m27-ledger-row{grid-template-columns:minmax(0,1.25fr) 92px 160px 170px!important}
+.m27-cost-pair{display:grid;gap:4px;text-align:right}.m27-cost-pair div{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:#8da1b8}.m27-cost-pair strong{color:#edf7ff;font-size:11px}.m27-cost-pair .saving strong{color:#8cffb8}.m27-cost-pair .overspend strong{color:#ffadba}
+.m27-actual-edit{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}.m27-actual-input{min-width:95px;width:100%;padding:8px 9px!important;border-radius:10px!important;font-size:12px!important;font-weight:950!important;text-align:right}.m27-save-actual{border:1px solid rgba(96,165,250,.28)!important;background:rgba(96,165,250,.07)!important;color:#b4ddff!important;border-radius:9px!important;padding:8px!important;font-size:8px!important;font-weight:950!important}
+.m27-room-tag{display:inline-flex;margin-bottom:5px;padding:4px 7px;border-radius:999px;border:1px solid rgba(167,139,250,.24);background:rgba(167,139,250,.07);color:#d8ccff;font-size:7px;font-weight:950;text-transform:uppercase;letter-spacing:.45px}
+@media(max-width:1300px){.m27-room-grid{grid-template-columns:repeat(3,1fr)}.m27-form-room{grid-template-columns:repeat(4,1fr)!important}.m27-add-btn{grid-column:1/-1}.m27-ledger-row{grid-template-columns:minmax(0,1fr) 90px 150px!important}.m27-entry-actions{grid-column:1/-1;justify-content:flex-start}}
+@media(max-width:850px){.m27-room-grid{grid-template-columns:1fr 1fr}.m27-form-room{grid-template-columns:1fr 1fr!important}.m27-ledger-row{grid-template-columns:1fr auto!important}.m27-cost-pair{text-align:left}.m27-cost-pair div{justify-content:flex-start}.m27-actual-edit{grid-column:1/-1}}
+@media(max-width:500px){.m27-room-grid,.m27-form-room{grid-template-columns:1fr!important}.m27-room-head{align-items:flex-start;display:grid}}
+</style>
+
 </head>
 <body>
 
@@ -3353,38 +3376,45 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 
 
 
+
   <!-- ===================== M27 HOUSE PROJECT LEDGER ===================== -->
   <section class="section card m27-house-ledger" id="m27HouseProjectLedger">
     <div class="command-title">
       <div>
         <h2>House Project Ledger</h2>
-        <div class="subv">Track available House Pot cash and completed renovation spending as one £19,000 project mission.</div>
+        <div class="subv">Room-by-room renovation control with estimated costs, actual costs and live House Pot deductions.</div>
       </div>
-      <div class="command-badge good">M27 PROJECT CONTROL</div>
+      <div class="command-badge good">ROOM CONTROL</div>
     </div>
 
     <div class="m27-house-hero">
       <div class="m27-house-copy">
         <div class="m13-eyebrow">HOUSE FUNDING RULE</div>
-        <h3>Spending on the house still counts as progress.</h3>
-        <p>Upcoming payments are reserved first. When you mark one paid, Aurora reduces the House Pot cash and increases confirmed house spending by the same amount. The total funded progress therefore stays unchanged.</p>
-        <div class="m27-house-rule"><strong>Funded progress = current House Pot cash + confirmed house spending.</strong> The payday allocator now uses this project progress—not the cash balance alone—to calculate the remaining gap.</div>
+        <h3>Every payment belongs to a room.</h3>
+        <p>Reserved work uses the estimated cost. Once you enter the actual cost and mark it paid, only the actual amount is deducted from the House Pot. Any saving is released back into available cash automatically.</p>
+        <div class="m27-house-rule"><strong>Funded progress = current House Pot cash + confirmed actual house spending.</strong> Reserved estimates reduce available cash but do not count as spent until paid.</div>
       </div>
       <div class="m27-progress-card">
         <div class="m27-progress-ring" id="m27ProgressRing"><div><strong id="m27ProgressPct">0%</strong><small>Project funded</small></div></div>
-        <div class="subv" id="m27ProgressCaption" style="margin-top:10px">Calculating house progress…</div>
+        <div id="m27ProgressCaption" class="subv" style="margin-top:10px">Calculating house progress…</div>
       </div>
     </div>
 
     <div class="m27-kpis">
       <div class="m27-kpi" style="--m27-accent:#a78bfa"><span>Project target</span><strong id="m27TargetKpi">£0.00</strong></div>
       <div class="m27-kpi" style="--m27-accent:#22d3ee"><span>House Pot cash</span><strong id="m27CashKpi">£0.00</strong></div>
-      <div class="m27-kpi" style="--m27-accent:#fbbf24"><span>Upcoming reserved</span><strong id="m27ReservedKpi">£0.00</strong></div>
+      <div class="m27-kpi" style="--m27-accent:#fbbf24"><span>Estimated reserved</span><strong id="m27ReservedKpi">£0.00</strong></div>
       <div class="m27-kpi" style="--m27-accent:#60a5fa"><span>Available after costs</span><strong id="m27AvailableKpi">£0.00</strong></div>
-      <div class="m27-kpi" style="--m27-accent:#34d399"><span>Spent on house</span><strong id="m27SpentKpi">£0.00</strong></div>
+      <div class="m27-kpi" style="--m27-accent:#34d399"><span>Actual spent</span><strong id="m27SpentKpi">£0.00</strong></div>
       <div class="m27-kpi" style="--m27-accent:#34d399"><span>Total funded progress</span><strong id="m27FundedKpi">£0.00</strong></div>
       <div class="m27-kpi" style="--m27-accent:#fb7185"><span>Remaining to fund</span><strong id="m27RemainingKpi">£0.00</strong></div>
     </div>
+
+    <div class="m27-room-head">
+      <div><h3>Room Dashboard</h3><small>Estimated, actual and remaining by room</small></div>
+      <button class="m27-add-room-btn" id="m27AddRoom" type="button">+ Add room</button>
+    </div>
+    <div class="m27-room-grid" id="m27RoomGrid"></div>
 
     <div class="m27-setup">
       <div class="m27-field"><label for="m27HouseTarget">House project target</label><input id="m27HouseTarget" type="number" min="0" step="0.01"></div>
@@ -3393,22 +3423,25 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
       <button class="m27-save-btn" id="m27SaveSetup" type="button">Save House Setup</button>
     </div>
 
-    <div class="m27-note"><strong>Historical spending:</strong> use the starting total for one combined amount, or add previous payments individually below. Do not enter the same payment in both places, or it will be counted twice.</div>
+    <div class="m27-note"><strong>Historical spending:</strong> use the starting total for one combined amount, or add previous payments individually by room. Do not enter the same payment in both places.</div>
 
-    <div class="m27-form">
-      <div class="m27-field"><label for="m27EntryName">Payment description</label><input id="m27EntryName" type="text" placeholder="e.g. Games-room panels"></div>
-      <div class="m27-field"><label for="m27EntryAmount">Amount</label><input id="m27EntryAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
+    <div class="m27-form m27-form-room">
+      <div class="m27-field"><label for="m27EntryName">Payment description</label><input id="m27EntryName" type="text" placeholder="e.g. TV & Soundbar"></div>
+      <div class="m27-field"><label for="m27EntryRoom">Room</label><select id="m27EntryRoom"></select></div>
+      <div class="m27-field"><label for="m27EntryEstimated">Estimated cost</label><input id="m27EntryEstimated" type="number" min="0" step="0.01" placeholder="2000.00"></div>
+      <div class="m27-field"><label for="m27EntryActual">Actual cost</label><input id="m27EntryActual" type="number" min="0" step="0.01" placeholder="Leave blank until known"></div>
       <div class="m27-field"><label for="m27EntryDate">Due / paid date</label><input id="m27EntryDate" type="date"></div>
-      <div class="m27-field"><label for="m27EntryType">Payment type</label><select id="m27EntryType"><option value="historical">Already paid — do not deduct cash</option><option value="reserved">Upcoming — reserve from House Pot</option></select></div>
-      <div class="m27-field"><label for="m27EntryCategory">Category</label><input id="m27EntryCategory" type="text" placeholder="House project"></div>
+      <div class="m27-field"><label for="m27EntryType">Payment type</label><select id="m27EntryType"><option value="historical">Already paid — historical</option><option value="reserved" selected>Upcoming — reserve from House Pot</option></select></div>
+      <div class="m27-field"><label for="m27EntryCategory">Work category</label><input id="m27EntryCategory" type="text" placeholder="Electrics, flooring, furniture…"></div>
       <button class="m27-add-btn" id="m27AddEntry" type="button">+ Add Payment</button>
     </div>
 
     <div id="m27HouseStatus" class="m27-status"></div>
-
     <div class="m27-ledger-head"><h3>House payment ledger</h3><small id="m27LedgerMeta">0 records</small></div>
     <div class="m27-ledger-list" id="m27LedgerList"></div>
   </section>
+
+
 
   <!-- ===================== M33 PAYDAY MISSION CONTROL + SCENARIO LAB ===================== -->
   <section class="section card m33-payday-section" id="m15PaydayAllocationCentre">
@@ -7789,278 +7822,173 @@ document.addEventListener("click",event=>{
 </script>
 
 
+
 <script>
-/* ===================== M27 HOUSE PROJECT LEDGER ENGINE ===================== */
+/* ===================== M27 HOUSE PROJECT LEDGER ENGINE — ROOM EDITION ===================== */
 (function(){
   'use strict';
 
-  const M27_VERSION = 27;
+  const M27_VERSION = 29;
   const M27_TARGET = 19000;
   const M27_OPENING_CASH = 16152.01;
+  const DEFAULT_ROOMS = ['Games Room','Living Room','Hallway','Kitchen','Whole House'];
+  const ROOM_COLOURS = ['#a78bfa','#22d3ee','#fbbf24','#34d399','#60a5fa','#fb7185','#f97316'];
   const M27_SEED_ENTRIES = [
-    {id:'m27-electrician-20260726',name:'Electrician',amount:280,due:'2026-07-26',category:'Electrical',status:'reserved',deducted:false,paidDate:'',notes:'Upcoming house payment'},
-    {id:'m27-window-20260727',name:'Window repair',amount:134,due:'2026-07-27',category:'Windows',status:'reserved',deducted:false,paidDate:'',notes:'Upcoming house payment'}
+    {id:'m27-electrician-20260726',name:'Electrician',estimated:280,actual:0,due:'2026-07-26',room:'Whole House',category:'Electrical',status:'reserved',deducted:false,paidDate:'',notes:'Upcoming house payment'},
+    {id:'m27-window-20260727',name:'Window repair',estimated:134,actual:0,due:'2026-07-27',room:'Whole House',category:'Windows',status:'reserved',deducted:false,paidDate:'',notes:'Upcoming house payment'}
   ];
 
-  function m27Money(value){
-    return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));
-  }
-  function m27Number(value){
-    const number = Number(String(value ?? '').replace(/[^0-9.-]/g,''));
-    return Number.isFinite(number) ? number : 0;
-  }
-  function m27Escape(value){
-    return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
-  }
-  function m27Today(){
-    const date = new Date();
-    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-  }
+  function m27Money(value){return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0))}
+  function m27Number(value){const n=Number(String(value??'').replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:0}
+  function m27Escape(value){return String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+  function m27Today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
   function m27HousePot(){
-    if(!Array.isArray(plannerState.editablePots)) plannerState.editablePots = [];
-    let pot = plannerState.editablePots.find(item=>String(item?.id||'')==='house_fund')
-      || plannerState.editablePots.find(item=>String(item?.name||'').trim().toLowerCase().includes('house'));
-    if(!pot){
-      pot = {id:'house_fund',name:'House Fund',balance:M27_OPENING_CASH,target:M27_TARGET,note:'Renovation and home projects',priority:2};
-      plannerState.editablePots.push(pot);
-    }
+    if(!Array.isArray(plannerState.editablePots))plannerState.editablePots=[];
+    let pot=plannerState.editablePots.find(item=>String(item?.id||'')==='house_fund')||plannerState.editablePots.find(item=>String(item?.name||'').trim().toLowerCase().includes('house'));
+    if(!pot){pot={id:'house_fund',name:'House Fund',balance:M27_OPENING_CASH,target:M27_TARGET,note:'Renovation and home projects',priority:2};plannerState.editablePots.push(pot)}
     return pot;
   }
   function m27NormaliseEntry(item,index){
-    const status = ['reserved','paid','historical'].includes(String(item?.status||'')) ? String(item.status) : (item?.paid ? 'paid' : 'reserved');
+    const status=['reserved','paid','historical'].includes(String(item?.status||''))?String(item.status):(item?.paid?'paid':'reserved');
+    const legacy=Math.max(0,m27Number(item?.amount));
+    const estimated=Math.max(0,m27Number(item?.estimated??legacy));
+    const actual=Math.max(0,m27Number(item?.actual??((status==='paid'||status==='historical')?legacy:0)));
     return {
-      id:String(item?.id||`house-${Date.now()}-${index}`),
-      name:String(item?.name||'House payment'),
-      amount:Math.max(0,m27Number(item?.amount)),
-      due:String(item?.due||''),
-      category:String(item?.category||'House project'),
-      status,
-      deducted:Boolean(item?.deducted),
-      paidDate:String(item?.paidDate||''),
-      notes:String(item?.notes||'')
+      id:String(item?.id||`house-${Date.now()}-${index}`),name:String(item?.name||'House payment'),
+      estimated,actual,amount:status==='reserved'?estimated:actual,due:String(item?.due||''),
+      room:String(item?.room||item?.category||'Whole House'),category:String(item?.category||'House project'),
+      status,deducted:Boolean(item?.deducted),paidDate:String(item?.paidDate||''),notes:String(item?.notes||'')
     };
   }
   function m27EnsureState(){
-    const pot = m27HousePot();
-    if(!plannerState.houseProjectLedger || typeof plannerState.houseProjectLedger !== 'object'){
-      plannerState.houseProjectLedger = {version:M27_VERSION,openingHistoricalSpend:0,entries:[]};
-    }
-    const ledger = plannerState.houseProjectLedger;
-    ledger.version = M27_VERSION;
-    ledger.openingHistoricalSpend = Math.max(0,m27Number(ledger.openingHistoricalSpend));
-    ledger.entries = Array.isArray(ledger.entries) ? ledger.entries.map(m27NormaliseEntry) : [];
-
+    const pot=m27HousePot();
+    if(!plannerState.houseProjectLedger||typeof plannerState.houseProjectLedger!=='object')plannerState.houseProjectLedger={version:M27_VERSION,openingHistoricalSpend:0,rooms:[...DEFAULT_ROOMS],entries:[]};
+    const ledger=plannerState.houseProjectLedger;
+    ledger.version=M27_VERSION;ledger.openingHistoricalSpend=Math.max(0,m27Number(ledger.openingHistoricalSpend));
+    ledger.rooms=Array.isArray(ledger.rooms)&&ledger.rooms.length?[...new Set(ledger.rooms.map(v=>String(v).trim()).filter(Boolean))]:[...DEFAULT_ROOMS];
+    DEFAULT_ROOMS.forEach(room=>{if(!ledger.rooms.includes(room))ledger.rooms.push(room)});
+    ledger.entries=Array.isArray(ledger.entries)?ledger.entries.map(m27NormaliseEntry):[];
     if(!plannerState.m27HouseProjectMigrated){
-      pot.target = M27_TARGET;
-      if(m27Number(pot.balance) <= 0) pot.balance = M27_OPENING_CASH;
-      M27_SEED_ENTRIES.forEach(seed=>{
-        const exists = ledger.entries.some(entry=>entry.id===seed.id || (String(entry.name).toLowerCase()===seed.name.toLowerCase() && Math.abs(entry.amount-seed.amount)<.01));
-        if(!exists) ledger.entries.push({...seed});
-      });
-      plannerState.m27HouseProjectMigrated = true;
-      if(typeof savePlannerData === 'function') savePlannerData();
+      pot.target=M27_TARGET;if(m27Number(pot.balance)<=0)pot.balance=M27_OPENING_CASH;
+      M27_SEED_ENTRIES.forEach(seed=>{const exists=ledger.entries.some(e=>e.id===seed.id||(e.name.toLowerCase()===seed.name.toLowerCase()&&Math.abs(e.estimated-seed.estimated)<.01));if(!exists)ledger.entries.push({...seed})});
+      plannerState.m27HouseProjectMigrated=true;if(typeof savePlannerData==='function')savePlannerData();
     }
     return {pot,ledger};
   }
   function m27Metrics(){
-    const {pot,ledger} = m27EnsureState();
-    const cash = Math.max(0,m27Number(pot.balance));
-    const target = Math.max(0,m27Number(pot.target));
-    const reserved = ledger.entries.filter(entry=>entry.status==='reserved').reduce((sum,entry)=>sum+entry.amount,0);
-    const entrySpend = ledger.entries.filter(entry=>entry.status==='paid'||entry.status==='historical').reduce((sum,entry)=>sum+entry.amount,0);
-    const spent = Math.max(0,m27Number(ledger.openingHistoricalSpend)) + entrySpend;
-    const funded = cash + spent;
-    const remaining = Math.max(0,target-funded);
-    const available = Math.max(0,cash-reserved);
-    const progress = target>0 ? Math.min(100,(funded/target)*100) : (funded>0?100:0);
-    return {pot,ledger,cash,target,reserved,spent,funded,remaining,available,progress};
+    const {pot,ledger}=m27EnsureState(),cash=Math.max(0,m27Number(pot.balance)),target=Math.max(0,m27Number(pot.target));
+    const reserved=ledger.entries.filter(e=>e.status==='reserved').reduce((s,e)=>s+e.estimated,0);
+    const entrySpend=ledger.entries.filter(e=>e.status==='paid'||e.status==='historical').reduce((s,e)=>s+e.actual,0);
+    const spent=Math.max(0,m27Number(ledger.openingHistoricalSpend))+entrySpend,funded=cash+spent,remaining=Math.max(0,target-funded),available=Math.max(0,cash-reserved),progress=target>0?Math.min(100,funded/target*100):(funded>0?100:0);
+    const rooms=ledger.rooms.map((room,index)=>{
+      const rows=ledger.entries.filter(e=>e.room===room);
+      const estimated=rows.reduce((s,e)=>s+e.estimated,0),actual=rows.filter(e=>e.status==='paid'||e.status==='historical').reduce((s,e)=>s+e.actual,0);
+      const pending=rows.filter(e=>e.status==='reserved').reduce((s,e)=>s+e.estimated,0),variance=estimated-actual;
+      return {room,index,rows,estimated,actual,pending,variance};
+    });
+    return {pot,ledger,cash,target,reserved,spent,funded,remaining,available,progress,rooms};
   }
   function m27Set(id,value){const el=document.getElementById(id);if(el)el.textContent=value}
-  function m27SetStatus(message,error=false){
-    const box=document.getElementById('m27HouseStatus');
-    if(!box)return;
-    box.textContent=message;
-    box.classList.toggle('error',Boolean(error));
-    box.classList.add('show');
-    clearTimeout(window.m27StatusTimer);
-    window.m27StatusTimer=setTimeout(()=>box.classList.remove('show'),5200);
-  }
-  function m27StatusLabel(status,deducted){return status==='paid'?'✅ Paid':(status==='historical'?'✅ Historically paid':'Reserved')}
-  function m27DateLabel(value){
-    if(!value)return 'No date';
-    try{return typeof dateLabel==='function'?dateLabel(value):new Date(value).toLocaleDateString('en-GB')}catch(_){return value}
+  function m27SetStatus(message,error=false){const box=document.getElementById('m27HouseStatus');if(!box)return;box.textContent=message;box.classList.toggle('error',!!error);box.classList.add('show');clearTimeout(window.m27StatusTimer);window.m27StatusTimer=setTimeout(()=>box.classList.remove('show'),5200)}
+  function m27StatusLabel(status){return status==='paid'?'✅ Paid':status==='historical'?'✅ Historically paid':'Reserved'}
+  function m27DateLabel(value){if(!value)return'No date';try{return typeof dateLabel==='function'?dateLabel(value):new Date(value).toLocaleDateString('en-GB')}catch(_){return value}}
+  function m27RenderRooms(metrics){
+    const select=document.getElementById('m27EntryRoom');if(select){const current=select.value;select.innerHTML=metrics.ledger.rooms.map(r=>`<option value="${m27Escape(r)}">${m27Escape(r)}</option>`).join('');if(metrics.ledger.rooms.includes(current))select.value=current}
+    const host=document.getElementById('m27RoomGrid');if(!host)return;
+    host.innerHTML=metrics.rooms.map((r,i)=>{
+      const pct=r.estimated>0?Math.min(100,r.actual/r.estimated*100):0;
+      const varianceClass=r.variance>=0?'good':'risk';
+      const varianceText=r.variance>=0?`${m27Money(r.variance)} under / unspent`:`${m27Money(Math.abs(r.variance))} over`;
+      return `<div class="m27-room-card" style="--room-accent:${ROOM_COLOURS[i%ROOM_COLOURS.length]}">
+        <div class="m27-room-top"><div class="m27-room-name">${m27Escape(r.room)}</div><div class="m27-room-count">${r.rows.length} item${r.rows.length===1?'':'s'}</div></div>
+        <div class="m27-room-stats"><div class="m27-room-stat"><span>Estimated</span><strong>${m27Money(r.estimated)}</strong></div><div class="m27-room-stat"><span>Actual spent</span><strong>${m27Money(r.actual)}</strong></div><div class="m27-room-stat"><span>Reserved</span><strong>${m27Money(r.pending)}</strong></div><div class="m27-room-stat"><span>Difference</span><strong>${m27Money(r.variance)}</strong></div></div>
+        <div class="m27-room-bar"><i style="width:${pct}%"></i></div>
+        <div class="m27-room-foot"><span>${pct.toFixed(0)}% of estimate spent</span><b class="${varianceClass}">${varianceText}</b></div>
+      </div>`;
+    }).join('');
   }
   function m27RenderLedger(metrics){
-    const host=document.getElementById('m27LedgerList');
-    if(!host)return;
-    const entries=[...metrics.ledger.entries].sort((a,b)=>{
-      const rank={reserved:0,paid:1,historical:2};
-      return (rank[a.status]??3)-(rank[b.status]??3) || String(a.due||'9999').localeCompare(String(b.due||'9999')) || a.name.localeCompare(b.name,'en-GB');
-    });
-    m27Set('m27LedgerMeta',`${entries.length} record${entries.length===1?'':'s'} • ${m27Money(metrics.reserved)} reserved • ${m27Money(metrics.spent)} spent`);
-    host.innerHTML=entries.length?entries.map(entry=>`
-      <div class="m27-ledger-row ${entry.status}">
-        <div><div class="m27-entry-name">${m27Escape(entry.name)}</div><div class="m27-entry-meta">${m27Escape(entry.category||'House project')}${entry.notes?` • ${m27Escape(entry.notes)}`:''}${entry.status==='paid'?' • completed from House Pot':(entry.status==='historical'?' • entered as earlier historical spending':'')}</div></div>
+    const host=document.getElementById('m27LedgerList');if(!host)return;
+    const entries=[...metrics.ledger.entries].sort((a,b)=>a.room.localeCompare(b.room,'en-GB')||({reserved:0,paid:1,historical:2}[a.status]-({reserved:0,paid:1,historical:2}[b.status]))||String(a.due||'9999').localeCompare(String(b.due||'9999')));
+    m27Set('m27LedgerMeta',`${entries.length} record${entries.length===1?'':'s'} • ${m27Money(metrics.reserved)} estimated reserved • ${m27Money(metrics.spent)} actual spent`);
+    host.innerHTML=entries.length?entries.map(entry=>{
+      const diff=entry.estimated-entry.actual,diffClass=diff>=0?'saving':'overspend';
+      return `<div class="m27-ledger-row ${entry.status}">
+        <div><span class="m27-room-tag">${m27Escape(entry.room)}</span><div class="m27-entry-name">${m27Escape(entry.name)}</div><div class="m27-entry-meta">${m27Escape(entry.category||'House project')}${entry.notes?` • ${m27Escape(entry.notes)}`:''}</div></div>
         <div class="m27-entry-date">${m27Escape(m27DateLabel(entry.paidDate||entry.due))}</div>
-        <div><span class="m27-status-pill ${entry.status}">${m27StatusLabel(entry.status,entry.deducted)}</span><div class="m27-entry-amount">${m27Money(entry.amount)}</div></div>
-        <div class="m27-entry-actions">
-          ${entry.status==='reserved'?`<button class="m27-paid-btn" type="button" data-m27-pay="${m27Escape(entry.id)}">Mark paid</button>`:''}
-          ${(entry.status==='paid'||entry.status==='historical')&&entry.deducted?`<button class="m27-undo-payment" type="button" data-m27-undo="${m27Escape(entry.id)}">Undo payment</button>`:''}
-          <button class="m27-delete-entry" type="button" data-m27-delete="${m27Escape(entry.id)}">Delete</button>
+        <div><span class="m27-status-pill ${entry.status}">${m27StatusLabel(entry.status)}</span>
+          <div class="m27-cost-pair"><div><span>Estimated</span><strong>${m27Money(entry.estimated)}</strong></div><div><span>Actual</span><strong>${entry.actual>0?m27Money(entry.actual):'Not entered'}</strong></div>${entry.actual>0?`<div class="${diffClass}"><span>Difference</span><strong>${diff>=0?'+':'-'}${m27Money(Math.abs(diff))}</strong></div>`:''}</div>
         </div>
-      </div>`).join(''):'<div class="m22-empty">No house payments have been recorded yet.</div>';
+        <div>
+          ${entry.status==='reserved'?`<div class="m27-actual-edit"><input class="m27-actual-input" type="number" min="0" step="0.01" value="${entry.actual||''}" placeholder="Actual cost" data-m27-actual="${m27Escape(entry.id)}"><button class="m27-save-actual" type="button" data-m27-save-actual="${m27Escape(entry.id)}">Save</button></div>`:''}
+          <div class="m27-entry-actions">
+            ${entry.status==='reserved'?`<button class="m27-paid-btn" type="button" data-m27-pay="${m27Escape(entry.id)}">Mark paid</button>`:''}
+            ${(entry.status==='paid'||entry.status==='historical')&&entry.deducted?`<button class="m27-undo-payment" type="button" data-m27-undo="${m27Escape(entry.id)}">Undo payment</button>`:''}
+            <button class="m27-delete-entry" type="button" data-m27-delete="${m27Escape(entry.id)}">Delete</button>
+          </div>
+        </div>
+      </div>`;
+    }).join(''):'<div class="m22-empty">No house payments have been recorded yet.</div>';
   }
   function m27Render(){
-    const metrics=m27Metrics();
-    m27Set('m27TargetKpi',m27Money(metrics.target));
-    m27Set('m27CashKpi',m27Money(metrics.cash));
-    m27Set('m27ReservedKpi',m27Money(metrics.reserved));
-    m27Set('m27AvailableKpi',m27Money(metrics.available));
-    m27Set('m27SpentKpi',m27Money(metrics.spent));
-    m27Set('m27FundedKpi',m27Money(metrics.funded));
-    m27Set('m27RemainingKpi',m27Money(metrics.remaining));
-    m27Set('m27ProgressPct',`${metrics.progress.toFixed(1)}%`);
-    m27Set('m27ProgressCaption',metrics.remaining>.009?`${m27Money(metrics.remaining)} remains to reach the ${m27Money(metrics.target)} project target.`:`Project target reached • ${m27Money(Math.max(0,metrics.funded-metrics.target))} above target.`);
-    document.getElementById('m27ProgressRing')?.style.setProperty('--m27-progress',`${metrics.progress}%`);
-    const target=document.getElementById('m27HouseTarget'),cash=document.getElementById('m27HouseCash'),opening=document.getElementById('m27OpeningSpend');
-    if(target && document.activeElement!==target)target.value=metrics.target.toFixed(2);
-    if(cash && document.activeElement!==cash)cash.value=metrics.cash.toFixed(2);
-    if(opening && document.activeElement!==opening)opening.value=metrics.ledger.openingHistoricalSpend.toFixed(2);
-    m27RenderLedger(metrics);
+    const m=m27Metrics();
+    m27Set('m27TargetKpi',m27Money(m.target));m27Set('m27CashKpi',m27Money(m.cash));m27Set('m27ReservedKpi',m27Money(m.reserved));m27Set('m27AvailableKpi',m27Money(m.available));m27Set('m27SpentKpi',m27Money(m.spent));m27Set('m27FundedKpi',m27Money(m.funded));m27Set('m27RemainingKpi',m27Money(m.remaining));m27Set('m27ProgressPct',`${m.progress.toFixed(1)}%`);
+    m27Set('m27ProgressCaption',m.remaining>.009?`${m27Money(m.remaining)} remains to reach the ${m27Money(m.target)} project target.`:`Project target reached • ${m27Money(Math.max(0,m.funded-m.target))} above target.`);
+    document.getElementById('m27ProgressRing')?.style.setProperty('--m27-progress',`${m.progress}%`);
+    [['m27HouseTarget',m.target],['m27HouseCash',m.cash],['m27OpeningSpend',m.ledger.openingHistoricalSpend]].forEach(([id,v])=>{const el=document.getElementById(id);if(el&&document.activeElement!==el)el.value=Number(v).toFixed(2)});
+    m27RenderRooms(m);m27RenderLedger(m);
   }
   function m27SaveSetup(){
-    const {pot,ledger}=m27EnsureState();
-    const target=Math.max(0,m27Number(document.getElementById('m27HouseTarget')?.value));
-    const cash=Math.max(0,m27Number(document.getElementById('m27HouseCash')?.value));
-    const opening=Math.max(0,m27Number(document.getElementById('m27OpeningSpend')?.value));
-    pot.target=target;pot.balance=cash;ledger.openingHistoricalSpend=opening;
-    if(typeof savePlannerData==='function')savePlannerData();
-    if(typeof renderPotEditor==='function')renderPotEditor();
-    if(typeof runPlanner==='function')runPlanner();else m27Render();
-    m27SetStatus(`House setup saved. The project is ${m27Money(m27Metrics().funded)} funded with ${m27Money(m27Metrics().remaining)} remaining.`);
+    const {pot,ledger}=m27EnsureState();pot.target=Math.max(0,m27Number(document.getElementById('m27HouseTarget')?.value));pot.balance=Math.max(0,m27Number(document.getElementById('m27HouseCash')?.value));ledger.openingHistoricalSpend=Math.max(0,m27Number(document.getElementById('m27OpeningSpend')?.value));
+    if(typeof savePlannerData==='function')savePlannerData();if(typeof renderPotEditor==='function')renderPotEditor();if(typeof runPlanner==='function')runPlanner();else m27Render();m27SetStatus(`House setup saved. ${m27Money(m27Metrics().remaining)} remains to fund.`);
   }
   function m27AddEntry(){
-    const {ledger}=m27EnsureState();
-    const name=String(document.getElementById('m27EntryName')?.value||'').trim();
-    const amount=Math.max(0,m27Number(document.getElementById('m27EntryAmount')?.value));
-    const due=String(document.getElementById('m27EntryDate')?.value||'');
-    const type=String(document.getElementById('m27EntryType')?.value||'historical');
-    const category=String(document.getElementById('m27EntryCategory')?.value||'House project').trim()||'House project';
-    if(!name||amount<=0){m27SetStatus('Enter a payment description and an amount above £0.',true);return}
-    ledger.entries.push({id:`house-${Date.now()}-${Math.random().toString(16).slice(2)}`,name,amount,due,category,status:type==='reserved'?'reserved':'historical',deducted:false,paidDate:type==='historical'?(due||m27Today()):'',notes:type==='historical'?'Previous payment added without deducting current cash':'Upcoming House Pot payment'});
-    ['m27EntryName','m27EntryAmount','m27EntryDate','m27EntryCategory'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
-    if(typeof savePlannerData==='function')savePlannerData();
-    if(typeof runPlanner==='function')runPlanner();else m27Render();
-    m27SetStatus(type==='reserved'?`${name} is reserved from the House Pot.`:`${name} was added as historical spending without changing the current House Pot balance.`);
+    const {ledger}=m27EnsureState(),name=String(document.getElementById('m27EntryName')?.value||'').trim(),estimated=Math.max(0,m27Number(document.getElementById('m27EntryEstimated')?.value)),actual=Math.max(0,m27Number(document.getElementById('m27EntryActual')?.value)),due=String(document.getElementById('m27EntryDate')?.value||''),type=String(document.getElementById('m27EntryType')?.value||'reserved'),room=String(document.getElementById('m27EntryRoom')?.value||'Whole House'),category=String(document.getElementById('m27EntryCategory')?.value||'House project').trim()||'House project';
+    if(!name||estimated<=0){m27SetStatus('Enter a payment description and an estimated cost above £0.',true);return}
+    if(type==='historical'&&actual<=0){m27SetStatus('Enter the actual cost for a payment that is already paid.',true);return}
+    ledger.entries.push({id:`house-${Date.now()}-${Math.random().toString(16).slice(2)}`,name,estimated,actual:type==='historical'?actual:actual,due,room,category,status:type==='reserved'?'reserved':'historical',deducted:false,paidDate:type==='historical'?(due||m27Today()):'',notes:type==='historical'?'Previous payment added without deducting current cash':'Upcoming House Pot payment'});
+    ['m27EntryName','m27EntryEstimated','m27EntryActual','m27EntryDate','m27EntryCategory'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+    if(typeof savePlannerData==='function')savePlannerData();if(typeof runPlanner==='function')runPlanner();else m27Render();m27SetStatus(type==='reserved'?`${name} reserved at ${m27Money(estimated)} for ${room}.`:`${name} added to ${room} with an actual cost of ${m27Money(actual)}.`);
   }
-  function m27FindEntry(id){const {ledger}=m27EnsureState();return ledger.entries.find(entry=>entry.id===id)}
+  function m27Find(id){return m27EnsureState().ledger.entries.find(e=>e.id===id)}
+  function m27SaveActual(id,input){
+    const e=m27Find(id);if(!e||e.status!=='reserved')return;const actual=Math.max(0,m27Number(input?.value));if(actual<=0){m27SetStatus('Enter the actual cost before saving.',true);return}
+    e.actual=actual;if(typeof savePlannerData==='function')savePlannerData();m27Render();m27SetStatus(`${e.name} actual cost saved as ${m27Money(actual)}.`);
+  }
   function m27PayEntry(id){
-    // Build metrics first, then retrieve the entry from that same normalised ledger.
-    // Calling m27FindEntry() before m27Metrics() created a stale object reference:
-    // the cash changed, but the status update was applied to an object no longer in the ledger.
-    const metrics=m27Metrics();
-    const entry=metrics.ledger.entries.find(item=>item.id===id);
-    if(!entry||entry.status!=='reserved')return;
-    if(metrics.cash+0.009<entry.amount){m27SetStatus(`The House Pot has ${m27Money(metrics.cash)}, which is not enough to record this ${m27Money(entry.amount)} payment.`,true);return}
-    metrics.pot.balance=Math.max(0,metrics.cash-entry.amount);
-    entry.status='paid';
-    entry.deducted=true;
-    entry.paidDate=m27Today();
-    if(typeof savePlannerData==='function')savePlannerData();
-    if(typeof renderPotEditor==='function')renderPotEditor();
-    if(typeof runPlanner==='function')runPlanner();else m27Render();
-    m27SetStatus(`${entry.name} is now marked ✅ Paid. House Pot cash fell by ${m27Money(entry.amount)}, and the payment is shown in History.`);
+    const m=m27Metrics(),e=m.ledger.entries.find(x=>x.id===id);if(!e||e.status!=='reserved')return;
+    if(e.actual<=0){m27SetStatus(`Enter the actual cost for ${e.name} before marking it paid.`,true);return}
+    if(m.cash+0.009<e.actual){m27SetStatus(`The House Pot has ${m27Money(m.cash)}, which is not enough for the actual cost of ${m27Money(e.actual)}.`,true);return}
+    m.pot.balance=Math.max(0,m.cash-e.actual);e.status='paid';e.deducted=true;e.paidDate=m27Today();e.amount=e.actual;
+    if(typeof savePlannerData==='function')savePlannerData();if(typeof renderPotEditor==='function')renderPotEditor();if(typeof runPlanner==='function')runPlanner();else m27Render();
+    const diff=e.estimated-e.actual;m27SetStatus(`${e.name} marked paid. ${m27Money(e.actual)} came off the House Pot${diff>0?`, releasing ${m27Money(diff)} back from the estimate`:diff<0?`, ${m27Money(Math.abs(diff))} over estimate`:''}.`);
   }
   function m27UndoEntry(id){
-    const metrics=m27Metrics();
-    const entry=metrics.ledger.entries.find(item=>item.id===id);
-    if(!entry||(entry.status!=='paid'&&entry.status!=='historical')||!entry.deducted)return;
-    metrics.pot.balance=metrics.cash+entry.amount;
-    entry.status='reserved';
-    entry.deducted=false;
-    entry.paidDate='';
-    if(typeof savePlannerData==='function')savePlannerData();
-    if(typeof renderPotEditor==='function')renderPotEditor();
-    if(typeof runPlanner==='function')runPlanner();else m27Render();
-    m27SetStatus(`${entry.name} was undone. ${m27Money(entry.amount)} was restored to the House Pot and returned to reserved costs.`);
+    const m=m27Metrics(),e=m.ledger.entries.find(x=>x.id===id);if(!e||(e.status!=='paid'&&e.status!=='historical')||!e.deducted)return;
+    m.pot.balance=m.cash+e.actual;e.status='reserved';e.deducted=false;e.paidDate='';
+    if(typeof savePlannerData==='function')savePlannerData();if(typeof renderPotEditor==='function')renderPotEditor();if(typeof runPlanner==='function')runPlanner();else m27Render();m27SetStatus(`${e.name} was undone. ${m27Money(e.actual)} was restored to the House Pot.`);
   }
   function m27DeleteEntry(id){
-    const {pot,ledger}=m27EnsureState();
-    const index=ledger.entries.findIndex(entry=>entry.id===id);if(index<0)return;
-    const entry=ledger.entries[index];
-    if((entry.status==='paid'||entry.status==='historical')&&entry.deducted)pot.balance=m27Number(pot.balance)+entry.amount;
-    ledger.entries.splice(index,1);
-    if(typeof savePlannerData==='function')savePlannerData();
-    if(typeof renderPotEditor==='function')renderPotEditor();
-    if(typeof runPlanner==='function')runPlanner();else m27Render();
-    m27SetStatus(`${entry.name} was deleted${(entry.status==='paid'||entry.status==='historical')&&entry.deducted?' and its cash deduction was restored':''}.`);
+    const {pot,ledger}=m27EnsureState(),i=ledger.entries.findIndex(e=>e.id===id);if(i<0)return;const e=ledger.entries[i];
+    if((e.status==='paid'||e.status==='historical')&&e.deducted)pot.balance=m27Number(pot.balance)+e.actual;ledger.entries.splice(i,1);
+    if(typeof savePlannerData==='function')savePlannerData();if(typeof renderPotEditor==='function')renderPotEditor();if(typeof runPlanner==='function')runPlanner();else m27Render();m27SetStatus(`${e.name} was deleted.`);
+  }
+  function m27AddRoom(){
+    const name=prompt('New room or area name:');if(!name)return;const clean=String(name).trim();if(!clean)return;
+    const {ledger}=m27EnsureState();if(ledger.rooms.some(r=>r.toLowerCase()===clean.toLowerCase())){m27SetStatus(`${clean} already exists.`,true);return}
+    ledger.rooms.push(clean);if(typeof savePlannerData==='function')savePlannerData();m27Render();document.getElementById('m27EntryRoom').value=clean;m27SetStatus(`${clean} added to the room dashboard.`);
   }
 
-  window.m27HouseMetrics=m27Metrics;
-  window.m27HouseProjectProgress=function(){return m27Metrics().funded};
-
-  const m27OriginalPotGap=window.m15PotGap;
-  window.m15PotGap=function(pot){
-    const id=String(pot?.id||'');
-    const name=String(pot?.name||'').toLowerCase();
-    if(id==='house_fund'||name.includes('house')){
-      const metrics=m27Metrics();
-      return Math.max(0,Number(pot?.target||metrics.target)-metrics.funded);
-    }
-    return typeof m27OriginalPotGap==='function'?m27OriginalPotGap(pot):Math.max(0,Number(pot?.target||0)-Number(pot?.balance||0));
-  };
-
-  window.renderPotHealthRadar=function(){
-    const grid=document.getElementById('potHealthRadar');if(!grid)return;
-    const pots=[...(Array.isArray(plannerState.editablePots)?plannerState.editablePots:[])];
-    pots.sort((a,b)=>{
-      const pa=normalisePotPriority(a.priority),pb=normalisePotPriority(b.priority);if(pa!==pb)return pa-pb;
-      const av=(Number(a.target||0)>0?Math.max(0,Number(a.target||0)-m15PotGap(a))/Number(a.target||1):1);
-      const bv=(Number(b.target||0)>0?Math.max(0,Number(b.target||0)-m15PotGap(b))/Number(b.target||1):1);
-      return av-bv||String(a.name||'').localeCompare(String(b.name||''),'en-GB');
-    });
-    const houseMetrics=m27Metrics();
-    grid.innerHTML=pots.map(p=>{
-      const isHouse=String(p.id||'')==='house_fund'||String(p.name||'').toLowerCase().includes('house');
-      const current=isHouse?houseMetrics.funded:Number(p.balance||0),target=Number(p.target||0);
-      const progress=target>0?Math.min(100,(current/target)*100):(current>0?100:0);
-      const cls=progress>=85?'good':progress>=45?'watch':'risk',priority=normalisePotPriority(p.priority),targetText=target>0?`£${formatMoney(target)}`:'Open target';
-      const detail=isHouse?`£${formatMoney(houseMetrics.cash)} cash + £${formatMoney(houseMetrics.spent)} spent = £${formatMoney(houseMetrics.funded)} funded`:`£${formatMoney(current)} / ${targetText} • ${progress.toFixed(0)}%`;
-      return `<div class="pot-radar-card ${cls} priority-${priority}"><div class="pot-radar-top"><div class="pot-name">${m27Escape(p.name||'Unnamed Pot')}</div><span class="pot-priority-rank">P${priority} ${priorityLabel(priority)}</span></div><div class="subv">${m27Escape(p.note||'Personal goal pot')}</div><div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div><div class="subv">${detail}${isHouse?` • ${progress.toFixed(0)}%`:''}</div></div>`;
-    }).join('')||'<div class="subv">Add pots in the Editable Pot Manager to build your radar.</div>';
-  };
-
-  try{
-    if(typeof M14_VIEWS!=='undefined'&&M14_VIEWS.m13PotHealth&&!M14_VIEWS.m13PotHealth.headings.includes('House Project Ledger')){
-      M14_VIEWS.m13PotHealth.headings.splice(2,0,'House Project Ledger');
-    }
-    if(typeof M14_VIEWS!=='undefined'&&M14_VIEWS.m13History){
-      M14_VIEWS.m13History.headings=M14_VIEWS.m13History.headings.filter(heading=>heading!=='House Project Ledger');
-    }
-    if(typeof M16_VIEW_DATA!=='undefined'&&M16_VIEW_DATA.m13PotHealth){
-      M16_VIEW_DATA.m13PotHealth.kpis=()=>{
-        const pots=Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[];
-        const totalCash=pots.reduce((sum,p)=>sum+Number(p.balance||0),0);
-        const target=pots.reduce((sum,p)=>sum+Number(p.target||0),0);
-        const gap=pots.reduce((sum,p)=>sum+Number(m15PotGap(p)||0),0);
-        const critical=pots.filter(p=>Number(p.priority||2)===1&&m15PotGap(p)>.009).length;
-        return [['Total pot cash',m16Money(totalCash),'#22d3ee'],['Combined targets',m16Money(target),'#a78bfa'],['Remaining funding gap',m16Money(gap),'#fbbf24'],['Critical pots below target',String(critical),'#fb7185']];
-      };
-    }
-  }catch(error){console.warn('M27 view integration warning',error)}
-
-  const m27OriginalRunPlanner=window.runPlanner;
-  if(typeof m27OriginalRunPlanner==='function'){
-    window.runPlanner=function(){m27EnsureState();const result=m27OriginalRunPlanner.apply(this,arguments);m27Render();return result};
-  }
-  const m27OriginalResetPlannerData=window.resetPlannerData;
-  if(typeof m27OriginalResetPlannerData==='function'){
-    window.resetPlannerData=function(){const result=m27OriginalResetPlannerData.apply(this,arguments);plannerState.m27HouseProjectMigrated=false;m27EnsureState();return result};
-  }
+  window.m27HouseMetrics=m27Metrics;window.m27HouseProjectProgress=()=>m27Metrics().funded;
+  const originalGap=window.m15PotGap;window.m15PotGap=function(pot){const id=String(pot?.id||''),name=String(pot?.name||'').toLowerCase();if(id==='house_fund'||name.includes('house')){const m=m27Metrics();return Math.max(0,Number(pot?.target||m.target)-m.funded)}return typeof originalGap==='function'?originalGap(pot):Math.max(0,Number(pot?.target||0)-Number(pot?.balance||0))};
+  const originalRun=window.runPlanner;if(typeof originalRun==='function')window.runPlanner=function(){m27EnsureState();const result=originalRun.apply(this,arguments);m27Render();return result};
+  const originalReset=window.resetPlannerData;if(typeof originalReset==='function')window.resetPlannerData=function(){const result=originalReset.apply(this,arguments);plannerState.m27HouseProjectMigrated=false;m27EnsureState();return result};
 
   document.getElementById('m27SaveSetup')?.addEventListener('click',m27SaveSetup);
   document.getElementById('m27AddEntry')?.addEventListener('click',m27AddEntry);
+  document.getElementById('m27AddRoom')?.addEventListener('click',m27AddRoom);
   document.getElementById('m27LedgerList')?.addEventListener('click',event=>{
+    const save=event.target.closest('[data-m27-save-actual]');if(save){const input=document.querySelector(`[data-m27-actual="${CSS.escape(save.dataset.m27SaveActual)}"]`);m27SaveActual(save.dataset.m27SaveActual,input);return}
     const pay=event.target.closest('[data-m27-pay]');if(pay){m27PayEntry(pay.dataset.m27Pay);return}
     const undo=event.target.closest('[data-m27-undo]');if(undo){m27UndoEntry(undo.dataset.m27Undo);return}
     const del=event.target.closest('[data-m27-delete]');if(del)m27DeleteEntry(del.dataset.m27Delete);
@@ -8068,10 +7996,10 @@ document.addEventListener("click",event=>{
   document.getElementById('savePotsBtn')?.addEventListener('click',()=>setTimeout(m27Render,0));
   document.getElementById('potEditorGrid')?.addEventListener('change',()=>setTimeout(m27Render,0));
   window.addEventListener('load',()=>{m27EnsureState();m27Render();if(typeof renderPotHealthRadar==='function')renderPotHealthRadar({})});
-  m27EnsureState();
-  m27Render();
+  m27EnsureState();m27Render();
 })();
 </script>
+
 
 
 
