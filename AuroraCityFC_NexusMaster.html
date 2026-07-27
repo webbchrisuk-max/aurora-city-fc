@@ -2087,6 +2087,37 @@ body.aurora-transfer-test-active .aurora-system-dock{border-color:rgba(251,191,3
     window.addEventListener('resize',function(){
       if(window.innerWidth>820) closeMobile();
     });
+    
+    var lastY=Math.max(0,window.scrollY||0);
+    var scrollTick=false;
+    var lastDirection='';
+    function autoSidebarOnScroll(){
+      var y=Math.max(0,window.scrollY||0);
+      var delta=y-lastY;
+      if(window.innerWidth<=820){
+        if(Math.abs(delta)>3) closeMobile();
+      }else{
+        if(y<=24){
+          document.body.classList.remove('aufc-nav-collapsed');
+          lastDirection='up';
+        }else if(delta>7 && lastDirection!=='down'){
+          document.body.classList.add('aufc-nav-collapsed');
+          lastDirection='down';
+        }else if(delta<-7 && lastDirection!=='up'){
+          document.body.classList.remove('aufc-nav-collapsed');
+          lastDirection='up';
+        }
+        sync();
+      }
+      lastY=y;
+      scrollTick=false;
+    }
+    window.addEventListener('scroll',function(){
+      if(!scrollTick){
+        scrollTick=true;
+        window.requestAnimationFrame(autoSidebarOnScroll);
+      }
+    },{passive:true});
     sync();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mount);
