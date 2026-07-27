@@ -5755,6 +5755,111 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 </style>
 
 <!-- Build: Aurora Connected Finance Department System • 26 Jul 2026 -->
+
+<style id="auroraUnifiedFinanceSidebarV3">
+/* Aurora City FC — Finance-master unified sidebar */
+:root{
+  --aufc-side-open:244px;
+  --aufc-side-closed:76px;
+}
+html{scroll-behavior:smooth}
+body{transition:padding-left .28s cubic-bezier(.2,.8,.2,1)!important}
+body.aufc-nav-ready{padding-left:var(--aufc-side-open)!important}
+body.aufc-nav-ready.aufc-nav-collapsed{padding-left:var(--aufc-side-closed)!important}
+
+/* Disable previous page-specific sidebars without touching page content */
+body.aufc-nav-ready .fm-sidebar,
+body.aufc-nav-ready .fm-side-toggle,
+body.aufc-nav-ready .fm-edge-toggle,
+body.aufc-nav-ready .universal-sidebar,
+body.aufc-nav-ready #auroraUniversalSidebar{display:none!important}
+body.aufc-nav-ready .fm-workspace{margin-left:0!important}
+body.aufc-nav-ready .fm-shell{display:block!important}
+
+.aufc-sidebar{
+  position:fixed;inset:0 auto 0 0;z-index:100000;
+  width:var(--aufc-side-open);height:100dvh;
+  padding:18px 14px;
+  display:flex;flex-direction:column;
+  color:#eaf4ff;
+  border-right:1px solid rgba(125,211,252,.18);
+  background:linear-gradient(180deg,rgba(3,10,22,.985),rgba(4,13,28,.975));
+  box-shadow:12px 0 34px rgba(0,0,0,.24);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  transition:width .28s cubic-bezier(.2,.8,.2,1),padding .28s ease;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+body.aufc-nav-collapsed .aufc-sidebar{width:var(--aufc-side-closed);padding-left:10px;padding-right:10px}
+.aufc-sidebar *{box-sizing:border-box}
+.aufc-brand{display:flex;align-items:center;gap:11px;padding:8px 7px 20px;min-height:70px}
+.aufc-crest{width:49px;height:49px;flex:0 0 auto;border-radius:16px;overflow:hidden;border:1px solid rgba(34,211,238,.42);background:rgba(34,211,238,.10);box-shadow:0 0 28px rgba(34,211,238,.18)}
+.aufc-crest img{width:100%;height:100%;display:block;object-fit:cover}
+.aufc-brand-copy{min-width:0}
+.aufc-brand strong{display:block;font-size:14px;white-space:nowrap}
+.aufc-brand small{display:block;margin-top:3px;color:#93a4bd;font-size:9px;letter-spacing:.9px;white-space:nowrap}
+.aufc-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:0 1px 16px;scrollbar-width:thin;scrollbar-color:rgba(125,211,252,.24) transparent}
+.aufc-label{font-size:9px;color:#6f8199;letter-spacing:1.2px;font-weight:900;padding:13px 10px 7px;text-transform:uppercase;white-space:nowrap}
+.aufc-links{display:grid;gap:6px}
+.aufc-link{
+  --nav-accent:#22d3ee;--nav-rgb:34,211,238;
+  position:relative;width:100%;min-height:43px;
+  display:grid;grid-template-columns:25px minmax(0,1fr) auto;align-items:center;gap:9px;
+  padding:10px 11px;border:1px solid transparent;border-radius:13px;
+  color:#cbd5e1!important;background:transparent;text-decoration:none!important;
+  font-size:12px;font-weight:780;transition:.18s ease;overflow:hidden;
+}
+.aufc-link:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:999px;background:rgba(var(--nav-rgb),.35)}
+.aufc-link:hover{transform:translateX(3px);color:#fff!important;border-color:rgba(var(--nav-rgb),.24);background:rgba(var(--nav-rgb),.075)}
+.aufc-link.active{color:#fff!important;border-color:rgba(var(--nav-rgb),.38);background:linear-gradient(90deg,rgba(var(--nav-rgb),.16),rgba(var(--nav-rgb),.045));box-shadow:inset 3px 0 0 var(--nav-accent),0 0 18px rgba(var(--nav-rgb),.07)}
+.aufc-link.finance-link{
+  --nav-accent:#f3c45b;--nav-rgb:243,196,91;
+  color:#ffe29a!important;border-color:rgba(243,196,91,.17);
+  background:rgba(243,196,91,.045)
+}
+.aufc-link.finance-link:before{background:#f3c45b;box-shadow:0 0 10px rgba(243,196,91,.42)}
+.aufc-link.finance-link.active{background:linear-gradient(90deg,rgba(243,196,91,.19),rgba(243,196,91,.055));border-color:rgba(243,196,91,.40)}
+.aufc-icon{width:24px;text-align:center;font-size:16px;color:var(--nav-accent)}
+.aufc-name{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aufc-status{font-size:8px;color:#7f95ae;font-weight:950;white-space:nowrap}
+.aufc-footer{margin-top:auto;border:1px solid rgba(125,211,252,.18);background:rgba(255,255,255,.025);border-radius:16px;padding:12px}
+.aufc-live{display:flex;align-items:center;gap:7px;color:#34d399;font-size:9px;font-weight:900}
+.aufc-live i{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 12px #34d399}
+.aufc-toggle{
+  position:absolute;top:76px;right:-15px;z-index:3;width:31px;height:42px;
+  display:grid;place-items:center;padding:0;border:1px solid rgba(34,211,238,.34);
+  border-radius:0 13px 13px 0;color:#dffcff;background:linear-gradient(145deg,rgba(7,24,43,.99),rgba(3,12,25,.99));
+  box-shadow:8px 0 22px rgba(0,0,0,.32),0 0 17px rgba(34,211,238,.11);cursor:pointer
+}
+.aufc-toggle span{font-size:24px;line-height:1;transition:transform .28s ease}
+body.aufc-nav-collapsed .aufc-toggle span{transform:rotate(180deg)}
+.aufc-mobile-button{display:none}
+
+body.aufc-nav-collapsed .aufc-brand{justify-content:center;gap:0;padding-left:0;padding-right:0}
+body.aufc-nav-collapsed .aufc-brand-copy,
+body.aufc-nav-collapsed .aufc-label,
+body.aufc-nav-collapsed .aufc-name,
+body.aufc-nav-collapsed .aufc-status,
+body.aufc-nav-collapsed .aufc-footer{display:none!important}
+body.aufc-nav-collapsed .aufc-link{grid-template-columns:1fr;justify-items:center;padding:11px 7px}
+body.aufc-nav-collapsed .aufc-link:before{left:4px}
+body.aufc-nav-collapsed .aufc-icon{width:auto;font-size:18px}
+
+@media(max-width:820px){
+  body.aufc-nav-ready,body.aufc-nav-ready.aufc-nav-collapsed{padding-left:0!important}
+  .aufc-sidebar{width:min(292px,86vw);transform:translateX(-110%);transition:transform .25s ease}
+  body.aufc-mobile-open .aufc-sidebar{transform:translateX(0)}
+  .aufc-toggle{display:none}
+  .aufc-mobile-button{
+    position:fixed;left:10px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:100002;
+    width:48px;height:48px;display:grid;place-items:center;border-radius:15px;
+    border:1px solid rgba(34,211,238,.38);background:rgba(3,15,29,.96);color:#7dd3fc;
+    box-shadow:0 12px 30px rgba(0,0,0,.36),0 0 18px rgba(34,211,238,.11);font-size:21px
+  }
+  .aufc-mobile-shade{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.52);backdrop-filter:blur(2px)}
+  body.aufc-mobile-open .aufc-mobile-shade{display:block}
+}
+</style>
+
 </head>
 <body>
 <div aria-label="Open navigation" class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" role="button" tabindex="0">
@@ -10380,6 +10485,45 @@ body.aurora-transfer-test-active .aurora-system-dock{border-color:rgba(251,191,3
     addEventListener('storage',e=>{if([FINANCE_KEY,LEGACY_KEY,TEST_KEY].includes(e.key))refresh()});addEventListener('aurora:finance-mission',refresh);addEventListener('aurora:wealth-mission',refresh);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
+
+<script id="auroraUnifiedFinanceSidebarV3Script">
+(function(){
+  'use strict';
+  var activePage="transfer";
+  function mount(){
+    if(document.getElementById('auroraUnifiedFinanceSidebar')) return;
+    document.body.insertAdjacentHTML('afterbegin', "\n<aside class=\"aufc-sidebar\" id=\"auroraUnifiedFinanceSidebar\" aria-label=\"Aurora City FC navigation\">\n  <button class=\"aufc-toggle\" id=\"aufcSidebarToggle\" type=\"button\" aria-label=\"Collapse navigation\" aria-expanded=\"true\"><span>\u2039</span></button>\n  <div class=\"aufc-brand\">\n    <div class=\"aufc-crest\"><img alt=\"Aurora City FC crest\" src=\"https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png\"></div>\n    <div class=\"aufc-brand-copy\"><strong>Aurora City FC</strong><small>CONNECTED CLUB SYSTEM</small></div>\n  </div>\n  <nav class=\"aufc-scroll\"><div class=\"aufc-label\">Manager</div><div class=\"aufc-links\"><a class=\"aufc-link\" data-page=\"home\" href=\"AuroraCityFC_ManagerDashboard.html\" style=\"--nav-accent:#60a5fa;--nav-rgb:96,165,250\"><span class=\"aufc-icon\">\u2302</span><span class=\"aufc-name\">Home</span><span class=\"aufc-status\"></span></a></div><div class=\"aufc-label\">Finance</div><div class=\"aufc-links\"><a class=\"aufc-link finance-link\" data-page=\"finance\" href=\"AuroraCityFC_FinanceDepartment.html\" style=\"--nav-accent:#f3c45b;--nav-rgb:243,196,91\"><span class=\"aufc-icon\">\u00a3</span><span class=\"aufc-name\">Finance Department</span><span class=\"aufc-status\"></span></a></div><div class=\"aufc-label\">Performance</div><div class=\"aufc-links\"><a class=\"aufc-link\" data-page=\"squad\" href=\"AuroraCityFC_SquadHub.html\" style=\"--nav-accent:#22d3ee;--nav-rgb:34,211,238\"><span class=\"aufc-icon\">\u265f</span><span class=\"aufc-name\">Squad Hub</span><span class=\"aufc-status\"></span></a><a class=\"aufc-link\" data-page=\"analysis\" href=\"AuroraCityFC_AnalysisRoom.html\" style=\"--nav-accent:#a78bfa;--nav-rgb:167,139,250\"><span class=\"aufc-icon\">\u2301</span><span class=\"aufc-name\">Analysis Room</span><span class=\"aufc-status\"></span></a><a class=\"aufc-link\" data-page=\"training\" href=\"AuroraCityFC_TrainingGround.html\" style=\"--nav-accent:#34d399;--nav-rgb:52,211,153\"><span class=\"aufc-icon\">\u2699</span><span class=\"aufc-name\">Training Ground</span><span class=\"aufc-status\"></span></a></div><div class=\"aufc-label\">Recruitment</div><div class=\"aufc-links\"><a class=\"aufc-link\" data-page=\"scouting\" href=\"AuroraCityFC_ScoutingCentre.html\" style=\"--nav-accent:#4ade80;--nav-rgb:74,222,128\"><span class=\"aufc-icon\">\u25ce</span><span class=\"aufc-name\">Scouting Centre</span><span class=\"aufc-status\"></span></a><a class=\"aufc-link active\" data-page=\"transfer\" href=\"AuroraCityFC_TransferCentre.html\" style=\"--nav-accent:#fbbf24;--nav-rgb:251,191,36\"><span class=\"aufc-icon\">\u21c4</span><span class=\"aufc-name\">Transfer Centre</span><span class=\"aufc-status\"></span></a></div><div class=\"aufc-label\">Club</div><div class=\"aufc-links\"><a class=\"aufc-link\" data-page=\"boardroom\" href=\"AuroraCityFC_Boardroom.html\" style=\"--nav-accent:#60a5fa;--nav-rgb:96,165,250\"><span class=\"aufc-icon\">\u265c</span><span class=\"aufc-name\">Boardroom</span><span class=\"aufc-status\"></span></a><a class=\"aufc-link\" data-page=\"media\" href=\"AuroraCityFC_MediaCentre.html\" style=\"--nav-accent:#fb7185;--nav-rgb:251,113,133\"><span class=\"aufc-icon\">\u25eb</span><span class=\"aufc-name\">Media Centre</span><span class=\"aufc-status\"></span></a><a class=\"aufc-link\" data-page=\"nexus\" href=\"AuroraCityFC_NexusMaster.html\" style=\"--nav-accent:#b985ff;--nav-rgb:185,133,255\"><span class=\"aufc-icon\">\u2726</span><span class=\"aufc-name\">Nexus HQ</span><span class=\"aufc-status\"></span></a></div></nav>\n  <div class=\"aufc-footer\"><div class=\"aufc-live\"><i></i><span>Club systems connected</span></div></div>\n</aside>\n<div class=\"aufc-mobile-shade\" id=\"aufcMobileShade\"></div>\n<button class=\"aufc-mobile-button\" id=\"aufcMobileButton\" type=\"button\" aria-label=\"Open navigation\">\u2630</button>\n");
+    document.body.classList.add('aufc-nav-ready');
+    var saved=localStorage.getItem('auroraUnifiedSidebarCollapsed')==='1';
+    if(saved && window.innerWidth>820) document.body.classList.add('aufc-nav-collapsed');
+    var toggle=document.getElementById('aufcSidebarToggle');
+    var mobile=document.getElementById('aufcMobileButton');
+    var shade=document.getElementById('aufcMobileShade');
+    function sync(){
+      var collapsed=document.body.classList.contains('aufc-nav-collapsed');
+      if(toggle) toggle.setAttribute('aria-expanded', String(!collapsed));
+    }
+    if(toggle) toggle.addEventListener('click',function(){
+      document.body.classList.toggle('aufc-nav-collapsed');
+      localStorage.setItem('auroraUnifiedSidebarCollapsed',document.body.classList.contains('aufc-nav-collapsed')?'1':'0');
+      sync();
+    });
+    function closeMobile(){document.body.classList.remove('aufc-mobile-open')}
+    if(mobile) mobile.addEventListener('click',function(){document.body.classList.toggle('aufc-mobile-open')});
+    if(shade) shade.addEventListener('click',closeMobile);
+    document.querySelectorAll('.aufc-link').forEach(function(a){
+      a.addEventListener('click',closeMobile);
+    });
+    window.addEventListener('resize',function(){
+      if(window.innerWidth>820) closeMobile();
+    });
+    sync();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mount);
+  else mount();
 })();
 </script>
 
