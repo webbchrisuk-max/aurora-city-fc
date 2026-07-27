@@ -10520,20 +10520,35 @@ body.aurora-transfer-test-active .aurora-system-dock{border-color:rgba(251,191,3
     window.addEventListener('resize',function(){
       if(window.innerWidth>820) closeMobile();
     });
-    // Sidebar stability fix: never auto-collapse the desktop navigation on scroll.
-    // On mobile, scrolling closes the temporary drawer only.
+    
     var lastY=Math.max(0,window.scrollY||0);
     var scrollTick=false;
-    function keepSidebarStableOnScroll(){
+    var lastDirection='';
+    function autoSidebarOnScroll(){
       var y=Math.max(0,window.scrollY||0);
-      if(window.innerWidth<=820 && Math.abs(y-lastY)>3) closeMobile();
+      var delta=y-lastY;
+      if(window.innerWidth<=820){
+        if(Math.abs(delta)>3) closeMobile();
+      }else{
+        if(y<=24){
+          document.body.classList.remove('aufc-nav-collapsed');
+          lastDirection='up';
+        }else if(delta>7 && lastDirection!=='down'){
+          document.body.classList.add('aufc-nav-collapsed');
+          lastDirection='down';
+        }else if(delta<-7 && lastDirection!=='up'){
+          document.body.classList.remove('aufc-nav-collapsed');
+          lastDirection='up';
+        }
+        sync();
+      }
       lastY=y;
       scrollTick=false;
     }
     window.addEventListener('scroll',function(){
       if(!scrollTick){
         scrollTick=true;
-        window.requestAnimationFrame(keepSidebarStableOnScroll);
+        window.requestAnimationFrame(autoSidebarOnScroll);
       }
     },{passive:true});
     sync();
@@ -10543,5 +10558,43 @@ body.aurora-transfer-test-active .aurora-system-dock{border-color:rgba(251,191,3
 })();
 </script>
 
+
+<!-- Build: Sidebar Definitive Fix • 27 Jul 2026 -->
+<style id="aurora-sidebar-definitive-fix">
+/* Retire the obsolete FM auto-hiding sidebar. The unified AUFC sidebar is now the only navigation. */
+.fm-sidebar,
+.fm-sidebar-edge-zone,
+#fmSidebarEdgeZone,
+#fmSidebarCollapse { display:none !important; pointer-events:none !important; }
+.fm-workspace,
+body.fm-sidebar-hidden .fm-workspace { margin-left:0 !important; }
+body.fm-sidebar-hidden { overflow-x:hidden !important; }
+/* Keep the unified navigation expanded whenever a new page loads. */
+@media (min-width:821px){
+  body.aufc-nav-ready .aufc-sidebar{transform:translateX(0) !important;}
+}
+</style>
+<script id="aurora-sidebar-definitive-fix-script">
+(function(){
+  'use strict';
+  function fixSidebar(){
+    document.body.classList.remove('fm-sidebar-hidden','aufc-nav-collapsed','aufc-mobile-open');
+    try{ localStorage.setItem('auroraUnifiedSidebarCollapsed','0'); }catch(e){}
+    var old=document.querySelector('.fm-sidebar');
+    if(old){ old.setAttribute('aria-hidden','true'); old.style.display='none'; }
+    var edge=document.getElementById('fmSidebarEdgeZone');
+    if(edge){ edge.setAttribute('aria-hidden','true'); edge.style.display='none'; }
+    var workspace=document.querySelector('.fm-workspace');
+    if(workspace) workspace.style.marginLeft='0';
+    var unified=document.getElementById('auroraUnifiedFinanceSidebar');
+    if(unified) unified.setAttribute('aria-hidden','false');
+    var toggle=document.getElementById('aufcSidebarToggle');
+    if(toggle) toggle.setAttribute('aria-expanded','true');
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(fixSidebar,0);},{once:true});
+  else setTimeout(fixSidebar,0);
+  window.addEventListener('pageshow',fixSidebar);
+})();
+</script>
 </body>
 </html>
