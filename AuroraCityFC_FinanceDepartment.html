@@ -3075,6 +3075,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
         <button data-target="m13PaydayPlan" type="button"><span class="icon">£</span><span>Payday Plan</span></button>
         <button data-target="m13Bills" type="button"><span class="icon">✓</span><span>Bills &amp; Spending</span></button>
         <button data-target="m13PotHealth" type="button"><span class="icon">◉</span><span>Pot Health</span></button>
+        <button data-target="m13HouseProject" type="button"><span class="icon">⌂</span><span>House Project</span></button>
         <button data-target="m13Funding" type="button"><span class="icon">↗</span><span>Funding Engine</span></button>
         <button data-target="m13History" type="button"><span class="icon">▦</span><span>History</span></button>
       </div>
@@ -3104,7 +3105,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
   <div id="m13Dashboard" class="m13-anchor">
     <div class="m13-topbar">
       <div><div class="m13-eyebrow">AURORA FINANCIAL MANAGEMENT</div><h1>Budget Manager Dashboard</h1><div class="m13-subtitle">Your live matchday view of bills, spending, pots and payday decisions.</div></div>
-      <div class="m13-actions"><button class="m13-btn" id="m13Refresh">Refresh Plan</button><button class="m13-btn" id="m13Presentation">Presentation Mode</button></div>
+      <div class="m13-actions"><button class="m13-btn" type="button" onclick="window.m14ShowView && window.m14ShowView('m13HouseProject')">🏠 House Project Ledger</button><button class="m13-btn" id="m13Refresh">Refresh Plan</button><button class="m13-btn" id="m13Presentation">Presentation Mode</button></div>
     </div>
     <section class="m32-balance-command" aria-label="Live balance summary">
       <div class="m32-balance-main">
@@ -6718,6 +6719,13 @@ const M14_VIEWS = {
       "Pot Control Panel","Pot Health Radar","Grow Pot Engine","True Surplus Split"
     ]
   },
+  m13HouseProject:{
+    title:"House Project",
+    subtitle:"Control renovation costs room by room, compare estimates with actual payments and update the House Pot.",
+    headings:[
+      "House Project Ledger"
+    ]
+  },
   m13Funding:{
     title:"Funding Engine",
     subtitle:"See how surplus money is routed and how your longer-term financial flight path changes.",
@@ -7180,6 +7188,7 @@ function m16ApplyGridClasses(target){
     const heading=(section.querySelector("h2,.m15-hero h3,.m22-hero h3")?.textContent||"").trim();
     if(target==="m13Bills"&&["Bills Control Centre","Editable Future Costs"].includes(heading))section.classList.add("m16-wide");
     if(target==="m13PotHealth"&&heading==="Pot Health Radar")section.classList.add("m16-wide");
+    if(target==="m13HouseProject")section.classList.add("m16-wide");
     if(target==="m13Funding"&&["Financial Freedom Flight Path","Funding Engine"].includes(heading))section.classList.add("m16-wide");
     if(target==="m13History")section.classList.add("m16-wide");
     if(visible.length===3&&!section.classList.contains("m16-wide"))section.classList.add("m16-third");
