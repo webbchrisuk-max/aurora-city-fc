@@ -3046,6 +3046,10 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 @media(max-width:500px){.m27-room-grid,.m27-form-room{grid-template-columns:1fr!important}.m27-room-head{align-items:flex-start;display:grid}}
 </style>
 
+
+<style>
+.m27-edit-entry{border:1px solid rgba(98,243,255,.30);background:rgba(98,243,255,.08);color:var(--cyan);border-radius:10px;padding:8px 10px;font-weight:900;cursor:pointer}.m27-edit-entry:hover{background:rgba(98,243,255,.15);box-shadow:0 0 14px rgba(98,243,255,.12)}
+</style>
 </head>
 <body>
 
@@ -3071,7 +3075,6 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
         <button data-target="m13PaydayPlan" type="button"><span class="icon">£</span><span>Payday Plan</span></button>
         <button data-target="m13Bills" type="button"><span class="icon">✓</span><span>Bills &amp; Spending</span></button>
         <button data-target="m13PotHealth" type="button"><span class="icon">◉</span><span>Pot Health</span></button>
-        <button data-target="m13HouseProject" type="button"><span class="icon">⌂</span><span>House Project</span></button>
         <button data-target="m13Funding" type="button"><span class="icon">↗</span><span>Funding Engine</span></button>
         <button data-target="m13History" type="button"><span class="icon">▦</span><span>History</span></button>
       </div>
@@ -3101,8 +3104,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
   <div id="m13Dashboard" class="m13-anchor">
     <div class="m13-topbar">
       <div><div class="m13-eyebrow">AURORA FINANCIAL MANAGEMENT</div><h1>Budget Manager Dashboard</h1><div class="m13-subtitle">Your live matchday view of bills, spending, pots and payday decisions.</div></div>
-      <div class="m13-actions">
-        <button class="m13-btn" type="button" onclick="window.m14ShowView && window.m14ShowView('m13HouseProject')">🏠 House Project Ledger</button><button class="m13-btn" id="m13Refresh">Refresh Plan</button><button class="m13-btn" id="m13Presentation">Presentation Mode</button></div>
+      <div class="m13-actions"><button class="m13-btn" id="m13Refresh">Refresh Plan</button><button class="m13-btn" id="m13Presentation">Presentation Mode</button></div>
     </div>
     <section class="m32-balance-command" aria-label="Live balance summary">
       <div class="m32-balance-main">
@@ -6716,13 +6718,6 @@ const M14_VIEWS = {
       "Pot Control Panel","Pot Health Radar","Grow Pot Engine","True Surplus Split"
     ]
   },
-  m13HouseProject:{
-    title:"House Project",
-    subtitle:"Control renovation costs room by room, compare estimates with actual payments and update the House Pot.",
-    headings:[
-      "House Project Ledger"
-    ]
-  },
   m13Funding:{
     title:"Funding Engine",
     subtitle:"See how surplus money is routed and how your longer-term financial flight path changes.",
@@ -7185,7 +7180,6 @@ function m16ApplyGridClasses(target){
     const heading=(section.querySelector("h2,.m15-hero h3,.m22-hero h3")?.textContent||"").trim();
     if(target==="m13Bills"&&["Bills Control Centre","Editable Future Costs"].includes(heading))section.classList.add("m16-wide");
     if(target==="m13PotHealth"&&heading==="Pot Health Radar")section.classList.add("m16-wide");
-    if(target==="m13HouseProject")section.classList.add("m16-wide");
     if(target==="m13Funding"&&["Financial Freedom Flight Path","Funding Engine"].includes(heading))section.classList.add("m16-wide");
     if(target==="m13History")section.classList.add("m16-wide");
     if(visible.length===3&&!section.classList.contains("m16-wide"))section.classList.add("m16-third");
@@ -7934,6 +7928,7 @@ document.addEventListener("click",event=>{
           <div class="m27-entry-actions">
             ${entry.status==='reserved'?`<button class="m27-paid-btn" type="button" data-m27-pay="${m27Escape(entry.id)}">Mark paid</button>`:''}
             ${(entry.status==='paid'||entry.status==='historical')&&entry.deducted?`<button class="m27-undo-payment" type="button" data-m27-undo="${m27Escape(entry.id)}">Undo payment</button>`:''}
+            <button class="m27-edit-entry" type="button" data-m27-edit="${m27Escape(entry.id)}">Edit</button>
             <button class="m27-delete-entry" type="button" data-m27-delete="${m27Escape(entry.id)}">Delete</button>
           </div>
         </div>
@@ -7978,6 +7973,33 @@ document.addEventListener("click",event=>{
     m.pot.balance=m.cash+e.actual;e.status='reserved';e.deducted=false;e.paidDate='';
     if(typeof savePlannerData==='function')savePlannerData();if(typeof renderPotEditor==='function')renderPotEditor();if(typeof runPlanner==='function')runPlanner();else m27Render();m27SetStatus(`${e.name} was undone. ${m27Money(e.actual)} was restored to the House Pot.`);
   }
+  function m27EditEntry(id){
+    const {pot,ledger}=m27EnsureState(),e=ledger.entries.find(x=>x.id===id);if(!e)return;
+    const oldActual=Math.max(0,m27Number(e.actual)),oldDeducted=Boolean(e.deducted);
+    const name=prompt('Payment description:',e.name);if(name===null)return;
+    const estimatedText=prompt('Estimated cost (£):',Number(e.estimated||0).toFixed(2));if(estimatedText===null)return;
+    const actualText=prompt('Actual cost (£):',Number(e.actual||0).toFixed(2));if(actualText===null)return;
+    const due=prompt('Date (YYYY-MM-DD, or leave blank):',e.due||e.paidDate||'');if(due===null)return;
+    const room=prompt('Room or area:',e.room||'Whole House');if(room===null)return;
+    const category=prompt('Category:',e.category||'House project');if(category===null)return;
+    const cleanName=String(name).trim(),cleanRoom=String(room).trim()||'Whole House',cleanCategory=String(category).trim()||'House project';
+    const estimated=Math.max(0,m27Number(estimatedText)),actual=Math.max(0,m27Number(actualText));
+    if(!cleanName||estimated<=0){m27SetStatus('The description and estimated cost must be completed.',true);return}
+    if((e.status==='paid'||e.status==='historical')&&actual<=0){m27SetStatus('Paid and historical records need an actual cost above £0.',true);return}
+    if(oldDeducted){
+      const adjustment=oldActual-actual;
+      const revisedCash=m27Number(pot.balance)+adjustment;
+      if(revisedCash<-.009){m27SetStatus(`This edit would take the House Pot below £0. The largest actual cost you can enter is ${m27Money(m27Number(pot.balance)+oldActual)}.`,true);return}
+      pot.balance=Math.max(0,revisedCash);
+    }
+    e.name=cleanName;e.estimated=estimated;e.actual=actual;e.amount=e.status==='reserved'?estimated:actual;e.due=String(due).trim();e.room=cleanRoom;e.category=cleanCategory;
+    if((e.status==='paid'||e.status==='historical')&&!e.paidDate)e.paidDate=e.due||m27Today();
+    if(!ledger.rooms.includes(cleanRoom))ledger.rooms.push(cleanRoom);
+    if(typeof savePlannerData==='function')savePlannerData();if(typeof renderPotEditor==='function')renderPotEditor();if(typeof runPlanner==='function')runPlanner();else m27Render();
+    const cashNote=oldDeducted&&Math.abs(oldActual-actual)>.009?` House Pot adjusted by ${m27Money(Math.abs(oldActual-actual))} ${actual>oldActual?'down':'up'}.`:'';
+    m27SetStatus(`${cleanName} was updated.${cashNote}`);
+  }
+
   function m27DeleteEntry(id){
     const {pot,ledger}=m27EnsureState(),i=ledger.entries.findIndex(e=>e.id===id);if(i<0)return;const e=ledger.entries[i];
     if((e.status==='paid'||e.status==='historical')&&e.deducted)pot.balance=m27Number(pot.balance)+e.actual;ledger.entries.splice(i,1);
@@ -8001,6 +8023,7 @@ document.addEventListener("click",event=>{
     const save=event.target.closest('[data-m27-save-actual]');if(save){const input=document.querySelector(`[data-m27-actual="${CSS.escape(save.dataset.m27SaveActual)}"]`);m27SaveActual(save.dataset.m27SaveActual,input);return}
     const pay=event.target.closest('[data-m27-pay]');if(pay){m27PayEntry(pay.dataset.m27Pay);return}
     const undo=event.target.closest('[data-m27-undo]');if(undo){m27UndoEntry(undo.dataset.m27Undo);return}
+    const edit=event.target.closest('[data-m27-edit]');if(edit){m27EditEntry(edit.dataset.m27Edit);return}
     const del=event.target.closest('[data-m27-delete]');if(del)m27DeleteEntry(del.dataset.m27Delete);
   });
   document.getElementById('savePotsBtn')?.addEventListener('click',()=>setTimeout(m27Render,0));
