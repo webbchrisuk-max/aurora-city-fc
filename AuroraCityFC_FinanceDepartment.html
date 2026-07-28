@@ -2,17 +2,71 @@
 
 <html data-aurora-page="finance" lang="en">
 <head>
-<!-- Build: Aurora City FC Finance Department • shared navigation refactor • 28 Jul 2026 -->
+<!-- Build: Aurora City FC Unified Finance Sidebar • 26 Jul 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Aurora Finance Department — Payday &amp; Capital Control</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
+
+
+
+
+
 <!-- Build: Direct Finance Department → Transfer Centre pipeline • 26 Jul 2026 -->
 <!-- Build: Aurora Connected Finance Department System • 26 Jul 2026 -->
-<link href="assets/aurora-city-fc/shared/AuroraFCFinance.css?v=20260728-navfix-1" rel="stylesheet"/>
-</head>
-<body data-aurora-page="finance">
+
+
+
+
+<link href="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.css?v=20260728-unified-shared-v1" rel="stylesheet"/><link href="assets/aurora-city-fc/shared/AuroraFCShared.css?v=20260728-unified-shared-v1" rel="stylesheet"/><link href="assets/aurora-city-fc/shared/AuroraFCNavigation.css?v=20260728-unified-shared-v1" rel="stylesheet"/></head>
+<body data-aurora-page="finance"><div hidden="" id="auroraNavigationMount"></div>
 <div class="m13-app">
-<div id="auroraNavigationMount"></div>
+<aside aria-label="Aurora City FC finance navigation" class="m13-sidebar aurora-finance-sidebar">
+<button aria-expanded="true" aria-label="Finance navigation" class="m13-sidebar-toggle" id="m21SidebarToggle" title="Finance navigation" type="button"><span aria-hidden="true">‹</span></button>
+<div class="m13-club">
+<div class="m13-crest"><img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/></div>
+<div><strong>Aurora City FC</strong><small>FINANCE OFFICE</small></div>
+</div>
+<nav aria-label="Aurora departments" class="aurora-finance-nav-scroll">
+<div class="m13-nav-label">Manager</div>
+<a class="aurora-fc-side-link" href="AuroraCityFC_ManagerDashboard.html" style="--nav-accent:#60a5fa;--nav-rgb:96,165,250">
+<span class="icon">⌂</span><span>Home</span><span class="aurora-fc-side-arrow">›</span>
+</a>
+<div class="m13-nav-label aurora-finance-group-label">Finance</div>
+<details class="aurora-finance-folder" open="">
+<summary><span class="icon">£</span><span>Finance Department</span><span class="aurora-folder-arrow">›</span></summary>
+<div class="m13-nav aurora-finance-submenu" id="m13Nav">
+<button class="active" data-target="m13Dashboard" type="button"><span class="icon">⌂</span><span>Budget Dashboard</span></button>
+<button data-target="m13PaydayPlan" type="button"><span class="icon">£</span><span>Payday Plan</span></button>
+<button data-target="m13Bills" type="button"><span class="icon">✓</span><span>Bills &amp; Spending</span></button>
+<button data-target="m13PotHealth" type="button"><span class="icon">◉</span><span>Pot Health</span></button>
+<button data-target="m13HouseProject" type="button"><span class="icon">⌂</span><span>House Project</span></button>
+<button data-target="m13Funding" type="button"><span class="icon">↗</span><span>Funding Engine</span></button>
+<button data-target="m13History" type="button"><span class="icon">▦</span><span>History</span></button>
+</div>
+</details>
+<div class="m13-nav-label">Performance</div>
+<a class="aurora-fc-side-link" href="AuroraCityFC_SquadHub.html" style="--nav-accent:#22d3ee;--nav-rgb:34,211,238"><span class="icon">♟</span><span>Squad Hub</span><span class="aurora-fc-side-status">Linked</span></a>
+<a class="aurora-fc-side-link" href="AuroraCityFC_AnalysisRoom.html" style="--nav-accent:#a78bfa;--nav-rgb:167,139,250"><span class="icon">⌁</span><span>Analysis Room</span><span class="aurora-fc-side-status live">Live</span></a>
+<a class="aurora-fc-side-link" href="AuroraCityFC_TrainingGround.html" style="--nav-accent:#34d399;--nav-rgb:52,211,153"><span class="icon">▲</span><span>Training Ground</span><span class="aurora-fc-side-status">Linked</span></a>
+<div class="m13-nav-label">Recruitment</div>
+<a class="aurora-fc-side-link" href="AuroraCityFC_ScoutingCentre.html" style="--nav-accent:#34d399;--nav-rgb:52,211,153"><span class="icon">⌕</span><span>Scouting Centre</span><span class="aurora-fc-side-arrow">›</span></a>
+<a class="aurora-fc-side-link" href="AuroraCityFC_TransferCentre.html" style="--nav-accent:#f59e0b;--nav-rgb:245,158,11"><span class="icon">⇄</span><span>Transfer Centre</span><span class="aurora-fc-side-status ready">Ready</span></a>
+<div class="m13-nav-label">Club</div>
+<a class="aurora-fc-side-link" href="AuroraCityFC_Boardroom.html" style="--nav-accent:#ec4899;--nav-rgb:236,72,153"><span class="icon">♜</span><span>Boardroom</span><span class="aurora-fc-side-status">Linked</span></a>
+<a class="aurora-fc-side-link" href="AuroraCityFC_MediaCentre.html" style="--nav-accent:#facc15;--nav-rgb:250,204,21"><span class="icon">●</span><span>Media Centre</span><span class="aurora-fc-side-status">Linked</span></a>
+</nav>
+<div class="m13-sidebar-foot aurora-finance-sidebar-foot">
+<button class="aurora-finance-refresh" id="financeSidebarRefresh" type="button"><span class="icon">↻</span><span>Refresh Plan</span></button>
+<div class="m13-live"><i></i> FINANCE DEPARTMENT LIVE</div>
+<div id="m13SideStatus">Loading saved planner…</div>
+</div>
+</aside>
 <main class="m13-content">
 <div class="m13-anchor" id="m13Dashboard">
 <div class="m13-topbar">
@@ -564,20 +618,20 @@
 <div class="grid two-grid">
 <div class="input-box">
 <label for="simPayInput">Expected Pay</label>
-<input id="simPayInput" step="1" type="number" value="2100"/>
-</div>
+<input id="simPayInput" step="1" type="number" value="2100">
+</input></div>
 <div class="input-box">
 <label for="simInvestInput">Target IG ISA</label>
-<input id="simInvestInput" step="1" type="number" value="1000"/>
-</div>
+<input id="simInvestInput" step="1" type="number" value="1000">
+</input></div>
 <div class="input-box">
 <label for="simLifestyleInput">Lifestyle / Spending Pot</label>
-<input id="simLifestyleInput" step="1" type="number" value="250"/>
-</div>
+<input id="simLifestyleInput" step="1" type="number" value="250">
+</input></div>
 <div class="input-box">
 <label for="simGoalsInput">Goal Pots Total</label>
-<input id="simGoalsInput" step="1" type="number" value="250"/>
-</div>
+<input id="simGoalsInput" step="1" type="number" value="250">
+</input></div>
 </div>
 <div class="payday-results" id="paydaySimulationResults">
 <div class="payday-row"><strong>Waiting for simulator...</strong><span>--</span></div>
@@ -734,8 +788,8 @@
 </div>
 <div class="m36-backup-status" id="backupStatus">No backup exported this session</div>
 </details>
-<input accept=".json,application/json" hidden="" id="importBackupFile" type="file"/>
-</section>
+<input accept=".json,application/json" hidden="" id="importBackupFile" type="file">
+</input></section>
 <!-- ===================== SECTION: NEXT 7 DAYS BILLS ===================== -->
 <section class="section card">
 <div class="bill-strip-head">
@@ -1025,9 +1079,36 @@
     Aurora Wealth Centre M30 • Beast Mode Control + Funding Ownership + Live Explanations
   </div>
 </div>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.01.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.02.js?v=20260728-unified-shared-v1"></script>
 <!-- ===================== SECTION: AURORA MASTER JSON SOURCE ===================== -->
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.03.js?v=20260728-unified-shared-v1"></script>
 </div></main></div>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.04.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.05.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.06.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.07.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.08.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.09.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.10.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.11.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.12.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.13.js?v=20260728-unified-shared-v1"></script>
 <!-- ===================== M30 BEAST MODE CONTROL CENTRE ===================== -->
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.14.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.15.js?v=20260728-unified-shared-v1"></script>
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.16.js?v=20260728-unified-shared-v1"></script>
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.17.js?v=20260728-unified-shared-v1"></script>
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.18.js?v=20260728-unified-shared-v1"></script>
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.19.js?v=20260728-unified-shared-v1"></script>
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.20.js?v=20260728-unified-shared-v1"></script>
+
 <section class="m42-strategy" id="m42HouseShareStrategy">
 <div class="m42-head"><div><div class="m13-eyebrow">AURORA CAPITAL ROUTE</div><h2>House Complete → Share Accelerator</h2><p>Use only what is needed from the reserved investment cash to finish the house project. Keep the balance invested gradually, while all new overtime is directed to shares.</p></div><div class="m42-badge" id="m42Badge">STRATEGY READY</div></div>
 <div class="m42-inputs">
@@ -1046,12 +1127,48 @@
 <div class="m42-actions"><button class="m42-btn" id="m42Save" type="button">Save Strategy</button><button class="m42-btn" id="m42ApplyHouse" type="button">Apply House Boost to Scenario</button></div>
 <div class="m42-status" id="m42Status">This strategy is a planning layer and does not move money automatically.</div>
 </section>
-<!-- ===================== FINANCE DEPARTMENT CONNECTED BRIDGE ===================== -->
-<!-- ===================== AURORA CONNECTED SYSTEM V1 ===================== -->
-<!-- Build: Sidebar Definitive Fix • 27 Jul 2026 -->
-<!-- Build: Aurora Sidebar Persistent Navigation V4 • 27 Jul 2026 -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.21.js?v=20260728-unified-shared-v1"></script>
+<section aria-label="Aurora Wealth Centre smart navigation" class="aurora-smart-dock" data-aurora-page="wealth" id="auroraSmartDock">
+<div class="aurora-smart-head">
+<button class="aurora-smart-back" data-aurora-back="" type="button">← Back</button>
+<div class="aurora-smart-centre"><strong>Aurora Wealth Centre</strong><span data-aurora-current-label="">CONNECTED COMMAND SYSTEM</span></div>
+<a class="aurora-smart-next" data-aurora-next="" href="#">Next step →</a>
+</div>
+<nav aria-label="Aurora command rooms" class="aurora-smart-grid">
+<a class="aurora-smart-link" data-aurora-route="nexus" href="#"><span class="aurora-smart-icon">🏟️</span><span class="aurora-smart-name">Nexus HQ</span><span class="aurora-smart-status cyan" data-aurora-status="nexus">HOME</span></a>
+<a class="aurora-smart-link" data-aurora-route="wealth" href="#"><span class="aurora-smart-icon">💷</span><span class="aurora-smart-name">Finance Department</span><span class="aurora-smart-status" data-aurora-status="wealth">NO MISSION</span></a>
+<a class="aurora-smart-link" data-aurora-route="brain" href="#"><span class="aurora-smart-icon">🧠</span><span class="aurora-smart-name">Trading Brain</span><span class="aurora-smart-status" data-aurora-status="brain">WAITING</span></a>
+<a class="aurora-smart-link" data-aurora-route="transfer" href="#"><span class="aurora-smart-icon">🔁</span><span class="aurora-smart-name">Transfer Centre</span><span class="aurora-smart-status" data-aurora-status="transfer">NO MISSION</span></a>
+<a class="aurora-smart-link" data-aurora-route="registration" href="#"><span class="aurora-smart-icon">✅</span><span class="aurora-smart-name">Registration</span><span class="aurora-smart-status" data-aurora-status="registration">EMPTY</span></a>
+<a class="aurora-smart-link" data-aurora-route="tesco" href="#"><span class="aurora-smart-icon">🛒</span><span class="aurora-smart-name">Tesco SAYE</span><span class="aurora-smart-status cyan" data-aurora-status="tesco">2029 PLAN</span></a>
+</nav>
+</section>
+<button aria-label="Go to Aurora navigation" class="aurora-dock-launcher" id="auroraDockLauncher" type="button"><span>⌘</span><span>Aurora navigation</span></button>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.22.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.23.js?v=20260728-unified-shared-v1"></script>
 
-<script src="assets/aurora-city-fc/shared/AuroraFCFinance.js?v=20260728-navfix-1"></script>
-<script src="assets/aurora-city-fc/shared/AuroraFCNavigation.js?v=20260728-universal-sidebar-1"></script></body>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.24.js?v=20260728-unified-shared-v1"></script>
+<!-- ===================== FINANCE DEPARTMENT CONNECTED BRIDGE ===================== -->
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.25.js?v=20260728-unified-shared-v1"></script>
+<!-- ===================== AURORA CONNECTED SYSTEM V1 ===================== -->
+
+<section aria-label="Aurora connected navigation" class="aurora-system-dock" data-aurora-current-page="finance">
+<div class="aurora-system-head">
+<button class="aurora-system-back" type="button">← Back</button>
+<div class="aurora-system-centre"><strong>Finance Department</strong><span data-aurora-finance-summary="">Finance Department linked • checking mission</span></div>
+<a class="aurora-system-next" href="AuroraCityFC_TransferCentre.html">Next: Transfers →</a>
+</div>
+<nav aria-label="Aurora departments" class="aurora-system-grid"><a class="aurora-system-link" data-aurora-route="nexus" href="AuroraCityFC_NexusMaster.html"><span class="aurora-system-icon">🌌</span><span class="aurora-system-name">Aurora Nexus HQ</span><span class="aurora-system-status" data-aurora-nav-status="nexus">LINKED</span></a><a aria-current="page" class="aurora-system-link active" data-aurora-route="finance" href="AuroraCityFC_FinanceDepartment.html"><span class="aurora-system-icon">💷</span><span class="aurora-system-name">Finance Department</span><span class="aurora-system-status" data-aurora-nav-status="finance">LINKED</span></a><a class="aurora-system-link" data-aurora-route="manager" href="AuroraCityFC_ManagerDashboard.html"><span class="aurora-system-icon">🎮</span><span class="aurora-system-name">Manager Dashboard</span><span class="aurora-system-status" data-aurora-nav-status="manager">LINKED</span></a><a class="aurora-system-link" data-aurora-route="transfer" href="AuroraCityFC_TransferCentre.html"><span class="aurora-system-icon">🔄</span><span class="aurora-system-name">Transfer Centre</span><span class="aurora-system-status" data-aurora-nav-status="transfer">LINKED</span></a><a class="aurora-system-link" data-aurora-route="squad" href="AuroraCityFC_SquadHub.html"><span class="aurora-system-icon">👥</span><span class="aurora-system-name">Squad Hub</span><span class="aurora-system-status" data-aurora-nav-status="squad">LINKED</span></a><a class="aurora-system-link" data-aurora-route="boardroom" href="AuroraCityFC_Boardroom.html"><span class="aurora-system-icon">🏛️</span><span class="aurora-system-name">Boardroom</span><span class="aurora-system-status" data-aurora-nav-status="boardroom">LINKED</span></a><a class="aurora-system-link" data-aurora-route="analysis" href="AuroraCityFC_AnalysisRoom.html"><span class="aurora-system-icon">📊</span><span class="aurora-system-name">Analysis Room</span><span class="aurora-system-status" data-aurora-nav-status="analysis">LINKED</span></a><a class="aurora-system-link" data-aurora-route="training" href="AuroraCityFC_TrainingGround.html"><span class="aurora-system-icon">🏋️</span><span class="aurora-system-name">Training Ground</span><span class="aurora-system-status" data-aurora-nav-status="training">LINKED</span></a><a class="aurora-system-link" data-aurora-route="scouting" href="AuroraCityFC_ScoutingCentre.html"><span class="aurora-system-icon">🔎</span><span class="aurora-system-name">Scouting Centre</span><span class="aurora-system-status" data-aurora-nav-status="scouting">LINKED</span></a><a class="aurora-system-link" data-aurora-route="media" href="AuroraCityFC_MediaCentre.html"><span class="aurora-system-icon">📡</span><span class="aurora-system-name">Media Centre</span><span class="aurora-system-status" data-aurora-nav-status="media">LINKED</span></a></nav>
+</section>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.26.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.27.js?v=20260728-unified-shared-v1"></script>
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.28.js?v=20260728-unified-shared-v1"></script>
+<!-- Build: Sidebar Definitive Fix • 27 Jul 2026 -->
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.29.js?v=20260728-unified-shared-v1"></script>
+<!-- Build: Aurora Sidebar Persistent Navigation V4 • 27 Jul 2026 -->
+
+<script src="assets/aurora-city-fc/pages/Finance/AuroraFCFinance.30.js?v=20260728-unified-shared-v1"></script>
+<script defer="" src="assets/aurora-city-fc/shared/AuroraFCNavigation.js?v=20260728-unified-shared-v1"></script></body>
 </html>
