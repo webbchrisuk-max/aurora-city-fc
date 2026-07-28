@@ -1,0 +1,26 @@
+
+/* ===================== M6 CONNECTED MISSION PIPELINE ===================== */
+(function(){
+  const WEALTH_KEY="aurora_wealth_investment_mission_v1",DECISION_KEY="aurora_trading_brain_decision_v1",QUEUE_KEY="aurora_pending_registrations_v1";
+  const el=id=>document.getElementById(id);const read=key=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch(_){return null}};
+  const gbp=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));
+  const text=(id,value)=>{const node=el(id);if(node)node.textContent=value};
+  function render(){
+    const wealth=read(WEALTH_KEY),decision=read(DECISION_KEY),queue=read(QUEUE_KEY);
+    if(wealth){text("pipelineWealthValue",gbp(wealth.budget));text("pipelineWealthCopy",`${wealth.preferredAccount||"Account review"} • payday ${wealth.paydayDate?new Date(`${wealth.paydayDate}T12:00:00`).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"not set"}`);text("pipelineWealthState",String(wealth.status||"READY").replaceAll("_"," "))}else{text("pipelineWealthValue",gbp(0));text("pipelineWealthCopy","No investment mission has been sent from Finance Department.");text("pipelineWealthState","WAITING")}
+    const linkedDecision=decision&&(!wealth||!decision.wealthMissionId||decision.wealthMissionId===wealth.id);
+    if(linkedDecision){const targets=Array.isArray(decision.targets)?decision.targets:[];text("pipelineTradeValue",`${targets.length} target${targets.length===1?"":"s"}`);text("pipelineTradeCopy",`${decision.strategy||"Balanced"} • ${gbp(decision.spent||0)} deployed • ${gbp(decision.holdback||0)} reserve • ${gbp(decision.totalIncome||0)}/yr projected`);text("pipelineTradeState",decision.status==="READY_TO_EXECUTE"?"READY TO EXECUTE":String(decision.status||"READY").replaceAll("_"," "))}else{text("pipelineTradeValue","No plan");text("pipelineTradeCopy","Scouting Centre has not published a decision for the current mission.");text("pipelineTradeState","WAITING")}
+    if(queue&&Array.isArray(queue.items)&&queue.items.length){const complete=queue.items.filter(item=>["PURCHASED","REGISTERED","COMPLETE"].includes(String(item.status||"").toUpperCase())).length;text("pipelineRegistrationValue",`${complete} / ${queue.items.length}`);text("pipelineRegistrationCopy",`${gbp(queue.totalAllocated)} approved • ${gbp(queue.projectedAnnualIncome)}/yr projected • ${gbp(queue.reserve)} held back`);text("pipelineRegistrationState",complete===queue.items.length?"COMPLETE":`${queue.items.length-complete} WAITING`)}else{text("pipelineRegistrationValue","0 / 0");text("pipelineRegistrationCopy","No approved purchases are waiting for registration.");text("pipelineRegistrationState","WAITING")}
+    const dividendName=String(el("nextDividendHolding")?.textContent||"").trim(),dividendAmount=String(el("nextDividendAmount")?.textContent||"").trim(),dividendDate=String(el("nextDividendDate")?.textContent||"").trim();
+    if(dividendName&&dividendName!=="--"){text("pipelineDividendValue",dividendAmount&&dividendAmount!=="--"?dividendAmount:dividendName);text("pipelineDividendCopy",`${dividendName}${dividendDate&&dividendDate!=="Waiting for Dividends sheet..."?` • ${dividendDate}`:""}`);text("pipelineDividendState","SCHEDULED")}else{text("pipelineDividendValue","Scanning");text("pipelineDividendCopy","Aurora is checking the active dividend calendar.");text("pipelineDividendState","LIVE DATA")}
+    let summary="<strong>Pipeline ready:</strong> send a payday investment mission from Finance Department to begin the connected flow.";
+    if(wealth&&!linkedDecision)summary=`<strong>Next action:</strong> open Scouting Centre and load the ${gbp(wealth.budget)} payday investment mission.`;
+    else if(linkedDecision&&(!queue||!queue.items?.length))summary=`<strong>Next action:</strong> Scouting Centre has ${decision.targets?.length||0} target${decision.targets?.length===1?"":"s"} ready. Review and approve the transfer window.`;
+    else if(queue?.items?.length){const complete=queue.items.filter(item=>["PURCHASED","REGISTERED","COMPLETE"].includes(String(item.status||"").toUpperCase())).length;summary=complete===queue.items.length?`<strong>Pipeline complete:</strong> every approved purchase is registered. Nexus will pick up the new holdings on the next master-data sync.`:`<strong>Next action:</strong> ${queue.items.length-complete} approved purchase${queue.items.length-complete===1?"":"s"} still need buying and registration.`}
+    const box=el("pipelineSummary");if(box)box.innerHTML=summary;
+  }
+  el("refreshMissionPipeline")?.addEventListener("click",render);el("pipelineDividendLink")?.addEventListener("click",event=>{event.preventDefault();document.getElementById("dividendRunway")?.closest("section")?.scrollIntoView({behavior:"smooth",block:"start"})});
+  window.addEventListener("storage",event=>{if([WEALTH_KEY,DECISION_KEY,QUEUE_KEY].includes(event.key))render()});
+  ["nextDividendHolding","nextDividendAmount","nextDividendDate"].forEach(id=>{const node=el(id);if(node)new MutationObserver(()=>render()).observe(node,{childList:true,subtree:true,characterData:true})});
+  window.addEventListener("load",()=>setTimeout(render,360));if(document.readyState!=="loading")setTimeout(render,180);
+})();
