@@ -1,4 +1,4 @@
-/* Aurora City FC shared navigation — Finance + Boardroom */
+/* Aurora City FC shared navigation — Finance + Boardroom + Squad Hub */
 (function () {
   "use strict";
 
@@ -61,6 +61,80 @@
 </aside>
 <div class="aufc-mobile-shade" id="aufcMobileShade"></div>
 <button class="aufc-mobile-button" id="aufcMobileButton" type="button" aria-label="Open navigation">☰</button>`;
+
+
+  const squadHubSidebarMarkup = `
+<aside class="fm-sidebar aurora-squad-sidebar" aria-label="Aurora City FC navigation">
+  <div class="fm-side-brand">
+    <button aria-label="Hide navigation" class="fm-sidebar-collapse" id="fmSidebarCollapse" title="Hide navigation" type="button">‹</button>
+    <div class="fm-side-crest">
+      <img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png">
+    </div>
+    <div><strong>Aurora City FC</strong><span>Squad Hub</span></div>
+  </div>
+
+  <nav class="fm-side-scroll">
+    <div class="fm-nav-group">Navigation</div>
+    <a class="fm-side-link" href="AuroraCityFC_ManagerDashboard.html">
+      <span class="fm-side-icon">⌂</span><span>Home</span>
+    </a>
+
+    <div class="fm-nav-group">Finance</div>
+    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html">
+      <span class="fm-side-icon">£</span><span>Finance Department</span>
+    </a>
+
+    <div class="fm-nav-group">Performance</div>
+    <details class="fm-side-folder active aurora-page-folder" id="squadSideMenu" open style="--page-accent:#22d3ee;--page-accent-rgb:34,211,238">
+      <summary aria-label="Squad Hub page sections">
+        <span class="fm-side-icon">♟</span><span>Squad Hub</span><span class="fm-folder-arrow">›</span>
+      </summary>
+      <div class="fm-side-submenu fm-page-submenu">
+        <a href="#squad-overview">Overview</a>
+        <a href="#squad-summary">Squad Summary</a>
+        <a href="#first-team-formation">First-Team Formation</a>
+        <a href="#starting-xi">Starting XI</a>
+        <a href="#bench-depth-chart">Bench &amp; Depth</a>
+        <a href="#selection-room">Selection Room</a>
+        <a href="#positional-depth-chart">Positional Depth</a>
+        <a href="#chemistry-legends">Chemistry &amp; Legends</a>
+        <a href="#squad-development-centre">Development Centre</a>
+        <a href="#m3FormerPlayers">Former Players</a>
+      </div>
+    </details>
+
+    <a class="fm-side-link" href="AuroraCityFC_AnalysisRoom.html">
+      <span class="fm-side-icon">⌁</span><span>Analysis Room</span>
+    </a>
+    <a class="fm-side-link" href="AuroraCityFC_TrainingGround.html">
+      <span class="fm-side-icon">▲</span><span>Training Ground</span>
+    </a>
+
+    <div class="fm-nav-group">Recruitment</div>
+    <a class="fm-side-link" href="AuroraCityFC_ScoutingCentre.html">
+      <span class="fm-side-icon">⌕</span><span>Scouting Centre</span>
+    </a>
+    <a class="fm-side-link" href="AuroraCityFC_TransferCentre.html">
+      <span class="fm-side-icon">⇄</span><span>Transfer Centre</span>
+    </a>
+
+    <div class="fm-nav-group">Club</div>
+    <a class="fm-side-link" href="AuroraCityFC_Boardroom.html">
+      <span class="fm-side-icon">♜</span><span>Boardroom</span>
+    </a>
+    <a class="fm-side-link" href="AuroraCityFC_MediaCentre.html">
+      <span class="fm-side-icon">●</span><span>Media Centre</span>
+    </a>
+  </nav>
+
+  <div class="fm-side-footer">
+    <button class="fm-side-action" id="sharedSquadRefresh" type="button">Refresh Data</button>
+    <div class="fm-side-clock" id="fmClock">Squad systems connected</div>
+  </div>
+</aside>
+<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" aria-label="Show navigation" role="button" tabindex="0">
+  <div class="fm-sidebar-edge-handle">›</div>
+</div>`;
 
   function mountFinance(mount) {
     mount.outerHTML = financeSidebarMarkup;
@@ -148,11 +222,107 @@
     window.setTimeout(scheduleClose, 5000);
   }
 
+
+  function mountSquadHub(mount) {
+    mount.outerHTML = squadHubSidebarMarkup;
+    document.body.classList.add("aurora-shared-nav-ready");
+
+    const sidebar = document.querySelector(".aurora-squad-sidebar");
+    const collapseButton = document.getElementById("fmSidebarCollapse");
+    const edgeZone = document.getElementById("fmSidebarEdgeZone");
+    const refreshButton = document.getElementById("sharedSquadRefresh");
+    let timer = 0;
+
+    function cancelCollapse() {
+      if (timer) window.clearTimeout(timer);
+      timer = 0;
+    }
+
+    function setCollapsed(collapsed) {
+      document.body.classList.toggle("fm-sidebar-hidden", collapsed);
+      if (collapseButton) {
+        collapseButton.textContent = collapsed ? "›" : "‹";
+        collapseButton.setAttribute(
+          "aria-label",
+          collapsed ? "Show navigation" : "Hide navigation"
+        );
+      }
+    }
+
+    function scheduleCollapse() {
+      cancelCollapse();
+      timer = window.setTimeout(function () {
+        setCollapsed(true);
+      }, 5000);
+    }
+
+    function openSidebar() {
+      cancelCollapse();
+      setCollapsed(false);
+      scheduleCollapse();
+    }
+
+    if (collapseButton) {
+      collapseButton.addEventListener("click", function () {
+        cancelCollapse();
+        const willCollapse = !document.body.classList.contains("fm-sidebar-hidden");
+        setCollapsed(willCollapse);
+        if (!willCollapse) scheduleCollapse();
+      });
+    }
+
+    if (edgeZone) {
+      edgeZone.addEventListener("pointerenter", openSidebar);
+      edgeZone.addEventListener("click", openSidebar);
+      edgeZone.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openSidebar();
+        }
+      });
+    }
+
+    if (sidebar) {
+      sidebar.addEventListener("pointerenter", cancelCollapse);
+      sidebar.addEventListener("pointerleave", scheduleCollapse);
+      sidebar.addEventListener("focusin", cancelCollapse);
+      sidebar.addEventListener("focusout", scheduleCollapse);
+    }
+
+    document.querySelectorAll('.fm-page-submenu a[href^="#"]').forEach(function (link) {
+      link.addEventListener("click", function (event) {
+        const target = document.querySelector(link.getAttribute("href"));
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.querySelectorAll(".fm-page-submenu a").forEach(function (item) {
+          item.classList.remove("active");
+        });
+        link.classList.add("active");
+        scheduleCollapse();
+      });
+    });
+
+    if (refreshButton) {
+      refreshButton.addEventListener("click", function () {
+        const existingRefresh = document.getElementById("refreshBtn");
+        if (existingRefresh && existingRefresh !== refreshButton) {
+          existingRefresh.click();
+        } else {
+          window.location.reload();
+        }
+      });
+    }
+
+    window.setTimeout(scheduleCollapse, 5000);
+  }
+
   function mountAuroraNavigation() {
     const mount = document.getElementById("auroraNavigationMount");
     if (!mount || mount.dataset.mounted === "true") return;
     const page = document.documentElement.dataset.auroraPage || "";
     if (page === "boardroom") mountBoardroom(mount);
+    else if (page === "squad-hub") mountSquadHub(mount);
     else mountFinance(mount);
   }
 
