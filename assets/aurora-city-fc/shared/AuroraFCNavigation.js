@@ -21,7 +21,7 @@
 
     <div class="aufc-label">Finance</div>
     <div class="aufc-links">
-      <a class="aufc-link finance-link" href="AuroraCityFC_FinanceDepartment.html"><span class="aufc-icon">£</span><span class="aufc-name">Finance Department</span></a>
+      <a class="aufc-link finance-link" href="AuroraCityFC_FinanceDepartment.html" style="--nav-accent:#f3c45b;--nav-rgb:243,196,91"><span class="aufc-icon">£</span><span class="aufc-name">Finance Department</span></a>
     </div>
 
     <div class="aufc-label">Performance</div>
@@ -80,7 +80,7 @@
     </a>
 
     <div class="fm-nav-group">Finance</div>
-    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html">
+    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html" style="--dept-colour:#f3c45b;--dept-rgb:243,196,91">
       <span class="fm-side-icon">£</span><span>Finance Department</span>
     </a>
 
@@ -154,7 +154,7 @@
     </a>
 
     <div class="fm-nav-group">Finance</div>
-    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html">
+    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html" style="--dept-colour:#f3c45b;--dept-rgb:243,196,91">
       <span class="fm-side-icon">£</span><span>Finance Department</span>
     </a>
 
@@ -223,7 +223,7 @@
     <a class="fm-side-link" href="AuroraCityFC_ManagerDashboard.html"><span class="fm-side-icon">⌂</span><span>Home</span></a>
 
     <div class="fm-nav-group">Finance</div>
-    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html"><span class="fm-side-icon">£</span><span>Finance Department</span></a>
+    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html" style="--dept-colour:#f3c45b;--dept-rgb:243,196,91"><span class="fm-side-icon">£</span><span>Finance Department</span></a>
 
     <div class="fm-nav-group">Performance</div>
     <a class="fm-side-link" href="AuroraCityFC_SquadHub.html"><span class="fm-side-icon">♟</span><span>Squad Hub</span></a>
