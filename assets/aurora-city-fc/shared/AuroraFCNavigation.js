@@ -1,4 +1,4 @@
-/* Aurora City FC shared navigation — Finance + Boardroom + Squad Hub + Training Ground */
+/* Aurora City FC shared navigation — FIXED Training Ground detection • 28 Jul 2026 */
 (function () {
   "use strict";
 
@@ -172,13 +172,12 @@
       </summary>
       <div class="fm-side-submenu fm-page-submenu">
         <a href="#training-overview">Overview</a>
-        <a href="#training-status">Training Status</a>
-        <a href="#development-plan">Development Plan</a>
-        <a href="#weekly-programme">Weekly Programme</a>
-        <a href="#fitness-load">Fitness &amp; Load</a>
-        <a href="#player-development">Player Development</a>
-        <a href="#coaching-focus">Coaching Focus</a>
-        <a href="#injury-prevention">Injury Prevention</a>
+        <a href="#training-summary">Training Summary</a>
+        <a href="#coachs-report">Coach’s Report</a>
+        <a href="#rising-stars">Rising Stars</a>
+        <a href="#medical-room">Medical Room</a>
+        <a href="#training-form-table">Training Form</a>
+        <a href="#training-focus">Training Focus</a>
       </div>
     </details>
 
@@ -432,10 +431,10 @@
     if (collapseButton) {
       collapseButton.addEventListener("click", function () {
         cancelCollapse();
-        const willCollapse =
+        const collapse =
           !document.body.classList.contains("fm-sidebar-hidden");
-        setCollapsed(willCollapse);
-        if (!willCollapse) scheduleCollapse();
+        setCollapsed(collapse);
+        if (!collapse) scheduleCollapse();
       });
     }
 
@@ -467,15 +466,20 @@
           item.classList.remove("active");
         });
         link.classList.add("active");
+        try {
+          history.replaceState(null, "", link.getAttribute("href"));
+        } catch (_) {}
         scheduleCollapse();
       });
     });
 
     if (refreshButton) {
       refreshButton.addEventListener("click", function () {
-        const existingRefresh = document.getElementById("refreshBtn");
-        if (existingRefresh && existingRefresh !== refreshButton) {
-          existingRefresh.click();
+        const pageRefresh = document.getElementById("refreshBtn");
+        if (pageRefresh && pageRefresh !== refreshButton) {
+          pageRefresh.click();
+        } else if (typeof loadAuroraData === "function") {
+          loadAuroraData();
         } else {
           window.location.reload();
         }
@@ -488,10 +492,38 @@
   function mountAuroraNavigation() {
     const mount = document.getElementById("auroraNavigationMount");
     if (!mount || mount.dataset.mounted === "true") return;
-    const page = document.documentElement.dataset.auroraPage || "";
-    if (page === "boardroom") mountBoardroom(mount);
-    else if (page === "squad-hub") mountSquadHub(mount);
-    else if (page === "training-ground") mountTrainingGround(mount);
+    const declaredPage = (
+      document.documentElement.dataset.auroraPage ||
+      document.body?.dataset.auroraPage ||
+      ""
+    ).toLowerCase();
+
+    const fileName = (
+      window.location.pathname.split("/").pop() || ""
+    ).toLowerCase();
+
+    const pageTitle = (document.title || "").toLowerCase();
+
+    const isTrainingGround =
+      declaredPage === "training-ground" ||
+      declaredPage === "training" ||
+      fileName.includes("trainingground") ||
+      pageTitle.includes("training ground");
+
+    const isSquadHub =
+      declaredPage === "squad-hub" ||
+      declaredPage === "squad" ||
+      fileName.includes("squadhub") ||
+      pageTitle.includes("squad hub");
+
+    const isBoardroom =
+      declaredPage === "boardroom" ||
+      fileName.includes("boardroom") ||
+      pageTitle.includes("boardroom");
+
+    if (isTrainingGround) mountTrainingGround(mount);
+    else if (isBoardroom) mountBoardroom(mount);
+    else if (isSquadHub) mountSquadHub(mount);
     else mountFinance(mount);
   }
 
