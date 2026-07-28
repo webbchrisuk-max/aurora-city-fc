@@ -3117,12 +3117,12 @@ document.addEventListener("click",event=>{
     if(hoverQuery.matches)scheduleCollapse();
   });
   sidebar.addEventListener('focusin',expandSidebar);
-  sidebar.addEventListener('focusout',()=>scheduleCollapse(5000));
+  sidebar.addEventListener('focusout',()=>scheduleCollapse(650));
 
   nav?.querySelectorAll('button').forEach(button=>{
     const label=button.querySelector('span:last-child')?.textContent?.trim();
     if(label)button.title=label;
-    button.addEventListener('click',()=>scheduleCollapse(5000));
+    button.addEventListener('click',()=>scheduleCollapse(260));
   });
 
   document.addEventListener('click',event=>{
@@ -5002,32 +5002,17 @@ document.addEventListener("click",event=>{
     var lastY=Math.max(0,window.scrollY||0);
     var ticking=false;
     var direction='';
-    var delayedCollapseTimer=0;
-    function cancelDelayedCollapse(){
-      if(delayedCollapseTimer){
-        clearTimeout(delayedCollapseTimer);
-        delayedCollapseTimer=0;
-      }
-    }
-    function delayCollapse(){
-      cancelDelayedCollapse();
-      delayedCollapseTimer=setTimeout(function(){
-        setCollapsed(true);
-      },5000);
-    }
     function onFrame(){
       var y=Math.max(0,window.scrollY||0);
       var delta=y-lastY;
       if(window.innerWidth>820){
         if(y<=24){
-          cancelDelayedCollapse();
           setCollapsed(false);
           direction='up';
         }else if(delta>7 && direction!=='down'){
-          delayCollapse();
+          setCollapsed(true);
           direction='down';
         }else if(delta<-7 && direction!=='up'){
-          cancelDelayedCollapse();
           setCollapsed(false);
           direction='up';
         }
