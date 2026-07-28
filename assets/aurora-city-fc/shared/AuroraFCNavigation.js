@@ -1,694 +1,445 @@
-/* Aurora City FC shared navigation — FIXED Training Ground detection • 28 Jul 2026 */
-(function () {
+
+(() => {
   "use strict";
 
-  const financeSidebarMarkup = "<aside class=\"m13-sidebar aurora-finance-sidebar\" aria-label=\"Aurora City FC finance navigation\">\n  <button class=\"m13-sidebar-toggle\" id=\"m21SidebarToggle\" type=\"button\" aria-expanded=\"true\" aria-label=\"Finance navigation\" title=\"Finance navigation\"><span aria-hidden=\"true\">\u2039</span></button>\n  <div class=\"m13-club\">\n    <div class=\"m13-crest\"><img alt=\"Aurora City FC crest\" src=\"https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png\"/></div>\n    <div><strong>Aurora City FC</strong><small>FINANCE OFFICE</small></div>\n  </div>\n\n  <nav class=\"aurora-finance-nav-scroll\" aria-label=\"Aurora departments\">\n    <div class=\"m13-nav-label\">Manager</div>\n    <a class=\"aurora-fc-side-link\" href=\"AuroraCityFC_ManagerDashboard.html\" style=\"--nav-accent:#60a5fa;--nav-rgb:96,165,250\">\n      <span class=\"icon\">\u2302</span><span>Home</span><span class=\"aurora-fc-side-arrow\">\u203a</span>\n    </a>\n\n    <div class=\"m13-nav-label aurora-finance-group-label\">Finance</div>\n    <details class=\"aurora-finance-folder\" open>\n      <summary><span class=\"icon\">\u00a3</span><span>Finance Department</span><span class=\"aurora-folder-arrow\">\u203a</span></summary>\n      <div class=\"m13-nav aurora-finance-submenu\" id=\"m13Nav\">\n        <button class=\"active\" data-target=\"m13Dashboard\" type=\"button\"><span class=\"icon\">\u2302</span><span>Budget Dashboard</span></button>\n        <button data-target=\"m13PaydayPlan\" type=\"button\"><span class=\"icon\">\u00a3</span><span>Payday Plan</span></button>\n        <button data-target=\"m13Bills\" type=\"button\"><span class=\"icon\">\u2713</span><span>Bills &amp; Spending</span></button>\n        <button data-target=\"m13PotHealth\" type=\"button\"><span class=\"icon\">\u25c9</span><span>Pot Health</span></button>\n        <button data-target=\"m13HouseProject\" type=\"button\"><span class=\"icon\">\u2302</span><span>House Project</span></button>\n        <button data-target=\"m13Funding\" type=\"button\"><span class=\"icon\">\u2197</span><span>Funding Engine</span></button>\n        <button data-target=\"m13History\" type=\"button\"><span class=\"icon\">\u25a6</span><span>History</span></button>\n      </div>\n    </details>\n\n    <div class=\"m13-nav-label\">Performance</div>\n    <a class=\"aurora-fc-side-link\" href=\"AuroraCityFC_SquadHub.html\" style=\"--nav-accent:#22d3ee;--nav-rgb:34,211,238\"><span class=\"icon\">\u265f</span><span>Squad Hub</span><span class=\"aurora-fc-side-status\">Linked</span></a>\n    <a class=\"aurora-fc-side-link\" href=\"AuroraCityFC_AnalysisRoom.html\" style=\"--nav-accent:#a78bfa;--nav-rgb:167,139,250\"><span class=\"icon\">\u2301</span><span>Analysis Room</span><span class=\"aurora-fc-side-status live\">Live</span></a>\n    <a class=\"aurora-fc-side-link\" href=\"AuroraCityFC_TrainingGround.html\" style=\"--nav-accent:#34d399;--nav-rgb:52,211,153\"><span class=\"icon\">\u25b2</span><span>Training Ground</span><span class=\"aurora-fc-side-status\">Linked</span></a>\n\n    <div class=\"m13-nav-label\">Recruitment</div>\n    <a class=\"aurora-fc-side-link\" href=\"AuroraCityFC_ScoutingCentre.html\" style=\"--nav-accent:#34d399;--nav-rgb:52,211,153\"><span class=\"icon\">\u2315</span><span>Scouting Centre</span><span class=\"aurora-fc-side-arrow\">\u203a</span></a>\n    <a class=\"aurora-fc-side-link\" href=\"AuroraCityFC_TransferCentre.html\" style=\"--nav-accent:#f59e0b;--nav-rgb:245,158,11\"><span class=\"icon\">\u21c4</span><span>Transfer Centre</span><span class=\"aurora-fc-side-status ready\">Ready</span></a>\n\n    <div class=\"m13-nav-label\">Club</div>\n    <a class=\"aurora-fc-side-link\" href=\"AuroraCityFC_Boardroom.html\" style=\"--nav-accent:#ec4899;--nav-rgb:236,72,153\"><span class=\"icon\">\u265c</span><span>Boardroom</span><span class=\"aurora-fc-side-status\">Linked</span></a>\n    <a class=\"aurora-fc-side-link\" href=\"AuroraCityFC_MediaCentre.html\" style=\"--nav-accent:#facc15;--nav-rgb:250,204,21\"><span class=\"icon\">\u25cf</span><span>Media Centre</span><span class=\"aurora-fc-side-status\">Linked</span></a>\n  </nav>\n\n  <div class=\"m13-sidebar-foot aurora-finance-sidebar-foot\">\n    <button class=\"aurora-finance-refresh\" id=\"financeSidebarRefresh\" type=\"button\"><span class=\"icon\">\u21bb</span><span>Refresh Plan</span></button>\n    <div class=\"m13-live\"><i></i> FINANCE DEPARTMENT LIVE</div>\n    <div id=\"m13SideStatus\">Loading saved planner\u2026</div>\n  </div>\n</aside>";
-
-  const boardroomSidebarMarkup = `
-<aside class="aufc-sidebar aurora-boardroom-sidebar" aria-label="Aurora City FC navigation">
-  <button class="aufc-toggle" id="aufcSidebarToggle" type="button" aria-label="Collapse navigation" aria-expanded="true"><span>‹</span></button>
-
-  <div class="aufc-brand">
-    <div class="aufc-crest"><img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"></div>
-    <div class="aufc-brand-copy"><strong>Aurora City FC</strong><small>BOARDROOM</small></div>
-  </div>
-
-  <nav class="aufc-scroll" aria-label="Aurora departments">
-    <div class="aufc-label">Manager</div>
-    <div class="aufc-links">
-      <a class="aufc-link" href="AuroraCityFC_ManagerDashboard.html" style="--nav-accent:#60a5fa;--nav-rgb:96,165,250"><span class="aufc-icon">⌂</span><span class="aufc-name">Home</span></a>
-    </div>
-
-    <div class="aufc-label">Finance</div>
-    <div class="aufc-links">
-      <a class="aufc-link finance-link" href="AuroraCityFC_FinanceDepartment.html" style="--nav-accent:#f3c45b;--nav-rgb:243,196,91"><span class="aufc-icon">£</span><span class="aufc-name">Finance Department</span></a>
-    </div>
-
-    <div class="aufc-label">Performance</div>
-    <div class="aufc-links">
-      <a class="aufc-link" href="AuroraCityFC_SquadHub.html" style="--nav-accent:#22d3ee;--nav-rgb:34,211,238"><span class="aufc-icon">♟</span><span class="aufc-name">Squad Hub</span></a>
-      <a class="aufc-link" href="AuroraCityFC_AnalysisRoom.html" style="--nav-accent:#a78bfa;--nav-rgb:167,139,250"><span class="aufc-icon">⌁</span><span class="aufc-name">Analysis Room</span></a>
-      <a class="aufc-link" href="AuroraCityFC_TrainingGround.html" style="--nav-accent:#34d399;--nav-rgb:52,211,153"><span class="aufc-icon">▲</span><span class="aufc-name">Training Ground</span></a>
-    </div>
-
-    <div class="aufc-label">Recruitment</div>
-    <div class="aufc-links">
-      <a class="aufc-link" href="AuroraCityFC_ScoutingCentre.html" style="--nav-accent:#4ade80;--nav-rgb:74,222,128"><span class="aufc-icon">⌕</span><span class="aufc-name">Scouting Centre</span></a>
-      <a class="aufc-link" href="AuroraCityFC_TransferCentre.html" style="--nav-accent:#f59e0b;--nav-rgb:245,158,11"><span class="aufc-icon">⇄</span><span class="aufc-name">Transfer Centre</span></a>
-    </div>
-
-    <div class="aufc-label">Club</div>
-    <div class="aufc-links">
-      <details class="aurora-page-folder" open style="--page-accent:#f472b6;--page-accent-rgb:244,114,182">
-        <summary><span class="fm-side-icon">♜</span><span>Boardroom</span><span class="fm-folder-arrow">›</span></summary>
-        <div class="fm-side-submenu fm-page-submenu">
-          <a href="#boardroom-overview">Overview</a>
-          <a href="#board-summary">Board Summary</a>
-          <a href="#confidence-objectives">Confidence &amp; Objectives</a>
-          <a href="#executive-control-room">Executive Control</a>
-          <a href="#board-agenda-risk">Agenda &amp; Risk</a>
-          <a href="#financial-oversight">Financial Oversight</a>
-          <a href="#board-decision-log">Decision Log</a>
-          <a href="#boardroom-briefing">Boardroom Briefing</a>
-          <a href="#aurora-honours-cabinet">Honours Cabinet</a>
-        </div>
-      </details>
-      <a class="aufc-link" href="AuroraCityFC_MediaCentre.html" style="--nav-accent:#facc15;--nav-rgb:250,204,21"><span class="aufc-icon">●</span><span class="aufc-name">Media Centre</span></a>
-    </div>
-  </nav>
-
-  <div class="aufc-footer"><div class="aufc-live"><i></i><span>Board systems connected</span></div></div>
-</aside>
-<div class="aufc-mobile-shade" id="aufcMobileShade"></div>
-<button class="aufc-mobile-button" id="aufcMobileButton" type="button" aria-label="Open navigation">☰</button>`;
-
-
-  const squadHubSidebarMarkup = `
-<aside class="fm-sidebar aurora-squad-sidebar" aria-label="Aurora City FC navigation">
-  <div class="fm-side-brand">
-    <button aria-label="Hide navigation" class="fm-sidebar-collapse" id="fmSidebarCollapse" title="Hide navigation" type="button">‹</button>
-    <div class="fm-side-crest">
-      <img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png">
-    </div>
-    <div><strong>Aurora City FC</strong><span>Squad Hub</span></div>
-  </div>
-
-  <nav class="fm-side-scroll">
-    <div class="fm-nav-group">Navigation</div>
-    <a class="fm-side-link" href="AuroraCityFC_ManagerDashboard.html">
-      <span class="fm-side-icon">⌂</span><span>Home</span>
-    </a>
-
-    <div class="fm-nav-group">Finance</div>
-    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html" style="--dept-colour:#f3c45b;--dept-rgb:243,196,91">
-      <span class="fm-side-icon">£</span><span>Finance Department</span>
-    </a>
-
-    <div class="fm-nav-group">Performance</div>
-    <details class="fm-side-folder active aurora-page-folder" id="squadSideMenu" open style="--page-accent:#22d3ee;--page-accent-rgb:34,211,238">
-      <summary aria-label="Squad Hub page sections">
-        <span class="fm-side-icon">♟</span><span>Squad Hub</span><span class="fm-folder-arrow">›</span>
-      </summary>
-      <div class="fm-side-submenu fm-page-submenu">
-        <a href="#squad-overview">Overview</a>
-        <a href="#squad-summary">Squad Summary</a>
-        <a href="#first-team-formation">First-Team Formation</a>
-        <a href="#starting-xi">Starting XI</a>
-        <a href="#bench-depth-chart">Bench &amp; Depth</a>
-        <a href="#selection-room">Selection Room</a>
-        <a href="#positional-depth-chart">Positional Depth</a>
-        <a href="#chemistry-legends">Chemistry &amp; Legends</a>
-        <a href="#squad-development-centre">Development Centre</a>
-        <a href="#m3FormerPlayers">Former Players</a>
-      </div>
-    </details>
-
-    <a class="fm-side-link" href="AuroraCityFC_AnalysisRoom.html">
-      <span class="fm-side-icon">⌁</span><span>Analysis Room</span>
-    </a>
-    <a class="fm-side-link" href="AuroraCityFC_TrainingGround.html">
-      <span class="fm-side-icon">▲</span><span>Training Ground</span>
-    </a>
-
-    <div class="fm-nav-group">Recruitment</div>
-    <a class="fm-side-link" href="AuroraCityFC_ScoutingCentre.html">
-      <span class="fm-side-icon">⌕</span><span>Scouting Centre</span>
-    </a>
-    <a class="fm-side-link" href="AuroraCityFC_TransferCentre.html">
-      <span class="fm-side-icon">⇄</span><span>Transfer Centre</span>
-    </a>
-
-    <div class="fm-nav-group">Club</div>
-    <a class="fm-side-link" href="AuroraCityFC_Boardroom.html">
-      <span class="fm-side-icon">♜</span><span>Boardroom</span>
-    </a>
-    <a class="fm-side-link" href="AuroraCityFC_MediaCentre.html">
-      <span class="fm-side-icon">●</span><span>Media Centre</span>
-    </a>
-  </nav>
-
-  <div class="fm-side-footer">
-    <button class="fm-side-action" id="sharedSquadRefresh" type="button">Refresh Data</button>
-    <div class="fm-side-clock" id="fmClock">Squad systems connected</div>
-  </div>
-</aside>
-<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" aria-label="Show navigation" role="button" tabindex="0">
-  <div class="fm-sidebar-edge-handle">›</div>
-</div>`;
-
-
-  const trainingGroundSidebarMarkup = `
-<aside class="fm-sidebar aurora-training-sidebar" aria-label="Aurora City FC navigation">
-  <div class="fm-side-brand">
-    <button aria-label="Hide navigation" class="fm-sidebar-collapse" id="fmSidebarCollapse" title="Hide navigation" type="button">‹</button>
-    <div class="fm-side-crest">
-      <img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png">
-    </div>
-    <div><strong>Aurora City FC</strong><span>Training Ground</span></div>
-  </div>
-
-  <nav class="fm-side-scroll">
-    <div class="fm-nav-group">Navigation</div>
-    <a class="fm-side-link" href="AuroraCityFC_ManagerDashboard.html">
-      <span class="fm-side-icon">⌂</span><span>Home</span>
-    </a>
-
-    <div class="fm-nav-group">Finance</div>
-    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html" style="--dept-colour:#f3c45b;--dept-rgb:243,196,91">
-      <span class="fm-side-icon">£</span><span>Finance Department</span>
-    </a>
-
-    <div class="fm-nav-group">Performance</div>
-    <a class="fm-side-link" href="AuroraCityFC_SquadHub.html">
-      <span class="fm-side-icon">♟</span><span>Squad Hub</span>
-    </a>
-    <a class="fm-side-link" href="AuroraCityFC_AnalysisRoom.html">
-      <span class="fm-side-icon">⌁</span><span>Analysis Room</span>
-    </a>
-
-    <details class="fm-side-folder active aurora-page-folder" id="trainingSideMenu" open style="--page-accent:#34d399;--page-accent-rgb:52,211,153">
-      <summary aria-label="Training Ground page sections">
-        <span class="fm-side-icon">▲</span><span>Training Ground</span><span class="fm-folder-arrow">›</span>
-      </summary>
-      <div class="fm-side-submenu fm-page-submenu">
-        <a href="#training-overview">Overview</a>
-        <a href="#training-summary">Training Summary</a>
-        <a href="#coachs-report">Coach’s Report</a>
-        <a href="#rising-stars">Rising Stars</a>
-        <a href="#medical-room">Medical Room</a>
-        <a href="#training-form-table">Training Form</a>
-        <a href="#training-focus">Training Focus</a>
-      </div>
-    </details>
-
-    <div class="fm-nav-group">Recruitment</div>
-    <a class="fm-side-link" href="AuroraCityFC_ScoutingCentre.html">
-      <span class="fm-side-icon">⌕</span><span>Scouting Centre</span>
-    </a>
-    <a class="fm-side-link" href="AuroraCityFC_TransferCentre.html">
-      <span class="fm-side-icon">⇄</span><span>Transfer Centre</span>
-    </a>
-
-    <div class="fm-nav-group">Club</div>
-    <a class="fm-side-link" href="AuroraCityFC_Boardroom.html">
-      <span class="fm-side-icon">♜</span><span>Boardroom</span>
-    </a>
-    <a class="fm-side-link" href="AuroraCityFC_MediaCentre.html">
-      <span class="fm-side-icon">●</span><span>Media Centre</span>
-    </a>
-  </nav>
-
-  <div class="fm-side-footer">
-    <button class="fm-side-action" id="sharedTrainingRefresh" type="button">Refresh Data</button>
-    <div class="fm-side-clock" id="fmClock">Training systems connected</div>
-  </div>
-</aside>
-<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" aria-label="Show navigation" role="button" tabindex="0">
-  <div class="fm-sidebar-edge-handle">›</div>
-</div>`;
-
-
-  const scoutingCentreSidebarMarkup = `
-<aside class="fm-sidebar aurora-scouting-sidebar" aria-label="Aurora City FC navigation">
-  <div class="fm-side-brand">
-    <button aria-label="Hide navigation" class="fm-sidebar-collapse" id="fmSidebarCollapse" title="Hide navigation" type="button">‹</button>
-    <div class="fm-side-crest">
-      <img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png">
-    </div>
-    <div><strong>Aurora City FC</strong><span>Scouting Centre</span></div>
-  </div>
-
-  <nav class="fm-side-scroll">
-    <div class="fm-nav-group">Navigation</div>
-    <a class="fm-side-link" href="AuroraCityFC_ManagerDashboard.html"><span class="fm-side-icon">⌂</span><span>Home</span></a>
-
-    <div class="fm-nav-group">Finance</div>
-    <a class="fm-side-link" href="AuroraCityFC_FinanceDepartment.html" style="--dept-colour:#f3c45b;--dept-rgb:243,196,91"><span class="fm-side-icon">£</span><span>Finance Department</span></a>
-
-    <div class="fm-nav-group">Performance</div>
-    <a class="fm-side-link" href="AuroraCityFC_SquadHub.html"><span class="fm-side-icon">♟</span><span>Squad Hub</span></a>
-    <a class="fm-side-link" href="AuroraCityFC_AnalysisRoom.html"><span class="fm-side-icon">⌁</span><span>Analysis Room</span></a>
-    <a class="fm-side-link" href="AuroraCityFC_TrainingGround.html"><span class="fm-side-icon">▲</span><span>Training Ground</span></a>
-
-    <div class="fm-nav-group">Recruitment</div>
-    <details class="fm-side-folder active aurora-page-folder" id="scoutingSideMenu" open style="--page-accent:#4ade80;--page-accent-rgb:74,222,128">
-      <summary aria-label="Scouting Centre page sections">
-        <span class="fm-side-icon">⌕</span><span>Scouting Centre</span><span class="fm-folder-arrow">›</span>
-      </summary>
-      <div class="fm-side-submenu fm-page-submenu">
-        <a href="#scouting-overview">Overview</a>
-        <a href="#chief-scout-report">Chief Scout Report</a>
-        <a href="#scouting-best-xi">Scouting Best XI</a>
-        <a href="#rescouting-desk">Re-scouting Desk</a>
-        <a href="#scouting-radar">Scouting Radar</a>
-        <a href="#scout-assignments">Scout Assignments</a>
-        <a href="#scouting-pipeline">Scouting Pipeline</a>
-        <a href="#reports">League Tables</a>
-        <a href="#meeting">Recruitment Meeting</a>
-      </div>
-    </details>
-    <a class="fm-side-link" href="AuroraCityFC_TransferCentre.html"><span class="fm-side-icon">⇄</span><span>Transfer Centre</span></a>
-
-    <div class="fm-nav-group">Club</div>
-    <a class="fm-side-link" href="AuroraCityFC_Boardroom.html"><span class="fm-side-icon">♜</span><span>Boardroom</span></a>
-    <a class="fm-side-link" href="AuroraCityFC_MediaCentre.html"><span class="fm-side-icon">●</span><span>Media Centre</span></a>
-  </nav>
-
-  <div class="fm-side-footer">
-    <button class="fm-side-action" id="sharedScoutingRefresh" type="button">Refresh Data</button>
-    <div class="fm-side-clock" id="fmClock">Scouting systems connected</div>
-  </div>
-</aside>
-<div class="fm-sidebar-edge-zone" id="fmSidebarEdgeZone" aria-label="Show navigation" role="button" tabindex="0">
-  <div class="fm-sidebar-edge-handle">›</div>
-</div>`;
-
-  function mountFinance(mount) {
-    mount.outerHTML = financeSidebarMarkup;
-  }
-
-  function mountBoardroom(mount) {
-    mount.outerHTML = boardroomSidebarMarkup;
-    document.body.classList.add("aufc-nav-ready");
-
-    const toggle = document.getElementById("aufcSidebarToggle");
-    const mobile = document.getElementById("aufcMobileButton");
-    const shade = document.getElementById("aufcMobileShade");
-    const sidebar = document.querySelector(".aurora-boardroom-sidebar");
-    let timer = 0;
-
-    function cancelTimer() {
-      if (timer) clearTimeout(timer);
-      timer = 0;
-    }
-
-    function openSidebar() {
-      cancelTimer();
-      if (window.innerWidth <= 820) {
-        document.body.classList.add("aufc-mobile-open");
-      } else {
-        document.body.classList.remove("aufc-nav-collapsed");
-        if (toggle) toggle.setAttribute("aria-expanded", "true");
-      }
-    }
-
-    function closeSidebar() {
-      if (window.innerWidth <= 820) {
-        document.body.classList.remove("aufc-mobile-open");
-      } else {
-        document.body.classList.add("aufc-nav-collapsed");
-        if (toggle) toggle.setAttribute("aria-expanded", "false");
-      }
-    }
-
-    function scheduleClose() {
-      cancelTimer();
-      timer = window.setTimeout(closeSidebar, 5000);
-    }
-
-    if (toggle) toggle.addEventListener("click", function() {
-      cancelTimer();
-      document.body.classList.toggle("aufc-nav-collapsed");
-      toggle.setAttribute("aria-expanded", document.body.classList.contains("aufc-nav-collapsed") ? "false" : "true");
-      if (!document.body.classList.contains("aufc-nav-collapsed")) scheduleClose();
-    });
-
-    if (mobile) mobile.addEventListener("click", function() {
-      openSidebar();
-      scheduleClose();
-    });
-
-    if (shade) shade.addEventListener("click", closeSidebar);
-
-    if (sidebar) {
-      sidebar.addEventListener("pointerenter", cancelTimer);
-      sidebar.addEventListener("pointerleave", scheduleClose);
-      sidebar.addEventListener("focusin", cancelTimer);
-      sidebar.addEventListener("focusout", scheduleClose);
-      sidebar.addEventListener("click", function(event) {
-        const link = event.target.closest('a[href^="#"]');
-        if (link) {
-          openSidebar();
-          scheduleClose();
-        }
-      });
-    }
-
-    document.querySelectorAll('.fm-page-submenu a[href^="#"]').forEach(function(link) {
-      link.addEventListener("click", function(event) {
-        const target = document.querySelector(link.getAttribute("href"));
-        if (!target) return;
-        event.preventDefault();
-        target.scrollIntoView({ behavior:"smooth", block:"start" });
-        document.querySelectorAll(".fm-page-submenu a").forEach(a => a.classList.remove("active"));
-        link.classList.add("active");
-        scheduleClose();
-      });
-    });
-
-    window.setTimeout(scheduleClose, 5000);
-  }
-
-
-  function mountSquadHub(mount) {
-    mount.outerHTML = squadHubSidebarMarkup;
-    document.body.classList.add("aurora-shared-nav-ready");
-
-    const sidebar = document.querySelector(".aurora-squad-sidebar");
-    const collapseButton = document.getElementById("fmSidebarCollapse");
-    const edgeZone = document.getElementById("fmSidebarEdgeZone");
-    const refreshButton = document.getElementById("sharedSquadRefresh");
-    let timer = 0;
-
-    function cancelCollapse() {
-      if (timer) window.clearTimeout(timer);
-      timer = 0;
-    }
-
-    function setCollapsed(collapsed) {
-      document.body.classList.toggle("fm-sidebar-hidden", collapsed);
-      if (collapseButton) {
-        collapseButton.textContent = collapsed ? "›" : "‹";
-        collapseButton.setAttribute(
-          "aria-label",
-          collapsed ? "Show navigation" : "Hide navigation"
-        );
-      }
-    }
-
-    function scheduleCollapse() {
-      cancelCollapse();
-      timer = window.setTimeout(function () {
-        setCollapsed(true);
-      }, 5000);
-    }
-
-    function openSidebar() {
-      cancelCollapse();
-      setCollapsed(false);
-      scheduleCollapse();
-    }
-
-    if (collapseButton) {
-      collapseButton.addEventListener("click", function () {
-        cancelCollapse();
-        const willCollapse = !document.body.classList.contains("fm-sidebar-hidden");
-        setCollapsed(willCollapse);
-        if (!willCollapse) scheduleCollapse();
-      });
-    }
-
-    if (edgeZone) {
-      edgeZone.addEventListener("pointerenter", openSidebar);
-      edgeZone.addEventListener("click", openSidebar);
-      edgeZone.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          openSidebar();
-        }
-      });
-    }
-
-    if (sidebar) {
-      sidebar.addEventListener("pointerenter", cancelCollapse);
-      sidebar.addEventListener("pointerleave", scheduleCollapse);
-      sidebar.addEventListener("focusin", cancelCollapse);
-      sidebar.addEventListener("focusout", scheduleCollapse);
-    }
-
-    document.querySelectorAll('.fm-page-submenu a[href^="#"]').forEach(function (link) {
-      link.addEventListener("click", function (event) {
-        const target = document.querySelector(link.getAttribute("href"));
-        if (!target) return;
-        event.preventDefault();
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-        document.querySelectorAll(".fm-page-submenu a").forEach(function (item) {
-          item.classList.remove("active");
-        });
-        link.classList.add("active");
-        scheduleCollapse();
-      });
-    });
-
-    if (refreshButton) {
-      refreshButton.addEventListener("click", function () {
-        const existingRefresh = document.getElementById("refreshBtn");
-        if (existingRefresh && existingRefresh !== refreshButton) {
-          existingRefresh.click();
-        } else {
-          window.location.reload();
-        }
-      });
-    }
-
-    window.setTimeout(scheduleCollapse, 5000);
-  }
-
-
-  function mountTrainingGround(mount) {
-    mount.outerHTML = trainingGroundSidebarMarkup;
-    document.body.classList.add("aurora-shared-nav-ready");
-
-    const sidebar = document.querySelector(".aurora-training-sidebar");
-    const collapseButton = document.getElementById("fmSidebarCollapse");
-    const edgeZone = document.getElementById("fmSidebarEdgeZone");
-    const refreshButton = document.getElementById("sharedTrainingRefresh");
-    let timer = 0;
-
-    function cancelCollapse() {
-      if (timer) window.clearTimeout(timer);
-      timer = 0;
-    }
-
-    function setCollapsed(collapsed) {
-      document.body.classList.toggle("fm-sidebar-hidden", collapsed);
-      if (collapseButton) {
-        collapseButton.textContent = collapsed ? "›" : "‹";
-        collapseButton.setAttribute(
-          "aria-label",
-          collapsed ? "Show navigation" : "Hide navigation"
-        );
-      }
-    }
-
-    function scheduleCollapse() {
-      cancelCollapse();
-      timer = window.setTimeout(function () {
-        setCollapsed(true);
-      }, 5000);
-    }
-
-    function openSidebar() {
-      cancelCollapse();
-      setCollapsed(false);
-      scheduleCollapse();
-    }
-
-    if (collapseButton) {
-      collapseButton.addEventListener("click", function () {
-        cancelCollapse();
-        const collapse =
-          !document.body.classList.contains("fm-sidebar-hidden");
-        setCollapsed(collapse);
-        if (!collapse) scheduleCollapse();
-      });
-    }
-
-    if (edgeZone) {
-      edgeZone.addEventListener("pointerenter", openSidebar);
-      edgeZone.addEventListener("click", openSidebar);
-      edgeZone.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          openSidebar();
-        }
-      });
-    }
-
-    if (sidebar) {
-      sidebar.addEventListener("pointerenter", cancelCollapse);
-      sidebar.addEventListener("pointerleave", scheduleCollapse);
-      sidebar.addEventListener("focusin", cancelCollapse);
-      sidebar.addEventListener("focusout", scheduleCollapse);
-    }
-
-    document.querySelectorAll('.fm-page-submenu a[href^="#"]').forEach(function (link) {
-      link.addEventListener("click", function (event) {
-        const target = document.querySelector(link.getAttribute("href"));
-        if (!target) return;
-        event.preventDefault();
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-        document.querySelectorAll(".fm-page-submenu a").forEach(function (item) {
-          item.classList.remove("active");
-        });
-        link.classList.add("active");
-        try {
-          history.replaceState(null, "", link.getAttribute("href"));
-        } catch (_) {}
-        scheduleCollapse();
-      });
-    });
-
-    if (refreshButton) {
-      refreshButton.addEventListener("click", function () {
-        const pageRefresh = document.getElementById("refreshBtn");
-        if (pageRefresh && pageRefresh !== refreshButton) {
-          pageRefresh.click();
-        } else if (typeof loadAuroraData === "function") {
-          loadAuroraData();
-        } else {
-          window.location.reload();
-        }
-      });
-    }
-
-    window.setTimeout(scheduleCollapse, 5000);
-  }
-
-  function mountScoutingCentre(mount) {
-    mount.outerHTML = scoutingCentreSidebarMarkup;
-    document.body.classList.add("aurora-shared-nav-ready");
-
-    const sidebar = document.querySelector(".aurora-scouting-sidebar");
-    const collapseButton = document.getElementById("fmSidebarCollapse");
-    const edgeZone = document.getElementById("fmSidebarEdgeZone");
-    const refreshButton = document.getElementById("sharedScoutingRefresh");
-    let timer = 0;
-
-    function cancelCollapse() {
-      if (timer) window.clearTimeout(timer);
-      timer = 0;
-    }
-
-    function setCollapsed(collapsed) {
-      document.body.classList.toggle("fm-sidebar-hidden", collapsed);
-      if (collapseButton) {
-        collapseButton.textContent = collapsed ? "›" : "‹";
-        collapseButton.setAttribute(
-          "aria-label",
-          collapsed ? "Show navigation" : "Hide navigation"
-        );
-      }
-    }
-
-    function scheduleCollapse() {
-      cancelCollapse();
-      timer = window.setTimeout(function () {
-        setCollapsed(true);
-      }, 5000);
-    }
-
-    function openSidebar() {
-      cancelCollapse();
-      setCollapsed(false);
-      scheduleCollapse();
-    }
-
-    if (collapseButton) {
-      collapseButton.addEventListener("click", function () {
-        cancelCollapse();
-        const collapse =
-          !document.body.classList.contains("fm-sidebar-hidden");
-        setCollapsed(collapse);
-        if (!collapse) scheduleCollapse();
-      });
-    }
-
-    if (edgeZone) {
-      edgeZone.addEventListener("pointerenter", openSidebar);
-      edgeZone.addEventListener("click", openSidebar);
-      edgeZone.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          openSidebar();
-        }
-      });
-    }
-
-    if (sidebar) {
-      sidebar.addEventListener("pointerenter", cancelCollapse);
-      sidebar.addEventListener("pointerleave", scheduleCollapse);
-      sidebar.addEventListener("focusin", cancelCollapse);
-      sidebar.addEventListener("focusout", scheduleCollapse);
-    }
-
-    document.querySelectorAll('.fm-page-submenu a[href^="#"]').forEach(function (link) {
-      link.addEventListener("click", function (event) {
-        const target = document.querySelector(link.getAttribute("href"));
-        if (!target) return;
-        event.preventDefault();
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-        document.querySelectorAll(".fm-page-submenu a").forEach(function (item) {
-          item.classList.remove("active");
-        });
-        link.classList.add("active");
-        try {
-          history.replaceState(null, "", link.getAttribute("href"));
-        } catch (_) {}
-        scheduleCollapse();
-      });
-    });
-
-    if (refreshButton) {
-      refreshButton.addEventListener("click", function () {
-        const pageRefresh = document.getElementById("refreshBtn");
-        if (pageRefresh && pageRefresh !== refreshButton) {
-          pageRefresh.click();
-        } else if (typeof loadAuroraData === "function") {
-          loadAuroraData();
-        } else {
-          window.location.reload();
-        }
-      });
-    }
-
-    window.setTimeout(scheduleCollapse, 5000);
-  }
-
-  function mountAuroraNavigation() {
-    const mount = document.getElementById("auroraNavigationMount");
-    if (!mount || mount.dataset.mounted === "true") return;
-    const declaredPage = (
+  const BUILD = "20260728-universal-sidebar-1";
+  const AUTO_CLOSE_MS = 5000;
+  const OPEN_UNTIL_KEY = "auroraSidebarOpenUntil";
+  const MANUAL_CLOSED_KEY = "auroraSidebarManualClosed";
+
+  const pages = [
+    { key:"home", label:"Home", href:"AuroraCityFC_ManagerDashboard.html", icon:"⌂", colour:"#60a5fa", rgb:"96,165,250", group:"Navigation" },
+    { key:"finance", label:"Finance Department", href:"AuroraCityFC_FinanceDepartment.html", icon:"£", colour:"#f3c45b", rgb:"243,196,91", group:"Finance" },
+    { key:"squad-hub", label:"Squad Hub", href:"AuroraCityFC_SquadHub.html", icon:"♟", colour:"#22d3ee", rgb:"34,211,238", group:"Performance" },
+    { key:"analysis-room", label:"Analysis Room", href:"AuroraCityFC_AnalysisRoom.html", icon:"⌁", colour:"#a78bfa", rgb:"167,139,250", group:"Performance" },
+    { key:"training-ground", label:"Training Ground", href:"AuroraCityFC_TrainingGround.html", icon:"▲", colour:"#34d399", rgb:"52,211,153", group:"Performance" },
+    { key:"scouting-centre", label:"Scouting Centre", href:"AuroraCityFC_ScoutingCentre.html", icon:"⌕", colour:"#4ade80", rgb:"74,222,128", group:"Recruitment" },
+    { key:"transfer-centre", label:"Transfer Centre", href:"AuroraCityFC_TransferCentre.html", icon:"⇄", colour:"#f59e0b", rgb:"245,158,11", group:"Recruitment" },
+    { key:"boardroom", label:"Boardroom", href:"AuroraCityFC_Boardroom.html", icon:"♜", colour:"#f472b6", rgb:"244,114,182", group:"Club" },
+    { key:"media-centre", label:"Media Centre", href:"AuroraCityFC_MediaCentre.html", icon:"●", colour:"#facc15", rgb:"250,204,21", group:"Club" }
+  ];
+
+  const pageSubmenus = {
+    "finance": [
+      ["finance-overview","Overview"],["payday-plan","Payday Plan"],["income-builder","Income Builder"],
+      ["holdings","Holdings"],["dividends","Dividends"],["watchlist","Watchlist"]
+    ],
+    "squad-hub": [
+      ["squad-overview","Overview"],["squad-summary","Squad Summary"],["first-team-formation","Formation"],
+      ["starting-xi","Starting XI"],["bench-depth-chart","Bench"],["positional-depth-chart","Depth Chart"],
+      ["chemistry-legends","Chemistry & Legends"],["squad-development-centre","Development Centre"]
+    ],
+    "training-ground": [
+      ["training-overview","Overview"],["training-plan","Training Plan"],["training-report","Training Report"],
+      ["fitness-centre","Fitness Centre"],["development","Development"]
+    ],
+    "scouting-centre": [
+      ["scouting-overview","Overview"],["chief-scout-report","Chief Scout Report"],["scouting-best-xi","Best XI"],
+      ["rescouting-desk","Re-scouting Desk"],["scouting-radar","Scouting Radar"],["scout-assignments","Assignments"],
+      ["scouting-pipeline","Pipeline"],["reports","League Tables"],["meeting","Recruitment Meeting"]
+    ],
+    "transfer-centre": [
+      ["transfer-overview","Overview"],["best-return-allocation","Best Return"],["top-transfer-board","Top Targets"],
+      ["deal-sheet","Deal Sheet"],["registration-desk","Registration"],["incoming-offers","Incoming Offers"],
+      ["sell-desk","Sell Desk"],["transfer-bench","Transfer Bench"],["no-buy-watch","No-buy Watch"]
+    ],
+    "boardroom": [
+      ["board-overview","Overview"],["club-strategy","Club Strategy"],["board-confidence","Board Confidence"],
+      ["objectives","Objectives"],["governance","Governance"]
+    ],
+    "media-centre": [
+      ["media-overview","Overview"],["press-room","Press Room"],["news-feed","News Feed"],
+      ["sentiment","Sentiment"],["communications","Communications"]
+    ]
+  };
+
+  function detectPage() {
+    const declared = (
       document.documentElement.dataset.auroraPage ||
       document.body?.dataset.auroraPage ||
       ""
     ).toLowerCase();
+    if (declared) return declared;
 
-    const fileName = (
-      window.location.pathname.split("/").pop() || ""
-    ).toLowerCase();
+    const file = location.pathname.split("/").pop().toLowerCase();
+    const title = document.title.toLowerCase();
 
-    const pageTitle = (document.title || "").toLowerCase();
+    const checks = [
+      ["finance", "financedepartment", "finance department"],
+      ["squad-hub", "squadhub", "squad hub"],
+      ["analysis-room", "analysisroom", "analysis room"],
+      ["training-ground", "trainingground", "training ground"],
+      ["scouting-centre", "scoutingcentre", "scouting centre"],
+      ["transfer-centre", "transfercentre", "transfer centre"],
+      ["boardroom", "boardroom", "boardroom"],
+      ["media-centre", "mediacentre", "media centre"],
+      ["home", "managerdashboard", "manager dashboard"]
+    ];
 
-    const isScoutingCentre =
-      declaredPage === "scouting-centre" ||
-      declaredPage === "scouting" ||
-      fileName.includes("scoutingcentre") ||
-      pageTitle.includes("scouting centre");
-
-    const isTrainingGround =
-      declaredPage === "training-ground" ||
-      declaredPage === "training" ||
-      fileName.includes("trainingground") ||
-      pageTitle.includes("training ground");
-
-    const isSquadHub =
-      declaredPage === "squad-hub" ||
-      declaredPage === "squad" ||
-      fileName.includes("squadhub") ||
-      pageTitle.includes("squad hub");
-
-    const isBoardroom =
-      declaredPage === "boardroom" ||
-      fileName.includes("boardroom") ||
-      pageTitle.includes("boardroom");
-
-    if (isScoutingCentre) mountScoutingCentre(mount);
-    else if (isTrainingGround) mountTrainingGround(mount);
-    else if (isBoardroom) mountBoardroom(mount);
-    else if (isSquadHub) mountSquadHub(mount);
-    else mountFinance(mount);
+    for (const [key, fileNeedle, titleNeedle] of checks) {
+      if (file.includes(fileNeedle) || title.includes(titleNeedle)) return key;
+    }
+    return "home";
   }
 
-  mountAuroraNavigation();
+  function injectStyles() {
+    document.getElementById("auroraUniversalNavigationStyles")?.remove();
+
+    const style = document.createElement("style");
+    style.id = "auroraUniversalNavigationStyles";
+    style.textContent = `
+      :root{--aurora-sidebar-width:238px;--aurora-sidebar-compact:214px}
+      html{scroll-behavior:smooth}
+      body{overflow-x:hidden!important}
+      body>.fm-sidebar:not(#auroraUniversalSidebar),
+      body .aufc-sidebar,
+      body .aufc-mobile-button,
+      body .aufc-mobile-shade{display:none!important}
+
+      #auroraUniversalSidebar{
+        position:fixed!important;inset:0 auto 0 0!important;
+        width:var(--aurora-sidebar-width)!important;height:100dvh!important;
+        z-index:2147483000!important;display:grid!important;
+        grid-template-rows:auto minmax(0,1fr) auto!important;
+        overflow:hidden!important;visibility:visible!important;opacity:1!important;
+        pointer-events:auto!important;transform:translateX(0)!important;
+        border-right:1px solid rgba(125,211,252,.18)!important;
+        background:radial-gradient(circle at 20% 0%,rgba(34,211,238,.12),transparent 30%),
+          linear-gradient(180deg,rgba(5,18,38,.995),rgba(2,7,18,1))!important;
+        box-shadow:18px 0 60px rgba(0,0,0,.30)!important;
+        transition:transform .26s cubic-bezier(.2,.8,.2,1)!important;
+        font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+      }
+      body.aurora-sidebar-hidden #auroraUniversalSidebar{
+        transform:translateX(calc(-100% - 18px))!important;
+      }
+
+      body.aurora-universal-nav-ready .fm-workspace,
+      body.aurora-universal-nav-ready main.app,
+      body.aurora-universal-nav-ready .app{
+        transition:margin-left .26s cubic-bezier(.2,.8,.2,1)!important;
+      }
+      body.aurora-universal-nav-ready .fm-workspace{margin-left:var(--aurora-sidebar-width)!important}
+      body.aurora-universal-nav-ready:not(.aurora-has-workspace) main.app,
+      body.aurora-universal-nav-ready:not(.aurora-has-workspace) .app{
+        margin-left:var(--aurora-sidebar-width)!important;
+      }
+      body.aurora-sidebar-hidden .fm-workspace,
+      body.aurora-sidebar-hidden:not(.aurora-has-workspace) main.app,
+      body.aurora-sidebar-hidden:not(.aurora-has-workspace) .app{margin-left:0!important}
+
+      .aurora-nav-brand{
+        position:relative;min-height:78px;display:flex;align-items:center;gap:11px;
+        padding:13px 14px;border-bottom:1px solid rgba(125,211,252,.14);
+        background:rgba(2,6,18,.34)
+      }
+      .aurora-nav-crest{width:48px;height:48px;flex:0 0 48px}
+      .aurora-nav-crest img{width:100%;height:100%;display:block;object-fit:contain}
+      .aurora-nav-brand strong{display:block;color:#f0f9ff;font-size:15px;letter-spacing:-.035em}
+      .aurora-nav-brand span{display:block;margin-top:4px;color:#67e8f9;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+      .aurora-nav-collapse{
+        position:absolute;top:50%;right:-15px;transform:translateY(-50%);
+        width:30px;height:66px;display:grid;place-items:center;
+        border:1px solid rgba(34,211,238,.30);border-left:0;border-radius:0 12px 12px 0;
+        background:rgba(4,18,36,.98);color:#67e8f9;font-size:24px;cursor:pointer
+      }
+
+      .aurora-nav-scroll{min-height:0;overflow-y:auto;padding:10px 9px 18px}
+      .aurora-nav-group{margin:12px 10px 6px;color:#64748b;font-size:9px;font-weight:1000;letter-spacing:.16em;text-transform:uppercase}
+      .aurora-nav-link,.aurora-nav-folder>summary{
+        --dept-colour:#60a5fa;--dept-rgb:96,165,250;
+        position:relative;min-height:42px;display:grid;grid-template-columns:30px minmax(0,1fr);
+        align-items:center;gap:7px;margin:2px 0;padding:7px 9px;border:1px solid rgba(var(--dept-rgb),.14);
+        border-radius:11px;color:#cbd5e1;background:linear-gradient(90deg,rgba(var(--dept-rgb),.10),rgba(var(--dept-rgb),.025) 62%,transparent);
+        font-size:13px;font-weight:750;text-decoration:none;cursor:pointer;overflow:hidden
+      }
+      .aurora-nav-link:before,.aurora-nav-folder>summary:before{
+        content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 4px 4px 0;
+        background:var(--dept-colour);opacity:.58;box-shadow:0 0 12px rgba(var(--dept-rgb),.32)
+      }
+      .aurora-nav-link:hover,.aurora-nav-folder>summary:hover{
+        color:#fff;border-color:rgba(var(--dept-rgb),.42);
+        background:linear-gradient(90deg,rgba(var(--dept-rgb),.24),rgba(var(--dept-rgb),.07) 72%,transparent)
+      }
+      .aurora-nav-link.active,.aurora-nav-folder.active>summary{
+        color:#fff;border-color:rgba(var(--dept-rgb),.62);
+        background:linear-gradient(90deg,rgba(var(--dept-rgb),.38),rgba(var(--dept-rgb),.16) 68%,rgba(var(--dept-rgb),.05));
+        box-shadow:inset 3px 0 0 var(--dept-colour),0 9px 25px rgba(var(--dept-rgb),.17)
+      }
+      .aurora-nav-icon{
+        width:28px;height:28px;display:grid;place-items:center;border-radius:9px;
+        color:var(--dept-colour);background:rgba(var(--dept-rgb),.11);border:1px solid rgba(var(--dept-rgb),.14)
+      }
+      .aurora-nav-folder{margin:2px 0;border-radius:11px}
+      .aurora-nav-folder>summary{grid-template-columns:30px minmax(0,1fr) 18px;list-style:none}
+      .aurora-nav-folder>summary::-webkit-details-marker{display:none}
+      .aurora-nav-arrow{color:var(--dept-colour);font-size:17px;text-align:center;transition:transform .18s}
+      .aurora-nav-folder[open] .aurora-nav-arrow{transform:rotate(90deg)}
+      .aurora-nav-submenu{display:grid;gap:2px;padding:3px 7px 9px 42px}
+      .aurora-nav-submenu a{min-height:30px;display:flex;align-items:center;padding:6px 9px;border-radius:8px;color:#8fa2ba;font-size:11px;font-weight:750;text-decoration:none}
+      .aurora-nav-submenu a:hover,.aurora-nav-submenu a.active{color:#fff;background:rgba(var(--dept-rgb),.15)}
+
+      .aurora-nav-footer{display:grid;gap:5px;padding:8px 9px calc(10px + env(safe-area-inset-bottom));border-top:1px solid rgba(125,211,252,.18);background:linear-gradient(180deg,rgba(3,12,27,.99),rgba(2,7,18,1))}
+      .aurora-nav-refresh{min-height:38px;border:1px solid rgba(125,211,252,.16);border-radius:11px;background:rgba(15,23,42,.46);color:#cbd5e1;font-size:12px;font-weight:800;cursor:pointer}
+      .aurora-nav-clock{color:#64748b;font-size:9px;text-align:center}
+
+      #auroraSidebarEdge{
+        position:fixed;inset:0 auto 0 0;z-index:2147482999;width:25px;opacity:0;pointer-events:none;cursor:e-resize
+      }
+      body.aurora-sidebar-hidden #auroraSidebarEdge{opacity:1;pointer-events:auto}
+      #auroraSidebarEdge span{
+        position:absolute;left:0;top:50%;transform:translateY(-50%);width:19px;height:96px;
+        display:grid;place-items:center;border:1px solid rgba(34,211,238,.34);border-left:0;border-radius:0 13px 13px 0;
+        background:linear-gradient(180deg,rgba(4,18,36,.98),rgba(8,47,73,.94));color:#67e8f9;font-size:21px;font-weight:1000
+      }
+
+      @media(max-width:1180px){
+        #auroraUniversalSidebar{width:var(--aurora-sidebar-compact)!important}
+        body.aurora-universal-nav-ready .fm-workspace{margin-left:var(--aurora-sidebar-compact)!important}
+        body.aurora-universal-nav-ready:not(.aurora-has-workspace) main.app,
+        body.aurora-universal-nav-ready:not(.aurora-has-workspace) .app{margin-left:var(--aurora-sidebar-compact)!important}
+      }
+      @media(max-width:900px){
+        #auroraUniversalSidebar{width:198px!important}
+        body.aurora-universal-nav-ready .fm-workspace{margin-left:198px!important}
+        body.aurora-universal-nav-ready:not(.aurora-has-workspace) main.app,
+        body.aurora-universal-nav-ready:not(.aurora-has-workspace) .app{margin-left:198px!important}
+      }
+      body.aurora-sidebar-hidden .fm-workspace,
+      body.aurora-sidebar-hidden:not(.aurora-has-workspace) main.app,
+      body.aurora-sidebar-hidden:not(.aurora-has-workspace) .app{margin-left:0!important}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function createLink(page, activeKey) {
+    const isActive = page.key === activeKey;
+    const submenu = pageSubmenus[page.key];
+
+    if (submenu && isActive) {
+      const details = document.createElement("details");
+      details.className = "aurora-nav-folder active";
+      details.open = true;
+      details.style.setProperty("--dept-colour", page.colour);
+      details.style.setProperty("--dept-rgb", page.rgb);
+
+      const summary = document.createElement("summary");
+      summary.innerHTML = `<span class="aurora-nav-icon">${page.icon}</span><span>${page.label}</span><span class="aurora-nav-arrow">›</span>`;
+      details.appendChild(summary);
+
+      const sub = document.createElement("div");
+      sub.className = "aurora-nav-submenu";
+      for (const [id, label] of submenu) {
+        const a = document.createElement("a");
+        a.href = `#${id}`;
+        a.textContent = label;
+        sub.appendChild(a);
+      }
+      details.appendChild(sub);
+      return details;
+    }
+
+    const a = document.createElement("a");
+    a.className = "aurora-nav-link" + (isActive ? " active" : "");
+    a.href = page.href;
+    a.dataset.auroraPageTarget = page.key;
+    a.style.setProperty("--dept-colour", page.colour);
+    a.style.setProperty("--dept-rgb", page.rgb);
+    a.innerHTML = `<span class="aurora-nav-icon">${page.icon}</span><span>${page.label}</span>`;
+    return a;
+  }
+
+  function renderSidebar() {
+    document.getElementById("auroraUniversalSidebar")?.remove();
+    document.getElementById("auroraSidebarEdge")?.remove();
+
+    const current = detectPage();
+    const sidebar = document.createElement("aside");
+    sidebar.id = "auroraUniversalSidebar";
+    sidebar.setAttribute("aria-label", "Aurora City FC navigation");
+
+    const brand = document.createElement("div");
+    brand.className = "aurora-nav-brand";
+    brand.innerHTML = `
+      <button class="aurora-nav-collapse" id="auroraSidebarCollapse" type="button" aria-label="Hide navigation">‹</button>
+      <div class="aurora-nav-crest"><img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"></div>
+      <div><strong>Aurora City FC</strong><span>${pages.find(p => p.key === current)?.label || "Club HQ"}</span></div>
+    `;
+    sidebar.appendChild(brand);
+
+    const scroll = document.createElement("nav");
+    scroll.className = "aurora-nav-scroll";
+
+    let lastGroup = "";
+    for (const page of pages) {
+      if (page.group !== lastGroup) {
+        const group = document.createElement("div");
+        group.className = "aurora-nav-group";
+        group.textContent = page.group;
+        scroll.appendChild(group);
+        lastGroup = page.group;
+      }
+      scroll.appendChild(createLink(page, current));
+    }
+    sidebar.appendChild(scroll);
+
+    const footer = document.createElement("div");
+    footer.className = "aurora-nav-footer";
+    footer.innerHTML = `
+      <button class="aurora-nav-refresh" type="button" id="auroraSidebarRefresh">↻ Refresh Data</button>
+      <div class="aurora-nav-clock" id="auroraSidebarClock">Connected</div>
+    `;
+    sidebar.appendChild(footer);
+
+    const edge = document.createElement("div");
+    edge.id = "auroraSidebarEdge";
+    edge.setAttribute("role", "button");
+    edge.setAttribute("tabindex", "0");
+    edge.setAttribute("aria-label", "Show navigation");
+    edge.innerHTML = "<span>›</span>";
+
+    document.body.prepend(edge);
+    document.body.prepend(sidebar);
+
+    return sidebar;
+  }
+
+  let closeTimer = 0;
+
+  function clearCloseTimer() {
+    if (closeTimer) window.clearTimeout(closeTimer);
+    closeTimer = 0;
+  }
+
+  function setOpenWindow(ms = AUTO_CLOSE_MS) {
+    sessionStorage.setItem(OPEN_UNTIL_KEY, String(Date.now() + ms));
+    sessionStorage.removeItem(MANUAL_CLOSED_KEY);
+  }
+
+  function openSidebar({ preserveWindow = false } = {}) {
+    clearCloseTimer();
+    document.body.classList.remove("aurora-sidebar-hidden");
+    if (!preserveWindow) setOpenWindow(AUTO_CLOSE_MS);
+
+    const until = Number(sessionStorage.getItem(OPEN_UNTIL_KEY) || 0);
+    const remaining = Math.max(0, until - Date.now());
+    if (remaining > 0) {
+      closeTimer = window.setTimeout(closeSidebarAutomatically, remaining);
+    }
+  }
+
+  function closeSidebarAutomatically() {
+    clearCloseTimer();
+    document.body.classList.add("aurora-sidebar-hidden");
+    sessionStorage.removeItem(OPEN_UNTIL_KEY);
+  }
+
+  function closeSidebarManually() {
+    clearCloseTimer();
+    document.body.classList.add("aurora-sidebar-hidden");
+    sessionStorage.removeItem(OPEN_UNTIL_KEY);
+    sessionStorage.setItem(MANUAL_CLOSED_KEY, "1");
+  }
+
+  function restoreCrossPageState() {
+    const manuallyClosed = sessionStorage.getItem(MANUAL_CLOSED_KEY) === "1";
+    const until = Number(sessionStorage.getItem(OPEN_UNTIL_KEY) || 0);
+
+    if (manuallyClosed) {
+      document.body.classList.add("aurora-sidebar-hidden");
+      return;
+    }
+
+    if (until > Date.now()) {
+      openSidebar({ preserveWindow: true });
+      return;
+    }
+
+    setOpenWindow(AUTO_CLOSE_MS);
+    openSidebar({ preserveWindow: true });
+  }
+
+  function wireEvents(sidebar) {
+    document.getElementById("auroraSidebarCollapse")?.addEventListener("click", closeSidebarManually);
+
+    const edge = document.getElementById("auroraSidebarEdge");
+    const openFromEdge = () => openSidebar();
+    edge?.addEventListener("click", openFromEdge);
+    edge?.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") openFromEdge();
+    });
+
+    document.getElementById("auroraSidebarRefresh")?.addEventListener("click", () => location.reload());
+
+    sidebar.querySelectorAll('a[data-aurora-page-target]').forEach(link => {
+      link.addEventListener("click", () => {
+        setOpenWindow(AUTO_CLOSE_MS);
+        document.body.classList.remove("aurora-sidebar-hidden");
+      });
+    });
+
+    sidebar.addEventListener("pointerenter", () => {
+      if (!document.body.classList.contains("aurora-sidebar-hidden")) {
+        setOpenWindow(AUTO_CLOSE_MS);
+        openSidebar({ preserveWindow: true });
+      }
+    });
+
+    document.addEventListener("click", event => {
+      const anchor = event.target.closest?.(".aurora-nav-submenu a");
+      if (!anchor) return;
+      setOpenWindow(AUTO_CLOSE_MS);
+      openSidebar({ preserveWindow: true });
+    });
+  }
+
+  function removeLegacyNavigation() {
+    document.querySelectorAll(
+      "body > .fm-sidebar:not(#auroraUniversalSidebar)," +
+      ".aufc-sidebar,.aufc-mobile-button,.aufc-mobile-shade," +
+      "#fmSidebarEdgeZone,.fm-sidebar-edge-zone"
+    ).forEach(node => node.remove());
+
+    const mount = document.getElementById("auroraNavigationMount");
+    if (mount) mount.innerHTML = "";
+  }
+
+  function startDuplicateGuard() {
+    const observer = new MutationObserver(() => removeLegacyNavigation());
+    observer.observe(document.body, { childList:true, subtree:true });
+  }
+
+  function updateClock() {
+    const node = document.getElementById("auroraSidebarClock");
+    if (!node) return;
+    node.textContent = new Intl.DateTimeFormat("en-GB", {
+      hour:"2-digit", minute:"2-digit", second:"2-digit"
+    }).format(new Date());
+  }
+
+  function boot() {
+    injectStyles();
+    removeLegacyNavigation();
+
+    document.body.classList.toggle("aurora-has-workspace", !!document.querySelector(".fm-workspace"));
+    const sidebar = renderSidebar();
+    document.body.classList.add("aurora-universal-nav-ready");
+
+    restoreCrossPageState();
+    wireEvents(sidebar);
+    startDuplicateGuard();
+
+    updateClock();
+    window.setInterval(updateClock, 1000);
+
+    document.dispatchEvent(new CustomEvent("aurora:navigation-ready", {
+      detail:{ build:BUILD, page:detectPage() }
+    }));
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once:true });
+  } else {
+    boot();
+  }
 })();
