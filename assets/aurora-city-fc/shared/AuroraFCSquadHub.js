@@ -1859,11 +1859,6 @@ document.documentElement.dataset.playerProfileBuild = "colour-signals-v25";
     ];
     document.querySelectorAll('a[href]').forEach(a=>{let href=a.getAttribute('href')||'';map.forEach(([rx,to])=>{href=href.replace(rx,to)});a.setAttribute('href',href)});
   }
-  function addFinanceSidebarLink(){
-    const host=document.querySelector('.fm-side-scroll');if(!host||host.querySelector('[data-aurora-finance-sidebar]'))return;
-    const a=document.createElement('a');a.href=ROUTES.finance;a.dataset.auroraFinanceSidebar='1';a.className='fm-side-link'+(PAGE==='finance'?' active':'');a.innerHTML='<span class="fm-side-icon">£</span><span>Finance Department</span>';
-    const firstGroup=host.querySelector('.fm-nav-group');if(firstGroup)firstGroup.insertAdjacentElement('afterend',a);else host.prepend(a);
-  }
   function addConnectedCard(){
     if(document.getElementById('auroraConnectedFinanceCard'))return;
     const card=document.createElement('section');card.id='auroraConnectedFinanceCard';card.className='aurora-connected-card';
@@ -1883,7 +1878,7 @@ document.documentElement.dataset.playerProfileBuild = "colour-signals-v25";
   }
   function init(){
     document.querySelectorAll('.aurora-smart-dock').forEach(el=>el.style.setProperty('display','none','important'));
-    patchLinks();addFinanceSidebarLink();addConnectedCard();refresh();
+    patchLinks();addConnectedCard();refresh();
     const dock=document.querySelector('.aurora-system-dock');dock?.querySelector('.aurora-system-back')?.addEventListener('click',()=>{if(history.length>1)history.back();else location.href=ROUTES.nexus});
     let lastY=scrollY||0,ticking=false,timer;const show=()=>dock?.classList.remove('is-hidden'),hide=()=>dock?.classList.add('is-hidden');
     addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{const y=scrollY||0,max=Math.max(0,document.documentElement.scrollHeight-innerHeight),nearBottom=max-y<70;if(nearBottom||y<12||y<lastY-6)show();else if(y>lastY+6)hide();lastY=y;clearTimeout(timer);timer=setTimeout(show,180);ticking=false})},{passive:true});
