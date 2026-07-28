@@ -1,1307 +1,1060 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html data-aurora-page="finance" lang="en">
 <head>
 <!-- Build: Aurora City FC Finance Department • shared navigation refactor • 28 Jul 2026 -->
-
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Aurora Finance Department — Payday & Capital Control</title>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Aurora Finance Department — Payday &amp; Capital Control</title>
 <!-- Build: Direct Finance Department → Transfer Centre pipeline • 26 Jul 2026 -->
 <!-- Build: Aurora Connected Finance Department System • 26 Jul 2026 -->
-
-
-
-
-
-
-
-
-
-
-
-
-<link rel="stylesheet" href="assets/aurora-city-fc/shared/AuroraFCFinance.css" />
+<link href="assets/aurora-city-fc/shared/AuroraFCFinance.css?v=20260728-navfix-1" rel="stylesheet"/>
 </head>
-<body>
-
+<body data-aurora-page="finance">
 <div class="m13-app">
 <div id="auroraNavigationMount"></div>
 <main class="m13-content">
-  <div id="m13Dashboard" class="m13-anchor">
-    <div class="m13-topbar">
-      <div><div class="m13-eyebrow">AURORA FINANCIAL MANAGEMENT</div><h1>Budget Manager Dashboard</h1><div class="m13-subtitle">Your live matchday view of bills, spending, pots and payday decisions.</div></div>
-      <div class="m13-actions"><button class="m13-btn" type="button" onclick="window.m14ShowView && window.m14ShowView('m13HouseProject')">🏠 House Project Ledger</button><button class="m13-btn" id="m13Refresh">Refresh Plan</button><button class="m13-btn" id="m13Presentation">Presentation Mode</button></div>
-    </div>
-    <section class="m32-balance-command" aria-label="Live balance summary">
-      <div class="m32-balance-main">
-        <div class="m32-balance-icon">£</div>
-        <div>
-          <div class="m13-eyebrow">LIVE MONEY POSITION</div>
-          <div class="m32-balance-label">Holding Pot Balance</div>
-          <div class="m32-balance-value" id="m32TopBalance">£0.00</div>
-          <div class="m32-balance-note" id="m32TopBalanceNote">Current saved balance available to protect bills and spending.</div>
-        </div>
-      </div>
-      <div class="m32-balance-stats">
-        <div class="m32-balance-stat"><span>Before payday</span><strong id="m32TopBefore">£0.00</strong><small>Known outgoing payments</small></div>
-        <div class="m32-balance-stat"><span>Projected balance</span><strong id="m32TopProjected">£0.00</strong><small>After known payments</small></div>
-        <div class="m32-balance-stat"><span>Safe surplus</span><strong id="m32TopSafe">£0.00</strong><small>Above full protection</small></div>
-      </div>
-    </section>
-    <section class="m13-hero">
-      <div class="m13-hero-grid">
-        <div class="m13-manager-brief">
-          <div class="m13-avatar">🧭</div>
-          <div><div class="m13-eyebrow">MANAGER BRIEFING</div><div class="m13-brief-title" id="m13BriefTitle">Checking your live position…</div><div class="m13-brief-copy" id="m13BriefCopy">Aurora is reading the saved planner and calculating your current buffer.</div><div class="m13-callout" id="m13Callout"><strong>Holding Pot instruction:</strong> calculating…</div></div>
-        </div>
-        <div class="m13-score"><div class="m13-score-ring" id="m13ScoreRing"><div><strong id="m13Score">0</strong><small>PLAN RATING</small></div></div><div id="m13ScoreLabel" style="margin-top:8px;font-size:11px;color:#34d399;font-weight:900">CALCULATING</div></div>
-      </div>
-    </section>
-    <section class="m13-kpis">
-      <div class="m13-kpi" style="--accent:#22d3ee"><div class="m13-kpi-label">Expected Pay</div><div class="m13-kpi-value" id="m13ExpectedPay">£0.00</div><div class="m13-kpi-note">Current simulator baseline</div></div>
-      <div class="m13-kpi" style="--accent:#60a5fa"><div class="m13-kpi-label">IG ISA</div><div class="m13-kpi-value" id="m13Isa">£0.00</div><div class="m13-kpi-note">Payday investment plan</div></div>
-      <div class="m13-kpi" style="--accent:#a78bfa"><div class="m13-kpi-label">Goal Pots</div><div class="m13-kpi-value" id="m13Goals">£0.00</div><div class="m13-kpi-note">Protected savings goals</div></div>
-      <div class="m13-kpi" style="--accent:#fbbf24"><div class="m13-kpi-label">Lifestyle Pot</div><div class="m13-kpi-value" id="m13Lifestyle">£0.00</div><div class="m13-kpi-note">Four-week personal spending</div></div>
-      <div class="m13-kpi" style="--accent:#34d399"><div class="m13-kpi-label">Remaining Flex</div><div class="m13-kpi-value" id="m13Flex">£0.00</div><div class="m13-kpi-note">Held until bills settle</div></div>
-      <div class="m13-kpi" style="--accent:#fb7185"><div class="m13-kpi-label">Holding Pot</div><div class="m13-kpi-value" id="m13Holding">£0.00</div><div class="m13-kpi-note">Live saved balance</div></div>
-    </section>
-    <section class="m13-dashboard">
-      <div class="m13-panel">
-        <div class="m13-panel-head"><div class="m13-panel-title">Payday Starting Line-up</div><span class="m13-badge">TACTICAL ALLOCATION</span></div>
-        <div class="m13-lineup">
-          <div class="m13-allocation" style="--w:100%;--c:#60a5fa"><small>IG ISA</small><div class="num" id="m13LineIsa">£0</div><small>CORE INVESTMENT</small></div>
-          <div class="m13-allocation" style="--w:25%;--c:#a78bfa"><small>GOAL POTS</small><div class="num" id="m13LineGoals">£0</div><small>SAVINGS TARGETS</small></div>
-          <div class="m13-allocation" style="--w:25%;--c:#fbbf24"><small>LIFESTYLE</small><div class="num" id="m13LineLifestyle">£0</div><small>PERSONAL SPEND</small></div>
-          <div class="m13-allocation" style="--w:8%;--c:#fb7185"><small>HOLDING POT</small><div class="num" id="m13LineHolding">£0</div><small>LIVE REQUIREMENT</small></div>
-          <div class="m13-allocation" style="--w:0%;--c:#34d399"><small>END-CYCLE MOVE</small><div class="num" id="m13EndCycle">TBC</div><small>LEFTOVER ONLY</small></div>
-        </div>
-        <div class="m13-buffer-card"><div><strong>Buffer Protection Strategy</strong><p id="m13BufferText">Keep remaining flex protected until actual bills and spending are confirmed.</p></div><div class="m13-buffer-value" id="m13BufferValue">£0.00</div></div>
-      </div>
-      <div class="m13-panel">
-        <div class="m13-panel-head"><div class="m13-panel-title">Spending Runway</div><span class="m13-badge" id="m13DaysBadge">— DAYS</span></div>
-        <div class="m13-runway"><div class="m13-donut" id="m13Donut"><div><strong id="m13RunwayPct">0%</strong><small>PROTECTED</small></div></div><div class="m13-runway-list">
-          <div class="m13-row"><span>Holding Pot balance</span><strong id="m13RunHolding">£0.00</strong></div>
-          <div class="m13-row"><span>Total protection requirement</span><strong id="m13RunProtected">£0.00</strong></div>
-          <div class="m13-row"><span>Current true surplus</span><strong id="m13RunSurplus" style="color:#34d399">£0.00</strong></div>
-          <div class="m13-row"><span>Safe to move now</span><strong id="m13RunSafe">£0.00</strong></div>
-        </div></div>
-      </div>
-      <div class="m13-panel" id="m13BeforePayday">
-        <div class="m13-panel-head"><div class="m13-panel-title">Before Payday Cash Flow</div><span class="m13-badge">LIVE FORECAST</span></div>
-        <div class="m13-prepayday-summary">
-          <div class="m13-prepayday-metric"><span>Current balance</span><strong id="m13BeforeCurrent">£0.00</strong></div>
-          <div class="m13-prepayday-metric impact"><span>Going out before payday</span><strong id="m13BeforeOut">£0.00</strong></div>
-          <div class="m13-prepayday-metric"><span>Payments remaining</span><strong id="m13BeforeCount">0</strong></div>
-          <div class="m13-prepayday-metric remaining"><span>Projected balance</span><strong id="m13BeforeProjected">£0.00</strong></div>
-        </div>
-        <div class="m13-cashflow-list" id="m13CashflowList"></div>
-        <div class="m13-balance-impact"><div class="m13-balance-line"><span>Holding Pot now</span><strong id="m13ImpactNow">£0.00</strong></div><div class="m13-balance-line"><span>Less scheduled before payday</span><strong id="m13ImpactOut" style="color:#fb7185">−£0.00</strong></div><div class="m13-balance-line final"><span>Estimated balance on payday eve</span><strong id="m13ImpactFinal">£0.00</strong></div></div>
-      </div>
-      <div class="m13-panel">
-        <div class="m13-panel-head"><div class="m13-panel-title">Upcoming Fixtures — Bills</div><span class="m13-badge">NEXT PAYMENTS</span></div>
-        <div class="m13-cashflow-list" id="m13UpcomingBills"></div>
-      </div>
-    </section>
-    <div class="m13-ticker"><div class="m13-ticker-label">AURORA LIVE</div><div class="m13-ticker-track"><div class="m13-ticker-text" id="m13Ticker">Loading live planner figures…</div></div></div>
-  </div>
-  
-<div class="m14-view-header" id="m14ViewHeader">
-  <div>
-    <div class="eyebrow">AURORA WEALTH HQ</div>
-    <h1 id="m14ViewTitle">Payday Plan</h1>
-    <p id="m14ViewSubtitle">Working planner controls presented in the same Manager Dashboard style.</p>
-  </div>
-  <button class="m14-back" id="m14BackDashboard" type="button">← Budget Dashboard</button>
+<div class="m13-anchor" id="m13Dashboard">
+<div class="m13-topbar">
+<div><div class="m13-eyebrow">AURORA FINANCIAL MANAGEMENT</div><h1>Budget Manager Dashboard</h1><div class="m13-subtitle">Your live matchday view of bills, spending, pots and payday decisions.</div></div>
+<div class="m13-actions"><button class="m13-btn" onclick="window.m14ShowView &amp;&amp; window.m14ShowView('m13HouseProject')" type="button">🏠 House Project Ledger</button><button class="m13-btn" id="m13Refresh">Refresh Plan</button><button class="m13-btn" id="m13Presentation">Presentation Mode</button></div>
 </div>
-
-
-<div class="m16-view-overview" id="m16ViewOverview">
-  <div class="m16-overview-head">
-    <div>
-      <div class="m13-eyebrow" id="m16Eyebrow">AURORA MANAGER VIEW</div>
-      <h3 id="m16OverviewTitle">Manager View</h3>
-      <p id="m16OverviewCopy">Live planner controls and financial intelligence.</p>
-    </div>
-    <span class="m16-status"><i></i><span id="m16StatusText">LIVE</span></span>
-  </div>
-  <div class="m16-kpis" id="m16Kpis"></div>
-  <div class="m16-view-note" id="m16ViewNote"></div>
+<section aria-label="Live balance summary" class="m32-balance-command">
+<div class="m32-balance-main">
+<div class="m32-balance-icon">£</div>
+<div>
+<div class="m13-eyebrow">LIVE MONEY POSITION</div>
+<div class="m32-balance-label">Holding Pot Balance</div>
+<div class="m32-balance-value" id="m32TopBalance">£0.00</div>
+<div class="m32-balance-note" id="m32TopBalanceNote">Current saved balance available to protect bills and spending.</div>
 </div>
-
-<div class="m13-working-planner" id="m14WorkingPlanner">
-
-<div class="wrap">
-
-  <!-- ===================== SECTION: HERO ===================== -->
-  <section class="hero">
-    <h1 class="aurora-title">Aurora<br>Finance Department</h1>
-    <div class="sub">Personal CFO terminal • bills radar • payday simulator • pot health • surplus command engine.</div>
-
-    <div class="grid hero-grid">
-      <div class="card">
-        <div class="stat-label">Holding Pot Balance</div>
-        <div class="stat">£<span id="potBalance">0.00</span></div>
-        <div class="subv" id="potBalanceMeta">Current saved amount</div>
-      </div>
-
-      <div class="card">
-        <div class="stat-label">Pot Trend</div>
-        <canvas id="potTrendChart"></canvas>
-        <div class="subv" id="potTrendMeta">Last 8 snapshots of your holding pot</div>
-      </div>
-
-      <div class="card">
-        <div class="stat-label">Available to Invest</div>
-        <div class="stat">£<span id="availableToInvest">0.00</span></div>
-        <div class="subv">Safe to move to IG ISA now</div>
-      </div>
-
-      <div class="card" id="safeMoveCard">
-        <div class="stat-label">Safe To Move Now</div>
-        <div class="stat">£<span id="safeToMoveNow">0.00</span></div>
-        <div class="subv" id="safeToMoveNowMeta">After protecting upcoming bills</div>
-      </div>
-
-      <div class="card" id="pressureCard">
-        <div class="stat-label">Upcoming Pressure</div>
-        <div class="stat small" id="pressureLevel">--</div>
-        <div class="subv" id="pressureMeta">Calculating upcoming bills...</div>
-      </div>
-
-      <div class="card">
-        <div class="stat-label">Included Total</div>
-        <div class="stat">£<span id="includedTotal">0.00</span></div>
-        <div class="subv" id="includedTotalMeta">All active scheduled, future, recurring costs</div>
-      </div>
-
-      <div class="card" id="trueSurplusCard">
-        <div class="stat-label">True Surplus</div>
-        <div class="stat">£<span id="trueSurplus">0.00</span></div>
-        <div class="subv" id="trueSurplusMeta">What is genuinely spare after protection</div>
-      </div>
-
-      <div class="card" id="protectedMoneyCard">
-        <div class="stat-label">Protection Requirement</div>
-        <div class="stat">£<span id="protectedMoney">0.00</span></div>
-        <div class="subv" id="protectedMoneyMeta">Required for the buffer, dated commitments and remaining monthly spending</div>
-      </div>
-
-      <div class="card">
-        <div class="stat-label">Released Surplus</div>
-        <div class="stat">£<span id="releasedSurplus">0.00</span></div>
-        <div class="subv" id="releasedSurplusMeta">From bills costing less than planned</div>
-      </div>
-
-      <div class="card" id="paydayCountdownCard">
-        <div class="stat-label">Days To Payday</div>
-        <div class="stat small" id="daysToPayday">--</div>
-        <div class="subv" id="daysToPaydayMeta">Next payday not calculated yet</div>
-      </div>
-
-      <div class="card" id="igCard">
-        <div class="stat-label">IG ISA Signal</div>
-        <div class="stat small" id="igSignal">--</div>
-        <div class="subv" id="igSignalMeta">Waiting for planner calculation</div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ===================== SECTION: AURORA CFO COMMAND DECK ===================== -->
-  <section class="section command-card">
-    <div class="command-title">
-      <div>
-        <h2>Aurora CFO Command Deck</h2>
-        <div class="subv">One-glance financial health, safe-to-move decision, bill pressure and next payday action.</div>
-      </div>
-      <div class="command-badge good" id="wealthCommandBadge">LIVE CFO</div>
-    </div>
-
-    <div class="wealth-command-grid">
-      <div class="wealth-score-ring">
-        <div>
-          <div class="score-number" id="wealthScore">--</div>
-          <div class="score-label">Aurora Wealth Score</div>
-        </div>
-      </div>
-
-      <div class="command-metric-grid">
-        <div class="command-metric good">
-          <div class="k">Safe Move Signal</div>
-          <div class="v" id="commandSafeSignal">--</div>
-          <div class="subv" id="commandSafeMeta">Calculating...</div>
-        </div>
-
-        <div class="command-metric cyan">
-          <div class="k">Next Payday Move</div>
-          <div class="v" id="commandPaydayMove">£0</div>
-          <div class="subv">Suggested holding pot top-up</div>
-        </div>
-
-        <div class="command-metric watch">
-          <div class="k">Bill Pressure</div>
-          <div class="v" id="commandPressure">--</div>
-          <div class="subv" id="commandPressureMeta">Next 30 days</div>
-        </div>
-
-        <div class="command-metric good">
-          <div class="k">Surplus Route</div>
-          <div class="v" id="commandSurplusRoute">--</div>
-          <div class="subv" id="commandSurplusMeta">Aurora allocation logic</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ===================== SECTION: EDITABLE POT MANAGER ===================== -->
-  <details class="section card pot-manager-details" id="editablePotManager">
-    <summary class="pot-manager-summary">
-      <span>
-        <strong>Editable Pot Manager</strong>
-        <small>Open only when you need to update balances, targets or priorities.</small>
-      </span>
-      <span class="command-badge good">LOCAL SAVE</span>
-    </summary>
-
-    <div class="pot-manager-content">
-      <div class="pot-manager-head">
-        <div>
-          <h2>Pot Control Panel</h2>
-          <div class="subv">Changes save on this device and rebuild the Pot Health Radar instantly.</div>
-        </div>
-        <div class="pot-manager-key">
-          <span><i class="priority-dot p1"></i> Critical</span>
-          <span><i class="priority-dot p2"></i> Important</span>
-          <span><i class="priority-dot p3"></i> Flexible</span>
-        </div>
-      </div>
-
-      <div class="pot-editor-columns" aria-hidden="true">
-        <span>Pot</span><span>Balance</span><span>Target</span><span>Priority</span><span>Note</span><span></span>
-      </div>
-      <div class="pot-editor-grid" id="potEditorGrid"></div>
-
-      <div class="pot-editor-actions">
-        <button class="add-btn" id="addPotBtn" type="button">+ Add Pot</button>
-        <button class="quick-btn" id="savePotsBtn" type="button">Save Changes</button>
-        <button class="delete-btn" id="resetPotsBtn" type="button">Reset Pot List</button>
-      </div>
-      <div class="pot-editor-status" id="potEditorStatus">Pot values remain in this browser until you export or import a planner backup.</div>
-    </div>
-  </details>
-
-  <!-- ===================== SECTION: POT HEALTH RADAR ===================== -->
-  <section class="section card" id="m13PotHealth" class="m13-anchor section card">
-    <div class="command-title">
-      <div>
-        <h2>Pot Health Radar</h2>
-        <div class="subv">Goal pots ranked by funding strength and pressure.</div>
-      </div>
-      <div class="command-badge watch">GOAL MAP</div>
-    </div>
-    <div class="radar-grid" id="potHealthRadar"></div>
-  </section>
-
-
-
-
-
-  <!-- ===================== M27 HOUSE PROJECT LEDGER ===================== -->
-  <section class="section card m27-house-ledger" id="m27HouseProjectLedger">
-    <div class="command-title">
-      <div>
-        <h2>House Project Ledger</h2>
-        <div class="subv">Room-by-room renovation control with estimated costs, actual costs and live House Pot deductions.</div>
-      </div>
-      <div class="command-badge good">ROOM CONTROL</div>
-    </div>
-
-    <div class="m27-house-hero">
-      <div class="m27-house-copy">
-        <div class="m13-eyebrow">HOUSE FUNDING RULE</div>
-        <h3>Every payment belongs to a room.</h3>
-        <p>Reserved work uses the estimated cost. Once you enter the actual cost and mark it paid, only the actual amount is deducted from the House Pot. Any saving is released back into available cash automatically.</p>
-        <div class="m27-house-rule"><strong>Funded progress = current House Pot cash + confirmed actual house spending.</strong> Reserved estimates reduce available cash but do not count as spent until paid.</div>
-      </div>
-      <div class="m27-progress-card">
-        <div class="m27-progress-ring" id="m27ProgressRing"><div><strong id="m27ProgressPct">0%</strong><small>Project funded</small></div></div>
-        <div id="m27ProgressCaption" class="subv" style="margin-top:10px">Calculating house progress…</div>
-      </div>
-    </div>
-
-    <div class="m27-kpis">
-      <div class="m27-kpi" style="--m27-accent:#a78bfa"><span>Project target</span><strong id="m27TargetKpi">£0.00</strong></div>
-      <div class="m27-kpi" style="--m27-accent:#22d3ee"><span>House Pot cash</span><strong id="m27CashKpi">£0.00</strong></div>
-      <div class="m27-kpi" style="--m27-accent:#fbbf24"><span>Estimated reserved</span><strong id="m27ReservedKpi">£0.00</strong></div>
-      <div class="m27-kpi" style="--m27-accent:#60a5fa"><span>Available after costs</span><strong id="m27AvailableKpi">£0.00</strong></div>
-      <div class="m27-kpi" style="--m27-accent:#34d399"><span>Actual spent</span><strong id="m27SpentKpi">£0.00</strong></div>
-      <div class="m27-kpi" style="--m27-accent:#34d399"><span>Total funded progress</span><strong id="m27FundedKpi">£0.00</strong></div>
-      <div class="m27-kpi" style="--m27-accent:#fb7185"><span>Remaining to fund</span><strong id="m27RemainingKpi">£0.00</strong></div>
-    </div>
-
-    <div class="m27-room-head">
-      <div><h3>Room Dashboard</h3><small>Estimated, actual and remaining by room</small></div>
-      <button class="m27-add-room-btn" id="m27AddRoom" type="button">+ Add room</button>
-    </div>
-    <div class="m27-room-grid" id="m27RoomGrid"></div>
-
-    <div class="m27-setup">
-      <div class="m27-field"><label for="m27HouseTarget">House project target</label><input id="m27HouseTarget" type="number" min="0" step="0.01"></div>
-      <div class="m27-field"><label for="m27HouseCash">Current House Pot balance</label><input id="m27HouseCash" type="number" min="0" step="0.01"></div>
-      <div class="m27-field"><label for="m27OpeningSpend">Starting historical spend total</label><input id="m27OpeningSpend" type="number" min="0" step="0.01"></div>
-      <button class="m27-save-btn" id="m27SaveSetup" type="button">Save House Setup</button>
-    </div>
-
-    <div class="m27-note"><strong>Historical spending:</strong> use the starting total for one combined amount, or add previous payments individually by room. Do not enter the same payment in both places.</div>
-
-    <div class="m27-form m27-form-room">
-      <div class="m27-field"><label for="m27EntryName">Payment description</label><input id="m27EntryName" type="text" placeholder="e.g. TV & Soundbar"></div>
-      <div class="m27-field"><label for="m27EntryRoom">Room</label><select id="m27EntryRoom"></select></div>
-      <div class="m27-field"><label for="m27EntryEstimated">Estimated cost</label><input id="m27EntryEstimated" type="number" min="0" step="0.01" placeholder="2000.00"></div>
-      <div class="m27-field"><label for="m27EntryActual">Actual cost</label><input id="m27EntryActual" type="number" min="0" step="0.01" placeholder="Leave blank until known"></div>
-      <div class="m27-field"><label for="m27EntryDate">Due / paid date</label><input id="m27EntryDate" type="date"></div>
-      <div class="m27-field"><label for="m27EntryType">Payment type</label><select id="m27EntryType"><option value="historical">Already paid — historical</option><option value="reserved" selected>Upcoming — reserve from House Pot</option></select></div>
-      <div class="m27-field"><label for="m27EntryCategory">Work category</label><input id="m27EntryCategory" type="text" placeholder="Electrics, flooring, furniture…"></div>
-      <button class="m27-add-btn" id="m27AddEntry" type="button">+ Add Payment</button>
-    </div>
-
-    <div id="m27HouseStatus" class="m27-status"></div>
-    <div class="m27-ledger-head"><h3>House payment ledger</h3><small id="m27LedgerMeta">0 records</small></div>
-    <div class="m27-ledger-list" id="m27LedgerList"></div>
-  </section>
-
-
-
-  <!-- ===================== M33 PAYDAY MISSION CONTROL + SCENARIO LAB ===================== -->
-  <section class="section card m33-payday-section" id="m15PaydayAllocationCentre">
-    <div class="m33-payday-head">
-      <div>
-        <div class="m13-eyebrow">AURORA PAYDAY OPERATIONS</div>
-        <h2>Payday Mission Control</h2>
-        <p>Build the real payday plan on the left. Test a different wage and allocation on the right without touching the live mission until you choose to apply it.</p>
-      </div>
-      <span class="m15-live-badge m22-live" id="m22MissionBadge">DRAFT PLAN</span>
-    </div>
-
-    <div class="m33-command-grid">
-      <article class="m33-live-card">
-        <div class="m33-card-head">
-          <div>
-            <span class="m33-kicker live">LIVE PAYDAY PLAN</span>
-            <h3>Real money. Real transfers.</h3>
-            <p>This is the saved mission that updates your Holding Pot, goal pots and payday history.</p>
-          </div>
-          <span class="m33-plan-tag">PROTECT → FUND → INVEST</span>
-        </div>
-
-        <div class="m22-input-grid m33-live-inputs" id="m22InputGrid">
-          <div class="m22-field m35-date-field"><label for="m22PaydayDate">Payday date</label><input id="m22PaydayDate" type="date"><small id="m35PaydayHuman">—</small></div>
-          <div class="m22-field"><label for="m15ExpectedPay">Expected pay</label><input id="m15ExpectedPay" type="number" min="0" step="0.01" value="2100"></div>
-          <div class="m22-field"><label for="m15ActualPay">Actual pay received</label><input id="m15ActualPay" type="number" min="0" step="0.01" value="2100"></div>
-          <div class="m22-field"><label for="m22CoreInvestment">Core share contribution</label><input id="m22CoreInvestment" type="number" min="0" step="0.01" value="1500"></div>
-          <div class="m22-field"><label for="m22Lifestyle">Lifestyle / Spending Pot</label><input id="m22Lifestyle" type="number" min="0" step="0.01" value="250"></div>
-          <div class="m22-field"><label for="m22GoalPots">Flexible goal-pot budget</label><input id="m22GoalPots" type="number" min="0" step="0.01" value="250"><small class="m35-field-help">Routed into the highest-priority named pots in the checklist.</small></div>
-          <div class="m22-field"><label for="m33LiveHouseBoost">House Pot boost</label><input id="m33LiveHouseBoost" type="number" min="0" step="0.01" value="0"></div>
-          <div class="m22-field"><label for="m33LiveEmergencyBoost">Emergency Fund boost</label><input id="m33LiveEmergencyBoost" type="number" min="0" step="0.01" value="0"></div>
-          <div class="m22-field"><label for="m15AllocateExtra">Auto-route extra pay</label><input id="m15AllocateExtra" type="number" min="0" step="0.01" value="0"></div>
-          <div class="m22-field"><label for="m15Strategy">Extra-pay strategy</label><select id="m15Strategy"><option value="priority">Aurora priority — P1, P2, P3</option><option value="critical">Critical pots only, then shares</option><option value="balanced">Balanced across underfunded pots</option><option value="isa">All available extra to shares</option></select></div>
-          <div class="m22-field"><label for="m22InvestmentPlatform">Investment account</label><select id="m22InvestmentPlatform"><option value="ig">IG ISA</option><option value="t212">Trading 212 ISA</option><option value="split">Split IG / Trading 212</option></select></div>
-        </div>
-
-        <div class="m33-live-scoreboard">
-          <div class="m33-score main"><span>Actual pay</span><strong id="m15SumActual">£0.00</strong><small id="m33LivePayNote">Wage available</small></div>
-          <div class="m33-score"><span>Holding move</span><strong id="m15SumHolding">£0.00</strong><small>Bills and protection</small></div>
-          <div class="m33-score"><span>Total accounted for</span><strong id="m33PlannedTotal">£0.00</strong><small id="m15AllocationTotal">£0.00 transfers planned</small></div>
-          <div class="m33-score success"><span>Retained</span><strong id="m22WalletBuffered">£0.00</strong><small>Left in current account</small></div>
-        </div>
-
-        <div class="m33-hidden-values" aria-hidden="true">
-          <span id="m15SumExpected">£0.00</span><span id="m15SumExtra">£0.00</span><span id="m22SumShortfall">£0.00</span><span id="m15SumAvailable">£0.00</span>
-        </div>
-
-        <div class="m22-callout" id="m15Instruction">Aurora is building the payday instruction.</div>
-        <div class="m22-status" id="m22Status"></div>
-
-        <div class="m33-progress-wrap">
-          <div class="m33-progress-head"><span>Mission execution</span><strong id="m22ProgressText">0 of 0 moves completed</strong></div>
-          <div class="m22-progress"><div class="m22-progress-fill" id="m22ProgressFill"></div></div>
-          <div class="m22-progress-meta"><span id="m22LockText">Plan editable</span><span id="m33MissionSafety">Protected planning active</span></div>
-        </div>
-
-        <div class="m33-execution-board m35-execution-board">
-          <div class="m22-panel-head"><h3>Payday execution checklist</h3><small id="m35ChecklistSummary">0 moves ready</small></div>
-          <div class="m35-checklist-preview" id="m35ChecklistPreview"></div>
-          <details class="m35-full-checklist" id="m35FullChecklist">
-            <summary><span>View full checklist</span><small id="m35FullChecklistMeta">0 moves</small></summary>
-            <div class="m22-action-list" id="m15AllocationList"></div>
-          </details>
-        </div>
-
-        <div class="m22-actions m33-primary-actions">
-          <button class="m22-btn" id="m15UseFullExtra" type="button">Allocate All Extra</button>
-          <button class="m22-btn" id="m15UseHalfExtra" type="button">Half Extra / Half Buffer</button>
-          <button class="m22-btn" id="m15CopyPlan" type="button">Copy Plan</button>
-          <button class="m22-btn primary m33-complete" id="m22CompletePayday" type="button" disabled>Complete Payday Mission</button>
-          <button class="m22-btn danger" id="m22ResetMission" type="button">Reset Draft</button>
-          <button class="m22-btn primary" id="m22NewMission" type="button" style="display:none">Start Next Payday</button>
-        </div>
-
-        <details class="m33-advanced">
-          <summary><span>Open mission intelligence</span><small>Protection, reconciliation, route and receipts</small></summary>
-          <div class="m33-advanced-body">
-            <div class="m22-summary-grid">
-              <div class="m22-summary" style="--c:#22d3ee"><span>Expected pay</span><strong id="m33ExpectedMirror">—</strong></div>
-              <div class="m22-summary" style="--c:#60a5fa"><span>Actual pay</span><strong id="m33ActualMirror">—</strong></div>
-              <div class="m22-summary" style="--c:#34d399"><span>Extra / overtime</span><strong id="m33ExtraMirror">—</strong></div>
-              <div class="m22-summary" style="--c:#fb7185"><span>Pay shortfall</span><strong id="m33ShortfallMirror">—</strong></div>
-            </div>
-
-            <div class="m22-protection">
-              <div class="m22-protect-item"><span>Minimum buffer</span><strong id="m22MinimumBuffer">£0.00</strong></div>
-              <div class="m22-protect-item"><span>Bills before next payday</span><strong id="m22BillsReserve">£0.00</strong></div>
-              <div class="m22-protect-item"><span>Monthly spend remaining</span><strong id="m22RecurringReserve">£0.00</strong></div>
-              <div class="m22-protect-item"><span>Total Holding requirement</span><strong id="m22HoldingRequirement">£0.00</strong></div>
-              <div class="m22-protect-item"><span>Holding Pot now</span><strong id="m22HoldingNow">£0.00</strong></div>
-              <div class="m22-protect-item"><span>Urgent top-up</span><strong id="m22UrgentHolding">£0.00</strong></div>
-              <div class="m22-protect-item"><span>Regular contribution</span><strong id="m22RegularHolding">£0.00</strong></div>
-              <div class="m22-protect-item"><span>Long-term commitments</span><strong id="m25LongTermTarget">£0.00</strong></div>
-              <div class="m22-protect-item"><span>Long-term funding gap</span><strong id="m25LongTermGap">£0.00</strong></div>
-            </div>
-
-            <div class="m22-wallet">
-              <div class="m22-wallet-card"><span>Planned mission total</span><strong id="m22WalletTotal">£0.00</strong></div>
-              <div class="m22-wallet-card"><span>Transfers completed</span><strong id="m22WalletExecuted">£0.00</strong></div>
-              <div class="m22-wallet-card"><span>Transfers still planned</span><strong id="m22WalletRemaining">£0.00</strong></div>
-              <div class="m22-wallet-card"><span>Deliberately retained</span><strong id="m33RetainedMirror">£0.00</strong></div>
-            </div>
-
-            <div class="m25-reconcile" id="m25ReconcilePanel">
-              <div class="m25-reconcile-card"><span>Wage received</span><strong id="m25RecWage">£0.00</strong></div>
-              <div class="m25-reconcile-card"><span>Transfers completed</span><strong id="m25RecCompleted">£0.00</strong></div>
-              <div class="m25-reconcile-card"><span>Transfers still pending</span><strong id="m25RecPending">£0.00</strong></div>
-              <div class="m25-reconcile-card"><span>Current account now</span><strong id="m25RecCurrent">£0.00</strong></div>
-              <div class="m25-reconcile-card"><span>Deliberately retained</span><strong id="m25RecRetained">£0.00</strong></div>
-              <div class="m25-reconcile-card" id="m25DifferenceCard"><span>Unexplained difference</span><strong id="m25RecDifference">£0.00</strong></div>
-            </div>
-            <div class="m25-reconcile-note" id="m25ReconcileNote">Every pound should equal a completed transfer, a pending transfer or money deliberately retained in the current account.</div>
-
-            <div class="m22-grid">
-              <div class="m22-panel">
-                <div class="m22-panel-head"><h3>Execution order</h3><small>LIVE ROUTE</small></div>
-                <div class="m22-route" id="m15Route"></div>
-              </div>
-              <div class="m22-panel">
-                <div class="m22-panel-head"><h3>Due-date sinking-fund engine</h3><small id="m25SinkingTotal">£0.00 THIS PAYDAY</small></div>
-                <div class="m25-sinking-summary" id="m25SinkingSummary"></div>
-                <div class="m25-sinking-list" id="m25SinkingList"></div>
-              </div>
-            </div>
-
-            <div class="m22-panel">
-              <div class="m22-panel-head"><h3>Duplicate-cost audit</h3><small id="m25AuditBadge">CHECKING</small></div>
-              <div class="m25-audit-list" id="m25AuditList"></div>
-            </div>
-
-            <div class="m22-panel">
-              <div class="m22-panel-head"><h3>Recent payday receipts</h3><small>LOCAL HISTORY</small></div>
-              <div class="m22-history" id="m22History"></div>
-            </div>
-          </div>
-        </details>
-
-        <div class="m22-receipt" id="m22Receipt"></div>
-      </article>
-
-      <aside class="m33-scenario-card">
-        <div class="m33-card-head scenario">
-          <div>
-            <span class="m33-kicker scenario">SCENARIO LAB</span>
-            <h3>Test it before you commit.</h3>
-            <p>Nothing here changes the live payday mission until you press Apply Scenario.</p>
-          </div>
-          <span class="m33-sim-badge">SIMULATION ONLY</span>
-        </div>
-
-        <div class="m33-mode-tabs" role="group" aria-label="Scenario mode">
-          <button type="button" data-m33-mode="baseline">Baseline</button>
-          <button type="button" data-m33-mode="overtime" class="active">Overtime</button>
-          <button type="button" data-m33-mode="custom">Custom</button>
-        </div>
-
-        <div class="m33-scenario-note" id="m33ModeNote">Overtime mode starts with your £800 planning assumption.</div>
-
-        <div class="m35-overtime-strip" id="m35OvertimeStrip">
-          <div><span>Normal payday</span><strong id="m35BasePay">£0.00</strong></div>
-          <div><span>Extra overtime</span><strong id="m35OvertimeDisplay">£0.00</strong></div>
-          <div><span>Scenario total</span><strong id="m35ScenarioTotal">£0.00</strong></div>
-        </div>
-        <div class="m35-overtime-route" id="m35OvertimeRoute">The extra-pay route will appear here.</div>
-
-        <div class="m33-scenario-inputs">
-          <div class="m33-field featured" id="m35ScenarioPayField"><label for="m33ScenarioPay">Scenario pay received</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioPay" type="number" min="0" step="0.01"></div></div>
-          <div class="m33-field featured m35-overtime-field" id="m35OvertimeField"><label for="m35OvertimeExtra">Overtime / extra pay</label><div class="m33-money-input"><span>£</span><input id="m35OvertimeExtra" type="number" min="0" step="0.01" value="800"></div></div>
-          <div class="m33-field"><label for="m33ScenarioShares">Shares</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioShares" type="number" min="0" step="0.01"></div></div>
-          <div class="m33-field"><label for="m33ScenarioLifestyle">Spending Pot</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioLifestyle" type="number" min="0" step="0.01"></div></div>
-          <div class="m33-field"><label for="m33ScenarioGoals">Other named pots</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioGoals" type="number" min="0" step="0.01"></div></div>
-          <div class="m33-field"><label for="m33ScenarioHouse">House Pot boost</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioHouse" type="number" min="0" step="0.01"></div></div>
-          <div class="m33-field"><label for="m33ScenarioEmergency">Emergency Fund boost</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioEmergency" type="number" min="0" step="0.01"></div></div>
-          <div class="m33-field"><label for="m33ScenarioRetain">Minimum retained cash</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioRetain" type="number" min="0" step="0.01" value="100"></div></div>
-        </div>
-
-        <div class="m35-decision-statement" id="m35DecisionStatement">Aurora is checking whether this scenario is safe.</div>
-
-        <div class="m33-scenario-verdict" id="m33ScenarioVerdict" data-state="healthy">
-          <div><span>Scenario status</span><strong id="m33ScenarioStatus">HEALTHY</strong></div>
-          <div class="m33-verdict-orb"><span id="m33ScenarioScore">100</span><small>/100</small></div>
-        </div>
-
-        <div class="m33-scenario-kpis">
-          <div><span>Protection</span><strong id="m33ScenarioProtection">£0.00</strong></div>
-          <div><span>Total allocated</span><strong id="m33ScenarioAllocated">£0.00</strong></div>
-          <div><span>Retained</span><strong id="m33ScenarioRetained">£0.00</strong></div>
-        </div>
-
-        <div class="m33-allocation-stack" id="m33AllocationStack" aria-label="Scenario allocation breakdown"></div>
-
-        <div class="m33-comparison">
-          <div class="m33-comparison-head"><h4>Live plan vs scenario</h4><span id="m33ScenarioDifference">£0.00 change</span></div>
-          <div class="m33-compare-table">
-            <div class="m33-compare-row head"><span>Allocation</span><span>Live</span><span>Scenario</span><span>Change</span></div>
-            <div id="m33ComparisonBody"></div>
-          </div>
-        </div>
-
-        <div class="m33-insight" id="m33ScenarioInsight">Aurora is analysing this scenario.</div>
-
-        <div class="m35-apply-confirm" id="m35ApplyConfirm" hidden>
-          <strong>Apply this scenario to the live payday mission?</strong>
-          <p id="m35ApplyConfirmCopy">Your current live plan will be saved as an undo point.</p>
-          <div><button type="button" id="m35CancelApply">Cancel</button><button type="button" class="primary" id="m35ConfirmApply">Confirm apply</button></div>
-        </div>
-        <div class="m33-scenario-actions m35-sticky-actions">
-          <span class="m35-simulation-label">Simulation only</span>
-          <button type="button" id="m33ResetScenario">Reset</button>
-          <button type="button" id="m35UndoScenario" hidden>Undo apply</button>
-          <button type="button" class="primary" id="m33ApplyScenario">Apply Scenario</button>
-        </div>
-        <div class="m33-apply-status" id="m33ApplyStatus" aria-live="polite"></div>
-      </aside>
-    </div>
-
-    <section class="m37-handoff" id="m37InvestmentHandoff" aria-label="Investment mission handoff">
-      <div class="m37-handoff-head">
-        <div>
-          <div class="m13-eyebrow">CONNECTED AURORA PIPELINE</div>
-          <h3>Investment Mission Handoff</h3>
-          <p>Authorise the share allocation from this real payday mission and send it directly to the Aurora FC Transfer Centre. The Transfer Centre receives the budget, payday and preferred ISA route, then uses Trading Brain intelligence behind the scenes to rank opportunities and size the final purchases.</p>
-        </div>
-        <span class="m37-status" id="m37HandoffStatus" data-state="none">NOT SENT</span>
-      </div>
-      <div class="m37-handoff-grid">
-        <div class="m37-metric primary"><span>Total investment mission</span><strong id="m37InvestmentBudget">£0.00</strong></div>
-        <div class="m37-metric"><span>Preferred account</span><strong id="m37InvestmentAccount">—</strong></div>
-        <div class="m37-metric"><span>Payday</span><strong id="m37InvestmentPayday">—</strong></div>
-        <div class="m37-metric"><span>Pipeline stage</span><strong id="m37PipelineStage">Draft plan</strong></div>
-      </div>
-      <div class="m50-funding-panel">
-        <div class="m50-funding-head">
-          <div><span class="m13-eyebrow">MONTHLY FUNDING STACK</span><h4>Build the complete transfer budget</h4><p>Payday money is combined with controlled releases from your existing capital and ETF-sale pots.</p></div>
-          <button type="button" id="m50SaveFunding">Save funding pools</button>
-        </div>
-        <div class="m50-source-grid">
-          <article class="m50-source payday"><span>Payday contribution</span><strong id="m50PaydayRelease">£0.00</strong><small>Read automatically from the live payday plan</small></article>
-          <article class="m50-source">
-            <label for="m50CapitalBalance">Existing capital remaining</label>
-            <div class="m50-money"><span>£</span><input id="m50CapitalBalance" type="number" min="0" step="0.01" value="7000"></div>
-            <label for="m50CapitalRelease">Release this month</label>
-            <div class="m50-money"><span>£</span><input id="m50CapitalRelease" type="number" min="0" step="0.01" value="1000"></div>
-            <small id="m50CapitalRunway">7 monthly releases available</small>
-          </article>
-          <article class="m50-source">
-            <label for="m50EtfBalance">ETF/share-sale pot available</label>
-            <div class="m50-money"><span>£</span><input id="m50EtfBalance" type="number" min="0" step="0.01" value="0"></div>
-            <label for="m50EtfRelease">Release this month</label>
-            <div class="m50-money"><span>£</span><input id="m50EtfRelease" type="number" min="0" step="0.01" value="1000"></div>
-            <small id="m50EtfRunway">Waiting for sale proceeds</small>
-          </article>
-          <article class="m50-source total"><span>Combined monthly mission</span><strong id="m50CombinedMission">£0.00</strong><small id="m50MissionBreakdown">Payday only</small></article>
-        </div>
-        <div class="m50-note">Aurora never assumes sale proceeds are available. The ETF release stays at £0 until a balance is entered. Releasing a mission authorises the plan only; it does not move cash or place trades.</div>
-      </div>
-      <div class="m37-route" id="m37InvestmentRoute"><strong>Waiting:</strong> Build the live payday plan and Aurora will combine every available investment funding source.</div>
-      <div class="m37-actions">
-        <button class="primary" id="m37SendToTradingBrain" type="button">Release Mission to Transfer Centre</button>
-        <button id="m37RefreshHandoff" type="button">Refresh Status</button>
-        <a href="AuroraCityFC_TransferCentre.html?from=finance-department" target="_self">Open Transfer Centre →</a>
-      </div>
-      <div class="m37-feedback" id="m37HandoffFeedback" aria-live="polite"></div>
-    </section>
-
-  </section>
-
-
-  <!-- ===================== SECTION: PAYDAY SIMULATOR ===================== -->
-  <section class="section card" id="m13PaydayPlan" class="m13-anchor section card">
-    <div class="command-title">
-      <div>
-        <h2>Payday Command Simulator</h2>
-        <div class="subv">Enter expected pay and Aurora builds a clean payday move plan.</div>
-      </div>
-      <div class="command-badge cyan">SIMULATOR</div>
-    </div>
-
-    <div class="payday-grid">
-      <div class="grid two-grid">
-        <div class="input-box">
-          <label for="simPayInput">Expected Pay</label>
-          <input id="simPayInput" type="number" step="1" value="2100" />
-        </div>
-
-        <div class="input-box">
-          <label for="simInvestInput">Target IG ISA</label>
-          <input id="simInvestInput" type="number" step="1" value="1000" />
-        </div>
-
-        <div class="input-box">
-          <label for="simLifestyleInput">Lifestyle / Spending Pot</label>
-          <input id="simLifestyleInput" type="number" step="1" value="250" />
-        </div>
-
-        <div class="input-box">
-          <label for="simGoalsInput">Goal Pots Total</label>
-          <input id="simGoalsInput" type="number" step="1" value="250" />
-        </div>
-      </div>
-
-      <div class="payday-results" id="paydaySimulationResults">
-        <div class="payday-row"><strong>Waiting for simulator...</strong><span>--</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: AURORA WEALTH INTELLIGENCE ===================== -->
-  <section class="section card">
-    <div class="command-title">
-      <div>
-        <h2>Aurora Wealth Intelligence</h2>
-        <div class="subv">Live explanation of the current money setup.</div>
-      </div>
-      <div class="command-badge good">AI VIEW</div>
-    </div>
-    <div class="ai-command-text" id="wealthAiView">Aurora is analysing the Wealth Centre...</div>
-  </section>
-
-  <!-- ===================== SECTION: FREEDOM FLIGHT PATH ===================== -->
-  <section class="section card">
-    <div class="command-title">
-      <div>
-        <h2>Financial Freedom Flight Path</h2>
-        <div class="subv">Progress view towards the long-term £2,000/month passive income mission.</div>
-      </div>
-      <div class="command-badge cyan">MISSION</div>
-    </div>
-    <div id="freedomFlightPath"></div>
-  </section>
-
-  <!-- ===================== SECTION: FUNDING ENGINE ===================== -->
-  <section class="section card m13-anchor m36-funding-centre" id="m13Funding">
-    <div class="m36-funding-hero">
-      <div class="m36-funding-copy">
-        <div class="m13-eyebrow">AURORA SURPLUS ROUTING ENGINE</div>
-        <h2>Funding Engine</h2>
-        <p>Protect the Holding Pot, set the contribution rate and make the next payday move from one joined-up command centre.</p>
-      </div>
-      <div class="m36-engine-state" id="m36EngineState" data-state="live">
-        <span class="m36-state-dot"></span>
-        <div><small>ENGINE STATUS</small><strong id="m36EngineStateText">CALCULATING</strong></div>
-      </div>
-    </div>
-
-    <div class="m36-funding-kpis">
-      <article class="m36-funding-kpi" style="--m36-accent:#56dfff">
-        <div class="m36-kpi-icon">W</div>
-        <div><span>Suggested weekly funding</span><strong id="weeklyTarget">£0</strong><small id="weeklyTargetMeta">Based on active included costs</small></div>
-      </article>
-      <article class="m36-funding-kpi" style="--m36-accent:#f3c45b">
-        <div class="m36-kpi-icon">M</div>
-        <div><span>Monthly equivalent</span><strong id="monthlyTarget">£0</strong><small>Weekly target × 52 ÷ 12</small></div>
-      </article>
-      <article class="m36-funding-kpi" style="--m36-accent:#4ee09a">
-        <div class="m36-kpi-icon">Y</div>
-        <div><span>At current rate</span><strong id="currentRateAnnual">£0</strong><small id="currentRateMeta">Funding produced yearly from your weekly amount</small></div>
-      </article>
-      <article class="m36-funding-kpi" style="--m36-accent:#b59cff" id="m36VarianceCard">
-        <div class="m36-kpi-icon">±</div>
-        <div><span>Surplus / shortfall</span><strong id="surplusShortfall">£0</strong><small id="surplusShortfallMeta">Vs active planner total</small></div>
-      </article>
-    </div>
-
-    <div class="m36-coverage-panel">
-      <div class="m36-coverage-copy">
-        <span>ANNUAL FUNDING COVERAGE</span>
-        <strong id="m36CoverageText">Calculating coverage…</strong>
-      </div>
-      <div class="m36-coverage-track" aria-hidden="true"><div class="m36-coverage-fill" id="m36CoverageFill"></div></div>
-      <div class="m36-coverage-badge" id="m36CoverageBadge">0%</div>
-    </div>
-
-    <div class="m36-funding-layout">
-      <div class="m36-funding-panel m36-control-panel">
-        <div class="m36-panel-heading">
-          <div><span>LIVE CONTROL DECK</span><h3>Holding Pot & contributions</h3><p>Update balances and move money without hunting through separate controls.</p></div>
-          <div class="m36-panel-chip">LOCAL SAVE</div>
-        </div>
-
-        <div class="m36-position-grid">
-          <label class="m36-field m36-field-featured" for="holdingBalanceInput">
-            <span>Current Holding Pot balance</span>
-            <div class="m36-money-input"><b>£</b><input id="holdingBalanceInput" type="number" step="0.01" value="2020" /></div>
-            <small id="m36HoldingPosition">Live protected cash position</small>
-          </label>
-          <label class="m36-field" for="minimumBufferInput">
-            <span>Minimum safe buffer</span>
-            <div class="m36-money-input"><b>£</b><input id="minimumBufferInput" type="number" step="1" value="1000" /></div>
-            <small>Floor Aurora should protect</small>
-          </label>
-        </div>
-
-        <div class="m36-buffer-meter">
-          <div><span>BUFFER POSITION</span><strong id="m36BufferPosition">Calculating…</strong></div>
-          <div class="m36-buffer-track"><div class="m36-buffer-fill" id="m36BufferFill"></div></div>
-        </div>
-
-        <div class="m36-transfer-heading"><span>QUICK MONEY MOVES</span><strong>Choose the action, enter the amount, then confirm.</strong></div>
-        <div class="m36-transfer-grid">
-          <article class="m36-transfer-card contribution">
-            <div class="m36-transfer-icon">＋</div>
-            <div class="m36-transfer-copy"><span>Regular payday contribution</span><small>Saved rate only — it is not money moved until you press the button.</small></div>
-            <label class="m36-compact-field" for="paydayContributionInput"><b>£</b><input id="paydayContributionInput" type="number" step="1" value="140" /></label>
-            <button class="m36-action-btn positive" id="addPaydayBtn" type="button">Add payday contribution</button><small class="m41-contribution-status" id="m41ContributionStatus">Rate saved separately from the live Holding Pot balance.</small>
-          </article>
-          <article class="m36-transfer-card custom">
-            <div class="m36-transfer-icon">↗</div>
-            <div class="m36-transfer-copy"><span>Custom amount in</span><small>Add overtime or spare cash</small></div>
-            <label class="m36-compact-field" for="customAddInput"><b>£</b><input id="customAddInput" type="number" step="0.01" placeholder="0.00" /></label>
-            <button class="m36-action-btn neutral" id="addCustomBtn" type="button">Add custom amount</button>
-          </article>
-          <article class="m36-transfer-card remove">
-            <div class="m36-transfer-icon">−</div>
-            <div class="m36-transfer-copy"><span>Transfer out</span><small>Record money leaving the pot</small></div>
-            <label class="m36-compact-field" for="customRemoveInput"><b>£</b><input id="customRemoveInput" type="number" step="0.01" placeholder="0.00" /></label>
-            <button class="m36-action-btn danger" id="removeCustomBtn" type="button">Remove from pot</button>
-          </article>
-        </div>
-
-        <div class="m36-growth-card">
-          <div class="m36-growth-head">
-            <div><span>GROW POT RESERVE</span><strong>Safety-goal controls</strong></div>
-            <div class="m36-growth-score" id="m36GrowthScore">0%</div>
-          </div>
-          <div class="m36-growth-fields">
-            <label class="m36-field" for="growPotBalanceInput"><span>Current balance</span><div class="m36-money-input"><b>£</b><input id="growPotBalanceInput" type="number" step="0.01" value="700" /></div></label>
-            <label class="m36-field" for="growPotTargetInput"><span>Target</span><div class="m36-money-input"><b>£</b><input id="growPotTargetInput" type="number" step="1" value="7500" /></div></label>
-          </div>
-          <div class="m36-growth-track"><div class="m36-growth-fill" id="m36GrowthFill"></div></div>
-          <small id="m36GrowthText">Building towards the safety target</small>
-        </div>
-      </div>
-
-      <aside class="m36-funding-panel m36-decision-panel">
-        <div class="m36-panel-heading">
-          <div><span>PAYDAY FUNDING DECISION</span><h3>Contribution adjustment</h3><p>Aurora converts the funding requirement into one clear next move.</p></div>
-          <div class="m36-panel-chip gold">NEXT MOVE</div>
-        </div>
-
-        <div class="m36-decision-grid">
-          <article class="m36-urgent-move"><span>Immediate catch-up</span><strong>£<b id="currentPotOffset">0.00</b></strong><small id="currentPotOffsetMeta">Short-term protection required before the following payday</small></article>
-          <article class="m36-future-move"><span>Future due-date contribution</span><strong>£<b id="suggestedContributionNow">0.00</b></strong><small id="suggestedContributionMeta">Funding spread across paydays before later commitments</small></article>
-          <article class="m36-final-move" id="finalContributionCard"><span>Total Holding Pot transfer</span><strong>£<b id="finalAmountToAdd">0.00</b></strong><small id="finalAmountToAddMeta">Immediate catch-up plus future due-date funding</small></article>
-          <article><span>Next payday</span><strong id="nextPaydayLabel">--</strong><small id="nextPaydayMeta">Countdown to next pay cycle</small></article>
-        </div>
-
-        <div class="m36-command-card">
-          <div class="m36-command-top"><span>AURORA RECOMMENDATION</span><i id="m36RecommendationState">READY</i></div>
-          <div class="m36-command-value"><small>Total Holding Pot transfer</small><strong id="finalPotTopUp">£0</strong><p id="finalPotTopUpMeta">Immediate catch-up plus future due-date contribution</p></div>
-          <div class="m36-command-divider"></div>
-          <div class="m36-grow-move"><div><small>Suggested Grow Pot move</small><strong id="growPotMove">£0</strong></div><p id="growPotMoveMeta">Based on safety status</p></div>
-        </div>
-
-        <div class="m36-action-plan">
-          <div class="m36-action-plan-head"><span>WHAT TO DO NEXT</span><div class="m36-live-dot"><i></i> LIVE PLAN</div></div>
-          <div id="paydayActionsList" class="m36-action-plan-list">Waiting for planner calculation...</div>
-        </div>
-      </aside>
-    </div>
-
-    <details class="m36-data-drawer">
-      <summary><div><span>PLANNER DATA & BACKUPS</span><strong>Save, reset, export or restore this planner</strong></div><i>Open controls</i></summary>
-      <div class="m36-data-grid">
-        <button class="m36-data-btn save" id="savePlannerBtn" type="button"><span>✓</span><div><strong>Save planner data</strong><small>Store the latest values on this device</small></div></button>
-        <button class="m36-data-btn reset" id="resetPlannerBtn" type="button"><span>↺</span><div><strong>Reset to defaults</strong><small>Restore the original planner setup</small></div></button>
-        <button class="m36-data-btn export" id="exportBackupBtn" type="button"><span>⇩</span><div><strong>Export backup JSON</strong><small>Download a portable planner backup</small></div></button>
-        <button class="m36-data-btn import" id="importBackupBtn" type="button"><span>⇧</span><div><strong>Import backup JSON</strong><small>Restore a previously exported backup</small></div></button>
-      </div>
-      <div class="m36-backup-status" id="backupStatus">No backup exported this session</div>
-    </details>
-
-    <input id="importBackupFile" type="file" accept=".json,application/json" hidden />
-  </section>
-
-  <!-- ===================== SECTION: NEXT 7 DAYS BILLS ===================== -->
-  <section class="section card">
-    <div class="bill-strip-head">
-      <div>
-        <h2>Next 7 Days Bills</h2>
-        <div class="subv" id="next7BillsMeta">Closest pressure first.</div>
-      </div>
-      <div class="bill-strip-total" id="next7BillsTotal">£0 due in next 7 days</div>
-    </div>
-    <div class="grid three-grid" id="next7DaysGrid" style="margin-top:12px;"></div>
-  </section>
-
-  <!-- ===================== SECTION: GROW POT ENGINE ===================== -->
-  <section class="section card" id="growPotCard">
-    <h2>Grow Pot Engine</h2>
-    <div class="grid four-grid">
-      <div class="mini">
-        <div class="k">Grow Pot Balance</div>
-        <div class="v">£<span id="growPotBalanceDisplay">0.00</span></div>
-        <div class="subv">Your emergency / savings pot</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Grow Pot Target</div>
-        <div class="v">£<span id="growPotTargetDisplay">0.00</span></div>
-        <div class="subv">Long-term safety goal</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Gap Remaining</div>
-        <div class="v">£<span id="growPotGap">0.00</span></div>
-        <div class="subv" id="growPotGapMeta">Amount still needed</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Status</div>
-        <div class="v" id="growPotStatus">--</div>
-        <div class="subv" id="growPotStatusMeta">Safety state</div>
-      </div>
-    </div>
-
-    <div class="grow-meter">
-      <div class="grow-fill" id="growPotFill"></div>
-    </div>
-    <div class="helper-note subv" id="growPotProgressMeta">0% of target reached</div>
-  </section>
-
- <!-- ===================== SECTION: BILLS CONTROL CENTRE ===================== -->
-<section class="section card scheduled-bills-command m38-bills-centre" id="m13Bills">
-  <div class="m38-bills-header">
-    <div>
-      <div class="m38-eyebrow"><span></span> LIVE BILL OPERATIONS</div>
-      <h2>Bills Control Centre</h2>
-      <p>Upcoming payments are organised by urgency first. Select any bill to edit its funding source, protection rule, frequency and completion action.</p>
-    </div>
-    <button class="add-btn m38-add-bill" id="addScheduledBtn" type="button"><span>＋</span> Add confirmed bill</button>
-  </div>
-
-  <div class="scheduled-bill-command-strip m38-command-strip">
-    <article class="schedule-command-tile cyan">
-      <div class="k">Due before payday</div>
-      <div class="v" id="scheduledBeforePayday">£0.00</div>
-      <div class="subv" id="scheduledBeforePaydayMeta">0 payments</div>
-    </article>
-    <article class="schedule-command-tile watch">
-      <div class="k">Next 7 days</div>
-      <div class="v" id="scheduledDueSoon">£0.00</div>
-      <div class="subv" id="scheduledDueSoonMeta">No immediate pressure</div>
-    </article>
-    <article class="schedule-command-tile risk" id="scheduledProtectionTile">
-      <div class="k">Protection needed</div>
-      <div class="v" id="scheduledProtectionNeeded">£0.00</div>
-      <div class="subv">Holding Pot top-up required</div>
-    </article>
-    <article class="schedule-command-tile good" id="scheduledFundingTile">
-      <div class="k">Funding status</div>
-      <div class="v" id="scheduledFundingStatus">Protected</div>
-      <div class="subv" id="scheduledFundingStatusMeta">All selected bills covered</div>
-    </article>
-  </div>
-
-  <div class="m38-hidden-compat" aria-hidden="true">
-    <span id="scheduledLiveCount">0</span><span id="scheduledLiveTotal">£0.00</span>
-    <span id="scheduledNextBill">—</span><span id="scheduledNextBillMeta">—</span>
-  </div>
-
-  <div class="m38-bills-grid">
-    <section class="m38-queue-panel" aria-label="Upcoming bill timeline">
-      <div class="m38-panel-head">
-        <div>
-          <span class="m38-panel-kicker">PAYMENT QUEUE</span>
-          <h3>Upcoming timeline</h3>
-        </div>
-        <span class="m38-queue-count" id="m38QueueCount">0 bills</span>
-      </div>
-
-      <div class="m38-urgency-tabs" id="m38UrgencyTabs" aria-label="Bill timing filter">
-        <button type="button" data-m38-urgency="before" class="active">Before payday</button>
-        <button type="button" data-m38-urgency="next">Next cycle</button>
-        <button type="button" data-m38-urgency="later">Later</button>
-        <button type="button" data-m38-urgency="paid">Paid</button>
-        <button type="button" data-m38-urgency="all">All</button>
-      </div>
-
-      <div class="m38-category-row">
-        <span>Filter</span>
-        <div class="m38-category-filters" id="m38CategoryFilters"></div>
-      </div>
-
-      <div class="m38-bill-timeline" id="m18DynamicBillGroups"></div>
-    </section>
-
-    <aside class="m38-inspector-panel" id="m38BillInspector" aria-label="Selected bill inspector">
-      <div class="m38-inspector-empty">
-        <div class="m38-empty-orb">£</div>
-        <h3>Select a payment</h3>
-        <p>Choose a bill from the timeline to inspect its funding and edit the plan.</p>
-      </div>
-    </aside>
-  </div>
-
-  <details class="m38-archive-drawer" id="archivedBillsPanel">
-    <summary>
-      <span><b>Payment history</b><small>Completed and archived bill records</small></span>
-      <span class="m38-history-count" id="archivedBillsCount">0</span>
-    </summary>
-    <div class="m38-history-list" id="archivedBillsBody"></div>
-  </details>
+</div>
+<div class="m32-balance-stats">
+<div class="m32-balance-stat"><span>Before payday</span><strong id="m32TopBefore">£0.00</strong><small>Known outgoing payments</small></div>
+<div class="m32-balance-stat"><span>Projected balance</span><strong id="m32TopProjected">£0.00</strong><small>After known payments</small></div>
+<div class="m32-balance-stat"><span>Safe surplus</span><strong id="m32TopSafe">£0.00</strong><small>Above full protection</small></div>
+</div>
 </section>
-
-  <!-- ===================== SECTION: EDITABLE FUTURE COSTS ===================== -->
-  <section class="section card">
-    <h2>Editable Future Costs</h2>
-    <div class="grid two-grid" style="margin-bottom:12px;">
-      <button class="add-btn" id="addFutureBtn">Add Future Cost</button>
-      <div class="subv">Use this for things like next holiday, season ticket, or future dentist costs. Use the expanded note to record which Monzo pot is responsible.</div>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Included</th>
-            <th>Category</th>
-            <th>Notes</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="futureCostsBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: TRUE SURPLUS SPLIT ===================== -->
-  <section class="section card">
-    <h2>True Surplus Split</h2>
-
-    <div class="grid four-grid">
-      <div class="mini">
-        <div class="k">Released Surplus</div>
-        <div class="v" id="releaseSurplusCard">£0</div>
-        <div class="subv">Freed up from lower actual costs</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Protected For Bills</div>
-        <div class="v" id="protectedBillsCard">£0</div>
-        <div class="subv">Reserved for unpaid included bills</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Safe Surplus</div>
-        <div class="v" id="safeSurplusCard">£0</div>
-        <div class="subv">Actually movable without pressure</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Free After Buffer</div>
-        <div class="v" id="freeAfterBufferCard">£0</div>
-        <div class="subv">Headroom above minimum buffer</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: EDITABLE YEARLY RECURRING COSTS ===================== -->
-  <section class="section card">
-    <h2>Editable Yearly Recurring Costs</h2>
-    <div class="grid two-grid" style="margin-bottom:12px;">
-      <button class="add-btn" id="addYearlyRecurringBtn">Add Yearly Recurring Cost</button>
-      <div class="subv">Add the annual due date, mark it paid when it leaves the account, and Aurora will deduct it once from the Holding Pot and show the next renewal date.</div>
-    </div>
-
-    <div id="m21YearlyStatus" class="m21-yearly-status"></div>
-
-    <div class="table-wrap m21-yearly-table-wrap">
-      <table class="m21-yearly-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Due Date</th>
-            <th>Yearly Amount</th>
-            <th>Paid?</th>
-            <th>Payment Record</th>
-            <th>Next Auto-Renewal</th>
-            <th>Included</th>
-            <th>Category</th>
-            <th>Notes</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="yearlyRecurringCostsBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: EDITABLE RECURRING COSTS ===================== -->
-  <section class="section card">
-    <h2>Editable Recurring Monthly Costs</h2>
-    <div class="grid two-grid" style="margin-bottom:12px;">
-      <button class="add-btn" id="addRecurringBtn">Add Recurring Cost</button>
-      <div class="subv">Use this for monthly items like haircut, petrol, wash, or any repeat spending. Enter the actual spend and press Pay from Holding Pot.</div>
-    </div>
-
-    <div id="m19SpendStatus"></div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Monthly Budget</th>
-            <th>Spent This Cycle</th>
-            <th>Pay Amount</th>
-            <th>Pay Now</th>
-            <th>Yearly Amount</th>
-            <th>Included</th>
-            <th>Category</th>
-            <th>Last Paid</th>
-            <th>Reset Cycle</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody id="recurringCostsBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: CATEGORY BREAKDOWN ===================== -->
-  <section class="section card">
-    <h2>Category Breakdown</h2>
-    <div class="grid four-grid" id="categoryGrid"></div>
-  </section>
-
-  <!-- ===================== SECTION: YEARLY BREAKDOWN ===================== -->
-  <section class="section card">
-    <h2>Yearly Breakdown</h2>
-
-    <div class="grid four-grid">
-      <div class="mini">
-        <div class="k">Scheduled Included</div>
-        <div class="v" id="yearlyScheduled">£0</div>
-        <div class="subv">Active dated bills</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Recurring Included</div>
-        <div class="v" id="yearlyRecurring">£0</div>
-        <div class="subv">Monthly costs annualised</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Future Included</div>
-        <div class="v" id="yearlyFuture">£0</div>
-        <div class="subv">Future items switched on</div>
-      </div>
-
-      <div class="mini">
-        <div class="k">Grand Total View</div>
-        <div class="v" id="yearlyGrand">£0</div>
-        <div class="subv">Everything active in planner</div>
-      </div>
-    </div>
-
-    <div class="table-wrap" style="margin-top:12px;">
-      <table>
-        <thead>
-          <tr>
-            <th>Section</th>
-            <th>Total</th>
-            <th>Weekly</th>
-            <th>Monthly</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody id="yearlyTableBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ===================== SECTION: CONTRIBUTION ADJUSTMENTS ===================== -->
-  <section class="section card">
-    <h2>Contribution Adjustments (Autopilot)</h2>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th>Projected Balance</th>
-            <th>Min Required</th>
-            <th>Adjustment</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="contributionTableBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <div class="footer">
+<section class="m13-hero">
+<div class="m13-hero-grid">
+<div class="m13-manager-brief">
+<div class="m13-avatar">🧭</div>
+<div><div class="m13-eyebrow">MANAGER BRIEFING</div><div class="m13-brief-title" id="m13BriefTitle">Checking your live position…</div><div class="m13-brief-copy" id="m13BriefCopy">Aurora is reading the saved planner and calculating your current buffer.</div><div class="m13-callout" id="m13Callout"><strong>Holding Pot instruction:</strong> calculating…</div></div>
+</div>
+<div class="m13-score"><div class="m13-score-ring" id="m13ScoreRing"><div><strong id="m13Score">0</strong><small>PLAN RATING</small></div></div><div id="m13ScoreLabel" style="margin-top:8px;font-size:11px;color:#34d399;font-weight:900">CALCULATING</div></div>
+</div>
+</section>
+<section class="m13-kpis">
+<div class="m13-kpi" style="--accent:#22d3ee"><div class="m13-kpi-label">Expected Pay</div><div class="m13-kpi-value" id="m13ExpectedPay">£0.00</div><div class="m13-kpi-note">Current simulator baseline</div></div>
+<div class="m13-kpi" style="--accent:#60a5fa"><div class="m13-kpi-label">IG ISA</div><div class="m13-kpi-value" id="m13Isa">£0.00</div><div class="m13-kpi-note">Payday investment plan</div></div>
+<div class="m13-kpi" style="--accent:#a78bfa"><div class="m13-kpi-label">Goal Pots</div><div class="m13-kpi-value" id="m13Goals">£0.00</div><div class="m13-kpi-note">Protected savings goals</div></div>
+<div class="m13-kpi" style="--accent:#fbbf24"><div class="m13-kpi-label">Lifestyle Pot</div><div class="m13-kpi-value" id="m13Lifestyle">£0.00</div><div class="m13-kpi-note">Four-week personal spending</div></div>
+<div class="m13-kpi" style="--accent:#34d399"><div class="m13-kpi-label">Remaining Flex</div><div class="m13-kpi-value" id="m13Flex">£0.00</div><div class="m13-kpi-note">Held until bills settle</div></div>
+<div class="m13-kpi" style="--accent:#fb7185"><div class="m13-kpi-label">Holding Pot</div><div class="m13-kpi-value" id="m13Holding">£0.00</div><div class="m13-kpi-note">Live saved balance</div></div>
+</section>
+<section class="m13-dashboard">
+<div class="m13-panel">
+<div class="m13-panel-head"><div class="m13-panel-title">Payday Starting Line-up</div><span class="m13-badge">TACTICAL ALLOCATION</span></div>
+<div class="m13-lineup">
+<div class="m13-allocation" style="--w:100%;--c:#60a5fa"><small>IG ISA</small><div class="num" id="m13LineIsa">£0</div><small>CORE INVESTMENT</small></div>
+<div class="m13-allocation" style="--w:25%;--c:#a78bfa"><small>GOAL POTS</small><div class="num" id="m13LineGoals">£0</div><small>SAVINGS TARGETS</small></div>
+<div class="m13-allocation" style="--w:25%;--c:#fbbf24"><small>LIFESTYLE</small><div class="num" id="m13LineLifestyle">£0</div><small>PERSONAL SPEND</small></div>
+<div class="m13-allocation" style="--w:8%;--c:#fb7185"><small>HOLDING POT</small><div class="num" id="m13LineHolding">£0</div><small>LIVE REQUIREMENT</small></div>
+<div class="m13-allocation" style="--w:0%;--c:#34d399"><small>END-CYCLE MOVE</small><div class="num" id="m13EndCycle">TBC</div><small>LEFTOVER ONLY</small></div>
+</div>
+<div class="m13-buffer-card"><div><strong>Buffer Protection Strategy</strong><p id="m13BufferText">Keep remaining flex protected until actual bills and spending are confirmed.</p></div><div class="m13-buffer-value" id="m13BufferValue">£0.00</div></div>
+</div>
+<div class="m13-panel">
+<div class="m13-panel-head"><div class="m13-panel-title">Spending Runway</div><span class="m13-badge" id="m13DaysBadge">— DAYS</span></div>
+<div class="m13-runway"><div class="m13-donut" id="m13Donut"><div><strong id="m13RunwayPct">0%</strong><small>PROTECTED</small></div></div><div class="m13-runway-list">
+<div class="m13-row"><span>Holding Pot balance</span><strong id="m13RunHolding">£0.00</strong></div>
+<div class="m13-row"><span>Total protection requirement</span><strong id="m13RunProtected">£0.00</strong></div>
+<div class="m13-row"><span>Current true surplus</span><strong id="m13RunSurplus" style="color:#34d399">£0.00</strong></div>
+<div class="m13-row"><span>Safe to move now</span><strong id="m13RunSafe">£0.00</strong></div>
+</div></div>
+</div>
+<div class="m13-panel" id="m13BeforePayday">
+<div class="m13-panel-head"><div class="m13-panel-title">Before Payday Cash Flow</div><span class="m13-badge">LIVE FORECAST</span></div>
+<div class="m13-prepayday-summary">
+<div class="m13-prepayday-metric"><span>Current balance</span><strong id="m13BeforeCurrent">£0.00</strong></div>
+<div class="m13-prepayday-metric impact"><span>Going out before payday</span><strong id="m13BeforeOut">£0.00</strong></div>
+<div class="m13-prepayday-metric"><span>Payments remaining</span><strong id="m13BeforeCount">0</strong></div>
+<div class="m13-prepayday-metric remaining"><span>Projected balance</span><strong id="m13BeforeProjected">£0.00</strong></div>
+</div>
+<div class="m13-cashflow-list" id="m13CashflowList"></div>
+<div class="m13-balance-impact"><div class="m13-balance-line"><span>Holding Pot now</span><strong id="m13ImpactNow">£0.00</strong></div><div class="m13-balance-line"><span>Less scheduled before payday</span><strong id="m13ImpactOut" style="color:#fb7185">−£0.00</strong></div><div class="m13-balance-line final"><span>Estimated balance on payday eve</span><strong id="m13ImpactFinal">£0.00</strong></div></div>
+</div>
+<div class="m13-panel">
+<div class="m13-panel-head"><div class="m13-panel-title">Upcoming Fixtures — Bills</div><span class="m13-badge">NEXT PAYMENTS</span></div>
+<div class="m13-cashflow-list" id="m13UpcomingBills"></div>
+</div>
+</section>
+<div class="m13-ticker"><div class="m13-ticker-label">AURORA LIVE</div><div class="m13-ticker-track"><div class="m13-ticker-text" id="m13Ticker">Loading live planner figures…</div></div></div>
+</div>
+<div class="m14-view-header" id="m14ViewHeader">
+<div>
+<div class="eyebrow">AURORA WEALTH HQ</div>
+<h1 id="m14ViewTitle">Payday Plan</h1>
+<p id="m14ViewSubtitle">Working planner controls presented in the same Manager Dashboard style.</p>
+</div>
+<button class="m14-back" id="m14BackDashboard" type="button">← Budget Dashboard</button>
+</div>
+<div class="m16-view-overview" id="m16ViewOverview">
+<div class="m16-overview-head">
+<div>
+<div class="m13-eyebrow" id="m16Eyebrow">AURORA MANAGER VIEW</div>
+<h3 id="m16OverviewTitle">Manager View</h3>
+<p id="m16OverviewCopy">Live planner controls and financial intelligence.</p>
+</div>
+<span class="m16-status"><i></i><span id="m16StatusText">LIVE</span></span>
+</div>
+<div class="m16-kpis" id="m16Kpis"></div>
+<div class="m16-view-note" id="m16ViewNote"></div>
+</div>
+<div class="m13-working-planner" id="m14WorkingPlanner">
+<div class="wrap">
+<!-- ===================== SECTION: HERO ===================== -->
+<section class="hero">
+<h1 class="aurora-title">Aurora<br/>Finance Department</h1>
+<div class="sub">Personal CFO terminal • bills radar • payday simulator • pot health • surplus command engine.</div>
+<div class="grid hero-grid">
+<div class="card">
+<div class="stat-label">Holding Pot Balance</div>
+<div class="stat">£<span id="potBalance">0.00</span></div>
+<div class="subv" id="potBalanceMeta">Current saved amount</div>
+</div>
+<div class="card">
+<div class="stat-label">Pot Trend</div>
+<canvas id="potTrendChart"></canvas>
+<div class="subv" id="potTrendMeta">Last 8 snapshots of your holding pot</div>
+</div>
+<div class="card">
+<div class="stat-label">Available to Invest</div>
+<div class="stat">£<span id="availableToInvest">0.00</span></div>
+<div class="subv">Safe to move to IG ISA now</div>
+</div>
+<div class="card" id="safeMoveCard">
+<div class="stat-label">Safe To Move Now</div>
+<div class="stat">£<span id="safeToMoveNow">0.00</span></div>
+<div class="subv" id="safeToMoveNowMeta">After protecting upcoming bills</div>
+</div>
+<div class="card" id="pressureCard">
+<div class="stat-label">Upcoming Pressure</div>
+<div class="stat small" id="pressureLevel">--</div>
+<div class="subv" id="pressureMeta">Calculating upcoming bills...</div>
+</div>
+<div class="card">
+<div class="stat-label">Included Total</div>
+<div class="stat">£<span id="includedTotal">0.00</span></div>
+<div class="subv" id="includedTotalMeta">All active scheduled, future, recurring costs</div>
+</div>
+<div class="card" id="trueSurplusCard">
+<div class="stat-label">True Surplus</div>
+<div class="stat">£<span id="trueSurplus">0.00</span></div>
+<div class="subv" id="trueSurplusMeta">What is genuinely spare after protection</div>
+</div>
+<div class="card" id="protectedMoneyCard">
+<div class="stat-label">Protection Requirement</div>
+<div class="stat">£<span id="protectedMoney">0.00</span></div>
+<div class="subv" id="protectedMoneyMeta">Required for the buffer, dated commitments and remaining monthly spending</div>
+</div>
+<div class="card">
+<div class="stat-label">Released Surplus</div>
+<div class="stat">£<span id="releasedSurplus">0.00</span></div>
+<div class="subv" id="releasedSurplusMeta">From bills costing less than planned</div>
+</div>
+<div class="card" id="paydayCountdownCard">
+<div class="stat-label">Days To Payday</div>
+<div class="stat small" id="daysToPayday">--</div>
+<div class="subv" id="daysToPaydayMeta">Next payday not calculated yet</div>
+</div>
+<div class="card" id="igCard">
+<div class="stat-label">IG ISA Signal</div>
+<div class="stat small" id="igSignal">--</div>
+<div class="subv" id="igSignalMeta">Waiting for planner calculation</div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: AURORA CFO COMMAND DECK ===================== -->
+<section class="section command-card">
+<div class="command-title">
+<div>
+<h2>Aurora CFO Command Deck</h2>
+<div class="subv">One-glance financial health, safe-to-move decision, bill pressure and next payday action.</div>
+</div>
+<div class="command-badge good" id="wealthCommandBadge">LIVE CFO</div>
+</div>
+<div class="wealth-command-grid">
+<div class="wealth-score-ring">
+<div>
+<div class="score-number" id="wealthScore">--</div>
+<div class="score-label">Aurora Wealth Score</div>
+</div>
+</div>
+<div class="command-metric-grid">
+<div class="command-metric good">
+<div class="k">Safe Move Signal</div>
+<div class="v" id="commandSafeSignal">--</div>
+<div class="subv" id="commandSafeMeta">Calculating...</div>
+</div>
+<div class="command-metric cyan">
+<div class="k">Next Payday Move</div>
+<div class="v" id="commandPaydayMove">£0</div>
+<div class="subv">Suggested holding pot top-up</div>
+</div>
+<div class="command-metric watch">
+<div class="k">Bill Pressure</div>
+<div class="v" id="commandPressure">--</div>
+<div class="subv" id="commandPressureMeta">Next 30 days</div>
+</div>
+<div class="command-metric good">
+<div class="k">Surplus Route</div>
+<div class="v" id="commandSurplusRoute">--</div>
+<div class="subv" id="commandSurplusMeta">Aurora allocation logic</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: EDITABLE POT MANAGER ===================== -->
+<details class="section card pot-manager-details" id="editablePotManager">
+<summary class="pot-manager-summary">
+<span>
+<strong>Editable Pot Manager</strong>
+<small>Open only when you need to update balances, targets or priorities.</small>
+</span>
+<span class="command-badge good">LOCAL SAVE</span>
+</summary>
+<div class="pot-manager-content">
+<div class="pot-manager-head">
+<div>
+<h2>Pot Control Panel</h2>
+<div class="subv">Changes save on this device and rebuild the Pot Health Radar instantly.</div>
+</div>
+<div class="pot-manager-key">
+<span><i class="priority-dot p1"></i> Critical</span>
+<span><i class="priority-dot p2"></i> Important</span>
+<span><i class="priority-dot p3"></i> Flexible</span>
+</div>
+</div>
+<div aria-hidden="true" class="pot-editor-columns">
+<span>Pot</span><span>Balance</span><span>Target</span><span>Priority</span><span>Note</span><span></span>
+</div>
+<div class="pot-editor-grid" id="potEditorGrid"></div>
+<div class="pot-editor-actions">
+<button class="add-btn" id="addPotBtn" type="button">+ Add Pot</button>
+<button class="quick-btn" id="savePotsBtn" type="button">Save Changes</button>
+<button class="delete-btn" id="resetPotsBtn" type="button">Reset Pot List</button>
+</div>
+<div class="pot-editor-status" id="potEditorStatus">Pot values remain in this browser until you export or import a planner backup.</div>
+</div>
+</details>
+<!-- ===================== SECTION: POT HEALTH RADAR ===================== -->
+<section class="m13-anchor section card" id="m13PotHealth">
+<div class="command-title">
+<div>
+<h2>Pot Health Radar</h2>
+<div class="subv">Goal pots ranked by funding strength and pressure.</div>
+</div>
+<div class="command-badge watch">GOAL MAP</div>
+</div>
+<div class="radar-grid" id="potHealthRadar"></div>
+</section>
+<!-- ===================== M27 HOUSE PROJECT LEDGER ===================== -->
+<section class="section card m27-house-ledger" id="m27HouseProjectLedger">
+<div class="command-title">
+<div>
+<h2>House Project Ledger</h2>
+<div class="subv">Room-by-room renovation control with estimated costs, actual costs and live House Pot deductions.</div>
+</div>
+<div class="command-badge good">ROOM CONTROL</div>
+</div>
+<div class="m27-house-hero">
+<div class="m27-house-copy">
+<div class="m13-eyebrow">HOUSE FUNDING RULE</div>
+<h3>Every payment belongs to a room.</h3>
+<p>Reserved work uses the estimated cost. Once you enter the actual cost and mark it paid, only the actual amount is deducted from the House Pot. Any saving is released back into available cash automatically.</p>
+<div class="m27-house-rule"><strong>Funded progress = current House Pot cash + confirmed actual house spending.</strong> Reserved estimates reduce available cash but do not count as spent until paid.</div>
+</div>
+<div class="m27-progress-card">
+<div class="m27-progress-ring" id="m27ProgressRing"><div><strong id="m27ProgressPct">0%</strong><small>Project funded</small></div></div>
+<div class="subv" id="m27ProgressCaption" style="margin-top:10px">Calculating house progress…</div>
+</div>
+</div>
+<div class="m27-kpis">
+<div class="m27-kpi" style="--m27-accent:#a78bfa"><span>Project target</span><strong id="m27TargetKpi">£0.00</strong></div>
+<div class="m27-kpi" style="--m27-accent:#22d3ee"><span>House Pot cash</span><strong id="m27CashKpi">£0.00</strong></div>
+<div class="m27-kpi" style="--m27-accent:#fbbf24"><span>Estimated reserved</span><strong id="m27ReservedKpi">£0.00</strong></div>
+<div class="m27-kpi" style="--m27-accent:#60a5fa"><span>Available after costs</span><strong id="m27AvailableKpi">£0.00</strong></div>
+<div class="m27-kpi" style="--m27-accent:#34d399"><span>Actual spent</span><strong id="m27SpentKpi">£0.00</strong></div>
+<div class="m27-kpi" style="--m27-accent:#34d399"><span>Total funded progress</span><strong id="m27FundedKpi">£0.00</strong></div>
+<div class="m27-kpi" style="--m27-accent:#fb7185"><span>Remaining to fund</span><strong id="m27RemainingKpi">£0.00</strong></div>
+</div>
+<div class="m27-room-head">
+<div><h3>Room Dashboard</h3><small>Estimated, actual and remaining by room</small></div>
+<button class="m27-add-room-btn" id="m27AddRoom" type="button">+ Add room</button>
+</div>
+<div class="m27-room-grid" id="m27RoomGrid"></div>
+<div class="m27-setup">
+<div class="m27-field"><label for="m27HouseTarget">House project target</label><input id="m27HouseTarget" min="0" step="0.01" type="number"/></div>
+<div class="m27-field"><label for="m27HouseCash">Current House Pot balance</label><input id="m27HouseCash" min="0" step="0.01" type="number"/></div>
+<div class="m27-field"><label for="m27OpeningSpend">Starting historical spend total</label><input id="m27OpeningSpend" min="0" step="0.01" type="number"/></div>
+<button class="m27-save-btn" id="m27SaveSetup" type="button">Save House Setup</button>
+</div>
+<div class="m27-note"><strong>Historical spending:</strong> use the starting total for one combined amount, or add previous payments individually by room. Do not enter the same payment in both places.</div>
+<div class="m27-form m27-form-room">
+<div class="m27-field"><label for="m27EntryName">Payment description</label><input id="m27EntryName" placeholder="e.g. TV &amp; Soundbar" type="text"/></div>
+<div class="m27-field"><label for="m27EntryRoom">Room</label><select id="m27EntryRoom"></select></div>
+<div class="m27-field"><label for="m27EntryEstimated">Estimated cost</label><input id="m27EntryEstimated" min="0" placeholder="2000.00" step="0.01" type="number"/></div>
+<div class="m27-field"><label for="m27EntryActual">Actual cost</label><input id="m27EntryActual" min="0" placeholder="Leave blank until known" step="0.01" type="number"/></div>
+<div class="m27-field"><label for="m27EntryDate">Due / paid date</label><input id="m27EntryDate" type="date"/></div>
+<div class="m27-field"><label for="m27EntryType">Payment type</label><select id="m27EntryType"><option value="historical">Already paid — historical</option><option selected="" value="reserved">Upcoming — reserve from House Pot</option></select></div>
+<div class="m27-field"><label for="m27EntryCategory">Work category</label><input id="m27EntryCategory" placeholder="Electrics, flooring, furniture…" type="text"/></div>
+<button class="m27-add-btn" id="m27AddEntry" type="button">+ Add Payment</button>
+</div>
+<div class="m27-status" id="m27HouseStatus"></div>
+<div class="m27-ledger-head"><h3>House payment ledger</h3><small id="m27LedgerMeta">0 records</small></div>
+<div class="m27-ledger-list" id="m27LedgerList"></div>
+</section>
+<!-- ===================== M33 PAYDAY MISSION CONTROL + SCENARIO LAB ===================== -->
+<section class="section card m33-payday-section" id="m15PaydayAllocationCentre">
+<div class="m33-payday-head">
+<div>
+<div class="m13-eyebrow">AURORA PAYDAY OPERATIONS</div>
+<h2>Payday Mission Control</h2>
+<p>Build the real payday plan on the left. Test a different wage and allocation on the right without touching the live mission until you choose to apply it.</p>
+</div>
+<span class="m15-live-badge m22-live" id="m22MissionBadge">DRAFT PLAN</span>
+</div>
+<div class="m33-command-grid">
+<article class="m33-live-card">
+<div class="m33-card-head">
+<div>
+<span class="m33-kicker live">LIVE PAYDAY PLAN</span>
+<h3>Real money. Real transfers.</h3>
+<p>This is the saved mission that updates your Holding Pot, goal pots and payday history.</p>
+</div>
+<span class="m33-plan-tag">PROTECT → FUND → INVEST</span>
+</div>
+<div class="m22-input-grid m33-live-inputs" id="m22InputGrid">
+<div class="m22-field m35-date-field"><label for="m22PaydayDate">Payday date</label><input id="m22PaydayDate" type="date"/><small id="m35PaydayHuman">—</small></div>
+<div class="m22-field"><label for="m15ExpectedPay">Expected pay</label><input id="m15ExpectedPay" min="0" step="0.01" type="number" value="2100"/></div>
+<div class="m22-field"><label for="m15ActualPay">Actual pay received</label><input id="m15ActualPay" min="0" step="0.01" type="number" value="2100"/></div>
+<div class="m22-field"><label for="m22CoreInvestment">Core share contribution</label><input id="m22CoreInvestment" min="0" step="0.01" type="number" value="1500"/></div>
+<div class="m22-field"><label for="m22Lifestyle">Lifestyle / Spending Pot</label><input id="m22Lifestyle" min="0" step="0.01" type="number" value="250"/></div>
+<div class="m22-field"><label for="m22GoalPots">Flexible goal-pot budget</label><input id="m22GoalPots" min="0" step="0.01" type="number" value="250"/><small class="m35-field-help">Routed into the highest-priority named pots in the checklist.</small></div>
+<div class="m22-field"><label for="m33LiveHouseBoost">House Pot boost</label><input id="m33LiveHouseBoost" min="0" step="0.01" type="number" value="0"/></div>
+<div class="m22-field"><label for="m33LiveEmergencyBoost">Emergency Fund boost</label><input id="m33LiveEmergencyBoost" min="0" step="0.01" type="number" value="0"/></div>
+<div class="m22-field"><label for="m15AllocateExtra">Auto-route extra pay</label><input id="m15AllocateExtra" min="0" step="0.01" type="number" value="0"/></div>
+<div class="m22-field"><label for="m15Strategy">Extra-pay strategy</label><select id="m15Strategy"><option value="priority">Aurora priority — P1, P2, P3</option><option value="critical">Critical pots only, then shares</option><option value="balanced">Balanced across underfunded pots</option><option value="isa">All available extra to shares</option></select></div>
+<div class="m22-field"><label for="m22InvestmentPlatform">Investment account</label><select id="m22InvestmentPlatform"><option value="ig">IG ISA</option><option value="t212">Trading 212 ISA</option><option value="split">Split IG / Trading 212</option></select></div>
+</div>
+<div class="m33-live-scoreboard">
+<div class="m33-score main"><span>Actual pay</span><strong id="m15SumActual">£0.00</strong><small id="m33LivePayNote">Wage available</small></div>
+<div class="m33-score"><span>Holding move</span><strong id="m15SumHolding">£0.00</strong><small>Bills and protection</small></div>
+<div class="m33-score"><span>Total accounted for</span><strong id="m33PlannedTotal">£0.00</strong><small id="m15AllocationTotal">£0.00 transfers planned</small></div>
+<div class="m33-score success"><span>Retained</span><strong id="m22WalletBuffered">£0.00</strong><small>Left in current account</small></div>
+</div>
+<div aria-hidden="true" class="m33-hidden-values">
+<span id="m15SumExpected">£0.00</span><span id="m15SumExtra">£0.00</span><span id="m22SumShortfall">£0.00</span><span id="m15SumAvailable">£0.00</span>
+</div>
+<div class="m22-callout" id="m15Instruction">Aurora is building the payday instruction.</div>
+<div class="m22-status" id="m22Status"></div>
+<div class="m33-progress-wrap">
+<div class="m33-progress-head"><span>Mission execution</span><strong id="m22ProgressText">0 of 0 moves completed</strong></div>
+<div class="m22-progress"><div class="m22-progress-fill" id="m22ProgressFill"></div></div>
+<div class="m22-progress-meta"><span id="m22LockText">Plan editable</span><span id="m33MissionSafety">Protected planning active</span></div>
+</div>
+<div class="m33-execution-board m35-execution-board">
+<div class="m22-panel-head"><h3>Payday execution checklist</h3><small id="m35ChecklistSummary">0 moves ready</small></div>
+<div class="m35-checklist-preview" id="m35ChecklistPreview"></div>
+<details class="m35-full-checklist" id="m35FullChecklist">
+<summary><span>View full checklist</span><small id="m35FullChecklistMeta">0 moves</small></summary>
+<div class="m22-action-list" id="m15AllocationList"></div>
+</details>
+</div>
+<div class="m22-actions m33-primary-actions">
+<button class="m22-btn" id="m15UseFullExtra" type="button">Allocate All Extra</button>
+<button class="m22-btn" id="m15UseHalfExtra" type="button">Half Extra / Half Buffer</button>
+<button class="m22-btn" id="m15CopyPlan" type="button">Copy Plan</button>
+<button class="m22-btn primary m33-complete" disabled="" id="m22CompletePayday" type="button">Complete Payday Mission</button>
+<button class="m22-btn danger" id="m22ResetMission" type="button">Reset Draft</button>
+<button class="m22-btn primary" id="m22NewMission" style="display:none" type="button">Start Next Payday</button>
+</div>
+<details class="m33-advanced">
+<summary><span>Open mission intelligence</span><small>Protection, reconciliation, route and receipts</small></summary>
+<div class="m33-advanced-body">
+<div class="m22-summary-grid">
+<div class="m22-summary" style="--c:#22d3ee"><span>Expected pay</span><strong id="m33ExpectedMirror">—</strong></div>
+<div class="m22-summary" style="--c:#60a5fa"><span>Actual pay</span><strong id="m33ActualMirror">—</strong></div>
+<div class="m22-summary" style="--c:#34d399"><span>Extra / overtime</span><strong id="m33ExtraMirror">—</strong></div>
+<div class="m22-summary" style="--c:#fb7185"><span>Pay shortfall</span><strong id="m33ShortfallMirror">—</strong></div>
+</div>
+<div class="m22-protection">
+<div class="m22-protect-item"><span>Minimum buffer</span><strong id="m22MinimumBuffer">£0.00</strong></div>
+<div class="m22-protect-item"><span>Bills before next payday</span><strong id="m22BillsReserve">£0.00</strong></div>
+<div class="m22-protect-item"><span>Monthly spend remaining</span><strong id="m22RecurringReserve">£0.00</strong></div>
+<div class="m22-protect-item"><span>Total Holding requirement</span><strong id="m22HoldingRequirement">£0.00</strong></div>
+<div class="m22-protect-item"><span>Holding Pot now</span><strong id="m22HoldingNow">£0.00</strong></div>
+<div class="m22-protect-item"><span>Urgent top-up</span><strong id="m22UrgentHolding">£0.00</strong></div>
+<div class="m22-protect-item"><span>Regular contribution</span><strong id="m22RegularHolding">£0.00</strong></div>
+<div class="m22-protect-item"><span>Long-term commitments</span><strong id="m25LongTermTarget">£0.00</strong></div>
+<div class="m22-protect-item"><span>Long-term funding gap</span><strong id="m25LongTermGap">£0.00</strong></div>
+</div>
+<div class="m22-wallet">
+<div class="m22-wallet-card"><span>Planned mission total</span><strong id="m22WalletTotal">£0.00</strong></div>
+<div class="m22-wallet-card"><span>Transfers completed</span><strong id="m22WalletExecuted">£0.00</strong></div>
+<div class="m22-wallet-card"><span>Transfers still planned</span><strong id="m22WalletRemaining">£0.00</strong></div>
+<div class="m22-wallet-card"><span>Deliberately retained</span><strong id="m33RetainedMirror">£0.00</strong></div>
+</div>
+<div class="m25-reconcile" id="m25ReconcilePanel">
+<div class="m25-reconcile-card"><span>Wage received</span><strong id="m25RecWage">£0.00</strong></div>
+<div class="m25-reconcile-card"><span>Transfers completed</span><strong id="m25RecCompleted">£0.00</strong></div>
+<div class="m25-reconcile-card"><span>Transfers still pending</span><strong id="m25RecPending">£0.00</strong></div>
+<div class="m25-reconcile-card"><span>Current account now</span><strong id="m25RecCurrent">£0.00</strong></div>
+<div class="m25-reconcile-card"><span>Deliberately retained</span><strong id="m25RecRetained">£0.00</strong></div>
+<div class="m25-reconcile-card" id="m25DifferenceCard"><span>Unexplained difference</span><strong id="m25RecDifference">£0.00</strong></div>
+</div>
+<div class="m25-reconcile-note" id="m25ReconcileNote">Every pound should equal a completed transfer, a pending transfer or money deliberately retained in the current account.</div>
+<div class="m22-grid">
+<div class="m22-panel">
+<div class="m22-panel-head"><h3>Execution order</h3><small>LIVE ROUTE</small></div>
+<div class="m22-route" id="m15Route"></div>
+</div>
+<div class="m22-panel">
+<div class="m22-panel-head"><h3>Due-date sinking-fund engine</h3><small id="m25SinkingTotal">£0.00 THIS PAYDAY</small></div>
+<div class="m25-sinking-summary" id="m25SinkingSummary"></div>
+<div class="m25-sinking-list" id="m25SinkingList"></div>
+</div>
+</div>
+<div class="m22-panel">
+<div class="m22-panel-head"><h3>Duplicate-cost audit</h3><small id="m25AuditBadge">CHECKING</small></div>
+<div class="m25-audit-list" id="m25AuditList"></div>
+</div>
+<div class="m22-panel">
+<div class="m22-panel-head"><h3>Recent payday receipts</h3><small>LOCAL HISTORY</small></div>
+<div class="m22-history" id="m22History"></div>
+</div>
+</div>
+</details>
+<div class="m22-receipt" id="m22Receipt"></div>
+</article>
+<aside class="m33-scenario-card">
+<div class="m33-card-head scenario">
+<div>
+<span class="m33-kicker scenario">SCENARIO LAB</span>
+<h3>Test it before you commit.</h3>
+<p>Nothing here changes the live payday mission until you press Apply Scenario.</p>
+</div>
+<span class="m33-sim-badge">SIMULATION ONLY</span>
+</div>
+<div aria-label="Scenario mode" class="m33-mode-tabs" role="group">
+<button data-m33-mode="baseline" type="button">Baseline</button>
+<button class="active" data-m33-mode="overtime" type="button">Overtime</button>
+<button data-m33-mode="custom" type="button">Custom</button>
+</div>
+<div class="m33-scenario-note" id="m33ModeNote">Overtime mode starts with your £800 planning assumption.</div>
+<div class="m35-overtime-strip" id="m35OvertimeStrip">
+<div><span>Normal payday</span><strong id="m35BasePay">£0.00</strong></div>
+<div><span>Extra overtime</span><strong id="m35OvertimeDisplay">£0.00</strong></div>
+<div><span>Scenario total</span><strong id="m35ScenarioTotal">£0.00</strong></div>
+</div>
+<div class="m35-overtime-route" id="m35OvertimeRoute">The extra-pay route will appear here.</div>
+<div class="m33-scenario-inputs">
+<div class="m33-field featured" id="m35ScenarioPayField"><label for="m33ScenarioPay">Scenario pay received</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioPay" min="0" step="0.01" type="number"/></div></div>
+<div class="m33-field featured m35-overtime-field" id="m35OvertimeField"><label for="m35OvertimeExtra">Overtime / extra pay</label><div class="m33-money-input"><span>£</span><input id="m35OvertimeExtra" min="0" step="0.01" type="number" value="800"/></div></div>
+<div class="m33-field"><label for="m33ScenarioShares">Shares</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioShares" min="0" step="0.01" type="number"/></div></div>
+<div class="m33-field"><label for="m33ScenarioLifestyle">Spending Pot</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioLifestyle" min="0" step="0.01" type="number"/></div></div>
+<div class="m33-field"><label for="m33ScenarioGoals">Other named pots</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioGoals" min="0" step="0.01" type="number"/></div></div>
+<div class="m33-field"><label for="m33ScenarioHouse">House Pot boost</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioHouse" min="0" step="0.01" type="number"/></div></div>
+<div class="m33-field"><label for="m33ScenarioEmergency">Emergency Fund boost</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioEmergency" min="0" step="0.01" type="number"/></div></div>
+<div class="m33-field"><label for="m33ScenarioRetain">Minimum retained cash</label><div class="m33-money-input"><span>£</span><input id="m33ScenarioRetain" min="0" step="0.01" type="number" value="100"/></div></div>
+</div>
+<div class="m35-decision-statement" id="m35DecisionStatement">Aurora is checking whether this scenario is safe.</div>
+<div class="m33-scenario-verdict" data-state="healthy" id="m33ScenarioVerdict">
+<div><span>Scenario status</span><strong id="m33ScenarioStatus">HEALTHY</strong></div>
+<div class="m33-verdict-orb"><span id="m33ScenarioScore">100</span><small>/100</small></div>
+</div>
+<div class="m33-scenario-kpis">
+<div><span>Protection</span><strong id="m33ScenarioProtection">£0.00</strong></div>
+<div><span>Total allocated</span><strong id="m33ScenarioAllocated">£0.00</strong></div>
+<div><span>Retained</span><strong id="m33ScenarioRetained">£0.00</strong></div>
+</div>
+<div aria-label="Scenario allocation breakdown" class="m33-allocation-stack" id="m33AllocationStack"></div>
+<div class="m33-comparison">
+<div class="m33-comparison-head"><h4>Live plan vs scenario</h4><span id="m33ScenarioDifference">£0.00 change</span></div>
+<div class="m33-compare-table">
+<div class="m33-compare-row head"><span>Allocation</span><span>Live</span><span>Scenario</span><span>Change</span></div>
+<div id="m33ComparisonBody"></div>
+</div>
+</div>
+<div class="m33-insight" id="m33ScenarioInsight">Aurora is analysing this scenario.</div>
+<div class="m35-apply-confirm" hidden="" id="m35ApplyConfirm">
+<strong>Apply this scenario to the live payday mission?</strong>
+<p id="m35ApplyConfirmCopy">Your current live plan will be saved as an undo point.</p>
+<div><button id="m35CancelApply" type="button">Cancel</button><button class="primary" id="m35ConfirmApply" type="button">Confirm apply</button></div>
+</div>
+<div class="m33-scenario-actions m35-sticky-actions">
+<span class="m35-simulation-label">Simulation only</span>
+<button id="m33ResetScenario" type="button">Reset</button>
+<button hidden="" id="m35UndoScenario" type="button">Undo apply</button>
+<button class="primary" id="m33ApplyScenario" type="button">Apply Scenario</button>
+</div>
+<div aria-live="polite" class="m33-apply-status" id="m33ApplyStatus"></div>
+</aside>
+</div>
+<section aria-label="Investment mission handoff" class="m37-handoff" id="m37InvestmentHandoff">
+<div class="m37-handoff-head">
+<div>
+<div class="m13-eyebrow">CONNECTED AURORA PIPELINE</div>
+<h3>Investment Mission Handoff</h3>
+<p>Authorise the share allocation from this real payday mission and send it directly to the Aurora FC Transfer Centre. The Transfer Centre receives the budget, payday and preferred ISA route, then uses Trading Brain intelligence behind the scenes to rank opportunities and size the final purchases.</p>
+</div>
+<span class="m37-status" data-state="none" id="m37HandoffStatus">NOT SENT</span>
+</div>
+<div class="m37-handoff-grid">
+<div class="m37-metric primary"><span>Total investment mission</span><strong id="m37InvestmentBudget">£0.00</strong></div>
+<div class="m37-metric"><span>Preferred account</span><strong id="m37InvestmentAccount">—</strong></div>
+<div class="m37-metric"><span>Payday</span><strong id="m37InvestmentPayday">—</strong></div>
+<div class="m37-metric"><span>Pipeline stage</span><strong id="m37PipelineStage">Draft plan</strong></div>
+</div>
+<div class="m50-funding-panel">
+<div class="m50-funding-head">
+<div><span class="m13-eyebrow">MONTHLY FUNDING STACK</span><h4>Build the complete transfer budget</h4><p>Payday money is combined with controlled releases from your existing capital and ETF-sale pots.</p></div>
+<button id="m50SaveFunding" type="button">Save funding pools</button>
+</div>
+<div class="m50-source-grid">
+<article class="m50-source payday"><span>Payday contribution</span><strong id="m50PaydayRelease">£0.00</strong><small>Read automatically from the live payday plan</small></article>
+<article class="m50-source">
+<label for="m50CapitalBalance">Existing capital remaining</label>
+<div class="m50-money"><span>£</span><input id="m50CapitalBalance" min="0" step="0.01" type="number" value="7000"/></div>
+<label for="m50CapitalRelease">Release this month</label>
+<div class="m50-money"><span>£</span><input id="m50CapitalRelease" min="0" step="0.01" type="number" value="1000"/></div>
+<small id="m50CapitalRunway">7 monthly releases available</small>
+</article>
+<article class="m50-source">
+<label for="m50EtfBalance">ETF/share-sale pot available</label>
+<div class="m50-money"><span>£</span><input id="m50EtfBalance" min="0" step="0.01" type="number" value="0"/></div>
+<label for="m50EtfRelease">Release this month</label>
+<div class="m50-money"><span>£</span><input id="m50EtfRelease" min="0" step="0.01" type="number" value="1000"/></div>
+<small id="m50EtfRunway">Waiting for sale proceeds</small>
+</article>
+<article class="m50-source total"><span>Combined monthly mission</span><strong id="m50CombinedMission">£0.00</strong><small id="m50MissionBreakdown">Payday only</small></article>
+</div>
+<div class="m50-note">Aurora never assumes sale proceeds are available. The ETF release stays at £0 until a balance is entered. Releasing a mission authorises the plan only; it does not move cash or place trades.</div>
+</div>
+<div class="m37-route" id="m37InvestmentRoute"><strong>Waiting:</strong> Build the live payday plan and Aurora will combine every available investment funding source.</div>
+<div class="m37-actions">
+<button class="primary" id="m37SendToTradingBrain" type="button">Release Mission to Transfer Centre</button>
+<button id="m37RefreshHandoff" type="button">Refresh Status</button>
+<a href="AuroraCityFC_TransferCentre.html?from=finance-department" target="_self">Open Transfer Centre →</a>
+</div>
+<div aria-live="polite" class="m37-feedback" id="m37HandoffFeedback"></div>
+</section>
+</section>
+<!-- ===================== SECTION: PAYDAY SIMULATOR ===================== -->
+<section class="m13-anchor section card" id="m13PaydayPlan">
+<div class="command-title">
+<div>
+<h2>Payday Command Simulator</h2>
+<div class="subv">Enter expected pay and Aurora builds a clean payday move plan.</div>
+</div>
+<div class="command-badge cyan">SIMULATOR</div>
+</div>
+<div class="payday-grid">
+<div class="grid two-grid">
+<div class="input-box">
+<label for="simPayInput">Expected Pay</label>
+<input id="simPayInput" step="1" type="number" value="2100">
+</input></div>
+<div class="input-box">
+<label for="simInvestInput">Target IG ISA</label>
+<input id="simInvestInput" step="1" type="number" value="1000">
+</input></div>
+<div class="input-box">
+<label for="simLifestyleInput">Lifestyle / Spending Pot</label>
+<input id="simLifestyleInput" step="1" type="number" value="250">
+</input></div>
+<div class="input-box">
+<label for="simGoalsInput">Goal Pots Total</label>
+<input id="simGoalsInput" step="1" type="number" value="250">
+</input></div>
+</div>
+<div class="payday-results" id="paydaySimulationResults">
+<div class="payday-row"><strong>Waiting for simulator...</strong><span>--</span></div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: AURORA WEALTH INTELLIGENCE ===================== -->
+<section class="section card">
+<div class="command-title">
+<div>
+<h2>Aurora Wealth Intelligence</h2>
+<div class="subv">Live explanation of the current money setup.</div>
+</div>
+<div class="command-badge good">AI VIEW</div>
+</div>
+<div class="ai-command-text" id="wealthAiView">Aurora is analysing the Wealth Centre...</div>
+</section>
+<!-- ===================== SECTION: FREEDOM FLIGHT PATH ===================== -->
+<section class="section card">
+<div class="command-title">
+<div>
+<h2>Financial Freedom Flight Path</h2>
+<div class="subv">Progress view towards the long-term £2,000/month passive income mission.</div>
+</div>
+<div class="command-badge cyan">MISSION</div>
+</div>
+<div id="freedomFlightPath"></div>
+</section>
+<!-- ===================== SECTION: FUNDING ENGINE ===================== -->
+<section class="section card m13-anchor m36-funding-centre" id="m13Funding">
+<div class="m36-funding-hero">
+<div class="m36-funding-copy">
+<div class="m13-eyebrow">AURORA SURPLUS ROUTING ENGINE</div>
+<h2>Funding Engine</h2>
+<p>Protect the Holding Pot, set the contribution rate and make the next payday move from one joined-up command centre.</p>
+</div>
+<div class="m36-engine-state" data-state="live" id="m36EngineState">
+<span class="m36-state-dot"></span>
+<div><small>ENGINE STATUS</small><strong id="m36EngineStateText">CALCULATING</strong></div>
+</div>
+</div>
+<div class="m36-funding-kpis">
+<article class="m36-funding-kpi" style="--m36-accent:#56dfff">
+<div class="m36-kpi-icon">W</div>
+<div><span>Suggested weekly funding</span><strong id="weeklyTarget">£0</strong><small id="weeklyTargetMeta">Based on active included costs</small></div>
+</article>
+<article class="m36-funding-kpi" style="--m36-accent:#f3c45b">
+<div class="m36-kpi-icon">M</div>
+<div><span>Monthly equivalent</span><strong id="monthlyTarget">£0</strong><small>Weekly target × 52 ÷ 12</small></div>
+</article>
+<article class="m36-funding-kpi" style="--m36-accent:#4ee09a">
+<div class="m36-kpi-icon">Y</div>
+<div><span>At current rate</span><strong id="currentRateAnnual">£0</strong><small id="currentRateMeta">Funding produced yearly from your weekly amount</small></div>
+</article>
+<article class="m36-funding-kpi" id="m36VarianceCard" style="--m36-accent:#b59cff">
+<div class="m36-kpi-icon">±</div>
+<div><span>Surplus / shortfall</span><strong id="surplusShortfall">£0</strong><small id="surplusShortfallMeta">Vs active planner total</small></div>
+</article>
+</div>
+<div class="m36-coverage-panel">
+<div class="m36-coverage-copy">
+<span>ANNUAL FUNDING COVERAGE</span>
+<strong id="m36CoverageText">Calculating coverage…</strong>
+</div>
+<div aria-hidden="true" class="m36-coverage-track"><div class="m36-coverage-fill" id="m36CoverageFill"></div></div>
+<div class="m36-coverage-badge" id="m36CoverageBadge">0%</div>
+</div>
+<div class="m36-funding-layout">
+<div class="m36-funding-panel m36-control-panel">
+<div class="m36-panel-heading">
+<div><span>LIVE CONTROL DECK</span><h3>Holding Pot &amp; contributions</h3><p>Update balances and move money without hunting through separate controls.</p></div>
+<div class="m36-panel-chip">LOCAL SAVE</div>
+</div>
+<div class="m36-position-grid">
+<label class="m36-field m36-field-featured" for="holdingBalanceInput">
+<span>Current Holding Pot balance</span>
+<div class="m36-money-input"><b>£</b><input id="holdingBalanceInput" step="0.01" type="number" value="2020"/></div>
+<small id="m36HoldingPosition">Live protected cash position</small>
+</label>
+<label class="m36-field" for="minimumBufferInput">
+<span>Minimum safe buffer</span>
+<div class="m36-money-input"><b>£</b><input id="minimumBufferInput" step="1" type="number" value="1000"/></div>
+<small>Floor Aurora should protect</small>
+</label>
+</div>
+<div class="m36-buffer-meter">
+<div><span>BUFFER POSITION</span><strong id="m36BufferPosition">Calculating…</strong></div>
+<div class="m36-buffer-track"><div class="m36-buffer-fill" id="m36BufferFill"></div></div>
+</div>
+<div class="m36-transfer-heading"><span>QUICK MONEY MOVES</span><strong>Choose the action, enter the amount, then confirm.</strong></div>
+<div class="m36-transfer-grid">
+<article class="m36-transfer-card contribution">
+<div class="m36-transfer-icon">＋</div>
+<div class="m36-transfer-copy"><span>Regular payday contribution</span><small>Saved rate only — it is not money moved until you press the button.</small></div>
+<label class="m36-compact-field" for="paydayContributionInput"><b>£</b><input id="paydayContributionInput" step="1" type="number" value="140"/></label>
+<button class="m36-action-btn positive" id="addPaydayBtn" type="button">Add payday contribution</button><small class="m41-contribution-status" id="m41ContributionStatus">Rate saved separately from the live Holding Pot balance.</small>
+</article>
+<article class="m36-transfer-card custom">
+<div class="m36-transfer-icon">↗</div>
+<div class="m36-transfer-copy"><span>Custom amount in</span><small>Add overtime or spare cash</small></div>
+<label class="m36-compact-field" for="customAddInput"><b>£</b><input id="customAddInput" placeholder="0.00" step="0.01" type="number"/></label>
+<button class="m36-action-btn neutral" id="addCustomBtn" type="button">Add custom amount</button>
+</article>
+<article class="m36-transfer-card remove">
+<div class="m36-transfer-icon">−</div>
+<div class="m36-transfer-copy"><span>Transfer out</span><small>Record money leaving the pot</small></div>
+<label class="m36-compact-field" for="customRemoveInput"><b>£</b><input id="customRemoveInput" placeholder="0.00" step="0.01" type="number"/></label>
+<button class="m36-action-btn danger" id="removeCustomBtn" type="button">Remove from pot</button>
+</article>
+</div>
+<div class="m36-growth-card">
+<div class="m36-growth-head">
+<div><span>GROW POT RESERVE</span><strong>Safety-goal controls</strong></div>
+<div class="m36-growth-score" id="m36GrowthScore">0%</div>
+</div>
+<div class="m36-growth-fields">
+<label class="m36-field" for="growPotBalanceInput"><span>Current balance</span><div class="m36-money-input"><b>£</b><input id="growPotBalanceInput" step="0.01" type="number" value="700"/></div></label>
+<label class="m36-field" for="growPotTargetInput"><span>Target</span><div class="m36-money-input"><b>£</b><input id="growPotTargetInput" step="1" type="number" value="7500"/></div></label>
+</div>
+<div class="m36-growth-track"><div class="m36-growth-fill" id="m36GrowthFill"></div></div>
+<small id="m36GrowthText">Building towards the safety target</small>
+</div>
+</div>
+<aside class="m36-funding-panel m36-decision-panel">
+<div class="m36-panel-heading">
+<div><span>PAYDAY FUNDING DECISION</span><h3>Contribution adjustment</h3><p>Aurora converts the funding requirement into one clear next move.</p></div>
+<div class="m36-panel-chip gold">NEXT MOVE</div>
+</div>
+<div class="m36-decision-grid">
+<article class="m36-urgent-move"><span>Immediate catch-up</span><strong>£<b id="currentPotOffset">0.00</b></strong><small id="currentPotOffsetMeta">Short-term protection required before the following payday</small></article>
+<article class="m36-future-move"><span>Future due-date contribution</span><strong>£<b id="suggestedContributionNow">0.00</b></strong><small id="suggestedContributionMeta">Funding spread across paydays before later commitments</small></article>
+<article class="m36-final-move" id="finalContributionCard"><span>Total Holding Pot transfer</span><strong>£<b id="finalAmountToAdd">0.00</b></strong><small id="finalAmountToAddMeta">Immediate catch-up plus future due-date funding</small></article>
+<article><span>Next payday</span><strong id="nextPaydayLabel">--</strong><small id="nextPaydayMeta">Countdown to next pay cycle</small></article>
+</div>
+<div class="m36-command-card">
+<div class="m36-command-top"><span>AURORA RECOMMENDATION</span><i id="m36RecommendationState">READY</i></div>
+<div class="m36-command-value"><small>Total Holding Pot transfer</small><strong id="finalPotTopUp">£0</strong><p id="finalPotTopUpMeta">Immediate catch-up plus future due-date contribution</p></div>
+<div class="m36-command-divider"></div>
+<div class="m36-grow-move"><div><small>Suggested Grow Pot move</small><strong id="growPotMove">£0</strong></div><p id="growPotMoveMeta">Based on safety status</p></div>
+</div>
+<div class="m36-action-plan">
+<div class="m36-action-plan-head"><span>WHAT TO DO NEXT</span><div class="m36-live-dot"><i></i> LIVE PLAN</div></div>
+<div class="m36-action-plan-list" id="paydayActionsList">Waiting for planner calculation...</div>
+</div>
+</aside>
+</div>
+<details class="m36-data-drawer">
+<summary><div><span>PLANNER DATA &amp; BACKUPS</span><strong>Save, reset, export or restore this planner</strong></div><i>Open controls</i></summary>
+<div class="m36-data-grid">
+<button class="m36-data-btn save" id="savePlannerBtn" type="button"><span>✓</span><div><strong>Save planner data</strong><small>Store the latest values on this device</small></div></button>
+<button class="m36-data-btn reset" id="resetPlannerBtn" type="button"><span>↺</span><div><strong>Reset to defaults</strong><small>Restore the original planner setup</small></div></button>
+<button class="m36-data-btn export" id="exportBackupBtn" type="button"><span>⇩</span><div><strong>Export backup JSON</strong><small>Download a portable planner backup</small></div></button>
+<button class="m36-data-btn import" id="importBackupBtn" type="button"><span>⇧</span><div><strong>Import backup JSON</strong><small>Restore a previously exported backup</small></div></button>
+</div>
+<div class="m36-backup-status" id="backupStatus">No backup exported this session</div>
+</details>
+<input accept=".json,application/json" hidden="" id="importBackupFile" type="file">
+</input></section>
+<!-- ===================== SECTION: NEXT 7 DAYS BILLS ===================== -->
+<section class="section card">
+<div class="bill-strip-head">
+<div>
+<h2>Next 7 Days Bills</h2>
+<div class="subv" id="next7BillsMeta">Closest pressure first.</div>
+</div>
+<div class="bill-strip-total" id="next7BillsTotal">£0 due in next 7 days</div>
+</div>
+<div class="grid three-grid" id="next7DaysGrid" style="margin-top:12px;"></div>
+</section>
+<!-- ===================== SECTION: GROW POT ENGINE ===================== -->
+<section class="section card" id="growPotCard">
+<h2>Grow Pot Engine</h2>
+<div class="grid four-grid">
+<div class="mini">
+<div class="k">Grow Pot Balance</div>
+<div class="v">£<span id="growPotBalanceDisplay">0.00</span></div>
+<div class="subv">Your emergency / savings pot</div>
+</div>
+<div class="mini">
+<div class="k">Grow Pot Target</div>
+<div class="v">£<span id="growPotTargetDisplay">0.00</span></div>
+<div class="subv">Long-term safety goal</div>
+</div>
+<div class="mini">
+<div class="k">Gap Remaining</div>
+<div class="v">£<span id="growPotGap">0.00</span></div>
+<div class="subv" id="growPotGapMeta">Amount still needed</div>
+</div>
+<div class="mini">
+<div class="k">Status</div>
+<div class="v" id="growPotStatus">--</div>
+<div class="subv" id="growPotStatusMeta">Safety state</div>
+</div>
+</div>
+<div class="grow-meter">
+<div class="grow-fill" id="growPotFill"></div>
+</div>
+<div class="helper-note subv" id="growPotProgressMeta">0% of target reached</div>
+</section>
+<!-- ===================== SECTION: BILLS CONTROL CENTRE ===================== -->
+<section class="section card scheduled-bills-command m38-bills-centre" id="m13Bills">
+<div class="m38-bills-header">
+<div>
+<div class="m38-eyebrow"><span></span> LIVE BILL OPERATIONS</div>
+<h2>Bills Control Centre</h2>
+<p>Upcoming payments are organised by urgency first. Select any bill to edit its funding source, protection rule, frequency and completion action.</p>
+</div>
+<button class="add-btn m38-add-bill" id="addScheduledBtn" type="button"><span>＋</span> Add confirmed bill</button>
+</div>
+<div class="scheduled-bill-command-strip m38-command-strip">
+<article class="schedule-command-tile cyan">
+<div class="k">Due before payday</div>
+<div class="v" id="scheduledBeforePayday">£0.00</div>
+<div class="subv" id="scheduledBeforePaydayMeta">0 payments</div>
+</article>
+<article class="schedule-command-tile watch">
+<div class="k">Next 7 days</div>
+<div class="v" id="scheduledDueSoon">£0.00</div>
+<div class="subv" id="scheduledDueSoonMeta">No immediate pressure</div>
+</article>
+<article class="schedule-command-tile risk" id="scheduledProtectionTile">
+<div class="k">Protection needed</div>
+<div class="v" id="scheduledProtectionNeeded">£0.00</div>
+<div class="subv">Holding Pot top-up required</div>
+</article>
+<article class="schedule-command-tile good" id="scheduledFundingTile">
+<div class="k">Funding status</div>
+<div class="v" id="scheduledFundingStatus">Protected</div>
+<div class="subv" id="scheduledFundingStatusMeta">All selected bills covered</div>
+</article>
+</div>
+<div aria-hidden="true" class="m38-hidden-compat">
+<span id="scheduledLiveCount">0</span><span id="scheduledLiveTotal">£0.00</span>
+<span id="scheduledNextBill">—</span><span id="scheduledNextBillMeta">—</span>
+</div>
+<div class="m38-bills-grid">
+<section aria-label="Upcoming bill timeline" class="m38-queue-panel">
+<div class="m38-panel-head">
+<div>
+<span class="m38-panel-kicker">PAYMENT QUEUE</span>
+<h3>Upcoming timeline</h3>
+</div>
+<span class="m38-queue-count" id="m38QueueCount">0 bills</span>
+</div>
+<div aria-label="Bill timing filter" class="m38-urgency-tabs" id="m38UrgencyTabs">
+<button class="active" data-m38-urgency="before" type="button">Before payday</button>
+<button data-m38-urgency="next" type="button">Next cycle</button>
+<button data-m38-urgency="later" type="button">Later</button>
+<button data-m38-urgency="paid" type="button">Paid</button>
+<button data-m38-urgency="all" type="button">All</button>
+</div>
+<div class="m38-category-row">
+<span>Filter</span>
+<div class="m38-category-filters" id="m38CategoryFilters"></div>
+</div>
+<div class="m38-bill-timeline" id="m18DynamicBillGroups"></div>
+</section>
+<aside aria-label="Selected bill inspector" class="m38-inspector-panel" id="m38BillInspector">
+<div class="m38-inspector-empty">
+<div class="m38-empty-orb">£</div>
+<h3>Select a payment</h3>
+<p>Choose a bill from the timeline to inspect its funding and edit the plan.</p>
+</div>
+</aside>
+</div>
+<details class="m38-archive-drawer" id="archivedBillsPanel">
+<summary>
+<span><b>Payment history</b><small>Completed and archived bill records</small></span>
+<span class="m38-history-count" id="archivedBillsCount">0</span>
+</summary>
+<div class="m38-history-list" id="archivedBillsBody"></div>
+</details>
+</section>
+<!-- ===================== SECTION: EDITABLE FUTURE COSTS ===================== -->
+<section class="section card">
+<h2>Editable Future Costs</h2>
+<div class="grid two-grid" style="margin-bottom:12px;">
+<button class="add-btn" id="addFutureBtn">Add Future Cost</button>
+<div class="subv">Use this for things like next holiday, season ticket, or future dentist costs. Use the expanded note to record which Monzo pot is responsible.</div>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Date</th>
+<th>Amount</th>
+<th>Included</th>
+<th>Category</th>
+<th>Notes</th>
+<th>Delete</th>
+</tr>
+</thead>
+<tbody id="futureCostsBody"></tbody>
+</table>
+</div>
+</section>
+<!-- ===================== SECTION: TRUE SURPLUS SPLIT ===================== -->
+<section class="section card">
+<h2>True Surplus Split</h2>
+<div class="grid four-grid">
+<div class="mini">
+<div class="k">Released Surplus</div>
+<div class="v" id="releaseSurplusCard">£0</div>
+<div class="subv">Freed up from lower actual costs</div>
+</div>
+<div class="mini">
+<div class="k">Protected For Bills</div>
+<div class="v" id="protectedBillsCard">£0</div>
+<div class="subv">Reserved for unpaid included bills</div>
+</div>
+<div class="mini">
+<div class="k">Safe Surplus</div>
+<div class="v" id="safeSurplusCard">£0</div>
+<div class="subv">Actually movable without pressure</div>
+</div>
+<div class="mini">
+<div class="k">Free After Buffer</div>
+<div class="v" id="freeAfterBufferCard">£0</div>
+<div class="subv">Headroom above minimum buffer</div>
+</div>
+</div>
+</section>
+<!-- ===================== SECTION: EDITABLE YEARLY RECURRING COSTS ===================== -->
+<section class="section card">
+<h2>Editable Yearly Recurring Costs</h2>
+<div class="grid two-grid" style="margin-bottom:12px;">
+<button class="add-btn" id="addYearlyRecurringBtn">Add Yearly Recurring Cost</button>
+<div class="subv">Add the annual due date, mark it paid when it leaves the account, and Aurora will deduct it once from the Holding Pot and show the next renewal date.</div>
+</div>
+<div class="m21-yearly-status" id="m21YearlyStatus"></div>
+<div class="table-wrap m21-yearly-table-wrap">
+<table class="m21-yearly-table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Due Date</th>
+<th>Yearly Amount</th>
+<th>Paid?</th>
+<th>Payment Record</th>
+<th>Next Auto-Renewal</th>
+<th>Included</th>
+<th>Category</th>
+<th>Notes</th>
+<th>Delete</th>
+</tr>
+</thead>
+<tbody id="yearlyRecurringCostsBody"></tbody>
+</table>
+</div>
+</section>
+<!-- ===================== SECTION: EDITABLE RECURRING COSTS ===================== -->
+<section class="section card">
+<h2>Editable Recurring Monthly Costs</h2>
+<div class="grid two-grid" style="margin-bottom:12px;">
+<button class="add-btn" id="addRecurringBtn">Add Recurring Cost</button>
+<div class="subv">Use this for monthly items like haircut, petrol, wash, or any repeat spending. Enter the actual spend and press Pay from Holding Pot.</div>
+</div>
+<div id="m19SpendStatus"></div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Monthly Budget</th>
+<th>Spent This Cycle</th>
+<th>Pay Amount</th>
+<th>Pay Now</th>
+<th>Yearly Amount</th>
+<th>Included</th>
+<th>Category</th>
+<th>Last Paid</th>
+<th>Reset Cycle</th>
+<th>Delete</th>
+</tr>
+</thead>
+<tbody id="recurringCostsBody"></tbody>
+</table>
+</div>
+</section>
+<!-- ===================== SECTION: CATEGORY BREAKDOWN ===================== -->
+<section class="section card">
+<h2>Category Breakdown</h2>
+<div class="grid four-grid" id="categoryGrid"></div>
+</section>
+<!-- ===================== SECTION: YEARLY BREAKDOWN ===================== -->
+<section class="section card">
+<h2>Yearly Breakdown</h2>
+<div class="grid four-grid">
+<div class="mini">
+<div class="k">Scheduled Included</div>
+<div class="v" id="yearlyScheduled">£0</div>
+<div class="subv">Active dated bills</div>
+</div>
+<div class="mini">
+<div class="k">Recurring Included</div>
+<div class="v" id="yearlyRecurring">£0</div>
+<div class="subv">Monthly costs annualised</div>
+</div>
+<div class="mini">
+<div class="k">Future Included</div>
+<div class="v" id="yearlyFuture">£0</div>
+<div class="subv">Future items switched on</div>
+</div>
+<div class="mini">
+<div class="k">Grand Total View</div>
+<div class="v" id="yearlyGrand">£0</div>
+<div class="subv">Everything active in planner</div>
+</div>
+</div>
+<div class="table-wrap" style="margin-top:12px;">
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Total</th>
+<th>Weekly</th>
+<th>Monthly</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody id="yearlyTableBody"></tbody>
+</table>
+</div>
+</section>
+<!-- ===================== SECTION: CONTRIBUTION ADJUSTMENTS ===================== -->
+<section class="section card">
+<h2>Contribution Adjustments (Autopilot)</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Month</th>
+<th>Projected Balance</th>
+<th>Min Required</th>
+<th>Adjustment</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="contributionTableBody"></tbody>
+</table>
+</div>
+</section>
+<div class="footer">
     Aurora Wealth Centre M30 • Beast Mode Control + Funding Ownership + Live Explanations
   </div>
 </div>
-
-
-
-
-
 <!-- ===================== SECTION: AURORA MASTER JSON SOURCE ===================== -->
-
 </div></main></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- ===================== M30 BEAST MODE CONTROL CENTRE ===================== -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <section class="m42-strategy" id="m42HouseShareStrategy">
-  <div class="m42-head"><div><div class="m13-eyebrow">AURORA CAPITAL ROUTE</div><h2>House Complete → Share Accelerator</h2><p>Use only what is needed from the reserved investment cash to finish the house project. Keep the balance invested gradually, while all new overtime is directed to shares.</p></div><div class="m42-badge" id="m42Badge">STRATEGY READY</div></div>
-  <div class="m42-inputs">
-    <div class="m42-field"><label for="m42Reserve">Reserved cash available</label><input id="m42Reserve" type="number" min="0" step="0.01" value="10000"></div>
-    <div class="m42-field"><label for="m42MonthlyRelease">Monthly share release</label><input id="m42MonthlyRelease" type="number" min="0" step="0.01" value="1000"></div>
-    <div class="m42-field"><label for="m42Overtime">Expected overtime to shares</label><input id="m42Overtime" type="number" min="0" step="0.01" value="800"></div>
-  </div>
-  <div class="m42-kpis">
-    <div class="m42-kpi house"><span>House gap</span><strong id="m42HouseGap">£0.00</strong></div>
-    <div class="m42-kpi house"><span>Use from reserve</span><strong id="m42HouseUse">£0.00</strong></div>
-    <div class="m42-kpi shares"><span>Investment reserve left</span><strong id="m42ShareReserve">£0.00</strong></div>
-    <div class="m42-kpi shares"><span>Release runway</span><strong id="m42Runway">0 months</strong></div>
-    <div class="m42-kpi overtime"><span>Shares incl. overtime</span><strong id="m42MonthlyShares">£0.00/m</strong></div>
-  </div>
-  <div class="m42-route" id="m42Route">Calculating the best route…</div>
-  <div class="m42-actions"><button class="m42-btn" id="m42Save" type="button">Save Strategy</button><button class="m42-btn" id="m42ApplyHouse" type="button">Apply House Boost to Scenario</button></div>
-  <div class="m42-status" id="m42Status">This strategy is a planning layer and does not move money automatically.</div>
+<div class="m42-head"><div><div class="m13-eyebrow">AURORA CAPITAL ROUTE</div><h2>House Complete → Share Accelerator</h2><p>Use only what is needed from the reserved investment cash to finish the house project. Keep the balance invested gradually, while all new overtime is directed to shares.</p></div><div class="m42-badge" id="m42Badge">STRATEGY READY</div></div>
+<div class="m42-inputs">
+<div class="m42-field"><label for="m42Reserve">Reserved cash available</label><input id="m42Reserve" min="0" step="0.01" type="number" value="10000"/></div>
+<div class="m42-field"><label for="m42MonthlyRelease">Monthly share release</label><input id="m42MonthlyRelease" min="0" step="0.01" type="number" value="1000"/></div>
+<div class="m42-field"><label for="m42Overtime">Expected overtime to shares</label><input id="m42Overtime" min="0" step="0.01" type="number" value="800"/></div>
+</div>
+<div class="m42-kpis">
+<div class="m42-kpi house"><span>House gap</span><strong id="m42HouseGap">£0.00</strong></div>
+<div class="m42-kpi house"><span>Use from reserve</span><strong id="m42HouseUse">£0.00</strong></div>
+<div class="m42-kpi shares"><span>Investment reserve left</span><strong id="m42ShareReserve">£0.00</strong></div>
+<div class="m42-kpi shares"><span>Release runway</span><strong id="m42Runway">0 months</strong></div>
+<div class="m42-kpi overtime"><span>Shares incl. overtime</span><strong id="m42MonthlyShares">£0.00/m</strong></div>
+</div>
+<div class="m42-route" id="m42Route">Calculating the best route…</div>
+<div class="m42-actions"><button class="m42-btn" id="m42Save" type="button">Save Strategy</button><button class="m42-btn" id="m42ApplyHouse" type="button">Apply House Boost to Scenario</button></div>
+<div class="m42-status" id="m42Status">This strategy is a planning layer and does not move money automatically.</div>
 </section>
 
 
 <!-- ===================== FINANCE DEPARTMENT CONNECTED BRIDGE ===================== -->
-
-
 <!-- ===================== AURORA CONNECTED SYSTEM V1 ===================== -->
 
 <!-- Build: Sidebar Definitive Fix • 27 Jul 2026 -->
-
-
 <!-- Build: Aurora Sidebar Persistent Navigation V4 • 27 Jul 2026 -->
-
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="assets/aurora-city-fc/shared/AuroraFCNavigation.js"></script>
-<script src="assets/aurora-city-fc/shared/AuroraFCFinance.js"></script>
+<script src="assets/aurora-city-fc/shared/AuroraFCNavigation.js?v=20260728-navfix-1"></script>
+<script src="assets/aurora-city-fc/shared/AuroraFCFinance.js?v=20260728-navfix-1"></script>
 </body>
 </html>
