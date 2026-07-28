@@ -10,9 +10,8 @@
     mount.outerHTML = sidebarMarkup;
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", mountAuroraNavigation, { once: true });
-  } else {
-    mountAuroraNavigation();
-  }
+  // The script is loaded at the bottom of the Finance HTML, so the mount point
+  // already exists. Mount immediately so the Finance view controller can bind
+  // its click handlers to the injected navigation buttons.
+  mountAuroraNavigation();
 })();
