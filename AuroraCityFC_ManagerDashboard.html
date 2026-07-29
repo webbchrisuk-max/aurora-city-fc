@@ -1215,6 +1215,39 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
   opacity:.6;
   cursor:wait;
 }
+</style><style id="auroraHoldingDrawerStackFix">
+/* Manager portfolio profile drawer — overlay must sit behind the drawer. */
+#beastDrawerOverlay{
+  z-index:2147482980!important;
+}
+
+#beastHoldingDrawer{
+  z-index:2147482981!important;
+  visibility:visible;
+  pointer-events:none;
+}
+
+#beastHoldingDrawer.open{
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+
+body.beast-drawer-open #beastDrawerOverlay{
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+
+body.beast-drawer-open #beastHoldingDrawer{
+  transform:translateX(0)!important;
+}
+
+@media(max-width:760px){
+  #beastHoldingDrawer{
+    width:100vw!important;
+    max-width:100vw!important;
+    border-radius:0!important;
+  }
+}
 </style></head>
 <body>
 <div class="fm-shell">
@@ -3039,6 +3072,157 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function clean(){document.querySelectorAll(selectors.join(',')).forEach(node=>node.remove());}
   clean();
   addEventListener('pageshow',clean);
+})();
+</script><script id="auroraHoldingDrawerBehaviourFix">
+(function(){
+  "use strict";
+
+  function byId(id){
+    return document.getElementById(id);
+  }
+
+  function closeOtherManagerPanels(){
+    document.body.classList.remove("beast-decision-open");
+
+    byId("beastDecisionOverlay")
+      ?.setAttribute("aria-hidden","true");
+
+    byId("beastDecisionButton")
+      ?.setAttribute("aria-expanded","false");
+
+    byId("beastDecisionQueue")
+      ?.removeAttribute("aria-modal");
+
+    byId("beastNotificationPanel")
+      ?.classList.remove("open");
+
+    byId("beastNotificationButton")
+      ?.classList.remove("active");
+
+    byId("beastLayoutPanel")
+      ?.classList.remove("open");
+
+    byId("beastLayoutButton")
+      ?.classList.remove("active");
+  }
+
+  function synchroniseDrawer(open){
+    const overlay = byId("beastDrawerOverlay");
+    const drawer = byId("beastHoldingDrawer");
+
+    if(!overlay || !drawer) return;
+
+    document.body.classList.toggle(
+      "beast-drawer-open",
+      open
+    );
+
+    overlay.classList.toggle("open",open);
+    drawer.classList.toggle("open",open);
+
+    overlay.setAttribute(
+      "aria-hidden",
+      String(!open)
+    );
+
+    drawer.setAttribute(
+      "aria-hidden",
+      String(!open)
+    );
+
+    if(open){
+      document.body.style.overflow = "hidden";
+
+      requestAnimationFrame(function(){
+        byId("beastDrawerClose")
+          ?.focus({preventScroll:true});
+      });
+    }else{
+      document.body.style.overflow = "";
+    }
+  }
+
+  /*
+   * The original openDrawer() still builds all profile data.
+   * Watch for its class change and force the correct panel state.
+   */
+  const drawer = byId("beastHoldingDrawer");
+
+  if(drawer){
+    new MutationObserver(function(){
+      const open = drawer.classList.contains("open");
+
+      if(open){
+        closeOtherManagerPanels();
+      }
+
+      synchroniseDrawer(open);
+    }).observe(
+      drawer,
+      {
+        attributes:true,
+        attributeFilter:["class"]
+      }
+    );
+  }
+
+  document.addEventListener(
+    "click",
+    function(event){
+      const profileTrigger = event.target.closest(
+        "[data-beast-ticker],"
+        + '[data-decision-action="holding"]'
+      );
+
+      if(profileTrigger){
+        closeOtherManagerPanels();
+
+        /*
+         * openDrawer() runs in the Manager's existing handler.
+         * This second check runs after it and guarantees that the
+         * drawer—not just the blur overlay—is visible.
+         */
+        setTimeout(function(){
+          if(
+            byId("beastHoldingDrawer")
+              ?.classList.contains("open")
+          ){
+            synchroniseDrawer(true);
+          }
+        },220);
+      }
+
+      if(
+        event.target.closest(
+          "#beastDrawerClose,#beastDrawerOverlay"
+        )
+      ){
+        setTimeout(
+          function(){
+            synchroniseDrawer(false);
+          },
+          0
+        );
+      }
+    },
+    true
+  );
+
+  document.addEventListener(
+    "keydown",
+    function(event){
+      if(event.key === "Escape"){
+        synchroniseDrawer(false);
+      }
+    }
+  );
+
+  window.addEventListener(
+    "pageshow",
+    function(){
+      synchroniseDrawer(false);
+    }
+  );
 })();
 </script></body>
 </html>
