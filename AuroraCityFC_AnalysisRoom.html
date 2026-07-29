@@ -3387,7 +3387,7 @@ async function loadData(force=false){
   catch(err){console.error(err);$("analysisStatus").textContent="Data error";$("analysisStatus").className="badge red";$("heroCopy").textContent=`Unable to load AuroraMaster.json: ${err.message||"Unknown error"}`;$("playerTable").innerHTML=`<tr><td colspan="8" class="loading error">${err.message||"Unable to load Aurora data."}</td></tr>`;}
   finally{if(btn){btn.disabled=false;btn.textContent="Refresh";}}
 }
-$("refreshBtn").addEventListener("click",()=>loadData(true));
+$("refreshBtn")?.addEventListener("click",()=>loadData(true));
 loadData();
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
