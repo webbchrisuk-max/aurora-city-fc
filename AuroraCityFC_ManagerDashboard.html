@@ -1,10 +1,59 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head><!-- Build: Universal Page Section Navigation • 24 Jul 2026 -->
+<head><script id="auroraCrossBrowserCacheCleanup">
+(function(){
+  "use strict";
+
+  const CLEANUP_KEY = "aurora_browser_cache_cleanup_v1";
+
+  async function cleanBrowserCaches(){
+    let alreadyClean = false;
+
+    try{
+      alreadyClean = sessionStorage.getItem(CLEANUP_KEY) === "1";
+    }catch(_){}
+
+    if(alreadyClean) return;
+
+    try{
+      if("serviceWorker" in navigator){
+        const registrations =
+          await navigator.serviceWorker.getRegistrations();
+
+        await Promise.all(
+          registrations.map(registration =>
+            registration.unregister()
+          )
+        );
+      }
+    }catch(error){
+      console.warn("Aurora service-worker cleanup",error);
+    }
+
+    try{
+      if("caches" in window){
+        const names = await caches.keys();
+
+        await Promise.all(
+          names.map(name => caches.delete(name))
+        );
+      }
+    }catch(error){
+      console.warn("Aurora cache cleanup",error);
+    }
+
+    try{
+      sessionStorage.setItem(CLEANUP_KEY,"1");
+    }catch(_){}
+  }
+
+  cleanBrowserCaches();
+})();
+</script><!-- Build: Universal Page Section Navigation • 24 Jul 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<link href="manifest.json" rel="manifest"/>
+
 <meta content="#030712" name="theme-color"/>
 <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
 <meta content="no-cache" http-equiv="Pragma"/>
@@ -1169,8 +1218,8 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
 }
 </style>
 <!-- Aurora universal workflow navigation -->
-<link href="aurora-navigation.css?v=20260729-3" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260729-3"></script>
+<link href="aurora-navigation.css?v=20260729-crossbrowser-1" rel="stylesheet"/>
+<script defer="" src="aurora-navigation.js?v=20260729-crossbrowser-1"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
@@ -1340,7 +1389,7 @@ dialog#beastHoldingDrawer .beast-panel-head{
     margin:-16px -16px 12px!important;
   }
 }
-</style></head>
+</style><meta content="manager-cross-browser-cache-fix-20260729" name="aurora-build"/></head>
 <body>
 <div class="fm-shell">
 <div class="fm-workspace">
@@ -2181,7 +2230,7 @@ requestTransferPlanSync();
 loadData();
 setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }, 30000);
 
-if(window.AuroraFC) AuroraFC.registerServiceWorker();
+/* Service worker disabled for reliable cross-browser live updates. */
 </script>
 <aside aria-hidden="true" class="aurora-system-panel" id="auroraSystemPanel">
 <div class="aurora-system-head"><h3>Aurora System Check</h3><button aria-label="Close system check" class="aurora-system-close" id="auroraSystemClose" type="button">×</button></div>
