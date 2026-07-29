@@ -7071,95 +7071,7 @@ document.addEventListener("click",event=>{
   if(reset)m19ResetCycle(Number(reset.dataset.m19Reset));
 });
 </script>
-<script>
-/* ===================== M21 AUTO-HIDE MANAGER SIDEBAR ===================== */
-(function(){
-  const app=document.querySelector('.m13-app');
-  const sidebar=document.querySelector('.m13-sidebar');
-  const toggle=document.getElementById('m21SidebarToggle');
-  const nav=document.getElementById('m13Nav');
-  if(!app||!sidebar||!toggle)return;
 
-  const desktopQuery=window.matchMedia('(min-width: 821px)');
-  const hoverQuery=window.matchMedia('(hover: hover) and (pointer: fine)');
-  let hideTimer=0;
-
-  const isDesktop=()=>desktopQuery.matches;
-  const clearHide=()=>{if(hideTimer){window.clearTimeout(hideTimer);hideTimer=0;}};
-
-  function setToggleState(expanded){
-    toggle.setAttribute('aria-expanded',String(expanded));
-    toggle.setAttribute('aria-label',expanded?'Hide manager sidebar':'Show manager sidebar');
-    toggle.title=expanded?'Hide sidebar':'Show sidebar';
-  }
-
-  function expandSidebar(){
-    if(!isDesktop())return;
-    clearHide();
-    app.classList.remove('m13-sidebar-collapsed');
-    setToggleState(true);
-  }
-
-  function collapseSidebar(){
-    if(!isDesktop())return;
-    clearHide();
-    app.classList.add('m13-sidebar-collapsed');
-    setToggleState(false);
-  }
-
-  function scheduleCollapse(delay=480){
-    if(!isDesktop())return;
-    clearHide();
-    hideTimer=window.setTimeout(collapseSidebar,delay);
-  }
-
-  function syncResponsiveState(){
-    clearHide();
-    if(isDesktop()){
-      collapseSidebar();
-    }else{
-      app.classList.remove('m13-sidebar-collapsed');
-      setToggleState(true);
-    }
-  }
-
-  toggle.addEventListener('click',event=>{
-    event.preventDefault();
-    event.stopPropagation();
-    if(app.classList.contains('m13-sidebar-collapsed'))expandSidebar();
-    else collapseSidebar();
-  });
-
-  sidebar.addEventListener('pointerenter',()=>{
-    if(hoverQuery.matches)expandSidebar();
-  });
-  sidebar.addEventListener('pointerleave',()=>{
-    if(hoverQuery.matches)scheduleCollapse();
-  });
-  sidebar.addEventListener('focusin',expandSidebar);
-  sidebar.addEventListener('focusout',()=>scheduleCollapse(650));
-
-  nav?.querySelectorAll('button').forEach(button=>{
-    const label=button.querySelector('span:last-child')?.textContent?.trim();
-    if(label)button.title=label;
-    button.addEventListener('click',()=>scheduleCollapse(260));
-  });
-
-  document.addEventListener('click',event=>{
-    if(!isDesktop()||hoverQuery.matches)return;
-    if(!sidebar.contains(event.target))collapseSidebar();
-  });
-  document.addEventListener('keydown',event=>{
-    if(event.key==='Escape')collapseSidebar();
-  });
-
-  if(typeof desktopQuery.addEventListener==='function')desktopQuery.addEventListener('change',syncResponsiveState);
-  else if(typeof desktopQuery.addListener==='function')desktopQuery.addListener(syncResponsiveState);
-
-  setToggleState(!app.classList.contains('m13-sidebar-collapsed'));
-  window.addEventListener('load',()=>window.setTimeout(syncResponsiveState,180),{once:true});
-})();
-</script>
 <script>
 /* ===================== M25 FINANCIAL CONTROL ENGINE ===================== */
 (function(){
@@ -9131,7 +9043,6 @@ body.aurora-transfer-test-active .aurora-system-dock{border-color:rgba(251,191,3
   });
 })();
 </script>
-
 <!-- Build: Sidebar Definitive Fix • 27 Jul 2026 -->
 <style id="aurora-sidebar-definitive-fix">
 /* Retire the obsolete FM auto-hiding sidebar. The unified AUFC sidebar is now the only navigation. */
@@ -9181,127 +9092,148 @@ body.aufc-nav-collapsed .aufc-page-sections{display:none!important}
   body.aufc-mobile-open .aufc-mobile-shade{display:block!important}
 }
 </style>
-
 <script id="auroraFinanceSidebarFiveSecondRule">
 (function(){
   'use strict';
 
-  var CLOSE_DELAY = 5000;
-  var EXPIRY_KEY = 'auroraSidebarOpenUntil';
-  var timer = null;
-  var ignoreInitialScrollUntil = Date.now() + 700;
+  const CLOSE_DELAY = 5000;
+  const EXPIRY_KEY = 'auroraSidebarOpenUntil';
+  let timer = null;
+  let suppressScrollUntil = Date.now() + 900;
 
-  function app(){ return document.querySelector('.m13-app'); }
-  function sidebar(){ return document.querySelector('.m13-sidebar.aurora-finance-sidebar'); }
-  function toggle(){ return document.querySelector('.aurora-finance-toggle'); }
-  function isMobile(){ return window.matchMedia('(max-width:820px)').matches; }
+  const root = () => document.querySelector('.m13-app');
+  const side = () => document.querySelector('.m13-sidebar.aurora-finance-sidebar');
+  const toggle = () => document.querySelector('.aurora-finance-toggle');
+  const mobile = () => matchMedia('(max-width:820px)').matches;
 
-  function clearTimer(){
-    if(timer){ clearTimeout(timer); timer = null; }
+  function clearCloseTimer(){
+    if(timer){
+      clearTimeout(timer);
+      timer = null;
+    }
   }
 
-  function writeExpiry(value){
+  function saveExpiry(value){
     try{
       if(value) sessionStorage.setItem(EXPIRY_KEY, String(value));
       else sessionStorage.removeItem(EXPIRY_KEY);
-    }catch(e){}
+    }catch(_){}
   }
 
-  function readExpiry(){
+  function getExpiry(){
     try{ return Number(sessionStorage.getItem(EXPIRY_KEY) || 0); }
-    catch(e){ return 0; }
+    catch(_){ return 0; }
   }
 
-  function setOpen(open){
-    var root = app();
-    if(root) root.classList.toggle('m13-sidebar-collapsed', !open);
-    document.body.classList.toggle('aufc-mobile-open', !!open && isMobile());
+  function showSidebar(){
+    const app = root();
+    if(!app) return;
 
-    var button = toggle();
-    if(button){
-      button.setAttribute('aria-expanded', String(!!open));
-      button.setAttribute('aria-label', open ? 'Close Finance navigation' : 'Open Finance navigation');
-      button.title = open ? 'Close navigation' : 'Open navigation';
+    app.classList.remove('m13-sidebar-collapsed');
+    document.body.classList.toggle('aufc-mobile-open', mobile());
+
+    const btn = toggle();
+    if(btn){
+      btn.setAttribute('aria-expanded','true');
+      btn.setAttribute('aria-label','Close Finance navigation');
+      btn.title='Close navigation';
     }
   }
 
-  function closeNow(){
-    clearTimer();
-    writeExpiry(0);
-    setOpen(false);
+  function hideSidebar(){
+    clearCloseTimer();
+    saveExpiry(0);
+
+    const app = root();
+    if(app) app.classList.add('m13-sidebar-collapsed');
+    document.body.classList.remove('aufc-mobile-open');
+
+    const btn = toggle();
+    if(btn){
+      btn.setAttribute('aria-expanded','false');
+      btn.setAttribute('aria-label','Open Finance navigation');
+      btn.title='Open navigation';
+    }
   }
 
-  function openForFiveSeconds(){
-    clearTimer();
-    var expiry = Date.now() + CLOSE_DELAY;
-    writeExpiry(expiry);
-    setOpen(true);
-    timer = setTimeout(closeNow, CLOSE_DELAY);
+  function restartInactivityTimer(){
+    clearCloseTimer();
+    const expiry = Date.now() + CLOSE_DELAY;
+    saveExpiry(expiry);
+    showSidebar();
+    timer = setTimeout(hideSidebar, CLOSE_DELAY);
   }
 
-  function restore(){
-    clearTimer();
-    var remaining = readExpiry() - Date.now();
+  function restoreTimer(){
+    clearCloseTimer();
+    const remaining = getExpiry() - Date.now();
+
     if(remaining > 0){
-      setOpen(true);
-      timer = setTimeout(closeNow, remaining);
+      showSidebar();
+      timer = setTimeout(hideSidebar, remaining);
     }else{
-      writeExpiry(0);
-      setOpen(false);
+      restartInactivityTimer();
     }
   }
 
-  function bind(){
-    var root = app();
-    var side = sidebar();
-    if(!root || !side) return;
+  function init(){
+    const app = root();
+    const sidebar = side();
+    if(!app || !sidebar) return;
 
-    // Start open on a direct visit, then close after five seconds.
-    if(readExpiry() <= Date.now()) openForFiveSeconds();
-    else restore();
+    restoreTimer();
 
     document.addEventListener('click', function(event){
-      var button = event.target.closest('.aurora-finance-toggle');
-      if(button){
+      const toggleButton = event.target.closest('.aurora-finance-toggle');
+
+      if(toggleButton){
         event.preventDefault();
-        event.stopPropagation();
-        if(root.classList.contains('m13-sidebar-collapsed')) openForFiveSeconds();
-        else closeNow();
+        event.stopImmediatePropagation();
+
+        if(app.classList.contains('m13-sidebar-collapsed')){
+          restartInactivityTimer();
+        }else{
+          hideSidebar();
+        }
         return;
       }
 
-      var navLink = event.target.closest(
-        '.m13-sidebar.aurora-finance-sidebar a[href], ' +
-        '.m13-sidebar.aurora-finance-sidebar button[data-view], ' +
-        '#auroraUnifiedFinanceSidebar a[href]'
-      );
-
-      if(navLink){
-        // Preserve the open state for five seconds across page navigation.
-        openForFiveSeconds();
+      if(sidebar.contains(event.target)){
+        // Clicking any sidebar link or control keeps it open and starts
+        // a fresh five-second inactivity period.
+        restartInactivityTimer();
         return;
       }
 
-      if(!side.contains(event.target)){
-        closeNow();
-      }
+      // Outside clicks close it immediately.
+      hideSidebar();
     }, true);
 
-    // Any genuine user scroll closes the sidebar immediately.
-    window.addEventListener('scroll', function(){
-      if(Date.now() < ignoreInitialScrollUntil) return;
-      closeNow();
-    }, {passive:true});
+    const closeForScroll = () => {
+      if(Date.now() < suppressScrollUntil) return;
+      hideSidebar();
+    };
 
-    window.addEventListener('wheel', closeNow, {passive:true});
-    window.addEventListener('touchmove', closeNow, {passive:true});
-    window.addEventListener('pageshow', restore);
+    window.addEventListener('wheel', closeForScroll, {passive:true});
+    window.addEventListener('touchmove', closeForScroll, {passive:true});
+    window.addEventListener('scroll', closeForScroll, {passive:true});
+
+    window.addEventListener('pageshow', function(){
+      suppressScrollUntil = Date.now() + 650;
+      const remaining = getExpiry() - Date.now();
+
+      if(remaining > 0){
+        clearCloseTimer();
+        showSidebar();
+        timer = setTimeout(hideSidebar, remaining);
+      }
+    });
   }
 
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', bind, {once:true});
+    document.addEventListener('DOMContentLoaded', init, {once:true});
   }else{
-    bind();
+    init();
   }
 })();
 </script></body>
