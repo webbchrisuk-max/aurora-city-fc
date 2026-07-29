@@ -2919,6 +2919,164 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
   .m51-account-head{flex-direction:column}
   .m51-account-grid{grid-template-columns:1fr}
 }
+</style><style id="auroraGroupedInvestmentMissionStyles">
+/* M52 — grouped investment mission completion */
+.m52-investment-completion{
+  margin:14px 0;
+  padding:15px;
+  border:1px solid rgba(52,211,153,.25);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(52,211,153,.10),transparent 32%),
+    linear-gradient(145deg,rgba(5,20,39,.92),rgba(2,8,20,.94));
+  box-shadow:0 15px 42px rgba(0,0,0,.24);
+}
+.m52-completion-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:13px;
+}
+.m52-completion-head h4{
+  margin:5px 0 0;
+  color:#f5fbff;
+  font-size:18px;
+  letter-spacing:-.03em;
+}
+.m52-completion-head p{
+  margin:6px 0 0;
+  max-width:790px;
+  color:#93a6bf;
+  font-size:10px;
+  line-height:1.48;
+}
+.m52-completion-status{
+  flex:0 0 auto;
+  padding:7px 10px;
+  border:1px solid rgba(251,191,36,.30);
+  border-radius:999px;
+  color:#fde68a;
+  background:rgba(120,53,15,.22);
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.10em;
+}
+.m52-completion-status.complete{
+  color:#bbf7d0;
+  border-color:rgba(52,211,153,.34);
+  background:rgba(6,78,59,.28);
+}
+.m52-completion-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px;
+}
+.m52-completion-grid article{
+  min-height:99px;
+  padding:12px;
+  border:1px solid rgba(148,163,184,.14);
+  border-radius:16px;
+  background:rgba(2,8,20,.48);
+}
+.m52-completion-grid article.total{
+  border-color:rgba(52,211,153,.28);
+  background:linear-gradient(
+    145deg,
+    rgba(6,78,59,.22),
+    rgba(2,8,20,.50)
+  );
+}
+.m52-completion-grid span{
+  display:block;
+  color:#91a5bd;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.m52-completion-grid strong{
+  display:block;
+  margin-top:9px;
+  color:#f8fbff;
+  font-size:22px;
+  letter-spacing:-.04em;
+}
+.m52-completion-grid article.total strong{
+  color:#9cf3c5;
+}
+.m52-completion-grid small{
+  display:block;
+  margin-top:6px;
+  color:#7e92aa;
+  font-size:8px;
+  line-height:1.4;
+}
+.m52-completion-command{
+  margin-top:10px;
+  padding:11px 12px;
+  border:1px solid rgba(34,211,238,.18);
+  border-radius:14px;
+  color:#dff8ff;
+  background:rgba(8,47,73,.27);
+  font-size:10px;
+  font-weight:820;
+  line-height:1.5;
+}
+.m52-completion-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.m52-completion-actions button{
+  border:1px solid rgba(52,211,153,.34);
+  border-radius:12px;
+  padding:10px 13px;
+  color:#d1fae5;
+  background:linear-gradient(
+    145deg,
+    rgba(5,150,105,.35),
+    rgba(6,78,59,.42)
+  );
+  font-size:9px;
+  font-weight:1000;
+  cursor:pointer;
+}
+.m52-completion-actions button:disabled{
+  opacity:.52;
+  cursor:not-allowed;
+}
+.m52-completion-actions span{
+  color:#7e92aa;
+  font-size:8px;
+  line-height:1.4;
+}
+#m15AllocationList .m52-investment-row .m25-actual-wrap{
+  opacity:.72;
+}
+#m15AllocationList .m52-investment-row .m25-actual-wrap label:after{
+  content:" from payday";
+}
+.m52-handoff-button{
+  border:1px solid rgba(34,211,238,.28)!important;
+  background:rgba(8,47,73,.38)!important;
+  color:#c8f8ff!important;
+}
+@media(max-width:900px){
+  .m52-completion-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media(max-width:560px){
+  .m52-completion-head{
+    flex-direction:column;
+  }
+  .m52-completion-grid{
+    grid-template-columns:1fr;
+  }
+}
 </style></head>
 <body>
 <div class="m13-app">
@@ -3482,6 +3640,53 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 <div class="m51-account-instruction" id="m51AccountInstruction">
       Build the complete investment mission to see the initial broker transfer amounts.
     </div>
+</section><section aria-label="Complete the combined investment mission" class="m52-investment-completion" id="m52InvestmentMissionCompletion">
+<div class="m52-completion-head">
+<div>
+<span class="m13-eyebrow">ONE COMBINED COMPLETION</span>
+<h4>Complete Investment Mission</h4>
+<p>
+              The payday checklist reserves only the payday contribution.
+              Complete the IG and Trading 212 cash transfers here as one mission.
+            </p>
+</div>
+<span class="m52-completion-status" id="m52CompletionStatus">
+            WAITING
+          </span>
+</div>
+<div class="m52-completion-grid">
+<article>
+<span>Payday used</span>
+<strong id="m52PaydayUsed">£0.00</strong>
+<small>Deducted from this payday mission</small>
+</article>
+<article>
+<span>Existing capital used</span>
+<strong id="m52CapitalUsed">£0.00</strong>
+<small>Released from the saved capital pool</small>
+</article>
+<article>
+<span>ETF / sale pot used</span>
+<strong id="m52EtfUsed">£0.00</strong>
+<small>Only counted when sale proceeds are available</small>
+</article>
+<article class="total">
+<span>Complete investment mission</span>
+<strong id="m52MissionTotal">£0.00</strong>
+<small>Completed as one combined cash move</small>
+</article>
+</div>
+<div class="m52-completion-command" id="m52CompletionCommand">
+          Build the investment mission to create the completion instruction.
+        </div>
+<div class="m52-completion-actions">
+<button disabled="" id="m52CompleteInvestmentMission" type="button">
+            Complete Investment Mission
+          </button>
+<span id="m52CompletionNote">
+            This will mark the payday investment item complete as one grouped move.
+          </span>
+</div>
 </section>
 <div class="m37-route" id="m37InvestmentRoute"><strong>Waiting:</strong> Build the live payday plan and Aurora will combine every available investment funding source.</div>
 <div class="m37-actions">
@@ -9126,6 +9331,784 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 
   window.addEventListener("load",() => setTimeout(render,380));
   if(document.readyState !== "loading") setTimeout(render,220);
+})();
+</script><script id="auroraGroupedInvestmentMissionScript">
+(function(){
+  "use strict";
+
+  const FUNDING_KEY = "aurora_wealth_investment_funding_v1";
+  const WEALTH_KEY = "aurora_wealth_investment_mission_v1";
+  const ACCOUNT_KEY = "aurora_account_transfer_instruction_v1";
+  const COMPLETION_KEY = "aurora_investment_handoff_completion_v1";
+  const GROUP_ID = "bank:investment:mission";
+  const GROUP_VERSION = 52;
+
+  const byId = id => document.getElementById(id);
+
+  const read = key => {
+    try {
+      return JSON.parse(localStorage.getItem(key) || "null");
+    } catch (_) {
+      return null;
+    }
+  };
+
+  const write = (key,value) => {
+    try {
+      localStorage.setItem(key,JSON.stringify(value));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const number = value => {
+    const n = Number(String(value ?? "").replace(/[^0-9.-]/g,""));
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const round = value =>
+    Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+
+  const money = value =>
+    new Intl.NumberFormat(
+      "en-GB",
+      {
+        style:"currency",
+        currency:"GBP",
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    ).format(Math.max(0,Number(value || 0)));
+
+  function flattenComponents(action){
+    if(Array.isArray(action.components) && action.components.length){
+      return action.components.map(component => ({...component}));
+    }
+
+    return [{
+      id:action.id,
+      label:action.name || "Investment allocation",
+      amount:Number(action.amount || 0),
+      meta:action.meta || ""
+    }];
+  }
+
+  function groupInvestmentActions(plan){
+    if(!plan || !Array.isArray(plan.actions)) return plan;
+
+    const investmentIndexes = [];
+    const investments = [];
+
+    plan.actions.forEach((action,index) => {
+      if(action?.type === "investment"){
+        investmentIndexes.push(index);
+        investments.push(action);
+      }
+    });
+
+    if(!investments.length){
+      plan.investmentMissionVersion = GROUP_VERSION;
+      return plan;
+    }
+
+    if(
+      investments.length === 1
+      && investments[0].id === GROUP_ID
+    ){
+      investments[0].name = "Investment Mission Handoff";
+      investments[0].meta =
+        "Payday contribution reserved here; complete both broker cash transfers together in the Investment Mission Handoff.";
+      investments[0].handoffOnly = true;
+      plan.investmentMissionVersion = GROUP_VERSION;
+      return plan;
+    }
+
+    const amount = round(
+      investments.reduce(
+        (sum,action) => sum + Number(action.amount || 0),
+        0
+      )
+    );
+
+    const components = investments.flatMap(flattenComponents);
+    const originalIds = investments.flatMap(action =>
+      Array.isArray(action.originalIds)
+        ? action.originalIds
+        : [action.id]
+    );
+
+    const grouped = {
+      id:GROUP_ID,
+      name:"Investment Mission Handoff",
+      amount,
+      type:"investment",
+      meta:
+        "Payday contribution reserved here; complete both broker cash transfers together in the Investment Mission Handoff.",
+      components,
+      originalIds,
+      handoffOnly:true
+    };
+
+    const firstIndex = investmentIndexes[0];
+
+    plan.actions = plan.actions.filter(
+      action => action?.type !== "investment"
+    );
+    plan.actions.splice(firstIndex,0,grouped);
+    plan.planned = round(
+      plan.actions.reduce(
+        (sum,action) => sum + Number(action.amount || 0),
+        0
+      )
+    );
+    plan.investmentMissionVersion = GROUP_VERSION;
+
+    return plan;
+  }
+
+  function migrateStoredPlan(){
+    if(
+      typeof window.m22EnsureState !== "function"
+      || typeof window.m22Save !== "function"
+    ){
+      return;
+    }
+
+    const mission = window.m22EnsureState();
+    if(!mission?.plan) return;
+
+    const oldInvestments = mission.plan.actions?.filter(
+      action =>
+        action?.type === "investment"
+        && action.id !== GROUP_ID
+    ) || [];
+
+    if(
+      mission.plan.investmentMissionVersion === GROUP_VERSION
+      && !oldInvestments.length
+    ){
+      return;
+    }
+
+    oldInvestments.forEach(action => {
+      if(mission.executed){
+        delete mission.executed[action.id];
+      }
+      (action.originalIds || []).forEach(id => {
+        if(mission.executed){
+          delete mission.executed[id];
+        }
+      });
+    });
+
+    mission.plan = groupInvestmentActions(mission.plan);
+
+    if(mission.executed){
+      delete mission.executed[GROUP_ID];
+    }
+
+    window.m22Save();
+  }
+
+  const baseCompute = window.m22ComputePlan;
+  if(typeof baseCompute === "function"){
+    window.m22ComputePlan = function(){
+      return groupInvestmentActions(
+        baseCompute.apply(this,arguments)
+      );
+    };
+  }
+
+  const baseCurrentPlan = window.m22CurrentPlan;
+  if(typeof baseCurrentPlan === "function"){
+    window.m22CurrentPlan = function(){
+      const plan = baseCurrentPlan.apply(this,arguments);
+      return groupInvestmentActions(plan);
+    };
+  }
+
+  function currentPlan(){
+    if(typeof window.m22CurrentPlan !== "function") return null;
+    return groupInvestmentActions(window.m22CurrentPlan());
+  }
+
+  function currentMission(){
+    return typeof window.m22EnsureState === "function"
+      ? window.m22EnsureState()
+      : null;
+  }
+
+  function investmentAction(){
+    return currentPlan()?.actions?.find(
+      action =>
+        action?.type === "investment"
+        && action.id === GROUP_ID
+    ) || null;
+  }
+
+  function funding(){
+    const balance = Math.max(
+      0,
+      number(byId("m50CapitalBalance")?.value)
+    );
+    const target = Math.max(
+      0,
+      number(byId("m50CapitalRelease")?.value)
+    );
+    const etfBalance = Math.max(
+      0,
+      number(byId("m50EtfBalance")?.value)
+    );
+    const etfTarget = Math.max(
+      0,
+      number(byId("m50EtfRelease")?.value)
+    );
+
+    return {
+      capitalBalance:round(balance),
+      capitalRelease:round(Math.min(balance,target)),
+      etfBalance:round(etfBalance),
+      etfRelease:round(Math.min(etfBalance,etfTarget))
+    };
+  }
+
+  function currentAmounts(){
+    const action = investmentAction();
+    const pools = funding();
+
+    const payday = round(
+      Number(action?.amount || 0)
+    );
+
+    const total = round(
+      payday
+      + pools.capitalRelease
+      + pools.etfRelease
+    );
+
+    const accountPlan = read(ACCOUNT_KEY) || {};
+    let ig = round(Number(accountPlan.ig || 0));
+    let t212 = round(Number(accountPlan.t212 || 0));
+
+    if(Math.abs(ig + t212 - total) > .02){
+      ig = number(byId("m51IgTransfer")?.textContent);
+      t212 = number(byId("m51T212Transfer")?.textContent);
+    }
+
+    return {
+      action,
+      payday,
+      capitalRelease:pools.capitalRelease,
+      etfRelease:pools.etfRelease,
+      capitalBalance:pools.capitalBalance,
+      etfBalance:pools.etfBalance,
+      total,
+      ig:round(ig),
+      t212:round(t212)
+    };
+  }
+
+  function completionRecord(){
+    const mission = currentMission();
+    const saved = read(COMPLETION_KEY);
+
+    if(
+      !mission
+      || !saved
+      || saved.sourceMissionId !== mission.id
+    ){
+      return null;
+    }
+
+    return saved;
+  }
+
+  function saveFundingBalances(
+    capitalBalance,
+    etfBalance
+  ){
+    const releaseTarget = Math.max(
+      0,
+      number(byId("m50CapitalRelease")?.value)
+    );
+    const etfReleaseTarget = Math.max(
+      0,
+      number(byId("m50EtfRelease")?.value)
+    );
+
+    if(byId("m50CapitalBalance")){
+      byId("m50CapitalBalance").value =
+        round(capitalBalance).toFixed(2);
+    }
+
+    if(byId("m50EtfBalance")){
+      byId("m50EtfBalance").value =
+        round(etfBalance).toFixed(2);
+    }
+
+    write(FUNDING_KEY,{
+      capitalBalance:round(capitalBalance),
+      capitalRelease:round(releaseTarget),
+      etfBalance:round(etfBalance),
+      etfRelease:round(etfReleaseTarget),
+      updatedAt:new Date().toISOString()
+    });
+  }
+
+  function markPaydayInvestmentComplete(
+    action,
+    paydayAmount
+  ){
+    const mission = currentMission();
+    if(!mission || !action) return false;
+
+    mission.plan = groupInvestmentActions(
+      mission.plan || currentPlan()
+    );
+    mission.executed =
+      mission.executed
+      && typeof mission.executed === "object"
+        ? mission.executed
+        : {};
+
+    mission.startedAt =
+      mission.startedAt || new Date().toISOString();
+
+    mission.executed[GROUP_ID] = {
+      plannedAmount:Number(action.amount || 0),
+      actualAmount:Number(paydayAmount || 0),
+      amount:Number(paydayAmount || 0),
+      name:"Investment Mission Handoff",
+      type:"investment",
+      source:"INVESTMENT_HANDOFF",
+      at:new Date().toISOString()
+    };
+
+    if(typeof window.m22Save === "function"){
+      window.m22Save();
+    }
+
+    return true;
+  }
+
+  function completeInvestmentMission(){
+    const mission = currentMission();
+    const amounts = currentAmounts();
+
+    if(!mission || !amounts.action || amounts.payday <= 0){
+      if(typeof window.m22ShowStatus === "function"){
+        window.m22ShowStatus(
+          "There is no payday investment contribution to complete.",
+          true
+        );
+      }
+      return;
+    }
+
+    const existing = completionRecord();
+    if(existing) return;
+
+    if(
+      amounts.total <= 0
+      || Math.abs(
+        amounts.ig + amounts.t212 - amounts.total
+      ) > .02
+    ){
+      if(typeof window.m22ShowStatus === "function"){
+        window.m22ShowStatus(
+          "The broker transfer amounts do not yet match the complete investment mission.",
+          true
+        );
+      }
+      return;
+    }
+
+    if(
+      !markPaydayInvestmentComplete(
+        amounts.action,
+        amounts.payday
+      )
+    ){
+      return;
+    }
+
+    const remainingCapital = round(
+      Math.max(
+        0,
+        amounts.capitalBalance - amounts.capitalRelease
+      )
+    );
+    const remainingEtf = round(
+      Math.max(
+        0,
+        amounts.etfBalance - amounts.etfRelease
+      )
+    );
+
+    saveFundingBalances(
+      remainingCapital,
+      remainingEtf
+    );
+
+    const completedAt = new Date().toISOString();
+    const record = {
+      version:GROUP_VERSION,
+      sourceMissionId:mission.id,
+      paydayDate:mission.paydayDate,
+      paydayContribution:amounts.payday,
+      existingCapitalRelease:amounts.capitalRelease,
+      etfRelease:amounts.etfRelease,
+      totalInvestmentMission:amounts.total,
+      accountTransfers:[
+        {
+          account:"IG ISA",
+          amount:amounts.ig
+        },
+        {
+          account:"Trading 212 ISA",
+          amount:amounts.t212
+        }
+      ],
+      remainingCapital,
+      remainingEtf,
+      completedAt,
+      status:"COMPLETE"
+    };
+
+    write(COMPLETION_KEY,record);
+
+    const wealthMission = read(WEALTH_KEY);
+    if(wealthMission){
+      wealthMission.investmentHandoffCompletion = record;
+      wealthMission.status =
+        wealthMission.status === "READY_FOR_TRANSFER_CENTRE"
+          ? "CASH_TRANSFER_COMPLETE"
+          : wealthMission.status;
+      wealthMission.updatedAt = completedAt;
+      write(WEALTH_KEY,wealthMission);
+    }
+
+    if(typeof window.m22Save === "function"){
+      window.m22Save();
+    }
+
+    if(typeof window.m22Render === "function"){
+      window.m22Render();
+    }
+
+    byId("m50SaveFunding")?.click();
+
+    if(typeof window.m22ShowStatus === "function"){
+      window.m22ShowStatus(
+        `${money(amounts.total)} investment mission completed as one move. ${money(amounts.payday)} has been marked against this payday.`,
+        false
+      );
+    }
+
+    renderCompletion();
+  }
+
+  function scrollToHandoff(){
+    byId("m52InvestmentMissionCompletion")
+      ?.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+      });
+  }
+
+  function renderChecklistRow(){
+    const action = investmentAction();
+    if(!action) return;
+
+    const row = [
+      ...document.querySelectorAll(
+        "#m15AllocationList .m22-action-row"
+      )
+    ].find(candidate =>
+      candidate
+        .querySelector("[data-m22-execute]")
+        ?.dataset.m22Execute === GROUP_ID
+      || candidate
+        .querySelector("[data-m25-undo]")
+        ?.dataset.m25Undo === GROUP_ID
+      || candidate.textContent.includes(
+        "Investment Mission Handoff"
+      )
+    );
+
+    if(!row) return;
+
+    row.classList.add("m52-investment-row");
+
+    const done =
+      typeof window.m22ActionDone === "function"
+      && window.m22ActionDone(action);
+
+    const name = row.querySelector(".m22-action-name");
+    if(name){
+      name.textContent = "Investment Mission Handoff";
+    }
+
+    const meta = row.querySelector(".m22-action-meta");
+    if(meta){
+      meta.textContent =
+        `${money(action.amount)} from this payday is reserved. Complete the broker transfers together in the Investment Mission Handoff below.`;
+    }
+
+    const actualInput = row.querySelector(
+      "[data-m25-actual]"
+    );
+    if(actualInput){
+      actualInput.value =
+        Number(action.amount || 0).toFixed(2);
+      actualInput.disabled = true;
+    }
+
+    const existingButton = row.querySelector(
+      "[data-m22-execute],"
+      + "[data-m25-undo],"
+      + "[data-m52-open-handoff]"
+    );
+
+    if(existingButton){
+      const replacement =
+        document.createElement("button");
+
+      replacement.type = "button";
+      replacement.className =
+        "m22-execute-btn m52-handoff-button";
+      replacement.dataset.m52OpenHandoff = "1";
+      replacement.textContent = done
+        ? "Completed at handoff ✓"
+        : "Complete at mission handoff";
+      replacement.disabled = done;
+
+      existingButton.replaceWith(replacement);
+    }
+  }
+
+  function renderCompletion(){
+    const saved = completionRecord();
+    const live = currentAmounts();
+    const values = saved
+      ? {
+          payday:saved.paydayContribution,
+          capitalRelease:saved.existingCapitalRelease,
+          etfRelease:saved.etfRelease,
+          total:saved.totalInvestmentMission,
+          ig:Number(
+            saved.accountTransfers?.find(
+              item =>
+                String(item.account)
+                  .toUpperCase()
+                  .includes("IG")
+            )?.amount || 0
+          ),
+          t212:Number(
+            saved.accountTransfers?.find(
+              item =>
+                String(item.account)
+                  .includes("212")
+            )?.amount || 0
+          )
+        }
+      : live;
+
+    byId("m52PaydayUsed").textContent =
+      money(values.payday);
+    byId("m52CapitalUsed").textContent =
+      money(values.capitalRelease);
+    byId("m52EtfUsed").textContent =
+      money(values.etfRelease);
+    byId("m52MissionTotal").textContent =
+      money(values.total);
+
+    const status = byId("m52CompletionStatus");
+    const button = byId(
+      "m52CompleteInvestmentMission"
+    );
+    const command = byId("m52CompletionCommand");
+    const note = byId("m52CompletionNote");
+
+    if(saved){
+      status.textContent = "MISSION COMPLETE";
+      status.classList.add("complete");
+
+      button.textContent =
+        "Investment Mission Completed ✓";
+      button.disabled = true;
+
+      command.innerHTML =
+        `<strong>Completed together:</strong> `
+        + `${money(values.ig)} transferred to IG ISA and `
+        + `${money(values.t212)} transferred to Trading 212 ISA. `
+        + `${money(values.payday)} was marked against this payday; `
+        + `${money(values.capitalRelease + values.etfRelease)} came from existing investment capital.`;
+
+      note.textContent =
+        `Completed ${new Date(
+          saved.completedAt
+        ).toLocaleString("en-GB")}.`;
+
+      byId("m51PreviewStatus").textContent =
+        "MISSION COMPLETE";
+      return;
+    }
+
+    status.classList.remove("complete");
+
+    const ready =
+      Boolean(live.action)
+      && live.payday > 0
+      && live.total > 0
+      && Math.abs(
+        live.ig + live.t212 - live.total
+      ) <= .02;
+
+    status.textContent = ready
+      ? "READY TO COMPLETE"
+      : "WAITING";
+
+    button.disabled = !ready;
+    button.textContent =
+      `Complete ${money(live.total)} Investment Mission`;
+
+    if(ready){
+      command.innerHTML =
+        `<strong>One completion:</strong> Transfer `
+        + `${money(live.ig)} to IG ISA and `
+        + `${money(live.t212)} to Trading 212 ISA, then press Complete Investment Mission. `
+        + `Aurora will mark only ${money(live.payday)} against the payday checklist.`;
+    }else{
+      command.textContent =
+        "Build the investment mission and account transfer amounts before completing it.";
+    }
+
+    note.textContent =
+      "The full payday checklist will show one Investment Mission Handoff item instead of separate IG and Trading 212 moves.";
+  }
+
+  function renderAll(){
+    migrateStoredPlan();
+    renderChecklistRow();
+    renderCompletion();
+  }
+
+  const baseRender = window.m22Render;
+  if(typeof baseRender === "function"){
+    window.m22Render = function(){
+      const result =
+        baseRender.apply(this,arguments);
+
+      setTimeout(() => {
+        renderChecklistRow();
+        renderCompletion();
+      },0);
+
+      return result;
+    };
+  }
+
+  document.addEventListener(
+    "click",
+    event => {
+      const openButton =
+        event.target.closest(
+          "[data-m52-open-handoff]"
+        );
+
+      if(openButton){
+        event.preventDefault();
+        scrollToHandoff();
+      }
+    }
+  );
+
+  byId("m52CompleteInvestmentMission")
+    ?.addEventListener(
+      "click",
+      completeInvestmentMission
+    );
+
+  [
+    "m22CoreInvestment",
+    "m22InvestmentPlatform",
+    "m50CapitalBalance",
+    "m50CapitalRelease",
+    "m50EtfBalance",
+    "m50EtfRelease",
+    "m37RefreshHandoff",
+    "m50SaveFunding"
+  ].forEach(id => {
+    byId(id)?.addEventListener(
+      "input",
+      () => setTimeout(renderAll,40)
+    );
+    byId(id)?.addEventListener(
+      "change",
+      () => setTimeout(renderAll,40)
+    );
+    byId(id)?.addEventListener(
+      "click",
+      () => setTimeout(renderAll,80)
+    );
+  });
+
+  const accountPreview =
+    byId("m51AccountTransferPreview");
+
+  if(accountPreview){
+    new MutationObserver(
+      () => {
+        clearTimeout(
+          window.__auroraM52RenderTimer
+        );
+        window.__auroraM52RenderTimer =
+          setTimeout(renderAll,70);
+      }
+    ).observe(
+      accountPreview,
+      {
+        childList:true,
+        subtree:true,
+        characterData:true
+      }
+    );
+  }
+
+  window.addEventListener(
+    "aurora:wealth-mission",
+    () => setTimeout(renderAll,100)
+  );
+
+  window.addEventListener(
+    "storage",
+    event => {
+      if([
+        FUNDING_KEY,
+        WEALTH_KEY,
+        ACCOUNT_KEY,
+        COMPLETION_KEY
+      ].includes(event.key)){
+        setTimeout(renderAll,80);
+      }
+    }
+  );
+
+  migrateStoredPlan();
+
+  window.addEventListener(
+    "load",
+    () => {
+      setTimeout(renderAll,450);
+      setTimeout(renderAll,1300);
+    }
+  );
+
+  if(document.readyState !== "loading"){
+    setTimeout(renderAll,280);
+  }
 })();
 </script></body>
 </html>
