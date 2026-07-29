@@ -1784,9 +1784,9 @@ function renderAll(){
   const dataStamp=latestDataTimestamp();
   if(window.AuroraFC) AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'});
   else $("lastUpdated").textContent = dataStamp ? `Aurora data: ${dataStamp.toLocaleString("en-GB")}` : 'Aurora generated: unavailable';
-  $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  if($("tickerTime")) $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
   const nextDividendTickerText = nextDividend ? ` • Next dividend: ${nextDividend.ticker}${nextDividend.amountKnown ? ` ${money(nextDividend.amount)}` : ""} on ${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}` : "";
-  $("tickerText").textContent = route.length
+  if($("tickerText")) $("tickerText").textContent = route.length
     ? `Club News • Transfer Centre route ready: ${route.map(x=>displayTicker(x.row.ticker)).join(" / ")} • Estimated payday income ${money(routeIncome)}/yr${nextDividendTickerText} • Gap to £625/m: ${money(gap)}`
     : `Club News • Transfer Centre final deal sheet syncing • ${active.length} active squad players loaded${nextDividendTickerText} • Gap to £625/m: ${money(gap)}`;
 
@@ -1928,7 +1928,7 @@ function renderAll(){
 $("refreshBtn")?.addEventListener("click", ()=>{ AURORA_MASTER_CACHE = null; loadData(); });
 requestTransferPlanSync();
 loadData();
-setInterval(()=>{ if(!document.hidden&&$("tickerTime")) $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }, 30000);
+setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }, 30000);
 
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
