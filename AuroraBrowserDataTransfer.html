@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<title>Aurora City FC — Browser Data Transfer</title>
+<style>
+:root{
+  --bg:#020617;
+  --panel:#071425;
+  --panel2:#0b1d34;
+  --line:rgba(125,211,252,.22);
+  --text:#eaf4ff;
+  --muted:#9fb1c8;
+  --cyan:#22d3ee;
+  --green:#34d399;
+  --amber:#fbbf24;
+  --red:#fb7185;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 15% 0%,rgba(34,211,238,.20),transparent 30%),
+    radial-gradient(circle at 88% 10%,rgba(96,165,250,.18),transparent 32%),
+    linear-gradient(180deg,#020617,#041225 72%,#020617);
+}
+main{
+  width:min(900px,100%);
+  margin:0 auto;
+  padding:24px 16px calc(40px + env(safe-area-inset-bottom,0px));
+}
+.hero,.card{
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:linear-gradient(180deg,rgba(11,29,52,.92),rgba(5,16,31,.96));
+  box-shadow:0 20px 65px rgba(0,0,0,.38);
+}
+.hero{padding:24px;margin-bottom:16px}
+.kicker{
+  color:#a5f3fc;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+h1{
+  margin:10px 0 8px;
+  font-size:clamp(31px,6vw,56px);
+  line-height:.95;
+  letter-spacing:-.06em;
+}
+.hero p,.card p{
+  color:var(--muted);
+  line-height:1.55;
+}
+.notice{
+  margin-top:16px;
+  padding:13px 14px;
+  border:1px solid rgba(251,191,36,.30);
+  border-radius:15px;
+  background:rgba(120,53,15,.22);
+  color:#fde68a;
+  font-size:13px;
+  line-height:1.45;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.card{padding:20px}
+.step{
+  display:inline-grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  background:rgba(34,211,238,.12);
+  border:1px solid rgba(34,211,238,.28);
+  color:#a5f3fc;
+  font-weight:950;
+}
+h2{margin:12px 0 8px;font-size:22px}
+button,.file-label{
+  display:flex;
+  width:100%;
+  min-height:54px;
+  align-items:center;
+  justify-content:center;
+  margin-top:14px;
+  padding:13px 16px;
+  border:1px solid rgba(52,211,153,.38);
+  border-radius:15px;
+  color:#d1fae5;
+  background:rgba(5,150,105,.22);
+  font:900 14px/1.2 inherit;
+  text-align:center;
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+button.secondary,.file-label{
+  border-color:rgba(96,165,250,.38);
+  color:#dbeafe;
+  background:rgba(30,64,175,.22);
+}
+button.danger{
+  border-color:rgba(251,113,133,.38);
+  color:#ffe4e6;
+  background:rgba(159,18,57,.20);
+}
+input[type=file]{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+  pointer-events:none;
+}
+textarea{
+  width:100%;
+  min-height:130px;
+  margin-top:12px;
+  resize:vertical;
+  border:1px solid rgba(148,163,184,.22);
+  border-radius:14px;
+  padding:12px;
+  color:#e2e8f0;
+  background:#020b18;
+  font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.status{
+  margin-top:16px;
+  min-height:52px;
+  padding:13px 14px;
+  border:1px solid rgba(148,163,184,.18);
+  border-radius:14px;
+  background:rgba(2,6,23,.48);
+  color:#cbd5e1;
+  font-size:13px;
+  line-height:1.45;
+}
+.status.ok{
+  border-color:rgba(52,211,153,.34);
+  color:#bbf7d0;
+  background:rgba(6,78,59,.24);
+}
+.status.warn{
+  border-color:rgba(251,191,36,.34);
+  color:#fde68a;
+  background:rgba(120,53,15,.22);
+}
+.status.bad{
+  border-color:rgba(251,113,133,.38);
+  color:#fecdd3;
+  background:rgba(127,29,29,.24);
+}
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:14px;
+}
+.summary div{
+  padding:12px;
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:14px;
+  background:rgba(2,6,23,.40);
+}
+.summary small{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.summary strong{
+  display:block;
+  margin-top:5px;
+  color:#a5f3fc;
+  font-size:18px;
+}
+footer{
+  margin-top:16px;
+  color:#71849d;
+  font-size:11px;
+  text-align:center;
+}
+@media(max-width:720px){
+  .grid{grid-template-columns:1fr}
+  .summary{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="kicker">Aurora City FC • browser migration</div>
+    <h1>Move Aurora into Brave</h1>
+    <p>
+      Aurora’s portfolio feed comes from the shared online AuroraMaster file.
+      Your mission, payday, transfer, shortlist and dashboard progress are stored
+      separately inside each browser. This page copies those Aurora records from
+      one browser to another.
+    </p>
+    <div class="notice">
+      Keep the exported backup private. It may contain saved mission details and
+      registration settings. The page only transfers storage keys whose names
+      begin with <strong>Aurora</strong>.
+    </div>
+    <div class="summary">
+      <div><small>Browser</small><strong id="browserName">Checking…</strong></div>
+      <div><small>Aurora records here</small><strong id="recordCount">0</strong></div>
+      <div><small>Current storage size</small><strong id="storageSize">0 KB</strong></div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <span class="step">1</span>
+      <h2>In Chrome: export</h2>
+      <p>
+        Open this page in the browser that currently contains the correct
+        £3,500 mission and four-player allocation. Tap the button and save the
+        JSON backup into the iPad Files app.
+      </p>
+      <button id="exportButton" type="button">Export Aurora backup</button>
+      <button id="copyButton" class="secondary" type="button">Copy backup text</button>
+      <textarea id="backupText" placeholder="The backup text will appear here after export." spellcheck="false"></textarea>
+    </section>
+
+    <section class="card">
+      <span class="step">2</span>
+      <h2>In Brave: import</h2>
+      <p>
+        Open this same page in Brave. Select the backup from Files. Importing
+        replaces only Brave’s existing Aurora records and leaves unrelated
+        website data alone.
+      </p>
+      <label class="file-label" for="backupFile">Choose Aurora backup file</label>
+      <input id="backupFile" type="file" accept="application/json,.json">
+      <button id="importFileButton" type="button">Import selected backup</button>
+      <button id="importTextButton" class="secondary" type="button">Import pasted backup text</button>
+      <button id="openTransferButton" class="secondary" type="button">Open Transfer Centre after import</button>
+    </section>
+  </div>
+
+  <div id="status" class="status" role="status">
+    Ready. Export from Chrome first, then import the file into Brave.
+  </div>
+
+  <footer>
+    No information is uploaded anywhere by this page. Export and import happen
+    entirely on your device.
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  const PREFIX = /^aurora/i;
+  const FORMAT = "aurora-browser-backup-v1";
+  const $ = id => document.getElementById(id);
+
+  function auroraEntries(){
+    const entries = {};
+    for(let index=0; index<localStorage.length; index++){
+      const key = localStorage.key(index);
+      if(key && PREFIX.test(key)){
+        entries[key] = localStorage.getItem(key);
+      }
+    }
+    return entries;
+  }
+
+  function byteSize(value){
+    try{
+      return new Blob([value]).size;
+    }catch(_){
+      return String(value || "").length;
+    }
+  }
+
+  function formatBytes(bytes){
+    if(bytes < 1024) return `${bytes} B`;
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+
+  function browserLabel(){
+    const ua = navigator.userAgent || "";
+    if(/Brave/i.test(navigator.brave ? "Brave" : "")) return "Brave";
+    if(/EdgiOS|EdgA|Edg\//i.test(ua)) return "Edge";
+    if(/CriOS|Chrome/i.test(ua)) return "Chrome";
+    if(/FxiOS|Firefox/i.test(ua)) return "Firefox";
+    if(/Safari/i.test(ua)) return "Safari";
+    return "Browser";
+  }
+
+  async function detectBrowser(){
+    let name = browserLabel();
+    try{
+      if(navigator.brave && await navigator.brave.isBrave()){
+        name = "Brave";
+      }
+    }catch(_){}
+    $("browserName").textContent = name;
+  }
+
+  function refreshSummary(){
+    const entries = auroraEntries();
+    const serialised = JSON.stringify(entries);
+    $("recordCount").textContent = String(Object.keys(entries).length);
+    $("storageSize").textContent = formatBytes(byteSize(serialised));
+  }
+
+  function setStatus(message, tone=""){
+    const node = $("status");
+    node.className = `status ${tone}`.trim();
+    node.textContent = message;
+  }
+
+  function buildBackup(){
+    const data = auroraEntries();
+    return {
+      format: FORMAT,
+      createdAt: new Date().toISOString(),
+      sourceBrowser: $("browserName").textContent,
+      origin: location.origin,
+      recordCount: Object.keys(data).length,
+      data
+    };
+  }
+
+  function backupJson(){
+    return JSON.stringify(buildBackup(), null, 2);
+  }
+
+  function downloadBackup(){
+    const json = backupJson();
+    $("backupText").value = json;
+
+    const blob = new Blob([json], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const stamp = new Date().toISOString().replace(/[:.]/g,"-");
+    link.href = url;
+    link.download = `AuroraBrowserBackup-${stamp}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+
+    const count = buildBackup().recordCount;
+    setStatus(
+      `Exported ${count} Aurora record${count===1?"":"s"}. Save the file, then open this page in Brave.`,
+      count ? "ok" : "warn"
+    );
+  }
+
+  async function copyBackup(){
+    const json = backupJson();
+    $("backupText").value = json;
+    try{
+      await navigator.clipboard.writeText(json);
+      setStatus("Aurora backup copied. You can paste it into this page in Brave.", "ok");
+    }catch(_){
+      $("backupText").focus();
+      $("backupText").select();
+      setStatus("Copy was blocked. The backup text is selected—use Copy from the iPad menu.", "warn");
+    }
+  }
+
+  function parseBackup(text){
+    const parsed = JSON.parse(text);
+    if(!parsed || parsed.format !== FORMAT || !parsed.data || typeof parsed.data !== "object"){
+      throw new Error("This is not a valid Aurora browser backup.");
+    }
+    return parsed;
+  }
+
+  function importBackup(parsed){
+    const keys = Object.keys(parsed.data).filter(key=>PREFIX.test(key));
+    if(!keys.length){
+      throw new Error("The backup contains no Aurora records.");
+    }
+
+    const confirmed = window.confirm(
+      `Replace this browser's Aurora data with ${keys.length} imported records?`
+    );
+    if(!confirmed) return false;
+
+    const existing = [];
+    for(let index=0; index<localStorage.length; index++){
+      const key = localStorage.key(index);
+      if(key && PREFIX.test(key)) existing.push(key);
+    }
+    existing.forEach(key=>localStorage.removeItem(key));
+
+    keys.forEach(key=>{
+      const value = parsed.data[key];
+      if(value !== null && value !== undefined){
+        localStorage.setItem(key, String(value));
+      }
+    });
+
+    localStorage.setItem(
+      "aurora_browser_import_receipt_v1",
+      JSON.stringify({
+        importedAt:new Date().toISOString(),
+        sourceCreatedAt:parsed.createdAt || "",
+        sourceBrowser:parsed.sourceBrowser || "",
+        recordCount:keys.length
+      })
+    );
+
+    refreshSummary();
+    setStatus(
+      `Imported ${keys.length} Aurora records successfully. Brave now has the transferred mission data.`,
+      "ok"
+    );
+    return true;
+  }
+
+  async function importFile(){
+    const file = $("backupFile").files?.[0];
+    if(!file){
+      setStatus("Choose the Aurora JSON backup from the Files app first.", "warn");
+      return;
+    }
+    try{
+      const parsed = parseBackup(await file.text());
+      importBackup(parsed);
+    }catch(error){
+      setStatus(error.message || "The backup could not be imported.", "bad");
+    }
+  }
+
+  function importText(){
+    const text = $("backupText").value.trim();
+    if(!text){
+      setStatus("Paste the Aurora backup text into the box first.", "warn");
+      return;
+    }
+    try{
+      importBackup(parseBackup(text));
+    }catch(error){
+      setStatus(error.message || "The pasted backup could not be imported.", "bad");
+    }
+  }
+
+  $("exportButton").addEventListener("click", downloadBackup);
+  $("copyButton").addEventListener("click", copyBackup);
+  $("importFileButton").addEventListener("click", importFile);
+  $("importTextButton").addEventListener("click", importText);
+  $("openTransferButton").addEventListener("click", ()=>{
+    location.href = "AuroraCityFC_TransferCentre.html";
+  });
+  $("backupFile").addEventListener("change", ()=>{
+    const file = $("backupFile").files?.[0];
+    if(file){
+      setStatus(`Selected ${file.name}. Tap Import selected backup.`, "ok");
+    }
+  });
+  window.addEventListener("storage", refreshSummary);
+
+  detectBrowser();
+  refreshSummary();
+})();
+</script>
+</body>
+</html>
