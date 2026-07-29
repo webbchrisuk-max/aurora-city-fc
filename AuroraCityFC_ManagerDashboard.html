@@ -1215,105 +1215,129 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
   opacity:.6;
   cursor:wait;
 }
-</style><style id="auroraManagerStableButtonStyles">
-/* Stable iPad controls: no flashing transforms or competing transitions. */
+</style><style id="auroraManagerNativeControlsStyles">
 #beastDecisionQueue .beast-decision-btn,
 #beastDecisionQueue .beast-decision-btn:hover,
 #beastDecisionQueue .beast-decision-btn:focus,
 #beastDecisionQueue .beast-decision-btn:active{
   transform:none!important;
   animation:none!important;
-  transition:
-    border-color .12s linear,
-    background-color .12s linear!important;
-  -webkit-tap-highlight-color:transparent!important;
+  transition:none!important;
   touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
 }
 
-#beastDrawerOverlay{
-  z-index:2147482980!important;
+#beastDecisionQueue a.beast-decision-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none!important;
+  cursor:pointer;
 }
 
-#beastHoldingDrawer{
-  z-index:2147482981!important;
-  visibility:visible!important;
-  pointer-events:none;
-  overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;
+dialog#beastHoldingDrawer{
+  position:fixed!important;
+  inset:0 0 0 auto!important;
+  width:min(520px,100vw)!important;
+  max-width:100vw!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  margin:0!important;
+  padding:20px!important;
+  border:1px solid rgba(96,165,250,.30)!important;
+  border-radius:26px 0 0 26px!important;
+  color:var(--text)!important;
+  background:#030a18!important;
+  box-shadow:-24px 0 72px rgba(0,0,0,.58)!important;
+  overflow:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  transform:none!important;
+  transition:none!important;
+  animation:none!important;
 }
 
-#beastHoldingDrawer.open{
-  pointer-events:auto!important;
-  transform:translateX(0)!important;
+dialog#beastHoldingDrawer:not([open]){
+  display:none!important;
 }
 
-#beastHoldingDrawer .beast-panel-head{
-  position:sticky;
-  z-index:12;
-  top:-22px;
-  margin:-22px -22px 12px;
+dialog#beastHoldingDrawer[open]{
+  display:block!important;
+}
+
+dialog#beastHoldingDrawer::backdrop{
+  background:rgba(0,5,16,.74)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+dialog#beastHoldingDrawer .beast-panel-head{
+  position:sticky!important;
+  z-index:20!important;
+  top:-20px!important;
+  margin:-20px -20px 14px!important;
   padding:
     calc(14px + env(safe-area-inset-top,0px))
     14px
-    12px;
-  min-height:76px;
-  align-items:center;
+    13px!important;
+  min-height:82px!important;
+  align-items:center!important;
   background:#030a18!important;
-  border-bottom:1px solid rgba(125,211,252,.17);
+  border-bottom:1px solid rgba(125,211,252,.17)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+.beast-native-dialog-close{
+  display:block;
+  flex:0 0 auto;
+  margin:0;
+  padding:0;
 }
 
 #beastDrawerClose{
-  position:relative;
-  z-index:20;
-  width:56px!important;
-  height:56px!important;
-  min-width:56px!important;
-  min-height:56px!important;
+  display:grid!important;
+  place-items:center!important;
+  width:64px!important;
+  height:64px!important;
+  min-width:64px!important;
+  min-height:64px!important;
+  margin:0!important;
   padding:0!important;
-  border-radius:16px!important;
-  border:1px solid rgba(251,113,133,.45)!important;
-  color:#ffe4e6!important;
-  background:rgba(127,29,29,.55)!important;
-  font-size:31px!important;
+  border:2px solid rgba(251,113,133,.52)!important;
+  border-radius:18px!important;
+  color:#fff1f2!important;
+  background:#7f1d1d!important;
+  box-shadow:none!important;
+  font-size:36px!important;
   line-height:1!important;
   cursor:pointer!important;
   touch-action:manipulation!important;
   -webkit-tap-highlight-color:transparent!important;
-  user-select:none!important;
-  -webkit-user-select:none!important;
   transform:none!important;
+  transition:none!important;
   animation:none!important;
-  transition:background-color .1s linear!important;
 }
 
 #beastDrawerClose:hover,
 #beastDrawerClose:focus,
 #beastDrawerClose:active{
+  background:#be123c!important;
   transform:none!important;
+  transition:none!important;
   animation:none!important;
-  background:rgba(190,24,93,.62)!important;
-}
-
-body.beast-drawer-open #beastDrawerOverlay{
-  opacity:1!important;
-  pointer-events:auto!important;
-}
-
-body.beast-drawer-open #beastHoldingDrawer{
-  transform:translateX(0)!important;
 }
 
 @media(max-width:760px){
-  #beastHoldingDrawer{
+  dialog#beastHoldingDrawer{
     width:100vw!important;
-    max-width:100vw!important;
     border-radius:0!important;
     padding:16px!important;
   }
 
-  #beastHoldingDrawer .beast-panel-head{
-    top:-16px;
-    margin:-16px -16px 12px;
+  dialog#beastHoldingDrawer .beast-panel-head{
+    top:-16px!important;
+    margin:-16px -16px 12px!important;
   }
 }
 </style></head>
@@ -1874,6 +1898,59 @@ async function loadData(force=false){
       livePrices:tabs.LivePrices || []
     };
     renderAll();
+
+    try{
+      const params=new URLSearchParams(location.search);
+
+      if(params.has('managerRefresh')){
+        const refreshedLatest=latestDataTimestamp?.()||null;
+
+        localStorage.setItem(
+          'aurora_manager_refresh_ack_v2',
+          JSON.stringify({
+            at:Date.now(),
+            sourceFingerprint:String(
+              refreshedLatest?.getTime?.()||''
+            ),
+            latest:refreshedLatest?.toISOString?.()||'',
+            sourceStillStale:Boolean(
+              refreshedLatest
+              && (Date.now()-refreshedLatest.getTime())/36e5>8
+            )
+          })
+        );
+
+        history.replaceState(
+          null,
+          '',
+          location.pathname + location.hash
+        );
+
+        setTimeout(()=>{
+          const age=refreshedLatest
+            ? (Date.now()-refreshedLatest.getTime())/36e5
+            : NaN;
+
+          if(Number.isFinite(age)&&age>8){
+            managerNotice?.(
+              `Refresh completed. The downloaded source row is still ${age.toFixed(1)} hours old.`,
+              'warn'
+            );
+          }else{
+            managerNotice?.(
+              'Aurora data refreshed successfully.',
+              'ok'
+            );
+          }
+        },180);
+      }
+    }catch(error){
+      console.warn(
+        'Manager native refresh acknowledgement',
+        error
+      );
+    }
+
     return {ok:true,latest:latestDataTimestamp?.()||null};
   }catch(err){
     console.error(err);
@@ -2586,11 +2663,10 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 <div aria-label="Dashboard theme" class="beast-theme-grid"><button class="beast-theme-button active" data-beast-theme="night" type="button">Aurora Night</button><button class="beast-theme-button" data-beast-theme="deadline" type="button">Deadline Day</button><button class="beast-theme-button" data-beast-theme="gold" type="button">Boardroom Gold</button></div>
 <button class="beast-reset" id="beastResetLayout" type="button">Reset dashboard layout and theme</button>
 </div>
-<div class="beast-drawer-overlay" id="beastDrawerOverlay"></div>
-<aside aria-label="Holding profile drawer" class="beast-drawer" id="beastHoldingDrawer">
-<div class="beast-panel-head"><div><h3>Player Profile</h3><p>Live portfolio holding analysis.</p></div><button aria-label="Close holding profile" class="beast-close" id="beastDrawerClose" type="button">×</button></div>
+<dialog aria-label="Holding profile" class="beast-drawer" id="beastHoldingDrawer">
+<div class="beast-panel-head"><div><h3>Player Profile</h3><p>Live portfolio holding analysis.</p></div><form class="beast-native-dialog-close" method="dialog"><button aria-label="Close holding profile" class="beast-close" id="beastDrawerClose" type="submit" value="close">×</button></form></div>
 <div id="beastDrawerContent"><div class="beast-empty">Select a holding from the portfolio radar.</div></div>
-</aside>
+</dialog>
 <script id="aurora-beast-command-script">
 (()=>{
   'use strict';
@@ -2783,9 +2859,15 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function visibleDecisions(){const closed=decisionState();return decisionCandidates().filter(item=>closed[item.id]?.fingerprint!==item.fingerprint)}
   function decisionPrimaryAction(item){
     if(!item.actionLabel)return '';
-    if(item.href){
-      return `<button class="beast-decision-btn primary" type="button" data-decision-action="navigate" data-decision-href="${esc(item.href)}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)} <span aria-hidden="true">→</span></button>`;
+
+    if(item.action==='refresh'){
+      return `<a class="beast-decision-btn primary aurora-native-action" href="AuroraCityFC_ManagerDashboard.html?managerRefresh=${Date.now()}">${esc(item.actionLabel)} <span aria-hidden="true">→</span></a>`;
     }
+
+    if(item.href){
+      return `<a class="beast-decision-btn primary aurora-native-action" href="${esc(item.href)}">${esc(item.actionLabel)} <span aria-hidden="true">→</span></a>`;
+    }
+
     return `<button class="beast-decision-btn primary" type="button" data-decision-action="${esc(item.action||'open')}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)} <span aria-hidden="true">→</span></button>`;
   }
   function renderDecisions(){
@@ -2828,87 +2910,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     if(!item)return;
     if(action==='complete'||action==='dismiss'){
       closeDecision(item,action==='complete'?'completed':'dismissed');
-      return;
-    }
-    if(action==='refresh'){
-      if(window.__auroraManagerRefreshBusy)return;
-      window.__auroraManagerRefreshBusy=true;
-
-      /*
-       * Close the queue before fetching. This prevents renderAll(),
-       * renderDecisions() and the loading text from replacing the button
-       * underneath the user's finger.
-       */
-      closeDecisionQueue();
-      managerNotice('Refreshing Aurora data…','info');
-
-      try{
-        const result=await window.AuroraManagerRefresh?.();
-
-        if(result?.ok){
-          const latestDate=(()=>{
-            try{return latestDataTimestamp?.()||null}
-            catch(_){return null}
-          })();
-
-          writeJson('aurora_manager_refresh_ack_v2',{
-            at:Date.now(),
-            sourceFingerprint:String(
-              latestDate?.getTime?.()
-              || item.fingerprint
-              || ''
-            ),
-            latest:latestDate?.toISOString?.()||result.latest||'',
-            sourceStillStale:Boolean(result.sourceStillStale)
-          });
-
-          closeDecision(item,'completed');
-          renderAlerts();
-          refreshBeast();
-
-          if(result.sourceStillStale){
-            const age=Number(result.ageHours||0).toFixed(1);
-            managerNotice(
-              `Refresh completed. AuroraMaster downloaded successfully; its source row is still ${age} hours old.`,
-              'warn'
-            );
-            addLog(
-              'Refresh completed — source export still old',
-              `AuroraMaster was re-downloaded. Its newest source row remains ${age} hours old.`,
-              'data',
-              '↻',
-              `refresh-stale-${result.latest}`,
-              0
-            );
-          }else{
-            managerNotice(
-              'Aurora data refreshed successfully.',
-              'ok'
-            );
-            addLog(
-              'Aurora data refreshed',
-              'The Manager Dashboard downloaded a fresh AuroraMaster snapshot.',
-              'data',
-              '↻',
-              `refresh-ok-${result?.latest||Date.now()}`,
-              0
-            );
-          }
-        }else{
-          managerNotice(
-            'Aurora data refresh failed. The task has been left in the queue.',
-            'bad'
-          );
-        }
-      }catch(error){
-        console.error(error);
-        managerNotice(
-          'Aurora data refresh failed. The task has been left in the queue.',
-          'bad'
-        );
-      }finally{
-        window.__auroraManagerRefreshBusy=false;
-      }
       return;
     }
     if(action==='holding'&&item.ticker){
@@ -3001,17 +3002,20 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function openDrawer(t){
     const row=findRow(t);if(!row)return;addLog(`Reviewed holding: ${ticker(row)}`,`${name(row)} • ${cash(value(row))} market value • ${cash(annual(row))}/year income.`,'portfolio','♟',`holding-${ticker(row)}`,300000);const [status,cls]=rowStatus(row),y=rate(row),move=dayMove(row),form=historyFor(ticker(row));q('beastDrawerContent').innerHTML=`<div class="beast-drawer-hero"><small>${account(row)}</small><h2>${ticker(row)}</h2><p>${name(row)}</p><span class="beast-drawer-status beast-status-${cls}">${status} • ${valuation(row)}</span></div><div class="beast-drawer-metrics"><div class="beast-drawer-metric"><small>Market value</small><strong>${cash(value(row))}</strong></div><div class="beast-drawer-metric green"><small>Annual income</small><strong>${cash(annual(row))}</strong></div><div class="beast-drawer-metric"><small>Shares / units</small><strong>${Number.isFinite(shares(row))?shares(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Live price</small><strong>${Number.isFinite(price(row))?price(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Portfolio yield</small><strong>${Number.isFinite(y)?percent(y*100):'—'}</strong></div><div class="beast-drawer-metric ${Number.isFinite(move)&&move>=0?'green':''}"><small>Day move</small><strong>${Number.isFinite(move)?`${move>=0?'+':''}${move.toFixed(2)}%`:'—'}</strong></div></div><div class="beast-drawer-section"><h4>Recent form</h4><p>Five latest usable price sessions. W = positive, D = flat, L = negative.</p><div class="beast-drawer-form">${formMarkup(form,'span')}</div></div><div class="beast-drawer-section"><h4>Manager verdict</h4><p>${managerVerdict(row)}</p></div><div class="beast-drawer-links"><a href="AuroraCityFC_SquadHub.html">Open Squad Hub</a><a href="AuroraCityFC_AnalysisRoom.html">Open Analysis Room</a></div>`;
     closeDecisionQueue();
-    const overlay=q('beastDrawerOverlay');
+
     const drawer=q('beastHoldingDrawer');
+    if(!drawer)return;
 
-    overlay?.classList.add('open');
-    drawer?.classList.add('open');
-
-    overlay?.setAttribute('aria-hidden','false');
-    drawer?.setAttribute('aria-hidden','false');
-
-    document.body.classList.add('beast-drawer-open');
-    document.body.style.overflow='hidden';
+    try{
+      if(typeof drawer.showModal==='function'){
+        if(!drawer.open)drawer.showModal();
+      }else{
+        drawer.setAttribute('open','');
+      }
+    }catch(error){
+      console.warn('Holding profile open',error);
+      drawer.setAttribute('open','');
+    }
 
     requestAnimationFrame(()=>{
       q('beastDrawerClose')?.focus({preventScroll:true});
@@ -3019,17 +3023,18 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   }
 
   function closeDrawer(){
-    const overlay=q('beastDrawerOverlay');
     const drawer=q('beastHoldingDrawer');
+    if(!drawer)return;
 
-    overlay?.classList.remove('open');
-    drawer?.classList.remove('open');
-
-    overlay?.setAttribute('aria-hidden','true');
-    drawer?.setAttribute('aria-hidden','true');
-
-    document.body.classList.remove('beast-drawer-open');
-    document.body.style.overflow='';
+    try{
+      if(typeof drawer.close==='function'&&drawer.open){
+        drawer.close();
+      }else{
+        drawer.removeAttribute('open');
+      }
+    }catch(_){
+      drawer.removeAttribute('open');
+    }
   }
   function togglePanel(id,buttonId){['beastNotificationPanel','beastLayoutPanel'].forEach(pid=>{if(pid!==id)q(pid)?.classList.remove('open')});const panel=q(id);panel?.classList.toggle('open');q(buttonId)?.classList.toggle('active',panel?.classList.contains('open'));}
   function assignPanelKeys(){document.querySelectorAll('.manager-command-grid>.command-panel').forEach((panel,i)=>{if(!panel.dataset.beastKey){const h=panel.querySelector('h3')?.textContent?.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');panel.dataset.beastKey=h||`panel-${i}`}panel.draggable=panel.id!=='beastDecisionQueue'})}
@@ -3085,7 +3090,6 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
       handleDecision(button.dataset.decisionAction,button.dataset.decisionId,button);
     });
     document.addEventListener('click',e=>{const sort=e.target.closest('[data-beast-sort]');if(sort){sortMode=sort.dataset.beastSort;document.querySelectorAll('[data-beast-sort]').forEach(x=>x.classList.toggle('active',x===sort));renderRadar()}const card=e.target.closest('[data-beast-ticker]');if(card)openDrawer(card.dataset.beastTicker);const preview=e.target.closest('.preview-row');if(preview){const t=preview.querySelector('strong')?.textContent;if(t&&findRow(t))openDrawer(t)}});
-    q('beastDrawerClose')?.addEventListener('click',closeDrawer);q('beastDrawerOverlay')?.addEventListener('click',closeDrawer);
     document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeDecisionQueue();q('beastNotificationPanel')?.classList.remove('open');q('beastLayoutPanel')?.classList.remove('open')}if(e.key.toLowerCase()==='p'&&!/input|textarea|select/i.test(e.target.tagName)){const s=settings(),next=!s.presentation;saveSettings({...s,presentation:next});addLog(`Presentation mode ${next?'enabled':'disabled'}`,'Keyboard shortcut P used.','system','▣','presentation-'+next,30000)}});
     window.addEventListener('storage',e=>{if(['aurora_transfer_plan_v2','aurora_registration_last_v1','aurora_payday_execution_v1','aurora_m4_signing_lifecycle_v1','aurora_investment_handoff_completion_v1','aurora_finance_department_mission_v1','aurora_wealth_investment_mission_v1',DECISION_KEY,ACTION_LOG_KEY].includes(e.key))setTimeout(refreshBeast,250)});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshBeast()});
   }
@@ -3220,94 +3224,51 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   clean();
   addEventListener('pageshow',clean);
 })();
-</script><script id="auroraManagerStableButtonScript">
+</script><script id="auroraManagerNativeControlsScript">
 (function(){
   "use strict";
 
-  const byId=id=>document.getElementById(id);
+  function bind(){
+    const dialog=document.getElementById(
+      "beastHoldingDrawer"
+    );
 
-  function forceCloseDrawer(event){
-    if(event){
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation?.();
+    if(
+      !dialog
+      || dialog.dataset.auroraNativeBound
+    ){
+      return;
     }
 
-    const close=byId("beastDrawerClose");
-    const overlay=byId("beastDrawerOverlay");
-    const drawer=byId("beastHoldingDrawer");
+    dialog.dataset.auroraNativeBound="1";
 
-    /*
-     * Keep the event target alive until the click finishes.
-     * Closing in the next animation frame prevents the same iPad tap
-     * from falling through and reopening the holding underneath.
-     */
-    close?.setAttribute("aria-busy","true");
+    dialog.addEventListener(
+      "click",
+      function(event){
+        if(event.target!==dialog)return;
 
-    requestAnimationFrame(function(){
-      overlay?.classList.remove("open");
-      drawer?.classList.remove("open");
+        const rect=dialog.getBoundingClientRect();
+        const inside=
+          event.clientX>=rect.left
+          && event.clientX<=rect.right
+          && event.clientY>=rect.top
+          && event.clientY<=rect.bottom;
 
-      overlay?.setAttribute("aria-hidden","true");
-      drawer?.setAttribute("aria-hidden","true");
-
-      document.body.classList.remove("beast-drawer-open");
-      document.body.style.overflow="";
-
-      close?.removeAttribute("aria-busy");
-      close?.blur();
-    });
-  }
-
-  function bindStableControls(){
-    const close=byId("beastDrawerClose");
-    const overlay=byId("beastDrawerOverlay");
-
-    if(close&&!close.dataset.auroraStableClick){
-      close.dataset.auroraStableClick="1";
-      close.addEventListener(
-        "click",
-        forceCloseDrawer,
-        {capture:true}
-      );
-    }
-
-    if(overlay&&!overlay.dataset.auroraStableClick){
-      overlay.dataset.auroraStableClick="1";
-      overlay.addEventListener(
-        "click",
-        forceCloseDrawer,
-        {capture:true}
-      );
-    }
-  }
-
-  document.addEventListener(
-    "keydown",
-    function(event){
-      if(event.key==="Escape"){
-        forceCloseDrawer(event);
+        if(!inside&&dialog.open){
+          dialog.close();
+        }
       }
-    },
-    true
-  );
-
-  window.addEventListener(
-    "pageshow",
-    function(){
-      bindStableControls();
-      forceCloseDrawer();
-    }
-  );
+    );
+  }
 
   if(document.readyState==="loading"){
     document.addEventListener(
       "DOMContentLoaded",
-      bindStableControls,
+      bind,
       {once:true}
     );
   }else{
-    bindStableControls();
+    bind();
   }
 })();
 </script></body>
