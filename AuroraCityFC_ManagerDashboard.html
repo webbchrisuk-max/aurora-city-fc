@@ -63,6 +63,7 @@
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Manager Dashboard BEAST V3</title>
+<!-- Hotfix: Stable Manager Action Log rendering • 29 Jul 2026 -->
 <!-- Build: Aurora Motion Attention System • 24 Jul 2026 -->
 <!-- Build: BEAST V3 Click-Safe Decision Queue + Department Broadcast Panels • 24 Jul 2026 -->
 <!-- Build: BEAST V2 Decision Queue + Manager Action Log • 24 Jul 2026 -->
@@ -2738,6 +2739,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   let latestAlerts=[];
   let lastRenderSignature='';
   let latestAlertSignature='';
+  let lastActionLogSignature='';
 
   function settings(){
     try{return {...{compact:false,m3:true,radar:true,decisions:true,log:true,media:true,schedule:true,theme:'night',presentation:false},...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}}catch(_){return {compact:false,m3:true,radar:true,decisions:true,log:true,media:true,schedule:true,theme:'night',presentation:false}}
@@ -2791,8 +2793,45 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   }
   function renderActionLog(){
     const box=q('beastActionLogList'),rows=logEntries();if(!box)return;
-    box.innerHTML=rows.length?rows.map(row=>{const d=new Date(Number(row.at)||Date.now());return `<div class="beast-log-row"><span class="beast-log-icon">${esc(row.icon||'•')}</span><span><strong>${esc(row.title)}</strong>${row.detail?`<p>${esc(row.detail)}</p>`:''}</span><time class="beast-log-time" datetime="${d.toISOString()}">${d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}<br>${d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</time></div>`}).join(''):'<div class="beast-empty-state"><strong>No actions recorded yet</strong><p>Complete a decision, open a holding, refresh Aurora or add a manual note.</p></div>';
-    if(q('beastActionLogCount'))q('beastActionLogCount').textContent=`${rows.length} recorded action${rows.length===1?'':'s'}`;
+
+    const countText=`${rows.length} recorded action${rows.length===1?'':'s'}`;
+    if(q('beastActionLogCount')?.textContent!==countText){
+      q('beastActionLogCount').textContent=countText;
+    }
+
+    const signature=JSON.stringify(rows.map(row=>[
+      row.id,row.title,row.detail,row.type,row.icon,row.at,row.dedupeKey
+    ]));
+
+    /*
+     * Do not replace the saved event rows during routine dashboard refreshes.
+     * Rebuilding identical HTML causes visible flashing in iPad browsers.
+     */
+    if(signature===lastActionLogSignature&&box.dataset.actionLogReady==='1'){
+      return;
+    }
+
+    const previousScrollTop=box.scrollTop;
+    const wasAtTop=previousScrollTop<=4;
+    const markup=rows.length
+      ?rows.map(row=>{
+        const timestamp=Number(row.at);
+        const d=new Date(Number.isFinite(timestamp)?timestamp:0);
+        const safeDate=Number.isNaN(d.getTime())?new Date(0):d;
+        return `<div class="beast-log-row" data-log-id="${esc(row.id||'')}"><span class="beast-log-icon">${esc(row.icon||'•')}</span><span><strong>${esc(row.title)}</strong>${row.detail?`<p>${esc(row.detail)}</p>`:''}</span><time class="beast-log-time" datetime="${safeDate.toISOString()}">${safeDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}<br>${safeDate.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</time></div>`;
+      }).join('')
+      :'<div class="beast-empty-state"><strong>No actions recorded yet</strong><p>Complete a decision, open a holding, refresh Aurora or add a manual note.</p></div>';
+
+    if(box.innerHTML!==markup){
+      box.innerHTML=markup;
+    }
+
+    if(!wasAtTop){
+      box.scrollTop=previousScrollTop;
+    }
+
+    box.dataset.actionLogReady='1';
+    lastActionLogSignature=signature;
   }
   function decisionState(){const value=readJson(DECISION_KEY,{});return value&&typeof value==='object'?value:{}}
   function lifecycleSnapshot(){try{return window.AuroraM4?.lifecycle?.()||{}}catch(_){return {}}}
@@ -3095,7 +3134,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     if(!Array.isArray(state?.holdings)||!state.holdings.length)return;
     const signature=`${state.holdings.length}|${activeRows().length}|${q('heroAnnualIncome')?.textContent}|${q('lastUpdated')?.textContent}|${localStorage.getItem('aurora_transfer_plan_v2')||''}`;
     if(signature===lastRenderSignature&&q('beastHoldingStrip')?.children.length>1)return;
-    renderJourney();renderRadar();renderAlerts();renderDecisions();renderActionLog();startTicker();lastRenderSignature=signature;
+    renderJourney();renderRadar();renderAlerts();renderDecisions();startTicker();lastRenderSignature=signature;
   }
   function openDecisionQueue(){
     const s=settings();if(!s.decisions)saveSettings({...s,decisions:true});
