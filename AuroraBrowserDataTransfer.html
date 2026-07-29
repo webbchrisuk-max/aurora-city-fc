@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#020617">
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="#020617" name="theme-color"/>
 <title>Aurora City FC — Browser Data Transfer</title>
 <style>
 :root{
@@ -200,67 +201,58 @@ footer{
 </head>
 <body>
 <main>
-  <section class="hero">
-    <div class="kicker">Aurora City FC • browser migration</div>
-    <h1>Move Aurora into Brave</h1>
-    <p>
+<section class="hero">
+<div class="kicker">Aurora City FC • browser migration</div>
+<h1>Move Aurora into Brave</h1>
+<p>
       Aurora’s portfolio feed comes from the shared online AuroraMaster file.
       Your mission, payday, transfer, shortlist and dashboard progress are stored
       separately inside each browser. This page copies those Aurora records from
       one browser to another.
     </p>
-    <div class="notice">
+<div class="notice">
       Keep the exported backup private. It may contain saved mission details and
       registration settings. The page only transfers storage keys whose names
       begin with <strong>Aurora</strong>.
     </div>
-    <div class="summary">
-      <div><small>Browser</small><strong id="browserName">Checking…</strong></div>
-      <div><small>Aurora records here</small><strong id="recordCount">0</strong></div>
-      <div><small>Current storage size</small><strong id="storageSize">0 KB</strong></div>
-    </div>
-  </section>
-
-  <div class="grid">
-    <section class="card">
-      <span class="step">1</span>
-      <h2>In Chrome: export</h2>
-      <p>
+<div class="summary">
+<div><small>Browser</small><strong id="browserName">Checking…</strong></div>
+<div><small>Aurora records here</small><strong id="recordCount">0</strong></div>
+<div><small>Current storage size</small><strong id="storageSize">0 KB</strong></div>
+</div>
+</section>
+<div class="grid">
+<section class="card">
+<span class="step">1</span>
+<h2>In Chrome: export</h2>
+<p>
         Open this page in the browser that currently contains the correct
         £3,500 mission and four-player allocation. Tap the button and save the
         JSON backup into the iPad Files app.
       </p>
-      <button id="exportButton" type="button">Export Aurora backup</button>
-      <button id="copyButton" class="secondary" type="button">Copy backup text</button>
-      <textarea id="backupText" placeholder="The backup text will appear here after export." spellcheck="false"></textarea>
-    </section>
+<button id="exportButton" type="button">Export Aurora backup</button>
+<button class="secondary" id="copyButton" type="button">Copy backup text</button>
+<textarea id="backupText" placeholder="The backup text will appear here after export." spellcheck="false"></textarea>
+</section>
+<section class="card">
+<span class="step">2</span>
+<h2>In Brave: import</h2>
+<p>Open this same page in Brave. Choose the JSON backup from Files. The import starts automatically as soon as the file is selected—there is no second button to press.</p>
+<label class="file-label" for="backupFile">Choose backup and import automatically</label>
+<input accept="application/json,.json" id="backupFile" type="file"/><div class="status" id="importProgress">No backup selected yet.</div>
 
-    <section class="card">
-      <span class="step">2</span>
-      <h2>In Brave: import</h2>
-      <p>
-        Open this same page in Brave. Select the backup from Files. Importing
-        replaces only Brave’s existing Aurora records and leaves unrelated
-        website data alone.
-      </p>
-      <label class="file-label" for="backupFile">Choose Aurora backup file</label>
-      <input id="backupFile" type="file" accept="application/json,.json">
-      <button id="importFileButton" type="button">Import selected backup</button>
-      <button id="importTextButton" class="secondary" type="button">Import pasted backup text</button>
-      <button id="openTransferButton" class="secondary" type="button">Open Transfer Centre after import</button>
-    </section>
-  </div>
-
-  <div id="status" class="status" role="status">
+<button class="secondary" id="importTextButton" type="button">Import pasted backup text</button>
+<button class="secondary" id="openTransferButton" type="button">Open Transfer Centre after import</button>
+</section>
+</div>
+<div class="status" id="status" role="status">
     Ready. Export from Chrome first, then import the file into Brave.
   </div>
-
-  <footer>
+<footer>
     No information is uploaded anywhere by this page. Export and import happen
     entirely on your device.
   </footer>
 </main>
-
 <script>
 (function(){
   "use strict";
@@ -295,7 +287,6 @@ footer{
 
   function browserLabel(){
     const ua = navigator.userAgent || "";
-    if(/Brave/i.test(navigator.brave ? "Brave" : "")) return "Brave";
     if(/EdgiOS|EdgA|Edg\//i.test(ua)) return "Edge";
     if(/CriOS|Chrome/i.test(ua)) return "Chrome";
     if(/FxiOS|Firefox/i.test(ua)) return "Firefox";
@@ -322,6 +313,13 @@ footer{
 
   function setStatus(message, tone=""){
     const node = $("status");
+    node.className = `status ${tone}`.trim();
+    node.textContent = message;
+  }
+
+  function setProgress(message, tone=""){
+    const node = $("importProgress");
+    if(!node) return;
     node.className = `status ${tone}`.trim();
     node.textContent = message;
   }
@@ -369,41 +367,53 @@ footer{
     $("backupText").value = json;
     try{
       await navigator.clipboard.writeText(json);
-      setStatus("Aurora backup copied. You can paste it into this page in Brave.", "ok");
+      setStatus(
+        "Aurora backup copied. You can paste it into this page in Brave.",
+        "ok"
+      );
     }catch(_){
       $("backupText").focus();
       $("backupText").select();
-      setStatus("Copy was blocked. The backup text is selected—use Copy from the iPad menu.", "warn");
+      setStatus(
+        "Copy was blocked. The backup text is selected—use Copy from the iPad menu.",
+        "warn"
+      );
     }
   }
 
   function parseBackup(text){
     const parsed = JSON.parse(text);
-    if(!parsed || parsed.format !== FORMAT || !parsed.data || typeof parsed.data !== "object"){
+    if(
+      !parsed
+      || parsed.format !== FORMAT
+      || !parsed.data
+      || typeof parsed.data !== "object"
+    ){
       throw new Error("This is not a valid Aurora browser backup.");
     }
     return parsed;
   }
 
   function importBackup(parsed){
-    const keys = Object.keys(parsed.data).filter(key=>PREFIX.test(key));
+    const keys = Object.keys(parsed.data).filter(
+      key => PREFIX.test(key)
+    );
+
     if(!keys.length){
       throw new Error("The backup contains no Aurora records.");
     }
 
-    const confirmed = window.confirm(
-      `Replace this browser's Aurora data with ${keys.length} imported records?`
-    );
-    if(!confirmed) return false;
-
     const existing = [];
     for(let index=0; index<localStorage.length; index++){
       const key = localStorage.key(index);
-      if(key && PREFIX.test(key)) existing.push(key);
+      if(key && PREFIX.test(key)){
+        existing.push(key);
+      }
     }
-    existing.forEach(key=>localStorage.removeItem(key));
 
-    keys.forEach(key=>{
+    existing.forEach(key => localStorage.removeItem(key));
+
+    keys.forEach(key => {
       const value = parsed.data[key];
       if(value !== null && value !== undefined){
         localStorage.setItem(key, String(value));
@@ -421,53 +431,108 @@ footer{
     );
 
     refreshSummary();
-    setStatus(
-      `Imported ${keys.length} Aurora records successfully. Brave now has the transferred mission data.`,
+
+    setProgress(
+      `Imported ${keys.length} Aurora records successfully.`,
       "ok"
     );
+
+    setStatus(
+      `Brave now contains ${keys.length} transferred Aurora records. Open Transfer Centre to confirm the £3,500 mission and four-player allocation.`,
+      "ok"
+    );
+
     return true;
   }
 
-  async function importFile(){
+  function readFileText(file){
+    if(file && typeof file.text === "function"){
+      return file.text();
+    }
+
+    return new Promise((resolve,reject)=>{
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(
+        new Error("Brave could not read the selected backup file.")
+      );
+      reader.readAsText(file);
+    });
+  }
+
+  async function autoImportSelectedFile(){
     const file = $("backupFile").files?.[0];
+
     if(!file){
-      setStatus("Choose the Aurora JSON backup from the Files app first.", "warn");
+      setProgress("No backup selected yet.", "warn");
       return;
     }
+
+    setProgress(
+      `Reading ${file.name}…`,
+      "warn"
+    );
+
     try{
-      const parsed = parseBackup(await file.text());
+      const text = await readFileText(file);
+      const parsed = parseBackup(text);
+
+      setProgress(
+        `Backup read successfully. Importing ${Object.keys(parsed.data).length} Aurora records…`,
+        "warn"
+      );
+
       importBackup(parsed);
     }catch(error){
-      setStatus(error.message || "The backup could not be imported.", "bad");
+      console.error(error);
+      setProgress(
+        error.message || "The selected backup could not be imported.",
+        "bad"
+      );
+      setStatus(
+        "Import failed. The existing Brave data has not been changed.",
+        "bad"
+      );
     }
   }
 
   function importText(){
     const text = $("backupText").value.trim();
     if(!text){
-      setStatus("Paste the Aurora backup text into the box first.", "warn");
+      setStatus(
+        "Paste the Aurora backup text into the box first.",
+        "warn"
+      );
       return;
     }
+
     try{
       importBackup(parseBackup(text));
     }catch(error){
-      setStatus(error.message || "The pasted backup could not be imported.", "bad");
+      setStatus(
+        error.message || "The pasted backup could not be imported.",
+        "bad"
+      );
     }
   }
 
   $("exportButton").addEventListener("click", downloadBackup);
   $("copyButton").addEventListener("click", copyBackup);
-  $("importFileButton").addEventListener("click", importFile);
   $("importTextButton").addEventListener("click", importText);
+
   $("openTransferButton").addEventListener("click", ()=>{
     location.href = "AuroraCityFC_TransferCentre.html";
   });
-  $("backupFile").addEventListener("change", ()=>{
-    const file = $("backupFile").files?.[0];
-    if(file){
-      setStatus(`Selected ${file.name}. Tap Import selected backup.`, "ok");
-    }
-  });
+
+  /*
+   * Auto-import immediately after the iPad file picker returns.
+   * No second button, confirmation dialog or additional tap.
+   */
+  $("backupFile").addEventListener(
+    "change",
+    autoImportSelectedFile
+  );
+
   window.addEventListener("storage", refreshSummary);
 
   detectBrowser();
