@@ -3780,5 +3780,249 @@ init();
 
   window.addEventListener("pageshow", clean);
 })();
-</script></body>
+</script>
+<!-- Build: Aurora Sustainable Income Growth • 29 Jul 2026 -->
+<style id="aurora-sustainable-income-scouting-styles">
+/* Aurora Sustainable Income Growth • Scouting Centre */
+.sig-engine-panel{margin:14px 0 2px;padding:15px;border:1px solid rgba(52,211,153,.28);border-radius:20px;background:linear-gradient(135deg,rgba(6,78,59,.22),rgba(7,17,31,.94));box-shadow:0 16px 44px rgba(0,0,0,.24)}
+.sig-engine-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.sig-engine-head small{display:block;color:#86efac;font-size:9px;font-weight:1000;letter-spacing:.12em;text-transform:uppercase}.sig-engine-head h3{margin:5px 0 3px;font-size:19px}.sig-engine-head p{margin:0;color:#9fb4aa;font-size:10px;line-height:1.5}.sig-live-badge{flex:0 0 auto;padding:7px 9px;border:1px solid rgba(52,211,153,.30);border-radius:999px;background:rgba(6,78,59,.25);color:#bbf7d0;font-size:9px;font-weight:1000}.sig-weight-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin-top:12px}.sig-weight{padding:9px;border:1px solid rgba(148,163,184,.13);border-radius:13px;background:rgba(2,8,20,.48)}.sig-weight small{display:block;color:#8fa59b;font-size:7px;font-weight:900;text-transform:uppercase}.sig-weight strong{display:block;margin-top:5px;color:#eaf8ef;font-size:13px}.sig-engine-summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.sig-summary-pill{padding:6px 8px;border:1px solid rgba(148,163,184,.14);border-radius:999px;background:rgba(2,8,20,.42);color:#b9ccc1;font-size:8px;font-weight:850}.sig-summary-pill.good{color:#bbf7d0;border-color:rgba(52,211,153,.24)}.sig-summary-pill.warn{color:#fde68a;border-color:rgba(251,191,36,.24)}.sig-summary-pill.bad{color:#fecdd3;border-color:rgba(251,113,133,.24)}
+.sig-component-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}.sig-component{padding:9px;border:1px solid rgba(148,163,184,.13);border-radius:13px;background:rgba(2,8,20,.45)}.sig-component small{display:block;color:#8fa49a;font-size:7px;font-weight:900;text-transform:uppercase}.sig-component strong{display:block;margin-top:4px;color:#eaf8ef;font-size:14px}.sig-eligibility{margin-top:10px;padding:9px 10px;border-radius:12px;font-size:9px;line-height:1.45}.sig-eligibility.pass{border:1px solid rgba(52,211,153,.25);background:rgba(6,78,59,.18);color:#bbf7d0}.sig-eligibility.caution{border:1px solid rgba(251,191,36,.25);background:rgba(120,53,15,.18);color:#fde68a}.sig-eligibility.block{border:1px solid rgba(251,113,133,.25);background:rgba(127,29,29,.18);color:#fecdd3}
+@media(max-width:900px){.sig-weight-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:560px){.sig-engine-head{flex-direction:column}.sig-weight-grid,.sig-component-grid{grid-template-columns:1fr 1fr}}
+</style>
+<script id="aurora-sustainable-income-scouting">
+(function(){
+  "use strict";
+  document.documentElement.dataset.auroraSustainableIncome="scouting-v1";
+
+  const sigClamp=(value,min=0,max=100)=>Math.max(min,Math.min(max,Number(value)||0));
+  const sigNumber=(row,names)=>{
+    for(const name of names){
+      const value=row?.[name];
+      if(value===null||value===undefined||value==='') continue;
+      const parsed=Number(String(value).replace(/,/g,'').replace(/%/g,'').replace(/[^0-9.-]/g,''));
+      if(Number.isFinite(parsed)) return parsed;
+    }
+    return NaN;
+  };
+  const sigText=(row,names)=>{
+    for(const name of names){
+      const value=String(row?.[name]??'').trim();
+      if(value) return value;
+    }
+    return '';
+  };
+  const sigDateAgeDays=value=>{
+    if(!value) return NaN;
+    const direct=new Date(value);
+    if(!Number.isNaN(direct.getTime())) return Math.max(0,(Date.now()-direct.getTime())/86400000);
+    const match=String(value).match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+    if(!match) return NaN;
+    const parsed=new Date(Number(match[3]),Number(match[2])-1,Number(match[1]));
+    return Math.max(0,(Date.now()-parsed.getTime())/86400000);
+  };
+
+  function sigDividendGrowthScore(row){
+    const growth=sigNumber(row,['dividend_growth_5y','dividend_growth_5yr','five_year_dividend_growth','dividend_growth','dps_growth_5y']);
+    if(!Number.isFinite(growth)) return 50;
+    if(growth>=10) return 95;
+    if(growth>=7) return 88;
+    if(growth>=4) return 78;
+    if(growth>=2) return 67;
+    if(growth>=0) return 56;
+    if(growth>-5) return 32;
+    return 12;
+  }
+
+  function sigSafetyScore(row){
+    const risk=sigText(row,['payout_risk','dividend_risk']).toLowerCase();
+    const status=sigText(row,['dividend_status','distribution_status','dividend_action']).toLowerCase();
+    let score=risk.includes('very high')?5:risk.includes('high')?25:(risk.includes('check')||risk.includes('review'))?45:risk.includes('medium')?66:risk.includes('low')?90:58;
+    const cover=sigNumber(row,['dividend_cover','earnings_dividend_cover','earnings_cover']);
+    const fcfCover=sigNumber(row,['fcf_dividend_cover','free_cash_flow_cover','cash_dividend_cover']);
+    const interest=sigNumber(row,['interest_cover','interest_coverage']);
+    const debt=sigNumber(row,['net_debt_ebitda','net_debt_to_ebitda']);
+    const covers=[cover,fcfCover].filter(Number.isFinite);
+    if(covers.length){
+      const weakest=Math.min(...covers);
+      if(weakest<1) score-=38;
+      else if(weakest<1.2) score-=20;
+      else if(weakest>=2) score+=10;
+      else if(weakest>=1.5) score+=6;
+    }
+    if(Number.isFinite(interest)){if(interest<1.5)score-=28;else if(interest<2.5)score-=12;else if(interest>=5)score+=6;}
+    if(Number.isFinite(debt)){if(debt>5)score-=22;else if(debt>3.5)score-=10;else if(debt<2)score+=5;}
+    if(/suspend|cancel|omit/.test(status)) score=0;
+    else if(/cut|reduce/.test(status)) score=Math.min(score,25);
+    else if(/grow|increase|covered|maintain/.test(status)) score+=5;
+    return Math.round(sigClamp(score));
+  }
+
+  function sigValuationScore(row,base){
+    const valuation=String(base?.valuation??sigText(row,['valuation_status','valuation'])).toLowerCase();
+    const upside=Number(base?.upside);
+    let score=valuation.includes('under')||valuation.includes('discount')?90:valuation.includes('fair')||valuation.includes('neutral')?68:valuation.includes('over')?28:52;
+    if(Number.isFinite(upside)) score+=sigClamp(upside,-25,30)*0.55;
+    return Math.round(sigClamp(score));
+  }
+
+  function sigIncomeScore(row,base){
+    const y=Number(base?.yieldPct??sigNumber(row,['dividend_yield','yield_pct','yield']));
+    if(!Number.isFinite(y)||y<=0) return 0;
+    let score=sigClamp((y/8)*100);
+    if(y>10) score-=Math.min(35,(y-10)*7);
+    return Math.round(sigClamp(score));
+  }
+
+  function sigFitScore(row,base){
+    const impact=Number(base?.impact??sigNumber(row,['promotion_impact_score','impact_score','impact']));
+    const chemistry=sigText(row,['chemistry_risk','squad_balance_note']).toLowerCase();
+    let score=Number.isFinite(impact)?impact:55;
+    if(/high|poor|clash|overweight/.test(chemistry)) score-=18;
+    if(/improve|balance|low|good/.test(chemistry)) score+=8;
+    return Math.round(sigClamp(score));
+  }
+
+  function sigQualityScore(row,base){
+    const explicit=sigNumber(row,['business_quality','quality_score','quality','profitability_score']);
+    let score=Number.isFinite(explicit)?explicit:[Number(base?.strength),Number(base?.impact)].filter(Number.isFinite).reduce((a,b)=>a+b,0)/([Number(base?.strength),Number(base?.impact)].filter(Number.isFinite).length||1);
+    if(!Number.isFinite(score)||score<=0) score=52;
+    const roe=sigNumber(row,['return_on_equity','roe']);
+    const stability=sigNumber(row,['earnings_stability','earnings_stability_score']);
+    if(Number.isFinite(roe)){if(roe>=15)score+=8;else if(roe<5)score-=8;}
+    if(Number.isFinite(stability)) score=(score*0.75)+(stability*0.25);
+    return Math.round(sigClamp(score));
+  }
+
+  function sigDataScore(row,base){
+    let score=100;
+    const required=[Number(base?.live),Number(base?.yieldPct),Number(base?.fair)];
+    if(!(required[0]>0)) score-=45;
+    if(!(required[1]>0)) score-=35;
+    if(!(required[2]>0)) score-=10;
+    const age=sigDateAgeDays(sigText(row,['last_updated','data_checked_at','verified_at','price_checked_at']));
+    if(Number.isFinite(age)){if(age>90)score-=35;else if(age>45)score-=22;else if(age>21)score-=10;}
+    else score-=8;
+    return Math.round(sigClamp(score));
+  }
+
+  function sigAssessment(row,base){
+    const safety=sigSafetyScore(row);
+    const income=sigIncomeScore(row,base);
+    const valuation=sigValuationScore(row,base);
+    const fit=sigFitScore(row,base);
+    const growth=sigDividendGrowthScore(row);
+    const quality=sigQualityScore(row,base);
+    const data=sigDataScore(row,base);
+    const raw=(safety*.25)+(income*.20)+(valuation*.20)+(fit*.15)+(growth*.10)+(quality*.10);
+    const score=Math.round(sigClamp(raw*(0.72+data*.0028)));
+    const reasons=[];
+    const dividendStatus=sigText(row,['dividend_status','distribution_status','dividend_action']).toLowerCase();
+    const risk=String(base?.risk??sigText(row,['payout_risk'])).toLowerCase();
+    let eligibility='pass';
+    if(!(Number(base?.live)>0)){eligibility='block';reasons.push('Live price is missing.');}
+    if(!(Number(base?.yieldPct)>0)){eligibility='block';reasons.push('Recurring dividend yield is missing.');}
+    if(/suspend|cancel|omit/.test(dividendStatus)){eligibility='block';reasons.push('Dividend is suspended or cancelled.');}
+    if(risk.includes('very high')){eligibility='block';reasons.push('Payout risk is very high.');}
+    if(safety<35){eligibility='block';reasons.push('Dividend-safety score is below the purchase gate.');}
+    if(data<50){eligibility='block';reasons.push('Data confidence is below the purchase gate.');}
+    if(eligibility!=='block'&&(safety<60||data<75||Number(base?.yieldPct)>10)){eligibility='caution';}
+    if(!reasons.length){
+      reasons.push(eligibility==='pass'?'Clears the sustainable-income eligibility gates.':'Eligible only with controlled sizing and manager review.');
+    }
+    return {sustainableScore:score,dividendSafetyScore:safety,incomeScore:income,valuationScore:valuation,portfolioFitScore:fit,dividendGrowthScore:growth,businessQualityScore:quality,dataQualityScore:data,eligibility,eligibilityReasons:reasons,eligible:eligibility!=='block'};
+  }
+
+  const originalNormalise=normaliseScout;
+  normaliseScout=function(row){
+    const base=originalNormalise(row);
+    const assessment=sigAssessment(row,base);
+    return {...base,...assessment,ranking:assessment.sustainableScore};
+  };
+
+  topSorted=function(){
+    return [...state.scouts].sort((a,b)=>Number(b.eligible)-Number(a.eligible)||b.ranking-a.ranking);
+  };
+
+  const originalToggleShortlist=toggleShortlist;
+  toggleShortlist=function(ticker){
+    const row=state.scouts.find(item=>item.ticker===ticker);
+    if(row&&!row.eligible&&!state.shortlist.has(ticker)){
+      toast(`${ticker} is blocked by the sustainable-income safety gates`);
+      return;
+    }
+    originalToggleShortlist(ticker);
+  };
+
+  const originalOpenDetail=openDetail;
+  openDetail=function(ticker,refreshOnly=false){
+    originalOpenDetail(ticker,refreshOnly);
+    const row=state.scouts.find(item=>item.ticker===ticker);
+    const content=document.getElementById('detailContent');
+    if(!row||!content||content.querySelector('.sig-component-grid')) return;
+    const score=content.querySelector('.detail-score');
+    if(score) score.textContent=`Sustainable Income score ${Math.round(row.sustainableScore)}`;
+    const stats=content.querySelector('.detail-grid');
+    stats?.insertAdjacentHTML('afterend',`<div class="sig-component-grid">
+      <div class="sig-component"><small>Dividend safety • 25%</small><strong>${row.dividendSafetyScore}/100</strong></div>
+      <div class="sig-component"><small>Income • 20%</small><strong>${row.incomeScore}/100</strong></div>
+      <div class="sig-component"><small>Valuation • 20%</small><strong>${row.valuationScore}/100</strong></div>
+      <div class="sig-component"><small>Portfolio fit • 15%</small><strong>${row.portfolioFitScore}/100</strong></div>
+      <div class="sig-component"><small>Dividend growth • 10%</small><strong>${row.dividendGrowthScore}/100</strong></div>
+      <div class="sig-component"><small>Business quality • 10%</small><strong>${row.businessQualityScore}/100</strong></div>
+    </div><div class="sig-eligibility ${row.eligibility}"><strong>${row.eligibility==='pass'?'Eligible':row.eligibility==='caution'?'Controlled sizing':'Blocked from payday selection'}</strong> • ${row.eligibilityReasons.join(' ')}</div>`);
+    const shortlist=document.getElementById('detailShortlistBtn');
+    if(shortlist&&!row.eligible&&!state.shortlist.has(ticker)){
+      shortlist.disabled=true;
+      shortlist.textContent='Blocked by safety gates';
+    }
+  };
+
+  function injectEnginePanel(){
+    if(document.getElementById('sigScoutingEngine')) return;
+    const anchor=document.querySelector('.rumour-bar')||document.querySelector('.kpi-grid');
+    if(!anchor) return;
+    const panel=document.createElement('section');
+    panel.id='sigScoutingEngine';panel.className='sig-engine-panel aurora-section-anchor';
+    panel.innerHTML=`<div class="sig-engine-head"><div><small>Payday selection engine</small><h3>Sustainable Income Growth</h3><p>Safety gates run first. Eligible candidates are then ranked for dependable income, value, portfolio fit, dividend growth and quality.</p></div><span class="sig-live-badge">DEFAULT METHOD</span></div><div class="sig-weight-grid"><div class="sig-weight"><small>Dividend safety</small><strong>25%</strong></div><div class="sig-weight"><small>Income</small><strong>20%</strong></div><div class="sig-weight"><small>Valuation</small><strong>20%</strong></div><div class="sig-weight"><small>Portfolio fit</small><strong>15%</strong></div><div class="sig-weight"><small>Dividend growth</small><strong>10%</strong></div><div class="sig-weight"><small>Business quality</small><strong>10%</strong></div></div><div class="sig-engine-summary" id="sigScoutingSummary"></div>`;
+    anchor.insertAdjacentElement('afterend',panel);
+  }
+
+  function updateEnginePanel(){
+    injectEnginePanel();
+    const summary=document.getElementById('sigScoutingSummary');
+    if(!summary) return;
+    const pass=state.scouts.filter(row=>row.eligibility==='pass').length;
+    const caution=state.scouts.filter(row=>row.eligibility==='caution').length;
+    const blocked=state.scouts.filter(row=>row.eligibility==='block').length;
+    summary.innerHTML=`<span class="sig-summary-pill good">${pass} fully eligible</span><span class="sig-summary-pill warn">${caution} controlled</span><span class="sig-summary-pill bad">${blocked} blocked</span><span class="sig-summary-pill">£25 incremental allocation happens in Transfer Centre</span>`;
+    const rankOption=document.querySelector('#sortFilter option[value="rank"]');
+    if(rankOption) rankOption.textContent='Sustainable Income score';
+    const recBadge=document.querySelector('#scouting-radar .panel:nth-child(2) .section-badge');
+    if(recBadge) recBadge.textContent='Sustainable ranking';
+    const recTitle=document.querySelector('#scouting-radar .panel:nth-child(2) h4');
+    if(recTitle) recTitle.textContent='Sustainable income recommendations';
+    const radarCopy=document.querySelector('#scouting-radar .section-head p');
+    if(radarCopy) radarCopy.textContent='Eligible candidates rank first. Safety, income, valuation, portfolio fit, dividend growth and quality form the score.';
+  }
+
+  function renormaliseAndRender(){
+    if(!state?.scouts?.length) return;
+    state.scouts=state.scouts.map(row=>normaliseScout(row));
+    try{renderAll();}catch(error){console.error('Sustainable scouting render',error);}
+    updateEnginePanel();
+  }
+
+  const originalFetchAurora=fetchAurora;
+  fetchAurora=async function(){
+    await originalFetchAurora();
+    state.scouts=state.scouts.map(row=>normaliseScout(row));
+  };
+
+  window.AuroraSustainableIncomeScouting={assess:sigAssessment,weights:{dividendSafety:25,income:20,valuation:20,portfolioFit:15,dividendGrowth:10,businessQuality:10}};
+  injectEnginePanel();
+  setTimeout(renormaliseAndRender,150);
+  setTimeout(renormaliseAndRender,1800);
+})();
+</script>
+</body>
 </html>
