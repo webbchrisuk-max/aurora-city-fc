@@ -1215,21 +1215,69 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
   opacity:.6;
   cursor:wait;
 }
-</style><style id="auroraHoldingDrawerStackFix">
-/* Manager portfolio profile drawer — overlay must sit behind the drawer. */
+</style><style id="auroraHoldingDrawerResponsiveFix">
+/* Manager holding profile — reliable iPad/mobile drawer and close control. */
 #beastDrawerOverlay{
   z-index:2147482980!important;
 }
 
 #beastHoldingDrawer{
   z-index:2147482981!important;
-  visibility:visible;
+  visibility:visible!important;
   pointer-events:none;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
 }
 
 #beastHoldingDrawer.open{
   visibility:visible!important;
   pointer-events:auto!important;
+  transform:translateX(0)!important;
+}
+
+#beastHoldingDrawer .beast-panel-head{
+  position:sticky;
+  z-index:12;
+  top:-22px;
+  margin:-22px -22px 12px;
+  padding:
+    calc(14px + env(safe-area-inset-top,0px))
+    14px
+    12px;
+  min-height:72px;
+  align-items:center;
+  background:rgba(3,10,24,.98);
+  border-bottom:1px solid rgba(125,211,252,.17);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+#beastDrawerClose{
+  position:relative;
+  z-index:14;
+  flex:0 0 auto;
+  width:52px!important;
+  height:52px!important;
+  min-width:52px!important;
+  min-height:52px!important;
+  padding:0!important;
+  border-radius:16px!important;
+  border-color:rgba(251,113,133,.38)!important;
+  color:#ffe4e6!important;
+  background:rgba(127,29,29,.42)!important;
+  font-size:30px!important;
+  font-weight:500!important;
+  line-height:1!important;
+  cursor:pointer!important;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+#beastDrawerClose:active{
+  transform:scale(.93);
+  background:rgba(190,24,93,.48)!important;
 }
 
 body.beast-drawer-open #beastDrawerOverlay{
@@ -1246,6 +1294,12 @@ body.beast-drawer-open #beastHoldingDrawer{
     width:100vw!important;
     max-width:100vw!important;
     border-radius:0!important;
+    padding:16px!important;
+  }
+
+  #beastHoldingDrawer .beast-panel-head{
+    top:-16px;
+    margin:-16px -16px 12px;
   }
 }
 </style></head>
@@ -2769,14 +2823,41 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
         renderDecisions();
         refreshBeast();
         if(result?.ok){
+          /*
+           * The Manager has completed the requested refresh check.
+           * Clear this action from the Decision Queue even when the
+           * downloaded AuroraMaster still contains an old source row.
+           * The read-only bell alert can continue reporting stale source data.
+           */
+          closeDecision(item,'completed');
+
           if(result.sourceStillStale){
             const age=Number(result.ageHours||0).toFixed(1);
-            managerNotice(`AuroraMaster was re-downloaded successfully, but its newest source row is still ${age} hours old.`,'warn');
-            addLog('AuroraMaster refreshed — source still old',`Newest row remains ${age} hours old. The source export needs updating.`,`data`,'↻',`refresh-stale-${result.latest}`,0);
+            managerNotice(
+              `Refresh check completed and cleared. AuroraMaster downloaded successfully, but its newest source row is still ${age} hours old.`,
+              'warn'
+            );
+            addLog(
+              'Refresh check completed — source export still old',
+              `AuroraMaster was re-downloaded. Its newest source row remains ${age} hours old.`,
+              'data',
+              '↻',
+              `refresh-stale-${result.latest}`,
+              0
+            );
           }else{
-            managerNotice('Aurora data refreshed successfully.','ok');
-            addLog('Aurora data refreshed','The Manager Dashboard downloaded a fresh AuroraMaster snapshot.','data','↻',`refresh-ok-${result?.latest||Date.now()}`,0);
-            closeDecisionQueue();
+            managerNotice(
+              'Aurora data refreshed successfully and the refresh task has been cleared.',
+              'ok'
+            );
+            addLog(
+              'Aurora data refreshed',
+              'The Manager Dashboard downloaded a fresh AuroraMaster snapshot.',
+              'data',
+              '↻',
+              `refresh-ok-${result?.latest||Date.now()}`,
+              0
+            );
           }
         }else{
           managerNotice('Aurora data refresh failed. The existing dashboard data has been kept.','bad');
@@ -2881,9 +2962,37 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function managerVerdict(row){const [status]=rowStatus(row),y=rate(row),s=strength(row),v=valuation(row);if(status==='Under review')return `${ticker(row)} needs monitoring before further funds are committed. ${Number.isFinite(s)?`Buy-strength is ${Math.round(s)}.`:''}`;if(status==='Strong')return `${ticker(row)} is performing as a strong income-squad member. ${Number.isFinite(y)?`Current portfolio yield contribution is ${percent(y*100)}.`:''}`;return `${ticker(row)} remains a stable member of the income squad. Valuation status: ${v}.`}
   function openDrawer(t){
     const row=findRow(t);if(!row)return;addLog(`Reviewed holding: ${ticker(row)}`,`${name(row)} • ${cash(value(row))} market value • ${cash(annual(row))}/year income.`,'portfolio','♟',`holding-${ticker(row)}`,300000);const [status,cls]=rowStatus(row),y=rate(row),move=dayMove(row),form=historyFor(ticker(row));q('beastDrawerContent').innerHTML=`<div class="beast-drawer-hero"><small>${account(row)}</small><h2>${ticker(row)}</h2><p>${name(row)}</p><span class="beast-drawer-status beast-status-${cls}">${status} • ${valuation(row)}</span></div><div class="beast-drawer-metrics"><div class="beast-drawer-metric"><small>Market value</small><strong>${cash(value(row))}</strong></div><div class="beast-drawer-metric green"><small>Annual income</small><strong>${cash(annual(row))}</strong></div><div class="beast-drawer-metric"><small>Shares / units</small><strong>${Number.isFinite(shares(row))?shares(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Live price</small><strong>${Number.isFinite(price(row))?price(row).toLocaleString('en-GB',{maximumFractionDigits:4}):'—'}</strong></div><div class="beast-drawer-metric"><small>Portfolio yield</small><strong>${Number.isFinite(y)?percent(y*100):'—'}</strong></div><div class="beast-drawer-metric ${Number.isFinite(move)&&move>=0?'green':''}"><small>Day move</small><strong>${Number.isFinite(move)?`${move>=0?'+':''}${move.toFixed(2)}%`:'—'}</strong></div></div><div class="beast-drawer-section"><h4>Recent form</h4><p>Five latest usable price sessions. W = positive, D = flat, L = negative.</p><div class="beast-drawer-form">${formMarkup(form,'span')}</div></div><div class="beast-drawer-section"><h4>Manager verdict</h4><p>${managerVerdict(row)}</p></div><div class="beast-drawer-links"><a href="AuroraCityFC_SquadHub.html">Open Squad Hub</a><a href="AuroraCityFC_AnalysisRoom.html">Open Analysis Room</a></div>`;
-    q('beastDrawerOverlay').classList.add('open');q('beastHoldingDrawer').classList.add('open');document.body.style.overflow='hidden';
+    closeDecisionQueue();
+    const overlay=q('beastDrawerOverlay');
+    const drawer=q('beastHoldingDrawer');
+
+    overlay?.classList.add('open');
+    drawer?.classList.add('open');
+
+    overlay?.setAttribute('aria-hidden','false');
+    drawer?.setAttribute('aria-hidden','false');
+
+    document.body.classList.add('beast-drawer-open');
+    document.body.style.overflow='hidden';
+
+    requestAnimationFrame(()=>{
+      q('beastDrawerClose')?.focus({preventScroll:true});
+    });
   }
-  function closeDrawer(){q('beastDrawerOverlay')?.classList.remove('open');q('beastHoldingDrawer')?.classList.remove('open');document.body.style.overflow=''}
+
+  function closeDrawer(){
+    const overlay=q('beastDrawerOverlay');
+    const drawer=q('beastHoldingDrawer');
+
+    overlay?.classList.remove('open');
+    drawer?.classList.remove('open');
+
+    overlay?.setAttribute('aria-hidden','true');
+    drawer?.setAttribute('aria-hidden','true');
+
+    document.body.classList.remove('beast-drawer-open');
+    document.body.style.overflow='';
+  }
   function togglePanel(id,buttonId){['beastNotificationPanel','beastLayoutPanel'].forEach(pid=>{if(pid!==id)q(pid)?.classList.remove('open')});const panel=q(id);panel?.classList.toggle('open');q(buttonId)?.classList.toggle('active',panel?.classList.contains('open'));}
   function assignPanelKeys(){document.querySelectorAll('.manager-command-grid>.command-panel').forEach((panel,i)=>{if(!panel.dataset.beastKey){const h=panel.querySelector('h3')?.textContent?.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');panel.dataset.beastKey=h||`panel-${i}`}panel.draggable=panel.id!=='beastDecisionQueue'})}
   function applyOrder(){try{const order=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]'),grid=document.querySelector('.manager-command-grid');if(!grid||!Array.isArray(order))return;order.forEach(key=>{const node=[...grid.children].find(x=>x.dataset?.beastKey===key);if(node)grid.appendChild(node)})}catch(_){}}
@@ -3073,156 +3182,108 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   clean();
   addEventListener('pageshow',clean);
 })();
-</script><script id="auroraHoldingDrawerBehaviourFix">
+</script><script id="auroraHoldingDrawerResponsiveScript">
 (function(){
   "use strict";
 
-  function byId(id){
-    return document.getElementById(id);
-  }
+  const byId = id => document.getElementById(id);
 
-  function closeOtherManagerPanels(){
-    document.body.classList.remove("beast-decision-open");
+  function closeImmediately(event){
+    if(event){
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
+    }
 
-    byId("beastDecisionOverlay")
-      ?.setAttribute("aria-hidden","true");
-
-    byId("beastDecisionButton")
-      ?.setAttribute("aria-expanded","false");
-
-    byId("beastDecisionQueue")
-      ?.removeAttribute("aria-modal");
-
-    byId("beastNotificationPanel")
-      ?.classList.remove("open");
-
-    byId("beastNotificationButton")
-      ?.classList.remove("active");
-
-    byId("beastLayoutPanel")
-      ?.classList.remove("open");
-
-    byId("beastLayoutButton")
-      ?.classList.remove("active");
-  }
-
-  function synchroniseDrawer(open){
     const overlay = byId("beastDrawerOverlay");
     const drawer = byId("beastHoldingDrawer");
 
-    if(!overlay || !drawer) return;
+    overlay?.classList.remove("open");
+    drawer?.classList.remove("open");
 
-    document.body.classList.toggle(
-      "beast-drawer-open",
-      open
-    );
+    overlay?.setAttribute("aria-hidden","true");
+    drawer?.setAttribute("aria-hidden","true");
 
-    overlay.classList.toggle("open",open);
-    drawer.classList.toggle("open",open);
+    document.body.classList.remove("beast-drawer-open");
+    document.body.style.overflow = "";
 
-    overlay.setAttribute(
-      "aria-hidden",
-      String(!open)
-    );
+    /*
+     * Clear focus immediately so iPad Safari does not keep the
+     * close control in an unresponsive pressed state.
+     */
+    byId("beastDrawerClose")?.blur();
+  }
 
-    drawer.setAttribute(
-      "aria-hidden",
-      String(!open)
-    );
+  function bind(){
+    const close = byId("beastDrawerClose");
+    const overlay = byId("beastDrawerOverlay");
 
-    if(open){
-      document.body.style.overflow = "hidden";
+    if(close && !close.dataset.auroraResponsiveClose){
+      close.dataset.auroraResponsiveClose = "1";
 
-      requestAnimationFrame(function(){
-        byId("beastDrawerClose")
-          ?.focus({preventScroll:true});
-      });
-    }else{
-      document.body.style.overflow = "";
+      /*
+       * pointerdown closes before Safari waits to decide whether
+       * the gesture is a tap, scroll or double-tap.
+       */
+      close.addEventListener(
+        "pointerdown",
+        closeImmediately,
+        {capture:true}
+      );
+      close.addEventListener(
+        "touchstart",
+        closeImmediately,
+        {capture:true,passive:false}
+      );
+      close.addEventListener(
+        "click",
+        closeImmediately,
+        {capture:true}
+      );
+    }
+
+    if(overlay && !overlay.dataset.auroraResponsiveClose){
+      overlay.dataset.auroraResponsiveClose = "1";
+      overlay.addEventListener(
+        "pointerdown",
+        closeImmediately,
+        {capture:true}
+      );
+      overlay.addEventListener(
+        "click",
+        closeImmediately,
+        {capture:true}
+      );
     }
   }
 
-  /*
-   * The original openDrawer() still builds all profile data.
-   * Watch for its class change and force the correct panel state.
-   */
-  const drawer = byId("beastHoldingDrawer");
-
-  if(drawer){
-    new MutationObserver(function(){
-      const open = drawer.classList.contains("open");
-
-      if(open){
-        closeOtherManagerPanels();
-      }
-
-      synchroniseDrawer(open);
-    }).observe(
-      drawer,
-      {
-        attributes:true,
-        attributeFilter:["class"]
-      }
-    );
-  }
-
   document.addEventListener(
-    "click",
-    function(event){
-      const profileTrigger = event.target.closest(
-        "[data-beast-ticker],"
-        + '[data-decision-action="holding"]'
-      );
-
-      if(profileTrigger){
-        closeOtherManagerPanels();
-
-        /*
-         * openDrawer() runs in the Manager's existing handler.
-         * This second check runs after it and guarantees that the
-         * drawer—not just the blur overlay—is visible.
-         */
-        setTimeout(function(){
-          if(
-            byId("beastHoldingDrawer")
-              ?.classList.contains("open")
-          ){
-            synchroniseDrawer(true);
-          }
-        },220);
-      }
-
-      if(
-        event.target.closest(
-          "#beastDrawerClose,#beastDrawerOverlay"
-        )
-      ){
-        setTimeout(
-          function(){
-            synchroniseDrawer(false);
-          },
-          0
-        );
+    "keydown",
+    event => {
+      if(event.key === "Escape"){
+        closeImmediately(event);
       }
     },
     true
   );
 
-  document.addEventListener(
-    "keydown",
-    function(event){
-      if(event.key === "Escape"){
-        synchroniseDrawer(false);
-      }
+  window.addEventListener(
+    "pageshow",
+    () => {
+      bind();
+      closeImmediately();
     }
   );
 
-  window.addEventListener(
-    "pageshow",
-    function(){
-      synchroniseDrawer(false);
-    }
-  );
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      bind,
+      {once:true}
+    );
+  }else{
+    bind();
+  }
 })();
 </script></body>
 </html>
