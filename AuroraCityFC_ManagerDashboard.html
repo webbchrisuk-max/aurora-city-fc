@@ -1215,8 +1215,21 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
   opacity:.6;
   cursor:wait;
 }
-</style><style id="auroraHoldingDrawerResponsiveFix">
-/* Manager holding profile — reliable iPad/mobile drawer and close control. */
+</style><style id="auroraManagerStableButtonStyles">
+/* Stable iPad controls: no flashing transforms or competing transitions. */
+#beastDecisionQueue .beast-decision-btn,
+#beastDecisionQueue .beast-decision-btn:hover,
+#beastDecisionQueue .beast-decision-btn:focus,
+#beastDecisionQueue .beast-decision-btn:active{
+  transform:none!important;
+  animation:none!important;
+  transition:
+    border-color .12s linear,
+    background-color .12s linear!important;
+  -webkit-tap-highlight-color:transparent!important;
+  touch-action:manipulation!important;
+}
+
 #beastDrawerOverlay{
   z-index:2147482980!important;
 }
@@ -1230,7 +1243,6 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
 }
 
 #beastHoldingDrawer.open{
-  visibility:visible!important;
   pointer-events:auto!important;
   transform:translateX(0)!important;
 }
@@ -1244,40 +1256,42 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
     calc(14px + env(safe-area-inset-top,0px))
     14px
     12px;
-  min-height:72px;
+  min-height:76px;
   align-items:center;
-  background:rgba(3,10,24,.98);
+  background:#030a18!important;
   border-bottom:1px solid rgba(125,211,252,.17);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
 }
 
 #beastDrawerClose{
   position:relative;
-  z-index:14;
-  flex:0 0 auto;
-  width:52px!important;
-  height:52px!important;
-  min-width:52px!important;
-  min-height:52px!important;
+  z-index:20;
+  width:56px!important;
+  height:56px!important;
+  min-width:56px!important;
+  min-height:56px!important;
   padding:0!important;
   border-radius:16px!important;
-  border-color:rgba(251,113,133,.38)!important;
+  border:1px solid rgba(251,113,133,.45)!important;
   color:#ffe4e6!important;
-  background:rgba(127,29,29,.42)!important;
-  font-size:30px!important;
-  font-weight:500!important;
+  background:rgba(127,29,29,.55)!important;
+  font-size:31px!important;
   line-height:1!important;
   cursor:pointer!important;
-  touch-action:manipulation;
-  -webkit-tap-highlight-color:transparent;
-  user-select:none;
-  -webkit-user-select:none;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+  transform:none!important;
+  animation:none!important;
+  transition:background-color .1s linear!important;
 }
 
+#beastDrawerClose:hover,
+#beastDrawerClose:focus,
 #beastDrawerClose:active{
-  transform:scale(.93);
-  background:rgba(190,24,93,.48)!important;
+  transform:none!important;
+  animation:none!important;
+  background:rgba(190,24,93,.62)!important;
 }
 
 body.beast-drawer-open #beastDrawerOverlay{
@@ -2661,14 +2675,19 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     const m=journeyMetrics(),items=[];
     if(m.latest){
       const age=(Date.now()-m.latest.getTime())/36e5;
-      if(age>8){
+      const refreshAck=readJson('aurora_manager_refresh_ack_v2',{});
+      const sourceFingerprint=String(m.latest.getTime());
+      const sameSource=String(refreshAck.sourceFingerprint||'')===sourceFingerprint;
+      const recentlyChecked=sameSource&&(Date.now()-Number(refreshAck.at||0))<12*60*60*1000;
+
+      if(age>8&&!recentlyChecked){
         items.push({
           id:'refresh-data',
-          fingerprint:String(m.latest.getTime()),
+          fingerprint:sourceFingerprint,
           priority:'high',
           icon:'↻',
           title:'Refresh Aurora data',
-          detail:`The newest dated row is ${age.toFixed(1)} hours old. Refresh will re-download AuroraMaster; if the source export is still old, the warning will remain.`,
+          detail:`The newest dated row is ${age.toFixed(1)} hours old. Refresh will re-download AuroraMaster once and clear this task. The bell will still report an old source export when appropriate.`,
           meta:'Data confidence',
           action:'refresh',
           actionLabel:'Refresh now'
@@ -2812,33 +2831,49 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
       return;
     }
     if(action==='refresh'){
-      const original=source?.textContent||'Refresh now';
-      if(source){
-        source.disabled=true;
-        source.textContent='Refreshing Aurora…';
-      }
+      if(window.__auroraManagerRefreshBusy)return;
+      window.__auroraManagerRefreshBusy=true;
+
+      /*
+       * Close the queue before fetching. This prevents renderAll(),
+       * renderDecisions() and the loading text from replacing the button
+       * underneath the user's finger.
+       */
+      closeDecisionQueue();
+      managerNotice('Refreshing Aurora data…','info');
+
       try{
         const result=await window.AuroraManagerRefresh?.();
-        renderAlerts();
-        renderDecisions();
-        refreshBeast();
+
         if(result?.ok){
-          /*
-           * The Manager has completed the requested refresh check.
-           * Clear this action from the Decision Queue even when the
-           * downloaded AuroraMaster still contains an old source row.
-           * The read-only bell alert can continue reporting stale source data.
-           */
+          const latestDate=(()=>{
+            try{return latestDataTimestamp?.()||null}
+            catch(_){return null}
+          })();
+
+          writeJson('aurora_manager_refresh_ack_v2',{
+            at:Date.now(),
+            sourceFingerprint:String(
+              latestDate?.getTime?.()
+              || item.fingerprint
+              || ''
+            ),
+            latest:latestDate?.toISOString?.()||result.latest||'',
+            sourceStillStale:Boolean(result.sourceStillStale)
+          });
+
           closeDecision(item,'completed');
+          renderAlerts();
+          refreshBeast();
 
           if(result.sourceStillStale){
             const age=Number(result.ageHours||0).toFixed(1);
             managerNotice(
-              `Refresh check completed and cleared. AuroraMaster downloaded successfully, but its newest source row is still ${age} hours old.`,
+              `Refresh completed. AuroraMaster downloaded successfully; its source row is still ${age} hours old.`,
               'warn'
             );
             addLog(
-              'Refresh check completed — source export still old',
+              'Refresh completed — source export still old',
               `AuroraMaster was re-downloaded. Its newest source row remains ${age} hours old.`,
               'data',
               '↻',
@@ -2847,7 +2882,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
             );
           }else{
             managerNotice(
-              'Aurora data refreshed successfully and the refresh task has been cleared.',
+              'Aurora data refreshed successfully.',
               'ok'
             );
             addLog(
@@ -2860,16 +2895,19 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
             );
           }
         }else{
-          managerNotice('Aurora data refresh failed. The existing dashboard data has been kept.','bad');
+          managerNotice(
+            'Aurora data refresh failed. The task has been left in the queue.',
+            'bad'
+          );
         }
       }catch(error){
         console.error(error);
-        managerNotice('Aurora data refresh failed. The existing dashboard data has been kept.','bad');
+        managerNotice(
+          'Aurora data refresh failed. The task has been left in the queue.',
+          'bad'
+        );
       }finally{
-        if(source){
-          source.disabled=false;
-          source.textContent=original;
-        }
+        window.__auroraManagerRefreshBusy=false;
       }
       return;
     }
@@ -3182,76 +3220,63 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   clean();
   addEventListener('pageshow',clean);
 })();
-</script><script id="auroraHoldingDrawerResponsiveScript">
+</script><script id="auroraManagerStableButtonScript">
 (function(){
   "use strict";
 
-  const byId = id => document.getElementById(id);
+  const byId=id=>document.getElementById(id);
 
-  function closeImmediately(event){
+  function forceCloseDrawer(event){
     if(event){
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation?.();
     }
 
-    const overlay = byId("beastDrawerOverlay");
-    const drawer = byId("beastHoldingDrawer");
-
-    overlay?.classList.remove("open");
-    drawer?.classList.remove("open");
-
-    overlay?.setAttribute("aria-hidden","true");
-    drawer?.setAttribute("aria-hidden","true");
-
-    document.body.classList.remove("beast-drawer-open");
-    document.body.style.overflow = "";
+    const close=byId("beastDrawerClose");
+    const overlay=byId("beastDrawerOverlay");
+    const drawer=byId("beastHoldingDrawer");
 
     /*
-     * Clear focus immediately so iPad Safari does not keep the
-     * close control in an unresponsive pressed state.
+     * Keep the event target alive until the click finishes.
+     * Closing in the next animation frame prevents the same iPad tap
+     * from falling through and reopening the holding underneath.
      */
-    byId("beastDrawerClose")?.blur();
+    close?.setAttribute("aria-busy","true");
+
+    requestAnimationFrame(function(){
+      overlay?.classList.remove("open");
+      drawer?.classList.remove("open");
+
+      overlay?.setAttribute("aria-hidden","true");
+      drawer?.setAttribute("aria-hidden","true");
+
+      document.body.classList.remove("beast-drawer-open");
+      document.body.style.overflow="";
+
+      close?.removeAttribute("aria-busy");
+      close?.blur();
+    });
   }
 
-  function bind(){
-    const close = byId("beastDrawerClose");
-    const overlay = byId("beastDrawerOverlay");
+  function bindStableControls(){
+    const close=byId("beastDrawerClose");
+    const overlay=byId("beastDrawerOverlay");
 
-    if(close && !close.dataset.auroraResponsiveClose){
-      close.dataset.auroraResponsiveClose = "1";
-
-      /*
-       * pointerdown closes before Safari waits to decide whether
-       * the gesture is a tap, scroll or double-tap.
-       */
-      close.addEventListener(
-        "pointerdown",
-        closeImmediately,
-        {capture:true}
-      );
-      close.addEventListener(
-        "touchstart",
-        closeImmediately,
-        {capture:true,passive:false}
-      );
+    if(close&&!close.dataset.auroraStableClick){
+      close.dataset.auroraStableClick="1";
       close.addEventListener(
         "click",
-        closeImmediately,
+        forceCloseDrawer,
         {capture:true}
       );
     }
 
-    if(overlay && !overlay.dataset.auroraResponsiveClose){
-      overlay.dataset.auroraResponsiveClose = "1";
-      overlay.addEventListener(
-        "pointerdown",
-        closeImmediately,
-        {capture:true}
-      );
+    if(overlay&&!overlay.dataset.auroraStableClick){
+      overlay.dataset.auroraStableClick="1";
       overlay.addEventListener(
         "click",
-        closeImmediately,
+        forceCloseDrawer,
         {capture:true}
       );
     }
@@ -3259,9 +3284,9 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 
   document.addEventListener(
     "keydown",
-    event => {
-      if(event.key === "Escape"){
-        closeImmediately(event);
+    function(event){
+      if(event.key==="Escape"){
+        forceCloseDrawer(event);
       }
     },
     true
@@ -3269,20 +3294,20 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 
   window.addEventListener(
     "pageshow",
-    () => {
-      bind();
-      closeImmediately();
+    function(){
+      bindStableControls();
+      forceCloseDrawer();
     }
   );
 
-  if(document.readyState === "loading"){
+  if(document.readyState==="loading"){
     document.addEventListener(
       "DOMContentLoaded",
-      bind,
+      bindStableControls,
       {once:true}
     );
   }else{
-    bind();
+    bindStableControls();
   }
 })();
 </script></body>
