@@ -2755,11 +2755,8 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 
 
 </style>
-
 <!-- Build: Direct Finance Department → Transfer Centre pipeline • 26 Jul 2026 -->
 <!-- Build: Aurora Connected Finance Department System • 26 Jul 2026 -->
-
-
 <style id="m27RoomLedgerUpgradeStyles">
 /* ===================== M27 ROOM-BY-ROOM HOUSE LEDGER UPGRADE ===================== */
 .m27-room-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:17px 0 10px;padding-top:14px;border-top:1px solid rgba(125,211,252,.10)}
@@ -2819,14 +2816,112 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
   pointer-events:none!important;
 }
 </style>
-
 <!-- Aurora universal workflow navigation -->
-<link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
-<script src="aurora-navigation.js?v=20260729-3" defer></script>
-</head>
+<link href="aurora-navigation.css?v=20260729-3" rel="stylesheet"/>
+<script defer="" src="aurora-navigation.js?v=20260729-3"></script>
+<style id="auroraAccountTransferPreviewStyles">
+/* M51 — complete mission to broker-cash preview */
+.m51-account-preview{
+  margin:14px 0;
+  padding:15px;
+  border:1px solid rgba(34,211,238,.24);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(96,165,250,.10),transparent 32%),
+    linear-gradient(145deg,rgba(5,20,39,.90),rgba(2,8,20,.92));
+  box-shadow:0 14px 40px rgba(0,0,0,.22);
+}
+.m51-account-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.m51-account-head h4{
+  margin:5px 0 0;
+  color:#f4f9ff;
+  font-size:17px;
+  letter-spacing:-.025em;
+}
+.m51-account-head p{
+  margin:6px 0 0;
+  max-width:780px;
+  color:#93a6bf;
+  font-size:10px;
+  line-height:1.48;
+}
+.m51-preview-chip{
+  flex:0 0 auto;
+  padding:7px 9px;
+  border:1px solid rgba(251,191,36,.30);
+  border-radius:999px;
+  color:#fde68a;
+  background:rgba(120,53,15,.22);
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.10em;
+}
+.m51-account-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+.m51-account-card{
+  min-height:104px;
+  padding:13px;
+  border:1px solid rgba(148,163,184,.15);
+  border-radius:17px;
+  background:rgba(2,8,20,.48);
+}
+.m51-account-card.ig{
+  border-color:rgba(96,165,250,.28);
+  background:linear-gradient(145deg,rgba(30,64,175,.18),rgba(2,8,20,.48));
+}
+.m51-account-card.t212{
+  border-color:rgba(52,211,153,.26);
+  background:linear-gradient(145deg,rgba(6,78,59,.18),rgba(2,8,20,.48));
+}
+.m51-account-card span{
+  display:block;
+  color:#9aacbf;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+.m51-account-card strong{
+  display:block;
+  margin-top:9px;
+  color:#f7fbff;
+  font-size:25px;
+  letter-spacing:-.045em;
+}
+.m51-account-card small{
+  display:block;
+  margin-top:7px;
+  color:#8498b2;
+  font-size:8px;
+  line-height:1.4;
+}
+.m51-account-instruction{
+  margin-top:10px;
+  padding:11px 12px;
+  border:1px solid rgba(34,211,238,.18);
+  border-radius:14px;
+  color:#d9f7ff;
+  background:rgba(8,47,73,.28);
+  font-size:10px;
+  font-weight:800;
+  line-height:1.5;
+}
+@media(max-width:720px){
+  .m51-account-head{flex-direction:column}
+  .m51-account-grid{grid-template-columns:1fr}
+}
+</style></head>
 <body>
 <div class="m13-app">
-
 <div aria-hidden="true" class="m13-nav aurora-finance-submenu aurora-finance-view-compat" hidden="hidden" id="m13Nav" style="display:none!important">
 <button class="active" data-target="m13Dashboard" type="button"><span class="icon">⌂</span><span>Budget Dashboard</span></button>
 <button data-target="m13PaydayPlan" type="button"><span class="icon">£</span><span>Payday Plan</span></button>
@@ -3363,7 +3458,31 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 <article class="m50-source total"><span>Combined monthly mission</span><strong id="m50CombinedMission">£0.00</strong><small id="m50MissionBreakdown">Payday only</small></article>
 </div>
 <div class="m50-note">Aurora never assumes sale proceeds are available. The ETF release stays at £0 until a balance is entered. Releasing a mission authorises the plan only; it does not move cash or place trades.</div>
+</div><section aria-label="Initial account transfer preview" class="m51-account-preview" id="m51AccountTransferPreview">
+<div class="m51-account-head">
+<div>
+<span class="m13-eyebrow">BROKER CASH PREVIEW</span>
+<h4>Initial account transfer split</h4>
+<p>This turns the complete monthly mission into clear cash amounts. The Transfer Centre will replace this preview with the final account totals after it chooses the actual shares.</p>
 </div>
+<span class="m51-preview-chip" id="m51PreviewStatus">PREVIEW</span>
+</div>
+<div class="m51-account-grid">
+<article class="m51-account-card ig">
+<span>Transfer to IG ISA</span>
+<strong id="m51IgTransfer">£0.00</strong>
+<small id="m51IgTransferNote">Waiting for the live mission</small>
+</article>
+<article class="m51-account-card t212">
+<span>Transfer to Trading 212 ISA</span>
+<strong id="m51T212Transfer">£0.00</strong>
+<small id="m51T212TransferNote">Waiting for the live mission</small>
+</article>
+</div>
+<div class="m51-account-instruction" id="m51AccountInstruction">
+      Build the complete investment mission to see the initial broker transfer amounts.
+    </div>
+</section>
 <div class="m37-route" id="m37InvestmentRoute"><strong>Waiting:</strong> Build the live payday plan and Aurora will combine every available investment funding source.</div>
 <div class="m37-actions">
 <button class="primary" id="m37SendToTradingBrain" type="button">Release Mission to Transfer Centre</button>
@@ -3386,20 +3505,20 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 <div class="grid two-grid">
 <div class="input-box">
 <label for="simPayInput">Expected Pay</label>
-<input id="simPayInput" step="1" type="number" value="2100">
-</input></div>
+<input id="simPayInput" step="1" type="number" value="2100"/>
+</div>
 <div class="input-box">
 <label for="simInvestInput">Target IG ISA</label>
-<input id="simInvestInput" step="1" type="number" value="1000">
-</input></div>
+<input id="simInvestInput" step="1" type="number" value="1000"/>
+</div>
 <div class="input-box">
 <label for="simLifestyleInput">Lifestyle / Spending Pot</label>
-<input id="simLifestyleInput" step="1" type="number" value="250">
-</input></div>
+<input id="simLifestyleInput" step="1" type="number" value="250"/>
+</div>
 <div class="input-box">
 <label for="simGoalsInput">Goal Pots Total</label>
-<input id="simGoalsInput" step="1" type="number" value="250">
-</input></div>
+<input id="simGoalsInput" step="1" type="number" value="250"/>
+</div>
 </div>
 <div class="payday-results" id="paydaySimulationResults">
 <div class="payday-row"><strong>Waiting for simulator...</strong><span>--</span></div>
@@ -3556,8 +3675,8 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 </div>
 <div class="m36-backup-status" id="backupStatus">No backup exported this session</div>
 </details>
-<input accept=".json,application/json" hidden="" id="importBackupFile" type="file">
-</input></section>
+<input accept=".json,application/json" hidden="" id="importBackupFile" type="file"/>
+</section>
 <!-- ===================== SECTION: NEXT 7 DAYS BILLS ===================== -->
 <section class="section card">
 <div class="bill-strip-head">
@@ -6891,7 +7010,6 @@ document.addEventListener("click",event=>{
   if(reset)m19ResetCycle(Number(reset.dataset.m19Reset));
 });
 </script>
-
 <script>
 /* ===================== M25 FINANCIAL CONTROL ENGINE ===================== */
 (function(){
@@ -8550,9 +8668,6 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
  load();
 })();
 </script>
-
-
-
 <script>
 /* ===================== M43 PAYDAY POT GAP DEDUPLICATION FIX ===================== */
 (function(){
@@ -8776,17 +8891,8 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 })();
 </script>
 <!-- ===================== AURORA CONNECTED SYSTEM V1 ===================== -->
-
-
-
-
-
 <!-- Build: Sidebar Definitive Fix • 27 Jul 2026 -->
-
-
 <!-- Build: Aurora Sidebar Persistent Navigation V4 • 27 Jul 2026 -->
-
-
 <script id="auroraFinanceWorkflowAdapter">
 (function(){
   "use strict";
@@ -8832,6 +8938,194 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
   }
 
   window.addEventListener("hashchange", openRequestedView);
+})();
+</script><script id="auroraAccountTransferPreviewScript">
+(function(){
+  "use strict";
+
+  const WEALTH_KEY = "aurora_wealth_investment_mission_v1";
+  const ACCOUNT_KEY = "aurora_account_transfer_instruction_v1";
+
+  const byId = id => document.getElementById(id);
+  const read = key => {
+    try { return JSON.parse(localStorage.getItem(key) || "null"); }
+    catch (_) { return null; }
+  };
+  const write = (key,value) => {
+    try {
+      localStorage.setItem(key,JSON.stringify(value));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+  const number = value => {
+    const n = Number(String(value ?? "").replace(/[^0-9.-]/g,""));
+    return Number.isFinite(n) ? n : 0;
+  };
+  const money = value => new Intl.NumberFormat(
+    "en-GB",
+    {style:"currency",currency:"GBP"}
+  ).format(Math.max(0,Number(value || 0)));
+
+  function totalMission(){
+    const textValue = number(byId("m50CombinedMission")?.textContent);
+    if(textValue > 0) return textValue;
+
+    const payday = number(byId("m50PaydayRelease")?.textContent);
+    const capitalBalance = number(byId("m50CapitalBalance")?.value);
+    const capitalRelease = Math.min(
+      capitalBalance,
+      number(byId("m50CapitalRelease")?.value)
+    );
+    const etfBalance = number(byId("m50EtfBalance")?.value);
+    const etfRelease = Math.min(
+      etfBalance,
+      number(byId("m50EtfRelease")?.value)
+    );
+
+    return Math.max(0,payday + capitalRelease + etfRelease);
+  }
+
+  function currentPlatform(){
+    return String(
+      byId("m22InvestmentPlatform")?.value
+      || read(WEALTH_KEY)?.preferredPlatform
+      || "ig"
+    ).toLowerCase();
+  }
+
+  function calculate(){
+    const total = Math.round(totalMission() * 100) / 100;
+    const platform = currentPlatform();
+
+    let ig = 0;
+    let t212 = 0;
+
+    if(platform === "split"){
+      ig = Math.round((total / 2) * 100) / 100;
+      t212 = Math.round((total - ig) * 100) / 100;
+    }else if(platform === "t212"){
+      t212 = total;
+    }else{
+      ig = total;
+    }
+
+    return {
+      total,
+      platform,
+      ig,
+      t212,
+      source:"FINANCE_PREVIEW",
+      status:"PREVIEW",
+      generatedAt:new Date().toISOString()
+    };
+  }
+
+  function render(){
+    const plan = calculate();
+    const ig = byId("m51IgTransfer");
+    const t212 = byId("m51T212Transfer");
+    const igNote = byId("m51IgTransferNote");
+    const t212Note = byId("m51T212TransferNote");
+    const instruction = byId("m51AccountInstruction");
+    const status = byId("m51PreviewStatus");
+
+    if(!ig || !t212 || !instruction) return;
+
+    ig.textContent = money(plan.ig);
+    t212.textContent = money(plan.t212);
+
+    if(plan.total <= 0){
+      igNote.textContent = "Waiting for the live mission";
+      t212Note.textContent = "Waiting for the live mission";
+      instruction.textContent =
+        "Build the complete investment mission to see the initial broker transfer amounts.";
+      if(status) status.textContent = "PREVIEW";
+      return;
+    }
+
+    if(plan.platform === "split"){
+      igNote.textContent = "Initial 50% share of the complete mission";
+      t212Note.textContent = "Initial 50% share of the complete mission";
+    }else if(plan.platform === "t212"){
+      igNote.textContent = "No initial transfer planned";
+      t212Note.textContent = "Complete mission currently routed here";
+    }else{
+      igNote.textContent = "Complete mission currently routed here";
+      t212Note.textContent = "No initial transfer planned";
+    }
+
+    instruction.innerHTML =
+      `<strong>Initial cash move:</strong> Transfer ${money(plan.ig)} to IG ISA`
+      + ` and ${money(plan.t212)} to Trading 212 ISA. `
+      + `Wait for the Transfer Centre’s final purchase route before moving the cash, `
+      + `because the actual share choices can change these account totals.`;
+
+    write(ACCOUNT_KEY,plan);
+    if(status) status.textContent = "INITIAL SPLIT";
+  }
+
+  function enrichMission(event){
+    const plan = calculate();
+    const mission = event?.detail || read(WEALTH_KEY);
+
+    if(!mission || !(Number(mission.budget) > 0)) return;
+
+    mission.accountTransfers = [
+      {
+        account:"IG ISA",
+        amount:Number(plan.ig.toFixed(2)),
+        status:"PREVIEW"
+      },
+      {
+        account:"Trading 212 ISA",
+        amount:Number(plan.t212.toFixed(2)),
+        status:"PREVIEW"
+      }
+    ];
+    mission.accountTransferStatus = "PREVIEW";
+    mission.accountTransferGeneratedAt = new Date().toISOString();
+
+    write(WEALTH_KEY,mission);
+    write(ACCOUNT_KEY,{
+      ...plan,
+      missionId:mission.id || null
+    });
+  }
+
+  [
+    "m22InvestmentPlatform",
+    "m22CoreInvestment",
+    "m50CapitalBalance",
+    "m50CapitalRelease",
+    "m50EtfBalance",
+    "m50EtfRelease"
+  ].forEach(id => {
+    byId(id)?.addEventListener("input",() => setTimeout(render,0));
+    byId(id)?.addEventListener("change",() => setTimeout(render,0));
+  });
+
+  byId("m37RefreshHandoff")?.addEventListener(
+    "click",
+    () => setTimeout(render,20)
+  );
+
+  window.addEventListener("aurora:wealth-mission",event => {
+    enrichMission(event);
+    render();
+  });
+
+  const combined = byId("m50CombinedMission");
+  if(combined){
+    new MutationObserver(render).observe(
+      combined,
+      {childList:true,subtree:true,characterData:true}
+    );
+  }
+
+  window.addEventListener("load",() => setTimeout(render,380));
+  if(document.readyState !== "loading") setTimeout(render,220);
 })();
 </script></body>
 </html>
