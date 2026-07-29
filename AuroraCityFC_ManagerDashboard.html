@@ -64,6 +64,7 @@
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Manager Dashboard BEAST V3</title>
 <!-- Hotfix: Stable Manager Action Log rendering • 29 Jul 2026 -->
+<!-- Hotfix: iPad/Brave Manager Office scroll stability • 29 Jul 2026 -->
 <!-- Build: Aurora Motion Attention System • 24 Jul 2026 -->
 <!-- Build: BEAST V3 Click-Safe Decision Queue + Department Broadcast Panels • 24 Jul 2026 -->
 <!-- Build: BEAST V2 Decision Queue + Manager Action Log • 24 Jul 2026 -->
@@ -1390,7 +1391,81 @@ dialog#beastHoldingDrawer .beast-panel-head{
     margin:-16px -16px 12px!important;
   }
 }
-</style><meta content="manager-cross-browser-cache-fix-20260729" name="aurora-build"/></head>
+</style><meta content="manager-cross-browser-cache-fix-20260729" name="aurora-build"/>
+<style id="auroraManagerScrollStability">
+/*
+ * Manager Office scroll stability:
+ * - stops touch dragging/ghost cards
+ * - removes moving sweep layers and forced animation in this section
+ * - avoids fixed-background repaints on iPad browsers
+ */
+.manager-command-grid > .command-panel{
+  -webkit-user-drag:none!important;
+  user-select:text;
+}
+
+.manager-command-grid > .command-panel.beast-touch-static{
+  cursor:default!important;
+}
+
+@media (pointer:coarse), (hover:none), (max-width:1180px){
+  body{
+    background-attachment:scroll!important;
+  }
+
+  body:after{
+    position:absolute!important;
+  }
+
+  .manager-command-grid > .command-panel,
+  .manager-command-grid > .command-panel:hover,
+  .manager-command-grid > .command-panel:focus-within{
+    transform:none!important;
+    transition:none!important;
+    animation:none!important;
+    box-shadow:0 12px 30px rgba(0,0,0,.30)!important;
+    backface-visibility:visible!important;
+    -webkit-backface-visibility:visible!important;
+  }
+
+  .manager-command-grid > .command-panel:before{
+    animation:none!important;
+    transition:none!important;
+  }
+
+  .manager-command-grid > .command-panel:after{
+    content:none!important;
+    display:none!important;
+    animation:none!important;
+    transition:none!important;
+  }
+
+  .manager-command-grid .beast-panel-updated{
+    box-shadow:0 12px 30px rgba(0,0,0,.30)!important;
+  }
+
+  .manager-command-grid .beast-signal-dot,
+  .manager-command-grid .media-feature-icon i,
+  .manager-command-grid .beast-route-wire i,
+  .manager-command-grid .beast-squad-formation span,
+  .manager-command-grid .beast-board-seal,
+  .manager-command-grid .board-command-score strong,
+  .manager-command-grid .beast-schedule-track span{
+    animation:none!important;
+    transition:none!important;
+    transform:none!important;
+  }
+
+  .manager-command-grid .panel-open-link,
+  .manager-command-grid button,
+  .manager-command-grid input,
+  .manager-command-grid a{
+    -webkit-tap-highlight-color:transparent;
+  }
+}
+</style>
+
+</head>
 <body>
 <div class="fm-shell">
 <div class="fm-workspace">
@@ -3125,10 +3200,61 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     }
   }
   function togglePanel(id,buttonId){['beastNotificationPanel','beastLayoutPanel'].forEach(pid=>{if(pid!==id)q(pid)?.classList.remove('open')});const panel=q(id);panel?.classList.toggle('open');q(buttonId)?.classList.toggle('active',panel?.classList.contains('open'));}
-  function assignPanelKeys(){document.querySelectorAll('.manager-command-grid>.command-panel').forEach((panel,i)=>{if(!panel.dataset.beastKey){const h=panel.querySelector('h3')?.textContent?.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');panel.dataset.beastKey=h||`panel-${i}`}panel.draggable=panel.id!=='beastDecisionQueue'})}
+  function managerPanelsCanDrag(){
+    const finePointer=window.matchMedia?.('(pointer:fine)')?.matches===true;
+    const touchDevice=navigator.maxTouchPoints>0||/iPad|iPhone|iPod/i.test(navigator.userAgent||'');
+    return finePointer&&!touchDevice;
+  }
+  function assignPanelKeys(){
+    const allowDrag=managerPanelsCanDrag();
+    document.querySelectorAll('.manager-command-grid>.command-panel').forEach((panel,i)=>{
+      if(!panel.dataset.beastKey){
+        const h=panel.querySelector('h3')?.textContent?.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');
+        panel.dataset.beastKey=h||`panel-${i}`;
+      }
+      panel.draggable=allowDrag&&panel.id!=='beastDecisionQueue';
+      panel.classList.toggle('beast-touch-static',!allowDrag);
+    });
+  }
   function applyOrder(){try{const order=JSON.parse(localStorage.getItem(ORDER_KEY)||'[]'),grid=document.querySelector('.manager-command-grid');if(!grid||!Array.isArray(order))return;order.forEach(key=>{const node=[...grid.children].find(x=>x.dataset?.beastKey===key);if(node)grid.appendChild(node)})}catch(_){}}
   function saveOrder(){const grid=document.querySelector('.manager-command-grid');if(grid)localStorage.setItem(ORDER_KEY,JSON.stringify([...grid.children].map(x=>x.dataset?.beastKey).filter(Boolean)))}
-  function bindDrag(){let dragging=null;document.addEventListener('dragstart',e=>{if(e.target.closest('a,button,input,textarea,select,[role="button"],#beastDecisionQueue')){e.preventDefault();return}const panel=e.target.closest('.manager-command-grid>.command-panel');if(!panel||panel.draggable===false)return;dragging=panel;panel.classList.add('beast-dragging');e.dataTransfer.effectAllowed='move'});document.addEventListener('dragend',()=>{dragging?.classList.remove('beast-dragging');document.querySelectorAll('.beast-drag-over').forEach(x=>x.classList.remove('beast-drag-over'));dragging=null;saveOrder()});document.addEventListener('dragover',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.add('beast-drag-over')});document.addEventListener('dragleave',e=>e.target.closest('.command-panel')?.classList.remove('beast-drag-over'));document.addEventListener('drop',e=>{const target=e.target.closest('.manager-command-grid>.command-panel');if(!dragging||!target||target===dragging)return;e.preventDefault();target.classList.remove('beast-drag-over');const rect=target.getBoundingClientRect();target.parentNode.insertBefore(dragging,e.clientY<rect.top+rect.height/2?target:target.nextSibling);saveOrder()})}
+  function bindDrag(){
+    if(!managerPanelsCanDrag())return;
+    let dragging=null;
+    document.addEventListener('dragstart',e=>{
+      if(e.target.closest('a,button,input,textarea,select,[role="button"],#beastDecisionQueue')){
+        e.preventDefault();
+        return;
+      }
+      const panel=e.target.closest('.manager-command-grid>.command-panel');
+      if(!panel||panel.draggable===false)return;
+      dragging=panel;
+      panel.classList.add('beast-dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    document.addEventListener('dragend',()=>{
+      dragging?.classList.remove('beast-dragging');
+      document.querySelectorAll('.beast-drag-over').forEach(x=>x.classList.remove('beast-drag-over'));
+      dragging=null;
+      saveOrder();
+    });
+    document.addEventListener('dragover',e=>{
+      const target=e.target.closest('.manager-command-grid>.command-panel');
+      if(!dragging||!target||target===dragging)return;
+      e.preventDefault();
+      target.classList.add('beast-drag-over');
+    });
+    document.addEventListener('dragleave',e=>e.target.closest('.command-panel')?.classList.remove('beast-drag-over'));
+    document.addEventListener('drop',e=>{
+      const target=e.target.closest('.manager-command-grid>.command-panel');
+      if(!dragging||!target||target===dragging)return;
+      e.preventDefault();
+      target.classList.remove('beast-drag-over');
+      const rect=target.getBoundingClientRect();
+      target.parentNode.insertBefore(dragging,e.clientY<rect.top+rect.height/2?target:target.nextSibling);
+      saveOrder();
+    });
+  }
   function refreshBeast(){
     syncAutomaticLog();renderDecisions();renderActionLog();
     if(!Array.isArray(state?.holdings)||!state.holdings.length)return;
@@ -3183,19 +3309,13 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   }
 
   function enhanceBroadcastPanels(){
-    const ids=['manager-media-story','manager-transfer-desk','manager-squad-report','manager-board-update','schedule-panel'];
-    ids.forEach(id=>{
-      const panel=q(id);if(!panel||panel.dataset.broadcastObserved)return;
-      panel.dataset.broadcastObserved='1';
-      let timer;
-      new MutationObserver(()=>{
-        clearTimeout(timer);
-        panel.classList.remove('beast-panel-updated');
-        void panel.offsetWidth;
-        panel.classList.add('beast-panel-updated');
-        timer=setTimeout(()=>panel.classList.remove('beast-panel-updated'),1100);
-        if(id==='manager-board-update')updateBoardMeter();
-      }).observe(panel,{childList:true,subtree:true,characterData:true});
+    /*
+     * Keep the department cards static on iPad/Brave.
+     * The previous MutationObservers forced layout and replayed a highlight
+     * every time card text changed, which caused visible scroll flicker.
+     */
+    document.querySelectorAll('.manager-command-grid>.command-panel').forEach(panel=>{
+      panel.classList.remove('beast-panel-updated','beast-dragging','beast-drag-over');
     });
     updateBoardMeter();
   }
