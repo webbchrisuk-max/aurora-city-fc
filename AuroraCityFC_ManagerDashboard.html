@@ -921,7 +921,6 @@ body.beast-decision-open #beastDecisionButton{border-color:rgba(251,191,36,.55);
 </style>
 <!-- Hotfix: Manager Dashboard secondary intro removed • 24 Jul 2026 -->
 <!-- Build: Universal Sidebar Department Colours Fix • 24 Jul 2026 -->
-
 <style id="aurora-motion-system-styles">
 /* ================= AURORA MOTION SYSTEM • 24 JUL 2026 =================
    Purposeful attention animation shared by all Aurora departments.
@@ -1145,7 +1144,6 @@ html[data-aurora-motion="subtle"] .beast-theme-board .beast-board-seal{animation
 @media(max-width:760px){.beast-broadcast-strip span:last-child{display:none}.beast-squad-formation{display:none}.board-command-score{padding-top:64px}.beast-route-wire{margin-left:20px;margin-right:20px}.beast-schedule-track{margin-left:24px;margin-right:24px}}
 </style>
 <!-- Build: Aurora Connected Finance Department System • 26 Jul 2026 -->
-
 <style id="auroraNoSidebarNoDockLayout">
 /* Manager Dashboard baseline: full BEAST V3 page, no sidebar and no bottom dock */
 html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
@@ -1170,14 +1168,56 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
   .manager-command-header{margin-top:10px!important}
 }
 </style>
-
 <!-- Aurora universal workflow navigation -->
-<link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
-<script src="aurora-navigation.js?v=20260729-3" defer></script>
-</head>
+<link href="aurora-navigation.css?v=20260729-3" rel="stylesheet"/>
+<script defer="" src="aurora-navigation.js?v=20260729-3"></script>
+<style id="auroraManagerActionFixStyles">
+.aurora-manager-notice{
+  position:fixed;
+  z-index:2147483005;
+  left:50%;
+  bottom:calc(22px + env(safe-area-inset-bottom,0px));
+  width:min(560px,calc(100vw - 28px));
+  padding:13px 15px;
+  border:1px solid rgba(34,211,238,.32);
+  border-radius:15px;
+  color:#dff8ff;
+  background:rgba(4,18,36,.96);
+  box-shadow:0 18px 60px rgba(0,0,0,.48);
+  font:800 11px/1.45 Inter,ui-sans-serif,system-ui,sans-serif;
+  text-align:center;
+  opacity:0;
+  visibility:hidden;
+  transform:translate(-50%,16px);
+  transition:opacity .18s ease,transform .18s ease,visibility .18s ease;
+}
+.aurora-manager-notice.show{
+  opacity:1;
+  visibility:visible;
+  transform:translate(-50%,0);
+}
+.aurora-manager-notice[data-tone="warn"]{
+  color:#fde68a;
+  border-color:rgba(251,191,36,.40);
+  background:rgba(69,26,3,.96);
+}
+.aurora-manager-notice[data-tone="ok"]{
+  color:#bbf7d0;
+  border-color:rgba(52,211,153,.40);
+  background:rgba(3,46,32,.96);
+}
+.aurora-manager-notice[data-tone="bad"]{
+  color:#fecdd3;
+  border-color:rgba(251,113,133,.42);
+  background:rgba(69,10,22,.96);
+}
+.beast-decision-btn:disabled{
+  opacity:.6;
+  cursor:wait;
+}
+</style></head>
 <body>
 <div class="fm-shell">
-
 <div class="fm-workspace">
 <div class="topbar">
 <div class="topbar-inner">
@@ -1353,7 +1393,6 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
 </article>
 </section>
 </main>
-
 </div>
 </div>
 <script>
@@ -1673,9 +1712,15 @@ function renderPreviewRows(rows, target, valueFn){
       <div class="preview-value">${valueFn(row,i)}</div>
     </div>`).join("") : `<div class="loading">No live rows found yet.</div>`;
 }
-async function fetchMaster(){
+async function fetchMaster(force=false){
+  if(force) AURORA_MASTER_CACHE = null;
   if(!AURORA_MASTER_CACHE){
-    const res = await fetch(AURORA_MASTER_URL, { cache:"no-store" });
+    const separator = String(AURORA_MASTER_URL).includes("?") ? "&" : "?";
+    const url = `${AURORA_MASTER_URL}${separator}managerRefresh=${Date.now()}`;
+    const res = await fetch(url, {
+      cache:"no-store",
+      headers:{"Cache-Control":"no-cache, no-store, must-revalidate"}
+    });
     if(!res.ok) throw new Error(`AuroraMaster failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
   }
@@ -1698,7 +1743,7 @@ function readTab(master, tab){
   }
   return [];
 }
-async function loadData(){
+async function loadData(force=false){
   const btn = $("refreshBtn");
   const btnLabel = btn?.querySelector("span:last-child");
   if(btn){
@@ -1707,7 +1752,7 @@ async function loadData(){
     else btn.textContent = "Loading…";
   }
   try{
-    const master = await fetchMaster();
+    const master = await fetchMaster(force);
     const tabs = {};
     TABS.forEach(tab => tabs[tab] = readTab(master, tab));
     state = {
@@ -1728,9 +1773,11 @@ async function loadData(){
       livePrices:tabs.LivePrices || []
     };
     renderAll();
+    return {ok:true,latest:latestDataTimestamp?.()||null};
   }catch(err){
     console.error(err);
-    $("actionList").innerHTML = `<div class="loading error">${err.message || "Unable to load AuroraData."}</div>`;
+    if($("actionList")) $("actionList").innerHTML = `<div class="loading error">${err.message || "Unable to load AuroraData."}</div>`;
+    return {ok:false,error:err};
   }finally{
     if(btn){
       btn.disabled = false;
@@ -1739,6 +1786,27 @@ async function loadData(){
     }
   }
 }
+
+async function refreshManagerAuroraData(){
+  const startedAt = new Date();
+  const result = await loadData(true);
+  const latest = (()=>{try{return latestDataTimestamp?.()||null}catch(_){return null}})();
+  const ageHours = latest ? (Date.now()-latest.getTime())/36e5 : NaN;
+  const detail = {
+    ok:Boolean(result?.ok),
+    startedAt:startedAt.toISOString(),
+    completedAt:new Date().toISOString(),
+    latest:latest?.toISOString?.()||"",
+    ageHours:Number.isFinite(ageHours)?ageHours:null,
+    sourceStillStale:Number.isFinite(ageHours)&&ageHours>8
+  };
+  try{
+    localStorage.setItem("aurora_manager_last_refresh_v1",JSON.stringify(detail));
+  }catch(_){}
+  document.dispatchEvent(new CustomEvent("aurora:manager-data-refreshed",{detail}));
+  return detail;
+}
+window.AuroraManagerRefresh = refreshManagerAuroraData;
 
 function mediaValue(row,...keys){
   for(const key of keys){
@@ -2220,16 +2288,72 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   }
   function transferPlan(){const x=read('aurora_transfer_plan_v2',{});return x;}
   function lifecycle(){
-    const p=plan(),tp=transferPlan(),payday=read('aurora_payday_execution_v1',{}),receipt=read('aurora_m3_last_transfer_receipt_v1',{}),lastReg=read('aurora_registration_last_v1',{}),saved=read(LIFECYCLE_KEY,{});
+    const p=plan();
+    const tp=transferPlan();
+    const payday=read('aurora_payday_execution_v1',{});
+    const receipt=read('aurora_m3_last_transfer_receipt_v1',{});
+    const lastReg=read('aurora_registration_last_v1',{});
+    const saved=read(LIFECYCLE_KEY,{});
+    const financeMission=
+      read('aurora_finance_department_mission_v1',null)
+      || read('aurora_wealth_investment_mission_v1',null)
+      || {};
+    const handoff=read('aurora_investment_handoff_completion_v1',{});
+
+    const missionId=String(financeMission?.id||financeMission?.missionId||'');
     const route=Array.isArray(tp.rows)?tp.rows:Array.isArray(tp.route)?tp.route:[];
     const routeTickers=route.map(x=>ticker(x.row||x)).filter(Boolean);
-    const purchased=Boolean(payday.completedAt||receipt.completedAt||saved.purchasedAt);
+    const routeReady=route.length>0;
+
+    const handoffMatches=
+      !missionId
+      || !handoff?.sourceMissionId
+      || String(handoff.sourceMissionId)===missionId;
+    const handoffComplete=Boolean(handoff?.completedAt&&handoffMatches);
+
+    const purchaseMissionId=String(
+      payday?.wealthMissionId
+      || payday?.sourceMissionId
+      || receipt?.wealthMissionId
+      || ''
+    );
+    const purchaseMatches=
+      !missionId
+      || !purchaseMissionId
+      || purchaseMissionId===missionId;
+    const purchased=Boolean(
+      purchaseMatches
+      && (payday.completedAt||receipt.completedAt||saved.purchasedAt)
+    );
+
     const registered=Boolean(lastReg.at||saved.registeredAt);
     const regTicker=ticker(lastReg)||ticker({ticker:lastReg.ticker})||saved.ticker||'';
-    let holdings=[];try{if(typeof state!=='undefined'&&Array.isArray(state?.holdings))holdings=state.holdings.filter(active)}catch(_){}
+    let holdings=[];
+    try{
+      if(typeof state!=='undefined'&&Array.isArray(state?.holdings)){
+        holdings=state.holdings.filter(active);
+      }
+    }catch(_){}
     const inSquad=registered&&regTicker&&holdings.some(row=>ticker(row)===regTicker);
-    const stage=inSquad?5:registered?4:purchased?3:(route.length||tp.updatedAt)?2:1;
-    const output={...saved,stage,routeTickers,purchasedAt:payday.completedAt||receipt.completedAt||saved.purchasedAt||'',registeredAt:lastReg.at||saved.registeredAt||'',ticker:regTicker||saved.ticker||'',updatedAt:new Date().toISOString()};write(LIFECYCLE_KEY,output);return output;
+
+    const stage=inSquad?5:registered?4:purchased?3:routeReady?2:1;
+    const output={
+      ...saved,
+      stage,
+      missionId,
+      routeReady,
+      handoffComplete,
+      purchased,
+      registered,
+      inSquad,
+      routeTickers,
+      purchasedAt:purchased?(payday.completedAt||receipt.completedAt||saved.purchasedAt||''):'',
+      registeredAt:lastReg.at||saved.registeredAt||'',
+      ticker:regTicker||saved.ticker||'',
+      updatedAt:new Date().toISOString()
+    };
+    write(LIFECYCLE_KEY,output);
+    return output;
   }
   function insertScoutingLink(){
     const nav=document.querySelector('.fm-side-scroll');if(!nav||nav.querySelector('#scoutingSideMenu')||[...nav.querySelectorAll('a,summary')].some(a=>/Scouting Centre/i.test(a.textContent)))return;
@@ -2291,9 +2415,27 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     });
   }
   function renderLifecycle(life){
-    const labels=[['Plan approved','Deal sheet configured'],['Funds ready','Monthly release available'],['Purchases completed','Broker fills recorded'],['Registered','AuroraData updated'],['Added to squad','Holding confirmed live']];
-    q('m4LifecycleSteps').innerHTML=labels.map((item,index)=>{const n=index+1;return `<div class="m4-step ${life.stage>n?'done':life.stage===n?'current':''}" data-step="${n}"><strong>${item[0]}</strong><span>${n===4&&life.ticker?`${life.ticker} latest registration`:item[1]}</span></div>`}).join('');
-    const stageText=['Mission configured','Funds and route ready','Purchase execution complete','Registration confirmed','Signing live in the squad'][Math.max(0,life.stage-1)];q('m4LifecycleStatus').textContent=stageText;
+    const labels=[
+      ['Plan approved','Deal sheet configured'],
+      [
+        life.handoffComplete?'Funds ready':'Cash handoff',
+        life.handoffComplete?'Investment mission completed':'Complete the Investment Mission Handoff'
+      ],
+      ['Purchases completed','Broker fills recorded'],
+      ['Registered','AuroraData updated'],
+      ['Added to squad','Holding confirmed live']
+    ];
+    q('m4LifecycleSteps').innerHTML=labels.map((item,index)=>{
+      const n=index+1;
+      return `<div class="m4-step ${life.stage>n?'done':life.stage===n?'current':''}" data-step="${n}"><strong>${item[0]}</strong><span>${n===4&&life.ticker?`${life.ticker} latest registration`:item[1]}</span></div>`;
+    }).join('');
+    const stageText=
+      life.stage===1?'Mission configured':
+      life.stage===2?(life.handoffComplete?'Funds and route ready':'Route ready — cash handoff pending'):
+      life.stage===3?'Purchase execution complete':
+      life.stage===4?'Registration confirmed':
+      'Signing live in the squad';
+    q('m4LifecycleStatus').textContent=stageText;
   }
   function renderMediaStory(life){
     const box=q('breakingStories');if(!box||life.stage<3)return;
@@ -2326,7 +2468,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 })();
 </script>
 <div aria-label="Aurora notifications" class="beast-panel beast-notification-panel" id="beastNotificationPanel" role="dialog">
-<div class="beast-panel-head"><div><h3>Command Notifications</h3><p>Only items that can affect the next manager decision.</p></div><button aria-label="Close notifications" class="beast-close" id="beastNotificationClose" type="button">×</button></div>
+<div class="beast-panel-head"><div><h3>Command Notifications</h3><p>Read-only status alerts. Use the 📋 Decision Queue for linked actions.</p></div><button aria-label="Close notifications" class="beast-close" id="beastNotificationClose" type="button">×</button></div>
 <div class="beast-alert-list" id="beastAlertList"><div class="beast-empty">Waiting for AuroraData…</div></div>
 </div>
 <div aria-label="Dashboard controls" class="beast-layout-panel" id="beastLayoutPanel" role="dialog">
@@ -2430,13 +2572,106 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function lifecycleSnapshot(){try{return window.AuroraM4?.lifecycle?.()||{}}catch(_){return {}}}
   function decisionCandidates(){
     const m=journeyMetrics(),items=[];
-    if(m.latest){const age=(Date.now()-m.latest.getTime())/36e5;if(age>8)items.push({id:'refresh-data',fingerprint:String(m.latest.getTime()),priority:'high',icon:'↻',title:'Refresh Aurora data',detail:`The newest dated row is ${age.toFixed(1)} hours old. Refresh before making a price-sensitive decision.`,meta:'Data confidence',action:'refresh',actionLabel:'Refresh now'});}
-    const life=lifecycleSnapshot(),route=(life.routeTickers||[]).join(' / ');
-    if(Number(life.stage||1)===1)items.push({id:'signing-stage-1',fingerprint:'stage-1',priority:'high',icon:'⇄',title:'Build the next deal sheet',detail:'No active transfer route is synced. Finalise the allocation before the next payday window.',meta:'Transfer Centre',href:'AuroraCityFC_TransferCentre.html',actionLabel:'Open Transfer Centre'});
-    if(Number(life.stage)===2)items.push({id:'signing-stage-2',fingerprint:`${route}|${life.purchasedAt||''}`,priority:'high',icon:'💷',title:'Execute the payday purchases',detail:`The approved route${route?` is ${route}`:''} is ready for the broker purchase stage.`,meta:'Payday execution',href:'AuroraCityFC_TransferCentre.html#payday-execution',actionLabel:'Open execution'});
-    if(Number(life.stage)===3)items.push({id:'signing-stage-3',fingerprint:String(life.purchasedAt||route),priority:'high',icon:'✓',title:'Register the completed purchases',detail:'The broker purchase has been recorded but the signing still needs to pass through registration.',meta:'Registration pending',href:'AuroraCityFC_TransferCentre.html#registration',actionLabel:'Open registration'});
-    if(Number(life.stage)===4)items.push({id:'signing-stage-4',fingerprint:`${life.registeredAt||''}|${life.ticker||''}`,priority:'medium',icon:'♟',title:'Confirm the signing in the squad',detail:`${life.ticker||'The registered purchase'} has passed registration. Confirm it appears correctly in Squad Hub after the next data export.`,meta:'Squad confirmation',href:'AuroraCityFC_SquadHub.html',actionLabel:'Open Squad Hub'});
-    activeRows().filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60}).sort((a,b)=>strength(a)-strength(b)).slice(0,2).forEach(row=>items.push({id:`review-${ticker(row)}`,fingerprint:`${Math.round(strength(row))}|${valuation(row)}`,priority:'medium',icon:'⚠',title:`Review ${ticker(row)} before adding funds`,detail:`Buy-strength is ${Math.round(strength(row))}. Current valuation status: ${valuation(row)}.`,meta:'Portfolio review',action:'holding',ticker:ticker(row),actionLabel:'Open profile'}));
+    if(m.latest){
+      const age=(Date.now()-m.latest.getTime())/36e5;
+      if(age>8){
+        items.push({
+          id:'refresh-data',
+          fingerprint:String(m.latest.getTime()),
+          priority:'high',
+          icon:'↻',
+          title:'Refresh Aurora data',
+          detail:`The newest dated row is ${age.toFixed(1)} hours old. Refresh will re-download AuroraMaster; if the source export is still old, the warning will remain.`,
+          meta:'Data confidence',
+          action:'refresh',
+          actionLabel:'Refresh now'
+        });
+      }
+    }
+
+    const life=lifecycleSnapshot();
+    const route=(life.routeTickers||[]).join(' / ');
+
+    if(!life.routeReady){
+      items.push({
+        id:'signing-stage-route',
+        fingerprint:'route-required',
+        priority:'high',
+        icon:'⇄',
+        title:'Build the next deal sheet',
+        detail:'No active transfer route is synced. Finalise the allocation before moving any investment cash.',
+        meta:'Transfer Centre',
+        href:'AuroraCityFC_TransferCentre.html#top-transfer-board',
+        actionLabel:'Open Transfer Centre'
+      });
+    }else if(!life.handoffComplete){
+      items.push({
+        id:'signing-stage-handoff',
+        fingerprint:`${life.missionId||''}|${route}|handoff-pending`,
+        priority:'high',
+        icon:'£',
+        title:'Complete the Investment Mission Handoff',
+        detail:`The route${route?` is ${route}`:''} is prepared, but the combined IG / Trading 212 cash move has not been marked complete.`,
+        meta:'Finance Department',
+        href:'AuroraCityFC_FinanceDepartment.html#m52InvestmentMissionCompletion',
+        actionLabel:'Open mission handoff'
+      });
+    }else if(!life.purchased){
+      items.push({
+        id:'signing-stage-execution',
+        fingerprint:`${life.missionId||''}|${route}|handoff-complete`,
+        priority:'high',
+        icon:'💷',
+        title:'Execute the payday purchases',
+        detail:`The Investment Mission Handoff is complete${route?` and the approved route is ${route}`:''}. Record the actual broker fills.`,
+        meta:'Payday execution',
+        href:'AuroraCityFC_TransferCentre.html#payday-execution',
+        actionLabel:'Open execution'
+      });
+    }else if(!life.registered){
+      items.push({
+        id:'signing-stage-registration',
+        fingerprint:String(life.purchasedAt||route),
+        priority:'high',
+        icon:'✓',
+        title:'Register the completed purchases',
+        detail:'The broker purchase has been recorded but the signing still needs to pass through registration.',
+        meta:'Registration pending',
+        href:'AuroraCityFC_TransferCentre.html#registration-desk',
+        actionLabel:'Open registration'
+      });
+    }else if(!life.inSquad){
+      items.push({
+        id:'signing-stage-squad',
+        fingerprint:`${life.registeredAt||''}|${life.ticker||''}`,
+        priority:'medium',
+        icon:'♟',
+        title:'Confirm the signing in the squad',
+        detail:`${life.ticker||'The registered purchase'} has passed registration. Confirm it appears correctly in Squad Hub after the next data export.`,
+        meta:'Squad confirmation',
+        href:'AuroraCityFC_SquadHub.html#squad-overview',
+        actionLabel:'Open Squad Hub'
+      });
+    }
+
+    activeRows()
+      .filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60})
+      .sort((a,b)=>strength(a)-strength(b))
+      .slice(0,2)
+      .forEach(row=>items.push({
+        id:`review-${ticker(row)}`,
+        fingerprint:`${Math.round(strength(row))}|${valuation(row)}`,
+        priority:'medium',
+        icon:'⚠',
+        title:`Review ${ticker(row)} before adding funds`,
+        detail:`Buy-strength is ${Math.round(strength(row))}. Current valuation status: ${valuation(row)}.`,
+        meta:'Portfolio review',
+        action:'holding',
+        ticker:ticker(row),
+        actionLabel:'Open profile',
+        allowManualComplete:true
+      }));
+
     return items.slice(0,6);
   }
   function visibleDecisions(){const closed=decisionState();return decisionCandidates().filter(item=>closed[item.id]?.fingerprint!==item.fingerprint)}
@@ -2448,16 +2683,82 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     return `<button class="beast-decision-btn primary" type="button" data-decision-action="${esc(item.action||'open')}" data-decision-id="${esc(item.id)}">${esc(item.actionLabel)} <span aria-hidden="true">→</span></button>`;
   }
   function renderDecisions(){
-    const box=q('beastDecisionList');if(!box)return;const items=visibleDecisions();
-    box.innerHTML=items.length?items.map(item=>`<div class="beast-decision ${item.priority}"><span class="beast-decision-icon">${esc(item.icon)}</span><div class="beast-decision-copy"><div class="beast-decision-top"><strong>${esc(item.title)}</strong><span class="beast-decision-priority">${esc(item.priority)}</span></div><p>${esc(item.detail)}</p><div class="beast-decision-meta"><span>${esc(item.meta)}</span><span>•</span><span>Persists until resolved</span></div><div class="beast-decision-actions">${decisionPrimaryAction(item)}<button class="beast-decision-btn complete" type="button" data-decision-action="complete" data-decision-id="${esc(item.id)}">Complete</button><button class="beast-decision-btn dismiss" type="button" data-decision-action="dismiss" data-decision-id="${esc(item.id)}">Dismiss</button></div></div></div>`).join(''):'<div class="beast-empty-state"><strong>Decision queue clear</strong><p>No unresolved manager decisions are waiting. Aurora will add new items automatically when the data or transfer lifecycle changes.</p></div>';
-    const count=items.length;if(q('beastDecisionPanelCount'))q('beastDecisionPanelCount').textContent=`${count} pending`;const badge=q('beastDecisionCount');if(badge){badge.hidden=count===0;badge.textContent=String(count)}
+    const box=q('beastDecisionList');
+    if(!box)return;
+    const items=visibleDecisions();
+    box.innerHTML=items.length
+      ? items.map(item=>{
+          const completeButton=item.allowManualComplete
+            ? `<button class="beast-decision-btn complete" type="button" data-decision-action="complete" data-decision-id="${esc(item.id)}">Complete review</button>`
+            : '';
+          return `<div class="beast-decision ${item.priority}"><span class="beast-decision-icon">${esc(item.icon)}</span><div class="beast-decision-copy"><div class="beast-decision-top"><strong>${esc(item.title)}</strong><span class="beast-decision-priority">${esc(item.priority)}</span></div><p>${esc(item.detail)}</p><div class="beast-decision-meta"><span>${esc(item.meta)}</span><span>•</span><span>${item.allowManualComplete?'Review can be completed manually':'Completes automatically when the linked step is finished'}</span></div><div class="beast-decision-actions">${decisionPrimaryAction(item)}${completeButton}<button class="beast-decision-btn dismiss" type="button" data-decision-action="dismiss" data-decision-id="${esc(item.id)}">Dismiss</button></div></div></div>`;
+        }).join('')
+      : '<div class="beast-empty-state"><strong>Decision queue clear</strong><p>No unresolved manager decisions are waiting. Aurora will add new items automatically when the data or transfer lifecycle changes.</p></div>';
+    const count=items.length;
+    if(q('beastDecisionPanelCount'))q('beastDecisionPanelCount').textContent=`${count} pending`;
+    const badge=q('beastDecisionCount');
+    if(badge){badge.hidden=count===0;badge.textContent=String(count)}
   }
   function findDecision(id){return decisionCandidates().find(item=>item.id===id)}
   function closeDecision(item,outcome){if(!item)return;const state=decisionState();state[item.id]={fingerprint:item.fingerprint,outcome,at:Date.now()};writeJson(DECISION_KEY,state);addLog(`${outcome==='completed'?'Completed':'Dismissed'}: ${item.title}`,item.detail,'decision',outcome==='completed'?'✓':'×',`decision-${outcome}-${item.id}-${item.fingerprint}`,0);renderDecisions()}
-  function handleDecision(action,id,source){
-    const item=findDecision(id);if(!item)return;
-    if(action==='complete'||action==='dismiss'){closeDecision(item,action==='complete'?'completed':'dismissed');return;}
-    if(action==='refresh'){closeDecisionQueue();setTimeout(()=>q('refreshBtn')?.click(),80);return;}
+  function managerNotice(message,tone='info'){
+    let notice=q('auroraManagerNotice');
+    if(!notice){
+      notice=document.createElement('div');
+      notice.id='auroraManagerNotice';
+      notice.className='aurora-manager-notice';
+      notice.setAttribute('role','status');
+      document.body.appendChild(notice);
+    }
+    notice.dataset.tone=tone;
+    notice.textContent=message;
+    notice.classList.add('show');
+    clearTimeout(window.__auroraManagerNoticeTimer);
+    window.__auroraManagerNoticeTimer=setTimeout(()=>notice.classList.remove('show'),5200);
+  }
+
+  async function handleDecision(action,id,source){
+    const item=findDecision(id);
+    if(!item)return;
+    if(action==='complete'||action==='dismiss'){
+      closeDecision(item,action==='complete'?'completed':'dismissed');
+      return;
+    }
+    if(action==='refresh'){
+      const original=source?.textContent||'Refresh now';
+      if(source){
+        source.disabled=true;
+        source.textContent='Refreshing Aurora…';
+      }
+      try{
+        const result=await window.AuroraManagerRefresh?.();
+        renderAlerts();
+        renderDecisions();
+        refreshBeast();
+        if(result?.ok){
+          if(result.sourceStillStale){
+            const age=Number(result.ageHours||0).toFixed(1);
+            managerNotice(`AuroraMaster was re-downloaded successfully, but its newest source row is still ${age} hours old.`,'warn');
+            addLog('AuroraMaster refreshed — source still old',`Newest row remains ${age} hours old. The source export needs updating.`,`data`,'↻',`refresh-stale-${result.latest}`,0);
+          }else{
+            managerNotice('Aurora data refreshed successfully.','ok');
+            addLog('Aurora data refreshed','The Manager Dashboard downloaded a fresh AuroraMaster snapshot.','data','↻',`refresh-ok-${result?.latest||Date.now()}`,0);
+            closeDecisionQueue();
+          }
+        }else{
+          managerNotice('Aurora data refresh failed. The existing dashboard data has been kept.','bad');
+        }
+      }catch(error){
+        console.error(error);
+        managerNotice('Aurora data refresh failed. The existing dashboard data has been kept.','bad');
+      }finally{
+        if(source){
+          source.disabled=false;
+          source.textContent=original;
+        }
+      }
+      return;
+    }
     if(action==='holding'&&item.ticker){
       closeDecisionQueue();
       setTimeout(()=>openDrawer(item.ticker),180);
@@ -2606,7 +2907,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     document.addEventListener('click',e=>{const sort=e.target.closest('[data-beast-sort]');if(sort){sortMode=sort.dataset.beastSort;document.querySelectorAll('[data-beast-sort]').forEach(x=>x.classList.toggle('active',x===sort));renderRadar()}const card=e.target.closest('[data-beast-ticker]');if(card)openDrawer(card.dataset.beastTicker);const preview=e.target.closest('.preview-row');if(preview){const t=preview.querySelector('strong')?.textContent;if(t&&findRow(t))openDrawer(t)}});
     q('beastDrawerClose')?.addEventListener('click',closeDrawer);q('beastDrawerOverlay')?.addEventListener('click',closeDrawer);
     document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeDecisionQueue();q('beastNotificationPanel')?.classList.remove('open');q('beastLayoutPanel')?.classList.remove('open')}if(e.key.toLowerCase()==='p'&&!/input|textarea|select/i.test(e.target.tagName)){const s=settings(),next=!s.presentation;saveSettings({...s,presentation:next});addLog(`Presentation mode ${next?'enabled':'disabled'}`,'Keyboard shortcut P used.','system','▣','presentation-'+next,30000)}});
-    window.addEventListener('storage',e=>{if(['aurora_transfer_plan_v2','aurora_registration_last_v1','aurora_payday_execution_v1','aurora_m4_signing_lifecycle_v1',DECISION_KEY,ACTION_LOG_KEY].includes(e.key))setTimeout(refreshBeast,250)});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshBeast()});
+    window.addEventListener('storage',e=>{if(['aurora_transfer_plan_v2','aurora_registration_last_v1','aurora_payday_execution_v1','aurora_m4_signing_lifecycle_v1','aurora_investment_handoff_completion_v1','aurora_finance_department_mission_v1','aurora_wealth_investment_mission_v1',DECISION_KEY,ACTION_LOG_KEY].includes(e.key))setTimeout(refreshBeast,250)});document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshBeast()});
   }
 
   function enhanceBroadcastPanels(){
@@ -2722,16 +3023,8 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 })();
 </script>
 <!-- ===================== AURORA CONNECTED SYSTEM V1 ===================== -->
-
-
-
-
 <!-- Build: Sidebar Definitive Fix • 27 Jul 2026 -->
-
-
 <!-- Build: Aurora Sidebar Persistent Navigation V4 • 27 Jul 2026 -->
-
-
 <script id="auroraNoSidebarNoDockGuard">
 (function(){
   'use strict';
