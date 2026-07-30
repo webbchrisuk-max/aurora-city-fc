@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta name="theme-color" content="#020612"/>
+  <title>Aurora City FC — Phone Cloud Download</title>
+  <style>
+    :root{--bg:#020612;--panel:#071222;--line:rgba(125,211,252,.25);--text:#eaf4ff;--muted:#93a4bd;--green:#34d399;--red:#fb7185;--amber:#fbbf24;--cyan:#22d3ee;--blue:#60a5fa}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;display:grid;place-items:center;padding:18px;background:radial-gradient(circle at 15% 5%,rgba(34,211,238,.18),transparent 30%),radial-gradient(circle at 85% 10%,rgba(96,165,250,.16),transparent 30%),linear-gradient(180deg,#020612,#061224);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+    .card{width:min(720px,100%);border:1px solid var(--line);border-radius:28px;padding:26px;background:rgba(7,18,34,.95);box-shadow:0 24px 80px rgba(0,0,0,.45)}
+    .kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(34,211,238,.28);border-radius:999px;padding:8px 12px;background:rgba(8,47,73,.44);color:#a5f3fc;font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+    .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 6px rgba(52,211,153,.12)}
+    h1{margin:18px 0 8px;font-size:clamp(34px,7vw,58px);line-height:.95;letter-spacing:-.06em}h1 span{display:block;color:#7dd3fc}
+    p{color:var(--muted);line-height:1.55}
+    .status{margin:18px 0;padding:14px 15px;border:1px solid rgba(148,163,184,.18);border-radius:16px;background:rgba(2,6,23,.58);color:#dbeafe;white-space:pre-wrap}.status.ok{border-color:rgba(52,211,153,.4);color:#d1fae5}.status.error{border-color:rgba(251,113,133,.45);color:#fecdd3}.status.working{border-color:rgba(251,191,36,.4);color:#fde68a}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0}.stat{padding:15px;border:1px solid rgba(148,163,184,.16);border-radius:17px;background:rgba(2,6,23,.46)}.stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}.stat strong{display:block;margin-top:7px;color:#7dd3fc;font-size:23px}
+    .form{display:grid;gap:12px;margin:18px 0}.form label{display:grid;gap:7px;color:#cbd5e1;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.password-wrap{display:grid;grid-template-columns:1fr auto;gap:8px}.form input{width:100%;border:1px solid rgba(148,163,184,.22);border-radius:14px;background:rgba(2,6,23,.72);color:#f8fafc;padding:13px 14px;outline:none}.form input:focus{border-color:rgba(34,211,238,.62);box-shadow:0 0 0 3px rgba(34,211,238,.09)}
+    button,a{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(125,211,252,.3);border-radius:15px;padding:13px 16px;background:linear-gradient(135deg,#059669,#0f766e);color:white;font:900 14px/1 Inter,system-ui;text-decoration:none;cursor:pointer}.secondary{background:rgba(15,23,42,.75)}.blue{background:linear-gradient(135deg,#0891b2,#2563eb)}button:disabled{opacity:.5;cursor:wait}.actions{display:flex;gap:10px;flex-wrap:wrap}.small{font-size:12px;color:var(--muted);margin-top:16px}.hidden{display:none!important}
+    progress{width:100%;height:12px;margin:12px 0 4px;accent-color:#22d3ee}
+    @media(max-width:560px){.stats{grid-template-columns:1fr}.card{padding:21px}.password-wrap{grid-template-columns:1fr}.actions>*{width:100%}}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="kicker"><span class="dot"></span>Safe phone setup</div>
+    <h1>Download the club.<span>Keep a backup.</span></h1>
+    <p>This page copies Aurora’s verified Firestore save onto this phone. Before changing anything, it creates a local safety backup of any Aurora data already on the phone.</p>
+
+    <div class="stats">
+      <div class="stat"><small>Signed-in account</small><strong id="account">Checking…</strong></div>
+      <div class="stat"><small>Cloud records</small><strong id="count">—</strong></div>
+    </div>
+
+    <form id="loginForm" class="form hidden">
+      <label>Email address<input id="email" type="email" autocomplete="username" required/></label>
+      <label>Password<div class="password-wrap"><input id="password" type="password" autocomplete="current-password" required/><button class="secondary" id="showPassword" type="button">Show password</button></div></label>
+      <button class="blue" id="signInButton" type="submit">Sign in to Aurora Cloud</button>
+    </form>
+
+    <div class="status working" id="status">Loading Firebase and checking Aurora Cloud…</div>
+    <progress id="progress" max="100" value="0" class="hidden"></progress>
+
+    <div class="actions">
+      <button id="downloadButton" type="button" disabled>Download cloud copy to this phone</button>
+      <a class="secondary hidden" id="openAurora" href="AuroraCityFC_ManagerDashboard.html?v=20260730-phonecloud">Open Aurora Manager Dashboard</a>
+    </div>
+    <p class="small">The password goes directly to Firebase and is never stored by this page. Only Aurora keys are copied; browser display preferences remain local.</p>
+  </main>
+
+  <script type="module">
+    const statusEl=document.getElementById('status');
+    const countEl=document.getElementById('count');
+    const accountEl=document.getElementById('account');
+    const loginForm=document.getElementById('loginForm');
+    const emailEl=document.getElementById('email');
+    const passwordEl=document.getElementById('password');
+    const showPassword=document.getElementById('showPassword');
+    const signInButton=document.getElementById('signInButton');
+    const downloadButton=document.getElementById('downloadButton');
+    const openAurora=document.getElementById('openAurora');
+    const progressEl=document.getElementById('progress');
+
+    const show=(text,type='')=>{statusEl.textContent=text;statusEl.className='status'+(type?' '+type:'');};
+    const maskEmail=email=>{const [name,domain]=String(email||'').split('@');return domain?`${name.slice(0,2)}•••@${domain}`:'Signed in';};
+    const EXCLUDED=[/^aurora_cloud_/i,/^aurora_browser_/i,/^aurora_motion_/i,/(?:^|_)last_refresh(?:_|$)/i,/^aurora_manager_refresh_ack/i,/^aurora_beast_dashboard_(?:settings|order)/i,/^aurora_beast_alerts_read/i,/^aurora_registration_connection_v1$/i,/(?:^|_)sidebar(?:_|$)/i,/(?:^|_)(?:active_tab|active_view|last_page)(?:_|$)/i,/(?:^|_)test(?:_|$)/i,/backup/i,/cache/i];
+    const isSyncKey=key=>/^aurora/i.test(String(key||''))&&!EXCLUDED.some(pattern=>pattern.test(String(key||'')));
+    const localEntries=()=>{const entries=[];for(let i=0;i<localStorage.length;i+=1){const key=localStorage.key(i);if(key&&isSyncKey(key))entries.push([key,localStorage.getItem(key)]);}return entries.sort((a,b)=>a[0].localeCompare(b[0]));};
+
+    window.addEventListener('error',event=>show('Page error: '+(event.message||'Unknown error'),'error'));
+    window.addEventListener('unhandledrejection',event=>show('Firebase error: '+(event.reason?.message||String(event.reason)),'error'));
+
+    try{
+      const [appSdk,authSdk,dbSdk]=await Promise.all([
+        import('https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js'),
+        import('https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js')
+      ]);
+      const config={apiKey:'AIzaSyCWniUugILvyvTqXCnpQQQ352V0ECKPKo0',authDomain:'aurora-city-fc.firebaseapp.com',projectId:'aurora-city-fc',storageBucket:'aurora-city-fc.firebasestorage.app',messagingSenderId:'254659241407',appId:'1:254659241407:web:f6c0e7daf5d1d65b7d6d0a'};
+      const appName='aurora-cloud-sync';
+      const app=appSdk.getApps().find(item=>item.name===appName)||appSdk.initializeApp(config,appName);
+      const auth=authSdk.getAuth(app);
+      const db=dbSdk.getFirestore(app);
+      try{await authSdk.setPersistence(auth,authSdk.browserLocalPersistence);}catch(_){}
+
+      showPassword.addEventListener('click',()=>{const visible=passwordEl.type==='text';passwordEl.type=visible?'password':'text';showPassword.textContent=visible?'Show password':'Hide password';passwordEl.focus({preventScroll:true});});
+      loginForm.addEventListener('submit',async event=>{
+        event.preventDefault();
+        signInButton.disabled=true;
+        show('Signing in to Aurora Cloud…','working');
+        try{await authSdk.signInWithEmailAndPassword(auth,String(emailEl.value||'').trim(),String(passwordEl.value||''));passwordEl.value='';}
+        catch(error){show(error?.message||String(error),'error');signInButton.disabled=false;}
+      });
+
+      authSdk.onAuthStateChanged(auth,async user=>{
+        if(!user){accountEl.textContent='Not signed in';countEl.textContent='—';loginForm.classList.remove('hidden');downloadButton.disabled=true;show('Sign in with the same Aurora Firebase account used on the iPad.','working');return;}
+        loginForm.classList.add('hidden');
+        accountEl.textContent=maskEmail(user.email);
+        show('Checking the verified Firestore copy…','working');
+        try{
+          const configRef=dbSdk.doc(db,'users',user.uid,'cloud','config');
+          const [configSnap,recordsSnap]=await Promise.all([dbSdk.getDoc(configRef),dbSdk.getDocs(dbSdk.collection(db,'users',user.uid,'storage'))]);
+          const configured=configSnap.exists()&&configSnap.data()?.initialised===true;
+          if(!configured||recordsSnap.empty)throw new Error('Aurora Cloud is empty. Complete the iPad master upload first.');
+          const records=[];recordsSnap.forEach(record=>records.push(record.data()));
+          countEl.textContent=String(records.length);
+          show(`Ready — ${records.length} verified Aurora records are available for this phone.`,'ok');
+          downloadButton.disabled=false;
+
+          downloadButton.addEventListener('click',async()=>{
+            downloadButton.disabled=true;downloadButton.textContent='Downloading…';progressEl.classList.remove('hidden');progressEl.value=10;
+            show(`Creating a phone safety backup…\nThen downloading ${records.length} cloud records.`,'working');
+            try{
+              const before=Object.fromEntries(localEntries());
+              localStorage.setItem('aurora_cloud_restore_backup_v1',JSON.stringify({createdAt:new Date().toISOString(),reason:'before-phone-cloud-download',deviceName:'Chris’s phone',entries:before}));
+              progressEl.value=25;
+              const cloudMap=new Map();
+              records.forEach(data=>{if(data?.key&&isSyncKey(data.key))cloudMap.set(data.key,data);});
+              for(const [key] of localEntries()){if(!cloudMap.has(key))localStorage.removeItem(key);}
+              progressEl.value=45;
+              const meta={};let applied=0;
+              for(const [key,data] of cloudMap){
+                if(data.deleted)localStorage.removeItem(key);else localStorage.setItem(key,String(data.value??''));
+                meta[key]=Number(data.clientUpdatedAt)||Date.now();
+                applied+=1;progressEl.value=45+Math.round((applied/cloudMap.size)*45);
+              }
+              localStorage.setItem('aurora_cloud_meta_v1',JSON.stringify(meta));
+              localStorage.setItem('aurora_cloud_device_name_v1','Chris’s phone');
+              const verified=[...cloudMap].filter(([key,data])=>data.deleted?localStorage.getItem(key)===null:localStorage.getItem(key)===String(data.value??'')).length;
+              if(verified!==cloudMap.size)throw new Error(`Phone verification mismatch: ${verified} of ${cloudMap.size} records matched.`);
+              progressEl.value=100;
+              show(`Success — ${verified} Aurora records are now on this phone.\nA pre-download phone backup was saved locally.`,'ok');
+              downloadButton.textContent='Phone cloud copy complete ✓';
+              openAurora.classList.remove('hidden');
+            }catch(error){show(error?.message||String(error),'error');downloadButton.disabled=false;downloadButton.textContent='Try phone download again';progressEl.classList.add('hidden');}
+          },{once:true});
+        }catch(error){countEl.textContent='0';show(error?.message||String(error),'error');downloadButton.disabled=true;}
+      });
+    }catch(error){accountEl.textContent='Firebase unavailable';show('Firebase could not load: '+(error?.message||String(error)),'error');}
+  </script>
+</body>
+</html>
