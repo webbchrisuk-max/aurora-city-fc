@@ -10111,13 +10111,26 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
   }
 })();
 </script>
-<style id="m53PotDeadlineStyles">
-/* ===================== M53 DEADLINE-AWARE POT MANAGER ===================== */
+<style id="m54PotDeadlineStyles">
+/* ===================== M54 DEADLINE-AWARE POT MANAGER ===================== */
 .pot-editor-columns{
   grid-template-columns:1.15fr .62fr .62fr .82fr .72fr 1.1fr auto!important;
 }
 .pot-editor-row{
   grid-template-columns:1.15fr .62fr .62fr .82fr .72fr 1.1fr auto!important;
+}
+.pot-editor-row input,
+.pot-editor-row select,
+.pot-editor-row textarea{
+  pointer-events:auto!important;
+  user-select:text;
+  -webkit-user-select:text;
+}
+.pot-editor-row input:focus,
+.pot-editor-row select:focus,
+.pot-editor-row textarea:focus{
+  border-color:rgba(98,243,255,.72)!important;
+  box-shadow:0 0 0 3px rgba(98,243,255,.10);
 }
 .pot-editor-row input[type="date"].pot-deadline-input{
   min-width:132px;
@@ -10215,12 +10228,12 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
   .pot-editor-row .pot-note,.pot-editor-row button{grid-column:1}
 }
 </style>
-<script id="m53PotDeadlineScript">
-/* ===================== M53 DEADLINE-AWARE POT MANAGER ===================== */
+<script id="m54PotDeadlineScript">
+/* ===================== M54 DEADLINE-AWARE POT MANAGER ===================== */
 (function(){
   "use strict";
 
-  const VERSION = 53;
+  const VERSION = 54;
   const DAY_MS = 86400000;
   const PAY_CYCLE_DAYS = 28;
   let deadlineProtectedLedger = new Map();
@@ -10294,7 +10307,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
   }
 
   function ensureDeadlineFields(){
-    const pots = Array.isArray(window.plannerState?.editablePots) ? window.plannerState.editablePots : [];
+    const pots = Array.isArray(plannerState?.editablePots) ? plannerState.editablePots : [];
     let changed=false;
     pots.forEach(pot=>{
       if(!Object.prototype.hasOwnProperty.call(pot,"deadline")){
@@ -10334,7 +10347,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
     ensureDeadlineFields();
     const grid=document.getElementById("potEditorGrid");
     if(!grid) return;
-    const pots=Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[];
+    const pots=Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[];
     grid.innerHTML=pots.map((pot,index)=>`
       <div class="pot-editor-row" data-pot-index="${index}">
         <input data-pot-field="name" value="${escapeHtml(pot.name||"")}" aria-label="Pot name">
@@ -10355,8 +10368,8 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 
   window.syncPotEditorToState = function(){
     const rows=[...document.querySelectorAll("#potEditorGrid .pot-editor-row")];
-    const previous=Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[];
-    window.plannerState.editablePots=rows.map((row,index)=>{
+    const previous=Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[];
+    plannerState.editablePots=rows.map((row,index)=>{
       const old=previous[index]||{};
       const priority=Number(row.querySelector('[data-pot-field="priority"]')?.value);
       return {
@@ -10373,7 +10386,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
   };
 
   function sortedPots(){
-    const pots=[...(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[])];
+    const pots=[...(Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[])];
     return pots.sort((a,b)=>{
       const pa=Number(a.priority||2),pb=Number(b.priority||2);
       if(pa!==pb)return pa-pb;
@@ -10423,7 +10436,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       box.className="m53-deadline-summary";
       section.querySelector(".command-title")?.insertAdjacentElement("afterend",box);
     }
-    const dated=(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[]).map(p=>({pot:p,info:deadlineInfo(p)})).filter(row=>row.info.hasDeadline&&row.info.gap>.009);
+    const dated=(Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[]).map(p=>({pot:p,info:deadlineInfo(p)})).filter(row=>row.info.hasDeadline&&row.info.gap>.009);
     let plan=null;
     try{plan=window.m22CurrentPlan?.()||null;}catch(_){}
     const required=dated.reduce((sum,row)=>sum+row.info.required,0);
@@ -10471,7 +10484,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       const deadlineActions=[];
       const excluded=new Set((excludeIds||[]).map(String));
       const payday=currentPayday();
-      const pots=(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[])
+      const pots=(Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[])
         .map(pot=>({pot,info:deadlineInfo(pot,payday),key:potKey(pot),priority:Number(pot.priority||2)}))
         .filter(row=>row.key&&row.info.hasDeadline&&row.info.gap>.009&&!excluded.has(row.key))
         .sort((a,b)=>a.info.deadline-b.info.deadline||a.priority-b.priority||b.info.gap-a.info.gap);
@@ -10497,7 +10510,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
         remaining-=actual;
       }
 
-      const potsList=Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[];
+      const potsList=Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[];
       const originalBalances=new Map();
       potsList.forEach(pot=>{
         const key=potKey(pot),protectedAmount=Number(deadlineProtectedLedger.get(key)||0);
@@ -10524,7 +10537,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       deadlineProtectedLedger=new Map();
       allPlannedPotLedger=new Map();
       const plan=baseComputePlan.apply(this,arguments);
-      const dated=(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[]).map(pot=>({pot,info:deadlineInfo(pot)})).filter(row=>row.info.hasDeadline&&row.info.gap>.009);
+      const dated=(Array.isArray(plannerState?.editablePots)?plannerState.editablePots:[]).map(pot=>({pot,info:deadlineInfo(pot)})).filter(row=>row.info.hasDeadline&&row.info.gap>.009);
       const details=dated.map(row=>{
         const planned=plannedByPot(plan,potKey(row.pot));
         return {potId:potKey(row.pot),name:row.pot.name||"Dated Pot",deadline:row.info.deadlineText,required:row.info.required,planned,shortfall:Math.max(0,row.info.required-planned),paydays:row.info.paydays};
