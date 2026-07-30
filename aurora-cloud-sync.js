@@ -21,7 +21,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCWniUugILvvyTqXCnpQQQ352V0ECKPKo0",
+  apiKey: "AIzaSyCWniUugILvyvTqXCnpQQQ352V0ECKPKo0",
   authDomain: "aurora-city-fc.firebaseapp.com",
   projectId: "aurora-city-fc",
   storageBucket: "aurora-city-fc.firebasestorage.app",
