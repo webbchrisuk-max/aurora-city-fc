@@ -6,6 +6,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Aurora Finance Department — Payday &amp; Capital Control</title>
+<!-- Build: M44 Timeline Complete / Archive / Delete Controls • 30 Jul 2026 -->
 <style>
  :root {
   --bg: #071018;
@@ -2699,6 +2700,13 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 .m38-bill-amount{text-align:right;white-space:nowrap}
 .m38-bill-amount strong{display:block;font-size:16px;color:#f4fbff;letter-spacing:-.25px}
 .m38-bill-amount small{display:block;margin-top:5px;color:#7f94aa;font-size:8px}
+.m38-bill-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding-top:9px;margin-top:1px;border-top:1px solid rgba(255,255,255,.065)}
+.m38-timeline-action{appearance:none;border-radius:10px;padding:8px 9px;font-size:9px;font-weight:950;letter-spacing:.15px;cursor:pointer;transition:transform .16s ease,border-color .16s ease,background .16s ease,opacity .16s ease}
+.m38-timeline-action:hover:not(:disabled){transform:translateY(-1px)}
+.m38-timeline-complete{border:1px solid rgba(80,255,143,.32);background:rgba(80,255,143,.08);color:#9affc3}
+.m38-timeline-archive{border:1px solid rgba(98,243,255,.28);background:rgba(98,243,255,.07);color:#a9f2ff}
+.m38-timeline-delete{border:1px solid rgba(255,107,138,.28);background:rgba(255,107,138,.075);color:#ff9caf}
+.m38-timeline-action:disabled{opacity:.38;cursor:not-allowed;filter:saturate(.55)}
 .m38-source-tag{color:#aeeaff!important}
 .m38-protected-tag{color:#9affc3!important}
 .m38-unprotected-tag{color:#ffcf84!important}
@@ -2736,7 +2744,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 @keyframes m38Pulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
 @media(max-width:1050px){.m38-bills-grid{grid-template-columns:minmax(0,1.12fr) minmax(285px,.88fr)}.m38-urgency-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.m38-urgency-tabs button:nth-child(4),.m38-urgency-tabs button:nth-child(5){grid-column:auto}}
 @media(max-width:820px){.m38-bills-grid{grid-template-columns:1fr}.m38-inspector-panel{position:relative;top:auto;min-height:0}.m38-inspector-empty{min-height:230px}.m38-bills-header{align-items:stretch}.m38-add-bill{min-width:165px}.m38-command-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-@media(max-width:560px){.m38-bills-header{display:grid}.m38-add-bill{width:100%}.m38-command-strip{grid-template-columns:1fr 1fr!important}.m38-command-strip .schedule-command-tile{min-height:86px}.m38-queue-panel,.m38-inspector-panel{padding:11px;border-radius:16px}.m38-urgency-tabs{grid-template-columns:1fr 1fr}.m38-urgency-tabs button:last-child{grid-column:1/-1}.m38-bill-card{grid-template-columns:auto minmax(0,1fr);padding:10px}.m38-bill-amount{grid-column:2;text-align:left;display:flex;align-items:center;gap:8px}.m38-bill-amount strong{font-size:14px}.m38-bill-amount small{margin:0}.m38-form-grid{grid-template-columns:1fr}.m38-field.full{grid-column:auto}.m38-funding-readout{grid-template-columns:1fr 1fr}.m38-funding-readout div:last-child{grid-column:1/-1}.m38-history-card{grid-template-columns:minmax(0,1fr) auto}.m38-history-card .delete-btn{grid-column:1/-1;width:100%}}
+@media(max-width:560px){.m38-bills-header{display:grid}.m38-add-bill{width:100%}.m38-command-strip{grid-template-columns:1fr 1fr!important}.m38-command-strip .schedule-command-tile{min-height:86px}.m38-queue-panel,.m38-inspector-panel{padding:11px;border-radius:16px}.m38-urgency-tabs{grid-template-columns:1fr 1fr}.m38-urgency-tabs button:last-child{grid-column:1/-1}.m38-bill-card{grid-template-columns:auto minmax(0,1fr);padding:10px}.m38-bill-amount{grid-column:2;text-align:left;display:flex;align-items:center;gap:8px}.m38-bill-amount strong{font-size:14px}.m38-bill-amount small{margin:0}.m38-form-grid{grid-template-columns:1fr}.m38-field.full{grid-column:auto}.m38-funding-readout{grid-template-columns:1fr 1fr}.m38-funding-readout div:last-child{grid-column:1/-1}.m38-history-card{grid-template-columns:minmax(0,1fr) auto}.m38-history-card .delete-btn{grid-column:1/-1;width:100%}.m38-bill-actions{grid-template-columns:1fr}.m38-timeline-action{width:100%;padding:9px}}
 </style>
 <style>
 /* ===================== M37 AURORA INVESTMENT HANDOFF ===================== */
@@ -4920,11 +4928,7 @@ function m38RenderInspector() {
         <div><span>Payday impact</span><b>£${formatMoney(paydayImpact)}</b></div>
         <div><span>Next action</span><b>${bill.paid?"Finish record":"Complete payment"}</b></div>
       </div>
-      <div class="m38-action-row">
-        <button type="button" class="m38-complete-btn" data-m38-complete="${index}">${bill.recurrence==="none"?"Complete & archive":"Complete & schedule next"}</button>
-        <button type="button" class="m38-delete-bill" data-delete-section="scheduled" data-delete-index="${index}">Delete</button>
-      </div>
-      <p class="m38-action-note">Completing a payment deducts the actual amount from its chosen tracked pot. Current Account payments are recorded without changing the Holding Pot.</p>
+      <p class="m38-action-note">Complete, Archive and Delete controls now sit directly on each bill in the timeline. Completing records the payment from its selected funding source; archiving then files the completed record safely.</p>
     </div>`;
 }
 
@@ -4966,9 +4970,15 @@ function renderScheduledBills() {
         <div class="m38-bill-meta"><span>▣ ${bill.due?dateLabel(bill.due):"No date"}</span><span>↻ ${m38RecurrenceLabel(bill.recurrence)}</span><span class="m38-source-tag">● ${m18Escape(source)}</span><span class="${bill.included?"m38-protected-tag":"m38-unprotected-tag"}">${bill.included?"✓ Protected":"○ Not in contribution"}</span></div>
       </div>
       <div class="m38-bill-amount"><strong>£${formatMoney(bill.amount||0)}</strong><small>${m38DaysText(bill)}</small></div>
+      <div class="m38-bill-actions" aria-label="Bill actions">
+        <button type="button" class="m38-timeline-action m38-timeline-complete" data-m44-complete="${index}" ${bill.paid?"disabled":""}>${bill.paid?"Completed":"Complete"}</button>
+        <button type="button" class="m38-timeline-action m38-timeline-archive" data-m44-archive="${index}" ${bill.paid?"":"disabled"}>Archive</button>
+        <button type="button" class="m38-timeline-action m38-timeline-delete" data-m44-delete="${index}">Delete</button>
+      </div>
     </article>`;
   }).join("");
   m38RenderInspector();
+  m44BindTimelineControls();
 }
 
 
@@ -5927,6 +5937,89 @@ function m38ConvertFuture(index) {
   document.getElementById("m13Bills")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
+/* ===================== M44 TIMELINE BILL CONTROLS ===================== */
+function m44CompleteTimelineBill(index) {
+  const bill = plannerState.scheduledBills?.[index];
+  if (!bill || bill.paid) return;
+  const actual = Math.max(0, Number(bill.actualPaid || bill.amount || 0));
+  if (actual <= 0) { alert("Enter a planned or actual payment amount first."); return; }
+  if (!confirm(`Mark ${bill.name} complete and record £${formatMoney(actual)} from ${m38FundingSource(bill)}?`)) return;
+  if (!bill.deducted) m38DeductFundingSource(bill, actual);
+  bill.paid = true;
+  bill.actualPaid = actual;
+  bill.deducted = true;
+  bill.completedAt = new Date().toISOString();
+  m38SelectedBillId = bill.id;
+  m38UrgencyFilter = "paid";
+  savePlannerData();
+  runPlanner();
+}
+
+function m44ArchiveTimelineBill(index) {
+  const bill = plannerState.scheduledBills?.[index];
+  if (!bill) return;
+  if (!bill.paid) { alert("Complete this bill first, then archive it."); return; }
+  if (!confirm(`Archive ${bill.name}?`)) return;
+  if (!Array.isArray(plannerState.archivedBills)) plannerState.archivedBills = [];
+  const completed = {
+    ...bill,
+    paid: true,
+    actualPaid: Math.max(0, Number(bill.actualPaid || bill.amount || 0)),
+    archivedAt: new Date().toISOString(),
+    completedAt: bill.completedAt || new Date().toISOString()
+  };
+  plannerState.archivedBills.unshift(completed);
+  const recurrence = bill.recurrence || "monthly";
+  if (recurrence === "none") {
+    plannerState.scheduledBills.splice(index, 1);
+    m38SelectedBillId = null;
+  } else {
+    const nextDate = m20AddRecurrence(bill.due, recurrence);
+    if (nextDate) bill.due = m20DateInputValue(nextDate);
+    bill.paid = false;
+    bill.actualPaid = 0;
+    bill.deducted = false;
+    delete bill.completedAt;
+    m38SelectedBillId = bill.id;
+  }
+  savePlannerData();
+  runPlanner();
+}
+
+function m44DeleteTimelineBill(index) {
+  const bill = plannerState.scheduledBills?.[index];
+  if (!bill) return;
+  if (!confirm(`Delete ${bill.name} from the bill timeline? This will not deduct any money.`)) return;
+  const selected = String(m38SelectedBillId) === String(bill.id);
+  plannerState.scheduledBills.splice(index, 1);
+  if (selected) m38SelectedBillId = null;
+  savePlannerData();
+  runPlanner();
+}
+
+function m44BindTimelineControls() {
+  const host = document.getElementById("m18DynamicBillGroups");
+  if (!host) return;
+  host.onclick = event => {
+    const complete = event.target.closest("[data-m44-complete]");
+    const archive = event.target.closest("[data-m44-archive]");
+    const remove = event.target.closest("[data-m44-delete]");
+    if (complete || archive || remove) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (complete && !complete.disabled) m44CompleteTimelineBill(Number(complete.dataset.m44Complete));
+      else if (archive && !archive.disabled) m44ArchiveTimelineBill(Number(archive.dataset.m44Archive));
+      else if (remove) m44DeleteTimelineBill(Number(remove.dataset.m44Delete));
+      return;
+    }
+    const card = event.target.closest("[data-m38-select]");
+    if (!card) return;
+    m38SelectedBillId = card.dataset.m38Select;
+    renderScheduledBills();
+    bindTableInputs();
+  };
+}
+
 function bindTableInputs() {
   document.querySelectorAll("[data-section]").forEach(el => {
     const field = el.dataset.field;
@@ -5946,7 +6039,7 @@ function bindTableInputs() {
   document.querySelectorAll("[data-roll-section]").forEach(btn => { btn.onclick = handleRollForward; });
   document.querySelectorAll("[data-m21-paid]").forEach(input => { input.onchange = handleYearlyRecurringPaid; });
   document.querySelectorAll("[data-m21-undo]").forEach(btn => { btn.onclick = handleYearlyRecurringUndo; });
-  document.querySelectorAll("[data-m38-select]").forEach(card => { card.onclick = () => { m38SelectedBillId=card.dataset.m38Select; renderScheduledBills(); bindTableInputs(); }; });
+  m44BindTimelineControls();
   document.querySelectorAll("[data-m38-urgency]").forEach(btn => { btn.onclick = () => { m38UrgencyFilter=btn.dataset.m38Urgency; document.querySelectorAll("[data-m38-urgency]").forEach(x=>x.classList.toggle("active",x===btn)); renderScheduledBills(); bindTableInputs(); }; });
   document.querySelectorAll("[data-m38-category]").forEach(btn => { btn.onclick = () => { m38CategoryFilter=btn.dataset.m38Category; renderScheduledBills(); bindTableInputs(); }; });
   document.querySelectorAll("[data-m38-complete]").forEach(btn => { btn.onclick = () => m38CompleteScheduledPayment(Number(btn.dataset.m38Complete)); });
