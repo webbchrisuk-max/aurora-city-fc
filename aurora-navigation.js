@@ -5,7 +5,7 @@
     window.__AURORA_CLOUD_ENGINE_LOADING__ = true;
     const cloudScript = document.createElement("script");
     cloudScript.id = "auroraCloudSyncLoader";
-    cloudScript.src = "aurora-cloud-sync.js?v=20260730-rest1";
+    cloudScript.src = "aurora-cloud-sync.js?v=20260730-rest2";
     cloudScript.addEventListener("error",function(){
       window.__AURORA_CLOUD_ENGINE_LOADING__ = false;
       console.warn("Aurora Cloud Sync could not be loaded.");

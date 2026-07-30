@@ -8,7 +8,7 @@
 
   const API_KEY = "AIzaSyCWniUugILvyvTqXCnpQQQ352V0ECKPKo0";
   const PROJECT_ID = "aurora-city-fc";
-  const VERSION = "2.0.0-rest";
+  const VERSION = "2.0.1-rest-refresh-loop-fix";
   const SCHEMA_VERSION = 1;
   const SESSION_KEY = "aurora_cloud_rest_session_v1";
   const DEVICE_ID_KEY = "aurora_cloud_device_id_v1";
@@ -61,6 +61,21 @@
 
   function safeParse(value, fallback){
     try { return JSON.parse(value); } catch (_) { return fallback; }
+  }
+
+  const REFRESH_GUARD_WINDOW_MS = 15000;
+
+  function refreshGuardActive(){
+    const stamped = Number(sessionStorage.getItem(RELOAD_GUARD_KEY) || 0);
+    if(!stamped) return false;
+    if(Date.now() - stamped <= REFRESH_GUARD_WINDOW_MS) return true;
+    sessionStorage.removeItem(RELOAD_GUARD_KEY);
+    return false;
+  }
+
+  function armRefreshGuard(){
+    sessionStorage.setItem(RELOAD_GUARD_KEY, String(Date.now()));
+    pendingRefresh = false;
   }
 
   function humanError(error){
@@ -410,7 +425,7 @@
     }
 
     const changed = data.deleted ? current !== null : current !== String(data.value ?? "");
-    if(changed && allowReload) pendingRefresh = true;
+    if(changed && allowReload && !refreshGuardActive()) pendingRefresh = true;
     return changed;
   }
 
@@ -653,7 +668,7 @@
     pill.innerHTML = '<span class="aurora-cloud-dot" aria-hidden="true"></span><span class="aurora-cloud-copy">Cloud loading…</span>';
     pill.addEventListener("click", () => {
       if(pendingRefresh && location.pathname.split("/").pop()?.toLowerCase() !== SYNC_PAGE){
-        sessionStorage.setItem(RELOAD_GUARD_KEY, String(Date.now()));
+        armRefreshGuard();
         location.reload();
         return;
       }
@@ -714,7 +729,15 @@
       await ensureToken(false);
       const refreshed = loadSession();
       currentUser = { uid: refreshed.uid, email: refreshed.email || "" };
-      await reconcileFromCloud({ allowReload: true });
+      const suppressRefreshPrompt = refreshGuardActive();
+      await reconcileFromCloud({ allowReload: !suppressRefreshPrompt });
+      if(suppressRefreshPrompt){
+        pendingRefresh = false;
+        emitState();
+        setTimeout(() => {
+          sessionStorage.removeItem(RELOAD_GUARD_KEY);
+        }, REFRESH_GUARD_WINDOW_MS);
+      }
       startPolling();
     } catch(error){
       clearSession();
