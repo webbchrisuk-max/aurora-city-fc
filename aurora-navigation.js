@@ -6,7 +6,7 @@
     const cloudScript = document.createElement("script");
     cloudScript.id = "auroraCloudSyncLoader";
     cloudScript.type = "module";
-    cloudScript.src = "aurora-cloud-sync.js?v=20260730-cloud1";
+    cloudScript.src = "aurora-cloud-sync.js?v=20260730-cloud3";
     cloudScript.addEventListener("error",function(){
       console.warn("Aurora Cloud Sync could not be loaded.");
     });

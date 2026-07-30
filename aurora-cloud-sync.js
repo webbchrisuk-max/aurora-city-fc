@@ -29,7 +29,7 @@ const FIREBASE_CONFIG = {
   appId: "1:254659241407:web:f6c0e7daf5d1d65b7d6d0a"
 };
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 const SCHEMA_VERSION = 1;
 const DEVICE_ID_KEY = "aurora_cloud_device_id_v1";
 const DEVICE_NAME_KEY = "aurora_cloud_device_name_v1";
@@ -58,7 +58,8 @@ const nativeSetItem = Storage.prototype.setItem;
 const nativeRemoveItem = Storage.prototype.removeItem;
 const nativeClear = Storage.prototype.clear;
 
-const app = getApps().length ? getApp() : initializeApp(FIREBASE_CONFIG);
+const APP_NAME = "aurora-cloud-sync";
+const app = getApps().find(candidate => candidate.name === APP_NAME) || initializeApp(FIREBASE_CONFIG, APP_NAME);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
