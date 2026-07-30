@@ -8,7 +8,7 @@
 
   const API_KEY = "AIzaSyCWniUugILvyvTqXCnpQQQ352V0ECKPKo0";
   const PROJECT_ID = "aurora-city-fc";
-  const VERSION = "2.0.1-rest-refresh-loop-fix";
+  const VERSION = "2.0.2-rest-stable-green-status";
   const SCHEMA_VERSION = 1;
   const SESSION_KEY = "aurora_cloud_rest_session_v1";
   const DEVICE_ID_KEY = "aurora_cloud_device_id_v1";
@@ -667,11 +667,6 @@
     pill.type = "button";
     pill.innerHTML = '<span class="aurora-cloud-dot" aria-hidden="true"></span><span class="aurora-cloud-copy">Cloud loading…</span>';
     pill.addEventListener("click", () => {
-      if(pendingRefresh && location.pathname.split("/").pop()?.toLowerCase() !== SYNC_PAGE){
-        armRefreshGuard();
-        location.reload();
-        return;
-      }
       if(location.pathname.split("/").pop()?.toLowerCase() === SYNC_PAGE){
         document.getElementById("cloudControlCentre")?.scrollIntoView({ behavior: "smooth" });
       } else {
@@ -693,8 +688,10 @@
     else if(!snapshot.online){ label = "Saved offline"; state = "attention"; }
     else if(!snapshot.signedIn){ label = "Cloud sign in"; state = "attention"; }
     else if(!snapshot.cloudInitialised){ label = "Upload iPad master"; state = "attention"; }
-    else if(snapshot.pendingRefresh){ label = "Cloud update — tap to refresh"; state = "attention"; }
-    else if(snapshot.syncEnabled){ label = "Cloud synced"; state = "synced"; }
+    else if(snapshot.syncEnabled){
+      label = snapshot.pendingRefresh ? "Cloud synced — latest data received" : "Cloud synced";
+      state = "synced";
+    }
     else { label = "Cloud connecting…"; state = "working"; }
 
     pill.dataset.state = state;
