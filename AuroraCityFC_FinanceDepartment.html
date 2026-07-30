@@ -5042,7 +5042,7 @@ function renderFutureCosts() {
       <td><input class="table-input" type="text" value="${bill.category || ""}" data-section="future" data-index="${index}" data-field="category"></td>
       <td class="m28-note-cell"><label class="m28-notes-label" for="m28FutureNote_${index}">Funding note</label><textarea id="m28FutureNote_${index}" class="m28-notes-textarea" rows="3" placeholder="State which pot covers this cost, or why it is excluded." data-section="future" data-index="${index}" data-field="notes">${m18Escape(bill.notes)}</textarea></td>
       <td><button class="quick-btn" type="button" data-convert-future="${index}">Convert to bill</button></td>
-      <td><button class="delete-btn" data-delete-section="future" data-delete-index="${index}">Delete</button></td>
+      <td><button class="delete-btn" type="button" data-delete-section="future" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
   });
@@ -5072,7 +5072,7 @@ function renderRecurringCosts() {
       <td><input class="table-input" type="text" value="${m18Escape(cost.category)}" data-section="recurring" data-index="${index}" data-field="category"></td>
       <td>${cost.lastPaidDate ? new Date(cost.lastPaidDate).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}) : "—"}</td>
       <td><button class="m19-reset-btn" type="button" data-m19-reset="${index}">Reset</button></td>
-      <td><button class="delete-btn" data-delete-section="recurring" data-delete-index="${index}">Delete</button></td>
+      <td><button class="delete-btn" type="button" data-delete-section="recurring" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
   });
@@ -5224,7 +5224,7 @@ function renderYearlyRecurringCosts() {
       <td><div class="check-wrap"><input type="checkbox" ${cost.included ? "checked" : ""} data-section="yearlyRecurring" data-index="${index}" data-field="included"><span>${cost.included ? "Yes" : "No"}</span></div></td>
       <td><input class="table-input" type="text" value="${m18Escape(cost.category)}" data-section="yearlyRecurring" data-index="${index}" data-field="category"></td>
       <td class="m28-note-cell"><label class="m28-notes-label" for="m28YearlyNote_${index}">Funding note</label><textarea id="m28YearlyNote_${index}" class="m28-notes-textarea" rows="3" placeholder="Example: Fully covered by a named Monzo pot." data-section="yearlyRecurring" data-index="${index}" data-field="notes">${m18Escape(cost.notes || "")}</textarea></td>
-      <td><button class="delete-btn" data-delete-section="yearlyRecurring" data-delete-index="${index}">Delete</button></td>
+      <td><button class="delete-btn" type="button" data-delete-section="yearlyRecurring" data-delete-index="${index}">Delete</button></td>
     `;
     body.appendChild(tr);
   });
@@ -10604,6 +10604,55 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});
   else boot();
+})();
+</script>
+
+<script>
+/* ===================== M46 RELIABLE FUTURE-COST DELETE CONTROL ===================== */
+(function(){
+  "use strict";
+
+  const sectionMap={
+    scheduled:"scheduledBills",
+    future:"futureCosts",
+    recurring:"recurringCosts",
+    yearlyRecurring:"yearlyRecurringCosts",
+    archived:"archivedBills"
+  };
+
+  function clearUnstartedPaydayDraft(){
+    try{
+      const mission=window.m22EnsureState?.();
+      const hasExecuted=Boolean(mission?.executed&&Object.keys(mission.executed).length);
+      if(mission&&!mission.completed&&!hasExecuted){
+        mission.plan=null;
+        window.m22Save?.();
+      }
+    }catch(_){ }
+  }
+
+  document.addEventListener("click",function(event){
+    const button=event.target?.closest?.("[data-delete-section][data-delete-index]");
+    if(!button)return;
+
+    const section=String(button.dataset.deleteSection||"");
+    const property=sectionMap[section];
+    const index=Number(button.dataset.deleteIndex);
+    if(!property||!Number.isInteger(index)||index<0)return;
+    if(typeof plannerState==="undefined")return;
+
+    const list=plannerState[property];
+    if(!Array.isArray(list)||index>=list.length)return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    list.splice(index,1);
+    clearUnstartedPaydayDraft();
+    if(typeof savePlannerData==="function")savePlannerData();
+    if(typeof runPlanner==="function")runPlanner();
+    window.m22Render?.();
+  },true);
 })();
 </script>
 </body>
