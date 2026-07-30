@@ -2,11 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+
   <meta name="theme-color" content="#030712" />
+  <meta name="application-name" content="Aurora FC" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  />
+
+  <link rel="manifest" href="./manifest.json" />
+  <link
+    rel="apple-touch-icon"
+    href="./assets/aurora-city-fc/icons/icon-192.png"
+  />
+
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="192x192"
+    href="./assets/aurora-city-fc/icons/icon-192.png"
+  />
+
   <title>Aurora City FC | Manager Access</title>
+
   <style>
     :root {
       --ink: #02040a;
@@ -42,7 +67,14 @@
       min-height: 100svh;
       overflow: hidden;
       color: var(--white);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
       letter-spacing: 0.01em;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
@@ -58,10 +90,27 @@
       overflow: hidden;
       isolation: isolate;
       background:
-        radial-gradient(circle at 50% 14%, rgba(60, 236, 255, 0.12), transparent 25%),
-        radial-gradient(circle at 20% 48%, rgba(45, 130, 255, 0.14), transparent 32%),
-        radial-gradient(circle at 83% 50%, rgba(139, 92, 255, 0.13), transparent 30%),
-        linear-gradient(180deg, #07111e 0%, #030712 48%, #010307 100%);
+        radial-gradient(
+          circle at 50% 14%,
+          rgba(60, 236, 255, 0.12),
+          transparent 25%
+        ),
+        radial-gradient(
+          circle at 20% 48%,
+          rgba(45, 130, 255, 0.14),
+          transparent 32%
+        ),
+        radial-gradient(
+          circle at 83% 50%,
+          rgba(139, 92, 255, 0.13),
+          transparent 30%
+        ),
+        linear-gradient(
+          180deg,
+          #07111e 0%,
+          #030712 48%,
+          #010307 100%
+        );
     }
 
     .stadium,
@@ -81,8 +130,18 @@
     .stadium {
       z-index: -8;
       background:
-        linear-gradient(90deg, rgba(0, 0, 0, 0.84), transparent 25% 75%, rgba(0, 0, 0, 0.84)),
-        linear-gradient(180deg, transparent 0 48%, rgba(0, 0, 0, 0.66) 70%, #010205 100%);
+        linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.84),
+          transparent 25% 75%,
+          rgba(0, 0, 0, 0.84)
+        ),
+        linear-gradient(
+          180deg,
+          transparent 0 48%,
+          rgba(0, 0, 0, 0.66) 70%,
+          #010205 100%
+        );
     }
 
     .stadium::before {
@@ -90,9 +149,27 @@
       inset: auto -6% -12% -6%;
       height: 58%;
       background:
-        repeating-radial-gradient(ellipse at 50% 112%, rgba(197, 229, 255, 0.12) 0 1px, transparent 2px 10px),
-        linear-gradient(180deg, rgba(4, 12, 25, 0.2), rgba(0, 0, 0, 0.92));
-      clip-path: polygon(0 28%, 15% 17%, 35% 8%, 50% 5%, 65% 8%, 85% 17%, 100% 28%, 100% 100%, 0 100%);
+        repeating-radial-gradient(
+          ellipse at 50% 112%,
+          rgba(197, 229, 255, 0.12) 0 1px,
+          transparent 2px 10px
+        ),
+        linear-gradient(
+          180deg,
+          rgba(4, 12, 25, 0.2),
+          rgba(0, 0, 0, 0.92)
+        );
+      clip-path: polygon(
+        0 28%,
+        15% 17%,
+        35% 8%,
+        50% 5%,
+        65% 8%,
+        85% 17%,
+        100% 28%,
+        100% 100%,
+        0 100%
+      );
       opacity: 0.7;
     }
 
@@ -100,8 +177,18 @@
       content: "";
       inset: 0;
       background:
-        linear-gradient(105deg, transparent 0 18%, rgba(96, 220, 255, 0.05) 30%, transparent 43%),
-        linear-gradient(255deg, transparent 0 18%, rgba(105, 116, 255, 0.06) 30%, transparent 43%);
+        linear-gradient(
+          105deg,
+          transparent 0 18%,
+          rgba(96, 220, 255, 0.05) 30%,
+          transparent 43%
+        ),
+        linear-gradient(
+          255deg,
+          transparent 0 18%,
+          rgba(105, 116, 255, 0.06) 30%,
+          transparent 43%
+        );
       animation: stadiumPulse 7s ease-in-out infinite alternate;
     }
 
@@ -110,11 +197,33 @@
       inset: -8% -5% auto -5%;
       height: 46%;
       background:
-        radial-gradient(ellipse at 12% 18%, rgba(255,255,255,0.95) 0 1px, rgba(135,224,255,0.32) 2px 4px, transparent 5px),
-        radial-gradient(ellipse at 22% 12%, rgba(255,255,255,0.95) 0 1px, rgba(135,224,255,0.28) 2px 4px, transparent 5px),
-        radial-gradient(ellipse at 78% 12%, rgba(255,255,255,0.95) 0 1px, rgba(135,224,255,0.28) 2px 4px, transparent 5px),
-        radial-gradient(ellipse at 88% 18%, rgba(255,255,255,0.95) 0 1px, rgba(135,224,255,0.32) 2px 4px, transparent 5px);
-      filter: drop-shadow(0 0 14px rgba(80, 217, 255, 0.85));
+        radial-gradient(
+          ellipse at 12% 18%,
+          rgba(255, 255, 255, 0.95) 0 1px,
+          rgba(135, 224, 255, 0.32) 2px 4px,
+          transparent 5px
+        ),
+        radial-gradient(
+          ellipse at 22% 12%,
+          rgba(255, 255, 255, 0.95) 0 1px,
+          rgba(135, 224, 255, 0.28) 2px 4px,
+          transparent 5px
+        ),
+        radial-gradient(
+          ellipse at 78% 12%,
+          rgba(255, 255, 255, 0.95) 0 1px,
+          rgba(135, 224, 255, 0.28) 2px 4px,
+          transparent 5px
+        ),
+        radial-gradient(
+          ellipse at 88% 18%,
+          rgba(255, 255, 255, 0.95) 0 1px,
+          rgba(135, 224, 255, 0.32) 2px 4px,
+          transparent 5px
+        );
+      filter: drop-shadow(
+        0 0 14px rgba(80, 217, 255, 0.85)
+      );
     }
 
     .beam {
@@ -127,8 +236,18 @@
       filter: blur(18px);
       transform-origin: top center;
       pointer-events: none;
-      background: linear-gradient(180deg, rgba(177, 235, 255, 0.38), rgba(54, 159, 255, 0.08) 44%, transparent 72%);
-      clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+      background: linear-gradient(
+        180deg,
+        rgba(177, 235, 255, 0.38),
+        rgba(54, 159, 255, 0.08) 44%,
+        transparent 72%
+      );
+      clip-path: polygon(
+        42% 0,
+        58% 0,
+        100% 100%,
+        0 100%
+      );
     }
 
     .beam-left {
@@ -151,9 +270,23 @@
       transform: perspective(500px) rotateX(66deg);
       transform-origin: center bottom;
       background:
-        linear-gradient(90deg, transparent 49.8%, rgba(120, 238, 255, 0.34) 50%, transparent 50.2%),
-        linear-gradient(180deg, transparent 48.9%, rgba(120, 238, 255, 0.26) 49.3% 50.7%, transparent 51.1%),
-        repeating-linear-gradient(90deg, rgba(85, 180, 166, 0.08) 0 12.5%, rgba(23, 93, 84, 0.06) 12.5% 25%);
+        linear-gradient(
+          90deg,
+          transparent 49.8%,
+          rgba(120, 238, 255, 0.34) 50%,
+          transparent 50.2%
+        ),
+        linear-gradient(
+          180deg,
+          transparent 48.9%,
+          rgba(120, 238, 255, 0.26) 49.3% 50.7%,
+          transparent 51.1%
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(85, 180, 166, 0.08) 0 12.5%,
+          rgba(23, 93, 84, 0.06) 12.5% 25%
+        );
       border: 1px solid rgba(105, 233, 255, 0.24);
       box-shadow: 0 -25px 90px rgba(42, 214, 255, 0.06);
     }
@@ -180,7 +313,11 @@
     .scanlines {
       z-index: 19;
       opacity: 0.12;
-      background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(144, 226, 255, 0.06) 4px);
+      background: repeating-linear-gradient(
+        180deg,
+        transparent 0 3px,
+        rgba(144, 226, 255, 0.06) 4px
+      );
     }
 
     .vignette {
@@ -240,11 +377,19 @@
     .hud-rule {
       width: clamp(40px, 8vw, 100px);
       height: 1px;
-      background: linear-gradient(90deg, var(--cyan), transparent);
+      background: linear-gradient(
+        90deg,
+        var(--cyan),
+        transparent
+      );
     }
 
     .hud-cluster:last-child .hud-rule {
-      background: linear-gradient(270deg, var(--cyan), transparent);
+      background: linear-gradient(
+        270deg,
+        var(--cyan),
+        transparent
+      );
     }
 
     .corner {
@@ -296,7 +441,10 @@
         calc(28px + var(--safe-right))
         calc(42px + var(--safe-bottom))
         calc(28px + var(--safe-left));
-      transition: opacity 0.75s ease, visibility 0.75s ease, transform 0.75s ease;
+      transition:
+        opacity 0.75s ease,
+        visibility 0.75s ease,
+        transform 0.75s ease;
     }
 
     .boot-screen {
@@ -350,7 +498,9 @@
       width: 68%;
       height: 68%;
       object-fit: contain;
-      filter: drop-shadow(0 0 24px rgba(50, 221, 255, 0.5));
+      filter: drop-shadow(
+        0 0 24px rgba(50, 221, 255, 0.5)
+      );
     }
 
     .boot-kicker,
@@ -389,7 +539,12 @@
     .boot-progress {
       width: 0;
       height: 100%;
-      background: linear-gradient(90deg, var(--blue), var(--cyan), var(--violet));
+      background: linear-gradient(
+        90deg,
+        var(--blue),
+        var(--cyan),
+        var(--violet)
+      );
       box-shadow: 0 0 14px rgba(60, 236, 255, 0.85);
       transition: width 0.22s ease;
     }
@@ -422,7 +577,9 @@
     .access-layout {
       width: min(1180px, 94vw);
       display: grid;
-      grid-template-columns: minmax(0, 1.18fr) minmax(300px, 0.82fr);
+      grid-template-columns:
+        minmax(0, 1.18fr)
+        minmax(300px, 0.82fr);
       align-items: center;
       gap: clamp(32px, 6vw, 86px);
     }
@@ -443,8 +600,12 @@
       aspect-ratio: 1;
       transform: translate(-50%, -50%);
       border-radius: 50%;
-      background:
-        radial-gradient(circle, rgba(53, 217, 255, 0.15), rgba(27, 87, 169, 0.05) 38%, transparent 68%);
+      background: radial-gradient(
+        circle,
+        rgba(53, 217, 255, 0.15),
+        rgba(27, 87, 169, 0.05) 38%,
+        transparent 68%
+      );
       filter: blur(4px);
       animation: halo 4s ease-in-out infinite alternate;
     }
@@ -475,7 +636,12 @@
 
     .crest-shell::after {
       inset: 2%;
-      background: radial-gradient(circle, rgba(28, 150, 255, 0.18), rgba(7, 20, 41, 0.25) 58%, transparent 72%);
+      background: radial-gradient(
+        circle,
+        rgba(28, 150, 255, 0.18),
+        rgba(7, 20, 41, 0.25) 58%,
+        transparent 72%
+      );
       box-shadow: 0 0 75px rgba(47, 196, 255, 0.18);
     }
 
@@ -486,8 +652,12 @@
       height: 78%;
       object-fit: contain;
       filter:
-        drop-shadow(0 0 14px rgba(89, 224, 255, 0.52))
-        drop-shadow(0 24px 34px rgba(0, 0, 0, 0.72));
+        drop-shadow(
+          0 0 14px rgba(89, 224, 255, 0.52)
+        )
+        drop-shadow(
+          0 24px 34px rgba(0, 0, 0, 0.72)
+        );
       animation: crestFloat 4s ease-in-out infinite;
     }
 
@@ -505,7 +675,12 @@
       display: block;
       margin-top: 0.12em;
       color: transparent;
-      background: linear-gradient(90deg, #dff9ff 4%, #58e8ff 43%, #b098ff 94%);
+      background: linear-gradient(
+        90deg,
+        #dff9ff 4%,
+        #58e8ff 43%,
+        #b098ff 94%
+      );
       -webkit-background-clip: text;
       background-clip: text;
     }
@@ -526,8 +701,16 @@
       border: 1px solid rgba(130, 225, 255, 0.2);
       border-radius: 3px;
       background:
-        linear-gradient(135deg, rgba(9, 26, 51, 0.84), rgba(3, 10, 23, 0.68)),
-        repeating-linear-gradient(90deg, transparent 0 29px, rgba(100, 210, 255, 0.025) 30px);
+        linear-gradient(
+          135deg,
+          rgba(9, 26, 51, 0.84),
+          rgba(3, 10, 23, 0.68)
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 29px,
+          rgba(100, 210, 255, 0.025) 30px
+        );
       box-shadow:
         0 24px 70px rgba(0, 0, 0, 0.48),
         inset 0 0 46px rgba(44, 173, 255, 0.05);
@@ -541,7 +724,12 @@
       left: -34%;
       width: 32%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--cyan),
+        transparent
+      );
       animation: panelScan 4s linear infinite;
     }
 
@@ -588,19 +776,30 @@
       display: grid;
       place-items: center;
       border: 1px solid rgba(99, 228, 255, 0.36);
-      background: linear-gradient(145deg, rgba(48, 184, 255, 0.16), rgba(139, 92, 255, 0.12));
+      background: linear-gradient(
+        145deg,
+        rgba(48, 184, 255, 0.16),
+        rgba(139, 92, 255, 0.12)
+      );
       color: var(--white);
       font-size: 1.1rem;
       font-weight: 900;
       letter-spacing: 0.08em;
-      clip-path: polygon(14% 0, 100% 0, 100% 86%, 86% 100%, 0 100%, 0 14%);
+      clip-path: polygon(
+        14% 0,
+        100% 0,
+        100% 86%,
+        86% 100%,
+        0 100%,
+        0 14%
+      );
     }
 
     .manager-avatar::after {
       content: "";
       position: absolute;
       inset: 5px;
-      border: 1px solid rgba(255,255,255,0.07);
+      border: 1px solid rgba(255, 255, 255, 0.07);
     }
 
     .manager-label {
@@ -639,7 +838,7 @@
       min-height: 70px;
       padding: 13px;
       border: 1px solid rgba(133, 217, 255, 0.1);
-      background: rgba(255,255,255,0.025);
+      background: rgba(255, 255, 255, 0.025);
     }
 
     .system-tile small {
@@ -680,8 +879,12 @@
       overflow: hidden;
       border: 1px solid rgba(126, 230, 255, 0.4);
       border-radius: 2px;
-      background:
-        linear-gradient(90deg, rgba(21, 124, 199, 0.92), rgba(46, 216, 246, 0.92) 56%, rgba(116, 86, 241, 0.94));
+      background: linear-gradient(
+        90deg,
+        rgba(21, 124, 199, 0.92),
+        rgba(46, 216, 246, 0.92) 56%,
+        rgba(116, 86, 241, 0.94)
+      );
       color: #00101a;
       cursor: pointer;
       font-size: clamp(0.86rem, 1.2vw, 1rem);
@@ -689,7 +892,10 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       box-shadow: 0 12px 35px rgba(39, 181, 255, 0.18);
-      transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+      transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     .enter-button::before {
@@ -697,7 +903,12 @@
       position: absolute;
       inset: 0;
       transform: translateX(-115%) skewX(-18deg);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.52), transparent);
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.52),
+        transparent
+      );
       animation: buttonShine 3.6s ease-in-out infinite;
     }
 
@@ -749,7 +960,9 @@
       text-align: center;
       transform: scale(0.94);
       opacity: 0;
-      transition: transform 0.45s ease 0.2s, opacity 0.45s ease 0.2s;
+      transition:
+        transform 0.45s ease 0.2s,
+        opacity 0.45s ease 0.2s;
     }
 
     .transition-screen.is-active .transition-copy {
@@ -761,7 +974,9 @@
       width: 92px;
       height: 92px;
       object-fit: contain;
-      filter: drop-shadow(0 0 22px rgba(60, 236, 255, 0.55));
+      filter: drop-shadow(
+        0 0 22px rgba(60, 236, 255, 0.55)
+      );
     }
 
     .transition-copy h2 {
@@ -788,9 +1003,20 @@
       bottom: 0;
       width: 50.2%;
       background:
-        repeating-linear-gradient(90deg, transparent 0 31px, rgba(105, 222, 255, 0.025) 32px),
-        linear-gradient(180deg, #071223, #02050b);
-      transition: transform 0.95s cubic-bezier(.72,.03,.21,1) 0.55s;
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 31px,
+          rgba(105, 222, 255, 0.025) 32px
+        ),
+        linear-gradient(
+          180deg,
+          #071223,
+          #02050b
+        );
+      transition:
+        transform 0.95s
+        cubic-bezier(0.72, 0.03, 0.21, 1)
+        0.55s;
     }
 
     .door::after {
@@ -799,7 +1025,12 @@
       top: 0;
       bottom: 0;
       width: 1px;
-      background: linear-gradient(180deg, transparent, var(--cyan) 22% 78%, transparent);
+      background: linear-gradient(
+        180deg,
+        transparent,
+        var(--cyan) 22% 78%,
+        transparent
+      );
       box-shadow: 0 0 18px rgba(60, 236, 255, 0.85);
     }
 
@@ -834,56 +1065,121 @@
     }
 
     @keyframes stadiumPulse {
-      from { opacity: 0.62; }
-      to { opacity: 1; }
+      from {
+        opacity: 0.62;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     @keyframes sweepLeft {
-      from { transform: rotate(10deg) translateX(-4%); opacity: 0.13; }
-      to { transform: rotate(22deg) translateX(8%); opacity: 0.28; }
+      from {
+        transform: rotate(10deg) translateX(-4%);
+        opacity: 0.13;
+      }
+
+      to {
+        transform: rotate(22deg) translateX(8%);
+        opacity: 0.28;
+      }
     }
 
     @keyframes sweepRight {
-      from { transform: rotate(-10deg) translateX(4%); opacity: 0.13; }
-      to { transform: rotate(-22deg) translateX(-8%); opacity: 0.28; }
+      from {
+        transform: rotate(-10deg) translateX(4%);
+        opacity: 0.13;
+      }
+
+      to {
+        transform: rotate(-22deg) translateX(-8%);
+        opacity: 0.28;
+      }
     }
 
     @keyframes rise {
-      0% { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0; }
-      12% { opacity: 0.55; }
-      100% { transform: translate3d(var(--drift), -105vh, 0) scale(1.25); opacity: 0; }
+      0% {
+        transform: translate3d(0, 0, 0) scale(0.8);
+        opacity: 0;
+      }
+
+      12% {
+        opacity: 0.55;
+      }
+
+      100% {
+        transform:
+          translate3d(var(--drift), -105vh, 0)
+          scale(1.25);
+        opacity: 0;
+      }
     }
 
     @keyframes online {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.75); }
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.75);
+      }
     }
 
     @keyframes orbit {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     @keyframes orbitReverse {
-      to { transform: rotate(-360deg); }
+      to {
+        transform: rotate(-360deg);
+      }
     }
 
     @keyframes halo {
-      from { transform: translate(-50%, -50%) scale(0.94); opacity: 0.75; }
-      to { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+      from {
+        transform: translate(-50%, -50%) scale(0.94);
+        opacity: 0.75;
+      }
+
+      to {
+        transform: translate(-50%, -50%) scale(1.08);
+        opacity: 1;
+      }
     }
 
     @keyframes crestFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-7px); }
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-7px);
+      }
     }
 
     @keyframes panelScan {
-      to { left: 104%; }
+      to {
+        left: 104%;
+      }
     }
 
     @keyframes buttonShine {
-      0%, 48% { transform: translateX(-115%) skewX(-18deg); }
-      70%, 100% { transform: translateX(420%) skewX(-18deg); }
+      0%,
+      48% {
+        transform: translateX(-115%) skewX(-18deg);
+      }
+
+      70%,
+      100% {
+        transform: translateX(420%) skewX(-18deg);
+      }
     }
 
     @media (max-width: 820px) {
@@ -946,7 +1242,9 @@
 
       .access-layout {
         width: min(1100px, 93vw);
-        grid-template-columns: minmax(0, 1.08fr) minmax(310px, 0.92fr);
+        grid-template-columns:
+          minmax(0, 1.08fr)
+          minmax(310px, 0.92fr);
         gap: 30px;
       }
 
@@ -1010,6 +1308,7 @@
     }
   </style>
 </head>
+
 <body>
   <main class="app" id="app">
     <div class="stadium"></div>
@@ -1017,17 +1316,27 @@
     <div class="beam beam-left"></div>
     <div class="beam beam-right"></div>
     <div class="pitch"></div>
-    <div class="particles" id="particles" aria-hidden="true"></div>
+
+    <div
+      class="particles"
+      id="particles"
+      aria-hidden="true"
+    ></div>
+
     <div class="noise"></div>
     <div class="scanlines"></div>
     <div class="vignette"></div>
 
-    <header class="hud" aria-label="Aurora system status">
+    <header
+      class="hud"
+      aria-label="Aurora system status"
+    >
       <div class="hud-cluster">
         <span class="online-dot"></span>
         <span>Aurora Network</span>
         <span class="hud-rule"></span>
       </div>
+
       <div class="hud-cluster">
         <span class="hud-rule"></span>
         <span>Manager Access // 01</span>
@@ -1039,17 +1348,44 @@
     <div class="corner corner-bl"></div>
     <div class="corner corner-br"></div>
 
-    <section class="boot-screen" id="bootScreen" aria-live="polite">
+    <section
+      class="boot-screen"
+      id="bootScreen"
+      aria-live="polite"
+    >
       <div class="boot-card">
         <div class="boot-mark">
-          <img src="./assets/aurora-city-fc/icons/icon-512.png" alt="Aurora City FC crest" />
+          <img
+            src="./assets/aurora-city-fc/icons/icon-512.png"
+            alt="Aurora City FC crest"
+          />
         </div>
-        <p class="boot-kicker">Aurora Football Operating System</p>
-        <h1 class="boot-title">Initialising Club HQ</h1>
-        <p class="boot-message" id="bootMessage">Authenticating manager profile...</p>
-        <div class="boot-track" aria-hidden="true">
-          <div class="boot-progress" id="bootProgress"></div>
+
+        <p class="boot-kicker">
+          Aurora Football Operating System
+        </p>
+
+        <h1 class="boot-title">
+          Initialising Club HQ
+        </h1>
+
+        <p
+          class="boot-message"
+          id="bootMessage"
+        >
+          Authenticating manager profile...
+        </p>
+
+        <div
+          class="boot-track"
+          aria-hidden="true"
+        >
+          <div
+            class="boot-progress"
+            id="bootProgress"
+          ></div>
         </div>
+
         <div class="boot-meta">
           <span id="bootPercent">00%</span>
           <span id="bootCode">AUTH // MANAGER</span>
@@ -1057,23 +1393,52 @@
       </div>
     </section>
 
-    <section class="access-screen" id="accessScreen" aria-labelledby="clubTitle">
+    <section
+      class="access-screen"
+      id="accessScreen"
+      aria-labelledby="clubTitle"
+    >
       <div class="access-layout">
         <div class="club-stage">
-          <p class="access-kicker">Welcome to the future of football</p>
+          <p class="access-kicker">
+            Welcome to the future of football
+          </p>
+
           <div class="crest-shell">
-            <img src="./assets/aurora-city-fc/icons/icon-512.png" alt="Aurora City FC crest" />
+            <img
+              src="./assets/aurora-city-fc/icons/icon-512.png"
+              alt="Aurora City FC crest"
+            />
           </div>
-          <h1 class="club-name" id="clubTitle">Aurora City <span>Football Club</span></h1>
-          <p class="club-motto">Vision • Intelligence • Legacy</p>
+
+          <h1
+            class="club-name"
+            id="clubTitle"
+          >
+            Aurora City
+            <span>Football Club</span>
+          </h1>
+
+          <p class="club-motto">
+            Vision • Intelligence • Legacy
+          </p>
         </div>
 
-        <aside class="access-panel" aria-label="Manager access panel">
+        <aside
+          class="access-panel"
+          aria-label="Manager access panel"
+        >
           <div class="panel-header">
             <div>
-              <p class="access-kicker">Club Command Access</p>
-              <p class="panel-code">ACFC // HQ // 2026</p>
+              <p class="access-kicker">
+                Club Command Access
+              </p>
+
+              <p class="panel-code">
+                ACFC // HQ // 2026
+              </p>
             </div>
+
             <div class="live-badge">
               <span class="online-dot"></span>
               Systems Live
@@ -1081,36 +1446,61 @@
           </div>
 
           <div class="manager-profile">
-            <div class="manager-avatar" aria-hidden="true">WB</div>
+            <div
+              class="manager-avatar"
+              aria-hidden="true"
+            >
+              WB
+            </div>
+
             <div>
-              <p class="manager-label">Authenticated Manager</p>
-              <p class="manager-name">Webby</p>
-              <p class="profile-status">Full club clearance granted</p>
+              <p class="manager-label">
+                Authenticated Manager
+              </p>
+
+              <p class="manager-name">
+                Webby
+              </p>
+
+              <p class="profile-status">
+                Full club clearance granted
+              </p>
             </div>
           </div>
 
-          <div class="system-grid" aria-label="Available club systems">
+          <div
+            class="system-grid"
+            aria-label="Available club systems"
+          >
             <div class="system-tile">
               <small>Manager Dashboard</small>
               <strong>Ready</strong>
             </div>
+
             <div class="system-tile">
               <small>Transfer Centre</small>
               <strong>Connected</strong>
             </div>
+
             <div class="system-tile">
               <small>Squad Intelligence</small>
               <strong>Synced</strong>
             </div>
+
             <div class="system-tile">
               <small>Club Data Feed</small>
               <strong>Live</strong>
             </div>
           </div>
 
-          <button class="enter-button" id="enterButton" type="button">
+          <button
+            class="enter-button"
+            id="enterButton"
+            type="button"
+          >
             Enter Aurora City FC
           </button>
+
           <div class="button-subline">
             <span class="keycap">Enter</span>
             <span>or tap to continue</span>
@@ -1119,11 +1509,20 @@
       </div>
     </section>
 
-    <section class="transition-screen" id="transitionScreen" aria-live="polite">
+    <section
+      class="transition-screen"
+      id="transitionScreen"
+      aria-live="polite"
+    >
       <div class="door door-left"></div>
       <div class="door door-right"></div>
+
       <div class="transition-copy">
-        <img src="./assets/aurora-city-fc/icons/icon-512.png" alt="" />
+        <img
+          src="./assets/aurora-city-fc/icons/icon-512.png"
+          alt=""
+        />
+
         <h2>Welcome, Manager</h2>
         <p>Opening Aurora HQ</p>
       </div>
@@ -1134,50 +1533,132 @@
     (() => {
       "use strict";
 
-      const dashboardURL = "AuroraCityFC_GameShell.html";
-      const bootScreen = document.getElementById("bootScreen");
-      const accessScreen = document.getElementById("accessScreen");
-      const transitionScreen = document.getElementById("transitionScreen");
-      const bootProgress = document.getElementById("bootProgress");
-      const bootPercent = document.getElementById("bootPercent");
-      const bootMessage = document.getElementById("bootMessage");
-      const bootCode = document.getElementById("bootCode");
-      const enterButton = document.getElementById("enterButton");
-      const particles = document.getElementById("particles");
-      const loggedOut = new URLSearchParams(window.location.search).get("logout") === "1";
-      const profileStatus = document.querySelector(".profile-status");
+      const dashboardURL =
+        "AuroraCityFC_GameShell.html";
+
+      const bootScreen =
+        document.getElementById("bootScreen");
+
+      const accessScreen =
+        document.getElementById("accessScreen");
+
+      const transitionScreen =
+        document.getElementById("transitionScreen");
+
+      const bootProgress =
+        document.getElementById("bootProgress");
+
+      const bootPercent =
+        document.getElementById("bootPercent");
+
+      const bootMessage =
+        document.getElementById("bootMessage");
+
+      const bootCode =
+        document.getElementById("bootCode");
+
+      const enterButton =
+        document.getElementById("enterButton");
+
+      const particles =
+        document.getElementById("particles");
+
+      const loggedOut =
+        new URLSearchParams(window.location.search)
+          .get("logout") === "1";
+
+      const profileStatus =
+        document.querySelector(".profile-status");
 
       if (loggedOut && profileStatus) {
-        profileStatus.textContent = "Previous manager session closed safely";
+        profileStatus.textContent =
+          "Previous manager session closed safely";
+
         window.setTimeout(() => {
-          window.history.replaceState({}, "", window.location.pathname);
+          window.history.replaceState(
+            {},
+            "",
+            window.location.pathname
+          );
         }, 1200);
       }
 
       const stages = [
-        { at: 0, message: "Authenticating manager profile...", code: "AUTH // MANAGER" },
-        { at: 19, message: "Connecting to Aurora Master data...", code: "DATA // MASTER" },
-        { at: 42, message: "Synchronising squad intelligence...", code: "SQUAD // LIVE" },
-        { at: 64, message: "Opening transfer network...", code: "MARKET // ONLINE" },
-        { at: 83, message: "Preparing club command interface...", code: "HQ // READY" },
-        { at: 100, message: "Manager access granted.", code: "ACCESS // GRANTED" }
+        {
+          at: 0,
+          message:
+            "Authenticating manager profile...",
+          code: "AUTH // MANAGER"
+        },
+        {
+          at: 19,
+          message:
+            "Connecting to Aurora Master data...",
+          code: "DATA // MASTER"
+        },
+        {
+          at: 42,
+          message:
+            "Synchronising squad intelligence...",
+          code: "SQUAD // LIVE"
+        },
+        {
+          at: 64,
+          message:
+            "Opening transfer network...",
+          code: "MARKET // ONLINE"
+        },
+        {
+          at: 83,
+          message:
+            "Preparing club command interface...",
+          code: "HQ // READY"
+        },
+        {
+          at: 100,
+          message:
+            "Manager access granted.",
+          code: "ACCESS // GRANTED"
+        }
       ];
 
       let progress = 0;
       let entering = false;
 
       function createParticles() {
-        const count = window.innerWidth < 700 ? 20 : 36;
-        const fragment = document.createDocumentFragment();
+        const count =
+          window.innerWidth < 700 ? 20 : 36;
+
+        const fragment =
+          document.createDocumentFragment();
 
         for (let i = 0; i < count; i += 1) {
-          const particle = document.createElement("span");
+          const particle =
+            document.createElement("span");
+
           particle.className = "particle";
-          particle.style.left = `${Math.random() * 100}%`;
-          particle.style.setProperty("--duration", `${7 + Math.random() * 9}s`);
-          particle.style.setProperty("--delay", `${-Math.random() * 14}s`);
-          particle.style.setProperty("--drift", `${-45 + Math.random() * 90}px`);
-          particle.style.opacity = `${0.18 + Math.random() * 0.35}`;
+
+          particle.style.left =
+            `${Math.random() * 100}%`;
+
+          particle.style.setProperty(
+            "--duration",
+            `${7 + Math.random() * 9}s`
+          );
+
+          particle.style.setProperty(
+            "--delay",
+            `${-Math.random() * 14}s`
+          );
+
+          particle.style.setProperty(
+            "--drift",
+            `${-45 + Math.random() * 90}px`
+          );
+
+          particle.style.opacity =
+            `${0.18 + Math.random() * 0.35}`;
+
           fragment.appendChild(particle);
         }
 
@@ -1185,26 +1666,48 @@
       }
 
       function updateBoot(value) {
-        const bounded = Math.min(100, Math.max(0, Math.round(value)));
-        bootProgress.style.width = `${bounded}%`;
-        bootPercent.textContent = `${String(bounded).padStart(2, "0")}%`;
+        const bounded = Math.min(
+          100,
+          Math.max(0, Math.round(value))
+        );
 
-        const activeStage = [...stages].reverse().find((stage) => bounded >= stage.at) || stages[0];
-        bootMessage.textContent = activeStage.message;
-        bootCode.textContent = activeStage.code;
+        bootProgress.style.width =
+          `${bounded}%`;
+
+        bootPercent.textContent =
+          `${String(bounded).padStart(2, "0")}%`;
+
+        const activeStage =
+          [...stages]
+            .reverse()
+            .find(stage => bounded >= stage.at)
+          || stages[0];
+
+        bootMessage.textContent =
+          activeStage.message;
+
+        bootCode.textContent =
+          activeStage.code;
       }
 
       function finishBoot() {
         updateBoot(100);
+
         window.setTimeout(() => {
           bootScreen.classList.add("is-hidden");
           accessScreen.classList.add("is-active");
-          enterButton.focus({ preventScroll: true });
+
+          enterButton.focus({
+            preventScroll: true
+          });
         }, 520);
       }
 
       function runBoot() {
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const reduceMotion =
+          window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+          ).matches;
 
         if (reduceMotion) {
           progress = 100;
@@ -1214,8 +1717,19 @@
 
         const timer = window.setInterval(() => {
           const distance = 100 - progress;
-          const increment = distance > 28 ? 3 + Math.random() * 5 : distance > 8 ? 1.4 + Math.random() * 2.4 : 0.8 + Math.random() * 1.2;
-          progress = Math.min(100, progress + increment);
+
+          const increment =
+            distance > 28
+              ? 3 + Math.random() * 5
+              : distance > 8
+                ? 1.4 + Math.random() * 2.4
+                : 0.8 + Math.random() * 1.2;
+
+          progress = Math.min(
+            100,
+            progress + increment
+          );
+
           updateBoot(progress);
 
           if (progress >= 100) {
@@ -1226,32 +1740,73 @@
       }
 
       function enterClub() {
-        if (entering) return;
+        if (entering) {
+          return;
+        }
+
         entering = true;
         enterButton.disabled = true;
-        transitionScreen.classList.add("is-active");
+
+        transitionScreen.classList.add(
+          "is-active"
+        );
 
         window.setTimeout(() => {
-          transitionScreen.classList.add("open");
+          transitionScreen.classList.add(
+            "open"
+          );
         }, 320);
 
         window.setTimeout(() => {
-          window.location.href = dashboardURL;
+          window.location.href =
+            dashboardURL;
         }, 1550);
       }
 
-      enterButton.addEventListener("click", enterClub);
+      enterButton.addEventListener(
+        "click",
+        enterClub
+      );
 
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && accessScreen.classList.contains("is-active")) {
-          event.preventDefault();
-          enterClub();
+      document.addEventListener(
+        "keydown",
+        event => {
+          if (
+            event.key === "Enter"
+            && accessScreen.classList.contains(
+              "is-active"
+            )
+          ) {
+            event.preventDefault();
+            enterClub();
+          }
         }
-      });
+      );
 
       createParticles();
       runBoot();
     })();
+  </script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./service-worker.js")
+          .then(registration => {
+            console.log(
+              "Aurora FC service worker registered:",
+              registration.scope
+            );
+          })
+          .catch(error => {
+            console.error(
+              "Aurora FC service worker failed:",
+              error
+            );
+          });
+      });
+    }
   </script>
 </body>
 </html>
