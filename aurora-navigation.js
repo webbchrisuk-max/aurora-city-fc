@@ -1,13 +1,13 @@
 (function(){
   "use strict";
 
-  if(!window.__AURORA_CLOUD_LOADER__){
-    window.__AURORA_CLOUD_LOADER__ = true;
+  if(!window.__AURORA_CLOUD_ENGINE_LOADING__ && !window.AuroraCloudSync){
+    window.__AURORA_CLOUD_ENGINE_LOADING__ = true;
     const cloudScript = document.createElement("script");
     cloudScript.id = "auroraCloudSyncLoader";
-    cloudScript.type = "module";
-    cloudScript.src = "aurora-cloud-sync.js?v=20260730-cloud3";
+    cloudScript.src = "aurora-cloud-sync.js?v=20260730-rest1";
     cloudScript.addEventListener("error",function(){
+      window.__AURORA_CLOUD_ENGINE_LOADING__ = false;
       console.warn("Aurora Cloud Sync could not be loaded.");
     });
     document.head.appendChild(cloudScript);
