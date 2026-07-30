@@ -7,6 +7,7 @@
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Aurora Finance Department — Payday &amp; Capital Control</title>
 <!-- Build: M44 Timeline Complete / Archive / Delete Controls • 30 Jul 2026 -->
+<!-- Build: M45 Every Five Weeks Bill Recurrence • 30 Jul 2026 -->
 <style>
  :root {
   --bg: #071018;
@@ -4772,6 +4773,7 @@ function m20AddRecurrence(dateValue, recurrence) {
   if (recurrence === "weekly") next.setDate(next.getDate() + 7);
   else if (recurrence === "fortnightly") next.setDate(next.getDate() + 14);
   else if (recurrence === "four-weekly") next.setDate(next.getDate() + 28);
+  else if (recurrence === "five-weekly") next.setDate(next.getDate() + 35);
   else if (recurrence === "yearly") next.setFullYear(next.getFullYear() + 1);
   else {
     const originalDay = next.getDate();
@@ -4877,7 +4879,7 @@ function m38FundingOptions(selected) {
   return [...new Set(values)].map(value=>`<option value="${m18Escape(value)}" ${value===selected?"selected":""}>${m18Escape(value)}</option>`).join("");
 }
 function m38RecurrenceLabel(value) {
-  return ({none:"One-off",weekly:"Weekly",fortnightly:"Fortnightly","four-weekly":"Every 4 weeks",monthly:"Monthly",yearly:"Yearly"})[value] || "Monthly";
+  return ({none:"One-off",weekly:"Weekly",fortnightly:"Fortnightly","four-weekly":"Every 4 weeks","five-weekly":"Every 5 weeks",monthly:"Monthly",yearly:"Yearly"})[value] || "Monthly";
 }
 function m38SelectedBill() {
   return (plannerState.scheduledBills || []).find(bill => String(bill.id) === String(m38SelectedBillId)) || null;
@@ -4912,7 +4914,7 @@ function m38RenderInspector() {
         <div class="m38-field"><label for="m38Amount">Planned amount</label><input id="m38Amount" type="number" min="0" step="0.01" value="${Number(bill.amount||0)}" data-section="scheduled" data-index="${index}" data-field="amount"></div>
         <div class="m38-field"><label for="m38Category">Category</label><input id="m38Category" type="text" value="${m18Escape(bill.category)}" data-section="scheduled" data-index="${index}" data-field="category"></div>
         <div class="m38-field"><label for="m38Frequency">Frequency</label><select id="m38Frequency" data-section="scheduled" data-index="${index}" data-field="recurrence">
-          <option value="none" ${bill.recurrence==="none"?"selected":""}>One-off</option><option value="weekly" ${bill.recurrence==="weekly"?"selected":""}>Weekly</option><option value="fortnightly" ${bill.recurrence==="fortnightly"?"selected":""}>Fortnightly</option><option value="four-weekly" ${bill.recurrence==="four-weekly"?"selected":""}>Every 4 weeks</option><option value="monthly" ${bill.recurrence==="monthly"?"selected":""}>Monthly</option><option value="yearly" ${bill.recurrence==="yearly"?"selected":""}>Yearly</option>
+          <option value="none" ${bill.recurrence==="none"?"selected":""}>One-off</option><option value="weekly" ${bill.recurrence==="weekly"?"selected":""}>Weekly</option><option value="fortnightly" ${bill.recurrence==="fortnightly"?"selected":""}>Fortnightly</option><option value="four-weekly" ${bill.recurrence==="four-weekly"?"selected":""}>Every 4 weeks</option><option value="five-weekly" ${bill.recurrence==="five-weekly"?"selected":""}>Every 5 weeks</option><option value="monthly" ${bill.recurrence==="monthly"?"selected":""}>Monthly</option><option value="yearly" ${bill.recurrence==="yearly"?"selected":""}>Yearly</option>
         </select></div>
         <div class="m38-field full"><label for="m38FundingSource">Funding source</label><select id="m38FundingSource" data-section="scheduled" data-index="${index}" data-field="fundingSource">${m38FundingOptions(bill.fundingSource)}</select></div>
         <div class="m38-field"><label for="m38ActualPaid">Actual payment</label><input id="m38ActualPaid" type="number" min="0" step="0.01" value="${Number(bill.actualPaid||0)}" placeholder="Defaults to planned" data-section="scheduled" data-index="${index}" data-field="actualPaid"></div>
@@ -6540,10 +6542,10 @@ function m23DateValue(date){
 }
 function m23Recurrence(value){
   const recurrence=String(value||"none").toLowerCase();
-  return ["weekly","fortnightly","four-weekly","monthly","yearly","none"].includes(recurrence)?recurrence:"none";
+  return ["weekly","fortnightly","four-weekly","five-weekly","monthly","yearly","none"].includes(recurrence)?recurrence:"none";
 }
 function m23RecurrenceLabel(value){
-  return ({weekly:"Weekly",fortnightly:"Fortnightly","four-weekly":"Every 4 weeks",monthly:"Monthly",yearly:"Yearly",none:"One-off"})[m23Recurrence(value)]||"One-off";
+  return ({weekly:"Weekly",fortnightly:"Fortnightly","four-weekly":"Every 4 weeks","five-weekly":"Every 5 weeks",monthly:"Monthly",yearly:"Yearly",none:"One-off"})[m23Recurrence(value)]||"One-off";
 }
 function m23AdvanceDate(date,recurrence){
   const next=new Date(date);
@@ -6551,6 +6553,7 @@ function m23AdvanceDate(date,recurrence){
   if(rule==="weekly")next.setDate(next.getDate()+7);
   else if(rule==="fortnightly")next.setDate(next.getDate()+14);
   else if(rule==="four-weekly")next.setDate(next.getDate()+28);
+  else if(rule==="five-weekly")next.setDate(next.getDate()+35);
   else if(rule==="yearly")next.setFullYear(next.getFullYear()+1);
   else if(rule==="monthly"){
     const originalDay=next.getDate();
