@@ -10110,5 +10110,488 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
     setTimeout(renderAll,280);
   }
 })();
-</script></body>
+</script>
+<style id="m53PotDeadlineStyles">
+/* ===================== M53 DEADLINE-AWARE POT MANAGER ===================== */
+.pot-editor-columns{
+  grid-template-columns:1.15fr .62fr .62fr .82fr .72fr 1.1fr auto!important;
+}
+.pot-editor-row{
+  grid-template-columns:1.15fr .62fr .62fr .82fr .72fr 1.1fr auto!important;
+}
+.pot-editor-row input[type="date"].pot-deadline-input{
+  min-width:132px;
+  color-scheme:dark;
+  border-color:rgba(185,133,255,.24);
+  background:rgba(185,133,255,.055);
+}
+.m53-deadline-summary{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;
+  margin:0 0 12px;
+  padding:11px;
+  border:1px solid rgba(185,133,255,.22);
+  border-radius:16px;
+  background:radial-gradient(circle at top right,rgba(185,133,255,.10),transparent 42%),rgba(255,255,255,.022);
+}
+.m53-deadline-stat{
+  min-height:66px;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:13px;
+  background:rgba(0,0,0,.12);
+}
+.m53-deadline-stat span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:.75px;
+  text-transform:uppercase;
+}
+.m53-deadline-stat strong{
+  display:block;
+  margin-top:5px;
+  color:var(--cyan);
+  font-size:18px;
+  letter-spacing:-.35px;
+}
+.m53-deadline-stat.good strong{color:var(--green)}
+.m53-deadline-stat.watch strong{color:var(--amber)}
+.m53-deadline-stat.risk strong{color:var(--red)}
+.m53-pot-deadline{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:5px 10px;
+  margin:9px 0 10px;
+  padding:9px 10px;
+  border:1px solid rgba(185,133,255,.18);
+  border-radius:12px;
+  background:rgba(185,133,255,.045);
+}
+.m53-pot-deadline span{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.55px;
+  text-transform:uppercase;
+}
+.m53-pot-deadline strong{
+  color:#dfceff;
+  font-size:11px;
+  text-align:right;
+}
+.m53-pot-deadline small{
+  grid-column:1/-1;
+  color:#b9cae0;
+  font-size:10px;
+  line-height:1.4;
+}
+.m53-pot-deadline.good{border-color:rgba(52,211,153,.22);background:rgba(52,211,153,.04)}
+.m53-pot-deadline.good strong{color:var(--green)}
+.m53-pot-deadline.watch{border-color:rgba(251,191,36,.25);background:rgba(251,191,36,.045)}
+.m53-pot-deadline.watch strong{color:var(--amber)}
+.m53-pot-deadline.risk{border-color:rgba(251,113,133,.28);background:rgba(251,113,133,.055)}
+.m53-pot-deadline.risk strong{color:var(--red)}
+.m53-deadline-help{
+  margin-top:8px;
+  color:#b8cee3;
+  font-size:10px;
+  line-height:1.45;
+}
+@media(max-width:1100px){
+  .m53-deadline-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .pot-editor-columns{display:none!important}
+  .pot-editor-row{grid-template-columns:1fr 1fr!important}
+  .pot-editor-row .pot-note{grid-column:1/-1}
+  .pot-editor-row button{grid-column:1/-1}
+}
+@media(max-width:520px){
+  .m53-deadline-summary{grid-template-columns:1fr}
+  .pot-editor-row{grid-template-columns:1fr!important}
+  .pot-editor-row .pot-note,.pot-editor-row button{grid-column:1}
+}
+</style>
+<script id="m53PotDeadlineScript">
+/* ===================== M53 DEADLINE-AWARE POT MANAGER ===================== */
+(function(){
+  "use strict";
+
+  const VERSION = 53;
+  const DAY_MS = 86400000;
+  const PAY_CYCLE_DAYS = 28;
+  let deadlineProtectedLedger = new Map();
+  let allPlannedPotLedger = new Map();
+
+  const money = value => typeof window.m15Money === "function"
+    ? window.m15Money(Number(value || 0))
+    : `£${Number(value || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g,char=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[char]);
+
+  function parseDate(value){
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || "").trim());
+    if(!match) return null;
+    const date = new Date(Number(match[1]),Number(match[2])-1,Number(match[3]),12,0,0,0);
+    return Number.isFinite(date.getTime()) ? date : null;
+  }
+
+  function isoDate(date){
+    if(!(date instanceof Date) || !Number.isFinite(date.getTime())) return "";
+    const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function dateLabel(value){
+    const date = value instanceof Date ? value : parseDate(value);
+    return date ? date.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "No fixed date";
+  }
+
+  function potKey(pot){
+    return String((pot && (pot.id || pot.name)) || "");
+  }
+
+  function currentPayday(){
+    let value = "";
+    try{ value = window.m22EnsureState?.()?.paydayDate || window.m22DefaultPayday?.() || ""; }catch(_){}
+    return parseDate(value) || new Date(new Date().setHours(12,0,0,0));
+  }
+
+  function normalDeadline(pot){
+    return String(pot?.deadline || pot?.completeBy || pot?.targetDate || "").trim();
+  }
+
+  function deadlineInfo(pot,paydayValue=currentPayday()){
+    const balance = Math.max(0,Number(pot?.balance || 0));
+    const target = Math.max(0,Number(pot?.target || 0));
+    const gap = Math.max(0,target-balance);
+    const deadlineText = normalDeadline(pot);
+    const deadline = parseDate(deadlineText);
+    const payday = paydayValue instanceof Date ? paydayValue : (parseDate(paydayValue) || currentPayday());
+    const today = new Date(); today.setHours(12,0,0,0);
+
+    if(!deadline){
+      return {hasDeadline:false,deadlineText:"",deadline:null,balance,target,gap,paydays:0,required:0,daysLeft:null,status:gap<=.009?"Funded":"No fixed date",tone:gap<=.009?"good":"neutral"};
+    }
+
+    const daysLeft = Math.ceil((deadline.getTime()-today.getTime())/DAY_MS);
+    const cycleDifference = Math.floor((deadline.getTime()-payday.getTime())/(PAY_CYCLE_DAYS*DAY_MS));
+    const paydays = deadline.getTime() >= payday.getTime() ? Math.max(1,cycleDifference+1) : 0;
+    const required = gap<=.009 ? 0 : (paydays>0 ? gap/paydays : gap);
+    let status="Deadline active",tone="watch";
+    if(gap<=.009){status="Funded";tone="good";}
+    else if(daysLeft<0){status="Overdue";tone="risk";}
+    else if(paydays<=1){status="Due this payday";tone="risk";}
+    else if(paydays<=3){status="Deadline close";tone="watch";}
+    else{status="Deadline protected";tone="good";}
+
+    return {hasDeadline:true,deadlineText:isoDate(deadline),deadline,balance,target,gap,paydays,required,daysLeft,status,tone};
+  }
+
+  function ensureDeadlineFields(){
+    const pots = Array.isArray(window.plannerState?.editablePots) ? window.plannerState.editablePots : [];
+    let changed=false;
+    pots.forEach(pot=>{
+      if(!Object.prototype.hasOwnProperty.call(pot,"deadline")){
+        pot.deadline=String(pot.completeBy || pot.targetDate || "");
+        changed=true;
+      }
+    });
+    return changed;
+  }
+
+  function autoSizeNotes(grid){
+    grid?.querySelectorAll("textarea.pot-note").forEach(note=>{
+      const resize=()=>{note.style.height="auto";note.style.height=Math.max(72,note.scrollHeight)+"px";};
+      note.addEventListener("input",resize);
+      resize();
+    });
+  }
+
+  function updateManagerCopy(){
+    const columns=document.querySelector(".pot-editor-columns");
+    if(columns) columns.innerHTML="<span>Pot</span><span>Balance</span><span>Target</span><span>Complete by</span><span>Priority</span><span>Note</span><span></span>";
+    const summary=document.querySelector("#editablePotManager .pot-manager-summary small");
+    if(summary) summary.textContent="Update balances, targets, completion dates and priorities.";
+    const head=document.querySelector("#editablePotManager .pot-manager-head .subv");
+    if(head) head.textContent="A deadline protects the minimum amount needed each payday; priority controls where extra pot money goes.";
+    const status=document.getElementById("potEditorStatus");
+    if(status && !document.getElementById("m53DeadlineHelp")){
+      const help=document.createElement("div");
+      help.id="m53DeadlineHelp";
+      help.className="m53-deadline-help";
+      help.textContent="Leave Complete by blank for pots with no fixed date. Dated pots are funded first inside the goal-pot budget, even when their priority is Flexible.";
+      status.insertAdjacentElement("afterend",help);
+    }
+  }
+
+  window.renderPotEditor = function(){
+    ensureDeadlineFields();
+    const grid=document.getElementById("potEditorGrid");
+    if(!grid) return;
+    const pots=Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[];
+    grid.innerHTML=pots.map((pot,index)=>`
+      <div class="pot-editor-row" data-pot-index="${index}">
+        <input data-pot-field="name" value="${escapeHtml(pot.name||"")}" aria-label="Pot name">
+        <input data-pot-field="balance" type="number" step="0.01" value="${Number(pot.balance||0)}" aria-label="Current balance">
+        <input data-pot-field="target" type="number" step="0.01" value="${Number(pot.target||0)}" aria-label="Target">
+        <input class="pot-deadline-input" data-pot-field="deadline" type="date" value="${escapeHtml(normalDeadline(pot))}" aria-label="Complete by date">
+        <select data-pot-field="priority" aria-label="Priority">
+          <option value="1" ${Number(pot.priority)===1?"selected":""}>1 — Critical</option>
+          <option value="2" ${Number(pot.priority)!==1&&Number(pot.priority)!==3?"selected":""}>2 — Important</option>
+          <option value="3" ${Number(pot.priority)===3?"selected":""}>3 — Flexible</option>
+        </select>
+        <textarea class="pot-note" data-pot-field="note" rows="3" placeholder="Explain what this pot covers and which bills it funds." aria-label="Pot note">${escapeHtml(pot.note||"")}</textarea>
+        <button class="delete-btn" type="button" data-delete-pot="${index}">Delete</button>
+      </div>`).join("") || `<div class="subv">No pots yet. Add your first pot below.</div>`;
+    autoSizeNotes(grid);
+    updateManagerCopy();
+  };
+
+  window.syncPotEditorToState = function(){
+    const rows=[...document.querySelectorAll("#potEditorGrid .pot-editor-row")];
+    const previous=Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[];
+    window.plannerState.editablePots=rows.map((row,index)=>{
+      const old=previous[index]||{};
+      const priority=Number(row.querySelector('[data-pot-field="priority"]')?.value);
+      return {
+        ...old,
+        id:String(old.id||`pot_${Date.now()}_${index}`),
+        name:String(row.querySelector('[data-pot-field="name"]')?.value||`Pot ${index+1}`).trim(),
+        balance:Math.max(0,Number(row.querySelector('[data-pot-field="balance"]')?.value)||0),
+        target:Math.max(0,Number(row.querySelector('[data-pot-field="target"]')?.value)||0),
+        deadline:String(row.querySelector('[data-pot-field="deadline"]')?.value||"").trim(),
+        priority:priority===1||priority===2||priority===3?priority:2,
+        note:String(row.querySelector('[data-pot-field="note"]')?.value||"").trim()
+      };
+    });
+  };
+
+  function sortedPots(){
+    const pots=[...(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[])];
+    return pots.sort((a,b)=>{
+      const pa=Number(a.priority||2),pb=Number(b.priority||2);
+      if(pa!==pb)return pa-pb;
+      const ar=Number(a.target||0)>0?Number(a.balance||0)/Number(a.target||1):1;
+      const br=Number(b.target||0)>0?Number(b.balance||0)/Number(b.target||1):1;
+      return ar-br||String(a.name||"").localeCompare(String(b.name||""),"en-GB");
+    });
+  }
+
+  function plannedByPot(plan,key){
+    return (plan?.actions||[]).filter(action=>String(action?.potId||"")===String(key)).reduce((sum,action)=>sum+Number(action.amount||0),0);
+  }
+
+  function decorateRadar(){
+    const grid=document.getElementById("potHealthRadar");
+    if(!grid)return;
+    const cards=[...grid.querySelectorAll(".pot-radar-card")];
+    const pots=sortedPots();
+    cards.forEach((card,index)=>{
+      card.querySelector(".m53-pot-deadline")?.remove();
+      const pot=pots[index];
+      if(!pot)return;
+      const info=deadlineInfo(pot);
+      const panel=document.createElement("div");
+      panel.className=`m53-pot-deadline ${info.tone}`;
+      if(!info.hasDeadline){
+        panel.innerHTML=`<span>Complete by</span><strong>No fixed date</strong><small>Priority controls this pot because no deadline has been set.</small>`;
+      }else if(info.gap<=.009){
+        panel.innerHTML=`<span>Complete by</span><strong>${escapeHtml(dateLabel(info.deadline))}</strong><small>Target funded — no further payday contribution is required.</small>`;
+      }else{
+        const timing=info.paydays>0?`${info.paydays} payday${info.paydays===1?"":"s"} remaining`:`Deadline passed`;
+        panel.innerHTML=`<span>Complete by</span><strong>${escapeHtml(dateLabel(info.deadline))}</strong><small>${escapeHtml(info.status)} • ${money(info.required)} needed this payday • ${timing}</small>`;
+      }
+      const body=card.querySelector(".pot-card-body")||card;
+      const note=body.querySelector(".pot-card-note,.m28-note-display");
+      if(note)note.insertAdjacentElement("beforebegin",panel);else body.appendChild(panel);
+    });
+  }
+
+  function renderDeadlineSummary(){
+    const section=document.getElementById("m13PotHealth");
+    if(!section)return;
+    let box=document.getElementById("m53DeadlineSummary");
+    if(!box){
+      box=document.createElement("div");
+      box.id="m53DeadlineSummary";
+      box.className="m53-deadline-summary";
+      section.querySelector(".command-title")?.insertAdjacentElement("afterend",box);
+    }
+    const dated=(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[]).map(p=>({pot:p,info:deadlineInfo(p)})).filter(row=>row.info.hasDeadline&&row.info.gap>.009);
+    let plan=null;
+    try{plan=window.m22CurrentPlan?.()||null;}catch(_){}
+    const required=dated.reduce((sum,row)=>sum+row.info.required,0);
+    const planned=dated.reduce((sum,row)=>sum+Math.min(row.info.required,plannedByPot(plan,potKey(row.pot))),0);
+    const shortfall=Math.max(0,required-planned);
+    const nearest=dated.sort((a,b)=>a.info.deadline-b.info.deadline)[0];
+    const tone=shortfall>.009?"risk":dated.length?"good":"neutral";
+    box.innerHTML=`
+      <div class="m53-deadline-stat"><span>Dated pots</span><strong>${dated.length}</strong></div>
+      <div class="m53-deadline-stat watch"><span>Needed this payday</span><strong>${money(required)}</strong></div>
+      <div class="m53-deadline-stat ${tone}"><span>Protected in plan</span><strong>${money(planned)}</strong></div>
+      <div class="m53-deadline-stat ${shortfall>.009?"risk":"good"}"><span>${shortfall>.009?"Deadline shortfall":"Nearest deadline"}</span><strong>${shortfall>.009?money(shortfall):(nearest?escapeHtml(dateLabel(nearest.info.deadline)):"None")}</strong></div>`;
+  }
+
+  const baseRadar=window.renderPotHealthRadar;
+  window.renderPotHealthRadar=function(){
+    const result=typeof baseRadar==="function"?baseRadar.apply(this,arguments):undefined;
+    requestAnimationFrame(()=>{decorateRadar();renderDeadlineSummary();});
+    return result;
+  };
+
+  function mergeActions(actions){
+    const merged=[];
+    const byId=new Map();
+    actions.forEach(action=>{
+      if(!action||Number(action.amount||0)<=.009)return;
+      const id=String(action.id||`${action.type}:${action.potId||action.name}`);
+      if(byId.has(id)){
+        const existing=byId.get(id);
+        existing.amount=Number(existing.amount||0)+Number(action.amount||0);
+        if(action.deadlineProtected)existing.deadlineProtected=true;
+        const parts=[existing.meta,action.meta].filter(Boolean);
+        existing.meta=[...new Set(parts)].join(" • ");
+      }else{
+        const copy={...action,id};byId.set(id,copy);merged.push(copy);
+      }
+    });
+    return merged;
+  }
+
+  const baseBuildPotActions=window.m22BuildPotActions;
+  if(typeof baseBuildPotActions==="function"){
+    const deadlineAwareBuilder=function(amount,strategy,prefix="goal",excludeIds=[]){
+      let remaining=Math.max(0,Number(amount||0));
+      const deadlineActions=[];
+      const excluded=new Set((excludeIds||[]).map(String));
+      const payday=currentPayday();
+      const pots=(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[])
+        .map(pot=>({pot,info:deadlineInfo(pot,payday),key:potKey(pot),priority:Number(pot.priority||2)}))
+        .filter(row=>row.key&&row.info.hasDeadline&&row.info.gap>.009&&!excluded.has(row.key))
+        .sort((a,b)=>a.info.deadline-b.info.deadline||a.priority-b.priority||b.info.gap-a.info.gap);
+
+      for(const row of pots){
+        if(remaining<=.009)break;
+        const already=Number(allPlannedPotLedger.get(row.key)||0);
+        const need=Math.max(0,Math.min(row.info.gap-already,row.info.required-already));
+        const actual=Math.max(0,Math.min(remaining,need));
+        if(actual<=.009)continue;
+        const timing=row.info.paydays>0?`${row.info.paydays} payday${row.info.paydays===1?"":"s"} left`:`overdue`;
+        deadlineActions.push({
+          id:`${prefix}:pot:${row.key}`,
+          name:row.pot.name||"Dated Pot",
+          amount:actual,
+          type:"pot",
+          potId:row.key,
+          deadlineProtected:true,
+          meta:`Deadline ${dateLabel(row.info.deadline)} • ${money(row.info.required)} required this payday • ${timing}`
+        });
+        deadlineProtectedLedger.set(row.key,Number(deadlineProtectedLedger.get(row.key)||0)+actual);
+        allPlannedPotLedger.set(row.key,already+actual);
+        remaining-=actual;
+      }
+
+      const potsList=Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[];
+      const originalBalances=new Map();
+      potsList.forEach(pot=>{
+        const key=potKey(pot),protectedAmount=Number(deadlineProtectedLedger.get(key)||0);
+        if(protectedAmount>.009){originalBalances.set(key,Number(pot.balance||0));pot.balance=Number(pot.balance||0)+protectedAmount;}
+      });
+
+      let baseResult={actions:[],remaining};
+      try{baseResult=baseBuildPotActions.call(this,remaining,strategy,prefix,excludeIds)||baseResult;}
+      finally{potsList.forEach(pot=>{const key=potKey(pot);if(originalBalances.has(key))pot.balance=originalBalances.get(key);});}
+
+      (baseResult.actions||[]).forEach(action=>{
+        const key=String(action.potId||"");
+        if(key)allPlannedPotLedger.set(key,Number(allPlannedPotLedger.get(key)||0)+Number(action.amount||0));
+      });
+      return {actions:mergeActions([...deadlineActions,...(baseResult.actions||[])]),remaining:Number(baseResult.remaining||0)};
+    };
+    window.m22BuildPotActions=deadlineAwareBuilder;
+    try{m22BuildPotActions=deadlineAwareBuilder;}catch(_){}
+  }
+
+  const baseComputePlan=window.m22ComputePlan;
+  if(typeof baseComputePlan==="function"){
+    window.m22ComputePlan=function(){
+      deadlineProtectedLedger=new Map();
+      allPlannedPotLedger=new Map();
+      const plan=baseComputePlan.apply(this,arguments);
+      const dated=(Array.isArray(window.plannerState?.editablePots)?window.plannerState.editablePots:[]).map(pot=>({pot,info:deadlineInfo(pot)})).filter(row=>row.info.hasDeadline&&row.info.gap>.009);
+      const details=dated.map(row=>{
+        const planned=plannedByPot(plan,potKey(row.pot));
+        return {potId:potKey(row.pot),name:row.pot.name||"Dated Pot",deadline:row.info.deadlineText,required:row.info.required,planned,shortfall:Math.max(0,row.info.required-planned),paydays:row.info.paydays};
+      });
+      plan.potDeadlineVersion=VERSION;
+      plan.deadlineDetails=details;
+      plan.deadlineRequired=details.reduce((sum,row)=>sum+row.required,0);
+      plan.deadlinePlanned=details.reduce((sum,row)=>sum+Math.min(row.required,row.planned),0);
+      plan.deadlineShortfall=details.reduce((sum,row)=>sum+row.shortfall,0);
+      return plan;
+    };
+  }
+
+  const baseCurrentPlan=window.m22CurrentPlan;
+  if(typeof baseCurrentPlan==="function"){
+    window.m22CurrentPlan=function(){
+      try{
+        const mission=window.m22EnsureState?.();
+        const executed=mission?.executed&&Object.keys(mission.executed).length>0;
+        if(mission?.plan&&!mission.completed&&!executed&&mission.plan.potDeadlineVersion!==VERSION)mission.plan=null;
+      }catch(_){}
+      return baseCurrentPlan.apply(this,arguments);
+    };
+  }
+
+  const baseRender=window.m22Render;
+  if(typeof baseRender==="function"){
+    window.m22Render=function(){
+      const result=baseRender.apply(this,arguments);
+      setTimeout(()=>{decorateRadar();renderDeadlineSummary();},0);
+      return result;
+    };
+  }
+
+  function clearDraftForDeadlineChange(){
+    try{
+      const mission=window.m22EnsureState?.();
+      const executed=mission?.executed&&Object.keys(mission.executed).length>0;
+      if(mission&&!mission.completed&&!executed){mission.plan=null;window.m22Save?.();}
+    }catch(_){}
+  }
+
+  document.addEventListener("change",event=>{
+    if(event.target?.matches?.('#potEditorGrid [data-pot-field="deadline"],#potEditorGrid [data-pot-field="target"],#potEditorGrid [data-pot-field="balance"]')){
+      window.syncPotEditorToState?.();
+      clearDraftForDeadlineChange();
+      window.savePlannerData?.();
+      window.renderPotHealthRadar?.({});
+      setTimeout(()=>window.m22Render?.(),30);
+    }
+  });
+
+  document.getElementById("savePotsBtn")?.addEventListener("click",()=>{
+    setTimeout(()=>{clearDraftForDeadlineChange();window.m22Render?.();window.renderPotHealthRadar?.({});},20);
+  });
+
+  function boot(){
+    ensureDeadlineFields();
+    updateManagerCopy();
+    window.renderPotEditor?.();
+    window.renderPotHealthRadar?.({});
+    setTimeout(()=>{decorateRadar();renderDeadlineSummary();window.m22Render?.();},180);
+  }
+
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});
+  else boot();
+})();
+</script>
+</body>
 </html>
