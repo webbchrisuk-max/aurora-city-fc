@@ -48,6 +48,219 @@
     ["☁","Cloud Sync","AuroraCloudSync.html"]
   ];
 
+
+  const MATCHDAY_MASTER_URL =
+    "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+
+  const MATCHDAY_REPORT_KEYS = [
+    "MatchdayReport",
+    "MatchdayReports",
+    "DailyMatchReport",
+    "PortfolioMatchReport"
+  ];
+
+  function injectMatchdayStatusStyles(){
+    if(document.getElementById("auroraMatchdayStatusStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "auroraMatchdayStatusStyles";
+    style.textContent = `
+      .aurora-nav-matchday-status{
+        margin-left:auto;
+        flex:0 0 auto;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        min-width:68px;
+        padding:4px 8px;
+        border-radius:999px;
+        border:1px solid rgba(148,163,184,.24);
+        background:rgba(15,23,42,.7);
+        color:#94a3b8;
+        font-size:10px;
+        font-weight:850;
+        letter-spacing:.02em;
+        line-height:1;
+        white-space:nowrap;
+      }
+      .aurora-nav-matchday-status[data-state="progress"]{
+        color:#fde68a;
+        border-color:rgba(251,191,36,.4);
+        background:rgba(120,53,15,.35);
+        animation:auroraMatchdayPulse 1.7s ease-in-out infinite;
+      }
+      .aurora-nav-matchday-status[data-state="ready"]{
+        color:#a7f3d0;
+        border-color:rgba(52,211,153,.42);
+        background:rgba(6,78,59,.34);
+      }
+      .aurora-nav-matchday-status[data-state="none"]{
+        color:#cbd5e1;
+        border-color:rgba(148,163,184,.25);
+        background:rgba(30,41,59,.55);
+      }
+      @keyframes auroraMatchdayPulse{
+        0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}
+        50%{box-shadow:0 0 0 5px rgba(251,191,36,.10)}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function matchdayValue(object){
+    const keys = Array.prototype.slice.call(arguments,1);
+
+    for(const key of keys){
+      if(
+        object
+        && object[key] !== undefined
+        && object[key] !== null
+        && String(object[key]).trim() !== ""
+      ){
+        return object[key];
+      }
+    }
+
+    return "";
+  }
+
+  function matchdayRows(data){
+    for(const key of MATCHDAY_REPORT_KEYS){
+      if(Array.isArray(data && data[key])){
+        return data[key];
+      }
+    }
+
+    return [];
+  }
+
+  function matchdayReportDate(report){
+    const value = matchdayValue(
+      report,
+      "report_date",
+      "date",
+      "Date",
+      "timestamp",
+      "submitted_at"
+    );
+
+    if(!value) return null;
+
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function sameLocalDay(first,second){
+    return first
+      && second
+      && first.getFullYear() === second.getFullYear()
+      && first.getMonth() === second.getMonth()
+      && first.getDate() === second.getDate();
+  }
+
+  function setMatchdayStatus(state,label,detail){
+    const badge = document.getElementById("auroraMatchdayStatus");
+    if(!badge) return;
+
+    badge.dataset.state = state;
+    badge.textContent = label;
+    badge.title = detail;
+    badge.setAttribute("aria-label",detail);
+  }
+
+  async function refreshMatchdayStatus(){
+    const now = new Date();
+
+    try{
+      const response = await fetch(
+        MATCHDAY_MASTER_URL,
+        {cache:"no-store"}
+      );
+
+      if(!response.ok){
+        throw new Error(`AuroraMaster ${response.status}`);
+      }
+
+      const data = await response.json();
+      const reports = matchdayRows(data);
+
+      const latest = reports
+        .map(function(report){
+          return {
+            report:report,
+            date:matchdayReportDate(report)
+          };
+        })
+        .filter(function(item){
+          return item.date;
+        })
+        .sort(function(a,b){
+          return b.date.getTime() - a.date.getTime();
+        })[0];
+
+      if(latest && sameLocalDay(latest.date,now)){
+        setMatchdayStatus(
+          "ready",
+          "Ready",
+          "Today's Matchday report is ready"
+        );
+        return;
+      }
+
+      const minutes = now.getHours() * 60 + now.getMinutes();
+      const reportWindowOpen = minutes >= 17 * 60 && minutes < 19 * 60;
+
+      if(reportWindowOpen){
+        setMatchdayStatus(
+          "progress",
+          "In progress",
+          "Today's 5 p.m. Matchday report is being prepared"
+        );
+        return;
+      }
+
+      setMatchdayStatus(
+        "none",
+        "No report",
+        "No Matchday report is available for today"
+      );
+    }catch(error){
+      console.warn(
+        "Aurora navigation could not read Matchday report status.",
+        error
+      );
+
+      setMatchdayStatus(
+        "none",
+        "No report",
+        "Matchday report status is currently unavailable"
+      );
+    }
+  }
+
+  function wireMatchdayStatus(){
+    refreshMatchdayStatus();
+
+    window.setInterval(
+      refreshMatchdayStatus,
+      60000
+    );
+
+    window.addEventListener(
+      "focus",
+      refreshMatchdayStatus
+    );
+
+    document.addEventListener(
+      "visibilitychange",
+      function(){
+        if(!document.hidden){
+          refreshMatchdayStatus();
+        }
+      }
+    );
+  }
+
   const currentFile = (
     location.pathname.split("/").pop()
     || "AuroraCityFC_NexusMaster.html"
@@ -309,9 +522,11 @@
             <span class="aurora-nav-dept-icon" aria-hidden="true">${esc(item[0])}</span>
             <strong>${esc(item[1])}</strong>
             ${
-              current
-                ? '<span class="aurora-nav-current-tag">Current</span>'
-                : '<span aria-hidden="true">›</span>'
+              item[1] === "Matchday Centre"
+                ? '<span class="aurora-nav-matchday-status" id="auroraMatchdayStatus" data-state="none">No report</span>'
+                : current
+                  ? '<span class="aurora-nav-current-tag">Current</span>'
+                  : '<span aria-hidden="true">›</span>'
             }
           </a>
         `;
@@ -402,7 +617,9 @@
       </footer>
     `;
 
+    injectMatchdayStatusStyles();
     document.body.append(toggle,overlay,panel);
+    wireMatchdayStatus();
 
     const closeButton =
       panel.querySelector(".aurora-nav-close");
