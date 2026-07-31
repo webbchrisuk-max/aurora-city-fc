@@ -1618,35 +1618,47 @@
       return value === "log out" || value === "logout";
     });
 
+    const departmentNames = [
+      "aurora nexus hq",
+      "manager dashboard",
+      "finance department",
+      "squad hub",
+      "analysis room",
+      "training ground",
+      "scouting centre",
+      "scouting center",
+      "transfer centre",
+      "transfer center",
+      "boardroom",
+      "matchday centre",
+      "matchday center",
+      "media centre",
+      "media center",
+      "cloud sync",
+      "registration desk"
+    ];
+
     const departmentCandidates = Array.from(
       header.querySelectorAll(
-        ".department,.current-department,.header-status," +
-        ".session-status,.aurora-current-department," +
-        "[data-department-status],.nav-status"
+        "span,div,strong,p,a,button"
       )
     );
 
     const department = departmentCandidates.find(function(node){
+      if(
+        node === logout
+        || node.contains(logout)
+        || placement.host.contains(node)
+      ){
+        return false;
+      }
+
       const value = String(node.textContent || "")
         .replace(/\s+/g," ")
         .trim()
         .toLowerCase();
 
-      return (
-        value.includes("centre")
-        || value.includes("center")
-        || value.includes("dashboard")
-        || value.includes("room")
-        || value.includes("ground")
-        || value.includes("boardroom")
-        || value.includes("media")
-        || value.includes("finance")
-        || value.includes("squad")
-        || value.includes("scouting")
-        || value.includes("training")
-        || value.includes("transfer")
-        || value.includes("matchday")
-      );
+      return departmentNames.includes(value);
     });
 
     /*
@@ -1664,31 +1676,35 @@
         || logout.parentElement;
     }
 
-    if(rightSide){
-      rightSide.style.setProperty("display","flex","important");
-      rightSide.style.setProperty("align-items","center","important");
-      rightSide.style.setProperty(
-        "justify-content",
-        "flex-end",
-        "important"
-      );
-      rightSide.style.setProperty("gap","10px","important");
-      rightSide.style.setProperty("margin-left","auto","important");
+    if(!rightSide){
+      rightSide = parentDocument.createElement("div");
+      rightSide.className = "aurora-header-right-group";
+      header.appendChild(rightSide);
+    }
 
-      if(
-        department
-        && department.parentElement !== rightSide
-      ){
-        rightSide.insertBefore(department,logout || null);
-      }
-    }else{
-      if(department){
-        department.style.setProperty("margin-left","auto","important");
-      }
+    rightSide.style.setProperty("display","flex","important");
+    rightSide.style.setProperty("align-items","center","important");
+    rightSide.style.setProperty(
+      "justify-content",
+      "flex-end",
+      "important"
+    );
+    rightSide.style.setProperty("gap","10px","important");
+    rightSide.style.setProperty("margin-left","auto","important");
+    rightSide.style.setProperty("flex","0 0 auto","important");
 
-      if(logout){
-        logout.style.setProperty("margin-left","10px","important");
-      }
+    if(
+      department
+      && department.parentElement !== rightSide
+    ){
+      rightSide.appendChild(department);
+    }
+
+    if(
+      logout
+      && logout.parentElement !== rightSide
+    ){
+      rightSide.appendChild(logout);
     }
 
     if(department){
