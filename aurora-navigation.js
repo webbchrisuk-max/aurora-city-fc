@@ -1769,10 +1769,122 @@
       }
     };
 
+    let leftGroup = null;
+
     if(brand && brand.parentElement){
-      brand.parentElement.insertBefore(button,brand);
+      leftGroup = brand.parentElement;
+
+      /*
+        App-only layout:
+        menu button first, then the existing Aurora City FC /
+        Manager Session • Webby brand block.
+      */
+      leftGroup.style.setProperty("display","flex","important");
+      leftGroup.style.setProperty("align-items","center","important");
+      leftGroup.style.setProperty("justify-content","flex-start","important");
+      leftGroup.style.setProperty("gap","10px","important");
+      leftGroup.style.setProperty("min-width","0","important");
+      leftGroup.style.setProperty("margin-right","auto","important");
+
+      leftGroup.insertBefore(button,brand);
     }else{
       header.prepend(button);
+    }
+
+    /*
+      Move the current department label into the existing right-side
+      action group immediately before Log out. This runs only after the
+      genuine Aurora app shell has been verified, so web mode is untouched.
+    */
+    const logout = Array.from(
+      header.querySelectorAll("button,a")
+    ).find(function(node){
+      const value = String(node.textContent || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
+
+      return value === "log out" || value === "logout";
+    });
+
+    const departmentNames = [
+      "aurora nexus hq",
+      "manager dashboard",
+      "finance department",
+      "squad hub",
+      "analysis room",
+      "training ground",
+      "scouting centre",
+      "scouting center",
+      "transfer centre",
+      "transfer center",
+      "boardroom",
+      "matchday centre",
+      "matchday center",
+      "media centre",
+      "media center",
+      "cloud sync",
+      "registration desk"
+    ];
+
+    const department = Array.from(
+      header.querySelectorAll("span,div,strong,p,a,button")
+    ).find(function(node){
+      if(
+        node === logout
+        || (logout && node.contains(logout))
+        || (leftGroup && leftGroup.contains(node))
+      ){
+        return false;
+      }
+
+      const value = String(node.textContent || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
+
+      return departmentNames.includes(value);
+    });
+
+    let rightGroup = null;
+
+    if(logout){
+      rightGroup =
+        logout.closest(
+          ".nav,.top-actions,.header-actions,.right-actions," +
+          ".aurora-header-actions,[data-header-actions]"
+        )
+        || logout.parentElement;
+    }
+
+    if(!rightGroup){
+      rightGroup = parentDocument.createElement("div");
+      rightGroup.className = "aurora-app-header-right-group";
+      header.appendChild(rightGroup);
+    }
+
+    rightGroup.style.setProperty("display","flex","important");
+    rightGroup.style.setProperty("align-items","center","important");
+    rightGroup.style.setProperty("justify-content","flex-end","important");
+    rightGroup.style.setProperty("gap","10px","important");
+    rightGroup.style.setProperty("margin-left","auto","important");
+    rightGroup.style.setProperty("flex","0 0 auto","important");
+
+    if(department && department.parentElement !== rightGroup){
+      rightGroup.insertBefore(department,logout || null);
+    }
+
+    if(logout && logout.parentElement !== rightGroup){
+      rightGroup.appendChild(logout);
+    }
+
+    if(department){
+      department.style.setProperty("white-space","nowrap","important");
+      department.style.setProperty("flex","0 0 auto","important");
+    }
+
+    if(logout){
+      logout.style.setProperty("flex","0 0 auto","important");
     }
 
     toggle.style.setProperty(
