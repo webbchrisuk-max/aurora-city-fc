@@ -47,6 +47,120 @@
     ["●","Media Centre","AuroraCityFC_MediaCentre.html"],
   ];
 
+
+  const MATCHDAY_MASTER_URL =
+    "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+
+  function setMatchdayStatus(state,label,detail){
+    const badge = document.getElementById("auroraMatchdayStatus");
+    if(!badge) return;
+    badge.dataset.state = state;
+    badge.textContent = label;
+    badge.title = detail;
+  }
+
+  function sameLocalDay(a,b){
+    return a && b
+      && a.getFullYear() === b.getFullYear()
+      && a.getMonth() === b.getMonth()
+      && a.getDate() === b.getDate();
+  }
+
+  async function refreshMatchdayStatus(){
+    const now = new Date();
+
+    try{
+      const response = await fetch(
+        MATCHDAY_MASTER_URL + "?matchdayStatus=" + Date.now(),
+        {cache:"no-store"}
+      );
+
+      if(!response.ok){
+        throw new Error("AuroraMaster unavailable");
+      }
+
+      const data = await response.json();
+      const keys = [
+        "MatchdayReport",
+        "MatchdayReports",
+        "DailyMatchReport",
+        "PortfolioMatchReport"
+      ];
+
+      let reports = [];
+      for(const key of keys){
+        if(Array.isArray(data && data[key])){
+          reports = data[key];
+          break;
+        }
+      }
+
+      const latest = reports
+        .map(function(report){
+          const value =
+            report.report_date
+            || report.date
+            || report.Date
+            || report.timestamp
+            || report.submitted_at;
+
+          const date = value ? new Date(value) : null;
+          return {date:date,report:report};
+        })
+        .filter(function(item){
+          return item.date
+            && !Number.isNaN(item.date.getTime());
+        })
+        .sort(function(a,b){
+          return b.date.getTime() - a.date.getTime();
+        })[0];
+
+      if(latest && sameLocalDay(latest.date,now)){
+        setMatchdayStatus(
+          "ready",
+          "Ready",
+          "Today's Matchday report is ready"
+        );
+        return;
+      }
+
+      const minutes =
+        now.getHours() * 60 + now.getMinutes();
+
+      if(minutes >= 17 * 60 && minutes < 19 * 60){
+        setMatchdayStatus(
+          "progress",
+          "In progress",
+          "Today's Matchday report is being prepared"
+        );
+        return;
+      }
+
+      setMatchdayStatus(
+        "none",
+        "No report",
+        "No Matchday report has been published today"
+      );
+    }catch(error){
+      console.warn(
+        "Could not read Matchday report status.",
+        error
+      );
+
+      setMatchdayStatus(
+        "none",
+        "No report",
+        "Matchday report status is unavailable"
+      );
+    }
+  }
+
+  function wireMatchdayStatus(){
+    refreshMatchdayStatus();
+    window.setInterval(refreshMatchdayStatus,60000);
+    window.addEventListener("focus",refreshMatchdayStatus);
+  }
+
   const currentFile = (
     location.pathname.split("/").pop()
     || "AuroraCityFC_NexusMaster.html"
@@ -509,6 +623,7 @@
 
     saveMissionProgress(next);
     refreshMissionProgressUi();
+    wireMatchdayStatus();
   }
 
   function refreshMissionProgressUi(){
@@ -591,6 +706,11 @@
         align-items:center;
         justify-content:flex-end;
         gap:6px;
+      }
+
+      #auroraNavPanel .aurora-nav-complete-button[hidden],
+      #auroraNavPanel .aurora-nav-completed-badge[hidden]{
+        display:none!important;
       }
 
       #auroraNavPanel .aurora-nav-complete-button{
@@ -788,14 +908,17 @@
         return `
           <a
             class="aurora-nav-dept${current ? " is-current" : ""}"
+            data-department="${esc(item[1])}"
             href="${esc(item[2])}"
           >
             <span class="aurora-nav-dept-icon" aria-hidden="true">${esc(item[0])}</span>
             <strong>${esc(item[1])}</strong>
             ${
-              current
-                ? '<span class="aurora-nav-current-tag">Current</span>'
-                : '<span aria-hidden="true">›</span>'
+              item[1] === "Matchday Centre"
+                ? '<span class="aurora-nav-matchday-status" id="auroraMatchdayStatus" data-state="none">No report</span>'
+                : current
+                  ? '<span class="aurora-nav-current-tag">Current</span>'
+                  : '<span aria-hidden="true">›</span>'
             }
           </a>
         `;
