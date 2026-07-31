@@ -1409,6 +1409,14 @@
         z-index:auto!important;
       }
 
+
+      body.aurora-browser-page-mode > .topbar,
+      body.aurora-browser-page-mode > header.topbar,
+      body.aurora-browser-page-mode .app > .topbar,
+      body.aurora-browser-page-mode .app > header.topbar{
+        display:block!important;
+      }
+
       @media(max-width:640px){
         #auroraNavToggle.aurora-nav-inline-toggle,
         #auroraTopHeaderMenuButton{
@@ -1516,9 +1524,56 @@
     };
   }
 
+
+  function localPageHeaders(){
+    return Array.from(
+      document.querySelectorAll(
+        "body > .topbar," +
+        "body > header.topbar," +
+        ".app > .topbar," +
+        ".app > header.topbar," +
+        "body > .app-header," +
+        "body > .site-header," +
+        "body > .global-header"
+      )
+    );
+  }
+
+  function setLocalHeaderVisibility(visible){
+    document.body.classList.toggle(
+      "aurora-browser-page-mode",
+      Boolean(visible)
+    );
+
+    const cleanup =
+      document.getElementById(
+        "auroraSingleHeaderPageCleanup"
+      );
+
+    if(cleanup){
+      cleanup.disabled = visible;
+    }
+
+    localPageHeaders().forEach(function(header){
+      if(visible){
+        header.style.removeProperty("display");
+        header.removeAttribute("aria-hidden");
+      }else{
+        header.style.setProperty(
+          "display",
+          "none",
+          "important"
+        );
+        header.setAttribute("aria-hidden","true");
+      }
+    });
+  }
+
   function installParentHeaderButton(localToggle){
     const parentDocument = accessibleParentDocument();
     if(!parentDocument) return false;
+
+    setLocalHeaderVisibility(false);
 
     const placement = findAuroraBrandPlacement(parentDocument);
     if(!placement || !placement.host || !placement.before) return false;
@@ -1573,6 +1628,8 @@
   }
 
   function installLocalHeaderButton(toggle){
+    setLocalHeaderVisibility(true);
+
     const placement = findAuroraBrandPlacement(document);
 
     if(!placement || !placement.host || !placement.before){
@@ -1597,6 +1654,8 @@
     if(installParentHeaderButton(toggle)){
       return "parent";
     }
+
+    setLocalHeaderVisibility(true);
 
     if(installLocalHeaderButton(toggle)){
       return "local";
