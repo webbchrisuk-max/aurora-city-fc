@@ -1408,34 +1408,28 @@
   }
 
   function findAuroraHeaderPlacement(){
-    const selectors = [
-      "#auroraClubHeader",
-      "#auroraSessionHeader",
-      "#auroraAppHeader",
-      ".aurora-club-header",
-      ".aurora-session-header",
-      ".aurora-app-header",
-      "[data-aurora-shell-header]",
-      "[data-aurora-header]",
-      "body > header[role='banner']",
-      "body > header:not(.topbar)",
-      ".topbar-inner",
-      ".app-header .header-inner",
-      ".header-inner"
+    const candidates = [
+      {
+        header:document.querySelector(".topbar-inner"),
+        before:document.querySelector(".topbar-inner .brand")
+      },
+      {
+        header:document.querySelector(".app-header .header-inner"),
+        before:document.querySelector(".app-header .header-inner .brand")
+      },
+      {
+        header:document.querySelector(".header-inner"),
+        before:document.querySelector(".header-inner .brand")
+      },
+      {
+        header:document.querySelector("header .brand")?.parentElement || null,
+        before:document.querySelector("header .brand")
+      },
+      {
+        header:document.querySelector(".topbar"),
+        before:document.querySelector(".topbar .brand")
+      }
     ];
-
-    const candidates = selectors.map(function(selector){
-      const header = document.querySelector(selector);
-      if(!header) return {header:null,before:null};
-
-      const before =
-        header.querySelector(
-          ".brand,.aurora-brand,.club-brand,.session-brand,[data-aurora-brand]"
-        )
-        || header.firstElementChild;
-
-      return {header:header,before:before};
-    });
 
     return candidates.find(function(candidate){
       return candidate.header && candidate.before;
@@ -1449,20 +1443,16 @@
 
     if(!placement){
       toggle.classList.remove("aurora-nav-inline-toggle");
-      toggle.style.top = "84px";
-      toggle.style.left = "14px";
-      toggle.style.right = "auto";
       return false;
     }
 
     injectGlobalHeaderMenuStyles();
 
     if(toggle.parentElement !== placement.header){
-      if(placement.before){
-        placement.header.insertBefore(toggle,placement.before);
-      }else{
-        placement.header.prepend(toggle);
-      }
+      placement.header.insertBefore(
+        toggle,
+        placement.before
+      );
     }
 
     toggle.classList.add("aurora-nav-inline-toggle");
@@ -1489,14 +1479,161 @@
 
     window.setTimeout(function(){
       observer.disconnect();
-      placeToggleInAuroraHeader(toggle);
+      placeMenuInsideExistingHeader(toggle);
+    },5000);
+  }
+
+
+  function injectExistingHeaderMenuStyles(){
+    if(document.getElementById("auroraExistingHeaderMenuStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "auroraExistingHeaderMenuStyles";
+    style.textContent = `
+      #auroraNavToggle.aurora-nav-header-toggle{
+        position:static!important;
+        inset:auto!important;
+        transform:none!important;
+        flex:0 0 auto!important;
+        width:40px!important;
+        height:40px!important;
+        min-width:40px!important;
+        margin:0 10px 0 0!important;
+        border:1px solid rgba(125,211,252,.24)!important;
+        border-radius:13px!important;
+        color:#dff7ff!important;
+        background:
+          linear-gradient(
+            145deg,
+            rgba(8,47,73,.92),
+            rgba(15,23,42,.98)
+          )!important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.07),
+          0 8px 18px rgba(0,0,0,.20)!important;
+        z-index:auto!important;
+      }
+
+      #auroraNavToggle.aurora-nav-header-toggle:hover,
+      #auroraNavToggle.aurora-nav-header-toggle:focus-visible{
+        border-color:rgba(34,211,238,.52)!important;
+        outline:none!important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.09),
+          0 9px 20px rgba(0,0,0,.24),
+          0 0 16px rgba(34,211,238,.14)!important;
+      }
+
+      .aurora-header-menu-host{
+        display:flex!important;
+        align-items:center!important;
+        min-width:0!important;
+      }
+
+      @media(max-width:640px){
+        #auroraNavToggle.aurora-nav-header-toggle{
+          width:38px!important;
+          height:38px!important;
+          min-width:38px!important;
+          margin-right:8px!important;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function findExistingAuroraHeader(){
+    const headers = Array.from(
+      document.querySelectorAll(
+        "body > header, body > .topbar, body > .app-header, " +
+        ".topbar-inner, .header-inner, [data-aurora-header]"
+      )
+    );
+
+    for(const header of headers){
+      if(!header || header.id === "auroraNavPanel") continue;
+
+      const text = String(header.textContent || "").toLowerCase();
+      const hasManager =
+        text.includes("manager session") ||
+        text.includes("webby");
+
+      const hasLogout =
+        text.includes("log out") ||
+        text.includes("logout");
+
+      const brand =
+        header.querySelector(
+          ".brand,.aurora-brand,.club-brand,.session-brand," +
+          "[data-aurora-brand],.header-brand"
+        );
+
+      if((hasManager || hasLogout) && brand){
+        return {
+          host:brand.parentElement || header,
+          before:brand
+        };
+      }
+    }
+
+    return null;
+  }
+
+  function placeMenuInsideExistingHeader(toggle){
+    if(!toggle) return false;
+
+    const placement = findExistingAuroraHeader();
+
+    if(!placement){
+      toggle.classList.remove("aurora-nav-header-toggle");
+      toggle.style.top = "84px";
+      toggle.style.left = "14px";
+      toggle.style.right = "auto";
+      return false;
+    }
+
+    injectExistingHeaderMenuStyles();
+
+    if(toggle.parentElement !== placement.host){
+      placement.host.insertBefore(toggle,placement.before);
+    }
+
+    toggle.classList.add("aurora-nav-header-toggle");
+    placement.host.classList.add("aurora-header-menu-host");
+
+    toggle.style.removeProperty("top");
+    toggle.style.removeProperty("left");
+    toggle.style.removeProperty("right");
+    toggle.style.removeProperty("bottom");
+
+    return true;
+  }
+
+  function monitorExistingAuroraHeader(toggle){
+    if(placeMenuInsideExistingHeader(toggle)) return;
+
+    const observer = new MutationObserver(function(){
+      if(placeMenuInsideExistingHeader(toggle)){
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.documentElement,{
+      childList:true,
+      subtree:true
+    });
+
+    window.setTimeout(function(){
+      observer.disconnect();
+      placeMenuInsideExistingHeader(toggle);
     },5000);
   }
 
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
-    injectGlobalHeaderMenuStyles();
+    injectExistingHeaderMenuStyles();
     injectSofterMissionColours();
     injectSidebarReadabilityStyles();
     injectMatchdayBadgeStyles();
@@ -1687,7 +1824,7 @@
     `;
 
     document.body.append(toggle,overlay,panel);
-    monitorAuroraHeader(toggle);
+    monitorExistingAuroraHeader(toggle);
 
     const closeButton =
       panel.querySelector(".aurora-nav-close");
@@ -1831,14 +1968,14 @@
       "pageshow",
       function(){
         setOpen(false);
-        placeToggleInAuroraHeader(toggle);
+        placeMenuInsideExistingHeader(toggle);
       }
     );
 
     window.addEventListener(
       "resize",
       function(){
-        placeToggleInAuroraHeader(toggle);
+        placeMenuInsideExistingHeader(toggle);
       }
     );
 
