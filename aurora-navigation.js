@@ -1566,6 +1566,99 @@
     return null;
   }
 
+
+  function alignAuroraTopHeader(parentDocument,placement){
+    if(!parentDocument || !placement) return;
+
+    const header = placement.host.closest(
+      "header,.topbar,.app-header,.global-header,[data-aurora-header],[role='banner']"
+    ) || placement.host;
+
+    const brand = placement.before;
+    const centreCandidates = Array.from(
+      header.querySelectorAll(
+        ".department,.current-department,.header-status,.session-status," +
+        ".aurora-current-department,[data-department-status],.nav-status"
+      )
+    );
+
+    const centre = centreCandidates.find(function(node){
+      const value = String(node.textContent || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
+
+      return (
+        value.includes("centre")
+        || value.includes("center")
+        || value.includes("dashboard")
+        || value.includes("room")
+        || value.includes("ground")
+        || value.includes("boardroom")
+        || value.includes("media")
+        || value.includes("finance")
+        || value.includes("squad")
+        || value.includes("scouting")
+        || value.includes("training")
+        || value.includes("transfer")
+        || value.includes("matchday")
+      );
+    });
+
+    header.style.setProperty("display","grid","important");
+    header.style.setProperty(
+      "grid-template-columns",
+      "minmax(0,1fr) auto minmax(0,1fr)",
+      "important"
+    );
+    header.style.setProperty("align-items","center","important");
+    header.style.setProperty("column-gap","14px","important");
+
+    placement.host.style.setProperty("display","flex","important");
+    placement.host.style.setProperty("align-items","center","important");
+    placement.host.style.setProperty("justify-content","flex-start","important");
+    placement.host.style.setProperty("gap","0","important");
+    placement.host.style.setProperty("min-width","0","important");
+
+    if(brand){
+      brand.style.setProperty("margin","0","important");
+      brand.style.setProperty("min-width","0","important");
+    }
+
+    if(centre){
+      centre.style.setProperty("justify-self","center","important");
+      centre.style.setProperty("margin","0","important");
+      centre.style.setProperty("white-space","nowrap","important");
+    }
+
+    const logout = Array.from(
+      header.querySelectorAll("button,a")
+    ).find(function(node){
+      const value = String(node.textContent || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
+
+      return value === "log out" || value === "logout";
+    });
+
+    if(logout){
+      logout.style.setProperty("justify-self","end","important");
+    }
+
+    if(window.matchMedia("(max-width:760px)").matches){
+      header.style.setProperty(
+        "grid-template-columns",
+        "minmax(0,1fr) auto",
+        "important"
+      );
+
+      if(centre){
+        centre.style.setProperty("display","none","important");
+      }
+    }
+  }
+
   function styleTopHeaderMenuButton(button){
     button.style.cssText = [
       "position:static!important",
@@ -1641,6 +1734,7 @@
     };
 
     styleTopHeaderMenuButton(parentButton);
+    alignAuroraTopHeader(parentDocument,placement);
 
     if(parentButton.parentElement !== placement.host){
       if(placement.before){
@@ -1652,6 +1746,8 @@
         placement.host.prepend(parentButton);
       }
     }
+
+    alignAuroraTopHeader(parentDocument,placement);
 
     localToggle.style.setProperty(
       "display",
