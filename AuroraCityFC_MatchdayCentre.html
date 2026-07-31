@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Aurora City FC — Matchday Centre</title>
-<link rel="stylesheet" href="aurora-navigation.css?v=20260731-matchday-live-3">
+<link rel="stylesheet" href="aurora-navigation.css?v=20260731-matchday-department-4">
 <style>
 :root{
   --bg:#030712;--panel:#07111f;--panel2:#0b1730;--card:#0d1b34;--card2:#102345;
@@ -105,34 +105,6 @@ function renderHistory(history,date,movement){const items=history.length?history
 async function load(){const b=$('refreshBtn');b.textContent='Loading…';b.disabled=true;try{const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});if(!res.ok)throw new Error(`AuroraData ${res.status}`);const data=await res.json();const reportRows=rows(data,'MatchdayReport','MatchdayReports','DailyMatchReport','PortfolioMatchReport');const report=latest(reportRows);const holdings=rows(data,'Holdings','Portfolio');const ratings=deriveRatings(holdings);const regime=regimeFrom(data);if(!report&&!ratings.length){render(demoData(),true)}else{render({report:report||{date:new Date(),summary:'Aurora holdings loaded. Add a MatchdayReport sheet to publish the complete 5pm written report.',verdict:regime.buyMode},ratings,regime,history:reportRows},!report)}}catch(err){console.warn(err);render(demoData(),true)}finally{b.textContent='Refresh';b.disabled=false}}
 $('refreshBtn').addEventListener('click',load);load();
 </script>
-<script src="aurora-navigation.js?v=20260731-matchday-live-3"></script>
-<script>
-(function(){
-  function addMatchdayLink(){
-    const list=document.querySelector('#auroraNavPanel .aurora-nav-departments');
-    if(!list) return false;
-    let link=list.querySelector('a[href="AuroraCityFC_MatchdayCentre.html"]');
-    if(!link){
-      link=document.createElement('a');
-      link.href='AuroraCityFC_MatchdayCentre.html';
-      link.className='aurora-nav-department';
-      link.innerHTML='<span class="aurora-nav-icon">⚽</span><span>Matchday Centre</span>';
-      const media=list.querySelector('a[href="AuroraCityFC_MediaCentre.html"]');
-      media ? list.insertBefore(link,media) : list.appendChild(link);
-    }
-    list.querySelectorAll('.aurora-nav-department').forEach(function(item){
-      item.classList.toggle('active',item===link);
-    });
-    return true;
-  }
-  if(!addMatchdayLink()){
-    const observer=new MutationObserver(function(){
-      if(addMatchdayLink()) observer.disconnect();
-    });
-    observer.observe(document.documentElement,{childList:true,subtree:true});
-    setTimeout(function(){observer.disconnect();},5000);
-  }
-})();
-</script>
+<script src="aurora-navigation.js?v=20260731-matchday-department-4"></script>
 </body>
 </html>
