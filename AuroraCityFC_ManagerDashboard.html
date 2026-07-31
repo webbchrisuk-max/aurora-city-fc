@@ -53,7 +53,6 @@
 </script><!-- Build: Universal Page Section Navigation • 24 Jul 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-
 <meta content="#030712" name="theme-color"/>
 <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
 <meta content="no-cache" http-equiv="Pragma"/>
@@ -1220,8 +1219,8 @@ body{padding-left:0!important;padding-right:0!important;padding-bottom:0!importa
 }
 </style>
 <!-- Aurora universal workflow navigation -->
-<link href="aurora-navigation.css?v=20260729-crossbrowser-1" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260729-crossbrowser-1"></script>
+<link href="aurora-navigation.css?v=20260731-single-header-1" rel="stylesheet"/>
+<script defer="" src="aurora-navigation.js?v=20260731-single-header-1"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
@@ -1464,33 +1463,36 @@ dialog#beastHoldingDrawer .beast-panel-head{
   }
 }
 </style>
-
-</head>
+<style id="auroraSingleHeaderPageCleanup">
+/* Aurora single-header cleanup */
+body > .topbar,
+body > header.topbar,
+.fm-workspace > .topbar,
+.fm-workspace > header.topbar,
+.app > .topbar,
+.app > header.topbar,
+body > .app-header,
+body > .site-header,
+body > .global-header,
+.fm-sidebar{
+  display:none!important;
+}
+.fm-shell,
+.fm-workspace{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  margin-left:0!important;
+  transform:none!important;
+}
+body.fm-sidebar-hidden .fm-workspace{
+  margin-left:0!important;
+}
+</style></head>
 <body>
-<div class="fm-shell">
-<div class="fm-workspace">
-<div class="topbar">
-<div class="topbar-inner">
-<div class="brand">
-<div class="crest"><img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/></div>
-<div>
-<h1>Aurora City FC</h1>
-<p>Manager Dashboard • Club HQ</p>
-</div>
-</div>
-<div class="fm-top-context">
-<span class="fm-page-path">Home / Manager Command Centre</span>
-<div aria-label="Aurora command controls" class="beast-top-actions">
-<button aria-label="Open decision queue" class="beast-icon-button" id="beastDecisionButton" title="Decision Queue" type="button">📋<span class="beast-count" hidden="" id="beastDecisionCount">0</span></button>
-<button aria-label="Open manager action log" class="beast-icon-button" id="beastLogButton" title="Manager Action Log" type="button">🕘</button>
-<button aria-label="Open notifications" class="beast-icon-button" id="beastNotificationButton" title="Notifications" type="button">🔔<span class="beast-count" hidden="" id="beastNotificationCount">0</span></button>
-<button aria-label="Open dashboard controls" class="beast-icon-button" id="beastLayoutButton" title="Dashboard controls" type="button">⚙</button>
-<button aria-label="Toggle presentation mode" class="beast-icon-button" id="beastPresentationButton" title="Presentation mode" type="button">▣</button>
-</div>
-<span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
-</div>
-</div>
-</div>
+
+
+
 <main class="app fm-command-app">
 <section class="manager-command-header aurora-section-anchor" id="club-overview">
 <div class="command-identity">
@@ -1643,8 +1645,8 @@ dialog#beastHoldingDrawer .beast-panel-head{
 </article>
 </section>
 </main>
-</div>
-</div>
+
+
 <script>
 
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";

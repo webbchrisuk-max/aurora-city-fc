@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Aurora City FC — Matchday Centre</title>
-<link rel="stylesheet" href="aurora-navigation.css?v=20260731-matchday-v3-visual-1">
+<link href="aurora-navigation.css?v=20260731-single-header-1" rel="stylesheet"/>
 <style>
 :root{
   --bg:#030712;--panel:#07111f;--panel2:#0b1730;--card:#0d1b34;--card2:#102345;
@@ -343,82 +344,101 @@ a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,1
 }
 
 </style>
-</head>
+<style id="auroraSingleHeaderPageCleanup">
+/* Aurora single-header cleanup */
+body > .topbar,
+body > header.topbar,
+.fm-workspace > .topbar,
+.fm-workspace > header.topbar,
+.app > .topbar,
+.app > header.topbar,
+body > .app-header,
+body > .site-header,
+body > .global-header,
+.fm-sidebar{
+  display:none!important;
+}
+.fm-shell,
+.fm-workspace{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  margin-left:0!important;
+  transform:none!important;
+}
+body.fm-sidebar-hidden .fm-workspace{
+  margin-left:0!important;
+}
+</style></head>
 <body>
 <div class="app">
-<header class="topbar"><div class="topbar-inner"><div class="brand"><div class="crest">AC</div><div><h1>Aurora City FC</h1><p>Matchday Centre • Daily portfolio full-time report</p></div></div><button class="btn" id="refreshBtn">Refresh report</button></div></header>
 
 <section class="hero">
-  <article class="hero-main panel">
-    <div class="eyebrow">Aurora portfolio matchday</div>
-    <div class="fulltime"><span class="pulse"></span><span id="matchStatus">FULL TIME</span></div>
-    <div class="scoreboard">
-      <div class="club-side">
-        <div class="club-name">Aurora City FC</div>
-        <div class="club-sub">Income Squad</div>
-      </div>
-      <div class="score-orb" id="scoreOrb"><span id="resultTitle">+0.64%</span></div>
-      <div class="club-side right">
-        <div class="club-name">The Market</div>
-        <div class="club-sub">Daily Session</div>
-      </div>
-    </div>
-    <div class="result-kicker">Full-time portfolio performance</div>
-    <p class="lede" id="resultSummary">A positive session led by the strongest income holdings, with the squad finishing ahead of the wider market.</p>
-    <div class="hero-meta"><span class="pill" id="reportDate">Report date: —</span><span class="pill" id="marketResult">Market result: —</span><span class="pill" id="reportSource">Source: AuroraData</span></div>
-  </article>
-  <aside class="hero-side panel">
-    <div class="status-card"><div class="status-label">Market regime</div><div class="status-value cyan" id="regime">Normal / stable income</div><div class="status-note" id="regimeNote">Conditions favour disciplined selective accumulation.</div></div>
-    <div class="status-card"><div class="status-label">Buy mode</div><div class="status-value amber" id="buyMode">Selective accumulation</div><div class="status-note" id="buyModeNote">Follow the plan; no forced transfers.</div></div>
-    <div class="status-card"><div class="status-label">Next report</div><div class="status-value" id="nextReport">Today at 5:00pm</div><div class="status-note">The page displays the latest completed Aurora report.</div></div>
-  </aside>
+<article class="hero-main panel">
+<div class="eyebrow">Aurora portfolio matchday</div>
+<div class="fulltime"><span class="pulse"></span><span id="matchStatus">FULL TIME</span></div>
+<div class="scoreboard">
+<div class="club-side">
+<div class="club-name">Aurora City FC</div>
+<div class="club-sub">Income Squad</div>
+</div>
+<div class="score-orb" id="scoreOrb"><span id="resultTitle">+0.64%</span></div>
+<div class="club-side right">
+<div class="club-name">The Market</div>
+<div class="club-sub">Daily Session</div>
+</div>
+</div>
+<div class="result-kicker">Full-time portfolio performance</div>
+<p class="lede" id="resultSummary">A positive session led by the strongest income holdings, with the squad finishing ahead of the wider market.</p>
+<div class="hero-meta"><span class="pill" id="reportDate">Report date: —</span><span class="pill" id="marketResult">Market result: —</span><span class="pill" id="reportSource">Source: AuroraData</span></div>
+</article>
+<aside class="hero-side panel">
+<div class="status-card"><div class="status-label">Market regime</div><div class="status-value cyan" id="regime">Normal / stable income</div><div class="status-note" id="regimeNote">Conditions favour disciplined selective accumulation.</div></div>
+<div class="status-card"><div class="status-label">Buy mode</div><div class="status-value amber" id="buyMode">Selective accumulation</div><div class="status-note" id="buyModeNote">Follow the plan; no forced transfers.</div></div>
+<div class="status-card"><div class="status-label">Next report</div><div class="status-value" id="nextReport">Today at 5:00pm</div><div class="status-note">The page displays the latest completed Aurora report.</div></div>
+</aside>
 </section>
-
 <section class="section"><div class="section-head"><div><h3>Daily awards</h3><p>The standout performers from today’s portfolio session.</p></div></div><div class="grid">
-  <article class="card award"><div class="award-icon">🏆</div><div class="award-title">Man of the Match</div><div class="award-name" id="motmName">Tesco</div><div class="award-note" id="motmNote">Led the squad with the strongest overall contribution.</div><div class="rating" id="motmRating">8.8</div></article>
-  <article class="card award"><div class="award-icon">🛡️</div><div class="award-title">Defensive Hero</div><div class="award-name" id="defName">ARCC</div><div class="award-note" id="defNote">Protected the income line while market conditions shifted.</div><div class="rating" id="defRating">8.2</div></article>
-  <article class="card award"><div class="award-icon">💷</div><div class="award-title">Income Star</div><div class="award-name" id="incomeName">LondonMetric</div><div class="award-note" id="incomeNote">Best income contribution in today’s report.</div><div class="rating" id="incomeRating">7.7</div></article>
-  <article class="card award"><div class="award-icon">📉</div><div class="award-title">Toughest Match</div><div class="award-name" id="worstName">UKW</div><div class="award-note" id="worstNote">The weakest daily result, but still under tactical review.</div><div class="rating bad" id="worstRating">5.4</div></article>
+<article class="card award"><div class="award-icon">🏆</div><div class="award-title">Man of the Match</div><div class="award-name" id="motmName">Tesco</div><div class="award-note" id="motmNote">Led the squad with the strongest overall contribution.</div><div class="rating" id="motmRating">8.8</div></article>
+<article class="card award"><div class="award-icon">🛡️</div><div class="award-title">Defensive Hero</div><div class="award-name" id="defName">ARCC</div><div class="award-note" id="defNote">Protected the income line while market conditions shifted.</div><div class="rating" id="defRating">8.2</div></article>
+<article class="card award"><div class="award-icon">💷</div><div class="award-title">Income Star</div><div class="award-name" id="incomeName">LondonMetric</div><div class="award-note" id="incomeNote">Best income contribution in today’s report.</div><div class="rating" id="incomeRating">7.7</div></article>
+<article class="card award"><div class="award-icon">📉</div><div class="award-title">Toughest Match</div><div class="award-name" id="worstName">UKW</div><div class="award-note" id="worstNote">The weakest daily result, but still under tactical review.</div><div class="rating bad" id="worstRating">5.4</div></article>
 </div></section>
-
 <section class="section"><div class="grid">
-  <article class="card w5"><div class="section-head"><div><h3>Match statistics</h3><p>Today’s portfolio scoreboard.</p></div></div><div class="stat-grid">
-    <div class="stat"><b class="green" id="upCount">11</b><span>Holdings rising</span></div><div class="stat"><b class="red" id="downCount">6</b><span>Holdings falling</span></div><div class="stat"><b id="flatCount">2</b><span>Unchanged</span></div><div class="stat"><b id="portfolioValue">—</b><span>Portfolio value</span></div><div class="stat"><b class="green" id="dayGain">+£0.00</b><span>Daily gain / loss</span></div><div class="stat"><b id="annualIncome">—</b><span>Annual income</span></div>
-  </div></article>
-  <article class="card w7"><div class="section-head"><div><h3>Playing conditions</h3><p>Signals supplied by the Market Regime engine.</p></div></div>
-    <div class="condition"><strong>Volatility</strong><span id="volatility">Normal</span></div><div class="condition"><strong>Rate environment</strong><span id="rateEnvironment">High but stable</span></div><div class="condition"><strong>Inflation pressure</strong><span id="inflationPressure">Neutral / easing</span></div><div class="condition"><strong>Preferred sectors</strong><span id="preferredSectors">Defensive income, infrastructure, quality REITs</span></div><div class="condition"><strong>Avoid today</strong><span id="avoidList">Overconcentration, overvalued low-yield positions</span></div>
-  </article>
+<article class="card w5"><div class="section-head"><div><h3>Match statistics</h3><p>Today’s portfolio scoreboard.</p></div></div><div class="stat-grid">
+<div class="stat"><b class="green" id="upCount">11</b><span>Holdings rising</span></div><div class="stat"><b class="red" id="downCount">6</b><span>Holdings falling</span></div><div class="stat"><b id="flatCount">2</b><span>Unchanged</span></div><div class="stat"><b id="portfolioValue">—</b><span>Portfolio value</span></div><div class="stat"><b class="green" id="dayGain">+£0.00</b><span>Daily gain / loss</span></div><div class="stat"><b id="annualIncome">—</b><span>Annual income</span></div>
+</div></article>
+<article class="card w7"><div class="section-head"><div><h3>Playing conditions</h3><p>Signals supplied by the Market Regime engine.</p></div></div>
+<div class="condition"><strong>Volatility</strong><span id="volatility">Normal</span></div><div class="condition"><strong>Rate environment</strong><span id="rateEnvironment">High but stable</span></div><div class="condition"><strong>Inflation pressure</strong><span id="inflationPressure">Neutral / easing</span></div><div class="condition"><strong>Preferred sectors</strong><span id="preferredSectors">Defensive income, infrastructure, quality REITs</span></div><div class="condition"><strong>Avoid today</strong><span id="avoidList">Overconcentration, overvalued low-yield positions</span></div>
+</article>
 </div></section>
-
 <section class="section"><div class="grid">
-  <article class="card w7">
-    <div class="section-head"><div><h3>Manager’s report</h3><p>The written 5 p.m. assessment.</p></div></div>
-    <p class="manager-copy" id="managerReport">Aurora has completed the daily review.</p>
-    <div class="manager-decision">
-      <div class="decision-label">Manager’s decision</div>
-      <div class="decision-main" id="managerDecisionMain">HOLD</div>
-      <div class="decision-sub" id="managerDecisionSub">Selective accumulation</div>
-      <span id="managerVerdict" style="display:none"></span>
-    </div>
-  </article>
-  <article class="card w5">
-    <div class="section-head"><div><h3>Tomorrow’s objectives</h3><p>The next tactical briefing.</p></div></div>
-    <div class="objective-list" id="watchItems">
-      <div class="objective"><div class="objective-icon">👀</div><div><strong>One to watch</strong><span>Tesco price and momentum</span></div></div>
-      <div class="objective"><div class="objective-icon">📅</div><div><strong>Calendar</strong><span>Upcoming dividend dates</span></div></div>
-      <div class="objective"><div class="objective-icon">🏦</div><div><strong>Macro</strong><span>Rates and inflation headlines</span></div></div>
-    </div>
-  </article>
+<article class="card w7">
+<div class="section-head"><div><h3>Manager’s report</h3><p>The written 5 p.m. assessment.</p></div></div>
+<p class="manager-copy" id="managerReport">Aurora has completed the daily review.</p>
+<div class="manager-decision">
+<div class="decision-label">Manager’s decision</div>
+<div class="decision-main" id="managerDecisionMain">HOLD</div>
+<div class="decision-sub" id="managerDecisionSub">Selective accumulation</div>
+<span id="managerVerdict" style="display:none"></span>
+</div>
+</article>
+<article class="card w5">
+<div class="section-head"><div><h3>Tomorrow’s objectives</h3><p>The next tactical briefing.</p></div></div>
+<div class="objective-list" id="watchItems">
+<div class="objective"><div class="objective-icon">👀</div><div><strong>One to watch</strong><span>Tesco price and momentum</span></div></div>
+<div class="objective"><div class="objective-icon">📅</div><div><strong>Calendar</strong><span>Upcoming dividend dates</span></div></div>
+<div class="objective"><div class="objective-icon">🏦</div><div><strong>Macro</strong><span>Rates and inflation headlines</span></div></div>
+</div>
+</article>
 </div></section>
-
 <section class="section"><article class="card w12">
-  <div class="section-head"><div><h3>Matchday leaderboard</h3><p>The four official full-time awards.</p></div><span class="pill" id="ratingCount">0 published</span></div>
-  <div class="ratings-grid" id="ratingsBody"></div>
+<div class="section-head"><div><h3>Matchday leaderboard</h3><p>The four official full-time awards.</p></div><span class="pill" id="ratingCount">0 published</span></div>
+<div class="ratings-grid" id="ratingsBody"></div>
 </article></section>
-
 <section class="section"><article class="card w12">
-  <div class="section-head"><div><h3>Season form</h3><p>Every completed report becomes a fixture result.</p></div></div>
-  <div class="form-strip" id="history"></div>
+<div class="section-head"><div><h3>Season form</h3><p>Every completed report becomes a fixture result.</p></div></div>
+<div class="form-strip" id="history"></div>
 </article></section>
 <footer class="footer">Aurora City FC • Matchday Centre • Powered by AuroraData</footer>
 </div>
@@ -794,47 +814,7 @@ async function load(){
 $("refreshBtn").addEventListener("click",load);
 load();
 </script>
-<script src="aurora-navigation.js?v=20260731-matchday-v3-menu-inline-1"></script>
-
-<script>
-(function placeMatchdayMenuInHeader(){
-  function moveToggle(){
-    const toggle = document.getElementById("auroraNavToggle");
-    const header = document.querySelector(".topbar-inner");
-    const brand = header && header.querySelector(".brand");
-
-    if(!toggle || !header || !brand) return false;
-
-    if(toggle.parentElement !== header){
-      header.insertBefore(toggle,brand);
-    }
-
-    toggle.classList.add("aurora-matchday-inline-menu");
-    toggle.setAttribute("aria-label","Open Aurora mission navigation");
-    toggle.title = "Open mission navigation";
-
-    return true;
-  }
-
-  if(moveToggle()) return;
-
-  const observer = new MutationObserver(function(){
-    if(moveToggle()){
-      observer.disconnect();
-    }
-  });
-
-  observer.observe(document.body,{
-    childList:true,
-    subtree:true
-  });
-
-  window.setTimeout(function(){
-    observer.disconnect();
-    moveToggle();
-  },5000);
-})();
-</script>
+<script src="aurora-navigation.js?v=20260731-single-header-1"></script>
 
 </body>
 </html>

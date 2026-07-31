@@ -1344,7 +1344,7 @@
   }
 
 
-  function injectGlobalHeaderMenuStyles_legacy(){
+  function injectGlobalHeaderMenuStyles(){
     if(document.getElementById("auroraGlobalHeaderMenuStyles")) return;
 
     const style = document.createElement("style");
@@ -1407,52 +1407,62 @@
     document.head.appendChild(style);
   }
 
-  function findAuroraHeaderPlacement_legacy(){
-    const candidates = [
-      {
-        header:document.querySelector(".topbar-inner"),
-        before:document.querySelector(".topbar-inner .brand")
-      },
-      {
-        header:document.querySelector(".app-header .header-inner"),
-        before:document.querySelector(".app-header .header-inner .brand")
-      },
-      {
-        header:document.querySelector(".header-inner"),
-        before:document.querySelector(".header-inner .brand")
-      },
-      {
-        header:document.querySelector("header .brand")?.parentElement || null,
-        before:document.querySelector("header .brand")
-      },
-      {
-        header:document.querySelector(".topbar"),
-        before:document.querySelector(".topbar .brand")
-      }
+  function findAuroraHeaderPlacement(){
+    const selectors = [
+      "#auroraClubHeader",
+      "#auroraSessionHeader",
+      "#auroraAppHeader",
+      ".aurora-club-header",
+      ".aurora-session-header",
+      ".aurora-app-header",
+      "[data-aurora-shell-header]",
+      "[data-aurora-header]",
+      "body > header[role='banner']",
+      "body > header:not(.topbar)",
+      ".topbar-inner",
+      ".app-header .header-inner",
+      ".header-inner"
     ];
+
+    const candidates = selectors.map(function(selector){
+      const header = document.querySelector(selector);
+      if(!header) return {header:null,before:null};
+
+      const before =
+        header.querySelector(
+          ".brand,.aurora-brand,.club-brand,.session-brand,[data-aurora-brand]"
+        )
+        || header.firstElementChild;
+
+      return {header:header,before:before};
+    });
 
     return candidates.find(function(candidate){
       return candidate.header && candidate.before;
     }) || null;
   }
 
-  function placeToggleInAuroraHeader_legacy(toggle){
+  function placeToggleInAuroraHeader(toggle){
     if(!toggle) return false;
 
     const placement = findAuroraHeaderPlacement();
 
     if(!placement){
       toggle.classList.remove("aurora-nav-inline-toggle");
+      toggle.style.top = "84px";
+      toggle.style.left = "14px";
+      toggle.style.right = "auto";
       return false;
     }
 
     injectGlobalHeaderMenuStyles();
 
     if(toggle.parentElement !== placement.header){
-      placement.header.insertBefore(
-        toggle,
-        placement.before
-      );
+      if(placement.before){
+        placement.header.insertBefore(toggle,placement.before);
+      }else{
+        placement.header.prepend(toggle);
+      }
     }
 
     toggle.classList.add("aurora-nav-inline-toggle");
@@ -1463,7 +1473,7 @@
     return true;
   }
 
-  function monitorAuroraHeader_legacy(toggle){
+  function monitorAuroraHeader(toggle){
     if(placeToggleInAuroraHeader(toggle)) return;
 
     const observer = new MutationObserver(function(){
@@ -1483,353 +1493,10 @@
     },5000);
   }
 
-
-  const AURORA_DEPARTMENT_BY_FILE = {
-    "auroracityfc_nexusmaster.html":"Aurora Nexus HQ",
-    "auroracityfc_managerdashboard.html":"Manager Dashboard",
-    "auroracityfc_financedepartment.html":"Finance Department",
-    "auroracityfc_squadhub.html":"Squad Hub",
-    "auroracityfc_analysisroom.html":"Analysis Room",
-    "auroracityfc_trainingground.html":"Training Ground",
-    "auroracityfc_scoutingcentre.html":"Scouting Centre",
-    "auroracityfc_transfercentre.html":"Transfer Centre",
-    "auroracityfc_boardroom.html":"Boardroom",
-    "auroracityfc_matchdaycentre.html":"Matchday Centre",
-    "auroracityfc_mediacentre.html":"Media Centre",
-    "auroracloudsync.html":"Cloud Sync",
-    "auroracityfc_registrationdesk.html":"Registration Desk"
-  };
-
-  function injectSharedAuroraHeaderStyles(){
-    if(document.getElementById("auroraSharedHeaderStyles")) return;
-
-    const style = document.createElement("style");
-    style.id = "auroraSharedHeaderStyles";
-    style.textContent = `
-      :root{
-        --aurora-shared-header-height:72px;
-      }
-
-      body{
-        padding-top:var(--aurora-shared-header-height)!important;
-      }
-
-      #auroraSharedHeader{
-        position:fixed;
-        top:0;
-        left:0;
-        right:0;
-        z-index:2147483000;
-        height:var(--aurora-shared-header-height);
-        display:grid;
-        grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
-        align-items:center;
-        gap:18px;
-        padding:
-          calc(8px + env(safe-area-inset-top,0px))
-          14px
-          8px;
-        border-bottom:1px solid rgba(125,211,252,.16);
-        background:
-          linear-gradient(
-            90deg,
-            rgba(3,15,30,.98),
-            rgba(4,16,36,.98),
-            rgba(10,16,48,.98)
-          );
-        box-shadow:0 10px 28px rgba(0,0,0,.22);
-        backdrop-filter:blur(16px);
-        -webkit-backdrop-filter:blur(16px);
-      }
-
-      #auroraSharedHeader .aurora-shared-left{
-        display:flex;
-        align-items:center;
-        gap:10px;
-        min-width:0;
-      }
-
-      #auroraSharedHeader .aurora-shared-crest{
-        width:38px;
-        height:38px;
-        flex:0 0 auto;
-        display:grid;
-        place-items:center;
-        border:1px solid rgba(125,211,252,.24);
-        border-radius:12px;
-        color:#dff7ff;
-        background:
-          radial-gradient(
-            circle at 30% 20%,
-            rgba(255,255,255,.10),
-            transparent 42%
-          ),
-          linear-gradient(145deg,#155e75,#082f49);
-        box-shadow:
-          inset 0 1px 0 rgba(255,255,255,.08),
-          0 7px 16px rgba(0,0,0,.18);
-        font-size:11px;
-        font-weight:950;
-        letter-spacing:.04em;
-      }
-
-      #auroraSharedHeader .aurora-shared-brand{
-        min-width:0;
-      }
-
-      #auroraSharedHeader .aurora-shared-brand strong{
-        display:block;
-        overflow:hidden;
-        color:#f5fbff;
-        font-size:13px;
-        font-weight:950;
-        line-height:1.15;
-        text-overflow:ellipsis;
-        white-space:nowrap;
-      }
-
-      #auroraSharedHeader .aurora-shared-brand span{
-        display:block;
-        margin-top:3px;
-        overflow:hidden;
-        color:#a9bdd2;
-        font-size:10px;
-        font-weight:750;
-        text-overflow:ellipsis;
-        white-space:nowrap;
-      }
-
-      #auroraSharedHeader .aurora-shared-centre{
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        gap:8px;
-        min-width:0;
-        color:#b7c7dd;
-        font-size:10px;
-        font-weight:900;
-        letter-spacing:.14em;
-        text-transform:uppercase;
-        white-space:nowrap;
-      }
-
-      #auroraSharedHeader .aurora-shared-centre::before{
-        content:"";
-        width:8px;
-        height:8px;
-        flex:0 0 auto;
-        border-radius:50%;
-        background:#34d399;
-        box-shadow:
-          0 0 0 4px rgba(52,211,153,.10),
-          0 0 13px rgba(52,211,153,.45);
-      }
-
-      #auroraSharedHeader .aurora-shared-right{
-        display:flex;
-        align-items:center;
-        justify-content:flex-end;
-        gap:10px;
-        min-width:0;
-      }
-
-      #auroraSharedHeader .aurora-shared-logout{
-        min-height:36px;
-        padding:0 14px;
-        border:1px solid rgba(251,113,133,.34);
-        border-radius:12px;
-        color:#fecdd3;
-        background:
-          linear-gradient(
-            145deg,
-            rgba(76,5,25,.76),
-            rgba(44,7,20,.90)
-          );
-        font-size:10px;
-        font-weight:950;
-        letter-spacing:.13em;
-        text-transform:uppercase;
-        cursor:pointer;
-      }
-
-      #auroraSharedHeader .aurora-shared-logout:hover,
-      #auroraSharedHeader .aurora-shared-logout:focus-visible{
-        border-color:rgba(251,113,133,.58);
-        outline:none;
-      }
-
-      #auroraSharedHeader #auroraNavToggle{
-        position:static!important;
-        inset:auto!important;
-        transform:none!important;
-        flex:0 0 auto!important;
-        width:40px!important;
-        height:40px!important;
-        min-width:40px!important;
-        margin:0!important;
-        border:1px solid rgba(125,211,252,.24)!important;
-        border-radius:13px!important;
-        background:
-          linear-gradient(
-            145deg,
-            rgba(8,47,73,.92),
-            rgba(15,23,42,.98)
-          )!important;
-        box-shadow:
-          inset 0 1px 0 rgba(255,255,255,.07),
-          0 8px 18px rgba(0,0,0,.20)!important;
-        z-index:auto!important;
-      }
-
-      body > header:not(#auroraSharedHeader),
-      body > .topbar,
-      body > .app-header,
-      body > .site-header,
-      body > .global-header{
-        display:none!important;
-      }
-
-      @media(max-width:760px){
-        :root{
-          --aurora-shared-header-height:68px;
-        }
-
-        #auroraSharedHeader{
-          grid-template-columns:minmax(0,1fr) auto;
-          gap:10px;
-          padding-left:10px;
-          padding-right:10px;
-        }
-
-        #auroraSharedHeader .aurora-shared-centre{
-          display:none;
-        }
-
-        #auroraSharedHeader .aurora-shared-logout{
-          padding:0 10px;
-          font-size:9px;
-        }
-
-        #auroraSharedHeader .aurora-shared-brand strong{
-          font-size:12px;
-        }
-
-        #auroraSharedHeader .aurora-shared-brand span{
-          font-size:9px;
-        }
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
-
-  function currentDepartmentName(){
-    return (
-      AURORA_DEPARTMENT_BY_FILE[currentFile]
-      || document.title
-        .replace(/^Aurora City FC\s*[—|-]\s*/i,"")
-        .replace(/\s*[—|-].*$/,"")
-        .trim()
-      || "Aurora Club System"
-    );
-  }
-
-  function hideLegacyAuroraHeaders(){
-    const selectors = [
-      "body > header",
-      "body > .topbar",
-      "body > .app-header",
-      "body > .site-header",
-      "body > .global-header"
-    ];
-
-    selectors.forEach(function(selector){
-      document.querySelectorAll(selector).forEach(function(element){
-        if(element.id === "auroraSharedHeader") return;
-        element.dataset.auroraLegacyHeader = "true";
-        element.style.setProperty("display","none","important");
-      });
-    });
-  }
-
-  function buildSharedAuroraHeader(toggle){
-    let header = document.getElementById("auroraSharedHeader");
-
-    if(!header){
-      header = document.createElement("header");
-      header.id = "auroraSharedHeader";
-      header.setAttribute("role","banner");
-
-      header.innerHTML = `
-        <div class="aurora-shared-left">
-          <div class="aurora-shared-crest" aria-hidden="true">AFC</div>
-          <div class="aurora-shared-brand">
-            <strong>Aurora City FC</strong>
-            <span>Manager Session • Webby</span>
-          </div>
-        </div>
-
-        <div class="aurora-shared-centre">
-          ${esc(currentDepartmentName())}
-        </div>
-
-        <div class="aurora-shared-right">
-          <button
-            class="aurora-shared-logout"
-            type="button"
-            id="auroraSharedLogout"
-          >
-            Log out
-          </button>
-        </div>
-      `;
-
-      document.body.prepend(header);
-    }
-
-    const left = header.querySelector(".aurora-shared-left");
-    const crest = left && left.querySelector(".aurora-shared-crest");
-
-    if(toggle && left && crest){
-      left.insertBefore(toggle,crest);
-    }
-
-    const logout = header.querySelector("#auroraSharedLogout");
-
-    if(logout && !logout.dataset.wired){
-      logout.dataset.wired = "true";
-      logout.addEventListener("click",function(){
-        const existingLogout =
-          document.querySelector(
-            '[data-logout],#logoutBtn,.logout-btn,.logout'
-          );
-
-        if(
-          existingLogout
-          && existingLogout !== logout
-          && typeof existingLogout.click === "function"
-        ){
-          existingLogout.click();
-          return;
-        }
-
-        try{
-          localStorage.removeItem("aurora_session");
-          localStorage.removeItem("aurora_manager_session");
-          sessionStorage.clear();
-        }catch(_){}
-
-        location.href = "index.html";
-      });
-    }
-
-    hideLegacyAuroraHeaders();
-  }
-
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
-    injectSharedAuroraHeaderStyles();
+    injectGlobalHeaderMenuStyles();
     injectSofterMissionColours();
     injectSidebarReadabilityStyles();
     injectMatchdayBadgeStyles();
@@ -2020,7 +1687,7 @@
     `;
 
     document.body.append(toggle,overlay,panel);
-    buildSharedAuroraHeader(toggle);
+    monitorAuroraHeader(toggle);
 
     const closeButton =
       panel.querySelector(".aurora-nav-close");
@@ -2164,14 +1831,14 @@
       "pageshow",
       function(){
         setOpen(false);
-        buildSharedAuroraHeader(toggle);
+        placeToggleInAuroraHeader(toggle);
       }
     );
 
     window.addEventListener(
       "resize",
       function(){
-        buildSharedAuroraHeader(toggle);
+        placeToggleInAuroraHeader(toggle);
       }
     );
 
