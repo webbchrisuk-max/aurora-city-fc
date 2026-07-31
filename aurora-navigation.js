@@ -65,6 +65,42 @@
     const style = document.createElement("style");
     style.id = "auroraMatchdayStatusStyles";
     style.textContent = `
+      #auroraNavPanel{
+        isolation:isolate;
+      }
+      #auroraNavPanel .aurora-nav-head{
+        position:relative;
+        z-index:3;
+        flex:0 0 auto;
+        background:#061224;
+      }
+      #auroraNavPanel .aurora-nav-cloud{
+        position:relative;
+        z-index:3;
+        flex:0 0 auto;
+        margin-bottom:0;
+        background:
+          linear-gradient(135deg,rgba(8,47,73,.96),rgba(15,23,42,.98));
+        box-shadow:0 8px 18px rgba(0,0,0,.24);
+      }
+      #auroraNavPanel .aurora-nav-scroll{
+        position:relative;
+        z-index:1;
+        flex:1 1 auto;
+        min-height:0;
+        overflow-y:auto;
+        overflow-x:hidden;
+        padding-top:14px;
+        -webkit-overflow-scrolling:touch;
+        background:transparent;
+      }
+      #auroraNavPanel .aurora-nav-foot{
+        position:relative;
+        z-index:3;
+        flex:0 0 auto;
+        background:#030b18;
+      }
+
       .aurora-nav-matchday-status{
         margin-left:auto;
         flex:0 0 auto;
