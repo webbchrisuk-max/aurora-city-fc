@@ -1298,9 +1298,55 @@
     document.head.appendChild(style);
   }
 
+
+  function injectSofterMissionColours(){
+    if(document.getElementById("auroraSofterMissionColours")) return;
+
+    const style = document.createElement("style");
+    style.id = "auroraSofterMissionColours";
+    style.textContent = `
+      /* Softer supporting text beneath each mission title */
+      #auroraNavPanel .aurora-nav-step-copy span{
+        color:#9aa9bc!important;
+        text-shadow:none!important;
+      }
+
+      /* Softer mission helper and progress copy */
+      #auroraNavPanel .aurora-nav-mission-note,
+      #auroraNavPanel .aurora-nav-mission-progress{
+        color:#9aa9bc!important;
+      }
+
+      /* Replace the bright cyan connector line with a muted steel tone */
+      #auroraNavPanel .aurora-nav-step:not(:last-child)::after{
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(148,163,184,.42),
+            rgba(100,116,139,.16)
+          )!important;
+        box-shadow:none!important;
+      }
+
+      /* Keep titles bright and crisp */
+      #auroraNavPanel .aurora-nav-step-copy strong{
+        color:#f3f7fc!important;
+      }
+
+      /* Current/next mission remains highlighted without blue subtitle glare */
+      #auroraNavPanel .aurora-nav-step.is-next-mission .aurora-nav-step-copy span,
+      #auroraNavPanel .aurora-nav-step.is-active .aurora-nav-step-copy span{
+        color:#b8c4d4!important;
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
+    injectSofterMissionColours();
     injectSidebarReadabilityStyles();
     injectMatchdayBadgeStyles();
     injectMissionProgressStyles();
