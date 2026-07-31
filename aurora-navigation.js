@@ -1345,86 +1345,273 @@
 
 
 
-  /* ===================== CLEAN SHARED HEADER CONTROLLER ===================== */
-  /*
-    This controller has one job only:
-    place the navigation button immediately before the existing Aurora brand.
 
-    It deliberately does NOT:
-    - create another header,
-    - move the department label,
-    - move the logout button,
-    - change the header's flex/grid layout,
-    - hide or rebuild page headers.
-  */
+  /* ===================== UNIVERSAL AURORA HEADER ===================== */
 
-  function injectCleanHeaderMenuStyles(){
-    if(document.getElementById("auroraCleanHeaderMenuStyles")) return;
+  const AURORA_PAGE_TITLES = {
+    "auroracityfc_nexusmaster.html":"Aurora Nexus HQ",
+    "auroracityfc_managerdashboard.html":"Manager Dashboard",
+    "auroracityfc_financedepartment.html":"Finance Department",
+    "auroracityfc_squadhub.html":"Squad Hub",
+    "auroracityfc_analysisroom.html":"Analysis Room",
+    "auroracityfc_trainingground.html":"Training Ground",
+    "auroracityfc_scoutingcentre.html":"Scouting Centre",
+    "auroracityfc_transfercentre.html":"Transfer Centre",
+    "auroracityfc_boardroom.html":"Boardroom",
+    "auroracityfc_matchdaycentre.html":"Matchday Centre",
+    "auroracityfc_mediacentre.html":"Media Centre",
+    "auroracloudsync.html":"Cloud Sync",
+    "auroracityfc_registrationdesk.html":"Registration Desk"
+  };
+
+  function currentAuroraDepartment(){
+    return (
+      AURORA_PAGE_TITLES[currentFile]
+      || String(document.title || "")
+        .replace(/^Aurora City FC\s*[—|-]\s*/i,"")
+        .replace(/\s*[—|-].*$/,"")
+        .trim()
+      || "Aurora Club System"
+    );
+  }
+
+  function injectUniversalHeaderStyles(){
+    if(document.getElementById("auroraUniversalHeaderStyles")) return;
 
     const style = document.createElement("style");
-    style.id = "auroraCleanHeaderMenuStyles";
+    style.id = "auroraUniversalHeaderStyles";
     style.textContent = `
-      #auroraNavToggle.aurora-nav-inline-toggle{
+      :root{
+        --aurora-universal-header-height:72px;
+      }
+
+      body{
+        padding-top:var(--aurora-universal-header-height)!important;
+      }
+
+      #auroraUniversalHeader{
+        position:fixed;
+        top:0;
+        left:0;
+        right:0;
+        z-index:2147483000;
+        height:var(--aurora-universal-header-height);
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:16px;
+        padding:
+          calc(8px + env(safe-area-inset-top,0px))
+          14px
+          8px;
+        border-bottom:1px solid rgba(125,211,252,.16);
+        background:
+          linear-gradient(
+            90deg,
+            rgba(3,15,30,.98),
+            rgba(4,16,36,.98),
+            rgba(10,16,48,.98)
+          );
+        box-shadow:0 10px 28px rgba(0,0,0,.22);
+        backdrop-filter:blur(16px);
+        -webkit-backdrop-filter:blur(16px);
+      }
+
+      #auroraUniversalHeader .aurora-universal-left,
+      #auroraUniversalHeader .aurora-universal-right{
+        display:flex;
+        align-items:center;
+        min-width:0;
+      }
+
+      #auroraUniversalHeader .aurora-universal-left{
+        gap:10px;
+        flex:1 1 auto;
+      }
+
+      #auroraUniversalHeader .aurora-universal-right{
+        justify-content:flex-end;
+        gap:12px;
+        flex:0 0 auto;
+      }
+
+      #auroraUniversalHeader .aurora-universal-crest{
+        width:38px;
+        height:38px;
+        flex:0 0 auto;
+        display:grid;
+        place-items:center;
+        border:1px solid rgba(125,211,252,.24);
+        border-radius:12px;
+        color:#dff7ff;
+        background:
+          radial-gradient(
+            circle at 30% 20%,
+            rgba(255,255,255,.10),
+            transparent 42%
+          ),
+          linear-gradient(145deg,#155e75,#082f49);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.08),
+          0 7px 16px rgba(0,0,0,.18);
+        font-size:10px;
+        font-weight:950;
+        letter-spacing:.04em;
+      }
+
+      #auroraUniversalHeader .aurora-universal-brand{
+        min-width:0;
+      }
+
+      #auroraUniversalHeader .aurora-universal-brand strong{
+        display:block;
+        overflow:hidden;
+        color:#f5fbff;
+        font-size:13px;
+        font-weight:950;
+        line-height:1.15;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+
+      #auroraUniversalHeader .aurora-universal-brand span{
+        display:block;
+        margin-top:3px;
+        overflow:hidden;
+        color:#a9bdd2;
+        font-size:10px;
+        font-weight:750;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+
+      #auroraUniversalHeader .aurora-universal-department{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        color:#b7c7dd;
+        font-size:10px;
+        font-weight:900;
+        letter-spacing:.14em;
+        text-transform:uppercase;
+        white-space:nowrap;
+      }
+
+      #auroraUniversalHeader .aurora-universal-department::before{
+        content:"";
+        width:8px;
+        height:8px;
+        flex:0 0 auto;
+        border-radius:50%;
+        background:#34d399;
+        box-shadow:
+          0 0 0 4px rgba(52,211,153,.10),
+          0 0 13px rgba(52,211,153,.45);
+      }
+
+      #auroraUniversalHeader .aurora-universal-logout{
+        min-height:36px;
+        padding:0 14px;
+        border:1px solid rgba(251,113,133,.34);
+        border-radius:12px;
+        color:#fecdd3;
+        background:
+          linear-gradient(
+            145deg,
+            rgba(76,5,25,.76),
+            rgba(44,7,20,.90)
+          );
+        font-size:10px;
+        font-weight:950;
+        letter-spacing:.13em;
+        text-transform:uppercase;
+        cursor:pointer;
+      }
+
+      #auroraUniversalHeader .aurora-universal-logout:hover,
+      #auroraUniversalHeader .aurora-universal-logout:focus-visible{
+        border-color:rgba(251,113,133,.58);
+        outline:none;
+      }
+
+      #auroraUniversalHeader #auroraNavToggle{
         position:static!important;
         inset:auto!important;
-        top:auto!important;
-        right:auto!important;
-        bottom:auto!important;
-        left:auto!important;
         transform:none!important;
         flex:0 0 auto!important;
         width:40px!important;
         height:40px!important;
         min-width:40px!important;
-        margin:0 10px 0 0!important;
-        z-index:auto!important;
-        opacity:1!important;
-      }
-
-      #auroraTopHeaderMenuButton{
-        position:static!important;
-        inset:auto!important;
-        width:40px!important;
-        height:40px!important;
-        min-width:40px!important;
-        flex:0 0 40px!important;
-        display:grid!important;
-        place-items:center!important;
-        margin:0 10px 0 0!important;
-        padding:0!important;
-        border:1px solid rgba(125,211,252,.28)!important;
+        margin:0!important;
+        border:1px solid rgba(125,211,252,.24)!important;
         border-radius:13px!important;
         color:#dff7ff!important;
         background:
           linear-gradient(
             145deg,
-            rgba(8,47,73,.94),
+            rgba(8,47,73,.92),
             rgba(15,23,42,.98)
           )!important;
         box-shadow:
-          inset 0 1px 0 rgba(255,255,255,.08),
-          0 8px 18px rgba(0,0,0,.22)!important;
-        font:900 20px/1 system-ui,sans-serif!important;
-        cursor:pointer!important;
+          inset 0 1px 0 rgba(255,255,255,.07),
+          0 8px 18px rgba(0,0,0,.20)!important;
         z-index:auto!important;
+        opacity:1!important;
+        display:grid!important;
       }
 
-
-      body.aurora-browser-page-mode > .topbar,
-      body.aurora-browser-page-mode > header.topbar,
-      body.aurora-browser-page-mode .app > .topbar,
-      body.aurora-browser-page-mode .app > header.topbar{
-        display:block!important;
+      /*
+        Hide every old page/app header. The universal header is now the
+        only visible Aurora header in every environment.
+      */
+      body > .topbar,
+      body > header.topbar,
+      .app > .topbar,
+      .app > header.topbar,
+      body > .app-header,
+      body > .site-header,
+      body > .global-header,
+      body > header[role="banner"]:not(#auroraUniversalHeader){
+        display:none!important;
       }
 
-      @media(max-width:640px){
-        #auroraNavToggle.aurora-nav-inline-toggle,
-        #auroraTopHeaderMenuButton{
-          width:38px!important;
-          height:38px!important;
-          min-width:38px!important;
-          flex-basis:38px!important;
-          margin-right:8px!important;
+      @media(max-width:760px){
+        :root{
+          --aurora-universal-header-height:68px;
+        }
+
+        #auroraUniversalHeader{
+          padding-left:10px;
+          padding-right:10px;
+          gap:10px;
+        }
+
+        #auroraUniversalHeader .aurora-universal-right{
+          gap:8px;
+        }
+
+        #auroraUniversalHeader .aurora-universal-department{
+          font-size:9px;
+          letter-spacing:.10em;
+        }
+
+        #auroraUniversalHeader .aurora-universal-logout{
+          padding:0 10px;
+          font-size:9px;
+        }
+
+        #auroraUniversalHeader .aurora-universal-brand strong{
+          font-size:12px;
+        }
+
+        #auroraUniversalHeader .aurora-universal-brand span{
+          font-size:9px;
+        }
+      }
+
+      @media(max-width:560px){
+        #auroraUniversalHeader .aurora-universal-department{
+          display:none;
         }
       }
     `;
@@ -1432,311 +1619,91 @@
     document.head.appendChild(style);
   }
 
-  function accessibleParentDocument(){
-    try{
-      if(window.parent && window.parent !== window){
-        const parentDocument = window.parent.document;
-        void parentDocument.body;
-        return parentDocument;
-      }
-    }catch(_){}
+  function buildUniversalAuroraHeader(toggle){
+    injectUniversalHeaderStyles();
 
-    return null;
-  }
+    let header = document.getElementById("auroraUniversalHeader");
 
-  function findAuroraBrandPlacement(doc){
-    if(!doc) return null;
+    if(!header){
+      header = document.createElement("header");
+      header.id = "auroraUniversalHeader";
+      header.setAttribute("role","banner");
+      header.innerHTML = `
+        <div class="aurora-universal-left">
+          <div class="aurora-universal-crest" aria-hidden="true">AFC</div>
+          <div class="aurora-universal-brand">
+            <strong>Aurora City FC</strong>
+            <span>Manager Session • Webby</span>
+          </div>
+        </div>
 
-    const directSelectors = [
-      ".topbar-inner .brand",
-      ".header-inner .brand",
-      ".app-header .brand",
-      "header .brand",
-      "[data-aurora-header] [data-aurora-brand]",
-      "[data-aurora-brand]"
-    ];
+        <div class="aurora-universal-right">
+          <div class="aurora-universal-department">
+            ${esc(currentAuroraDepartment())}
+          </div>
+          <button
+            id="auroraUniversalLogout"
+            class="aurora-universal-logout"
+            type="button"
+          >
+            Log out
+          </button>
+        </div>
+      `;
 
-    for(const selector of directSelectors){
-      const brand = doc.querySelector(selector);
-
-      if(brand){
-        return {
-          host:brand.parentElement,
-          before:brand
-        };
-      }
+      document.body.prepend(header);
     }
 
-    /*
-      The installed Aurora app shell may use different class names.
-      In that case locate only the compact block containing the manager line.
-    */
-    const managerNode = Array.from(
-      doc.querySelectorAll(
-        "header div,header span,header strong,header p," +
-        "[role='banner'] div,[role='banner'] span," +
-        "[role='banner'] strong,[role='banner'] p"
-      )
-    ).find(function(node){
-      const value = String(node.textContent || "")
-        .replace(/\s+/g," ")
-        .trim()
-        .toLowerCase();
+    const left = header.querySelector(".aurora-universal-left");
+    const crest = header.querySelector(".aurora-universal-crest");
 
-      return (
-        value.includes("manager session")
-        && value.includes("webby")
-      );
-    });
-
-    if(!managerNode) return null;
-
-    let brandBlock = managerNode;
-
-    while(
-      brandBlock.parentElement
-      && brandBlock.parentElement !== doc.body
-    ){
-      const parentText = String(
-        brandBlock.parentElement.textContent || ""
-      )
-        .replace(/\s+/g," ")
-        .trim()
-        .toLowerCase();
-
-      /*
-        Stop before the whole header, which also contains department/logout.
-        This keeps those right-side controls completely untouched.
-      */
-      if(
-        parentText.includes("logout")
-        || parentText.includes("log out")
-      ){
-        break;
-      }
-
-      brandBlock = brandBlock.parentElement;
-    }
-
-    return {
-      host:brandBlock.parentElement,
-      before:brandBlock
-    };
-  }
-
-
-  function localPageHeaders(){
-    return Array.from(
-      document.querySelectorAll(
-        "body > .topbar," +
-        "body > header.topbar," +
-        ".app > .topbar," +
-        ".app > header.topbar," +
-        "body > .app-header," +
-        "body > .site-header," +
-        "body > .global-header"
-      )
-    );
-  }
-
-  function setLocalHeaderVisibility(visible){
-    document.body.classList.toggle(
-      "aurora-browser-page-mode",
-      Boolean(visible)
-    );
-
-    const cleanup =
-      document.getElementById(
-        "auroraSingleHeaderPageCleanup"
-      );
-
-    if(cleanup){
-      cleanup.disabled = visible;
-    }
-
-    localPageHeaders().forEach(function(header){
-      if(visible){
-        header.style.removeProperty("display");
-        header.removeAttribute("aria-hidden");
-      }else{
-        header.style.setProperty(
-          "display",
-          "none",
-          "important"
-        );
-        header.setAttribute("aria-hidden","true");
-      }
-    });
-  }
-
-  function installParentHeaderButton(localToggle){
-    const parentDocument = accessibleParentDocument();
-    if(!parentDocument) return false;
-
-    /*
-      A normal embedded browser (for example ChatGPT's preview window)
-      also has a parent document. Do not treat it as the Aurora app.
-      First prove that the parent contains Aurora's own manager header.
-    */
-    const parentText = String(
-      parentDocument.body
-        ? parentDocument.body.textContent || ""
-        : ""
-    )
-      .replace(/\s+/g," ")
-      .trim()
-      .toLowerCase();
-
-    const isAuroraShell =
-      parentText.includes("aurora city fc")
-      && parentText.includes("manager session")
-      && parentText.includes("webby")
-      && (
-        parentText.includes("log out")
-        || parentText.includes("logout")
-      );
-
-    if(!isAuroraShell) return false;
-
-    const placement = findAuroraBrandPlacement(parentDocument);
-    if(!placement || !placement.host || !placement.before) return false;
-
-    /*
-      Hide the page's duplicate header only after the genuine Aurora
-      app-shell header has been positively identified.
-    */
-    setLocalHeaderVisibility(false);
-
-    let button = parentDocument.getElementById(
-      "auroraTopHeaderMenuButton"
-    );
-
-    /*
-      The app shell survives while departments change.
-      Replace the proxy button so it always controls the current page.
-    */
-    if(button){
-      const freshButton = button.cloneNode(true);
-      button.replaceWith(freshButton);
-      button = freshButton;
-    }else{
-      button = parentDocument.createElement("button");
-      button.id = "auroraTopHeaderMenuButton";
-      button.type = "button";
-      button.textContent = "☰";
-    }
-
-    button.setAttribute(
-      "aria-label",
-      "Open Aurora mission navigation"
-    );
-    button.title = "Open mission navigation";
-
-    button.onclick = function(event){
-      event.preventDefault();
-      event.stopPropagation();
-
-      if(
-        localToggle
-        && localToggle.isConnected
-        && typeof localToggle.click === "function"
-      ){
-        localToggle.click();
-      }
-    };
-
-    placement.host.insertBefore(button,placement.before);
-
-    localToggle.style.setProperty(
-      "display",
-      "none",
-      "important"
-    );
-
-    return true;
-  }
-
-  function installLocalHeaderButton(toggle){
-    setLocalHeaderVisibility(true);
-
-    const placement = findAuroraBrandPlacement(document);
-
-    if(!placement || !placement.host || !placement.before){
-      toggle.classList.remove("aurora-nav-inline-toggle");
+    if(toggle && left && crest){
+      left.insertBefore(toggle,crest);
       toggle.style.removeProperty("display");
-      return false;
     }
 
-    if(toggle.parentElement !== placement.host){
-      placement.host.insertBefore(toggle,placement.before);
+    const logout = header.querySelector("#auroraUniversalLogout");
+
+    if(logout && !logout.dataset.wired){
+      logout.dataset.wired = "true";
+
+      logout.addEventListener("click",function(){
+        const oldLogout = Array.from(
+          document.querySelectorAll("button,a")
+        ).find(function(node){
+          const value = String(node.textContent || "")
+            .replace(/\s+/g," ")
+            .trim()
+            .toLowerCase();
+
+          return (
+            node !== logout
+            && (value === "log out" || value === "logout")
+          );
+        });
+
+        if(oldLogout && typeof oldLogout.click === "function"){
+          oldLogout.click();
+          return;
+        }
+
+        try{
+          localStorage.removeItem("aurora_session");
+          localStorage.removeItem("aurora_manager_session");
+          sessionStorage.clear();
+        }catch(_){}
+
+        location.href = "index.html";
+      });
     }
 
-    toggle.classList.add("aurora-nav-inline-toggle");
-    toggle.style.removeProperty("display");
-
-    return true;
+    return header;
   }
-
-  function mountHeaderMenu(toggle){
-    injectCleanHeaderMenuStyles();
-
-    if(installParentHeaderButton(toggle)){
-      return "parent";
-    }
-
-    /*
-      No verified Aurora shell: this is a normal browser, an in-app
-      preview, or another embedded webview. Restore the page header.
-    */
-    setLocalHeaderVisibility(true);
-
-    if(installLocalHeaderButton(toggle)){
-      return "local";
-    }
-
-    /*
-      No recognised header exists. Keep the original discreet floating
-      toggle from aurora-navigation.css rather than manufacturing a header.
-    */
-    toggle.style.removeProperty("display");
-    toggle.classList.remove("aurora-nav-inline-toggle");
-    return "floating";
-  }
-
-  function monitorHeaderMenu(toggle){
-    const result = mountHeaderMenu(toggle);
-
-    if(result !== "floating") return;
-
-    const parentDocument = accessibleParentDocument();
-    const target = parentDocument
-      ? parentDocument.documentElement
-      : document.documentElement;
-
-    const observer = new MutationObserver(function(){
-      const nextResult = mountHeaderMenu(toggle);
-
-      if(nextResult !== "floating"){
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(target,{
-      childList:true,
-      subtree:true
-    });
-
-    window.setTimeout(function(){
-      observer.disconnect();
-      mountHeaderMenu(toggle);
-    },5000);
-  }
-
 
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
-    injectCleanHeaderMenuStyles();
+    injectUniversalHeaderStyles();
     injectSofterMissionColours();
     injectSidebarReadabilityStyles();
     injectMatchdayBadgeStyles();
@@ -1932,18 +1899,8 @@
       Clean up remnants created by older navigation builds.
       This does not touch any genuine page/app header.
     */
-    const oldFallbackHeader =
-      document.getElementById("auroraBrowserFallbackHeader");
 
-    if(oldFallbackHeader){
-      oldFallbackHeader.remove();
-    }
-
-    document.body.classList.remove(
-      "aurora-browser-header-active"
-    );
-
-    monitorHeaderMenu(toggle);
+    buildUniversalAuroraHeader(toggle);
 
     const closeButton =
       panel.querySelector(".aurora-nav-close");
@@ -2087,14 +2044,14 @@
       "pageshow",
       function(){
         setOpen(false);
-        mountHeaderMenu(toggle);
+        buildUniversalAuroraHeader(toggle);
       }
     );
 
     window.addEventListener(
       "resize",
       function(){
-        mountHeaderMenu(toggle);
+        buildUniversalAuroraHeader(toggle);
       }
     );
 
