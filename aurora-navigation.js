@@ -1605,21 +1605,40 @@
         "auroraTopHeaderMenuButton"
       );
 
-    if(!parentButton){
+    /*
+      The parent header survives while department pages change.
+      Replace the existing node on every page load so any listener
+      belonging to the previous page is removed completely.
+    */
+    if(parentButton){
+      const freshButton = parentButton.cloneNode(true);
+      parentButton.replaceWith(freshButton);
+      parentButton = freshButton;
+    }else{
       parentButton = parentDocument.createElement("button");
       parentButton.id = "auroraTopHeaderMenuButton";
       parentButton.type = "button";
       parentButton.innerHTML = "☰";
-      parentButton.setAttribute(
-        "aria-label",
-        "Open Aurora mission navigation"
-      );
-      parentButton.title = "Open mission navigation";
-
-      parentButton.addEventListener("click",function(){
-        localToggle.click();
-      });
     }
+
+    parentButton.setAttribute(
+      "aria-label",
+      "Open Aurora mission navigation"
+    );
+    parentButton.title = "Open mission navigation";
+
+    parentButton.onclick = function(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        localToggle
+        && localToggle.isConnected
+        && typeof localToggle.click === "function"
+      ){
+        localToggle.click();
+      }
+    };
 
     styleTopHeaderMenuButton(parentButton);
 
@@ -1639,6 +1658,23 @@
       "none",
       "important"
     );
+
+    if(!localToggle.dataset.auroraParentCleanupWired){
+      localToggle.dataset.auroraParentCleanupWired = "true";
+
+      window.addEventListener("pagehide",function(){
+        try{
+          const currentButton =
+            parentDocument.getElementById(
+              "auroraTopHeaderMenuButton"
+            );
+
+          if(currentButton){
+            currentButton.onclick = null;
+          }
+        }catch(_){}
+      },{once:true});
+    }
 
     return true;
   }
