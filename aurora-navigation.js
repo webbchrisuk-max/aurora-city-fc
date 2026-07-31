@@ -1343,9 +1343,150 @@
     document.head.appendChild(style);
   }
 
+
+  function injectGlobalHeaderMenuStyles(){
+    if(document.getElementById("auroraGlobalHeaderMenuStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "auroraGlobalHeaderMenuStyles";
+    style.textContent = `
+      #auroraNavToggle.aurora-nav-inline-toggle{
+        position:static!important;
+        inset:auto!important;
+        top:auto!important;
+        right:auto!important;
+        bottom:auto!important;
+        left:auto!important;
+        transform:none!important;
+        flex:0 0 auto!important;
+        width:42px!important;
+        height:42px!important;
+        min-width:42px!important;
+        margin:0!important;
+        border:1px solid rgba(125,211,252,.24)!important;
+        border-radius:14px!important;
+        background:
+          linear-gradient(
+            145deg,
+            rgba(8,47,73,.90),
+            rgba(15,23,42,.98)
+          )!important;
+        color:#dff7ff!important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.07),
+          0 8px 18px rgba(0,0,0,.20)!important;
+        z-index:auto!important;
+      }
+
+      #auroraNavToggle.aurora-nav-inline-toggle:hover,
+      #auroraNavToggle.aurora-nav-inline-toggle:focus-visible{
+        border-color:rgba(34,211,238,.52)!important;
+        outline:none!important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.09),
+          0 9px 20px rgba(0,0,0,.24),
+          0 0 16px rgba(34,211,238,.14)!important;
+      }
+
+      .aurora-nav-header-menu-wrap{
+        display:flex!important;
+        align-items:center!important;
+        gap:10px!important;
+        min-width:0!important;
+      }
+
+      @media(max-width:640px){
+        #auroraNavToggle.aurora-nav-inline-toggle{
+          width:40px!important;
+          height:40px!important;
+          min-width:40px!important;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function findAuroraHeaderPlacement(){
+    const candidates = [
+      {
+        header:document.querySelector(".topbar-inner"),
+        before:document.querySelector(".topbar-inner .brand")
+      },
+      {
+        header:document.querySelector(".app-header .header-inner"),
+        before:document.querySelector(".app-header .header-inner .brand")
+      },
+      {
+        header:document.querySelector(".header-inner"),
+        before:document.querySelector(".header-inner .brand")
+      },
+      {
+        header:document.querySelector("header .brand")?.parentElement || null,
+        before:document.querySelector("header .brand")
+      },
+      {
+        header:document.querySelector(".topbar"),
+        before:document.querySelector(".topbar .brand")
+      }
+    ];
+
+    return candidates.find(function(candidate){
+      return candidate.header && candidate.before;
+    }) || null;
+  }
+
+  function placeToggleInAuroraHeader(toggle){
+    if(!toggle) return false;
+
+    const placement = findAuroraHeaderPlacement();
+
+    if(!placement){
+      toggle.classList.remove("aurora-nav-inline-toggle");
+      return false;
+    }
+
+    injectGlobalHeaderMenuStyles();
+
+    if(toggle.parentElement !== placement.header){
+      placement.header.insertBefore(
+        toggle,
+        placement.before
+      );
+    }
+
+    toggle.classList.add("aurora-nav-inline-toggle");
+    placement.header.classList.add(
+      "aurora-nav-header-menu-wrap"
+    );
+
+    return true;
+  }
+
+  function monitorAuroraHeader(toggle){
+    if(placeToggleInAuroraHeader(toggle)) return;
+
+    const observer = new MutationObserver(function(){
+      if(placeToggleInAuroraHeader(toggle)){
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.documentElement,{
+      childList:true,
+      subtree:true
+    });
+
+    window.setTimeout(function(){
+      observer.disconnect();
+      placeToggleInAuroraHeader(toggle);
+    },5000);
+  }
+
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
+    injectGlobalHeaderMenuStyles();
     injectSofterMissionColours();
     injectSidebarReadabilityStyles();
     injectMatchdayBadgeStyles();
@@ -1536,6 +1677,7 @@
     `;
 
     document.body.append(toggle,overlay,panel);
+    monitorAuroraHeader(toggle);
 
     const closeButton =
       panel.querySelector(".aurora-nav-close");
@@ -1679,6 +1821,14 @@
       "pageshow",
       function(){
         setOpen(false);
+        placeToggleInAuroraHeader(toggle);
+      }
+    );
+
+    window.addEventListener(
+      "resize",
+      function(){
+        placeToggleInAuroraHeader(toggle);
       }
     );
 
