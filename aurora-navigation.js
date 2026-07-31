@@ -116,10 +116,38 @@
         })[0];
 
       if(latest && sameLocalDay(latest.date,now)){
+        const reportStatus = String(
+          latest.report.status || ""
+        ).trim().toUpperCase();
+
+        if(reportStatus === "READY"){
+          setMatchdayStatus(
+            "ready",
+            "Ready",
+            "Today's Matchday report is published and ready"
+          );
+          return;
+        }
+
+        if(
+          reportStatus === "ERROR"
+          || reportStatus === "FAILED"
+          || reportStatus === "EXPORT_FAILED"
+        ){
+          setMatchdayStatus(
+            "error",
+            "Error",
+            "Today's Matchday report could not be published"
+          );
+          return;
+        }
+
         setMatchdayStatus(
-          "ready",
-          "Ready",
-          "Today's Matchday report is ready"
+          "progress",
+          "In progress",
+          reportStatus === "EXPORT_PENDING"
+            ? "Today's report is complete and waiting for the JSON export"
+            : "Today's Matchday report is being prepared"
         );
         return;
       }
@@ -148,9 +176,9 @@
       );
 
       setMatchdayStatus(
-        "none",
-        "No report",
-        "Matchday report status is unavailable"
+        "error",
+        "Error",
+        "Matchday report status is currently unavailable"
       );
     }
   }
@@ -820,9 +848,137 @@
     document.head.appendChild(style);
   }
 
+
+  function injectMatchdayBadgeStyles(){
+    if(document.getElementById("auroraMatchdayBadgeStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "auroraMatchdayBadgeStyles";
+    style.textContent = `
+      #auroraNavPanel .aurora-nav-matchday-status{
+        margin-left:auto;
+        flex:0 0 auto;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:5px;
+        min-width:72px;
+        padding:5px 8px;
+        border:1px solid rgba(148,163,184,.28);
+        border-radius:999px;
+        color:#cbd5e1;
+        background:rgba(30,41,59,.58);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+        font-size:8px;
+        font-weight:950;
+        letter-spacing:.075em;
+        line-height:1;
+        text-transform:uppercase;
+        white-space:nowrap;
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status::before{
+        content:"";
+        width:7px;
+        height:7px;
+        flex:0 0 auto;
+        border-radius:50%;
+        background:#94a3b8;
+        box-shadow:0 0 0 3px rgba(148,163,184,.10);
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status[data-state="none"]{
+        color:#fecdd3;
+        border-color:rgba(251,113,133,.38);
+        background:
+          linear-gradient(
+            135deg,
+            rgba(127,29,29,.34),
+            rgba(76,5,25,.24)
+          );
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status[data-state="none"]::before{
+        background:#fb7185;
+        box-shadow:
+          0 0 0 3px rgba(251,113,133,.11),
+          0 0 10px rgba(251,113,133,.28);
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status[data-state="progress"]{
+        color:#fde68a;
+        border-color:rgba(251,191,36,.42);
+        background:
+          linear-gradient(
+            135deg,
+            rgba(120,53,15,.40),
+            rgba(69,26,3,.27)
+          );
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status[data-state="progress"]::before{
+        background:#fbbf24;
+        box-shadow:
+          0 0 0 3px rgba(251,191,36,.12),
+          0 0 12px rgba(251,191,36,.38);
+        animation:auroraMatchdayBadgePulse 1.35s ease-in-out infinite;
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status[data-state="ready"]{
+        color:#a7f3d0;
+        border-color:rgba(52,211,153,.42);
+        background:
+          linear-gradient(
+            135deg,
+            rgba(6,78,59,.40),
+            rgba(2,44,34,.27)
+          );
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status[data-state="ready"]::before{
+        background:#34d399;
+        box-shadow:
+          0 0 0 3px rgba(52,211,153,.11),
+          0 0 12px rgba(52,211,153,.42);
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status[data-state="error"]{
+        color:#fecaca;
+        border-color:rgba(239,68,68,.48);
+        background:
+          linear-gradient(
+            135deg,
+            rgba(127,29,29,.46),
+            rgba(69,10,10,.30)
+          );
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status[data-state="error"]::before{
+        background:#ef4444;
+        box-shadow:
+          0 0 0 3px rgba(239,68,68,.12),
+          0 0 12px rgba(239,68,68,.42);
+      }
+
+      @keyframes auroraMatchdayBadgePulse{
+        0%,100%{
+          opacity:1;
+          transform:scale(1);
+        }
+        50%{
+          opacity:.5;
+          transform:scale(1.30);
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
+    injectMatchdayBadgeStyles();
     injectMissionProgressStyles();
 
     injectBottomCloudStyles();
