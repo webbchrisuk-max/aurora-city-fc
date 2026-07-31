@@ -1573,10 +1573,39 @@
     const parentDocument = accessibleParentDocument();
     if(!parentDocument) return false;
 
-    setLocalHeaderVisibility(false);
+    /*
+      A normal embedded browser (for example ChatGPT's preview window)
+      also has a parent document. Do not treat it as the Aurora app.
+      First prove that the parent contains Aurora's own manager header.
+    */
+    const parentText = String(
+      parentDocument.body
+        ? parentDocument.body.textContent || ""
+        : ""
+    )
+      .replace(/\s+/g," ")
+      .trim()
+      .toLowerCase();
+
+    const isAuroraShell =
+      parentText.includes("aurora city fc")
+      && parentText.includes("manager session")
+      && parentText.includes("webby")
+      && (
+        parentText.includes("log out")
+        || parentText.includes("logout")
+      );
+
+    if(!isAuroraShell) return false;
 
     const placement = findAuroraBrandPlacement(parentDocument);
     if(!placement || !placement.host || !placement.before) return false;
+
+    /*
+      Hide the page's duplicate header only after the genuine Aurora
+      app-shell header has been positively identified.
+    */
+    setLocalHeaderVisibility(false);
 
     let button = parentDocument.getElementById(
       "auroraTopHeaderMenuButton"
@@ -1655,6 +1684,10 @@
       return "parent";
     }
 
+    /*
+      No verified Aurora shell: this is a normal browser, an in-app
+      preview, or another embedded webview. Restore the page header.
+    */
     setLocalHeaderVisibility(true);
 
     if(installLocalHeaderButton(toggle)){
