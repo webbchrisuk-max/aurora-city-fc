@@ -1575,6 +1575,15 @@
         display:none!important;
       }
 
+
+      body.aurora-running-in-app-shell{
+        padding-top:0!important;
+      }
+
+      body.aurora-running-in-app-shell #auroraUniversalHeader{
+        display:none!important;
+      }
+
       @media(max-width:760px){
         :root{
           --aurora-universal-header-height:68px;
@@ -1619,8 +1628,188 @@
     document.head.appendChild(style);
   }
 
+
+  function getVerifiedAuroraAppShell(){
+    try{
+      if(!window.parent || window.parent === window) return null;
+
+      const parentDocument = window.parent.document;
+      if(!parentDocument || !parentDocument.body) return null;
+
+      const parentText = String(parentDocument.body.textContent || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
+
+      const hasAuroraBrand =
+        parentText.includes("aurora city fc");
+
+      const hasManagerSession =
+        parentText.includes("manager session")
+        && parentText.includes("webby");
+
+      const hasLogout =
+        parentText.includes("log out")
+        || parentText.includes("logout");
+
+      if(
+        !hasAuroraBrand
+        || !hasManagerSession
+        || !hasLogout
+      ){
+        return null;
+      }
+
+      const headerCandidates = Array.from(
+        parentDocument.querySelectorAll(
+          "header,.topbar,.app-header,.global-header," +
+          "[data-aurora-header],[role='banner']"
+        )
+      );
+
+      const header = headerCandidates.find(function(node){
+        const value = String(node.textContent || "")
+          .replace(/\s+/g," ")
+          .trim()
+          .toLowerCase();
+
+        return (
+          value.includes("aurora city fc")
+          && value.includes("manager session")
+          && value.includes("webby")
+          && (
+            value.includes("log out")
+            || value.includes("logout")
+          )
+        );
+      });
+
+      if(!header) return null;
+
+      const brand =
+        header.querySelector(
+          ".brand,.aurora-brand,.club-brand,.session-brand," +
+          "[data-aurora-brand],.header-brand"
+        );
+
+      return {
+        document:parentDocument,
+        header:header,
+        brand:brand
+      };
+    }catch(_){
+      return null;
+    }
+  }
+
+  function installMenuIntoAuroraAppShell(toggle){
+    const shell = getVerifiedAuroraAppShell();
+    if(!shell) return false;
+
+    const parentDocument = shell.document;
+    const header = shell.header;
+    const brand = shell.brand;
+
+    let button = parentDocument.getElementById(
+      "auroraTopHeaderMenuButton"
+    );
+
+    /*
+      The app shell survives while department pages change.
+      Replace the proxy button so it always controls the current page.
+    */
+    if(button){
+      const fresh = button.cloneNode(true);
+      button.replaceWith(fresh);
+      button = fresh;
+    }else{
+      button = parentDocument.createElement("button");
+      button.id = "auroraTopHeaderMenuButton";
+      button.type = "button";
+      button.textContent = "☰";
+    }
+
+    button.setAttribute(
+      "aria-label",
+      "Open Aurora mission navigation"
+    );
+    button.title = "Open mission navigation";
+
+    button.style.cssText = [
+      "position:static!important",
+      "inset:auto!important",
+      "width:40px!important",
+      "height:40px!important",
+      "min-width:40px!important",
+      "flex:0 0 40px!important",
+      "display:grid!important",
+      "place-items:center!important",
+      "margin:0 10px 0 0!important",
+      "padding:0!important",
+      "border:1px solid rgba(125,211,252,.28)!important",
+      "border-radius:13px!important",
+      "color:#dff7ff!important",
+      "background:linear-gradient(145deg,rgba(8,47,73,.94),rgba(15,23,42,.98))!important",
+      "box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 18px rgba(0,0,0,.22)!important",
+      "font:900 20px/1 system-ui,sans-serif!important",
+      "cursor:pointer!important",
+      "z-index:auto!important"
+    ].join(";");
+
+    button.onclick = function(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(
+        toggle
+        && toggle.isConnected
+        && typeof toggle.click === "function"
+      ){
+        toggle.click();
+      }
+    };
+
+    if(brand && brand.parentElement){
+      brand.parentElement.insertBefore(button,brand);
+    }else{
+      header.prepend(button);
+    }
+
+    toggle.style.setProperty(
+      "display",
+      "none",
+      "important"
+    );
+
+    /*
+      Remove the local universal header if this page was previously
+      rendered outside the app and then restored inside the shell.
+    */
+    const localHeader =
+      document.getElementById("auroraUniversalHeader");
+
+    if(localHeader){
+      localHeader.remove();
+    }
+
+    document.body.style.removeProperty("padding-top");
+    document.body.classList.add("aurora-running-in-app-shell");
+
+    return true;
+  }
+
   function buildUniversalAuroraHeader(toggle){
     injectUniversalHeaderStyles();
+
+    /*
+      Inside the installed Aurora app, the persistent app shell already
+      owns the top header. Use that header and do not build a second one.
+    */
+    if(installMenuIntoAuroraAppShell(toggle)){
+      return null;
+    }
+
+    document.body.classList.remove("aurora-running-in-app-shell");
 
     let header = document.getElementById("auroraUniversalHeader");
 
@@ -2044,6 +2233,7 @@
       "pageshow",
       function(){
         setOpen(false);
+        buildUniversalAuroraHeader(toggle);
         buildUniversalAuroraHeader(toggle);
       }
     );
