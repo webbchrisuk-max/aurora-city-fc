@@ -45,7 +45,6 @@
     ["♜","Boardroom","AuroraCityFC_Boardroom.html"],
     ["⚽","Matchday Centre","AuroraCityFC_MatchdayCentre.html"],
     ["●","Media Centre","AuroraCityFC_MediaCentre.html"],
-    ["☁","Cloud Sync","AuroraCloudSync.html"]
   ];
 
   const currentFile = (
@@ -528,26 +527,6 @@
           aria-label="Close Aurora navigation"
         >×</button>
       </header>
-
-      <button
-        class="aurora-nav-cloud"
-        id="auroraNavCloud"
-        type="button"
-        data-state="working"
-      >
-        <span
-          class="aurora-nav-cloud-dot"
-          aria-hidden="true"
-        ></span>
-        <span class="aurora-nav-cloud-copy">
-          <strong>Checking Aurora Cloud…</strong>
-          <span>Reading the live connection status</span>
-        </span>
-        <span
-          class="aurora-nav-cloud-arrow"
-          aria-hidden="true"
-        >›</span>
-      </button>
 
       <div class="aurora-nav-scroll">
         <section
