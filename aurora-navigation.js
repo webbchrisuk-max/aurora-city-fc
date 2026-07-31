@@ -975,9 +975,333 @@
     document.head.appendChild(style);
   }
 
+
+  function injectSidebarReadabilityStyles(){
+    if(document.getElementById("auroraSidebarReadabilityStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "auroraSidebarReadabilityStyles";
+    style.textContent = `
+      /* Wider sidebar so the larger text still breathes */
+      #auroraNavPanel{
+        width:min(390px,92vw);
+      }
+
+      /* Header */
+      #auroraNavPanel .aurora-nav-head{
+        min-height:76px;
+        padding:14px 15px;
+        gap:12px;
+      }
+
+      #auroraNavPanel .aurora-nav-crest{
+        width:48px;
+        height:48px;
+        border-radius:15px;
+        font-size:14px;
+        font-weight:950;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.08),
+          0 0 20px rgba(34,211,238,.10);
+      }
+
+      #auroraNavPanel .aurora-nav-brand strong{
+        font-size:17px;
+        line-height:1.15;
+      }
+
+      #auroraNavPanel .aurora-nav-brand span{
+        margin-top:4px;
+        font-size:10px;
+        letter-spacing:.18em;
+      }
+
+      #auroraNavPanel .aurora-nav-close{
+        width:40px;
+        height:40px;
+        border-radius:13px;
+        font-size:22px;
+      }
+
+      /* Section headings and helper text */
+      #auroraNavPanel .aurora-nav-label{
+        font-size:9px;
+        letter-spacing:.20em;
+        line-height:1.45;
+      }
+
+      #auroraNavPanel .aurora-nav-mission-note{
+        font-size:11px;
+        line-height:1.5;
+      }
+
+      #auroraNavPanel .aurora-nav-mission-progress{
+        font-size:10px;
+      }
+
+      /* Mission rows */
+      #auroraNavPanel .aurora-nav-step{
+        min-height:57px;
+        grid-template-columns:39px minmax(0,1fr) auto;
+        gap:10px;
+        padding:8px 9px;
+        border-radius:14px;
+      }
+
+      #auroraNavPanel .aurora-nav-step-number{
+        width:36px;
+        height:36px;
+        border-radius:11px;
+        font-size:13px;
+        font-weight:950;
+      }
+
+      #auroraNavPanel .aurora-nav-step-copy strong{
+        font-size:12px;
+        line-height:1.2;
+      }
+
+      #auroraNavPanel .aurora-nav-step-copy span{
+        margin-top:4px;
+        font-size:9px;
+        line-height:1.25;
+      }
+
+      #auroraNavPanel .aurora-nav-complete-button{
+        min-width:34px;
+        width:34px;
+        height:34px;
+        border-radius:10px;
+        font-size:16px;
+      }
+
+      #auroraNavPanel .aurora-nav-completed-badge{
+        padding:6px 9px;
+        font-size:8px;
+      }
+
+      /* Department rows */
+      #auroraNavPanel .aurora-nav-dept{
+        min-height:54px;
+        grid-template-columns:40px minmax(0,1fr) auto;
+        gap:11px;
+        padding:7px 10px;
+        border-radius:14px;
+      }
+
+      #auroraNavPanel .aurora-nav-dept strong{
+        font-size:12px;
+        font-weight:850;
+        letter-spacing:.01em;
+      }
+
+      #auroraNavPanel .aurora-nav-dept > span:last-child:not(.aurora-nav-matchday-status){
+        font-size:18px;
+      }
+
+      /* Larger, polished icon tiles */
+      #auroraNavPanel .aurora-nav-dept-icon{
+        width:38px;
+        height:38px;
+        display:grid;
+        place-items:center;
+        border:1px solid rgba(125,211,252,.18);
+        border-radius:12px;
+        color:#bcecff;
+        background:
+          radial-gradient(
+            circle at 30% 20%,
+            rgba(255,255,255,.10),
+            transparent 42%
+          ),
+          linear-gradient(
+            145deg,
+            rgba(8,71,96,.72),
+            rgba(6,32,54,.88)
+          );
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.07),
+          0 7px 15px rgba(0,0,0,.18);
+        font-family:
+          "Arial Unicode MS",
+          "Segoe UI Symbol",
+          system-ui,
+          sans-serif;
+        font-size:18px;
+        font-weight:900;
+        line-height:1;
+        text-shadow:0 1px 8px rgba(34,211,238,.25);
+        transition:
+          transform .18s ease,
+          border-color .18s ease,
+          box-shadow .18s ease;
+      }
+
+      #auroraNavPanel .aurora-nav-dept:hover .aurora-nav-dept-icon,
+      #auroraNavPanel .aurora-nav-dept:focus-visible .aurora-nav-dept-icon{
+        transform:translateY(-1px) scale(1.04);
+        border-color:rgba(34,211,238,.42);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.10),
+          0 9px 18px rgba(0,0,0,.22),
+          0 0 16px rgba(34,211,238,.12);
+      }
+
+      /* Department-specific accent colours */
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Aurora Nexus HQ"]
+      .aurora-nav-dept-icon{
+        color:#a5f3fc;
+        background:linear-gradient(145deg,#155e75,#083344);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Manager Dashboard"]
+      .aurora-nav-dept-icon{
+        color:#bfdbfe;
+        background:linear-gradient(145deg,#1e40af,#172554);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Finance Department"]
+      .aurora-nav-dept-icon{
+        color:#bbf7d0;
+        background:linear-gradient(145deg,#166534,#052e16);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Squad Hub"]
+      .aurora-nav-dept-icon{
+        color:#fde68a;
+        background:linear-gradient(145deg,#92400e,#451a03);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Analysis Room"]
+      .aurora-nav-dept-icon{
+        color:#ddd6fe;
+        background:linear-gradient(145deg,#6d28d9,#2e1065);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Training Ground"]
+      .aurora-nav-dept-icon{
+        color:#a7f3d0;
+        background:linear-gradient(145deg,#047857,#022c22);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Scouting Centre"]
+      .aurora-nav-dept-icon{
+        color:#bae6fd;
+        background:linear-gradient(145deg,#0369a1,#082f49);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Transfer Centre"]
+      .aurora-nav-dept-icon{
+        color:#fbcfe8;
+        background:linear-gradient(145deg,#be185d,#500724);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Boardroom"]
+      .aurora-nav-dept-icon{
+        color:#fef3c7;
+        background:linear-gradient(145deg,#a16207,#422006);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Matchday Centre"]
+      .aurora-nav-dept-icon{
+        color:#f8fafc!important;
+        background:
+          radial-gradient(
+            circle at 32% 25%,
+            rgba(255,255,255,.14),
+            transparent 40%
+          ),
+          linear-gradient(145deg,#0f766e,#042f2e);
+        font-size:0!important;
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Matchday Centre"]
+      .aurora-nav-dept-icon::before{
+        content:"⚽";
+        display:block;
+        color:#fff;
+        font-size:20px;
+        filter:drop-shadow(0 2px 5px rgba(0,0,0,.35));
+      }
+
+      #auroraNavPanel
+      .aurora-nav-dept[data-department="Media Centre"]
+      .aurora-nav-dept-icon{
+        color:#cffafe;
+        background:linear-gradient(145deg,#0e7490,#083344);
+      }
+
+      /* Current tag and Matchday badge slightly larger */
+      #auroraNavPanel .aurora-nav-current-tag{
+        padding:5px 8px;
+        font-size:8px;
+        letter-spacing:.12em;
+      }
+
+      #auroraNavPanel .aurora-nav-matchday-status{
+        min-width:78px;
+        padding:6px 9px;
+        font-size:8px;
+      }
+
+      /* Bottom Cloud Sync */
+      #auroraNavCloud{
+        min-height:55px;
+        grid-template-columns:38px minmax(0,1fr) auto;
+        gap:10px;
+        padding:8px 10px;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-icon{
+        width:36px;
+        height:36px;
+        border-radius:11px;
+        font-size:18px;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-copy strong{
+        font-size:12px;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-copy span{
+        margin-top:3px;
+        font-size:9px;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-state{
+        padding:6px 9px;
+        font-size:9px;
+      }
+
+      @media (max-width:430px){
+        #auroraNavPanel{
+          width:92vw;
+        }
+
+        #auroraNavPanel .aurora-nav-dept strong{
+          font-size:11.5px;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
+    injectSidebarReadabilityStyles();
     injectMatchdayBadgeStyles();
     injectMissionProgressStyles();
 
