@@ -1571,18 +1571,62 @@
     if(!parentDocument || !placement) return;
 
     const header = placement.host.closest(
-      "header,.topbar,.app-header,.global-header,[data-aurora-header],[role='banner']"
+      "header,.topbar,.app-header,.global-header," +
+      "[data-aurora-header],[role='banner']"
     ) || placement.host;
 
     const brand = placement.before;
-    const centreCandidates = Array.from(
+
+    /*
+      Keep the existing Aurora brand and manager session exactly
+      where the page already placed them. Only restore a normal
+      left/right header layout.
+    */
+    header.style.setProperty("display","flex","important");
+    header.style.setProperty("align-items","center","important");
+    header.style.setProperty(
+      "justify-content",
+      "space-between",
+      "important"
+    );
+    header.style.setProperty("gap","14px","important");
+
+    placement.host.style.setProperty("display","flex","important");
+    placement.host.style.setProperty("align-items","center","important");
+    placement.host.style.setProperty(
+      "justify-content",
+      "flex-start",
+      "important"
+    );
+    placement.host.style.setProperty("gap","0","important");
+    placement.host.style.setProperty("min-width","0","important");
+    placement.host.style.setProperty("margin-right","auto","important");
+
+    if(brand){
+      brand.style.setProperty("margin","0","important");
+      brand.style.setProperty("min-width","0","important");
+    }
+
+    const logout = Array.from(
+      header.querySelectorAll("button,a")
+    ).find(function(node){
+      const value = String(node.textContent || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
+
+      return value === "log out" || value === "logout";
+    });
+
+    const departmentCandidates = Array.from(
       header.querySelectorAll(
-        ".department,.current-department,.header-status,.session-status," +
-        ".aurora-current-department,[data-department-status],.nav-status"
+        ".department,.current-department,.header-status," +
+        ".session-status,.aurora-current-department," +
+        "[data-department-status],.nav-status"
       )
     );
 
-    const centre = centreCandidates.find(function(node){
+    const department = departmentCandidates.find(function(node){
       const value = String(node.textContent || "")
         .replace(/\s+/g," ")
         .trim()
@@ -1605,57 +1649,55 @@
       );
     });
 
-    header.style.setProperty("display","grid","important");
-    header.style.setProperty(
-      "grid-template-columns",
-      "minmax(0,1fr) auto minmax(0,1fr)",
-      "important"
-    );
-    header.style.setProperty("align-items","center","important");
-    header.style.setProperty("column-gap","14px","important");
-
-    placement.host.style.setProperty("display","flex","important");
-    placement.host.style.setProperty("align-items","center","important");
-    placement.host.style.setProperty("justify-content","flex-start","important");
-    placement.host.style.setProperty("gap","0","important");
-    placement.host.style.setProperty("min-width","0","important");
-
-    if(brand){
-      brand.style.setProperty("margin","0","important");
-      brand.style.setProperty("min-width","0","important");
-    }
-
-    if(centre){
-      centre.style.setProperty("justify-self","center","important");
-      centre.style.setProperty("margin","0","important");
-      centre.style.setProperty("white-space","nowrap","important");
-    }
-
-    const logout = Array.from(
-      header.querySelectorAll("button,a")
-    ).find(function(node){
-      const value = String(node.textContent || "")
-        .replace(/\s+/g," ")
-        .trim()
-        .toLowerCase();
-
-      return value === "log out" || value === "logout";
-    });
+    /*
+      Use the existing right-side container when the page has one.
+      This preserves the original polished header spacing.
+    */
+    let rightSide = null;
 
     if(logout){
-      logout.style.setProperty("justify-self","end","important");
+      rightSide =
+        logout.closest(
+          ".nav,.top-actions,.header-actions,.right-actions," +
+          ".aurora-header-actions,[data-header-actions]"
+        )
+        || logout.parentElement;
     }
 
-    if(window.matchMedia("(max-width:760px)").matches){
-      header.style.setProperty(
-        "grid-template-columns",
-        "minmax(0,1fr) auto",
+    if(rightSide){
+      rightSide.style.setProperty("display","flex","important");
+      rightSide.style.setProperty("align-items","center","important");
+      rightSide.style.setProperty(
+        "justify-content",
+        "flex-end",
         "important"
       );
+      rightSide.style.setProperty("gap","10px","important");
+      rightSide.style.setProperty("margin-left","auto","important");
 
-      if(centre){
-        centre.style.setProperty("display","none","important");
+      if(
+        department
+        && department.parentElement !== rightSide
+      ){
+        rightSide.insertBefore(department,logout || null);
       }
+    }else{
+      if(department){
+        department.style.setProperty("margin-left","auto","important");
+      }
+
+      if(logout){
+        logout.style.setProperty("margin-left","10px","important");
+      }
+    }
+
+    if(department){
+      department.style.setProperty("white-space","nowrap","important");
+      department.style.setProperty("flex","0 0 auto","important");
+    }
+
+    if(logout){
+      logout.style.setProperty("flex","0 0 auto","important");
     }
   }
 
