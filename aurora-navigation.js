@@ -1687,15 +1687,24 @@
       if(!header) return null;
 
       const brand =
-        header.querySelector(
-          ".brand,.aurora-brand,.club-brand,.session-brand," +
-          "[data-aurora-brand],.header-brand"
-        );
+        header.querySelector(".session-brand");
+
+      const route =
+        header.querySelector(".session-route");
+
+      const actions =
+        header.querySelector(".session-actions");
+
+      const logout =
+        header.querySelector(".logout-button");
 
       return {
         document:parentDocument,
         header:header,
-        brand:brand
+        brand:brand,
+        route:route,
+        actions:actions,
+        logout:logout
       };
     }catch(_){
       return null;
@@ -1709,6 +1718,9 @@
     const parentDocument = shell.document;
     const header = shell.header;
     const brand = shell.brand;
+    const route = shell.route;
+    const actions = shell.actions;
+    const logout = shell.logout;
 
     let button = parentDocument.getElementById(
       "auroraTopHeaderMenuButton"
@@ -1769,123 +1781,44 @@
       }
     };
 
-    let leftGroup = null;
-
-    if(brand && brand.parentElement){
-      leftGroup = brand.parentElement;
-
-      /*
-        App-only layout:
-        menu button first, then the existing Aurora City FC /
-        Manager Session • Webby brand block.
-      */
-      leftGroup.style.setProperty("display","flex","important");
-      leftGroup.style.setProperty("align-items","center","important");
-      leftGroup.style.setProperty("justify-content","flex-start","important");
-      leftGroup.style.setProperty("gap","10px","important");
-      leftGroup.style.setProperty("min-width","0","important");
-      leftGroup.style.setProperty("margin-right","auto","important");
-
-      leftGroup.insertBefore(button,brand);
+    /*
+      Exact Aurora GameShell layout:
+      menu button + session brand on the left.
+    */
+    if(brand){
+      brand.style.setProperty("display","flex","important");
+      brand.style.setProperty("align-items","center","important");
+      brand.style.setProperty("justify-content","flex-start","important");
+      brand.style.setProperty("gap","10px","important");
+      brand.style.setProperty("margin-right","auto","important");
+      brand.insertBefore(button,brand.firstElementChild);
     }else{
       header.prepend(button);
     }
 
     /*
-      Move the current department label into the existing right-side
-      action group immediately before Log out. This runs only after the
-      genuine Aurora app shell has been verified, so web mode is untouched.
+      Current department route goes into the existing right-side
+      action group immediately before Log out.
     */
-    const logout = Array.from(
-      header.querySelectorAll("button,a")
-    ).find(function(node){
-      const value = String(node.textContent || "")
-        .replace(/\s+/g," ")
-        .trim()
-        .toLowerCase();
+    if(actions){
+      actions.style.setProperty("display","flex","important");
+      actions.style.setProperty("align-items","center","important");
+      actions.style.setProperty("justify-content","flex-end","important");
+      actions.style.setProperty("gap","10px","important");
+      actions.style.setProperty("margin-left","auto","important");
 
-      return value === "log out" || value === "logout";
-    });
-
-    const departmentNames = [
-      "aurora nexus hq",
-      "manager dashboard",
-      "finance department",
-      "squad hub",
-      "analysis room",
-      "training ground",
-      "scouting centre",
-      "scouting center",
-      "transfer centre",
-      "transfer center",
-      "boardroom",
-      "matchday centre",
-      "matchday center",
-      "media centre",
-      "media center",
-      "cloud sync",
-      "registration desk"
-    ];
-
-    const department = Array.from(
-      header.querySelectorAll("span,div,strong,p,a,button")
-    ).find(function(node){
-      if(
-        node === logout
-        || (logout && node.contains(logout))
-        || (leftGroup && leftGroup.contains(node))
-      ){
-        return false;
+      if(route && route.parentElement !== actions){
+        actions.insertBefore(route,logout || actions.firstChild);
       }
 
-      const value = String(node.textContent || "")
-        .replace(/\s+/g," ")
-        .trim()
-        .toLowerCase();
-
-      return departmentNames.includes(value);
-    });
-
-    let rightGroup = null;
-
-    if(logout){
-      rightGroup =
-        logout.closest(
-          ".nav,.top-actions,.header-actions,.right-actions," +
-          ".aurora-header-actions,[data-header-actions]"
-        )
-        || logout.parentElement;
+      if(logout && logout.parentElement !== actions){
+        actions.appendChild(logout);
+      }
     }
 
-    if(!rightGroup){
-      rightGroup = parentDocument.createElement("div");
-      rightGroup.className = "aurora-app-header-right-group";
-      header.appendChild(rightGroup);
-    }
-
-    rightGroup.style.setProperty("display","flex","important");
-    rightGroup.style.setProperty("align-items","center","important");
-    rightGroup.style.setProperty("justify-content","flex-end","important");
-    rightGroup.style.setProperty("gap","10px","important");
-    rightGroup.style.setProperty("margin-left","auto","important");
-    rightGroup.style.setProperty("flex","0 0 auto","important");
-
-    if(department && department.parentElement !== rightGroup){
-      rightGroup.insertBefore(department,logout || null);
-    }
-
-    if(logout && logout.parentElement !== rightGroup){
-      rightGroup.appendChild(logout);
-    }
-
-    if(department){
-      department.style.setProperty("white-space","nowrap","important");
-      department.style.setProperty("flex","0 0 auto","important");
-    }
-
-    if(logout){
-      logout.style.setProperty("flex","0 0 auto","important");
-    }
+    header.style.setProperty("display","flex","important");
+    header.style.setProperty("align-items","center","important");
+    header.style.setProperty("justify-content","space-between","important");
 
     toggle.style.setProperty(
       "display",
