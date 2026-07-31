@@ -440,8 +440,270 @@
     document.head.appendChild(style);
   }
 
+
+  const AURORA_MISSION_PROGRESS_KEY =
+    "aurora_payday_mission_progress_v1";
+
+  function loadMissionProgress(){
+    try{
+      const value = JSON.parse(
+        localStorage.getItem(
+          AURORA_MISSION_PROGRESS_KEY
+        ) || "[]"
+      );
+
+      return Array.isArray(value)
+        ? value.filter(function(index){
+            return Number.isInteger(index)
+              && index >= 0
+              && index < WORKFLOW.length;
+          })
+        : [];
+    }catch(_){
+      return [];
+    }
+  }
+
+  function saveMissionProgress(progress){
+    localStorage.setItem(
+      AURORA_MISSION_PROGRESS_KEY,
+      JSON.stringify(progress)
+    );
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "aurora-mission-progress-changed",
+        {detail:{completed:progress}}
+      )
+    );
+  }
+
+  function isMissionComplete(index){
+    return loadMissionProgress().includes(index);
+  }
+
+  function nextMissionIndex(){
+    const completed = loadMissionProgress();
+
+    for(let index = 0; index < WORKFLOW.length; index += 1){
+      if(!completed.includes(index)){
+        return index;
+      }
+    }
+
+    return -1;
+  }
+
+  function setMissionComplete(index,complete){
+    const progress = loadMissionProgress();
+    const next = progress.filter(function(item){
+      return item !== index;
+    });
+
+    if(complete){
+      next.push(index);
+      next.sort(function(a,b){
+        return a - b;
+      });
+    }
+
+    saveMissionProgress(next);
+    refreshMissionProgressUi();
+  }
+
+  function refreshMissionProgressUi(){
+    const completed = loadMissionProgress();
+    const nextIndex = nextMissionIndex();
+
+    document.querySelectorAll(
+      "#auroraNavPanel .aurora-nav-step"
+    ).forEach(function(step){
+      const index = Number(step.dataset.missionIndex);
+      const done = completed.includes(index);
+      const isNext = index === nextIndex;
+
+      step.classList.toggle(
+        "is-completed",
+        done
+      );
+
+      step.classList.toggle(
+        "is-next-mission",
+        isNext
+      );
+
+      const button = step.querySelector(
+        ".aurora-nav-complete-button"
+      );
+
+      const badge = step.querySelector(
+        ".aurora-nav-completed-badge"
+      );
+
+      if(button){
+        button.hidden = done;
+        button.setAttribute(
+          "aria-label",
+          `Mark ${WORKFLOW[index].title} complete`
+        );
+      }
+
+      if(badge){
+        badge.hidden = !done;
+      }
+    });
+
+    const summary = document.getElementById(
+      "auroraMissionProgressSummary"
+    );
+
+    if(summary){
+      if(completed.length === WORKFLOW.length){
+        summary.textContent =
+          "Mission complete — every transfer step is finished.";
+      }else{
+        summary.textContent =
+          `${completed.length} of ${WORKFLOW.length} steps completed`;
+      }
+    }
+  }
+
+  function injectMissionProgressStyles(){
+    if(document.getElementById("auroraMissionProgressStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "auroraMissionProgressStyles";
+    style.textContent = `
+      #auroraNavPanel .aurora-nav-mission-progress{
+        margin:0 7px 10px;
+        color:#94a3b8;
+        font-size:9px;
+        font-weight:750;
+      }
+
+      #auroraNavPanel .aurora-nav-step{
+        grid-template-columns:
+          34px minmax(0,1fr) auto;
+      }
+
+      #auroraNavPanel .aurora-nav-step-actions{
+        display:flex;
+        align-items:center;
+        justify-content:flex-end;
+        gap:6px;
+      }
+
+      #auroraNavPanel .aurora-nav-complete-button{
+        min-width:30px;
+        height:30px;
+        display:grid;
+        place-items:center;
+        padding:0;
+        border:1px solid rgba(251,191,36,.28);
+        border-radius:9px;
+        color:#fde68a;
+        background:rgba(120,53,15,.22);
+        cursor:pointer;
+        font-size:14px;
+        font-weight:900;
+        -webkit-tap-highlight-color:transparent;
+      }
+
+      #auroraNavPanel .aurora-nav-complete-button:hover,
+      #auroraNavPanel .aurora-nav-complete-button:focus-visible{
+        color:#fff7c2;
+        border-color:rgba(251,191,36,.58);
+        background:rgba(146,64,14,.38);
+        outline:none;
+      }
+
+      #auroraNavPanel .aurora-nav-completed-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:5px;
+        padding:5px 8px;
+        border:1px solid rgba(251,191,36,.42);
+        border-radius:999px;
+        color:#fde68a;
+        background:
+          linear-gradient(
+            135deg,
+            rgba(146,64,14,.36),
+            rgba(120,53,15,.22)
+          );
+        box-shadow:
+          0 0 14px rgba(251,191,36,.10);
+        font-size:8px;
+        font-weight:950;
+        letter-spacing:.06em;
+        text-transform:uppercase;
+        white-space:nowrap;
+      }
+
+      #auroraNavPanel .aurora-nav-step.is-completed{
+        border-color:rgba(251,191,36,.32);
+        background:
+          linear-gradient(
+            90deg,
+            rgba(146,64,14,.24),
+            rgba(120,53,15,.10)
+          );
+        box-shadow:
+          inset 3px 0 0 #fbbf24;
+      }
+
+      #auroraNavPanel
+      .aurora-nav-step.is-completed
+      .aurora-nav-step-number{
+        color:#1c1202;
+        border-color:#fbbf24;
+        background:
+          linear-gradient(
+            135deg,
+            #fde68a,
+            #fbbf24
+          );
+        box-shadow:
+          0 0 0 4px var(--aurora-nav-panel),
+          0 0 16px rgba(251,191,36,.22);
+      }
+
+      #auroraNavPanel .aurora-nav-step.is-next-mission{
+        border-color:rgba(34,211,238,.44);
+        background:
+          linear-gradient(
+            90deg,
+            rgba(8,145,178,.23),
+            rgba(30,64,175,.10)
+          );
+        box-shadow:
+          inset 3px 0 0 var(--aurora-nav-cyan);
+      }
+
+      #auroraNavPanel
+      .aurora-nav-step.is-next-mission
+      .aurora-nav-step-copy strong::after{
+        content:"Next";
+        display:inline-flex;
+        margin-left:7px;
+        padding:2px 5px;
+        border-radius:999px;
+        color:#a5f3fc;
+        background:rgba(8,145,178,.18);
+        font-size:7px;
+        letter-spacing:.06em;
+        text-transform:uppercase;
+        vertical-align:middle;
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
+
+    injectMissionProgressStyles();
 
     injectBottomCloudStyles();
 
@@ -475,19 +737,45 @@
     const workflowMarkup = WORKFLOW.map(
       function(step,index){
         const active = isWorkflowActive(step.href);
+        const complete = isMissionComplete(index);
 
         return `
-          <a
-            class="aurora-nav-step${active ? " is-active" : ""}"
-            href="${esc(step.href)}"
+          <div
+            class="aurora-nav-step${active ? " is-active" : ""}${complete ? " is-completed" : ""}"
+            data-mission-index="${index}"
           >
             <span class="aurora-nav-step-number">${index + 1}</span>
-            <span class="aurora-nav-step-copy">
+
+            <a
+              class="aurora-nav-step-copy"
+              href="${esc(step.href)}"
+            >
               <strong>${esc(step.title)}</strong>
               <span>${esc(step.note)}</span>
+            </a>
+
+            <span class="aurora-nav-step-actions">
+              <button
+                class="aurora-nav-complete-button"
+                type="button"
+                data-complete-mission="${index}"
+                ${complete ? "hidden" : ""}
+                aria-label="Mark ${esc(step.title)} complete"
+                title="Mark complete"
+              >✓</button>
+
+              <button
+                class="aurora-nav-completed-badge"
+                type="button"
+                data-reopen-mission="${index}"
+                ${complete ? "" : "hidden"}
+                aria-label="Mark ${esc(step.title)} incomplete"
+                title="Tap to undo"
+              >
+                ✓ Completed
+              </button>
             </span>
-            <span class="aurora-nav-step-arrow" aria-hidden="true">›</span>
-          </a>
+          </div>
         `;
       }
     ).join("");
@@ -543,6 +831,11 @@
           <p class="aurora-nav-mission-note">
             Follow these steps in order. Each link opens the actual working area you need.
           </p>
+
+          <p
+            class="aurora-nav-mission-progress"
+            id="auroraMissionProgressSummary"
+          ></p>
 
           <nav
             class="aurora-nav-route"
@@ -675,6 +968,41 @@
     panel.addEventListener(
       "click",
       function(event){
+        const completeButton =
+          event.target.closest(
+            "[data-complete-mission]"
+          );
+
+        if(completeButton){
+          event.preventDefault();
+          event.stopPropagation();
+
+          setMissionComplete(
+            Number(
+              completeButton.dataset.completeMission
+            ),
+            true
+          );
+          return;
+        }
+
+        const reopenButton =
+          event.target.closest(
+            "[data-reopen-mission]"
+          );
+
+        if(reopenButton){
+          event.preventDefault();
+          event.stopPropagation();
+
+          setMissionComplete(
+            Number(
+              reopenButton.dataset.reopenMission
+            ),
+            false
+          );
+          return;
+        }
         if(event.target.closest("a[href]")){
           setOpen(false);
         }
@@ -706,6 +1034,12 @@
     );
 
     wireCloudStatus();
+    refreshMissionProgressUi();
+
+    window.addEventListener(
+      "aurora-mission-progress-changed",
+      refreshMissionProgressUi
+    );
   }
 
   if(document.readyState === "loading"){
