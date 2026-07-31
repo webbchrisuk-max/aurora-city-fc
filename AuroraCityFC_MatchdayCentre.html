@@ -294,6 +294,54 @@ a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,1
   .ratings-grid{grid-template-columns:1fr}
 }
 
+
+/* ===================== MATCHDAY HEADER MENU FIX ===================== */
+.topbar-inner .aurora-matchday-inline-menu{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  flex:0 0 auto!important;
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  margin:0!important;
+  border:1px solid rgba(125,211,252,.22)!important;
+  border-radius:14px!important;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,47,73,.88),
+      rgba(15,23,42,.96)
+    )!important;
+  color:#dff7ff!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 8px 18px rgba(0,0,0,.20)!important;
+  z-index:auto!important;
+}
+
+.topbar-inner .aurora-matchday-inline-menu:hover,
+.topbar-inner .aurora-matchday-inline-menu:focus-visible{
+  border-color:rgba(34,211,238,.50)!important;
+  outline:none!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 8px 20px rgba(0,0,0,.24),
+    0 0 16px rgba(34,211,238,.12)!important;
+}
+
+.topbar-inner .brand{
+  flex:1 1 auto;
+}
+
+@media(max-width:640px){
+  .topbar-inner .aurora-matchday-inline-menu{
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -746,6 +794,47 @@ async function load(){
 $("refreshBtn").addEventListener("click",load);
 load();
 </script>
-<script src="aurora-navigation.js?v=20260731-matchday-v3-visual-1"></script>
+<script src="aurora-navigation.js?v=20260731-matchday-v3-menu-inline-1"></script>
+
+<script>
+(function placeMatchdayMenuInHeader(){
+  function moveToggle(){
+    const toggle = document.getElementById("auroraNavToggle");
+    const header = document.querySelector(".topbar-inner");
+    const brand = header && header.querySelector(".brand");
+
+    if(!toggle || !header || !brand) return false;
+
+    if(toggle.parentElement !== header){
+      header.insertBefore(toggle,brand);
+    }
+
+    toggle.classList.add("aurora-matchday-inline-menu");
+    toggle.setAttribute("aria-label","Open Aurora mission navigation");
+    toggle.title = "Open mission navigation";
+
+    return true;
+  }
+
+  if(moveToggle()) return;
+
+  const observer = new MutationObserver(function(){
+    if(moveToggle()){
+      observer.disconnect();
+    }
+  });
+
+  observer.observe(document.body,{
+    childList:true,
+    subtree:true
+  });
+
+  window.setTimeout(function(){
+    observer.disconnect();
+    moveToggle();
+  },5000);
+})();
+</script>
+
 </body>
 </html>
