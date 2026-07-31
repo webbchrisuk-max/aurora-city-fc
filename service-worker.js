@@ -1,4 +1,4 @@
-const CACHE_NAME = "aurora-city-fc-v2026-07-30-app-1";
+const CACHE_NAME = "aurora-city-fc-v2026-07-30-menu-polish-1";
 
 const APP_FILES = [
   "./",
