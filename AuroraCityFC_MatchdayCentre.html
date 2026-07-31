@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Aurora City FC — Matchday Centre</title>
-<link rel="stylesheet" href="aurora-navigation.css?v=20260731-matchday-live-3">
+<link rel="stylesheet" href="aurora-navigation.css?v=20260731-matchday-v3-visual-1">
 <style>
 :root{
   --bg:#030712;--panel:#07111f;--panel2:#0b1730;--card:#0d1b34;--card2:#102345;
@@ -21,6 +21,279 @@ a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,1
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{border:1px solid var(--line);border-radius:15px;padding:13px;background:rgba(15,23,42,.48)}.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}.condition{display:flex;align-items:start;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.condition:last-child{border-bottom:0}.condition strong{font-size:13px}.condition span{font-size:12px;color:var(--muted);text-align:right}.manager-copy{font-size:14px;line-height:1.72;color:var(--soft);margin:0}.verdict{margin-top:14px;padding:13px;border-radius:15px;border:1px solid rgba(34,211,238,.25);background:rgba(8,47,73,.28)}.verdict b{display:block;color:var(--cyan);font-size:11px;letter-spacing:.12em;text-transform:uppercase}.verdict span{display:block;margin-top:5px;font-size:15px;font-weight:850}
 .table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:690px}.table th{padding:10px;text-align:left;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}.table td{padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px}.table tr:last-child td{border-bottom:0}.rank{width:28px;color:var(--muted)}.ticker{font-weight:900}.move.up{color:var(--green)}.move.down{color:var(--red)}.score{font-weight:950}.score.high{color:var(--green)}.score.mid{color:var(--amber)}.score.low{color:var(--red)}.history{display:flex;gap:9px;overflow:auto;padding-bottom:4px}.history button{min-width:132px;text-align:left;border:1px solid var(--line);background:rgba(15,23,42,.55);border-radius:15px;padding:11px;color:var(--soft);cursor:pointer}.history button.active{border-color:rgba(34,211,238,.5);background:rgba(8,47,73,.4)}.history b{display:block;font-size:12px}.history span{font-size:11px;color:var(--muted)}.empty{padding:28px;text-align:center;color:var(--muted)}.footer{text-align:center;color:var(--muted);font-size:11px;padding:28px 0 0}.pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(52,211,153,.55);animation:pulse 2s infinite}@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
 @media(max-width:980px){.hero{grid-template-columns:1fr}.card,.w4,.w5,.w6,.w7,.w8{grid-column:span 6}}@media(max-width:640px){.app{padding-left:10px;padding-right:10px}.topbar{margin-left:-10px;margin-right:-10px}.hero-main{padding:20px;min-height:310px}.hero h2{font-size:44px}.card,.w4,.w5,.w6,.w7,.w8{grid-column:span 12}.stat-grid{grid-template-columns:repeat(2,1fr)}.nav a{display:none}.nav .btn{display:block}}
+
+/* ===================== MATCHDAY V3 VISUAL UPGRADE ===================== */
+.scoreboard{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;
+  gap:18px;
+  margin:18px 0 14px;
+  position:relative;
+  z-index:2;
+}
+.club-side{
+  min-width:0;
+}
+.club-side.right{
+  text-align:right;
+}
+.club-name{
+  font-size:clamp(22px,3vw,36px);
+  font-weight:950;
+  letter-spacing:-.03em;
+}
+.club-sub{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+}
+.score-orb{
+  width:132px;
+  height:132px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(52,211,153,.34);
+  background:
+    radial-gradient(circle at 35% 25%,rgba(255,255,255,.12),transparent 36%),
+    linear-gradient(145deg,rgba(6,78,59,.84),rgba(3,32,28,.92));
+  box-shadow:
+    0 0 0 9px rgba(52,211,153,.05),
+    0 24px 48px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+.score-orb.negative{
+  border-color:rgba(251,113,133,.38);
+  background:
+    radial-gradient(circle at 35% 25%,rgba(255,255,255,.10),transparent 36%),
+    linear-gradient(145deg,rgba(127,29,29,.84),rgba(45,8,17,.94));
+  box-shadow:
+    0 0 0 9px rgba(251,113,133,.05),
+    0 24px 48px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+.score-orb span{
+  font-size:28px;
+  font-weight:950;
+  letter-spacing:-.04em;
+}
+.result-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.manager-decision{
+  position:relative;
+  overflow:hidden;
+  margin-top:16px;
+  padding:18px 20px;
+  border:1px solid rgba(34,211,238,.32);
+  border-radius:18px;
+  background:
+    linear-gradient(135deg,rgba(8,47,73,.48),rgba(15,23,42,.78));
+}
+.manager-decision:after{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  right:-70px;
+  top:-80px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(34,211,238,.18),transparent 68%);
+}
+.decision-label{
+  position:relative;
+  z-index:1;
+  color:var(--cyan);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.decision-main{
+  position:relative;
+  z-index:1;
+  margin-top:7px;
+  font-size:clamp(26px,4vw,42px);
+  font-weight:950;
+  line-height:1;
+  letter-spacing:-.035em;
+}
+.decision-sub{
+  position:relative;
+  z-index:1;
+  margin-top:8px;
+  color:var(--soft);
+  font-size:14px;
+  font-weight:750;
+}
+.objective-list{
+  display:grid;
+  gap:10px;
+}
+.objective{
+  display:grid;
+  grid-template-columns:40px minmax(0,1fr);
+  gap:11px;
+  align-items:center;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:rgba(15,23,42,.48);
+}
+.objective-icon{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:linear-gradient(145deg,rgba(8,47,73,.85),rgba(15,23,42,.95));
+  font-size:20px;
+}
+.objective strong{
+  display:block;
+  font-size:13px;
+}
+.objective span{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.4;
+}
+.ratings-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+.player-rating-card{
+  position:relative;
+  overflow:hidden;
+  min-height:165px;
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:
+    linear-gradient(145deg,rgba(13,27,52,.96),rgba(7,17,31,.98));
+}
+.player-rating-card:before{
+  content:"";
+  position:absolute;
+  width:120px;
+  height:120px;
+  right:-45px;
+  top:-48px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(96,165,250,.17),transparent 68%);
+}
+.player-rating-rank{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.player-rating-name{
+  margin-top:16px;
+  font-size:25px;
+  font-weight:950;
+}
+.player-rating-role{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.4;
+}
+.player-rating-score{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  width:54px;
+  height:54px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  border:1px solid rgba(52,211,153,.38);
+  color:#a7f3d0;
+  background:rgba(6,78,59,.28);
+  font-size:18px;
+  font-weight:950;
+}
+.player-rating-score.low{
+  border-color:rgba(251,113,133,.38);
+  color:#fecdd3;
+  background:rgba(127,29,29,.28);
+}
+.form-strip{
+  display:flex;
+  gap:10px;
+  overflow:auto;
+  padding-bottom:4px;
+}
+.form-chip{
+  min-width:150px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:rgba(15,23,42,.56);
+}
+.form-chip.win{
+  border-color:rgba(52,211,153,.35);
+  background:rgba(6,78,59,.22);
+}
+.form-chip.loss{
+  border-color:rgba(251,113,133,.35);
+  background:rgba(127,29,29,.20);
+}
+.form-chip.draw{
+  border-color:rgba(251,191,36,.35);
+  background:rgba(120,53,15,.20);
+}
+.form-chip b{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-size:12px;
+}
+.form-chip span{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:11px;
+}
+.form-badge{
+  padding:3px 7px;
+  border-radius:999px;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,.06);
+}
+@media(max-width:900px){
+  .ratings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .scoreboard{
+    grid-template-columns:1fr;
+    text-align:center;
+  }
+  .club-side.right{text-align:center}
+  .score-orb{margin:auto}
+  .ratings-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -31,7 +304,18 @@ a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,1
   <article class="hero-main panel">
     <div class="eyebrow">Aurora portfolio matchday</div>
     <div class="fulltime"><span class="pulse"></span><span id="matchStatus">FULL TIME</span></div>
-    <h2 id="resultTitle">Portfolio <span>+0.64%</span></h2>
+    <div class="scoreboard">
+      <div class="club-side">
+        <div class="club-name">Aurora City FC</div>
+        <div class="club-sub">Income Squad</div>
+      </div>
+      <div class="score-orb" id="scoreOrb"><span id="resultTitle">+0.64%</span></div>
+      <div class="club-side right">
+        <div class="club-name">The Market</div>
+        <div class="club-sub">Daily Session</div>
+      </div>
+    </div>
+    <div class="result-kicker">Full-time portfolio performance</div>
     <p class="lede" id="resultSummary">A positive session led by the strongest income holdings, with the squad finishing ahead of the wider market.</p>
     <div class="hero-meta"><span class="pill" id="reportDate">Report date: —</span><span class="pill" id="marketResult">Market result: —</span><span class="pill" id="reportSource">Source: AuroraData</span></div>
   </article>
@@ -59,13 +343,35 @@ a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,1
 </div></section>
 
 <section class="section"><div class="grid">
-  <article class="card w7"><div class="section-head"><div><h3>Manager’s report</h3><p>The written 5pm assessment.</p></div></div><p class="manager-copy" id="managerReport">Aurora’s portfolio delivered a solid performance today. The strongest income holdings carried the result, while weaker areas remained contained. There is no reason to force a transfer: retain discipline, follow the current release plan and keep tomorrow’s watchlist focused on value rather than noise.</p><div class="verdict"><b>Manager’s decision</b><span id="managerVerdict">HOLD • SELECTIVE ACCUMULATION</span></div></article>
-  <article class="card w5"><div class="section-head"><div><h3>Tomorrow’s team talk</h3><p>What Aurora wants monitored next.</p></div></div><div id="watchItems"><div class="condition"><strong>👀 One to watch</strong><span>Tesco price and momentum</span></div><div class="condition"><strong>📅 Calendar</strong><span>Upcoming dividend dates</span></div><div class="condition"><strong>🏦 Macro</strong><span>Rates and inflation headlines</span></div></div></article>
+  <article class="card w7">
+    <div class="section-head"><div><h3>Manager’s report</h3><p>The written 5 p.m. assessment.</p></div></div>
+    <p class="manager-copy" id="managerReport">Aurora has completed the daily review.</p>
+    <div class="manager-decision">
+      <div class="decision-label">Manager’s decision</div>
+      <div class="decision-main" id="managerDecisionMain">HOLD</div>
+      <div class="decision-sub" id="managerDecisionSub">Selective accumulation</div>
+      <span id="managerVerdict" style="display:none"></span>
+    </div>
+  </article>
+  <article class="card w5">
+    <div class="section-head"><div><h3>Tomorrow’s objectives</h3><p>The next tactical briefing.</p></div></div>
+    <div class="objective-list" id="watchItems">
+      <div class="objective"><div class="objective-icon">👀</div><div><strong>One to watch</strong><span>Tesco price and momentum</span></div></div>
+      <div class="objective"><div class="objective-icon">📅</div><div><strong>Calendar</strong><span>Upcoming dividend dates</span></div></div>
+      <div class="objective"><div class="objective-icon">🏦</div><div><strong>Macro</strong><span>Rates and inflation headlines</span></div></div>
+    </div>
+  </article>
 </div></section>
 
-<section class="section"><article class="card w12"><div class="section-head"><div><h3>Published player ratings</h3><p>Only ratings officially written into the 5 p.m. MatchdayReport.</p></div><span class="pill" id="ratingCount">0 rated</span></div><div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>Holding</th><th>Daily move</th><th>Contribution</th><th>Role</th><th>Rating</th></tr></thead><tbody id="ratingsBody"></tbody></table></div></article></section>
+<section class="section"><article class="card w12">
+  <div class="section-head"><div><h3>Matchday leaderboard</h3><p>The four official full-time awards.</p></div><span class="pill" id="ratingCount">0 published</span></div>
+  <div class="ratings-grid" id="ratingsBody"></div>
+</article></section>
 
-<section class="section"><article class="card w12"><div class="section-head"><div><h3>Previous fixtures</h3><p>Daily reports saved as a season history.</p></div></div><div class="history" id="history"></div></article></section>
+<section class="section"><article class="card w12">
+  <div class="section-head"><div><h3>Season form</h3><p>Every completed report becomes a fixture result.</p></div></div>
+  <div class="form-strip" id="history"></div>
+</article></section>
 <footer class="footer">Aurora City FC • Matchday Centre • Powered by AuroraData</footer>
 </div>
 <script>
@@ -198,42 +504,24 @@ function setAward(prefix,award,note){
 
 function renderPublishedRatings(report){
   const published = [
-    {label:"Man of the Match",award:awardFromReport(report,"motm"),role:"Top performer"},
-    {label:"Defensive Hero",award:awardFromReport(report,"def"),role:"Defensive stability"},
-    {label:"Income Star",award:awardFromReport(report,"income"),role:"Income contribution"},
-    {label:"Toughest Match",award:awardFromReport(report,"worst"),role:"Weakest session"}
+    {label:"Man of the Match",award:awardFromReport(report,"motm"),role:"Top performer",icon:"🏆"},
+    {label:"Defensive Hero",award:awardFromReport(report,"def"),role:"Defensive stability",icon:"🛡️"},
+    {label:"Income Star",award:awardFromReport(report,"income"),role:"Income contribution",icon:"💷"},
+    {label:"Toughest Match",award:awardFromReport(report,"worst"),role:"Weakest session",icon:"📉"}
   ].filter(item=>item.award.ticker !== "—");
 
   $("ratingsBody").innerHTML = published.length
     ? published.map((item,index)=>`
-      <tr>
-        <td class="rank">${index+1}</td>
-        <td>
-          <span class="ticker">${item.award.ticker}</span>
-          <br>
-          <span style="color:var(--muted);font-size:11px">${item.label}</span>
-        </td>
-        <td>Published at full time</td>
-        <td>—</td>
-        <td>${item.role}</td>
-        <td class="score ${
-          item.award.rating >= 8
-            ? "high"
-            : item.award.rating >= 6.5
-              ? "mid"
-              : "low"
-        }">${
-          Number.isFinite(item.award.rating)
-            ? item.award.rating.toFixed(1)
-            : "—"
-        }</td>
-      </tr>
+      <article class="player-rating-card">
+        <div class="player-rating-rank">${item.icon} ${item.label}</div>
+        <div class="player-rating-name">${item.award.ticker}</div>
+        <div class="player-rating-role">${item.role}</div>
+        <div class="player-rating-score ${item.award.rating < 6.5 ? "low" : ""}">
+          ${Number.isFinite(item.award.rating) ? item.award.rating.toFixed(1) : "—"}
+        </div>
+      </article>
     `).join("")
-    : `<tr>
-        <td colspan="6" class="empty">
-          No player ratings were published in this MatchdayReport.
-        </td>
-      </tr>`;
+    : `<div class="empty">No player ratings were published in this MatchdayReport.</div>`;
 
   $("ratingCount").textContent = `${published.length} published`;
 }
@@ -245,17 +533,20 @@ function renderHistory(reportRows){
       new Date(val(b,"created_at","report_date")||0) -
       new Date(val(a,"created_at","report_date")||0)
     )
-    .slice(0,10)
-    .map((report,index)=>{
-      const date = new Date(
-        val(report,"report_date","created_at") || Date.now()
-      );
-
+    .slice(0,12)
+    .map(report=>{
+      const date = new Date(val(report,"report_date","created_at") || Date.now());
+      const movement = num(val(report,"portfolio_change_pct"));
+      const resultClass = movement > 0 ? "win" : movement < 0 ? "loss" : "draw";
+      const resultLabel = movement > 0 ? "Win" : movement < 0 ? "Loss" : "Draw";
       return `
-        <button class="${index === 0 ? "active" : ""}">
-          <b>${date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</b>
-          <span>Full-time report • ${pct(val(report,"portfolio_change_pct"))}</span>
-        </button>
+        <div class="form-chip ${resultClass}">
+          <b>
+            ${date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}
+            <span class="form-badge">${resultLabel}</span>
+          </b>
+          <span>${pct(movement)} • ${val(report,"market_result") || "Full-time report"}</span>
+        </div>
       `;
     }).join("");
 }
@@ -270,8 +561,8 @@ function render(report,data){
   );
   const regime = reportRegime(report,data);
 
-  $("resultTitle").innerHTML =
-    `Portfolio <span class="${movement < 0 ? "red" : "green"}">${pct(movement)}</span>`;
+  $("resultTitle").textContent = pct(movement);
+  $("scoreOrb").classList.toggle("negative", movement < 0);
 
   $("resultSummary").textContent =
     val(report,"summary") || "Aurora completed the full-time report.";
@@ -320,9 +611,48 @@ function render(report,data){
     val(report,"manager_report") ||
     "Aurora completed the daily review.";
 
-  $("managerVerdict").textContent =
-    val(report,"verdict") ||
-    regime.buyMode.toUpperCase();
+  const verdictText = String(
+    val(report,"verdict") || regime.buyMode || "HOLD"
+  ).replace(/\?/g,"•").trim();
+
+  $("managerVerdict").textContent = verdictText;
+
+  const verdictParts = verdictText
+    .split(/[•|]/)
+    .map(part=>part.trim())
+    .filter(Boolean);
+
+  $("managerDecisionMain").textContent =
+    verdictParts[0] || "HOLD";
+
+  $("managerDecisionSub").textContent =
+    verdictParts.slice(1).join(" • ") ||
+    regime.buyMode ||
+    "Selective accumulation";
+
+  $("watchItems").innerHTML = `
+    <div class="objective">
+      <div class="objective-icon">👀</div>
+      <div>
+        <strong>One to watch</strong>
+        <span>${val(report,"one_to_watch") || "Tesco price and momentum"}</span>
+      </div>
+    </div>
+    <div class="objective">
+      <div class="objective-icon">📅</div>
+      <div>
+        <strong>Calendar</strong>
+        <span>${val(report,"calendar_watch") || "Upcoming dividend dates"}</span>
+      </div>
+    </div>
+    <div class="objective">
+      <div class="objective-icon">🏦</div>
+      <div>
+        <strong>Macro</strong>
+        <span>${val(report,"macro_watch") || `${regime.rates} rates and inflation headlines`}</span>
+      </div>
+    </div>
+  `;
 
   setAward(
     "motm",
@@ -354,7 +684,8 @@ function render(report,data){
 
 function renderNoReport(message){
   $("matchStatus").textContent = "NO REPORT";
-  $("resultTitle").innerHTML = `Portfolio <span class="red">—</span>`;
+  $("resultTitle").textContent = "—";
+  $("scoreOrb").classList.add("negative");
   $("resultSummary").textContent =
     message || "No completed MatchdayReport has been published yet.";
 
@@ -415,6 +746,6 @@ async function load(){
 $("refreshBtn").addEventListener("click",load);
 load();
 </script>
-<script src="aurora-navigation.js?v=20260731-matchday-v2-single-source-1"></script>
+<script src="aurora-navigation.js?v=20260731-matchday-v3-visual-1"></script>
 </body>
 </html>
