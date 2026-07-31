@@ -63,76 +63,358 @@ a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,1
   <article class="card w5"><div class="section-head"><div><h3>Tomorrow’s team talk</h3><p>What Aurora wants monitored next.</p></div></div><div id="watchItems"><div class="condition"><strong>👀 One to watch</strong><span>Tesco price and momentum</span></div><div class="condition"><strong>📅 Calendar</strong><span>Upcoming dividend dates</span></div><div class="condition"><strong>🏦 Macro</strong><span>Rates and inflation headlines</span></div></div></article>
 </div></section>
 
-<section class="section"><article class="card w12"><div class="section-head"><div><h3>Squad ratings</h3><p>Every holding ranked like a matchday performance.</p></div><span class="pill" id="ratingCount">0 rated</span></div><div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>Holding</th><th>Daily move</th><th>Contribution</th><th>Role</th><th>Rating</th></tr></thead><tbody id="ratingsBody"></tbody></table></div></article></section>
+<section class="section"><article class="card w12"><div class="section-head"><div><h3>Published player ratings</h3><p>Only ratings officially written into the 5 p.m. MatchdayReport.</p></div><span class="pill" id="ratingCount">0 rated</span></div><div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>Holding</th><th>Daily move</th><th>Contribution</th><th>Role</th><th>Rating</th></tr></thead><tbody id="ratingsBody"></tbody></table></div></article></section>
 
 <section class="section"><article class="card w12"><div class="section-head"><div><h3>Previous fixtures</h3><p>Daily reports saved as a season history.</p></div></div><div class="history" id="history"></div></article></section>
 <footer class="footer">Aurora City FC • Matchday Centre • Powered by AuroraData</footer>
 </div>
 <script>
-const AURORA_MASTER_URL="https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
-const $=id=>document.getElementById(id);const num=v=>{if(v===null||v===undefined||v==='')return NaN;const n=Number(String(v).replace(/[£,%]/g,'').replace(/,/g,'').trim());return Number.isFinite(n)?n:NaN};const money=v=>Number.isFinite(v)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(v):'—';const pct=v=>Number.isFinite(v)?`${v>=0?'+':''}${v.toFixed(2)}%`:'—';
-function val(o,...keys){for(const k of keys){if(o&&o[k]!==undefined&&o[k]!==null&&String(o[k]).trim()!=='')return o[k]}return ''}
-function rows(data,...keys){for(const k of keys){if(Array.isArray(data?.[k]))return data[k]}return []}
-function latest(rows){return [...rows].sort((a,b)=>new Date(val(b,'report_date','date','Date','timestamp','submitted_at')||0)-new Date(val(a,'report_date','date','Date','timestamp','submitted_at')||0))[0]||null}
-function normalizePercent(v){let n=num(v);if(!Number.isFinite(n))return NaN;if(Math.abs(n)<=1)n*=100;return n}
-function holdingName(r){return val(r,'name','Name','company','company_name')||String(val(r,'ticker','Ticker','symbol')).replace('LON:','')||'Holding'}
-function ticker(r){return String(val(r,'ticker','Ticker','symbol')).replace('LON:','').toUpperCase()}
-function change(r){return normalizePercent(val(r,'change_pct','change %','Change %','daily_change_pct','day_change_pct','percent_change'))}
-function annualIncome(r){const direct=num(val(r,'annual_income','Annual Income','income_annual','dividend_income'));if(Number.isFinite(direct))return direct;const value=num(val(r,'market_value','Market Value','value','current_value'));let y=num(val(r,'yield_pct','Yield','yield','dividend_yield'));if(Number.isFinite(y)&&y<=1)y*=100;return Number.isFinite(value)&&Number.isFinite(y)?value*y/100:0}
-function regimeFrom(data){
-  const r=rows(data,'MarketRegime','marketRegime');
-  const byLabel={};
-  r.forEach(x=>{
-    const label=String(val(x,'Metric','metric','A','field','label')).toLowerCase();
-    if(label) byLabel[label]=val(x,'Value','value','C','current');
+const AURORA_MASTER_URL =
+  "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
+
+const $ = id => document.getElementById(id);
+
+function rows(data,...names){
+  for(const name of names){
+    if(Array.isArray(data && data[name])) return data[name];
+  }
+  return [];
+}
+
+function val(obj,...keys){
+  for(const key of keys){
+    if(
+      obj &&
+      obj[key] !== undefined &&
+      obj[key] !== null &&
+      String(obj[key]).trim() !== ""
+    ) return obj[key];
+  }
+  return "";
+}
+
+function num(value){
+  if(value === null || value === undefined || value === "") return NaN;
+  if(typeof value === "number") return value;
+  const cleaned = String(value)
+    .replace(/[£$€,%]/g,"")
+    .replace(/,/g,"")
+    .trim();
+  const parsed = Number(cleaned);
+  return Number.isFinite(parsed) ? parsed : NaN;
+}
+
+function money(value){
+  const n = num(value);
+  if(!Number.isFinite(n)) return "—";
+  return new Intl.NumberFormat("en-GB",{
+    style:"currency",
+    currency:"GBP",
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  }).format(n);
+}
+
+/*
+ MatchdayReport stores portfolio_change_pct as a percentage number.
+ Example: -0.268 means -0.268%, not -26.8%.
+*/
+function pct(value){
+  const n = num(value);
+  if(!Number.isFinite(n)) return "—";
+  return `${n > 0 ? "+" : ""}${n.toFixed(2)}%`;
+}
+
+function latest(reports){
+  return reports
+    .slice()
+    .sort((a,b)=>{
+      const ad = new Date(val(a,"created_at","report_date","date","timestamp") || 0);
+      const bd = new Date(val(b,"created_at","report_date","date","timestamp") || 0);
+      return bd - ad;
+    })[0] || null;
+}
+
+function nextWeekdayReport(reportDate){
+  const d = new Date(reportDate);
+  d.setHours(17,0,0,0);
+  d.setDate(d.getDate()+1);
+
+  while(d.getDay() === 0 || d.getDay() === 6){
+    d.setDate(d.getDate()+1);
+  }
+
+  return `${d.toLocaleDateString("en-GB",{weekday:"long"})} at 5:00 p.m.`;
+}
+
+function reportRegime(report,data){
+  const current = val(report,"market_regime");
+  const buyMode = val(report,"buy_mode");
+  const regimeRows = rows(data,"MarketRegime");
+  const byField = {};
+
+  regimeRows.forEach(row=>{
+    const field = String(val(row,"Field","field") || "").trim().toLowerCase();
+    if(field) byField[field] = val(row,"Value","value");
   });
-  const flat=r[0]||{};
+
   return {
-    current:val(flat,'current_regime','Current Regime')||byLabel['current regime']||val(r[0],'C','Value','value')||'Normal / stable income',
-    volatility:val(flat,'volatility','Volatility')||byLabel['volatility']||val(r[1],'C','Value','value')||'Normal',
-    rates:val(flat,'rate_environment','Rate Environment')||byLabel['rate environment']||val(r[2],'C','Value','value')||'High but stable',
-    inflation:val(flat,'inflation_pressure','Inflation Pressure')||byLabel['inflation pressure']||val(r[3],'C','Value','value')||'Neutral / easing',
-    buyMode:val(flat,'buy_mode','Buy Mode')||byLabel['buy mode']||val(r[4],'C','Value','value')||'Selective accumulation',
-    preferred:val(flat,'preferred_sectors','Preferred Sectors')||'Defensive income, infrastructure, quality REITs',
-    avoid:val(flat,'avoid_list','Avoid List')||'Overconcentration, overvalued low-yield positions'
+    current: current || byField["current regime"] || "Not published",
+    buyMode: buyMode || byField["buy mode"] || "Not published",
+    volatility: byField["volatility level"] || "Not published",
+    rates: byField["rate environment"] || "Not published",
+    inflation: byField["inflation pressure"] || "Not published",
+    preferred: byField["normal market"] || "See the latest manager report",
+    avoid: val(report,"avoid_today") || "Overconcentration and forced buying"
   };
 }
-function deriveRatings(holdings){const list=holdings.map(r=>({raw:r,ticker:ticker(r),name:holdingName(r),move:change(r),income:annualIncome(r),value:num(val(r,'market_value','Market Value','value','current_value'))})).filter(x=>x.ticker);const maxIncome=Math.max(1,...list.map(x=>x.income||0));return list.map(x=>{const moveScore=Number.isFinite(x.move)?Math.max(-2.2,Math.min(2.2,x.move))*0.75:0;const incomeScore=(x.income/maxIncome)*.8;const rating=Math.max(4.5,Math.min(9.6,6.5+moveScore+incomeScore));return{...x,rating,contribution:Number.isFinite(x.value)&&Number.isFinite(x.move)?x.value*x.move/100:NaN,role:x.income>maxIncome*.7?'Income leader':Number.isFinite(x.move)&&x.move>1?'Attacker':Number.isFinite(x.move)&&x.move<-.8?'Under pressure':'Core squad'}}).sort((a,b)=>b.rating-a.rating)}
-function demoData(){return{report:{date:new Date().toISOString(),portfolio_change_pct:.64,portfolio_change_gbp:312.40,portfolio_value:49124.75,market_result:'Beat FTSE',summary:'A positive session led by Tesco, ARCC and LondonMetric, with the squad finishing ahead of the wider market.',manager_report:'Aurora’s portfolio delivered a solid performance today. Tesco led the advance, while the core income holdings remained steady. Renewable infrastructure was the weakest part of the squad, although there was no major deterioration in the long-term income outlook.',verdict:'HOLD • SELECTIVE ACCUMULATION'},ratings:[{ticker:'TSCO',name:'Tesco',move:1.42,rating:8.8,contribution:118.2,role:'Attacker',income:210},{ticker:'ARCC',name:'Ares Capital',move:.73,rating:8.2,contribution:82.1,role:'Defensive hero',income:530},{ticker:'LMP',name:'LondonMetric',move:.58,rating:7.7,contribution:44.3,role:'Income star',income:318},{ticker:'PHP',name:'Primary Health Properties',move:.31,rating:7.3,contribution:23.8,role:'Core squad',income:285},{ticker:'UKW',name:'Greencoat UK Wind',move:-1.08,rating:5.4,contribution:-77.4,role:'Under pressure',income:401}],regime:{current:'Normal / stable income',volatility:'Normal',rates:'High but stable',inflation:'Neutral / easing',buyMode:'Selective accumulation',preferred:'Defensive income, infrastructure, quality REITs',avoid:'Overconcentration, overvalued low-yield positions'}}}
-function render(payload,isDemo=false){const report=payload.report||{}, ratings=payload.ratings||[], regime=payload.regime||{};const movement=normalizePercent(val(report,'portfolio_change_pct','change_pct','daily_change_pct'));const gain=num(val(report,'portfolio_change_gbp','daily_gain_gbp','day_gain'));const totalValue=num(val(report,'portfolio_value','total_value','market_value'));const income=Number.isFinite(num(val(report,'annual_income','income_annual')))?num(val(report,'annual_income','income_annual')):ratings.reduce((s,r)=>s+(r.income||0),0);const date=new Date(val(report,'date','report_date','Date','timestamp')||Date.now());$('resultTitle').innerHTML=`Portfolio <span class="${movement<0?'red':'green'}">${pct(movement)}</span>`;$('resultSummary').textContent=val(report,'summary','result_summary','headline')||'Latest Aurora portfolio result.';$('reportDate').textContent=`Report date: ${date.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`;$('marketResult').textContent=`Market result: ${val(report,'market_result','benchmark_result')||'Report complete'}`;$('reportSource').textContent=isDemo?'Preview mode • awaiting MatchdayReport data':'Source: AuroraData';$('regime').textContent=regime.current;$('buyMode').textContent=regime.buyMode;$('regimeNote').textContent=`Volatility ${regime.volatility}; rates ${String(regime.rates).toLowerCase()}.`;$('upCount').textContent=ratings.filter(x=>x.move>0).length;$('downCount').textContent=ratings.filter(x=>x.move<0).length;$('flatCount').textContent=ratings.filter(x=>!Number.isFinite(x.move)||x.move===0).length;$('portfolioValue').textContent=money(totalValue);$('dayGain').textContent=money(gain);$('dayGain').className=gain<0?'red':'green';$('annualIncome').textContent=money(income);$('volatility').textContent=regime.volatility;$('rateEnvironment').textContent=regime.rates;$('inflationPressure').textContent=regime.inflation;$('preferredSectors').textContent=regime.preferred;$('avoidList').textContent=regime.avoid;$('managerReport').textContent=val(report,'manager_report','manager_summary','analysis')||'Aurora has completed the daily review.';$('managerVerdict').textContent=val(report,'verdict','manager_verdict','action')||regime.buyMode.toUpperCase();const best=ratings[0]||{},worst=ratings[ratings.length-1]||{},def=[...ratings].sort((a,b)=>(Math.abs(a.move||0)-Math.abs(b.move||0)))[0]||best,incomeStar=[...ratings].sort((a,b)=>(b.income||0)-(a.income||0))[0]||best;setAward('motm',best,'Led the squad with the strongest overall contribution.');setAward('def',def,'Protected the income line and remained composed.');setAward('income',incomeStar,'Best income contribution in today’s report.');setAward('worst',worst,'The weakest daily result, but still under tactical review.');$('ratingsBody').innerHTML=ratings.map((r,i)=>`<tr><td class="rank">${i+1}</td><td><span class="ticker">${r.ticker}</span><br><span style="color:var(--muted);font-size:11px">${r.name}</span></td><td class="move ${r.move<0?'down':'up'}">${pct(r.move)}</td><td>${Number.isFinite(r.contribution)?money(r.contribution):'—'}</td><td>${r.role||'Squad'}</td><td class="score ${r.rating>=8?'high':r.rating>=6.5?'mid':'low'}">${Number(r.rating||0).toFixed(1)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No squad ratings have been published yet.</td></tr>';$('ratingCount').textContent=`${ratings.length} rated`;renderHistory(payload.history||[],date,movement)}
-function setAward(prefix,r,note){$(`${prefix}Name`).textContent=r.ticker||r.name||'—';$(`${prefix}Note`).textContent=note;$(`${prefix}Rating`).textContent=Number(r.rating||0).toFixed(1)}
-function renderHistory(history,date,movement){const items=history.length?history:[{date,change:movement,label:'Latest report'}];$('history').innerHTML=items.slice(0,10).map((h,i)=>`<button class="${i===0?'active':''}"><b>${new Date(h.date||h.report_date||Date.now()).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</b><span>${h.label||'Full-time report'} • ${pct(normalizePercent(h.change??h.portfolio_change_pct))}</span></button>`).join('')}
-async function load(){const b=$('refreshBtn');b.textContent='Loading…';b.disabled=true;try{const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});if(!res.ok)throw new Error(`AuroraData ${res.status}`);const data=await res.json();const reportRows=rows(data,'MatchdayReport','MatchdayReports','DailyMatchReport','PortfolioMatchReport');const report=latest(reportRows);const holdings=rows(data,'Holdings','Portfolio');const ratings=deriveRatings(holdings);const regime=regimeFrom(data);if(!report&&!ratings.length){render(demoData(),true)}else{render({report:report||{date:new Date(),summary:'Aurora holdings loaded. Add a MatchdayReport sheet to publish the complete 5pm written report.',verdict:regime.buyMode},ratings,regime,history:reportRows},!report)}}catch(err){console.warn(err);render(demoData(),true)}finally{b.textContent='Refresh';b.disabled=false}}
-$('refreshBtn').addEventListener('click',load);load();
-</script>
-<script src="aurora-navigation.js?v=20260731-matchday-live-3"></script>
-<script>
-(function(){
-  function addMatchdayLink(){
-    const list=document.querySelector('#auroraNavPanel .aurora-nav-departments');
-    if(!list) return false;
-    let link=list.querySelector('a[href="AuroraCityFC_MatchdayCentre.html"]');
-    if(!link){
-      link=document.createElement('a');
-      link.href='AuroraCityFC_MatchdayCentre.html';
-      link.className='aurora-nav-department';
-      link.innerHTML='<span class="aurora-nav-icon">⚽</span><span>Matchday Centre</span>';
-      const media=list.querySelector('a[href="AuroraCityFC_MediaCentre.html"]');
-      media ? list.insertBefore(link,media) : list.appendChild(link);
+
+function awardFromReport(report,type){
+  const map = {
+    motm:["motm_ticker","motm_rating"],
+    def:["defensive_hero_ticker","defensive_hero_rating"],
+    income:["income_star_ticker","income_star_rating"],
+    worst:["toughest_match_ticker","toughest_match_rating"]
+  };
+
+  const fields = map[type];
+
+  return {
+    ticker:String(val(report,fields[0]) || "—")
+      .replace("LON:","")
+      .toUpperCase(),
+    rating:num(val(report,fields[1]))
+  };
+}
+
+function setAward(prefix,award,note){
+  $(`${prefix}Name`).textContent = award.ticker;
+  $(`${prefix}Note`).textContent = note;
+  $(`${prefix}Rating`).textContent =
+    Number.isFinite(award.rating)
+      ? award.rating.toFixed(1)
+      : "—";
+}
+
+function renderPublishedRatings(report){
+  const published = [
+    {label:"Man of the Match",award:awardFromReport(report,"motm"),role:"Top performer"},
+    {label:"Defensive Hero",award:awardFromReport(report,"def"),role:"Defensive stability"},
+    {label:"Income Star",award:awardFromReport(report,"income"),role:"Income contribution"},
+    {label:"Toughest Match",award:awardFromReport(report,"worst"),role:"Weakest session"}
+  ].filter(item=>item.award.ticker !== "—");
+
+  $("ratingsBody").innerHTML = published.length
+    ? published.map((item,index)=>`
+      <tr>
+        <td class="rank">${index+1}</td>
+        <td>
+          <span class="ticker">${item.award.ticker}</span>
+          <br>
+          <span style="color:var(--muted);font-size:11px">${item.label}</span>
+        </td>
+        <td>Published at full time</td>
+        <td>—</td>
+        <td>${item.role}</td>
+        <td class="score ${
+          item.award.rating >= 8
+            ? "high"
+            : item.award.rating >= 6.5
+              ? "mid"
+              : "low"
+        }">${
+          Number.isFinite(item.award.rating)
+            ? item.award.rating.toFixed(1)
+            : "—"
+        }</td>
+      </tr>
+    `).join("")
+    : `<tr>
+        <td colspan="6" class="empty">
+          No player ratings were published in this MatchdayReport.
+        </td>
+      </tr>`;
+
+  $("ratingCount").textContent = `${published.length} published`;
+}
+
+function renderHistory(reportRows){
+  $("history").innerHTML = reportRows
+    .slice()
+    .sort((a,b)=>
+      new Date(val(b,"created_at","report_date")||0) -
+      new Date(val(a,"created_at","report_date")||0)
+    )
+    .slice(0,10)
+    .map((report,index)=>{
+      const date = new Date(
+        val(report,"report_date","created_at") || Date.now()
+      );
+
+      return `
+        <button class="${index === 0 ? "active" : ""}">
+          <b>${date.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}</b>
+          <span>Full-time report • ${pct(val(report,"portfolio_change_pct"))}</span>
+        </button>
+      `;
+    }).join("");
+}
+
+function render(report,data){
+  const movement = num(val(report,"portfolio_change_pct"));
+  const gain = num(val(report,"portfolio_change_gbp"));
+  const value = num(val(report,"portfolio_value"));
+  const income = num(val(report,"annual_income"));
+  const reportDate = new Date(
+    val(report,"report_date","created_at") || Date.now()
+  );
+  const regime = reportRegime(report,data);
+
+  $("resultTitle").innerHTML =
+    `Portfolio <span class="${movement < 0 ? "red" : "green"}">${pct(movement)}</span>`;
+
+  $("resultSummary").textContent =
+    val(report,"summary") || "Aurora completed the full-time report.";
+
+  $("reportDate").textContent =
+    `Report date: ${reportDate.toLocaleDateString("en-GB",{
+      weekday:"long",
+      day:"numeric",
+      month:"long",
+      year:"numeric"
+    })}`;
+
+  $("marketResult").textContent =
+    `Market result: ${val(report,"market_result") || "Report complete"}`;
+
+  $("reportSource").textContent =
+    `Source: ${val(report,"source") || "Aurora 5pm Share Report"}`;
+
+  $("regime").textContent = regime.current;
+  $("buyMode").textContent = regime.buyMode;
+  $("regimeNote").textContent =
+    `Volatility ${regime.volatility}; rates ${String(regime.rates).toLowerCase()}.`;
+
+  $("nextReport").textContent = nextWeekdayReport(reportDate);
+
+  const up = num(val(report,"holdings_up"));
+  const down = num(val(report,"holdings_down"));
+  const flat = num(val(report,"holdings_flat"));
+
+  $("upCount").textContent = Number.isFinite(up) ? up : "—";
+  $("downCount").textContent = Number.isFinite(down) ? down : "—";
+  $("flatCount").textContent = Number.isFinite(flat) ? flat : "—";
+
+  $("portfolioValue").textContent = money(value);
+  $("dayGain").textContent = money(gain);
+  $("dayGain").className = gain < 0 ? "red" : "green";
+  $("annualIncome").textContent = money(income);
+
+  $("volatility").textContent = regime.volatility;
+  $("rateEnvironment").textContent = regime.rates;
+  $("inflationPressure").textContent = regime.inflation;
+  $("preferredSectors").textContent = regime.preferred;
+  $("avoidList").textContent = regime.avoid;
+
+  $("managerReport").textContent =
+    val(report,"manager_report") ||
+    "Aurora completed the daily review.";
+
+  $("managerVerdict").textContent =
+    val(report,"verdict") ||
+    regime.buyMode.toUpperCase();
+
+  setAward(
+    "motm",
+    awardFromReport(report,"motm"),
+    "Led the squad with the strongest overall contribution."
+  );
+
+  setAward(
+    "def",
+    awardFromReport(report,"def"),
+    "Protected the income line and remained composed."
+  );
+
+  setAward(
+    "income",
+    awardFromReport(report,"income"),
+    "Delivered the strongest published income contribution."
+  );
+
+  setAward(
+    "worst",
+    awardFromReport(report,"worst"),
+    "Recorded the weakest published performance of the session."
+  );
+
+  renderPublishedRatings(report);
+  renderHistory(rows(data,"MatchdayReport","MatchdayReports"));
+}
+
+function renderNoReport(message){
+  $("matchStatus").textContent = "NO REPORT";
+  $("resultTitle").innerHTML = `Portfolio <span class="red">—</span>`;
+  $("resultSummary").textContent =
+    message || "No completed MatchdayReport has been published yet.";
+
+  $("ratingsBody").innerHTML =
+    `<tr>
+      <td colspan="6" class="empty">
+        Awaiting the next completed 5 p.m. report.
+      </td>
+    </tr>`;
+
+  $("ratingCount").textContent = "0 published";
+}
+
+async function load(){
+  const button = $("refreshBtn");
+  button.textContent = "Loading…";
+  button.disabled = true;
+
+  try{
+    const response = await fetch(
+      `${AURORA_MASTER_URL}?matchday=${Date.now()}`,
+      {cache:"no-store"}
+    );
+
+    if(!response.ok){
+      throw new Error(`AuroraData ${response.status}`);
     }
-    list.querySelectorAll('.aurora-nav-department').forEach(function(item){
-      item.classList.toggle('active',item===link);
-    });
-    return true;
+
+    const data = await response.json();
+
+    const reportRows = rows(
+      data,
+      "MatchdayReport",
+      "MatchdayReports",
+      "DailyMatchReport",
+      "PortfolioMatchReport"
+    );
+
+    const report = latest(reportRows);
+
+    if(!report){
+      renderNoReport();
+      return;
+    }
+
+    render(report,data);
+  }catch(error){
+    console.warn(error);
+    renderNoReport(
+      "The Matchday Centre could not load AuroraMaster.json."
+    );
+  }finally{
+    button.textContent = "Refresh";
+    button.disabled = false;
   }
-  if(!addMatchdayLink()){
-    const observer=new MutationObserver(function(){
-      if(addMatchdayLink()) observer.disconnect();
-    });
-    observer.observe(document.documentElement,{childList:true,subtree:true});
-    setTimeout(function(){observer.disconnect();},5000);
-  }
-})();
+}
+
+$("refreshBtn").addEventListener("click",load);
+load();
 </script>
+<script src="aurora-navigation.js?v=20260731-matchday-v2-single-source-1"></script>
 </body>
 </html>
