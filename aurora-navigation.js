@@ -1833,14 +1833,294 @@
     return true;
   }
 
+
+  function injectBrowserFallbackHeaderStyles(doc){
+    if(!doc || doc.getElementById("auroraBrowserFallbackHeaderStyles")) return;
+
+    const style = doc.createElement("style");
+    style.id = "auroraBrowserFallbackHeaderStyles";
+    style.textContent = `
+      :root{
+        --aurora-browser-header-height:72px;
+      }
+
+      body.aurora-browser-header-active{
+        padding-top:var(--aurora-browser-header-height)!important;
+      }
+
+      #auroraBrowserFallbackHeader{
+        position:fixed;
+        top:0;
+        left:0;
+        right:0;
+        z-index:2147483000;
+        min-height:var(--aurora-browser-header-height);
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:14px;
+        padding:
+          calc(9px + env(safe-area-inset-top,0px))
+          14px
+          9px;
+        border-bottom:1px solid rgba(125,211,252,.16);
+        background:
+          linear-gradient(
+            90deg,
+            rgba(3,15,30,.98),
+            rgba(4,16,36,.98),
+            rgba(10,16,48,.98)
+          );
+        box-shadow:0 10px 28px rgba(0,0,0,.22);
+        backdrop-filter:blur(16px);
+        -webkit-backdrop-filter:blur(16px);
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-left{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        min-width:0;
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-crest{
+        width:38px;
+        height:38px;
+        flex:0 0 auto;
+        display:grid;
+        place-items:center;
+        border:1px solid rgba(125,211,252,.24);
+        border-radius:12px;
+        color:#dff7ff;
+        background:
+          radial-gradient(
+            circle at 30% 20%,
+            rgba(255,255,255,.10),
+            transparent 42%
+          ),
+          linear-gradient(145deg,#155e75,#082f49);
+        font-size:10px;
+        font-weight:950;
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-brand{
+        min-width:0;
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-brand strong{
+        display:block;
+        overflow:hidden;
+        color:#f5fbff;
+        font-size:13px;
+        font-weight:950;
+        line-height:1.15;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-brand span{
+        display:block;
+        margin-top:3px;
+        overflow:hidden;
+        color:#a9bdd2;
+        font-size:10px;
+        font-weight:750;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-right{
+        display:flex;
+        align-items:center;
+        justify-content:flex-end;
+        gap:10px;
+        min-width:0;
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-department{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        color:#b7c7dd;
+        font-size:10px;
+        font-weight:900;
+        letter-spacing:.13em;
+        text-transform:uppercase;
+        white-space:nowrap;
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-department:before{
+        content:"";
+        width:8px;
+        height:8px;
+        border-radius:50%;
+        background:#34d399;
+        box-shadow:
+          0 0 0 4px rgba(52,211,153,.10),
+          0 0 13px rgba(52,211,153,.45);
+      }
+
+      #auroraBrowserFallbackHeader .aurora-browser-logout{
+        min-height:36px;
+        padding:0 14px;
+        border:1px solid rgba(251,113,133,.34);
+        border-radius:12px;
+        color:#fecdd3;
+        background:
+          linear-gradient(
+            145deg,
+            rgba(76,5,25,.76),
+            rgba(44,7,20,.90)
+          );
+        font-size:10px;
+        font-weight:950;
+        letter-spacing:.13em;
+        text-transform:uppercase;
+        cursor:pointer;
+      }
+
+      #auroraBrowserFallbackHeader #auroraNavToggle{
+        position:static!important;
+        inset:auto!important;
+        transform:none!important;
+        display:grid!important;
+        width:40px!important;
+        height:40px!important;
+        min-width:40px!important;
+        margin:0!important;
+        z-index:auto!important;
+      }
+
+      @media(max-width:720px){
+        :root{
+          --aurora-browser-header-height:68px;
+        }
+
+        #auroraBrowserFallbackHeader{
+          padding-left:10px;
+          padding-right:10px;
+        }
+
+        #auroraBrowserFallbackHeader .aurora-browser-department{
+          display:none;
+        }
+
+        #auroraBrowserFallbackHeader .aurora-browser-logout{
+          padding:0 10px;
+          font-size:9px;
+        }
+      }
+    `;
+
+    doc.head.appendChild(style);
+  }
+
+  function browserDepartmentName(){
+    const title = String(document.title || "")
+      .replace(/^Aurora City FC\s*[—|-]\s*/i,"")
+      .replace(/\s*[—|-].*$/,"")
+      .trim();
+
+    return title || "Aurora Club System";
+  }
+
+  function installBrowserFallbackHeader(localToggle){
+    injectBrowserFallbackHeaderStyles(document);
+
+    let header =
+      document.getElementById("auroraBrowserFallbackHeader");
+
+    if(!header){
+      header = document.createElement("header");
+      header.id = "auroraBrowserFallbackHeader";
+      header.innerHTML = `
+        <div class="aurora-browser-left">
+          <div class="aurora-browser-crest" aria-hidden="true">AFC</div>
+          <div class="aurora-browser-brand">
+            <strong>Aurora City FC</strong>
+            <span>Manager Session • Webby</span>
+          </div>
+        </div>
+
+        <div class="aurora-browser-right">
+          <div class="aurora-browser-department">
+            ${browserDepartmentName()}
+          </div>
+          <button
+            class="aurora-browser-logout"
+            type="button"
+            id="auroraBrowserLogout"
+          >
+            Log out
+          </button>
+        </div>
+      `;
+
+      document.body.prepend(header);
+      document.body.classList.add(
+        "aurora-browser-header-active"
+      );
+    }
+
+    const left = header.querySelector(".aurora-browser-left");
+    const crest = header.querySelector(".aurora-browser-crest");
+
+    if(localToggle && left && crest){
+      left.insertBefore(localToggle,crest);
+      localToggle.style.removeProperty("display");
+    }
+
+    const logout = header.querySelector("#auroraBrowserLogout");
+
+    if(logout && !logout.dataset.wired){
+      logout.dataset.wired = "true";
+      logout.addEventListener("click",function(){
+        const existingLogout = Array.from(
+          document.querySelectorAll("button,a")
+        ).find(function(node){
+          const value = String(node.textContent || "")
+            .replace(/\s+/g," ")
+            .trim()
+            .toLowerCase();
+
+          return (
+            node !== logout
+            && (value === "log out" || value === "logout")
+          );
+        });
+
+        if(existingLogout){
+          existingLogout.click();
+          return;
+        }
+
+        try{
+          localStorage.removeItem("aurora_session");
+          localStorage.removeItem("aurora_manager_session");
+          sessionStorage.clear();
+        }catch(_){}
+
+        location.href = "index.html";
+      });
+    }
+
+    return true;
+  }
+
   function monitorTopAppHeader(localToggle){
     if(installMenuInTopAppHeader(localToggle)) return;
 
     const parentDocument = getAccessibleParentDocument();
-    const target =
-      parentDocument
-        ? parentDocument.documentElement
-        : document.documentElement;
+
+    /*
+      No accessible app-shell header means this is a normal browser tab.
+      Build the same compact header locally instead of leaving a floating
+      menu button over the hero.
+    */
+    if(!parentDocument){
+      installBrowserFallbackHeader(localToggle);
+      return;
+    }
 
     const observer = new MutationObserver(function(){
       if(installMenuInTopAppHeader(localToggle)){
@@ -1848,7 +2128,7 @@
       }
     });
 
-    observer.observe(target,{
+    observer.observe(parentDocument.documentElement,{
       childList:true,
       subtree:true
     });
@@ -1857,9 +2137,9 @@
       observer.disconnect();
 
       if(!installMenuInTopAppHeader(localToggle)){
-        localToggle.style.removeProperty("display");
+        installBrowserFallbackHeader(localToggle);
       }
-    },8000);
+    },3000);
   }
 
   function build(){
