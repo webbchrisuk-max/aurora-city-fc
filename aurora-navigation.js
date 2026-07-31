@@ -48,271 +48,6 @@
     ["☁","Cloud Sync","AuroraCloudSync.html"]
   ];
 
-
-  const MATCHDAY_MASTER_URL =
-    "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
-
-  const MATCHDAY_REPORT_KEYS = [
-    "MatchdayReport",
-    "MatchdayReports",
-    "DailyMatchReport",
-    "PortfolioMatchReport"
-  ];
-
-  function injectMatchdayStatusStyles(){
-    if(document.getElementById("auroraMatchdayStatusStyles")) return;
-
-    const style = document.createElement("style");
-    style.id = "auroraMatchdayStatusStyles";
-    style.textContent = `
-      #auroraNavPanel{
-        isolation:isolate;
-      }
-      #auroraNavPanel .aurora-nav-head{
-        position:relative;
-        z-index:3;
-        flex:0 0 auto;
-        background:#061224;
-      }
-      #auroraNavPanel .aurora-nav-scroll{
-        position:relative;
-        z-index:1;
-        flex:1 1 auto;
-        min-height:0;
-        overflow-y:auto;
-        overflow-x:hidden;
-        padding-top:14px;
-        -webkit-overflow-scrolling:touch;
-        background:transparent;
-      }
-      #auroraNavPanel .aurora-nav-foot [data-state="synced"] .aurora-nav-cloud-dot,
-      #auroraNavPanel .aurora-nav-foot .aurora-nav-cloud[data-state="synced"] .aurora-nav-cloud-dot{
-        background:var(--aurora-nav-green);
-        box-shadow:
-          0 0 0 5px rgba(52,211,153,.10),
-          0 0 16px rgba(52,211,153,.55);
-        animation:auroraBottomSyncFlash 1.8s ease-in-out infinite;
-      }
-      @keyframes auroraBottomSyncFlash{
-        0%,100%{
-          opacity:1;
-          transform:scale(1);
-          box-shadow:
-            0 0 0 5px rgba(52,211,153,.10),
-            0 0 12px rgba(52,211,153,.42);
-        }
-        50%{
-          opacity:.65;
-          transform:scale(1.22);
-          box-shadow:
-            0 0 0 8px rgba(52,211,153,.04),
-            0 0 22px rgba(52,211,153,.75);
-        }
-      }
-
-      #auroraNavPanel .aurora-nav-foot{
-        position:relative;
-        z-index:3;
-        flex:0 0 auto;
-        background:#030b18;
-      }
-
-      .aurora-nav-matchday-status{
-        margin-left:auto;
-        flex:0 0 auto;
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        min-width:68px;
-        padding:4px 8px;
-        border-radius:999px;
-        border:1px solid rgba(148,163,184,.24);
-        background:rgba(15,23,42,.7);
-        color:#94a3b8;
-        font-size:10px;
-        font-weight:850;
-        letter-spacing:.02em;
-        line-height:1;
-        white-space:nowrap;
-      }
-      .aurora-nav-matchday-status[data-state="progress"]{
-        color:#fde68a;
-        border-color:rgba(251,191,36,.4);
-        background:rgba(120,53,15,.35);
-        animation:auroraMatchdayPulse 1.7s ease-in-out infinite;
-      }
-      .aurora-nav-matchday-status[data-state="ready"]{
-        color:#a7f3d0;
-        border-color:rgba(52,211,153,.42);
-        background:rgba(6,78,59,.34);
-      }
-      .aurora-nav-matchday-status[data-state="none"]{
-        color:#cbd5e1;
-        border-color:rgba(148,163,184,.25);
-        background:rgba(30,41,59,.55);
-      }
-      @keyframes auroraMatchdayPulse{
-        0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}
-        50%{box-shadow:0 0 0 5px rgba(251,191,36,.10)}
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  function matchdayValue(object){
-    const keys = Array.prototype.slice.call(arguments,1);
-
-    for(const key of keys){
-      if(
-        object
-        && object[key] !== undefined
-        && object[key] !== null
-        && String(object[key]).trim() !== ""
-      ){
-        return object[key];
-      }
-    }
-
-    return "";
-  }
-
-  function matchdayRows(data){
-    for(const key of MATCHDAY_REPORT_KEYS){
-      if(Array.isArray(data && data[key])){
-        return data[key];
-      }
-    }
-
-    return [];
-  }
-
-  function matchdayReportDate(report){
-    const value = matchdayValue(
-      report,
-      "report_date",
-      "date",
-      "Date",
-      "timestamp",
-      "submitted_at"
-    );
-
-    if(!value) return null;
-
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? null : date;
-  }
-
-  function sameLocalDay(first,second){
-    return first
-      && second
-      && first.getFullYear() === second.getFullYear()
-      && first.getMonth() === second.getMonth()
-      && first.getDate() === second.getDate();
-  }
-
-  function setMatchdayStatus(state,label,detail){
-    const badge = document.getElementById("auroraMatchdayStatus");
-    if(!badge) return;
-
-    badge.dataset.state = state;
-    badge.textContent = label;
-    badge.title = detail;
-    badge.setAttribute("aria-label",detail);
-  }
-
-  async function refreshMatchdayStatus(){
-    const now = new Date();
-
-    try{
-      const response = await fetch(
-        MATCHDAY_MASTER_URL,
-        {cache:"no-store"}
-      );
-
-      if(!response.ok){
-        throw new Error(`AuroraMaster ${response.status}`);
-      }
-
-      const data = await response.json();
-      const reports = matchdayRows(data);
-
-      const latest = reports
-        .map(function(report){
-          return {
-            report:report,
-            date:matchdayReportDate(report)
-          };
-        })
-        .filter(function(item){
-          return item.date;
-        })
-        .sort(function(a,b){
-          return b.date.getTime() - a.date.getTime();
-        })[0];
-
-      if(latest && sameLocalDay(latest.date,now)){
-        setMatchdayStatus(
-          "ready",
-          "Ready",
-          "Today's Matchday report is ready"
-        );
-        return;
-      }
-
-      const minutes = now.getHours() * 60 + now.getMinutes();
-      const reportWindowOpen = minutes >= 17 * 60 && minutes < 19 * 60;
-
-      if(reportWindowOpen){
-        setMatchdayStatus(
-          "progress",
-          "In progress",
-          "Today's 5 p.m. Matchday report is being prepared"
-        );
-        return;
-      }
-
-      setMatchdayStatus(
-        "none",
-        "No report",
-        "No Matchday report is available for today"
-      );
-    }catch(error){
-      console.warn(
-        "Aurora navigation could not read Matchday report status.",
-        error
-      );
-
-      setMatchdayStatus(
-        "none",
-        "No report",
-        "Matchday report status is currently unavailable"
-      );
-    }
-  }
-
-  function wireMatchdayStatus(){
-    refreshMatchdayStatus();
-
-    window.setInterval(
-      refreshMatchdayStatus,
-      60000
-    );
-
-    window.addEventListener(
-      "focus",
-      refreshMatchdayStatus
-    );
-
-    document.addEventListener(
-      "visibilitychange",
-      function(){
-        if(!document.hidden){
-          refreshMatchdayStatus();
-        }
-      }
-    );
-  }
-
   const currentFile = (
     location.pathname.split("/").pop()
     || "AuroraCityFC_NexusMaster.html"
@@ -433,8 +168,25 @@
       ".aurora-nav-cloud-copy span"
     );
 
-    if(label) label.textContent = presentation.label;
+    if(label) label.textContent = "Cloud Sync";
     if(detail) detail.textContent = presentation.detail;
+
+    const stateLabel = control.querySelector(
+      ".aurora-nav-cloud-state-label"
+    );
+
+    if(stateLabel){
+      stateLabel.textContent =
+        presentation.state === "synced"
+          ? "Synced"
+          : presentation.state === "working"
+            ? "Syncing"
+            : presentation.state === "attention"
+              ? "Attention"
+              : presentation.state === "error"
+                ? "Error"
+                : "Checking";
+    }
 
     control.title = presentation.detail || presentation.label;
     control.setAttribute(
@@ -511,8 +263,188 @@
     );
   }
 
+  function injectBottomCloudStyles(){
+    if(document.getElementById("auroraBottomCloudStyles")) return;
+
+    const style = document.createElement("style");
+    style.id = "auroraBottomCloudStyles";
+    style.textContent = `
+      #auroraNavPanel{
+        display:flex;
+        flex-direction:column;
+        overflow:hidden;
+      }
+
+      #auroraNavPanel .aurora-nav-head{
+        flex:0 0 auto;
+      }
+
+      #auroraNavPanel .aurora-nav-scroll{
+        flex:1 1 auto;
+        min-height:0;
+        overflow-y:auto;
+        overflow-x:hidden;
+        -webkit-overflow-scrolling:touch;
+      }
+
+      #auroraNavPanel .aurora-nav-foot{
+        position:relative;
+        z-index:5;
+        flex:0 0 auto;
+        margin:0;
+        padding:
+          10px 12px
+          calc(10px + env(safe-area-inset-bottom,0px));
+        border-top:1px solid rgba(125,211,252,.16);
+        background:#030b18;
+        box-shadow:0 -10px 24px rgba(0,0,0,.22);
+      }
+
+      #auroraNavCloud{
+        width:100%;
+        min-height:48px;
+        display:grid;
+        grid-template-columns:32px minmax(0,1fr) auto;
+        align-items:center;
+        gap:9px;
+        padding:7px 9px;
+        border:1px solid rgba(125,211,252,.18);
+        border-radius:13px;
+        color:#dcecff;
+        background:linear-gradient(
+          135deg,
+          rgba(8,47,73,.38),
+          rgba(15,23,42,.62)
+        );
+        text-align:left;
+        cursor:pointer;
+        -webkit-tap-highlight-color:transparent;
+      }
+
+      #auroraNavCloud:hover,
+      #auroraNavCloud:focus-visible{
+        border-color:rgba(34,211,238,.42);
+        outline:none;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-icon{
+        width:30px;
+        height:30px;
+        display:grid;
+        place-items:center;
+        border-radius:9px;
+        color:#9bdff4;
+        background:rgba(8,47,73,.48);
+        font-size:15px;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-copy{
+        min-width:0;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-copy strong{
+        display:block;
+        overflow:hidden;
+        color:#f0f8ff;
+        font-size:11px;
+        font-weight:900;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-copy span{
+        display:block;
+        margin-top:2px;
+        overflow:hidden;
+        color:#8297b3;
+        font-size:8px;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-state{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:5px 8px;
+        border:1px solid rgba(148,163,184,.22);
+        border-radius:999px;
+        color:#cbd5e1;
+        background:rgba(30,41,59,.64);
+        font-size:9px;
+        font-weight:900;
+        white-space:nowrap;
+      }
+
+      #auroraNavCloud .aurora-nav-cloud-state-dot{
+        width:8px;
+        height:8px;
+        border-radius:50%;
+        background:#94a3b8;
+      }
+
+      #auroraNavCloud[data-state="synced"] .aurora-nav-cloud-state{
+        color:#a7f3d0;
+        border-color:rgba(52,211,153,.38);
+        background:rgba(6,78,59,.30);
+      }
+
+      #auroraNavCloud[data-state="synced"] .aurora-nav-cloud-state-dot{
+        background:#34d399;
+        box-shadow:0 0 0 4px rgba(52,211,153,.10);
+        animation:auroraSyncedFlash 1.8s ease-in-out infinite;
+      }
+
+      #auroraNavCloud[data-state="working"] .aurora-nav-cloud-state{
+        color:#a5f3fc;
+        border-color:rgba(34,211,238,.36);
+        background:rgba(8,47,73,.34);
+      }
+
+      #auroraNavCloud[data-state="working"] .aurora-nav-cloud-state-dot{
+        background:#22d3ee;
+        animation:auroraSyncedFlash 1.1s ease-in-out infinite;
+      }
+
+      #auroraNavCloud[data-state="attention"] .aurora-nav-cloud-state{
+        color:#fde68a;
+        border-color:rgba(251,191,36,.36);
+        background:rgba(120,53,15,.30);
+      }
+
+      #auroraNavCloud[data-state="attention"] .aurora-nav-cloud-state-dot{
+        background:#fbbf24;
+      }
+
+      #auroraNavCloud[data-state="error"] .aurora-nav-cloud-state{
+        color:#fecdd3;
+        border-color:rgba(251,113,133,.38);
+        background:rgba(127,29,29,.30);
+      }
+
+      #auroraNavCloud[data-state="error"] .aurora-nav-cloud-state-dot{
+        background:#fb7185;
+      }
+
+      @keyframes auroraSyncedFlash{
+        0%,100%{
+          opacity:1;
+          transform:scale(1);
+        }
+        50%{
+          opacity:.55;
+          transform:scale(1.28);
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
+
+    injectBottomCloudStyles();
 
     const toggle = document.createElement("button");
     toggle.id = "auroraNavToggle";
@@ -574,11 +506,9 @@
             <span class="aurora-nav-dept-icon" aria-hidden="true">${esc(item[0])}</span>
             <strong>${esc(item[1])}</strong>
             ${
-              item[1] === "Matchday Centre"
-                ? '<span class="aurora-nav-matchday-status" id="auroraMatchdayStatus" data-state="none">No report</span>'
-                : current
-                  ? '<span class="aurora-nav-current-tag">Current</span>'
-                  : '<span aria-hidden="true">›</span>'
+              current
+                ? '<span class="aurora-nav-current-tag">Current</span>'
+                : '<span aria-hidden="true">›</span>'
             }
           </a>
         `;
@@ -598,7 +528,28 @@
           aria-label="Close Aurora navigation"
         >×</button>
       </header>
-<div class="aurora-nav-scroll">
+
+      <button
+        class="aurora-nav-cloud"
+        id="auroraNavCloud"
+        type="button"
+        data-state="working"
+      >
+        <span
+          class="aurora-nav-cloud-dot"
+          aria-hidden="true"
+        ></span>
+        <span class="aurora-nav-cloud-copy">
+          <strong>Checking Aurora Cloud…</strong>
+          <span>Reading the live connection status</span>
+        </span>
+        <span
+          class="aurora-nav-cloud-arrow"
+          aria-hidden="true"
+        >›</span>
+      </button>
+
+      <div class="aurora-nav-scroll">
         <section
           class="aurora-nav-section"
           aria-labelledby="auroraMissionLabel"
@@ -643,14 +594,27 @@
       </div>
 
       <footer class="aurora-nav-foot">
-        <strong>Aurora HQ navigation.</strong>
-        Cloud status is shown above without covering dashboard content.
+        <button
+          class="aurora-nav-cloud"
+          id="auroraNavCloud"
+          type="button"
+          data-state="working"
+          aria-label="Cloud Sync. Checking connection."
+        >
+          <span class="aurora-nav-cloud-icon" aria-hidden="true">☁</span>
+          <span class="aurora-nav-cloud-copy">
+            <strong>Cloud Sync</strong>
+            <span>Checking Aurora Cloud connection</span>
+          </span>
+          <span class="aurora-nav-cloud-state">
+            <span class="aurora-nav-cloud-state-dot" aria-hidden="true"></span>
+            <span class="aurora-nav-cloud-state-label">Checking</span>
+          </span>
+        </button>
       </footer>
     `;
 
-    injectMatchdayStatusStyles();
     document.body.append(toggle,overlay,panel);
-    wireMatchdayStatus();
 
     const closeButton =
       panel.querySelector(".aurora-nav-close");
@@ -719,13 +683,15 @@
       }
     );
 
-    cloudControl.addEventListener(
-      "click",
-      function(){
-        setOpen(false);
-        location.href = "AuroraCloudSync.html";
-      }
-    );
+    if(cloudControl){
+      cloudControl.addEventListener(
+        "click",
+        function(){
+          setOpen(false);
+          location.href = "AuroraCloudSync.html";
+        }
+      );
+    }
 
     panel.addEventListener(
       "click",
