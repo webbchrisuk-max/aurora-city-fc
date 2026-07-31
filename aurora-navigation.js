@@ -1479,89 +1479,48 @@
 
     window.setTimeout(function(){
       observer.disconnect();
-      placeMenuInsideExistingHeader(toggle);
+      placeToggleInAuroraHeader(toggle);
     },5000);
   }
 
 
-  function injectExistingHeaderMenuStyles(){
-    if(document.getElementById("auroraExistingHeaderMenuStyles")) return;
-
-    const style = document.createElement("style");
-    style.id = "auroraExistingHeaderMenuStyles";
-    style.textContent = `
-      #auroraNavToggle.aurora-nav-header-toggle{
-        position:static!important;
-        inset:auto!important;
-        transform:none!important;
-        flex:0 0 auto!important;
-        width:40px!important;
-        height:40px!important;
-        min-width:40px!important;
-        margin:0 10px 0 0!important;
-        border:1px solid rgba(125,211,252,.24)!important;
-        border-radius:13px!important;
-        color:#dff7ff!important;
-        background:
-          linear-gradient(
-            145deg,
-            rgba(8,47,73,.92),
-            rgba(15,23,42,.98)
-          )!important;
-        box-shadow:
-          inset 0 1px 0 rgba(255,255,255,.07),
-          0 8px 18px rgba(0,0,0,.20)!important;
-        z-index:auto!important;
+  function getAccessibleParentDocument(){
+    try{
+      if(window.parent && window.parent !== window){
+        const parentDocument = window.parent.document;
+        void parentDocument.body;
+        return parentDocument;
       }
+    }catch(_){}
 
-      #auroraNavToggle.aurora-nav-header-toggle:hover,
-      #auroraNavToggle.aurora-nav-header-toggle:focus-visible{
-        border-color:rgba(34,211,238,.52)!important;
-        outline:none!important;
-        box-shadow:
-          inset 0 1px 0 rgba(255,255,255,.09),
-          0 9px 20px rgba(0,0,0,.24),
-          0 0 16px rgba(34,211,238,.14)!important;
-      }
-
-      .aurora-header-menu-host{
-        display:flex!important;
-        align-items:center!important;
-        min-width:0!important;
-      }
-
-      @media(max-width:640px){
-        #auroraNavToggle.aurora-nav-header-toggle{
-          width:38px!important;
-          height:38px!important;
-          min-width:38px!important;
-          margin-right:8px!important;
-        }
-      }
-    `;
-
-    document.head.appendChild(style);
+    return null;
   }
 
-  function findExistingAuroraHeader(){
+  function findAuroraAppHeader(doc){
+    if(!doc) return null;
+
     const headers = Array.from(
-      document.querySelectorAll(
-        "body > header, body > .topbar, body > .app-header, " +
-        ".topbar-inner, .header-inner, [data-aurora-header]"
+      doc.querySelectorAll(
+        "header, .topbar, .app-header, .global-header, " +
+        "[data-aurora-header], [role='banner']"
       )
     );
 
     for(const header of headers){
-      if(!header || header.id === "auroraNavPanel") continue;
+      const headerText = String(header.textContent || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
 
-      const text = String(header.textContent || "").toLowerCase();
-      const hasManager =
-        text.includes("manager session") ||
-        text.includes("webby");
-
-      const hasLogout =
-        text.includes("log out") ||
-        text.includes("logout");
+      if(
+        !headerText.includes("webby")
+        || !(
+          headerText.includes("log out")
+          || headerText.includes("logout")
+        )
+      ){
+        continue;
+      }
 
       const brand =
         header.querySelector(
@@ -1569,10 +1528,37 @@
           "[data-aurora-brand],.header-brand"
         );
 
-      if((hasManager || hasLogout) && brand){
+      if(brand){
         return {
           host:brand.parentElement || header,
           before:brand
+        };
+      }
+
+      const managerNode = Array.from(
+        header.querySelectorAll("div,span,strong,p")
+      ).find(function(node){
+        const nodeText = String(node.textContent || "")
+          .replace(/\s+/g," ")
+          .trim()
+          .toLowerCase();
+
+        return (
+          nodeText.includes("manager session")
+          && nodeText.includes("webby")
+        );
+      });
+
+      if(managerNode){
+        const brandBlock =
+          managerNode.closest(
+            ".brand,.aurora-brand,.club-brand,.session-brand"
+          )
+          || managerNode.parentElement;
+
+        return {
+          host:(brandBlock && brandBlock.parentElement) || header,
+          before:brandBlock || header.firstElementChild
         };
       }
     }
@@ -1580,60 +1566,116 @@
     return null;
   }
 
-  function placeMenuInsideExistingHeader(toggle){
-    if(!toggle) return false;
+  function styleTopHeaderMenuButton(button){
+    button.style.cssText = [
+      "position:static!important",
+      "inset:auto!important",
+      "width:40px!important",
+      "height:40px!important",
+      "min-width:40px!important",
+      "flex:0 0 40px!important",
+      "display:grid!important",
+      "place-items:center!important",
+      "margin:0 10px 0 0!important",
+      "padding:0!important",
+      "border:1px solid rgba(125,211,252,.30)!important",
+      "border-radius:13px!important",
+      "color:#dff7ff!important",
+      "background:linear-gradient(145deg,rgba(8,47,73,.94),rgba(15,23,42,.98))!important",
+      "box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 18px rgba(0,0,0,.22)!important",
+      "font-size:20px!important",
+      "font-weight:900!important",
+      "line-height:1!important",
+      "cursor:pointer!important",
+      "z-index:auto!important"
+    ].join(";");
+  }
 
-    const placement = findExistingAuroraHeader();
+  function installMenuInTopAppHeader(localToggle){
+    const parentDocument = getAccessibleParentDocument();
 
-    if(!placement){
-      toggle.classList.remove("aurora-nav-header-toggle");
-      toggle.style.top = "84px";
-      toggle.style.left = "14px";
-      toggle.style.right = "auto";
-      return false;
+    if(!parentDocument) return false;
+
+    const placement = findAuroraAppHeader(parentDocument);
+
+    if(!placement) return false;
+
+    let parentButton =
+      parentDocument.getElementById(
+        "auroraTopHeaderMenuButton"
+      );
+
+    if(!parentButton){
+      parentButton = parentDocument.createElement("button");
+      parentButton.id = "auroraTopHeaderMenuButton";
+      parentButton.type = "button";
+      parentButton.innerHTML = "☰";
+      parentButton.setAttribute(
+        "aria-label",
+        "Open Aurora mission navigation"
+      );
+      parentButton.title = "Open mission navigation";
+
+      parentButton.addEventListener("click",function(){
+        localToggle.click();
+      });
     }
 
-    injectExistingHeaderMenuStyles();
+    styleTopHeaderMenuButton(parentButton);
 
-    if(toggle.parentElement !== placement.host){
-      placement.host.insertBefore(toggle,placement.before);
+    if(parentButton.parentElement !== placement.host){
+      if(placement.before){
+        placement.host.insertBefore(
+          parentButton,
+          placement.before
+        );
+      }else{
+        placement.host.prepend(parentButton);
+      }
     }
 
-    toggle.classList.add("aurora-nav-header-toggle");
-    placement.host.classList.add("aurora-header-menu-host");
-
-    toggle.style.removeProperty("top");
-    toggle.style.removeProperty("left");
-    toggle.style.removeProperty("right");
-    toggle.style.removeProperty("bottom");
+    localToggle.style.setProperty(
+      "display",
+      "none",
+      "important"
+    );
 
     return true;
   }
 
-  function monitorExistingAuroraHeader(toggle){
-    if(placeMenuInsideExistingHeader(toggle)) return;
+  function monitorTopAppHeader(localToggle){
+    if(installMenuInTopAppHeader(localToggle)) return;
+
+    const parentDocument = getAccessibleParentDocument();
+    const target =
+      parentDocument
+        ? parentDocument.documentElement
+        : document.documentElement;
 
     const observer = new MutationObserver(function(){
-      if(placeMenuInsideExistingHeader(toggle)){
+      if(installMenuInTopAppHeader(localToggle)){
         observer.disconnect();
       }
     });
 
-    observer.observe(document.documentElement,{
+    observer.observe(target,{
       childList:true,
       subtree:true
     });
 
     window.setTimeout(function(){
       observer.disconnect();
-      placeMenuInsideExistingHeader(toggle);
-    },5000);
+
+      if(!installMenuInTopAppHeader(localToggle)){
+        localToggle.style.removeProperty("display");
+      }
+    },8000);
   }
 
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
-    injectExistingHeaderMenuStyles();
+    injectGlobalHeaderMenuStyles();
     injectSofterMissionColours();
     injectSidebarReadabilityStyles();
     injectMatchdayBadgeStyles();
@@ -1824,7 +1866,7 @@
     `;
 
     document.body.append(toggle,overlay,panel);
-    monitorExistingAuroraHeader(toggle);
+    monitorTopAppHeader(toggle);
 
     const closeButton =
       panel.querySelector(".aurora-nav-close");
@@ -1968,14 +2010,14 @@
       "pageshow",
       function(){
         setOpen(false);
-        placeMenuInsideExistingHeader(toggle);
+        installMenuInTopAppHeader(toggle);
       }
     );
 
     window.addEventListener(
       "resize",
       function(){
-        placeMenuInsideExistingHeader(toggle);
+        installMenuInTopAppHeader(toggle);
       }
     );
 
