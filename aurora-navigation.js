@@ -74,15 +74,6 @@
         flex:0 0 auto;
         background:#061224;
       }
-      #auroraNavPanel .aurora-nav-cloud{
-        position:relative;
-        z-index:3;
-        flex:0 0 auto;
-        margin-bottom:0;
-        background:
-          linear-gradient(135deg,rgba(8,47,73,.96),rgba(15,23,42,.98));
-        box-shadow:0 8px 18px rgba(0,0,0,.24);
-      }
       #auroraNavPanel .aurora-nav-scroll{
         position:relative;
         z-index:1;
@@ -94,6 +85,31 @@
         -webkit-overflow-scrolling:touch;
         background:transparent;
       }
+      #auroraNavPanel .aurora-nav-foot [data-state="synced"] .aurora-nav-cloud-dot,
+      #auroraNavPanel .aurora-nav-foot .aurora-nav-cloud[data-state="synced"] .aurora-nav-cloud-dot{
+        background:var(--aurora-nav-green);
+        box-shadow:
+          0 0 0 5px rgba(52,211,153,.10),
+          0 0 16px rgba(52,211,153,.55);
+        animation:auroraBottomSyncFlash 1.8s ease-in-out infinite;
+      }
+      @keyframes auroraBottomSyncFlash{
+        0%,100%{
+          opacity:1;
+          transform:scale(1);
+          box-shadow:
+            0 0 0 5px rgba(52,211,153,.10),
+            0 0 12px rgba(52,211,153,.42);
+        }
+        50%{
+          opacity:.65;
+          transform:scale(1.22);
+          box-shadow:
+            0 0 0 8px rgba(52,211,153,.04),
+            0 0 22px rgba(52,211,153,.75);
+        }
+      }
+
       #auroraNavPanel .aurora-nav-foot{
         position:relative;
         z-index:3;
@@ -582,28 +598,7 @@
           aria-label="Close Aurora navigation"
         >×</button>
       </header>
-
-      <button
-        class="aurora-nav-cloud"
-        id="auroraNavCloud"
-        type="button"
-        data-state="working"
-      >
-        <span
-          class="aurora-nav-cloud-dot"
-          aria-hidden="true"
-        ></span>
-        <span class="aurora-nav-cloud-copy">
-          <strong>Checking Aurora Cloud…</strong>
-          <span>Reading the live connection status</span>
-        </span>
-        <span
-          class="aurora-nav-cloud-arrow"
-          aria-hidden="true"
-        >›</span>
-      </button>
-
-      <div class="aurora-nav-scroll">
+<div class="aurora-nav-scroll">
         <section
           class="aurora-nav-section"
           aria-labelledby="auroraMissionLabel"
