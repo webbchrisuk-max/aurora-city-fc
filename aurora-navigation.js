@@ -1321,9 +1321,31 @@
     const style = document.createElement("style");
     style.id = "auroraSofterMissionColours";
     style.textContent = `
-      /* Softer supporting text beneath each mission title */
-      #auroraNavPanel .aurora-nav-step-copy span{
+      /*
+        Keep the mission title as the visible link, while the smaller
+        supporting line underneath displays as ordinary text.
+      */
+      #auroraNavPanel .aurora-nav-step-copy,
+      #auroraNavPanel .aurora-nav-step-copy:link,
+      #auroraNavPanel .aurora-nav-step-copy:visited,
+      #auroraNavPanel .aurora-nav-step-copy:hover,
+      #auroraNavPanel .aurora-nav-step-copy:active{
+        color:inherit!important;
+        text-decoration:none!important;
+      }
+
+      #auroraNavPanel .aurora-nav-step-copy strong{
+        text-decoration:underline;
+        text-decoration-thickness:1px;
+        text-underline-offset:2px;
+      }
+
+      #auroraNavPanel .aurora-nav-step-copy span,
+      #auroraNavPanel .aurora-nav-step.is-next-mission .aurora-nav-step-copy span,
+      #auroraNavPanel .aurora-nav-step.is-active .aurora-nav-step-copy span{
         color:#9aa9bc!important;
+        -webkit-text-fill-color:#9aa9bc!important;
+        text-decoration:none!important;
         text-shadow:none!important;
       }
 
@@ -1349,11 +1371,7 @@
         color:#f3f7fc!important;
       }
 
-      /* Current/next mission remains highlighted without blue subtitle glare */
-      #auroraNavPanel .aurora-nav-step.is-next-mission .aurora-nav-step-copy span,
-      #auroraNavPanel .aurora-nav-step.is-active .aurora-nav-step-copy span{
-        color:#b8c4d4!important;
-      }
+      /* Active highlighting stays on the row, not on the helper text. */
     `;
 
     document.head.appendChild(style);
