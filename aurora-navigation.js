@@ -39,6 +39,7 @@
     ["£","Finance Department","AuroraCityFC_FinanceDepartment.html"],
     ["♟","Squad Hub","AuroraCityFC_SquadHub.html"],
     ["↗","Analysis Room","AuroraCityFC_AnalysisRoom.html"],
+    ["🧠","Learning Centre","AuroraCityFC_LearningCentre.html"],
     ["▲","Training Ground","AuroraCityFC_TrainingGround.html"],
     ["⌕","Scouting Centre","AuroraCityFC_ScoutingCentre.html"],
     ["⇄","Transfer Centre","AuroraCityFC_TransferCentre.html"],
@@ -1184,6 +1185,21 @@
       }
 
       #auroraNavPanel
+      .aurora-nav-dept[data-department="Learning Centre"]
+      .aurora-nav-dept-icon{
+        color:#e9d5ff;
+        background:
+          radial-gradient(
+            circle at 32% 24%,
+            rgba(255,255,255,.14),
+            transparent 42%
+          ),
+          linear-gradient(145deg,#7e22ce,#2e1065);
+        text-shadow:
+          0 1px 8px rgba(167,139,250,.35);
+      }
+
+      #auroraNavPanel
       .aurora-nav-dept[data-department="Training Ground"]
       .aurora-nav-dept-icon{
         color:#a7f3d0;
@@ -1354,6 +1370,7 @@
     "auroracityfc_financedepartment.html":"Finance Department",
     "auroracityfc_squadhub.html":"Squad Hub",
     "auroracityfc_analysisroom.html":"Analysis Room",
+    "auroracityfc_learningcentre.html":"Learning Centre",
     "auroracityfc_trainingground.html":"Training Ground",
     "auroracityfc_scoutingcentre.html":"Scouting Centre",
     "auroracityfc_transfercentre.html":"Transfer Centre",
