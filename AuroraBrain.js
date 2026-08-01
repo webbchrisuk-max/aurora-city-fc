@@ -14,7 +14,7 @@
 (function (global) {
   "use strict";
 
-  const VERSION = "3.0.0";
+  const VERSION = "3.1.0";
 
   function compact(value) {
     return String(value ?? "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -198,6 +198,7 @@
       return {
         ticker,
         name: String(value(first, "name", "company", "company_name") || ticker),
+        company: String(value(first, "name", "company", "company_name") || ticker),
         accounts: [...new Set(rows.map(row => String(value(row, "account", "broker", "platform") || "")).filter(Boolean))],
         sector: String(value(first, "sector", "industry") || "Unclassified"),
         role: String(value(first, "role", "squad role", "squad_role") || ""),
@@ -212,7 +213,10 @@
         score,
         confidence: Math.max(0, Math.min(100, derivedConfidence)),
         status,
+        action: status,
         blocked,
+        riskLevel: blocked ? (derivedConfidence < 45 ? "High" : "Medium") : (yieldPct >= 12 ? "High" : yieldPct >= 10 ? "Medium" : "Low"),
+        trainingGroup: derivedConfidence >= 80 ? "Elite Squad" : derivedConfidence >= 65 ? "First Team" : derivedConfidence >= 50 ? "Development Squad" : "Recovery Squad",
         changePct: priceRow.changePct || 0,
         valuationStatus: String(value(first, "valuation status", "valuation_status") || ""),
         payoutRisk: String(value(first, "payout risk", "payout_risk") || ""),
@@ -392,6 +396,66 @@
       return {decision,note,bestIncome,bestGrowth,mostUndervalued,nextDividend};
     }
 
+
+    function getManagerThought(ticker) {
+      const row = holdings.find(item => item.ticker === cleanTicker(ticker));
+      if (!row) return "No live holding assessment is available.";
+      const parts = [];
+      if (row.blocked) parts.push(`${row.ticker} is restricted for new money`);
+      else if (row.confidence >= 80) parts.push(`${row.ticker} is one of the strongest current squad members`);
+      else if (row.confidence >= 65) parts.push(`${row.ticker} remains a credible first-team holding`);
+      else parts.push(`${row.ticker} needs monitoring before more capital is committed`);
+      parts.push(`confidence ${row.confidence}/100`);
+      if (row.discount > 0) parts.push(`${row.discount.toFixed(1)}% below fair value`);
+      if (row.yieldPct > 0) parts.push(`${row.yieldPct.toFixed(1)}% live yield`);
+      return parts.join(", ") + ".";
+    }
+
+    function compareHoldings(leftTicker, rightTicker) {
+      const left = holdings.find(item => item.ticker === cleanTicker(leftTicker));
+      const right = holdings.find(item => item.ticker === cleanTicker(rightTicker));
+      if (!left || !right) return {winner:null, summary:"Comparison unavailable."};
+      const leftScore = left.confidence + Math.max(0,left.discount)*0.15 + Math.min(12,left.yieldPct)*0.25 - (left.blocked?15:0);
+      const rightScore = right.confidence + Math.max(0,right.discount)*0.15 + Math.min(12,right.yieldPct)*0.25 - (right.blocked?15:0);
+      const winner = leftScore === rightScore ? null : (leftScore > rightScore ? left.ticker : right.ticker);
+      return {
+        winner,
+        left,
+        right,
+        summary: winner
+          ? `${winner} leads the comparison on Aurora's combined confidence, income and valuation assessment.`
+          : `${left.ticker} and ${right.ticker} are currently level on Aurora's combined assessment.`
+      };
+    }
+
+    function getManagerVerdict() { return getSummary().managerVerdict; }
+    function getMarketRegime() { return portfolio.marketRegime; }
+    function getBuyMode() { return portfolio.buyMode; }
+    function getSquadConfidence() { return portfolio.averageConfidence; }
+    function getTopHolding() { return topHolding; }
+    function getLowestHolding() { return lowestHolding; }
+    function getNewsBalance() { return {positive:portfolio.positiveNews, negative:portfolio.negativeNews}; }
+    function getTodaysMission() { return getTodayBestAction(); }
+    function getSelectionBoard() {
+      const action = getTodayBestAction();
+      return {
+        primary: action.decision,
+        note: action.note,
+        clearedTarget: action.bestIncome,
+        medicalPriority: restrictions.slice().sort((a,b)=>a.confidence-b.confidence)[0] || null,
+        comparison: holdings.length >= 2 ? compareHoldings(holdings[0].ticker, holdings[1].ticker) : null
+      };
+    }
+    function getMatchCommandData() {
+      return {
+        holdings: portfolio.holdingCount,
+        confidence: portfolio.averageConfidence,
+        restrictions: portfolio.restrictionCount,
+        news: getNewsBalance(),
+        updatedAt: portfolio.generatedAt
+      };
+    }
+
     function getSummary() {
       return {
         managerVerdict: restrictions.length >= 3 ? "Defensive review required" : "Selective accumulation remains appropriate",
@@ -409,6 +473,7 @@
     const summary = getSummary();
     const portfolio = Object.freeze({
       version: VERSION,
+      generatedAt: new Date().toISOString(),
       holdingCount: summary.holdingCount,
       averageConfidence: summary.averageConfidence,
       confidenceBand: summary.confidenceBand,
@@ -444,6 +509,18 @@
         const row = holdings.find(item=>item.ticker===cleanTicker(ticker));
         return row ? `${row.name}: ${row.status}, confidence ${row.confidence}/100, discount ${row.discount.toFixed(1)}%.` : "No holding found.";
       },
+      getManagerThought,
+      compareHoldings,
+      getManagerVerdict,
+      getMarketRegime,
+      getBuyMode,
+      getSquadConfidence,
+      getTopHolding,
+      getLowestHolding,
+      getNewsBalance,
+      getTodaysMission,
+      getSelectionBoard,
+      getMatchCommandData,
       getPremierLeague,
       getFairValueDiscounts,
       getNextDividend,
