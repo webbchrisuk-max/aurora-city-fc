@@ -1,85 +1,27 @@
+
 /**
- * Aurora City FC — AuroraBrain.js
- * Shared intelligence layer for all Aurora HTML departments.
+ * Aurora City FC — AuroraBrain.js v3.0
+ * Derived intelligence engine.
  *
- * Reads AuroraMaster.json-compatible data and exposes one consistent API:
- *
- *   const data = await fetch("AuroraMaster.json").then(r => r.json());
- *   const brain = AuroraBrain.create(data);
- *
- *   brain.portfolio
- *   brain.getHolding("UKW")
- *   brain.getAllHoldings()
- *   brain.getPriorityBuys()
- *   brain.getBlockedHoldings()
- *   brain.getRestrictions()
- *   brain.canBuy("UKW")
- *   brain.getBuyReason("UKW")
- *   brain.getTrainingGroup("UKW")
- *   brain.compareHoldings("UKW", "FGEN")
- *   brain.getManagerThought("UKW")
- *   brain.getSectorStrength()
- *
- * Build: Aurora Brain v2.0
+ * It does not require extra summary sheets. It derives:
+ * - Premier League zones
+ * - fair-value discounts
+ * - next dividend and 12-month runway
+ * - dividend roadmap
+ * - today's best action
+ * from the existing AuroraMaster tabs.
  */
 (function (global) {
   "use strict";
 
-  const VERSION = "2.0.0";
+  const VERSION = "3.0.0";
 
-  const DEFAULTS = Object.freeze({
-    confidenceBands: Object.freeze([
-      { min: 85, name: "Elite", statusClass: "elite" },
-      { min: 75, name: "Strong", statusClass: "strong" },
-      { min: 65, name: "Good", statusClass: "good" },
-      { min: 50, name: "Watch", statusClass: "watch" },
-      { min: 0, name: "Concern", statusClass: "concern" }
-    ]),
-    trainingGroups: Object.freeze([
-      { min: 75, name: "Elite Squad", statusClass: "elite", icon: "🏆" },
-      { min: 65, name: "First Team", statusClass: "first", icon: "⭐" },
-      { min: 50, name: "Development Squad", statusClass: "development", icon: "📈" },
-      { min: 0, name: "Recovery Squad", statusClass: "recovery", icon: "🩺" }
-    ]),
-    blockedActionPatterns: Object.freeze([
-      /no new money/i,
-      /avoid/i,
-      /review/i,
-      /locked legacy/i,
-      /monitor only/i,
-      /watch \/ no new money/i
-    ]),
-    buyActionPatterns: Object.freeze([
-      /priority buy/i,
-      /selective buy/i,
-      /hold \/ accumulate/i,
-      /accumulate/i
-    ])
-  });
-
-  function AuroraBrainError(message, details) {
-    this.name = "AuroraBrainError";
-    this.message = message || "Aurora Brain error";
-    this.details = details || null;
-    if (Error.captureStackTrace) Error.captureStackTrace(this, AuroraBrainError);
-  }
-  AuroraBrainError.prototype = Object.create(Error.prototype);
-  AuroraBrainError.prototype.constructor = AuroraBrainError;
-
-  function normaliseKey(value) {
-    return String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[_-]+/g, " ")
-      .replace(/\s+/g, " ");
-  }
-
-  function compactKey(value) {
-    return normaliseKey(value).replace(/[^a-z0-9]/g, "");
+  function compact(value) {
+    return String(value ?? "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
   }
 
   function cleanTicker(value) {
-    return String(value || "")
+    return String(value ?? "")
       .trim()
       .toUpperCase()
       .replace(/^LON:/, "")
@@ -87,684 +29,446 @@
       .replace(/\s+/g, "");
   }
 
-  function parseNumber(value) {
+  function number(value) {
     if (value === null || value === undefined || value === "") return NaN;
     if (typeof value === "number") return Number.isFinite(value) ? value : NaN;
-
-    const cleaned = String(value)
-      .replace(/[£$€,%\s]/g, "")
-      .replace(/,/g, "")
-      .trim();
-
-    if (!cleaned) return NaN;
-    const number = Number(cleaned);
-    return Number.isFinite(number) ? number : NaN;
+    const cleaned = String(value).replace(/[£$€,%\s]/g, "").replace(/,/g, "");
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) ? parsed : NaN;
   }
 
-  function parsePercent(value) {
-    const number = parseNumber(value);
-    if (!Number.isFinite(number)) return NaN;
-    return Math.abs(number) <= 1 ? number * 100 : number;
+  function percent(value) {
+    const parsed = number(value);
+    if (!Number.isFinite(parsed)) return NaN;
+    return Math.abs(parsed) <= 1 ? parsed * 100 : parsed;
   }
 
-  function parseDate(value) {
-    if (!value) return null;
-    if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
-
-    const text = String(value).trim();
-    const uk = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
-
-    if (uk) {
-      const date = new Date(
-        Number(uk[3]),
-        Number(uk[2]) - 1,
-        Number(uk[1]),
-        Number(uk[4] || 0),
-        Number(uk[5] || 0)
-      );
-      return Number.isNaN(date.getTime()) ? null : date;
+  function excelDate(value) {
+    const serial = number(value);
+    if (Number.isFinite(serial) && serial > 20000 && serial < 100000) {
+      return new Date(Date.UTC(1899, 11, 30) + serial * 86400000);
     }
-
+    if (!value) return null;
+    const uk = String(value).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (uk) return new Date(Number(uk[3]), Number(uk[2]) - 1, Number(uk[1]));
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? null : date;
   }
 
-  function getValue(row, ...names) {
+  function value(row, ...names) {
     if (!row || typeof row !== "object") return "";
-
-    const index = new Map();
-    Object.keys(row).forEach(key => index.set(compactKey(key), row[key]));
-
+    const map = new Map(Object.keys(row).map(key => [compact(key), row[key]]));
     for (const name of names) {
-      const key = compactKey(name);
-      if (index.has(key)) {
-        const value = index.get(key);
-        if (value !== null && value !== undefined && String(value).trim() !== "") return value;
-      }
+      const result = map.get(compact(name));
+      if (result !== undefined && result !== null && String(result).trim() !== "") return result;
     }
-
     return "";
   }
 
-  function rowsFromTabValue(value) {
-    if (!value) return [];
-
-    if (Array.isArray(value)) {
-      if (!value.length) return [];
-      if (value.every(row => row && typeof row === "object" && !Array.isArray(row))) {
-        return value.slice();
-      }
-      if (value.every(Array.isArray)) {
-        const first = value[0] || [];
-        const looksLikeHeader = first.every(cell => typeof cell === "string" || cell === null || cell === undefined);
-        if (!looksLikeHeader) return [];
-        const headers = first.map(cell => String(cell || "").trim());
-        return value.slice(1).filter(row => row.some(cell => cell !== "" && cell !== null && cell !== undefined)).map(row => {
-          const obj = {};
-          headers.forEach((header, index) => { if (header) obj[header] = row[index]; });
-          return obj;
-        });
+  function rowsFromValue(source) {
+    if (!source) return [];
+    if (Array.isArray(source)) {
+      if (!source.length) return [];
+      if (source.every(row => row && typeof row === "object" && !Array.isArray(row))) return source;
+      if (source.every(Array.isArray)) {
+        const headers = (source[0] || []).map(item => String(item ?? "").trim());
+        return source.slice(1).filter(row => row.some(cell => cell !== "" && cell !== null && cell !== undefined))
+          .map(row => {
+            const object = {};
+            headers.forEach((header, index) => { if (header) object[header] = row[index]; });
+            return object;
+          });
       }
       return [];
     }
+    if (typeof source !== "object") return [];
 
-    if (typeof value !== "object") return [];
-
-    const directArrays = [value.rows, value.data, value.values, value.records, value.items];
-    for (const candidate of directArrays) {
-      if (!Array.isArray(candidate)) continue;
-      if (candidate.every(row => row && typeof row === "object" && !Array.isArray(row))) return candidate.slice();
-      if (candidate.every(Array.isArray)) {
-        const headers = Array.isArray(value.headers)
-          ? value.headers.map(cell => String(cell || "").trim())
-          : Array.isArray(value.columns)
-            ? value.columns.map(column => String(column?.label || column?.name || column || "").trim())
-            : [];
-        if (headers.length) {
-          return candidate.filter(row => row.some(cell => cell !== "" && cell !== null && cell !== undefined)).map(row => {
-            const obj = {};
-            headers.forEach((header, index) => { if (header) obj[header] = row[index]; });
-            return obj;
-          });
-        }
-        return rowsFromTabValue(candidate);
-      }
-    }
-
-    // Google Visualization style: { cols:[{label}], rows:[{c:[{v}]}] }
-    if (Array.isArray(value.cols) && Array.isArray(value.rows)) {
-      const headers = value.cols.map((column, index) => String(column?.label || column?.id || `column_${index + 1}`));
-      return value.rows.map(row => {
+    if (Array.isArray(source.cols) && Array.isArray(source.rows)) {
+      const headers = source.cols.map((column, index) => String(column?.label || column?.id || `column_${index + 1}`));
+      return source.rows.map(row => {
+        const object = {};
         const cells = Array.isArray(row?.c) ? row.c : [];
-        const obj = {};
-        headers.forEach((header, index) => { obj[header] = cells[index]?.v ?? cells[index]?.f ?? ""; });
-        return obj;
+        headers.forEach((header, index) => { object[header] = cells[index]?.v ?? cells[index]?.f ?? ""; });
+        return object;
       });
     }
 
+    for (const candidate of [source.rows, source.data, source.values, source.records, source.items]) {
+      const rows = rowsFromValue(candidate);
+      if (rows.length) return rows;
+    }
     return [];
   }
 
-  function getTab(master, tabName) {
-    if (!master || typeof master !== "object") return [];
-
-    const wanted = compactKey(tabName);
+  function getTab(master, name) {
+    const wanted = compact(name);
     const containers = [
-      master,
-      master.data,
-      master.tabs,
-      master.sheets,
-      master.feeds,
-      master.tables,
-      master.payload
-    ].filter(container => container && typeof container === "object");
+      master, master?.data, master?.tabs, master?.sheets,
+      master?.feeds, master?.tables, master?.payload
+    ].filter(item => item && typeof item === "object");
 
     for (const container of containers) {
       for (const key of Object.keys(container)) {
-        if (compactKey(key) !== wanted) continue;
-        const rows = rowsFromTabValue(container[key]);
-        if (rows.length || Array.isArray(container[key])) return rows;
+        if (compact(key) === wanted) return rowsFromValue(container[key]);
       }
     }
-
-    // Some exports use an array of sheet objects.
-    for (const container of containers) {
-      if (!Array.isArray(container)) continue;
-      for (const sheet of container) {
-        const name = sheet?.name || sheet?.title || sheet?.sheet || sheet?.tab;
-        if (compactKey(name) === wanted) return rowsFromTabValue(sheet);
-      }
-    }
-
     return [];
   }
 
-  function actionType(action) {
-    const text = String(action || "");
-
-    if (DEFAULTS.blockedActionPatterns.some(pattern => pattern.test(text))) return "blocked";
-    if (DEFAULTS.buyActionPatterns.some(pattern => pattern.test(text))) return "buy";
-    return "watch";
-  }
-
-  function confidenceBand(score) {
-    const value = Number.isFinite(score) ? score : 0;
-    return DEFAULTS.confidenceBands.find(item => value >= item.min) || DEFAULTS.confidenceBands.at(-1);
-  }
-
-  function trainingGroup(score) {
-    const value = Number.isFinite(score) ? score : 0;
-    return DEFAULTS.trainingGroups.find(item => value >= item.min) || DEFAULTS.trainingGroups.at(-1);
-  }
-
-  function sortByDateDescending(rows) {
-    return rows.slice().sort((a, b) => {
-      const aDate = parseDate(
-        getValue(a, "generated_at", "published at", "published_at", "date", "timestamp", "created at")
-      );
-      const bDate = parseDate(
-        getValue(b, "generated_at", "published at", "published_at", "date", "timestamp", "created at")
-      );
-      return (bDate?.getTime() || 0) - (aDate?.getTime() || 0);
-    });
-  }
-
-  function latestByTicker(rows) {
+  function latestPrices(master) {
     const map = new Map();
 
-    sortByDateDescending(rows).forEach(row => {
-      const ticker = cleanTicker(getValue(row, "ticker", "symbol", "epic"));
-      if (ticker && !map.has(ticker)) map.set(ticker, row);
+    getTab(master, "DailyPriceSummary").forEach(row => {
+      const ticker = cleanTicker(value(row, "ticker", "symbol"));
+      const date = excelDate(value(row, "date", "timestamp"));
+      if (!ticker) return;
+      const existing = map.get(ticker);
+      if (!existing || (date?.getTime() || 0) >= (existing.date?.getTime() || 0)) {
+        map.set(ticker, {
+          ticker,
+          price: number(value(row, "close price", "close", "price")),
+          change: number(value(row, "change")),
+          changePct: percent(value(row, "change %", "change pct", "change_pct")),
+          low: number(value(row, "low price", "low")),
+          high: number(value(row, "high price", "high")),
+          date
+        });
+      }
+    });
+
+    getTab(master, "LivePrices").forEach(row => {
+      const ticker = cleanTicker(value(row, "symbol", "ticker"));
+      const price = number(value(row, "price", "live price"));
+      if (ticker && Number.isFinite(price)) {
+        const existing = map.get(ticker) || { ticker };
+        existing.price = price;
+        map.set(ticker, existing);
+      }
     });
 
     return map;
   }
 
-  function normaliseBriefing(rows) {
-    if (!Array.isArray(rows) || !rows.length) return {};
+  function holdingRows(master) {
+    const prices = latestPrices(master);
+    const groups = new Map();
 
-    const first = rows[0] || {};
-    const keys = Object.keys(first).map(compactKey);
+    getTab(master, "Holdings").forEach(row => {
+      const ticker = cleanTicker(value(row, "ticker", "symbol", "epic"));
+      const shares = number(value(row, "shares", "quantity", "units")) || 0;
+      if (!ticker || shares <= 0) return;
 
-    if (keys.includes("managerverdict") || keys.includes("marketregime")) {
-      return first;
-    }
-
-    const keyValue = {};
-    rows.forEach(row => {
-      const label = getValue(row, "label", "metric", "name", "field", "key", "A");
-      const value = getValue(row, "value", "result", "B");
-      if (label) keyValue[normaliseKey(label)] = value;
+      if (!groups.has(ticker)) groups.set(ticker, []);
+      groups.get(ticker).push(row);
     });
 
-    return keyValue;
-  }
+    return [...groups.entries()].map(([ticker, rows]) => {
+      const first = rows[0] || {};
+      const priceRow = prices.get(ticker) || {};
+      const shares = rows.reduce((sum, row) => sum + (number(value(row, "shares", "quantity", "units")) || 0), 0);
+      const sheetValues = rows.reduce((sum, row) => sum + (number(value(row, "current value", "current_value", "market value", "market_value")) || 0), 0);
+      const annualIncome = rows.reduce((sum, row) => sum + (number(value(row, "annual dps total", "annual_dps_total", "annual income", "annual_income")) || 0), 0);
+      const fairValues = rows.map(row => number(value(row, "fair value", "fair_value"))).filter(Number.isFinite);
+      const fairValue = fairValues.length ? fairValues.reduce((a,b)=>a+b,0) / fairValues.length : NaN;
+      const explicitPrice = rows.map(row => number(value(row, "live price", "live_price", "price"))).find(Number.isFinite);
+      const currentValue = sheetValues || 0;
+      let price = Number.isFinite(explicitPrice) ? explicitPrice : priceRow.price;
+      if ((!Number.isFinite(price) || price <= 0) && currentValue > 0 && shares > 0) price = currentValue / shares;
 
-  function buildHolding(intelligenceRow, holdingsRows, newsRows) {
-    const ticker = cleanTicker(getValue(intelligenceRow, "ticker", "symbol", "epic"));
-    const score = parseNumber(getValue(intelligenceRow, "confidence_score", "confidence", "score"));
-    const band = confidenceBand(score);
-    const action = String(getValue(intelligenceRow, "action", "recommendation", "decision") || "HOLD / WATCH");
-    const riskLevel = String(getValue(intelligenceRow, "risk_level", "risk", "risk band") || "Unknown");
-    const holdingRows = holdingsRows.filter(row => cleanTicker(getValue(row, "ticker", "symbol", "epic")) === ticker);
-    const matchingNews = newsRows.filter(row => cleanTicker(getValue(row, "ticker", "symbol", "epic")) === ticker);
+      const scores = rows.map(row => number(value(row, "buy strength", "buy_strength", "confidence", "confidence_score"))).filter(Number.isFinite);
+      const score = scores.length ? Math.max(...scores) : 50;
+      const annualDpsValues = rows.map(row => number(value(row, "annual dps", "annual_dps", "dps"))).filter(Number.isFinite);
+      const annualDps = annualDpsValues.length ? annualDpsValues[0] : (shares > 0 ? annualIncome / shares : 0);
+      const yieldPct = Number.isFinite(price) && price > 0 ? (annualDps / price) * 100 : percent(value(first, "yield pct", "yield_pct", "yield")) || 0;
+      const discount = Number.isFinite(price) && price > 0 && Number.isFinite(fairValue) && fairValue > 0
+        ? ((fairValue - price) / fairValue) * 100
+        : 0;
 
-    const accounts = [...new Set(
-      holdingRows
-        .map(row => String(getValue(row, "account", "platform", "broker") || "").trim())
-        .filter(Boolean)
-    )];
-
-    const shares = holdingRows.reduce((sum, row) => sum + (parseNumber(getValue(row, "shares", "quantity", "units")) || 0), 0);
-    const marketValueFromHoldings = holdingRows.reduce((sum, row) => {
-      return sum + (parseNumber(getValue(row, "market value", "market_value", "current value", "value")) || 0);
-    }, 0);
-    const incomeFromHoldings = holdingRows.reduce((sum, row) => {
-      return sum + (parseNumber(getValue(row, "annual income", "annual_income", "projected annual income")) || 0);
-    }, 0);
-
-    const positiveNews = parseNumber(getValue(intelligenceRow, "positive_news")) || 0;
-    const negativeNews = parseNumber(getValue(intelligenceRow, "negative_news")) || 0;
-    const latestNews =
-      String(getValue(intelligenceRow, "latest_news", "latest headline") || "") ||
-      String(getValue(sortByDateDescending(matchingNews)[0], "headline", "title", "news headline") || "");
-
-    const generatedAt = parseDate(getValue(intelligenceRow, "generated_at", "generated", "timestamp"));
-
-    return Object.freeze({
-      ticker,
-      company: String(getValue(intelligenceRow, "company", "name") || getValue(holdingRows[0], "name", "company") || ticker),
-      account: String(getValue(intelligenceRow, "account") || accounts.join(" + ")),
-      accounts: Object.freeze(accounts),
-      shares,
-      confidence: Number.isFinite(score) ? score : 0,
-      confidenceBand: band.name,
-      statusClass: band.statusClass,
-      action,
-      actionType: actionType(action),
-      canBuy: actionType(action) === "buy",
-      blocked: actionType(action) === "blocked",
-      price: parseNumber(getValue(intelligenceRow, "price")),
-      changePct: parsePercent(getValue(intelligenceRow, "change_pct", "daily_change_pct")),
-      yieldPct: parsePercent(getValue(intelligenceRow, "yield_pct", "yield")),
-      annualIncome: parseNumber(getValue(intelligenceRow, "annual_income")) || incomeFromHoldings,
-      marketValue: parseNumber(getValue(intelligenceRow, "market_value")) || marketValueFromHoldings,
-      priceScore: parseNumber(getValue(intelligenceRow, "price_score")),
-      incomeScore: parseNumber(getValue(intelligenceRow, "income_score")),
-      newsScore: parseNumber(getValue(intelligenceRow, "news_score")),
-      decisionScore: parseNumber(getValue(intelligenceRow, "decision_score")),
-      regimeScore: parseNumber(getValue(intelligenceRow, "regime_score")),
-      riskLevel,
-      riskPenalty: parseNumber(getValue(intelligenceRow, "risk_penalty")) || 0,
-      newsCount: parseNumber(getValue(intelligenceRow, "news_count")) || matchingNews.length,
-      positiveNews,
-      negativeNews,
-      latestNews,
-      marketRegime: String(getValue(intelligenceRow, "market_regime") || ""),
-      buyMode: String(getValue(intelligenceRow, "buy_mode") || ""),
-      explanation: String(getValue(intelligenceRow, "explanation") || ""),
-      source: String(getValue(intelligenceRow, "source") || "Aurora Intelligence Engine"),
-      generatedAt,
-      generatedAtIso: generatedAt ? generatedAt.toISOString() : "",
-      trainingGroup: trainingGroup(score).name,
-      trainingGroupClass: trainingGroup(score).statusClass,
-      trainingGroupIcon: trainingGroup(score).icon,
-      developmentStatus:
-        score >= 75 ? "Peak form" :
-        score >= 65 ? "First-team standard" :
-        score >= 50 ? "Development required" :
-        "Recovery programme",
-      newsImpact:
-        positiveNews > negativeNews ? "Positive" :
-        negativeNews > positiveNews ? "Negative" :
-        "Neutral",
-      raw: Object.freeze({
-        intelligence: intelligenceRow,
-        holdings: Object.freeze(holdingRows.slice()),
-        news: Object.freeze(matchingNews.slice())
-      })
-    });
-  }
-
-  function managerThought(holding) {
-    if (!holding) return "No Aurora Intelligence record is available for this holding.";
-
-    const reasons = [];
-
-    if (Number.isFinite(holding.incomeScore)) {
-      if (holding.incomeScore >= 75) reasons.push("income quality is strong");
-      else if (holding.incomeScore < 50) reasons.push("income quality remains weak");
-    }
-
-    if (Number.isFinite(holding.newsScore)) {
-      if (holding.newsScore >= 70) reasons.push("recent news is supportive");
-      else if (holding.newsScore < 45) reasons.push("recent news is applying pressure");
-    }
-
-    if (Number.isFinite(holding.regimeScore)) {
-      if (holding.regimeScore >= 75) reasons.push("the current market regime is favourable");
-      else if (holding.regimeScore < 50) reasons.push("the current market regime is a poor fit");
-    }
-
-    if (holding.riskLevel.toLowerCase() === "high") reasons.push("risk remains elevated");
-    else if (holding.riskLevel.toLowerCase() === "low") reasons.push("risk is controlled");
-
-    const why = reasons.length ? reasons.join(", ") : "the current score mix is balanced";
-
-    return `${holding.ticker} is rated ${holding.confidence}/100 (${holding.confidenceBand}). Aurora's instruction is ${holding.action} because ${why}.`;
-  }
-
-  function compareHoldings(a, b) {
-    if (!a && !b) return null;
-    if (!a) return { winner: b.ticker, loser: null, difference: null, summary: `${b.ticker} is the only holding available for comparison.` };
-    if (!b) return { winner: a.ticker, loser: null, difference: null, summary: `${a.ticker} is the only holding available for comparison.` };
-
-    const difference = Math.round((a.confidence - b.confidence) * 10) / 10;
-
-    if (difference === 0) {
-      return {
-        winner: null,
-        loser: null,
-        difference: 0,
-        summary: `${a.ticker} and ${b.ticker} have the same confidence score of ${a.confidence}/100.`,
-        a,
-        b
-      };
-    }
-
-    const winner = difference > 0 ? a : b;
-    const loser = difference > 0 ? b : a;
-
-    return {
-      winner: winner.ticker,
-      loser: loser.ticker,
-      difference: Math.abs(difference),
-      summary: `${winner.ticker} currently leads ${loser.ticker} by ${Math.abs(difference).toFixed(1)} confidence points.`,
-      a,
-      b
-    };
-  }
-
-  function create(master, options) {
-    if (!master || typeof master !== "object") {
-      throw new AuroraBrainError("AuroraBrain.create() requires an AuroraMaster JSON object.");
-    }
-
-    const config = Object.assign({}, options || {});
-    const intelligenceRows = getTab(master, "AuroraIntelligence");
-    const briefingRows = getTab(master, "ManagerBriefing");
-    const holdingsRows = getTab(master, "Holdings");
-    const newsRows = getTab(master, "AuroraTimes");
-    const regimeRows = getTab(master, "MarketRegime");
-
-    const briefing = normaliseBriefing(briefingRows);
-    const latestIntelligence = [...latestByTicker(intelligenceRows).values()];
-    const holdingList = latestIntelligence
-      .map(row => buildHolding(row, holdingsRows, newsRows))
-      .filter(holding => holding.ticker)
-      .sort((a, b) => b.confidence - a.confidence);
-
-    const holdingMap = new Map(holdingList.map(holding => [holding.ticker, holding]));
-    const scores = holdingList.map(holding => holding.confidence).filter(Number.isFinite);
-    const averageConfidence = scores.length
-      ? scores.reduce((sum, value) => sum + value, 0) / scores.length
-      : 0;
-
-    const topHolding = holdingList[0] || null;
-    const lowestHolding = holdingList.at(-1) || null;
-    const positiveNews = holdingList.reduce((sum, holding) => sum + holding.positiveNews, 0);
-    const negativeNews = holdingList.reduce((sum, holding) => sum + holding.negativeNews, 0);
-    const restrictions = holdingList.filter(holding => holding.blocked);
-    const priorityBuys = holdingList.filter(holding => holding.canBuy);
-
-    const regimeRow = regimeRows[0] || {};
-    const marketRegime =
-      String(getValue(briefing, "market regime", "market_regime") || "") ||
-      String(getValue(regimeRow, "current regime", "current_regime", "regime") || "") ||
-      String(topHolding?.marketRegime || "");
-
-    const buyMode =
-      String(getValue(briefing, "buy mode", "buy_mode") || "") ||
-      String(getValue(regimeRow, "buy mode", "buy_mode") || "") ||
-      String(topHolding?.buyMode || "");
-
-    const managerVerdict =
-      String(getValue(briefing, "manager verdict", "manager_verdict", "verdict") || "") ||
-      (
-        restrictions.length >= 3
-          ? "Defensive review required"
-          : negativeNews > positiveNews
-            ? "Caution: news balance has weakened"
-            : "Selective accumulation remains appropriate"
+      const status = String(value(first, "status", "action", "recommendation") || "HOLD").toUpperCase();
+      const blocked = /WAIT|REVIEW|NO BUY|AVOID|LOCKED/.test(status);
+      const valuationScore = number(value(first, "valuation score", "valuation_score")) || 50;
+      const yieldScore = number(value(first, "yield score", "yield_score")) || 50;
+      const payoutScore = number(value(first, "payout score", "payout_score")) || 50;
+      const growthScore = number(value(first, "growth score", "growth_score")) || 50;
+      const derivedConfidence = Math.round(
+        score * 0.45 + valuationScore * 0.20 + yieldScore * 0.18 +
+        payoutScore * 0.08 + growthScore * 0.09 - (blocked ? 10 : 0)
       );
 
-    const generatedAt =
-      parseDate(getValue(briefing, "generated", "generated_at", "last update")) ||
-      topHolding?.generatedAt ||
-      null;
-
-    const portfolio = Object.freeze({
-      version: VERSION,
-      holdingCount: holdingList.length,
-      averageConfidence: Math.round(averageConfidence * 10) / 10,
-      confidenceBand: confidenceBand(averageConfidence).name,
-      statusClass: confidenceBand(averageConfidence).statusClass,
-      topHolding,
-      lowestHolding,
-      managerVerdict,
-      marketRegime,
-      buyMode,
-      restrictionCount: restrictions.length,
-      buyEligibleCount: priorityBuys.length,
-      positiveNews,
-      negativeNews,
-      newsBalance: positiveNews - negativeNews,
-      annualIncome: holdingList.reduce((sum, holding) => sum + (holding.annualIncome || 0), 0),
-      marketValue: holdingList.reduce((sum, holding) => sum + (holding.marketValue || 0), 0),
-      generatedAt,
-      generatedAtIso: generatedAt ? generatedAt.toISOString() : "",
-      dataQuality: Object.freeze({
-        hasIntelligence: intelligenceRows.length > 0,
-        hasBriefing: briefingRows.length > 0,
-        hasHoldings: holdingsRows.length > 0,
-        hasNews: newsRows.length > 0,
-        intelligenceRows: intelligenceRows.length,
-        briefingRows: briefingRows.length,
-        holdingsRows: holdingsRows.length,
-        newsRows: newsRows.length
-      })
-    });
-
-    function getHolding(ticker) {
-      return holdingMap.get(cleanTicker(ticker)) || null;
-    }
-
-    function getAllHoldings() {
-      return holdingList.slice();
-    }
-
-    function getPriorityBuys() {
-      return priorityBuys.slice();
-    }
-
-    function getBlockedHoldings() {
-      return restrictions.slice();
-    }
-
-    function getRestrictions() {
-      return restrictions.map(holding => ({
-        ticker: holding.ticker,
-        action: holding.action,
-        reason: holding.explanation || holding.riskLevel,
-        confidence: holding.confidence
-      }));
-    }
-
-    function canBuy(ticker) {
-      return Boolean(getHolding(ticker)?.canBuy);
-    }
-
-    function getBuyReason(ticker) {
-      const holding = getHolding(ticker);
-      if (!holding) return "No Aurora Intelligence record is available.";
-      return holding.canBuy
-        ? holding.explanation || `${holding.ticker} is currently eligible for ${holding.action}.`
-        : holding.explanation || `${holding.ticker} is currently restricted by ${holding.action}.`;
-    }
-
-    function getTrainingGroup(ticker) {
-      const holding = getHolding(ticker);
-      if (!holding) return null;
-
       return {
-        name: holding.trainingGroup,
-        statusClass: holding.trainingGroupClass,
-        icon: holding.trainingGroupIcon,
-        developmentStatus: holding.developmentStatus
+        ticker,
+        name: String(value(first, "name", "company", "company_name") || ticker),
+        accounts: [...new Set(rows.map(row => String(value(row, "account", "broker", "platform") || "")).filter(Boolean))],
+        sector: String(value(first, "sector", "industry") || "Unclassified"),
+        role: String(value(first, "role", "squad role", "squad_role") || ""),
+        shares,
+        price: Number.isFinite(price) ? price : 0,
+        fairValue: Number.isFinite(fairValue) ? fairValue : 0,
+        currentValue,
+        annualIncome,
+        annualDps,
+        yieldPct,
+        discount,
+        score,
+        confidence: Math.max(0, Math.min(100, derivedConfidence)),
+        status,
+        blocked,
+        changePct: priceRow.changePct || 0,
+        valuationStatus: String(value(first, "valuation status", "valuation_status") || ""),
+        payoutRisk: String(value(first, "payout risk", "payout_risk") || ""),
+        annualTarget: number(value(first, "annual target", "annual_target")) || 0,
+        raw: rows
+      };
+    }).sort((a,b) => b.confidence - a.confidence);
+  }
+
+  function watchRows(master) {
+    const prices = latestPrices(master);
+    return getTab(master, "Watchlist").map(row => {
+      const ticker = cleanTicker(value(row, "ticker", "symbol"));
+      const priceRow = prices.get(ticker) || {};
+      let price = number(value(row, "live price", "live_price", "price"));
+      if (!Number.isFinite(price)) price = priceRow.price;
+      const low = number(value(row, "low 52w", "low_52w"));
+      const high = number(value(row, "high 52w", "high_52w"));
+      const fair = number(value(row, "fair value", "fair_value"));
+      if ((!Number.isFinite(price) || price <= 0) && Number.isFinite(low) && Number.isFinite(high)) price = (low + high) / 2;
+      const dps = number(value(row, "annual dps", "annual_dps")) || 0;
+      const yieldPct = Number.isFinite(price) && price > 0 ? dps / price * 100 : 0;
+      const score = number(value(row, "buy strength", "buy_strength", "score")) || 0;
+      const discount = Number.isFinite(price) && price > 0 && Number.isFinite(fair) && fair > 0 ? ((fair-price)/fair)*100 : 0;
+      return {
+        ticker,
+        name: String(value(row, "name", "company", "company_name") || ticker),
+        price: Number.isFinite(price) ? price : 0,
+        fairValue: Number.isFinite(fair) ? fair : 0,
+        annualDps: dps,
+        yieldPct,
+        score,
+        confidence: Math.round(Math.max(0, Math.min(100, score * .7 + (number(value(row,"valuation score","valuation_score"))||50)*.18 + (number(value(row,"yield score","yield_score"))||50)*.12))),
+        discount,
+        status: String(value(row, "status") || ""),
+        trialStatus: String(value(row, "trial status", "trial_status") || ""),
+        verdict: String(value(row, "trial verdict", "trial_verdict") || "")
+      };
+    }).filter(row => row.ticker).sort((a,b)=>b.confidence-a.confidence);
+  }
+
+  function dividends(master) {
+    const activeTickers = new Set(holdingRows(master).map(item => item.ticker));
+    return getTab(master, "Dividends").map(row => {
+      const ticker = cleanTicker(value(row, "ticker", "symbol"));
+      return {
+        ticker,
+        name: String(value(row, "name", "company") || ticker),
+        exDate: excelDate(value(row, "ex date", "ex_date")),
+        payDate: excelDate(value(row, "pay date", "pay_date")),
+        amount: number(value(row, "dividend due", "dividend_due", "amount")) || 0,
+        received: number(value(row, "dividend received", "dividend_received")) || 0,
+        status: String(value(row, "status", "payment stage", "payment_stage") || ""),
+        stage: String(value(row, "payment stage", "payment_stage") || ""),
+        month: String(value(row, "income month", "income_month") || ""),
+        year: number(value(row, "income year", "income_year")),
+        active: activeTickers.has(ticker)
+      };
+    }).filter(row => row.ticker && row.active);
+  }
+
+  function confidenceBand(score) {
+    if (score >= 85) return "Elite";
+    if (score >= 75) return "Strong";
+    if (score >= 65) return "Good";
+    if (score >= 50) return "Watch";
+    return "Concern";
+  }
+
+  function create(master) {
+    if (!master || typeof master !== "object") throw new Error("AuroraBrain.create requires AuroraMaster data.");
+
+    const holdings = holdingRows(master);
+    const watchlist = watchRows(master);
+    const dividendRows = dividends(master);
+    const intelligence = getTab(master, "AuroraIntelligence");
+    const briefing = getTab(master, "ManagerBriefing");
+
+    const averageConfidence = holdings.length
+      ? holdings.reduce((sum,row)=>sum+row.confidence,0)/holdings.length
+      : 0;
+    const restrictions = holdings.filter(row => row.blocked);
+    const topHolding = holdings[0] || null;
+    const lowestHolding = holdings.at(-1) || null;
+
+    function getPremierLeague() {
+      const sorted = holdings.slice().sort((a,b)=>b.confidence-a.confidence);
+      return {
+        topFour: sorted.slice(0,4),
+        midTable: sorted.slice(4, Math.max(4, sorted.length-3)),
+        relegation: sorted.slice(-3),
+        promotion: watchlist.slice(0,4)
       };
     }
 
-    function getManagerThought(ticker) {
-      return managerThought(getHolding(ticker));
+    function getFairValueDiscounts(limit=6) {
+      return holdings.filter(row => row.discount > 0)
+        .sort((a,b)=>b.discount-a.discount)
+        .slice(0,limit);
     }
 
-    function compare(tickerA, tickerB) {
-      return compareHoldings(getHolding(tickerA), getHolding(tickerB));
+    function getNextDividend(now=new Date()) {
+      const upcoming = dividendRows
+        .filter(row => row.payDate && row.payDate.getTime() >= now.getTime() - 86400000)
+        .sort((a,b)=>a.payDate-b.payDate);
+      return upcoming[0] || null;
     }
 
-    function getSectorStrength() {
-      const sectors = new Map();
-
-      holdingList.forEach(holding => {
-        const sourceRows = holding.raw.holdings;
-        const sector =
-          String(getValue(sourceRows[0], "sector", "industry", "asset class", "category") || "Unclassified");
-
-        if (!sectors.has(sector)) {
-          sectors.set(sector, {
-            sector,
-            holdings: [],
-            confidenceTotal: 0,
-            annualIncome: 0,
-            marketValue: 0
-          });
-        }
-
-        const entry = sectors.get(sector);
-        entry.holdings.push(holding.ticker);
-        entry.confidenceTotal += holding.confidence;
-        entry.annualIncome += holding.annualIncome || 0;
-        entry.marketValue += holding.marketValue || 0;
+    function getDividendRunway(now=new Date()) {
+      const months = Array.from({length:12}, (_,index) => {
+        const date = new Date(now.getFullYear(), now.getMonth()+index, 1);
+        return {
+          key: `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`,
+          label: date.toLocaleString("en-GB",{month:"short",year:"numeric"}),
+          amount: 0,
+          rows: []
+        };
       });
-
-      return [...sectors.values()]
-        .map(entry => ({
-          sector: entry.sector,
-          holdings: entry.holdings,
-          holdingCount: entry.holdings.length,
-          averageConfidence: entry.holdings.length
-            ? Math.round((entry.confidenceTotal / entry.holdings.length) * 10) / 10
-            : 0,
-          annualIncome: entry.annualIncome,
-          marketValue: entry.marketValue
-        }))
-        .sort((a, b) => b.averageConfidence - a.averageConfidence);
-    }
-
-    function getPremierLeague() {
-      const all = getAllHoldings();
-      const champions = all.slice(0, 4);
-      const midTable = all.slice(4, Math.max(4, all.length - 3));
-      const relegation = all.slice(-3);
-      const watchRows = getTab(master, "Watchlist").concat(getTab(master, "Global Watchlist"));
-      const promotion = watchRows.slice(0, 6).map((row, index) => ({
-        position: index + 5,
-        ticker: cleanTicker(getValue(row, "ticker", "symbol", "epic")),
-        company: String(getValue(row, "name", "company", "company name") || "Watchlist candidate"),
-        score: parseNumber(getValue(row, "score", "buy strength", "buy_strength", "promotion score")) || 0,
-        action: String(getValue(row, "status", "action", "recommendation") || "SCOUT")
-      }));
-      return { champions, promotion, midTable, relegation };
-    }
-
-    function getFairValueDiscounts() {
-      return getAllHoldings().map(holding => {
-        const raw = holding.raw?.holdings?.[0] || {};
-        const fairValue = parseNumber(getValue(raw, "fair value", "fair_value", "target price", "target_price"));
-        const price = holding.price || parseNumber(getValue(raw, "live price", "live_price", "price"));
-        const discountPct = fairValue > 0 && price > 0 ? ((fairValue - price) / fairValue) * 100 : NaN;
-        return Object.assign({}, holding, { fairValue, discountPct });
-      }).filter(item => Number.isFinite(item.discountPct)).sort((a, b) => b.discountPct - a.discountPct);
+      const byKey = new Map(months.map(month=>[month.key,month]));
+      dividendRows.forEach(row => {
+        const date = row.payDate;
+        if (!date) return;
+        const key = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;
+        const month = byKey.get(key);
+        if (month) {
+          month.amount += row.amount || row.received || 0;
+          month.rows.push(row);
+        }
+      });
+      const populated = months.filter(month=>month.amount>0);
+      const best = populated.slice().sort((a,b)=>b.amount-a.amount)[0] || null;
+      const weakest = months.slice().sort((a,b)=>a.amount-b.amount)[0] || null;
+      const nextEx = dividendRows.filter(row=>row.exDate && row.exDate>=now).sort((a,b)=>a.exDate-b.exDate)[0] || null;
+      return {months,best,weakest,nextEx,gapCount:months.filter(month=>month.amount<=0).length};
     }
 
     function getDividendRoadmap() {
-      const monthly = portfolio.annualIncome / 12;
-      const targets = [250,350,500,800,1150,1400,1600,2000];
-      return targets.map((target, index) => ({
-        year: 2026 + index,
-        target,
-        currentMonthly: monthly,
-        progressPct: Math.min(100, target > 0 ? monthly / target * 100 : 0),
-        gap: Math.max(0, target - monthly),
-        achieved: monthly >= target
-      }));
-    }
-
-    function getIncomeForecast() {
-      const dividends = getTab(master, "Dividends");
-      return { annualIncome: portfolio.annualIncome, monthlyIncome: portfolio.annualIncome / 12, dividends };
-    }
-
-    function getDepartments() {
-      return [
-        { name: "Finance Department", status: "CONNECTED" },
-        { name: "Manager Dashboard", status: "CONNECTED" },
-        { name: "Squad Hub", status: "CONNECTED" },
-        { name: "Scouting Centre", status: "CONNECTED" },
-        { name: "Transfer Centre", status: "CONNECTED" },
-        { name: "Analysis Room", status: "CONNECTED" }
+      const annualIncome = holdings.reduce((sum,row)=>sum+(row.annualIncome||0),0);
+      const monthly = annualIncome/12;
+      const targets = [
+        [2026,250,350],[2027,350,500],[2028,500,700],[2029,800,1100],
+        [2030,1150,1400],[2031,1400,1600],[2032,1600,1800],[2033,2000,2000]
       ];
+      return {
+        currentMonthly: monthly,
+        currentAnnual: annualIncome,
+        years: targets.map(([year,min,max]) => ({
+          year,min,max,
+          progress: Math.min(100, min > 0 ? monthly/min*100 : 0),
+          gap: Math.max(0,min-monthly),
+          status: monthly>=min ? "Ahead / Achieved" : monthly>=min*.75 ? "On Track" : "Needs Build"
+        }))
+      };
+    }
+
+    function getTodayBestAction() {
+      const incomeCandidates = holdings.filter(row=>!row.blocked && row.price>0 && row.annualDps>0)
+        .map(row=>({...row,incomeFrom500:500/row.price*row.annualDps}))
+        .sort((a,b)=>b.incomeFrom500-a.incomeFrom500);
+      const growthCandidates = holdings.filter(row=>/GROWTH|ETF|TECH/i.test(`${row.role} ${row.sector}`) && !row.blocked)
+        .sort((a,b)=>b.confidence-a.confidence);
+      const discounts = getFairValueDiscounts();
+      const nextDividend = getNextDividend();
+      const bestIncome = incomeCandidates[0] || null;
+      const bestGrowth = growthCandidates[0] || holdings.find(row=>!row.blocked) || null;
+      const mostUndervalued = discounts[0] || null;
+
+      let decision = "Hold Position";
+      let note = "No forced move. Follow Aurora's restrictions and wait for a stronger signal.";
+      if (bestIncome && bestIncome.confidence >= 65) {
+        decision = `Review ${bestIncome.ticker}`;
+        note = `${bestIncome.name} currently produces the strongest estimated income from a £500 deployment.`;
+      } else if (mostUndervalued) {
+        decision = `Review ${mostUndervalued.ticker}`;
+        note = `${mostUndervalued.name} has the largest current discount to fair value.`;
+      }
+      return {decision,note,bestIncome,bestGrowth,mostUndervalued,nextDividend};
     }
 
     function getSummary() {
       return {
-        managerVerdict: portfolio.managerVerdict,
-        marketRegime: portfolio.marketRegime,
-        buyMode: portfolio.buyMode,
-        averageConfidence: portfolio.averageConfidence,
-        topHolding: portfolio.topHolding?.ticker || "",
-        lowestHolding: portfolio.lowestHolding?.ticker || "",
-        restrictions: portfolio.restrictionCount,
-        positiveNews: portfolio.positiveNews,
-        negativeNews: portfolio.negativeNews
+        managerVerdict: restrictions.length >= 3 ? "Defensive review required" : "Selective accumulation remains appropriate",
+        averageConfidence: Math.round(averageConfidence*10)/10,
+        confidenceBand: confidenceBand(averageConfidence),
+        topHolding,
+        lowestHolding,
+        restrictions: restrictions.length,
+        holdingCount: holdings.length,
+        annualIncome: holdings.reduce((sum,row)=>sum+(row.annualIncome||0),0),
+        marketValue: holdings.reduce((sum,row)=>sum+(row.currentValue||0),0)
       };
     }
 
+    const summary = getSummary();
+    const portfolio = Object.freeze({
+      version: VERSION,
+      holdingCount: summary.holdingCount,
+      averageConfidence: summary.averageConfidence,
+      confidenceBand: summary.confidenceBand,
+      topHolding,
+      lowestHolding,
+      restrictionCount: restrictions.length,
+      annualIncome: summary.annualIncome,
+      marketValue: summary.marketValue,
+      managerVerdict: summary.managerVerdict,
+      marketRegime: String(value(briefing[0],"market regime","market_regime") || value(intelligence[0],"market regime","market_regime") || "Live portfolio conditions"),
+      buyMode: String(value(briefing[0],"buy mode","buy_mode") || value(intelligence[0],"buy mode","buy_mode") || "Selective accumulation"),
+      positiveNews: intelligence.reduce((sum,row)=>sum+(number(value(row,"positive news","positive_news"))||0),0),
+      negativeNews: intelligence.reduce((sum,row)=>sum+(number(value(row,"negative news","negative_news"))||0),0),
+      dataQuality: {
+        holdingsRows:getTab(master,"Holdings").length,
+        watchlistRows:getTab(master,"Watchlist").length,
+        dividendRows:getTab(master,"Dividends").length,
+        priceRows:getTab(master,"DailyPriceSummary").length
+      }
+    });
+
     return Object.freeze({
       version: VERSION,
-      config: Object.freeze(config),
       portfolio,
-      getHolding,
-      getAllHoldings,
-      getPriorityBuys,
-      getBlockedHoldings,
-      getRestrictions,
-      canBuy,
-      getBuyReason,
-      getTrainingGroup,
-      getManagerThought,
-      compareHoldings: compare,
-      getSectorStrength,
+      getTab: name => getTab(master,name),
+      getAllHoldings: () => holdings.slice(),
+      getHolding: ticker => holdings.find(row=>row.ticker===cleanTicker(ticker)) || null,
+      getPriorityBuys: () => holdings.filter(row=>!row.blocked && row.confidence>=65),
+      getBlockedHoldings: () => restrictions.slice(),
+      getRestrictions: () => restrictions.map(row=>({ticker:row.ticker,action:row.status,confidence:row.confidence})),
+      canBuy: ticker => Boolean(holdings.find(row=>row.ticker===cleanTicker(ticker) && !row.blocked)),
+      getBuyReason: ticker => {
+        const row = holdings.find(item=>item.ticker===cleanTicker(ticker));
+        return row ? `${row.name}: ${row.status}, confidence ${row.confidence}/100, discount ${row.discount.toFixed(1)}%.` : "No holding found.";
+      },
       getPremierLeague,
       getFairValueDiscounts,
+      getNextDividend,
+      getDividendRunway,
       getDividendRoadmap,
-      getIncomeForecast,
-      getDepartments,
+      getTodayBestAction,
       getSummary,
-      raw: Object.freeze({
-        master,
-        intelligence: Object.freeze(intelligenceRows.slice()),
-        briefing: Object.freeze(briefingRows.slice()),
-        holdings: Object.freeze(holdingsRows.slice()),
-        news: Object.freeze(newsRows.slice()),
-        regime: Object.freeze(regimeRows.slice())
-      })
+      raw: Object.freeze({master,holdings,watchlist,dividends:dividendRows})
     });
   }
 
-  async function load(url, options) {
-    const target = url || "AuroraMaster.json";
-    const fetchOptions = Object.assign({ cache: "no-store" }, options?.fetch || {});
-    const response = await fetch(target, fetchOptions);
-
-    if (!response.ok) {
-      throw new AuroraBrainError(
-        `AuroraMaster load failed with HTTP ${response.status}.`,
-        { url: target, status: response.status }
-      );
-    }
-
-    const data = await response.json();
-    return create(data, options);
+  async function load(url="AuroraMaster.json", options={}) {
+    const separator = url.includes("?") ? "&" : "?";
+    const response = await fetch(`${url}${separator}v=${Date.now()}`, {cache:"no-store", ...(options.fetch||{})});
+    if (!response.ok) throw new Error(`AuroraMaster load failed: HTTP ${response.status}`);
+    return create(await response.json());
   }
 
-  const api = Object.freeze({
+  global.AuroraBrain = Object.freeze({
     version: VERSION,
     create,
     load,
-    cleanTicker,
-    parseNumber,
-    parsePercent,
-    confidenceBand,
-    trainingGroup,
     getTab,
-    rowsFromTabValue,
-    AuroraBrainError
+    cleanTicker,
+    parseNumber:number,
+    parsePercent:percent
   });
-
-  global.AuroraBrain = api;
-
-  if (typeof module !== "undefined" && module.exports) {
-    module.exports = api;
-  }
 })(typeof window !== "undefined" ? window : globalThis);
