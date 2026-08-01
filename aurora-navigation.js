@@ -1321,31 +1321,9 @@
     const style = document.createElement("style");
     style.id = "auroraSofterMissionColours";
     style.textContent = `
-      /*
-        Keep the mission title as the visible link, while the smaller
-        supporting line underneath displays as ordinary text.
-      */
-      #auroraNavPanel .aurora-nav-step-copy,
-      #auroraNavPanel .aurora-nav-step-copy:link,
-      #auroraNavPanel .aurora-nav-step-copy:visited,
-      #auroraNavPanel .aurora-nav-step-copy:hover,
-      #auroraNavPanel .aurora-nav-step-copy:active{
-        color:inherit!important;
-        text-decoration:none!important;
-      }
-
-      #auroraNavPanel .aurora-nav-step-copy strong{
-        text-decoration:underline;
-        text-decoration-thickness:1px;
-        text-underline-offset:2px;
-      }
-
-      #auroraNavPanel .aurora-nav-step-copy span,
-      #auroraNavPanel .aurora-nav-step.is-next-mission .aurora-nav-step-copy span,
-      #auroraNavPanel .aurora-nav-step.is-active .aurora-nav-step-copy span{
+      /* Softer supporting text beneath each mission title */
+      #auroraNavPanel .aurora-nav-step-copy span{
         color:#9aa9bc!important;
-        -webkit-text-fill-color:#9aa9bc!important;
-        text-decoration:none!important;
         text-shadow:none!important;
       }
 
@@ -1371,7 +1349,11 @@
         color:#f3f7fc!important;
       }
 
-      /* Active highlighting stays on the row, not on the helper text. */
+      /* Current/next mission remains highlighted without blue subtitle glare */
+      #auroraNavPanel .aurora-nav-step.is-next-mission .aurora-nav-step-copy span,
+      #auroraNavPanel .aurora-nav-step.is-active .aurora-nav-step-copy span{
+        color:#b8c4d4!important;
+      }
     `;
 
     document.head.appendChild(style);
@@ -1878,6 +1860,47 @@
     return true;
   }
 
+  function removeDuplicateUniversalMenuButtons(header,toggle){
+    if(!header) return;
+
+    const left = header.querySelector(".aurora-universal-left");
+
+    /*
+      The web header must contain exactly one menu control: the live
+      #auroraNavToggle created by this shared navigation controller.
+      Remove stale proxy or legacy menu buttons without touching Log out.
+    */
+    if(left){
+      Array.from(left.querySelectorAll("button")).forEach(function(button){
+        if(button !== toggle){
+          button.remove();
+        }
+      });
+    }
+
+    Array.from(
+      header.querySelectorAll(
+        "#auroraTopHeaderMenuButton," +
+        "[data-aurora-menu-button]," +
+        ".aurora-menu-button," +
+        ".menu-button," +
+        ".hamburger-button"
+      )
+    ).forEach(function(button){
+      if(button !== toggle){
+        button.remove();
+      }
+    });
+
+    const staleProxy = document.getElementById(
+      "auroraTopHeaderMenuButton"
+    );
+
+    if(staleProxy && staleProxy.ownerDocument === document){
+      staleProxy.remove();
+    }
+  }
+
   function buildUniversalAuroraHeader(toggle){
     injectUniversalHeaderStyles();
 
@@ -1922,6 +1945,8 @@
 
       document.body.prepend(header);
     }
+
+    removeDuplicateUniversalMenuButtons(header,toggle);
 
     const left = header.querySelector(".aurora-universal-left");
     const crest = header.querySelector(".aurora-universal-crest");
@@ -1971,6 +1996,13 @@
 
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
+
+    /* Remove any stale web toggle left by an older navigation build. */
+    Array.from(
+      document.querySelectorAll("#auroraNavToggle")
+    ).forEach(function(button){
+      button.remove();
+    });
 
     injectUniversalHeaderStyles();
     injectSofterMissionColours();
@@ -2313,7 +2345,6 @@
       "pageshow",
       function(){
         setOpen(false);
-        buildUniversalAuroraHeader(toggle);
         buildUniversalAuroraHeader(toggle);
       }
     );
