@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en" data-aurora-page="learning">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#06111f">
+<title>Aurora City FC — Learning Centre</title>
+<style>
+:root{
+  --bg:#04101d;--panel:#081929;--panel2:#0b2135;--line:rgba(125,211,252,.16);
+  --text:#edfaff;--muted:#8fa8bb;--cyan:#53d9f5;--green:#6ee7a2;--amber:#f6c85f;
+  --red:#fb7185;--purple:#a78bfa;--shadow:0 20px 55px rgba(0,0,0,.34);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(34,211,238,.12),transparent 30%),
+    linear-gradient(180deg,#061525 0%,#03101b 45%,#020a12 100%);
+  min-height:100vh;
+}
+a{color:inherit}
+.shell{max-width:1480px;margin:auto;padding:14px}
+.topbar{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:11px 14px;margin-bottom:12px;border:1px solid var(--line);border-radius:17px;
+  background:rgba(4,16,29,.88);backdrop-filter:blur(18px);box-shadow:0 12px 34px rgba(0,0,0,.25)
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:950;letter-spacing:.3px}
+.crest{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;font-weight:1000;
+  background:radial-gradient(circle at 35% 30%,#8cf0ff,#1b8fb5 46%,#073348 72%);border:2px solid rgba(255,255,255,.2);
+  box-shadow:0 0 20px rgba(83,217,245,.25)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  border:1px solid rgba(125,211,252,.18);background:rgba(34,211,238,.055);color:#dff9ff;
+  padding:9px 11px;border-radius:11px;text-decoration:none;font-size:9px;font-weight:900
+}
+.hero{
+  position:relative;overflow:hidden;min-height:355px;padding:27px;border-radius:30px;border:1px solid rgba(125,211,252,.18);
+  background:
+    linear-gradient(90deg,rgba(2,10,20,.96),rgba(5,18,31,.83) 54%,rgba(5,18,31,.43)),
+    radial-gradient(circle at 82% 28%,rgba(167,139,250,.20),transparent 28%),
+    radial-gradient(circle at 55% 0%,rgba(34,211,238,.13),transparent 34%),
+    linear-gradient(145deg,#0b2940,#071424 63%,#04101d);
+  box-shadow:var(--shadow)
+}
+.hero:after{
+  content:"";position:absolute;left:-8%;right:-8%;bottom:-70px;height:180px;border-radius:50% 50% 0 0;
+  background:
+    linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.13) 49.9% 50.1%,transparent 50.2%),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.02) 0 1px,transparent 1px 70px),
+    linear-gradient(180deg,rgba(30,130,76,.40),rgba(7,50,31,.15));
+  opacity:.65
+}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center}
+.kicker{font-size:9px;font-weight:1000;letter-spacing:1.5px;color:var(--cyan)}
+h1{font-size:clamp(38px,6vw,74px);line-height:.94;margin:9px 0 13px;letter-spacing:-2.7px;text-transform:uppercase}
+.hero p{max-width:720px;color:#a3bacb;line-height:1.55;font-size:13px}
+.hero-status{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.pill{padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);font-size:8px;font-weight:1000}
+.pill.live{color:#8ff0ad;background:rgba(20,83,45,.18);border-color:rgba(74,222,128,.23)}
+.brain-orb{
+  width:min(330px,80vw);aspect-ratio:1;margin:auto;border-radius:50%;display:grid;place-items:center;text-align:center;position:relative;
+  background:radial-gradient(circle,rgba(83,217,245,.25),rgba(83,217,245,.07) 38%,rgba(167,139,250,.08) 58%,transparent 60%);
+  border:1px solid rgba(83,217,245,.20);box-shadow:0 0 60px rgba(83,217,245,.12),inset 0 0 45px rgba(167,139,250,.08)
+}
+.brain-orb:before,.brain-orb:after{content:"";position:absolute;inset:11%;border-radius:50%;border:1px dashed rgba(83,217,245,.22)}
+.brain-orb:after{inset:25%;border-color:rgba(167,139,250,.27);animation:spin 22s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.orb-value{font-size:56px;font-weight:1000;line-height:1}.orb-label{font-size:9px;color:#93adbf;text-transform:uppercase;letter-spacing:1.1px}
+.grid{display:grid;gap:14px;margin-top:14px}
+.kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
+.card{
+  position:relative;overflow:hidden;padding:16px;border:1px solid var(--line);border-radius:22px;
+  background:linear-gradient(145deg,rgba(10,28,46,.96),rgba(4,13,24,.99));box-shadow:0 14px 34px rgba(0,0,0,.22)
+}
+.kpi small,.label{display:block;color:#87a2b6;font-size:8px;font-weight:950;letter-spacing:.8px;text-transform:uppercase}
+.kpi strong{display:block;margin-top:6px;font-size:24px}.kpi span{display:block;margin-top:4px;color:#7f9aae;font-size:8px}
+.section-head{display:flex;justify-content:space-between;align-items:start;gap:14px;margin-bottom:13px}
+.section-head h2{margin:0;font-size:24px;letter-spacing:-.6px}
+.section-head p{margin:5px 0 0;color:var(--muted);font-size:10px}
+.two{grid-template-columns:1.1fr .9fr}.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.accuracy-panel{display:grid;grid-template-columns:190px minmax(0,1fr);gap:18px;align-items:center}
+.ring{
+  width:170px;height:170px;border-radius:50%;display:grid;place-items:center;margin:auto;
+  background:conic-gradient(var(--green) calc(var(--pct,0)*1%),rgba(255,255,255,.06) 0);
+  position:relative;box-shadow:0 0 30px rgba(110,231,162,.12)
+}
+.ring:after{content:"";position:absolute;inset:13px;border-radius:50%;background:#071626;border:1px solid rgba(255,255,255,.06)}
+.ring-content{position:relative;z-index:2;text-align:center}.ring-content strong{font-size:38px}.ring-content span{display:block;color:#8ea8ba;font-size:8px}
+.metric-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.metric{padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025)}
+.metric strong{display:block;font-size:20px;margin-top:5px}
+.journal-tools{display:flex;gap:8px;flex-wrap:wrap}
+select,input{
+  border:1px solid rgba(125,211,252,.14);background:#071728;color:#e8f9ff;border-radius:10px;padding:9px 10px;font-size:9px
+}
+.table-wrap{overflow:auto;border-radius:16px;border:1px solid rgba(255,255,255,.06)}
+table{width:100%;border-collapse:collapse;min-width:1080px;background:rgba(0,0,0,.08)}
+th{position:sticky;top:0;text-align:left;padding:10px;background:#0b2134;color:#8ddff2;font-size:8px;text-transform:uppercase;letter-spacing:.7px}
+td{padding:10px;border-top:1px solid rgba(255,255,255,.055);font-size:9px;color:#d9eaf2}
+tbody tr:hover{background:rgba(83,217,245,.035)}
+.badge{display:inline-flex;padding:5px 7px;border-radius:999px;font-size:7px;font-weight:1000;border:1px solid rgba(255,255,255,.1)}
+.good{color:#88efaa;background:rgba(20,83,45,.19);border-color:rgba(74,222,128,.24)}
+.watch{color:#ffd879;background:rgba(120,53,15,.18);border-color:rgba(246,200,95,.25)}
+.risk{color:#ff9cab;background:rgba(127,29,29,.18);border-color:rgba(251,113,133,.25)}
+.info{color:#97e8fa;background:rgba(8,75,97,.18);border-color:rgba(83,217,245,.25)}
+.call-card{padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:17px;background:rgba(255,255,255,.024)}
+.call-card h3{margin:5px 0 7px;font-size:21px}.call-card p{margin:0;color:#8fa8ba;font-size:9px;line-height:1.45}
+.call-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.call-stats div{padding:9px;border-radius:11px;background:rgba(0,0,0,.18)}
+.call-stats strong{display:block;margin-top:4px}
+.lessons{display:grid;gap:8px}.lesson{padding:12px 13px;border-left:3px solid var(--cyan);background:rgba(255,255,255,.022);border-radius:0 13px 13px 0}
+.lesson strong{display:block;font-size:11px}.lesson span{display:block;margin-top:4px;color:#8fa8ba;font-size:9px;line-height:1.4}
+.evolution{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.evo-step{padding:14px;border-radius:16px;border:1px solid rgba(167,139,250,.14);background:rgba(167,139,250,.035)}
+.evo-step strong{display:block;margin:6px 0}.evo-step p{font-size:9px;color:#90a9ba;line-height:1.45;margin:0}
+.footer{text-align:center;color:#617b8d;font-size:8px;padding:20px}
+.empty{padding:22px;text-align:center;color:#7891a3;font-size:10px}
+@media(max-width:1150px){.kpis{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:1fr}.hero-inner{grid-template-columns:1fr}.brain-orb{width:250px}.evolution{grid-template-columns:1fr}}
+@media(max-width:700px){.kpis{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr}.accuracy-panel{grid-template-columns:1fr}.metric-list{grid-template-columns:1fr}.shell{padding:8px}.hero{padding:18px}.topbar{position:relative}}
+</style>
+
+<style id="aurora-learning-shared-navigation-bridge">
+:root{
+  --fm-sidebar:238px;
+  --fm-sidebar-compact:214px;
+}
+body{overflow-x:hidden}
+.fm-shell{min-height:100vh}
+.fm-workspace{
+  min-width:0;
+  min-height:100vh;
+  margin-left:var(--fm-sidebar);
+  transition:margin-left .28s ease;
+}
+body.fm-sidebar-hidden .fm-workspace{margin-left:0}
+body.fm-sidebar-collapsed .fm-workspace{margin-left:76px}
+body.fm-sidebar-open{overflow:hidden}
+.fm-workspace .shell{
+  max-width:1480px;
+  margin:0 auto;
+}
+@media(max-width:1100px){
+  :root{--fm-sidebar:var(--fm-sidebar-compact)}
+}
+@media(max-width:820px){
+  .fm-workspace,
+  body.fm-sidebar-hidden .fm-workspace,
+  body.fm-sidebar-collapsed .fm-workspace{
+    margin-left:0;
+  }
+}
+</style>
+<script>
+window.AURORA_PAGE_ID = "learning";
+window.AURORA_PAGE_TITLE = "Learning Centre";
+window.AURORA_NAV_ACTIVE = "AuroraCityFC_LearningCentre.html";
+window.AURORA_EXTRA_NAV_ITEMS = [
+  {
+    label:"Learning Centre",
+    href:"AuroraCityFC_LearningCentre.html",
+    icon:"🧠",
+    group:"Club Intelligence",
+    active:true
+  }
+];
+</script>
+<script src="aurora-navigation.js?v=20260801-learning" defer></script>
+</head>
+<body>
+<div class="fm-shell">
+<div class="fm-workspace">
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><div class="crest">A</div><div>Aurora City FC <span style="color:#5bd9f4">Learning Centre</span></div></div>
+    <div class="top-actions"><span class="pill live">SHARED AURORA NAVIGATION</span></div></header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="kicker">AURORA HQ • BRAIN PERFORMANCE DEPARTMENT</div>
+        <h1>Learning<br>Centre</h1>
+        <p>Aurora’s permanent memory. Every recommendation is logged, reviewed after 7, 30 and 90 days, and converted into a transparent record of what the Brain gets right, where it misses and what it should learn next.</p>
+        <div class="hero-status">
+          <span class="pill live" id="liveStatus">CONNECTING TO AURORA MASTER</span>
+          <span class="pill" id="brainVersion">Brain version —</span>
+          <span class="pill" id="latestReview">Latest review —</span>
+        </div>
+      </div>
+      <div class="brain-orb">
+        <div class="ring-content">
+          <div class="orb-value" id="heroAccuracy">—</div>
+          <div class="orb-label">Matured Decision Accuracy</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid kpis">
+    <article class="card kpi"><small>Total Decisions</small><strong id="totalDecisions">0</strong><span>Aurora memory entries</span></article>
+    <article class="card kpi"><small>Matured Reviews</small><strong id="maturedReviews">0</strong><span>With measured outcomes</span></article>
+    <article class="card kpi"><small>Successful Calls</small><strong id="successfulCalls">0</strong><span>Success + strong success</span></article>
+    <article class="card kpi"><small>Average Return</small><strong id="averageReturn">—</strong><span>Latest available horizon</span></article>
+    <article class="card kpi"><small>Best Decision</small><strong id="bestDecision">—</strong><span id="bestDecisionMeta">Waiting for reviews</span></article>
+    <article class="card kpi"><small>Learning Status</small><strong id="learningStatus">Collecting</strong><span id="learningMeta">First review due after 7 days</span></article>
+  </section>
+
+  <section class="grid two">
+    <article class="card">
+      <div class="section-head"><div><div class="kicker">BRAIN ACCURACY</div><h2>Performance Scoreboard</h2><p>Measured only from decisions with a completed review.</p></div><span class="badge info" id="accuracyBadge">NO MATURED DATA</span></div>
+      <div class="accuracy-panel">
+        <div class="ring" id="accuracyRing" style="--pct:0"><div class="ring-content"><strong id="accuracyValue">—</strong><span>Success rate</span></div></div>
+        <div class="metric-list">
+          <div class="metric"><small class="label">Strong Success</small><strong id="strongSuccess">0</strong></div>
+          <div class="metric"><small class="label">Success</small><strong id="successCount">0</strong></div>
+          <div class="metric"><small class="label">Mixed</small><strong id="mixedCount">0</strong></div>
+          <div class="metric"><small class="label">Miss</small><strong id="missCount">0</strong></div>
+          <div class="metric"><small class="label">7-Day Reviews</small><strong id="review7">0</strong></div>
+          <div class="metric"><small class="label">90-Day Complete</small><strong id="review90">0</strong></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="section-head"><div><div class="kicker">MANAGER BRIEFING</div><h2>What Aurora Has Learned</h2><p>Evidence-led observations from the Decision Log.</p></div></div>
+      <div class="lessons" id="lessons"><div class="empty">Aurora is collecting its first history. Lessons will appear when decisions mature.</div></div>
+    </article>
+  </section>
+
+  <section class="card" style="margin-top:14px">
+    <div class="section-head">
+      <div><div class="kicker">DECISION JOURNAL</div><h2>Aurora Memory</h2><p>Every logged recommendation and its measured outcomes.</p></div>
+      <div class="journal-tools">
+        <input id="searchBox" placeholder="Search ticker or company">
+        <select id="actionFilter"><option value="">All actions</option></select>
+        <select id="resultFilter"><option value="">All results</option></select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Ticker</th><th>Company</th><th>Action</th><th>Score</th><th>Decision Price</th><th>7D</th><th>30D</th><th>90D</th><th>Result</th><th>Status</th><th>Reason</th></tr></thead>
+        <tbody id="journalBody"><tr><td colspan="12" class="empty">Loading AuroraDecisionLog…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="grid three">
+    <article class="card">
+      <div class="section-head"><div><div class="kicker">TOP CALL</div><h2>Best Recommendation</h2></div></div>
+      <div id="bestCall"><div class="empty">Waiting for a matured review.</div></div>
+    </article>
+    <article class="card">
+      <div class="section-head"><div><div class="kicker">COACHING REVIEW</div><h2>Biggest Miss</h2></div></div>
+      <div id="worstCall"><div class="empty">Waiting for a matured review.</div></div>
+    </article>
+    <article class="card">
+      <div class="section-head"><div><div class="kicker">CURRENT FORM</div><h2>Decision Mix</h2></div></div>
+      <div id="decisionMix" class="lessons"><div class="empty">Loading current decision profile…</div></div>
+    </article>
+  </section>
+
+  <section class="card" style="margin-top:14px">
+    <div class="section-head"><div><div class="kicker">BRAIN EVOLUTION</div><h2>Controlled Improvement Path</h2><p>Aurora proposes improvements only after enough evidence exists. No rule changes are automatic.</p></div><span class="badge watch">MANAGER APPROVAL REQUIRED</span></div>
+    <div class="evolution">
+      <div class="evo-step"><small class="label">Stage 1 • Live</small><strong>Decision Memory</strong><p>Record every recommendation and review it at 7, 30 and 90 days.</p></div>
+      <div class="evo-step"><small class="label">Stage 2 • Building</small><strong>Accuracy & Lessons</strong><p>Identify which actions, scores and asset types produce the strongest outcomes.</p></div>
+      <div class="evo-step"><small class="label">Stage 3 • Locked</small><strong>Rule Suggestions</strong><p>Propose scoring-weight changes for the manager to approve or reject.</p></div>
+    </div>
+  </section>
+
+  <footer class="footer">Aurora City FC Learning Centre • Brain performance is evidence, not a guarantee of future investment results.</footer>
+</div>
+</div>
+</div>
+
+<script>
+const MASTER_URLS=["AuroraMaster.json","https://webby1981.github.io/Aurora-HQ/AuroraMaster.json"];
+let ALL=[];
+
+const norm=s=>String(s??"").trim().toLowerCase().replace(/[^a-z0-9]/g,"");
+const num=v=>{if(v===null||v===undefined||v==="")return NaN;const n=Number(String(v).replace(/[£$€,%\s,]/g,""));return Number.isFinite(n)?n:NaN};
+const val=(r,...names)=>{const m=new Map(Object.keys(r||{}).map(k=>[norm(k),r[k]]));for(const n of names){const x=m.get(norm(n));if(x!==undefined&&x!==null&&String(x)!=="")return x}return""};
+const pct=v=>{const n=num(v);return Number.isFinite(n)?(Math.abs(n)<=1?n*100:n):NaN};
+const money=v=>Number(v||0).toLocaleString("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:2});
+const dte=v=>{if(!v)return null;if(v instanceof Date)return v;const x=new Date(v);return Number.isNaN(x.getTime())?null:x};
+const fmtDate=v=>{const d=dte(v);return d?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—"};
+const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+
+function rowsFrom(source){
+  if(!source)return[];
+  if(Array.isArray(source)){
+    if(!source.length)return[];
+    if(source.every(x=>x&&typeof x==="object"&&!Array.isArray(x)))return source;
+    if(source.every(Array.isArray)){
+      const h=source[0].map(String);
+      return source.slice(1).filter(r=>r.some(x=>x!==""&&x!=null)).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])));
+    }
+  }
+  if(typeof source==="object"){
+    for(const k of ["rows","data","values","records","items"]){const x=rowsFrom(source[k]);if(x.length)return x}
+  }
+  return[];
+}
+function tab(master,name){
+  const want=norm(name);
+  for(const box of [master,master?.tabs,master?.sheets,master?.data,master?.feeds].filter(Boolean)){
+    for(const k of Object.keys(box)){if(norm(k)===want)return rowsFrom(box[k])}
+  }
+  return[];
+}
+async function loadMaster(){
+  let last;
+  for(const url of MASTER_URLS){
+    try{const r=await fetch(url+(url.includes("?")?"&":"?")+"v="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);return await r.json()}catch(e){last=e}
+  }
+  throw last||new Error("AuroraMaster unavailable");
+}
+function latestReturn(r){
+  for(const h of ["outcome_90d_pct","outcome_30d_pct","outcome_7d_pct"]){const n=pct(val(r,h));if(Number.isFinite(n))return n}
+  return NaN;
+}
+function resultClass(x){
+  const s=String(x||"").toUpperCase();
+  return s.includes("SUCCESS")?"good":s==="MISS"?"risk":s==="MIXED"?"watch":"info";
+}
+function statusClass(x){
+  const s=String(x||"").toUpperCase();
+  return s.includes("COMPLETE")||s.includes("REVIEWED")?"good":s.includes("AWAITING")?"watch":"info";
+}
+function makeCall(r){
+  if(!r)return'<div class="empty">Waiting for a matured review.</div>';
+  const ret=latestReturn(r);
+  return `<div class="call-card">
+    <small class="label">${fmtDate(val(r,"decision_date"))}</small>
+    <h3>${val(r,"ticker")} · ${val(r,"company")}</h3>
+    <p>${val(r,"reason")||"No decision explanation recorded."}</p>
+    <div class="call-stats">
+      <div><small class="label">Action</small><strong>${val(r,"action")||"—"}</strong></div>
+      <div><small class="label">Score</small><strong>${val(r,"confidence_score")||"—"}/100</strong></div>
+      <div><small class="label">Latest Return</small><strong class="${ret>=0?"good":"risk"}">${Number.isFinite(ret)?ret.toFixed(2)+"%":"—"}</strong></div>
+      <div><small class="label">Result</small><strong>${val(r,"decision_result")||"Pending"}</strong></div>
+    </div>
+  </div>`;
+}
+function render(){
+  const total=ALL.length;
+  const matured=ALL.filter(r=>Number.isFinite(latestReturn(r)));
+  const successes=matured.filter(r=>/SUCCESS/i.test(String(val(r,"decision_result"))));
+  const returns=matured.map(latestReturn).filter(Number.isFinite);
+  const accuracy=matured.length?successes.length/matured.length*100:NaN;
+  const sorted=matured.slice().sort((a,b)=>latestReturn(b)-latestReturn(a));
+  const best=sorted[0],worst=sorted.at(-1);
+
+  put("totalDecisions",total);
+  put("maturedReviews",matured.length);
+  put("successfulCalls",successes.length);
+  put("averageReturn",returns.length?(returns.reduce((a,b)=>a+b,0)/returns.length).toFixed(2)+"%":"—");
+  put("bestDecision",best?val(best,"ticker"):"—");
+  put("bestDecisionMeta",best?latestReturn(best).toFixed(2)+"% latest measured return":"Waiting for reviews");
+  put("heroAccuracy",Number.isFinite(accuracy)?accuracy.toFixed(1)+"%":"—");
+  put("accuracyValue",Number.isFinite(accuracy)?accuracy.toFixed(1)+"%":"—");
+  document.getElementById("accuracyRing").style.setProperty("--pct",Number.isFinite(accuracy)?accuracy:0);
+  put("accuracyBadge",matured.length?`${matured.length} MATURED REVIEWS`:"NO MATURED DATA");
+  put("strongSuccess",ALL.filter(r=>String(val(r,"decision_result")).toUpperCase()==="STRONG SUCCESS").length);
+  put("successCount",ALL.filter(r=>String(val(r,"decision_result")).toUpperCase()==="SUCCESS").length);
+  put("mixedCount",ALL.filter(r=>String(val(r,"decision_result")).toUpperCase()==="MIXED").length);
+  put("missCount",ALL.filter(r=>String(val(r,"decision_result")).toUpperCase()==="MISS").length);
+  put("review7",ALL.filter(r=>Number.isFinite(pct(val(r,"outcome_7d_pct")))).length);
+  put("review90",ALL.filter(r=>Number.isFinite(pct(val(r,"outcome_90d_pct")))).length);
+  put("learningStatus",matured.length>=100?"Evidence Rich":matured.length>=25?"Learning":matured.length?"Early Form":"Collecting");
+  put("learningMeta",matured.length?`${matured.length} measured decisions available`:"First review due after 7 days");
+  put("bestCall","");document.getElementById("bestCall").innerHTML=makeCall(best);
+  document.getElementById("worstCall").innerHTML=makeCall(worst);
+
+  const brainVersion=[...new Set(ALL.map(r=>val(r,"brain_version")).filter(Boolean))].at(-1)||"—";
+  put("brainVersion","Brain version "+brainVersion);
+  const latest=ALL.map(r=>dte(val(r,"last_reviewed_at"))).filter(Boolean).sort((a,b)=>b-a)[0];
+  put("latestReview","Latest review "+(latest?latest.toLocaleString("en-GB"):"pending"));
+
+  const counts={};ALL.forEach(r=>{const a=String(val(r,"action")||"UNKNOWN").toUpperCase();counts[a]=(counts[a]||0)+1});
+  document.getElementById("decisionMix").innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([a,c])=>`<div class="lesson"><strong>${a}</strong><span>${c} logged decision${c===1?"":"s"} • ${(c/Math.max(1,total)*100).toFixed(1)}% of memory</span></div>`).join("")||'<div class="empty">No decisions logged.</div>';
+
+  const lessons=[];
+  if(!matured.length) lessons.push(["Learning clock started","Aurora has recorded its first decisions. The first measured evidence will appear after the 7-day review window."]);
+  else{
+    lessons.push(["Current measured accuracy",`${accuracy.toFixed(1)}% of matured calls are classified as successful or strongly successful.`]);
+    if(best) lessons.push(["Strongest measured call",`${val(best,"ticker")} has the best latest measured outcome at ${latestReturn(best).toFixed(2)}%.`]);
+    if(worst) lessons.push(["Coaching focus",`${val(worst,"ticker")} has the weakest latest measured outcome at ${latestReturn(worst).toFixed(2)}%.`]);
+    const high=matured.filter(r=>num(val(r,"confidence_score"))>=75), low=matured.filter(r=>num(val(r,"confidence_score"))<65);
+    if(high.length>=3) lessons.push(["High-confidence form",`${high.length} matured decisions began with confidence of 75 or above.`]);
+    if(low.length>=3) lessons.push(["Review-zone evidence",`${low.length} matured decisions began below 65 confidence; compare their outcomes before changing score rules.`]);
+  }
+  document.getElementById("lessons").innerHTML=lessons.map(([a,b])=>`<div class="lesson"><strong>${a}</strong><span>${b}</span></div>`).join("");
+  renderJournal();
+}
+function renderJournal(){
+  const q=document.getElementById("searchBox").value.toLowerCase();
+  const af=document.getElementById("actionFilter").value;
+  const rf=document.getElementById("resultFilter").value;
+  const rows=ALL.filter(r=>{
+    const text=(val(r,"ticker")+" "+val(r,"company")).toLowerCase();
+    return (!q||text.includes(q))&&(!af||String(val(r,"action"))===af)&&(!rf||String(val(r,"decision_result"))===rf);
+  }).sort((a,b)=>(dte(val(b,"decision_date"))||0)-(dte(val(a,"decision_date"))||0));
+  document.getElementById("journalBody").innerHTML=rows.map(r=>{
+    const f=x=>{const n=pct(val(r,x));return Number.isFinite(n)?`<span class="${n>=0?"good":"risk"}">${n.toFixed(2)}%</span>`:"—"};
+    return `<tr>
+      <td>${fmtDate(val(r,"decision_date"))}</td><td><strong>${val(r,"ticker")}</strong></td><td>${val(r,"company")}</td>
+      <td><span class="badge info">${val(r,"action")}</span></td><td>${val(r,"confidence_score")}/100</td>
+      <td>${money(num(val(r,"price_at_decision"))||0)}</td><td>${f("outcome_7d_pct")}</td><td>${f("outcome_30d_pct")}</td><td>${f("outcome_90d_pct")}</td>
+      <td><span class="badge ${resultClass(val(r,"decision_result"))}">${val(r,"decision_result")||"PENDING"}</span></td>
+      <td><span class="badge ${statusClass(val(r,"review_status"))}">${val(r,"review_status")||"—"}</span></td>
+      <td title="${String(val(r,"reason")).replace(/"/g,"&quot;")}">${String(val(r,"reason")||"—").slice(0,120)}</td>
+    </tr>`;
+  }).join("")||'<tr><td colspan="12" class="empty">No decisions match the current filters.</td></tr>';
+}
+function fillFilters(){
+  const actions=[...new Set(ALL.map(r=>String(val(r,"action"))).filter(Boolean))].sort();
+  const results=[...new Set(ALL.map(r=>String(val(r,"decision_result"))).filter(Boolean))].sort();
+  document.getElementById("actionFilter").innerHTML='<option value="">All actions</option>'+actions.map(x=>`<option>${x}</option>`).join("");
+  document.getElementById("resultFilter").innerHTML='<option value="">All results</option>'+results.map(x=>`<option>${x}</option>`).join("");
+}
+(async()=>{
+  try{
+    const master=await loadMaster();
+    ALL=tab(master,"AuroraDecisionLog");
+    fillFilters();render();
+    put("liveStatus","LIVE • AURORA DECISION LOG CONNECTED");
+  }catch(e){
+    console.error(e);put("liveStatus","DATA CONNECTION ERROR");
+    document.getElementById("journalBody").innerHTML=`<tr><td colspan="12" class="empty">${e.message}</td></tr>`;
+  }
+})();
+["searchBox","actionFilter","resultFilter"].forEach(id=>document.getElementById(id).addEventListener("input",renderJournal));
+</script>
+
+<script id="aurora-learning-navigation-extension">
+(function(){
+  "use strict";
+
+  const PAGE_FILE = "AuroraCityFC_LearningCentre.html";
+
+  function addLearningLink(){
+    const nav =
+      document.querySelector(".fm-side-scroll") ||
+      document.querySelector("#auroraUniversalSidebar nav") ||
+      document.querySelector(".universal-sidebar nav");
+
+    if(!nav) return false;
+
+    const existing = [...nav.querySelectorAll("a")].find(a =>
+      /Learning Centre/i.test(a.textContent || "") ||
+      String(a.getAttribute("href") || "").includes(PAGE_FILE)
+    );
+
+    if(existing){
+      existing.classList.add("active");
+      existing.setAttribute("aria-current","page");
+      return true;
+    }
+
+    const link = document.createElement("a");
+    link.href = PAGE_FILE;
+    link.className = "fm-side-link active";
+    link.setAttribute("aria-current","page");
+    link.innerHTML = '<span class="fm-side-icon">🧠</span><span>Learning Centre</span>';
+
+    const intelligenceGroup =
+      [...nav.querySelectorAll(".fm-nav-group,.fm-side-folder")].find(node =>
+        /Intelligence|Club HQ|Departments/i.test(node.textContent || "")
+      );
+
+    const target =
+      intelligenceGroup?.querySelector(".fm-side-submenu") ||
+      intelligenceGroup ||
+      nav;
+
+    target.appendChild(link);
+    return true;
+  }
+
+  function markActive(){
+    document.querySelectorAll(
+      '.fm-side-link,.fm-side-submenu a,#auroraUniversalSidebar a,.universal-sidebar a'
+    ).forEach(link=>{
+      const href=String(link.getAttribute("href")||"");
+      const isLearning=href.includes(PAGE_FILE)||/Learning Centre/i.test(link.textContent||"");
+      link.classList.toggle("active",isLearning);
+      if(isLearning) link.setAttribute("aria-current","page");
+      else link.removeAttribute("aria-current");
+    });
+  }
+
+  function initialise(){
+    let attempts=0;
+    const timer=setInterval(()=>{
+      attempts++;
+      if(addLearningLink() || attempts>40){
+        clearInterval(timer);
+        markActive();
+      }
+    },125);
+
+    new MutationObserver(()=>{
+      addLearningLink();
+      markActive();
+    }).observe(document.documentElement,{childList:true,subtree:true});
+
+    window.addEventListener("pageshow",()=>{
+      addLearningLink();
+      markActive();
+    });
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",initialise,{once:true});
+  }else{
+    initialise();
+  }
+})();
+</script>
+
+</body>
+</html>
