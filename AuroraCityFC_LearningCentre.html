@@ -206,7 +206,7 @@ body{
 
   <section class="card" style="margin-top:14px">
     <div class="section-head">
-      <div><div class="kicker">DECISION JOURNAL</div><h2>Aurora Memory</h2><p>Every logged recommendation and its measured outcomes.</p></div>
+      <div><div class="kicker">DECISION JOURNAL</div><h2>Aurora Memory</h2><p>Live recommendation history and measured outcomes. Archived SOLD holdings are excluded.</p></div>
       <div class="journal-tools">
         <input id="searchBox" placeholder="Search ticker or company">
         <select id="actionFilter"><option value="">All actions</option></select>
@@ -250,7 +250,7 @@ body{
 
 <script>
 const MASTER_URLS=["AuroraMaster.json","https://webby1981.github.io/Aurora-HQ/AuroraMaster.json"];
-let ALL=[];
+let ALL=[],ARCHIVED_SOLD=[];
 
 const norm=s=>String(s??"").trim().toLowerCase().replace(/[^a-z0-9]/g,"");
 const num=v=>{if(v===null||v===undefined||v==="")return NaN;const n=Number(String(v).replace(/[£$€,%\s,]/g,""));return Number.isFinite(n)?n:NaN};
@@ -260,6 +260,18 @@ const money=v=>Number(v||0).toLocaleString("en-GB",{style:"currency",currency:"G
 const dte=v=>{if(!v)return null;if(v instanceof Date)return v;const x=new Date(v);return Number.isNaN(x.getTime())?null:x};
 const fmtDate=v=>{const d=dte(v);return d?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—"};
 const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+
+function isArchivedSoldRecord(r){
+  const soldStates=[
+    val(r,"action"),
+    val(r,"status"),
+    val(r,"holding_status"),
+    val(r,"position_status"),
+    val(r,"portfolio_status")
+  ].map(v=>String(v||"").trim().toUpperCase());
+
+  return soldStates.includes("SOLD");
+}
 
 function rowsFrom(source){
   if(!source)return[];
@@ -397,9 +409,18 @@ function fillFilters(){
 (async()=>{
   try{
     const master=await loadMaster();
-    ALL=tab(master,"AuroraDecisionLog");
+    const decisionRows=tab(master,"AuroraDecisionLog");
+
+    ARCHIVED_SOLD=decisionRows.filter(isArchivedSoldRecord);
+    ALL=decisionRows.filter(r=>!isArchivedSoldRecord(r));
+
     fillFilters();render();
-    put("liveStatus","LIVE • AURORA DECISION LOG CONNECTED");
+    put(
+      "liveStatus",
+      ARCHIVED_SOLD.length
+        ? `LIVE • DECISION LOG CONNECTED • ${ARCHIVED_SOLD.length} SOLD ARCHIVED`
+        : "LIVE • AURORA DECISION LOG CONNECTED"
+    );
   }catch(e){
     console.error(e);put("liveStatus","DATA CONNECTION ERROR");
     document.getElementById("journalBody").innerHTML=`<tr><td colspan="12" class="empty">${e.message}</td></tr>`;
