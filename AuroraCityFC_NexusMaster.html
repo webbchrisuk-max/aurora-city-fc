@@ -1980,6 +1980,158 @@ body{
 }
 </style>
 
+
+<style id="nexus-live-scoreboard-overlay-v11">
+/* ===================== LIVE HTML OVER SCOREBOARD PNG ===================== */
+.nexus-m6-hero{
+  min-height:680px !important;
+  padding:34px !important;
+  background:
+    linear-gradient(90deg,
+      rgba(2,8,18,.78) 0%,
+      rgba(2,8,18,.48) 34%,
+      rgba(2,8,18,.16) 58%,
+      rgba(2,8,18,.42) 100%
+    ),
+    linear-gradient(180deg,rgba(1,6,14,.02),rgba(1,6,14,.20)),
+    url("assets/aurora-city-fc/hero/nexus.PNG") center 42% / cover no-repeat !important;
+}
+.nexus-m6-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 32%,rgba(34,211,238,.04),transparent 30%),
+    linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.12));
+  pointer-events:none;
+  z-index:0;
+}
+.nexus-m6-hero::after{display:none !important}
+.nexus-m6-hero > *{position:relative;z-index:2}
+
+/* Hide the old hero arrangement and rebuild it as a scoreboard overlay */
+.nexus-m6-hero .hero-grid{
+  display:block !important;
+}
+.nexus-m6-hero .hero-copy{
+  max-width:980px !important;
+  margin:54px auto 0 !important;
+  text-align:center !important;
+}
+.nexus-m6-hero .eyebrow{
+  justify-content:center !important;
+  margin-bottom:10px !important;
+}
+.nexus-m6-hero h1{
+  margin:0 auto !important;
+  font-size:clamp(72px,9vw,132px) !important;
+  line-height:.78 !important;
+  letter-spacing:-5px !important;
+  text-align:center !important;
+  text-transform:uppercase !important;
+  text-shadow:
+    0 10px 28px rgba(0,0,0,.78),
+    0 0 18px rgba(34,211,238,.18) !important;
+}
+.nexus-m6-hero .big-sub{
+  margin:12px auto 0 !important;
+  max-width:760px !important;
+  text-align:center !important;
+  color:#b7dff0 !important;
+  font-size:18px !important;
+}
+.nexus-m6-hero .hero-badges{
+  justify-content:center !important;
+  margin-top:14px !important;
+}
+
+/* Live scoreboard rows */
+.nexus-scoreboard-live-grid{
+  max-width:980px;
+  margin:24px auto 0;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  border:1px solid rgba(125,211,252,.18);
+  border-radius:14px;
+  overflow:hidden;
+  background:rgba(2,8,18,.74);
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+  box-shadow:0 16px 34px rgba(0,0,0,.30);
+}
+.nexus-scoreboard-live-cell{
+  min-height:110px;
+  padding:15px 14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border-right:1px solid rgba(125,211,252,.12);
+}
+.nexus-scoreboard-live-cell:last-child{border-right:0}
+.nexus-scoreboard-live-cell small{
+  color:#58d9ff;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.nexus-scoreboard-live-cell strong{
+  display:block;
+  margin-top:7px;
+  font-size:24px;
+  line-height:1.1;
+}
+.nexus-scoreboard-live-cell span{
+  display:block;
+  margin-top:5px;
+  color:#9eb5c7;
+  font-size:10px;
+  line-height:1.35;
+}
+.nexus-scoreboard-live-cell.good strong{color:#72e99c}
+.nexus-scoreboard-live-cell.gold strong{color:#f6c453}
+.nexus-scoreboard-live-cell.cyan strong{color:#72ddff}
+.nexus-scoreboard-live-cell.red strong{color:#fb7185}
+
+/* Remove finance ticket from the scoreboard and place below hero */
+.nexus-command-ticket{
+  margin:24px auto -16px !important;
+  max-width:980px !important;
+  background:rgba(4,11,22,.92) !important;
+  border:1px solid rgba(74,222,128,.24) !important;
+  box-shadow:0 16px 34px rgba(0,0,0,.26) !important;
+}
+.nexus-command-ticket::before{
+  content:"FINANCE PIPELINE";
+  position:absolute;
+  top:-10px;
+  left:18px;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid rgba(74,222,128,.24);
+  background:#07111f;
+  color:#7deaaa;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.9px;
+}
+@media(max-width:900px){
+  .nexus-m6-hero{min-height:720px !important;padding:28px 18px !important}
+  .nexus-scoreboard-live-grid{grid-template-columns:1fr 1fr}
+  .nexus-scoreboard-live-cell:nth-child(2){border-right:0}
+  .nexus-scoreboard-live-cell:nth-child(-n+2){border-bottom:1px solid rgba(125,211,252,.12)}
+}
+@media(max-width:560px){
+  .nexus-m6-hero h1{font-size:58px !important;letter-spacing:-3px !important}
+  .nexus-scoreboard-live-grid{grid-template-columns:1fr}
+  .nexus-scoreboard-live-cell{
+    border-right:0;
+    border-bottom:1px solid rgba(125,211,252,.12);
+  }
+  .nexus-scoreboard-live-cell:last-child{border-bottom:0}
+}
+</style>
+
 </head>
 <body>
 
@@ -2329,7 +2481,7 @@ body{
   </div>
 </section>
 
-<div class="muted footer">Aurora Nexus HQ • GitHub Asset Hero v10 • AuroraBrain.js connected</div>
+<div class="muted footer">Aurora Nexus HQ • Live Scoreboard Overlay v11 • AuroraBrain.js connected</div>
 </div>
 
 
@@ -2643,6 +2795,14 @@ function renderNexusBrain(brain){
   setText("nexusBrainRiskMeta",p.lowestHolding?`${p.lowestHolding.confidence}/100 • ${p.lowestHolding.riskLevel}`:"No risk holding");
   setText("nexusBrainRestrictions",String(p.restrictionCount||0));
   setText("nexusBrainVerdict",p.managerVerdict||"No manager verdict");
+  setText("heroScoreVerdict",p.managerVerdict||"No manager verdict");
+  setText("heroScoreVerdictNote",p.topHolding?`Top player ${p.topHolding.ticker} • ${p.topHolding.confidence}/100`:"Live manager instruction");
+  setText("heroScoreConfidence",`${Number(p.averageConfidence||0).toFixed(1)}/100`);
+  setText("heroScoreConfidenceNote",`${p.confidenceBand||"Unknown"} squad reading`);
+  setText("heroScoreRegime",p.marketRegime||"Unavailable");
+  setText("heroScoreRegimeNote",`${p.positiveNews||0} positive • ${p.negativeNews||0} negative stories`);
+  setText("heroScoreBuyMode",p.buyMode||"Unavailable");
+  setText("heroScoreBuyModeNote",`${p.restrictionCount||0} current restrictions`);
   setText("nexusBrainContext",`${p.marketRegime||"Regime unavailable"} • ${p.buyMode||"Buy mode unavailable"} • ${p.positiveNews||0} positive / ${p.negativeNews||0} negative stories`);
 
   const list=document.getElementById("nexusBrainLeaders");
