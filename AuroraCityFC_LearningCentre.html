@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#06111f">
-<title>Aurora City FC — Learning Centre | Brain Performance</title>
+<title>Aurora City FC — Learning Centre | Review Engine</title>
 <style>
 :root{
   --bg:#04101d;--panel:#081929;--panel2:#0b2135;--line:rgba(125,211,252,.16);
@@ -149,6 +149,224 @@ body{
 }
 </style>
 
+
+<style id="aurora-learning-review-engine-styles">
+.review-engine-grid{
+  grid-template-columns:1fr 1fr;
+}
+.engine-metrics{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:12px;
+}
+.engine-metric{
+  padding:12px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;
+  background:rgba(255,255,255,.025);
+}
+.engine-metric small{
+  display:block;
+  color:#87a2b6;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+.engine-metric strong{
+  display:block;
+  margin-top:6px;
+  font-size:21px;
+}
+.engine-queue{
+  display:grid;
+  gap:7px;
+  margin-top:12px;
+}
+.engine-queue-row{
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:13px;
+  background:rgba(0,0,0,.13);
+}
+.engine-queue-row strong{
+  font-size:10px;
+}
+.engine-queue-row span{
+  color:#8fa8ba;
+  font-size:8px;
+}
+.engine-queue-row b{
+  color:#fde68a;
+  font-size:10px;
+}
+.approval-toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.engine-btn{
+  min-height:34px;
+  padding:8px 11px;
+  border:1px solid rgba(83,217,245,.25);
+  border-radius:10px;
+  color:#dff9ff;
+  background:rgba(8,75,97,.22);
+  font-size:8px;
+  font-weight:950;
+  cursor:pointer;
+}
+.engine-btn:hover,
+.engine-btn:focus-visible{
+  border-color:rgba(83,217,245,.55);
+  outline:none;
+}
+.engine-btn.approve{
+  color:#bbf7d0;
+  border-color:rgba(52,211,153,.28);
+  background:rgba(20,83,45,.20);
+}
+.engine-btn.reject{
+  color:#fecdd3;
+  border-color:rgba(251,113,133,.27);
+  background:rgba(127,29,29,.18);
+}
+.engine-btn.trial{
+  color:#fde68a;
+  border-color:rgba(251,191,36,.28);
+  background:rgba(120,53,15,.19);
+}
+.approval-list{
+  display:grid;
+  gap:10px;
+}
+.proposal-card{
+  padding:14px;
+  border:1px solid rgba(167,139,250,.18);
+  border-radius:17px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(167,139,250,.08),transparent 34%),
+    rgba(255,255,255,.025);
+}
+.proposal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.proposal-head h3{
+  margin:5px 0 0;
+  font-size:17px;
+}
+.proposal-card p{
+  margin:9px 0 0;
+  color:#9bb0c0;
+  font-size:9px;
+  line-height:1.5;
+}
+.proposal-evidence{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:11px;
+}
+.proposal-evidence div{
+  padding:9px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:11px;
+  background:rgba(0,0,0,.14);
+}
+.proposal-evidence small{
+  display:block;
+  color:#71889c;
+  font-size:7px;
+  font-weight:950;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+}
+.proposal-evidence strong{
+  display:block;
+  margin-top:5px;
+  font-size:11px;
+}
+.proposal-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.proposal-status{
+  flex:0 0 auto;
+}
+.replay-summary{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:12px;
+}
+.replay-stat{
+  padding:12px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;
+  background:rgba(255,255,255,.025);
+}
+.replay-stat small{
+  display:block;
+  color:#87a2b6;
+  font-size:8px;
+  font-weight:950;
+  text-transform:uppercase;
+}
+.replay-stat strong{
+  display:block;
+  margin-top:6px;
+  font-size:20px;
+}
+.rule-register{
+  display:grid;
+  gap:7px;
+  margin-top:12px;
+}
+.rule-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  padding:10px;
+  border:1px solid rgba(52,211,153,.14);
+  border-radius:13px;
+  background:rgba(20,83,45,.08);
+}
+.rule-row strong{
+  display:block;
+  font-size:10px;
+}
+.rule-row span{
+  display:block;
+  margin-top:3px;
+  color:#83a293;
+  font-size:8px;
+}
+.rule-row time{
+  color:#6ee7a2;
+  font-size:8px;
+  white-space:nowrap;
+}
+@media(max-width:1050px){
+  .review-engine-grid{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .engine-metrics,
+  .replay-summary{grid-template-columns:1fr 1fr}
+  .proposal-evidence{grid-template-columns:1fr}
+}
+</style>
+
 </head>
 <body>
 <div class="shell">
@@ -206,7 +424,7 @@ body{
 
   <section class="card" style="margin-top:14px">
     <div class="section-head">
-      <div><div class="kicker">DECISION JOURNAL</div><h2>Aurora Memory</h2><p>Live recommendation history and measured outcomes. Archived SOLD holdings are excluded.</p></div>
+      <div><div class="kicker">DECISION JOURNAL</div><h2>Aurora Memory</h2><p>Every logged recommendation and its measured outcomes.</p></div>
       <div class="journal-tools">
         <input id="searchBox" placeholder="Search ticker or company">
         <select id="actionFilter"><option value="">All actions</option></select>
@@ -236,12 +454,91 @@ body{
     </article>
   </section>
 
+
+  <section class="grid review-engine-grid">
+    <article class="card">
+      <div class="section-head">
+        <div>
+          <div class="kicker">AUTOMATED REVIEW ENGINE</div>
+          <h2>Decision Review Scan</h2>
+          <p>Checks every live recommendation against its 7, 30 and 90-day evidence. SOLD holdings remain archived.</p>
+        </div>
+        <span class="badge info" id="reviewEngineStatus">WAITING</span>
+      </div>
+
+      <div class="engine-metrics">
+        <div class="engine-metric"><small>Live decisions</small><strong id="engineLiveDecisions">0</strong></div>
+        <div class="engine-metric"><small>Matured evidence</small><strong id="engineMatured">0</strong></div>
+        <div class="engine-metric"><small>Reviews due</small><strong id="engineDue">0</strong></div>
+        <div class="engine-metric"><small>Sold archived</small><strong id="engineSoldArchived">0</strong></div>
+      </div>
+
+      <div class="engine-queue" id="engineReviewQueue">
+        <div class="empty">The review engine is waiting for AuroraDecisionLog.</div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="section-head">
+        <div>
+          <div class="kicker">MANAGER CONTROL</div>
+          <h2>Approval Centre</h2>
+          <p>Aurora may propose improvements, but no rule becomes approved without the manager.</p>
+        </div>
+        <div class="approval-toolbar">
+          <button class="engine-btn" id="runReviewEngine" type="button">Run review scan</button>
+          <span class="badge watch" id="proposalCountBadge">0 PROPOSALS</span>
+        </div>
+      </div>
+
+      <div class="approval-list" id="approvalList">
+        <div class="empty">No evidence-backed proposals yet.</div>
+      </div>
+    </article>
+  </section>
+
+  <section class="card" style="margin-top:14px">
+    <div class="section-head">
+      <div>
+        <div class="kicker">SAFE TESTING</div>
+        <h2>Decision Replay Simulator</h2>
+        <p>Replays a proposed change against matured historical decisions before anything is approved.</p>
+      </div>
+      <span class="badge info" id="replayProposalName">NO PROPOSAL SELECTED</span>
+    </div>
+
+    <div class="replay-summary">
+      <div class="replay-stat"><small>Current sample</small><strong id="replayCurrentSample">—</strong></div>
+      <div class="replay-stat"><small>Trial sample</small><strong id="replayTrialSample">—</strong></div>
+      <div class="replay-stat"><small>Current success</small><strong id="replayCurrentRate">—</strong></div>
+      <div class="replay-stat"><small>Trial success</small><strong id="replayTrialRate">—</strong></div>
+    </div>
+
+    <div class="lessons" id="replayExplanation" style="margin-top:12px">
+      <div class="empty">Choose Replay on a proposal to compare it with the existing evidence.</div>
+    </div>
+
+    <div class="section-head" style="margin-top:17px">
+      <div>
+        <div class="kicker">APPROVED MEMORY</div>
+        <h2>Manager-Approved Rule Register</h2>
+        <p>Approved changes are recorded for Aurora’s shared scoring systems to consume.</p>
+      </div>
+      <span class="badge good" id="approvedRuleCount">0 APPROVED</span>
+    </div>
+
+    <div class="rule-register" id="approvedRuleRegister">
+      <div class="empty">No learning changes have been approved.</div>
+    </div>
+  </section>
+
+
   <section class="card" style="margin-top:14px">
     <div class="section-head"><div><div class="kicker">BRAIN EVOLUTION</div><h2>Controlled Improvement Path</h2><p>Aurora proposes improvements only after enough evidence exists. No rule changes are automatic.</p></div><span class="badge watch">MANAGER APPROVAL REQUIRED</span></div>
     <div class="evolution">
       <div class="evo-step"><small class="label">Stage 1 • Live</small><strong>Decision Memory</strong><p>Record every recommendation and review it at 7, 30 and 90 days.</p></div>
-      <div class="evo-step"><small class="label">Stage 2 • Building</small><strong>Accuracy & Lessons</strong><p>Identify which actions, scores and asset types produce the strongest outcomes.</p></div>
-      <div class="evo-step"><small class="label">Stage 3 • Locked</small><strong>Rule Suggestions</strong><p>Propose scoring-weight changes for the manager to approve or reject.</p></div>
+      <div class="evo-step"><small class="label">Stage 2 • Live</small><strong>Accuracy & Lessons</strong><p>Identify which actions, scores and asset types produce the strongest outcomes.</p></div>
+      <div class="evo-step"><small class="label">Stage 3 • Manager Controlled</small><strong>Rule Suggestions</strong><p>Propose scoring-weight changes for the manager to approve or reject.</p></div>
     </div>
   </section>
 
@@ -262,7 +559,7 @@ const fmtDate=v=>{const d=dte(v);return d?d.toLocaleDateString("en-GB",{day:"2-d
 const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
 
 function isArchivedSoldRecord(r){
-  const soldStates=[
+  const states=[
     val(r,"action"),
     val(r,"status"),
     val(r,"holding_status"),
@@ -270,8 +567,9 @@ function isArchivedSoldRecord(r){
     val(r,"portfolio_status")
   ].map(v=>String(v||"").trim().toUpperCase());
 
-  return soldStates.includes("SOLD");
+  return states.includes("SOLD");
 }
+
 
 function rowsFrom(source){
   if(!source)return[];
@@ -414,7 +712,13 @@ function fillFilters(){
     ARCHIVED_SOLD=decisionRows.filter(isArchivedSoldRecord);
     ALL=decisionRows.filter(r=>!isArchivedSoldRecord(r));
 
-    fillFilters();render();
+    fillFilters();
+    render();
+
+    if(typeof runLearningReview==="function"){
+      runLearningReview();
+    }
+
     put(
       "liveStatus",
       ARCHIVED_SOLD.length
@@ -428,5 +732,464 @@ function fillFilters(){
 })();
 ["searchBox","actionFilter","resultFilter"].forEach(id=>document.getElementById(id).addEventListener("input",renderJournal));
 </script>
+
+<script id="aurora-learning-review-engine">
+const AURORA_LEARNING_DECISIONS_KEY="aurora_learning_proposal_decisions_v1";
+const AURORA_APPROVED_RULES_KEY="aurora_learning_approved_rules_v1";
+let CURRENT_LEARNING_PROPOSALS=[];
+
+function readLearningDecisionState(){
+  try{
+    const value=JSON.parse(localStorage.getItem(AURORA_LEARNING_DECISIONS_KEY)||"{}");
+    return value&&typeof value==="object"?value:{};
+  }catch(_){
+    return {};
+  }
+}
+
+function writeLearningDecisionState(value){
+  localStorage.setItem(AURORA_LEARNING_DECISIONS_KEY,JSON.stringify(value));
+}
+
+function readApprovedRules(){
+  try{
+    const value=JSON.parse(localStorage.getItem(AURORA_APPROVED_RULES_KEY)||"[]");
+    return Array.isArray(value)?value:[];
+  }catch(_){
+    return [];
+  }
+}
+
+function writeApprovedRules(value){
+  localStorage.setItem(AURORA_APPROVED_RULES_KEY,JSON.stringify(value));
+  window.AuroraLearningRules=value;
+  window.dispatchEvent(new CustomEvent("aurora-learning-rules-changed",{detail:{rules:value}}));
+}
+
+function decisionAgeDays(row){
+  const date=dte(val(row,"decision_date","date","created_at","submitted_at"));
+  if(!date)return NaN;
+  return Math.floor((Date.now()-date.getTime())/86400000);
+}
+
+function hasOutcome(row,horizon){
+  return Number.isFinite(pct(val(row,`outcome_${horizon}d_pct`)));
+}
+
+function measuredResult(row){
+  const stored=String(val(row,"decision_result")||"").trim().toUpperCase();
+  if(["STRONG SUCCESS","SUCCESS","MIXED","MISS"].includes(stored))return stored;
+
+  const ret=latestReturn(row);
+  if(!Number.isFinite(ret))return "PENDING";
+  if(ret>=8)return "STRONG SUCCESS";
+  if(ret>=2)return "SUCCESS";
+  if(ret>-3)return "MIXED";
+  return "MISS";
+}
+
+function resultIsSuccess(row){
+  return /SUCCESS/.test(measuredResult(row));
+}
+
+function safeRate(success,total){
+  return total?success/total*100:NaN;
+}
+
+function formatRate(value){
+  return Number.isFinite(value)?value.toFixed(1)+"%":"—";
+}
+
+function horizonReviewQueue(){
+  const horizons=[7,30,90];
+
+  return horizons.map(function(horizon){
+    const due=ALL.filter(function(row){
+      const age=decisionAgeDays(row);
+      return Number.isFinite(age)&&age>=horizon&&!hasOutcome(row,horizon);
+    });
+
+    return {
+      horizon,
+      count:due.length,
+      tickers:due.slice(0,4).map(row=>val(row,"ticker")).filter(Boolean)
+    };
+  });
+}
+
+function proposalStatus(id){
+  return readLearningDecisionState()[id]?.status||"pending";
+}
+
+function proposalStatusClass(status){
+  return status==="approved"?"good":status==="rejected"?"risk":status==="trial"?"watch":"info";
+}
+
+function proposalStatusLabel(status){
+  return status==="approved"?"Approved":status==="rejected"?"Rejected":status==="trial"?"Trial active":"Pending";
+}
+
+function makeConfidenceProposal(matured){
+  const scored=matured.filter(row=>Number.isFinite(num(val(row,"confidence_score"))));
+  const current=scored.filter(row=>num(val(row,"confidence_score"))>=75);
+  const trial=scored.filter(row=>num(val(row,"confidence_score"))>=80);
+
+  if(current.length<3)return null;
+
+  const currentRate=safeRate(current.filter(resultIsSuccess).length,current.length);
+  const trialRate=safeRate(trial.filter(resultIsSuccess).length,trial.length);
+
+  if(currentRate>=70)return null;
+
+  return {
+    id:"confidence-threshold-75-to-80",
+    type:"Confidence calibration",
+    title:"Tighten the high-confidence threshold",
+    summary:`Decisions scored 75 or above are succeeding at ${formatRate(currentRate)}. Aurora proposes reserving the high-confidence label for scores of 80 or above until the evidence improves.`,
+    currentRule:"High confidence begins at 75",
+    proposedRule:"High confidence begins at 80",
+    evidence:`${current.length} matured high-confidence decisions`,
+    effect:"Reduces overconfidence; does not block a purchase by itself.",
+    replay:{
+      currentSample:current.length,
+      trialSample:trial.length,
+      currentRate,
+      trialRate,
+      explanation:trial.length
+        ? `The 80-point trial keeps ${trial.length} decisions and changes measured success from ${formatRate(currentRate)} to ${formatRate(trialRate)}.`
+        : "No matured decision currently reaches 80, so Aurora needs more evidence before approval."
+    }
+  };
+}
+
+function makeWeakActionProposal(matured){
+  const groups=new Map();
+
+  matured.forEach(function(row){
+    const action=String(val(row,"action")||"UNKNOWN").trim().toUpperCase();
+    if(!groups.has(action))groups.set(action,[]);
+    groups.get(action).push(row);
+  });
+
+  const candidates=[...groups.entries()]
+    .filter(([,rows])=>rows.length>=3)
+    .map(([action,rows])=>({
+      action,
+      rows,
+      rate:safeRate(rows.filter(resultIsSuccess).length,rows.length)
+    }))
+    .sort((a,b)=>a.rate-b.rate);
+
+  const weakest=candidates[0];
+  if(!weakest||weakest.rate>=50)return null;
+
+  return {
+    id:`extra-review-${norm(weakest.action)}`,
+    type:"Action safeguard",
+    title:`Add an evidence check to ${weakest.action} calls`,
+    summary:`${weakest.action} decisions are succeeding at ${formatRate(weakest.rate)} across ${weakest.rows.length} matured reviews. Aurora proposes an extra manager-review gate before treating this action as promotion-ready.`,
+    currentRule:`${weakest.action} uses the normal review route`,
+    proposedRule:`${weakest.action} requires an additional evidence check`,
+    evidence:`${weakest.rows.length} matured ${weakest.action} decisions`,
+    effect:"Adds review friction; it does not automatically reject the share.",
+    replay:{
+      currentSample:weakest.rows.length,
+      trialSample:weakest.rows.filter(row=>num(val(row,"confidence_score"))>=65).length,
+      currentRate:weakest.rate,
+      trialRate:safeRate(
+        weakest.rows.filter(row=>num(val(row,"confidence_score"))>=65&&resultIsSuccess(row)).length,
+        weakest.rows.filter(row=>num(val(row,"confidence_score"))>=65).length
+      ),
+      explanation:`The trial keeps only ${weakest.action} decisions with confidence of at least 65 and compares them with the full ${weakest.action} history.`
+    }
+  };
+}
+
+function makeStrongActionProposal(matured){
+  const groups=new Map();
+
+  matured.forEach(function(row){
+    const action=String(val(row,"action")||"UNKNOWN").trim().toUpperCase();
+    if(!groups.has(action))groups.set(action,[]);
+    groups.get(action).push(row);
+  });
+
+  const candidates=[...groups.entries()]
+    .filter(([,rows])=>rows.length>=4)
+    .map(([action,rows])=>({
+      action,
+      rows,
+      rate:safeRate(rows.filter(resultIsSuccess).length,rows.length)
+    }))
+    .sort((a,b)=>b.rate-a.rate);
+
+  const strongest=candidates[0];
+  if(!strongest||strongest.rate<75)return null;
+
+  return {
+    id:`tie-break-${norm(strongest.action)}`,
+    type:"Evidence weighting",
+    title:`Use ${strongest.action} history as a tie-break signal`,
+    summary:`${strongest.action} has a ${formatRate(strongest.rate)} measured success rate across ${strongest.rows.length} matured decisions. Aurora proposes using this evidence only as a small tie-break when two candidates otherwise score equally.`,
+    currentRule:"No historical action tie-break",
+    proposedRule:`Small positive tie-break for proven ${strongest.action} patterns`,
+    evidence:`${strongest.rows.length} matured decisions`,
+    effect:"A tie-break only; valuation, yield and risk gates remain in control.",
+    replay:{
+      currentSample:matured.length,
+      trialSample:strongest.rows.length,
+      currentRate:safeRate(matured.filter(resultIsSuccess).length,matured.length),
+      trialRate:strongest.rate,
+      explanation:`The ${strongest.action} evidence set outperformed the full matured memory. The proposed use is deliberately limited to equal-score decisions.`
+    }
+  };
+}
+
+function makeHorizonProposal(matured){
+  const comparable=matured.filter(row=>hasOutcome(row,7)&&hasOutcome(row,90));
+  if(comparable.length<5)return null;
+
+  const reversals=comparable.filter(function(row){
+    const early=pct(val(row,"outcome_7d_pct"));
+    const late=pct(val(row,"outcome_90d_pct"));
+    return (early>=2&&late<0)||(early<0&&late>=2);
+  });
+
+  const reversalRate=safeRate(reversals.length,comparable.length);
+  if(reversalRate<30)return null;
+
+  return {
+    id:"require-90d-for-permanent-rule",
+    type:"Review horizon",
+    title:"Require 90-day evidence for permanent rule changes",
+    summary:`${formatRate(reversalRate)} of decisions with both 7-day and 90-day evidence changed direction. Aurora proposes allowing 7-day results to create a watch note, but requiring 90-day evidence before a permanent learning rule can be approved.`,
+    currentRule:"Any matured horizon may influence a rule proposal",
+    proposedRule:"Permanent changes require 90-day evidence",
+    evidence:`${reversals.length} reversals from ${comparable.length} comparable decisions`,
+    effect:"Slower learning, but stronger protection against short-term noise.",
+    replay:{
+      currentSample:comparable.length,
+      trialSample:comparable.length-reversals.length,
+      currentRate:safeRate(comparable.filter(resultIsSuccess).length,comparable.length),
+      trialRate:safeRate(
+        comparable.filter(row=>!reversals.includes(row)&&resultIsSuccess(row)).length,
+        comparable.length-reversals.length
+      ),
+      explanation:`The trial removes decisions whose early and 90-day direction conflicted, showing how much short-term noise affects the evidence base.`
+    }
+  };
+}
+
+function buildLearningProposals(){
+  const matured=ALL.filter(row=>Number.isFinite(latestReturn(row)));
+
+  return [
+    makeConfidenceProposal(matured),
+    makeWeakActionProposal(matured),
+    makeStrongActionProposal(matured),
+    makeHorizonProposal(matured)
+  ].filter(Boolean);
+}
+
+function renderReviewQueue(){
+  const queue=horizonReviewQueue();
+  const totalDue=queue.reduce((sum,item)=>sum+item.count,0);
+  const matured=ALL.filter(row=>Number.isFinite(latestReturn(row))).length;
+
+  put("engineLiveDecisions",ALL.length);
+  put("engineMatured",matured);
+  put("engineDue",totalDue);
+  put("engineSoldArchived",ARCHIVED_SOLD.length);
+
+  const status=document.getElementById("reviewEngineStatus");
+  if(status){
+    status.textContent=totalDue?`${totalDue} REVIEWS DUE`:"SCAN COMPLETE";
+    status.className=`badge ${totalDue?"watch":"good"}`;
+  }
+
+  const queueEl=document.getElementById("engineReviewQueue");
+  if(queueEl){
+    queueEl.innerHTML=queue.map(function(item){
+      const names=item.tickers.length?item.tickers.join(", "):"No overdue decisions";
+      return `<div class="engine-queue-row">
+        <strong>${item.horizon}-DAY</strong>
+        <span>${names}</span>
+        <b>${item.count} due</b>
+      </div>`;
+    }).join("");
+  }
+}
+
+function proposalCard(proposal){
+  const status=proposalStatus(proposal.id);
+
+  return `<article class="proposal-card" data-proposal-id="${proposal.id}">
+    <div class="proposal-head">
+      <div>
+        <small class="label">${proposal.type}</small>
+        <h3>${proposal.title}</h3>
+      </div>
+      <span class="badge ${proposalStatusClass(status)} proposal-status">${proposalStatusLabel(status)}</span>
+    </div>
+
+    <p>${proposal.summary}</p>
+
+    <div class="proposal-evidence">
+      <div><small>Current rule</small><strong>${proposal.currentRule}</strong></div>
+      <div><small>Proposed rule</small><strong>${proposal.proposedRule}</strong></div>
+      <div><small>Evidence</small><strong>${proposal.evidence}</strong></div>
+      <div><small>Controlled effect</small><strong>${proposal.effect}</strong></div>
+    </div>
+
+    <div class="proposal-actions">
+      <button class="engine-btn" type="button" data-replay-proposal="${proposal.id}">Replay evidence</button>
+      <button class="engine-btn trial" type="button" data-set-proposal="${proposal.id}" data-status="trial">Trial</button>
+      <button class="engine-btn approve" type="button" data-set-proposal="${proposal.id}" data-status="approved">Approve</button>
+      <button class="engine-btn reject" type="button" data-set-proposal="${proposal.id}" data-status="rejected">Reject</button>
+    </div>
+  </article>`;
+}
+
+function renderApprovalCentre(){
+  CURRENT_LEARNING_PROPOSALS=buildLearningProposals();
+
+  const list=document.getElementById("approvalList");
+  const badge=document.getElementById("proposalCountBadge");
+
+  if(badge){
+    badge.textContent=`${CURRENT_LEARNING_PROPOSALS.length} PROPOSAL${CURRENT_LEARNING_PROPOSALS.length===1?"":"S"}`;
+  }
+
+  if(!list)return;
+
+  list.innerHTML=CURRENT_LEARNING_PROPOSALS.length
+    ? CURRENT_LEARNING_PROPOSALS.map(proposalCard).join("")
+    : '<div class="empty">Aurora found no evidence strong enough to justify a rule proposal. Existing rules remain unchanged.</div>';
+}
+
+function setProposalDecision(id,status){
+  const proposal=CURRENT_LEARNING_PROPOSALS.find(item=>item.id===id);
+  if(!proposal)return;
+
+  const state=readLearningDecisionState();
+  state[id]={
+    status,
+    updatedAt:new Date().toISOString(),
+    title:proposal.title
+  };
+  writeLearningDecisionState(state);
+
+  let approved=readApprovedRules().filter(item=>item.id!==id);
+
+  if(status==="approved"){
+    approved.push({
+      id:proposal.id,
+      title:proposal.title,
+      type:proposal.type,
+      approvedAt:new Date().toISOString(),
+      currentRule:proposal.currentRule,
+      proposedRule:proposal.proposedRule,
+      evidence:proposal.evidence,
+      effect:proposal.effect,
+      mode:"manager-approved"
+    });
+  }
+
+  writeApprovedRules(approved);
+  renderApprovalCentre();
+  renderApprovedRuleRegister();
+}
+
+function showProposalReplay(id){
+  const proposal=CURRENT_LEARNING_PROPOSALS.find(item=>item.id===id);
+  if(!proposal)return;
+
+  put("replayProposalName",proposal.title.toUpperCase());
+  put("replayCurrentSample",proposal.replay.currentSample);
+  put("replayTrialSample",proposal.replay.trialSample);
+  put("replayCurrentRate",formatRate(proposal.replay.currentRate));
+  put("replayTrialRate",formatRate(proposal.replay.trialRate));
+
+  const explanation=document.getElementById("replayExplanation");
+  if(explanation){
+    explanation.innerHTML=`<div class="lesson">
+      <strong>Replay result</strong>
+      <span>${proposal.replay.explanation} This is a historical comparison only; it does not change live Aurora scoring.</span>
+    </div>`;
+  }
+
+  document.getElementById("replayProposalName")?.scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+}
+
+function renderApprovedRuleRegister(){
+  const rules=readApprovedRules();
+  const register=document.getElementById("approvedRuleRegister");
+  put("approvedRuleCount",`${rules.length} APPROVED`);
+
+  if(!register)return;
+
+  register.innerHTML=rules.length
+    ? rules.slice().reverse().map(function(rule){
+        const date=dte(rule.approvedAt);
+        return `<div class="rule-row">
+          <div>
+            <strong>${rule.title}</strong>
+            <span>${rule.proposedRule} • ${rule.evidence}</span>
+          </div>
+          <time>${date?date.toLocaleDateString("en-GB"):"Approved"}</time>
+        </div>`;
+      }).join("")
+    : '<div class="empty">No learning changes have been approved.</div>';
+}
+
+function runLearningReview(){
+  renderReviewQueue();
+  renderApprovalCentre();
+  renderApprovedRuleRegister();
+
+  window.AuroraLearningRules=readApprovedRules();
+
+  const status=document.getElementById("reviewEngineStatus");
+  if(status){
+    status.title=`Last scan ${new Date().toLocaleString("en-GB")}`;
+  }
+}
+
+document.addEventListener("click",function(event){
+  const decisionButton=event.target.closest("[data-set-proposal]");
+  if(decisionButton){
+    setProposalDecision(
+      decisionButton.dataset.setProposal,
+      decisionButton.dataset.status
+    );
+    return;
+  }
+
+  const replayButton=event.target.closest("[data-replay-proposal]");
+  if(replayButton){
+    showProposalReplay(replayButton.dataset.replayProposal);
+  }
+});
+
+document.getElementById("runReviewEngine")?.addEventListener("click",function(){
+  runLearningReview();
+  this.textContent="Scan complete";
+  window.setTimeout(()=>{this.textContent="Run review scan"},1300);
+});
+
+window.addEventListener("aurora-learning-rules-changed",renderApprovedRuleRegister);
+
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",function(){
+    window.setTimeout(runLearningReview,800);
+  },{once:true});
+}else{
+  window.setTimeout(runLearningReview,800);
+}
+</script>
+
 </body>
 </html>
