@@ -20,12 +20,12 @@
  *   brain.getManagerThought("UKW")
  *   brain.getSectorStrength()
  *
- * Build: Aurora Brain v1.0
+ * Build: Aurora Brain v2.0
  */
 (function (global) {
   "use strict";
 
-  const VERSION = "1.0.0";
+  const VERSION = "2.0.0";
 
   const DEFAULTS = Object.freeze({
     confidenceBands: Object.freeze([
@@ -146,6 +146,65 @@
     return "";
   }
 
+  function rowsFromTabValue(value) {
+    if (!value) return [];
+
+    if (Array.isArray(value)) {
+      if (!value.length) return [];
+      if (value.every(row => row && typeof row === "object" && !Array.isArray(row))) {
+        return value.slice();
+      }
+      if (value.every(Array.isArray)) {
+        const first = value[0] || [];
+        const looksLikeHeader = first.every(cell => typeof cell === "string" || cell === null || cell === undefined);
+        if (!looksLikeHeader) return [];
+        const headers = first.map(cell => String(cell || "").trim());
+        return value.slice(1).filter(row => row.some(cell => cell !== "" && cell !== null && cell !== undefined)).map(row => {
+          const obj = {};
+          headers.forEach((header, index) => { if (header) obj[header] = row[index]; });
+          return obj;
+        });
+      }
+      return [];
+    }
+
+    if (typeof value !== "object") return [];
+
+    const directArrays = [value.rows, value.data, value.values, value.records, value.items];
+    for (const candidate of directArrays) {
+      if (!Array.isArray(candidate)) continue;
+      if (candidate.every(row => row && typeof row === "object" && !Array.isArray(row))) return candidate.slice();
+      if (candidate.every(Array.isArray)) {
+        const headers = Array.isArray(value.headers)
+          ? value.headers.map(cell => String(cell || "").trim())
+          : Array.isArray(value.columns)
+            ? value.columns.map(column => String(column?.label || column?.name || column || "").trim())
+            : [];
+        if (headers.length) {
+          return candidate.filter(row => row.some(cell => cell !== "" && cell !== null && cell !== undefined)).map(row => {
+            const obj = {};
+            headers.forEach((header, index) => { if (header) obj[header] = row[index]; });
+            return obj;
+          });
+        }
+        return rowsFromTabValue(candidate);
+      }
+    }
+
+    // Google Visualization style: { cols:[{label}], rows:[{c:[{v}]}] }
+    if (Array.isArray(value.cols) && Array.isArray(value.rows)) {
+      const headers = value.cols.map((column, index) => String(column?.label || column?.id || `column_${index + 1}`));
+      return value.rows.map(row => {
+        const cells = Array.isArray(row?.c) ? row.c : [];
+        const obj = {};
+        headers.forEach((header, index) => { obj[header] = cells[index]?.v ?? cells[index]?.f ?? ""; });
+        return obj;
+      });
+    }
+
+    return [];
+  }
+
   function getTab(master, tabName) {
     if (!master || typeof master !== "object") return [];
 
@@ -155,14 +214,25 @@
       master.data,
       master.tabs,
       master.sheets,
-      master.feeds
-    ].filter(Boolean);
+      master.feeds,
+      master.tables,
+      master.payload
+    ].filter(container => container && typeof container === "object");
 
     for (const container of containers) {
       for (const key of Object.keys(container)) {
-        if (compactKey(key) === wanted && Array.isArray(container[key])) {
-          return container[key];
-        }
+        if (compactKey(key) !== wanted) continue;
+        const rows = rowsFromTabValue(container[key]);
+        if (rows.length || Array.isArray(container[key])) return rows;
+      }
+    }
+
+    // Some exports use an array of sheet objects.
+    for (const container of containers) {
+      if (!Array.isArray(container)) continue;
+      for (const sheet of container) {
+        const name = sheet?.name || sheet?.title || sheet?.sheet || sheet?.tab;
+        if (compactKey(name) === wanted) return rowsFromTabValue(sheet);
       }
     }
 
@@ -561,6 +631,61 @@
         .sort((a, b) => b.averageConfidence - a.averageConfidence);
     }
 
+    function getPremierLeague() {
+      const all = getAllHoldings();
+      const champions = all.slice(0, 4);
+      const midTable = all.slice(4, Math.max(4, all.length - 3));
+      const relegation = all.slice(-3);
+      const watchRows = getTab(master, "Watchlist").concat(getTab(master, "Global Watchlist"));
+      const promotion = watchRows.slice(0, 6).map((row, index) => ({
+        position: index + 5,
+        ticker: cleanTicker(getValue(row, "ticker", "symbol", "epic")),
+        company: String(getValue(row, "name", "company", "company name") || "Watchlist candidate"),
+        score: parseNumber(getValue(row, "score", "buy strength", "buy_strength", "promotion score")) || 0,
+        action: String(getValue(row, "status", "action", "recommendation") || "SCOUT")
+      }));
+      return { champions, promotion, midTable, relegation };
+    }
+
+    function getFairValueDiscounts() {
+      return getAllHoldings().map(holding => {
+        const raw = holding.raw?.holdings?.[0] || {};
+        const fairValue = parseNumber(getValue(raw, "fair value", "fair_value", "target price", "target_price"));
+        const price = holding.price || parseNumber(getValue(raw, "live price", "live_price", "price"));
+        const discountPct = fairValue > 0 && price > 0 ? ((fairValue - price) / fairValue) * 100 : NaN;
+        return Object.assign({}, holding, { fairValue, discountPct });
+      }).filter(item => Number.isFinite(item.discountPct)).sort((a, b) => b.discountPct - a.discountPct);
+    }
+
+    function getDividendRoadmap() {
+      const monthly = portfolio.annualIncome / 12;
+      const targets = [250,350,500,800,1150,1400,1600,2000];
+      return targets.map((target, index) => ({
+        year: 2026 + index,
+        target,
+        currentMonthly: monthly,
+        progressPct: Math.min(100, target > 0 ? monthly / target * 100 : 0),
+        gap: Math.max(0, target - monthly),
+        achieved: monthly >= target
+      }));
+    }
+
+    function getIncomeForecast() {
+      const dividends = getTab(master, "Dividends");
+      return { annualIncome: portfolio.annualIncome, monthlyIncome: portfolio.annualIncome / 12, dividends };
+    }
+
+    function getDepartments() {
+      return [
+        { name: "Finance Department", status: "CONNECTED" },
+        { name: "Manager Dashboard", status: "CONNECTED" },
+        { name: "Squad Hub", status: "CONNECTED" },
+        { name: "Scouting Centre", status: "CONNECTED" },
+        { name: "Transfer Centre", status: "CONNECTED" },
+        { name: "Analysis Room", status: "CONNECTED" }
+      ];
+    }
+
     function getSummary() {
       return {
         managerVerdict: portfolio.managerVerdict,
@@ -590,6 +715,11 @@
       getManagerThought,
       compareHoldings: compare,
       getSectorStrength,
+      getPremierLeague,
+      getFairValueDiscounts,
+      getDividendRoadmap,
+      getIncomeForecast,
+      getDepartments,
       getSummary,
       raw: Object.freeze({
         master,
@@ -627,6 +757,8 @@
     parsePercent,
     confidenceBand,
     trainingGroup,
+    getTab,
+    rowsFromTabValue,
     AuroraBrainError
   });
 
