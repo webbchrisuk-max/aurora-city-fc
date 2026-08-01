@@ -1728,108 +1728,9 @@
     }
   }
 
-  let auroraHeaderMode = "";
-  let auroraMenuButtonObserver = null;
-
-  function disconnectAuroraMenuButtonObserver(){
-    if(auroraMenuButtonObserver){
-      auroraMenuButtonObserver.disconnect();
-      auroraMenuButtonObserver = null;
-    }
-  }
-
-  function menuButtonLooksLikeNavigation(button){
-    if(!button || button.nodeType !== 1) return false;
-
-    const label = [
-      button.id,
-      button.className,
-      button.getAttribute("aria-label"),
-      button.getAttribute("title"),
-      button.getAttribute("data-aurora-menu-button"),
-      button.textContent
-    ].join(" ").toLowerCase();
-
-    return (
-      label.includes("auroranavtoggle")
-      || label.includes("auroratopheadermenubutton")
-      || label.includes("aurora-menu")
-      || label.includes("menu-button")
-      || label.includes("hamburger")
-      || label.includes("open aurora")
-      || label.includes("mission navigation")
-      || label.includes("open menu")
-      || label.includes("☰")
-    );
-  }
-
-  function removeExtraMenuButtons(container,keep){
-    if(!container) return;
-
-    Array.from(container.querySelectorAll("button")).forEach(function(button){
-      if(button === keep) return;
-
-      /*
-        Brand/left containers are reserved for the one navigation control.
-        In wider headers, only remove buttons that identify as menu controls.
-      */
-      const isDedicatedMenuContainer =
-        container.classList.contains("session-brand")
-        || container.classList.contains("aurora-universal-left");
-
-      if(
-        isDedicatedMenuContainer
-        || menuButtonLooksLikeNavigation(button)
-      ){
-        button.remove();
-      }
-    });
-  }
-
-  function watchSingleMenuButton(container,keep){
-    disconnectAuroraMenuButtonObserver();
-    if(!container || typeof MutationObserver === "undefined") return;
-
-    auroraMenuButtonObserver = new MutationObserver(function(){
-      removeExtraMenuButtons(container,keep);
-    });
-
-    auroraMenuButtonObserver.observe(container,{
-      childList:true,
-      subtree:true
-    });
-  }
-
   function installMenuIntoAuroraAppShell(toggle){
     const shell = getVerifiedAuroraAppShell();
-
-    /*
-      Once this page has positively identified the persistent app shell,
-      never fall back to the web header during a transient resize/pageshow.
-      Falling back was what allowed both the proxy and local menu buttons
-      to become visible together.
-    */
-    if(!shell){
-      if(auroraHeaderMode === "app"){
-        if(toggle){
-          toggle.style.setProperty("display","none","important");
-        }
-
-        const localHeader =
-          document.getElementById("auroraUniversalHeader");
-
-        if(localHeader){
-          localHeader.remove();
-        }
-
-        document.body.classList.add("aurora-running-in-app-shell");
-        return true;
-      }
-
-      return false;
-    }
-
-    auroraHeaderMode = "app";
+    if(!shell) return false;
 
     const parentDocument = shell.document;
     const header = shell.header;
@@ -1839,39 +1740,61 @@
     const logout = shell.logout;
 
     /*
-      Keep exactly one proxy button in the persistent shell. Older builds
-      may have left a second hamburger with a different class or ID.
+      The shell may already contain its own hamburger button. Reuse that
+      button instead of adding a second one, then wire it to the current
+      department page's real navigation toggle.
     */
-    const existingProxyButtons = Array.from(
-      parentDocument.querySelectorAll(
-        "#auroraTopHeaderMenuButton," +
-        "#auroraNavToggle," +
-        "[data-aurora-menu-button]," +
-        ".aurora-menu-button," +
-        ".menu-button," +
-        ".hamburger-button"
-      )
-    );
+    function isMenuControl(node){
+      if(!node || node === logout) return false;
 
-    let button = existingProxyButtons.find(function(candidate){
-      return candidate.id === "auroraTopHeaderMenuButton";
-    }) || null;
+      const text = String(node.textContent || "")
+        .replace(/\s+/g," ")
+        .trim()
+        .toLowerCase();
 
-    existingProxyButtons.forEach(function(candidate){
-      if(candidate !== button && menuButtonLooksLikeNavigation(candidate)){
-        candidate.remove();
-      }
-    });
+      const signature = [
+        node.id || "",
+        node.className || "",
+        node.getAttribute("aria-label") || "",
+        node.getAttribute("title") || "",
+        text
+      ].join(" ").toLowerCase();
 
-    if(!button){
+      return (
+        signature.includes("menu")
+        || signature.includes("navigation")
+        || text === "☰"
+        || text === "≡"
+        || text === "三"
+      );
+    }
+
+    const candidates = Array.from(
+      header.querySelectorAll("button")
+    ).filter(isMenuControl);
+
+    /*
+      Prefer the shell's original button when it exists. A proxy left by
+      an earlier page is only used when no original control is available.
+    */
+    let button =
+      candidates.find(function(candidate){
+        return candidate.id !== "auroraTopHeaderMenuButton";
+      })
+      || parentDocument.getElementById("auroraTopHeaderMenuButton")
+      || null;
+
+    if(button){
+      const fresh = button.cloneNode(true);
+      button.replaceWith(fresh);
+      button = fresh;
+    }else{
       button = parentDocument.createElement("button");
     }
 
     button.id = "auroraTopHeaderMenuButton";
     button.type = "button";
     button.textContent = "☰";
-    button.setAttribute("data-aurora-menu-button","app-shell");
-
     button.setAttribute(
       "aria-label",
       "Open Aurora mission navigation"
@@ -1896,7 +1819,10 @@
       "box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 18px rgba(0,0,0,.22)!important",
       "font:900 20px/1 system-ui,sans-serif!important",
       "cursor:pointer!important",
-      "z-index:auto!important"
+      "z-index:auto!important",
+      "opacity:1!important",
+      "visibility:visible!important",
+      "pointer-events:auto!important"
     ].join(";");
 
     button.onclick = function(event){
@@ -1913,9 +1839,17 @@
     };
 
     /*
-      Exact Aurora GameShell layout:
-      menu button + session brand on the left.
+      Remove every other shell hamburger control. This leaves one visible,
+      working button on both the browser shell and installed app shell.
     */
+    Array.from(
+      header.querySelectorAll("button")
+    ).forEach(function(candidate){
+      if(candidate !== button && isMenuControl(candidate)){
+        candidate.remove();
+      }
+    });
+
     if(brand){
       brand.style.setProperty("display","flex","important");
       brand.style.setProperty("align-items","center","important");
@@ -1923,18 +1857,10 @@
       brand.style.setProperty("gap","10px","important");
       brand.style.setProperty("margin-right","auto","important");
       brand.insertBefore(button,brand.firstElementChild);
-      removeExtraMenuButtons(brand,button);
-      watchSingleMenuButton(brand,button);
     }else{
       header.prepend(button);
-      removeExtraMenuButtons(header,button);
-      watchSingleMenuButton(header,button);
     }
 
-    /*
-      Current department route goes into the existing right-side
-      action group immediately before Log out.
-    */
     if(actions){
       actions.style.setProperty("display","flex","important");
       actions.style.setProperty("align-items","center","important");
@@ -1955,16 +1881,21 @@
     header.style.setProperty("align-items","center","important");
     header.style.setProperty("justify-content","space-between","important");
 
-    toggle.style.setProperty(
-      "display",
-      "none",
-      "important"
-    );
-
     /*
-      Remove the local universal header if this page was previously
-      rendered outside the app and then restored inside the shell.
+      Hide the page-local toggle only after the shell button is confirmed
+      in the DOM. This prevents the web version losing every menu button.
     */
+    if(button.isConnected){
+      toggle.style.setProperty(
+        "display",
+        "none",
+        "important"
+      );
+    }else{
+      toggle.style.removeProperty("display");
+      return false;
+    }
+
     const localHeader =
       document.getElementById("auroraUniversalHeader");
 
@@ -1984,14 +1915,20 @@
     const left = header.querySelector(".aurora-universal-left");
 
     /*
-      Standalone web pages use the local #auroraNavToggle only.
-      Any app-shell proxy or older hamburger is removed, including
-      duplicates that arrive after the first render.
+      The web header must contain exactly one menu control: the live
+      #auroraNavToggle created by this shared navigation controller.
+      Remove stale proxy or legacy menu buttons without touching Log out.
     */
-    removeExtraMenuButtons(left || header,toggle);
+    if(left){
+      Array.from(left.querySelectorAll("button")).forEach(function(button){
+        if(button !== toggle){
+          button.remove();
+        }
+      });
+    }
 
     Array.from(
-      document.querySelectorAll(
+      header.querySelectorAll(
         "#auroraTopHeaderMenuButton," +
         "[data-aurora-menu-button]," +
         ".aurora-menu-button," +
@@ -1999,33 +1936,18 @@
         ".hamburger-button"
       )
     ).forEach(function(button){
-      if(button !== toggle && menuButtonLooksLikeNavigation(button)){
+      if(button !== toggle){
         button.remove();
       }
     });
 
-    /*
-      If this page was previously embedded in the same-origin shell,
-      clear the old parent proxy when it is now running standalone.
-    */
-    try{
-      if(window.parent && window.parent !== window){
-        const parentDocument = window.parent.document;
+    const staleProxy = document.getElementById(
+      "auroraTopHeaderMenuButton"
+    );
 
-        Array.from(
-          parentDocument.querySelectorAll(
-            "#auroraTopHeaderMenuButton," +
-            "[data-aurora-menu-button]"
-          )
-        ).forEach(function(button){
-          if(menuButtonLooksLikeNavigation(button)){
-            button.remove();
-          }
-        });
-      }
-    }catch(_){}
-
-    watchSingleMenuButton(left || header,toggle);
+    if(staleProxy && staleProxy.ownerDocument === document){
+      staleProxy.remove();
+    }
   }
 
   function buildUniversalAuroraHeader(toggle){
@@ -2039,7 +1961,6 @@
       return null;
     }
 
-    auroraHeaderMode = "web";
     document.body.classList.remove("aurora-running-in-app-shell");
 
     let header = document.getElementById("auroraUniversalHeader");
@@ -2125,20 +2046,11 @@
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
 
-    /*
-      Start clean: remove stale navigation controls from older builds.
-      The live button for this build is created immediately afterwards.
-    */
+    /* Remove any stale web toggle left by an older navigation build. */
     Array.from(
-      document.querySelectorAll(
-        "#auroraNavToggle," +
-        "#auroraTopHeaderMenuButton," +
-        "[data-aurora-menu-button]"
-      )
+      document.querySelectorAll("#auroraNavToggle")
     ).forEach(function(button){
-      if(menuButtonLooksLikeNavigation(button)){
-        button.remove();
-      }
+      button.remove();
     });
 
     injectUniversalHeaderStyles();
@@ -2501,11 +2413,6 @@
       refreshMissionProgressUi
     );
   }
-
-  window.addEventListener(
-    "pagehide",
-    disconnectAuroraMenuButtonObserver
-  );
 
   if(document.readyState === "loading"){
     document.addEventListener(
