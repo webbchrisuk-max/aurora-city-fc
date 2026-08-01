@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Aurora City FC — Matchday Centre</title>
-<link href="aurora-navigation.css?v=20260731-single-header-1" rel="stylesheet"/>
+<link rel="stylesheet" href="aurora-navigation.css?v=20260731-matchday-v3-visual-1">
 <style>
 :root{
   --bg:#030712;--panel:#07111f;--panel2:#0b1730;--card:#0d1b34;--card2:#102345;
@@ -343,102 +342,350 @@ a{color:inherit;text-decoration:none}button{font:inherit}.app{width:min(1540px,1
   }
 }
 
+
+/* ===================== MATCHDAY INTELLIGENCE COMMAND ===================== */
+.intelligence-command{
+  margin-top:14px;
+}
+.intelligence-command-grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:14px;
+}
+.intelligence-panel{
+  border:1px solid rgba(34,211,238,.28);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 12% 0%,rgba(34,211,238,.13),transparent 34%),
+    radial-gradient(circle at 92% 8%,rgba(167,139,250,.10),transparent 34%),
+    linear-gradient(145deg,rgba(13,27,52,.96),rgba(7,17,31,.98));
+  padding:17px;
+  box-shadow:var(--shadow);
+  min-width:0;
+}
+.intelligence-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:13px;
+}
+.intelligence-head h3{margin:0;font-size:18px}
+.intelligence-head p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.4}
+.intelligence-live{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 9px;
+  border:1px solid rgba(52,211,153,.28);
+  border-radius:999px;
+  background:rgba(20,83,45,.20);
+  color:#bbf7d0;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.intelligence-kpis{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:9px;
+}
+.intel-kpi{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(2,6,23,.30);
+  padding:11px;
+  min-width:0;
+}
+.intel-kpi small{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.intel-kpi strong{
+  display:block;
+  margin-top:5px;
+  font-size:22px;
+  letter-spacing:-.04em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.intel-kpi span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.3;
+}
+.intel-verdict{
+  margin-top:11px;
+  border:1px solid rgba(34,211,238,.22);
+  border-radius:17px;
+  background:rgba(8,47,73,.24);
+  padding:13px;
+}
+.intel-verdict small{
+  display:block;
+  color:var(--cyan);
+  font-size:9px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+}
+.intel-verdict strong{
+  display:block;
+  margin-top:6px;
+  font-size:19px;
+}
+.intel-verdict span{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+}
+.tactical-bench{
+  display:grid;
+  gap:8px;
+}
+.tactical-row{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:rgba(2,6,23,.28);
+  padding:9px;
+}
+.tactical-rank{
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:rgba(96,165,250,.14);
+  border:1px solid rgba(96,165,250,.24);
+  color:#bfdbfe;
+  font-weight:950;
+}
+.tactical-row strong{display:block;font-size:13px}
+.tactical-row span{display:block;margin-top:2px;color:var(--muted);font-size:10px}
+.action-chip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  max-width:180px;
+  padding:6px 8px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:950;
+  text-align:center;
+  border:1px solid rgba(96,165,250,.28);
+  background:rgba(30,64,175,.20);
+  color:#bfdbfe;
+}
+.action-chip.buy{
+  color:#bbf7d0;
+  border-color:rgba(52,211,153,.30);
+  background:rgba(20,83,45,.22);
+}
+.action-chip.watch{
+  color:#fde68a;
+  border-color:rgba(251,191,36,.30);
+  background:rgba(120,53,15,.22);
+}
+.action-chip.block{
+  color:#fecdd3;
+  border-color:rgba(251,113,133,.30);
+  background:rgba(127,29,29,.22);
+}
+.matchday-headlines{
+  margin-top:14px;
+}
+.headline-list{
+  display:grid;
+  gap:8px;
+}
+.headline-row{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:rgba(2,6,23,.25);
+  padding:10px;
+}
+.headline-icon{
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:rgba(96,165,250,.14);
+  border:1px solid rgba(96,165,250,.22);
+}
+.headline-row strong{display:block;font-size:12px}
+.headline-row span{display:block;margin-top:2px;color:var(--muted);font-size:10px;line-height:1.35}
+.headline-impact{
+  font-size:9px;
+  font-weight:950;
+  padding:5px 7px;
+  border-radius:999px;
+  color:#cbd5e1;
+  background:rgba(30,41,59,.55);
+  border:1px solid rgba(148,163,184,.20);
+}
+.headline-impact.positive{
+  color:#bbf7d0;
+  background:rgba(20,83,45,.22);
+  border-color:rgba(52,211,153,.30);
+}
+.headline-impact.negative{
+  color:#fecdd3;
+  background:rgba(127,29,29,.22);
+  border-color:rgba(251,113,133,.30);
+}
+@media(max-width:980px){
+  .intelligence-command-grid{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .intelligence-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tactical-row,.headline-row{grid-template-columns:32px minmax(0,1fr)}
+  .action-chip,.headline-impact{grid-column:2;justify-self:start}
+}
+
 </style>
-<style id="auroraSingleHeaderPageCleanup">
-/* Aurora single-header cleanup */
-body > .topbar,
-body > header.topbar,
-.fm-workspace > .topbar,
-.fm-workspace > header.topbar,
-.app > .topbar,
-.app > header.topbar,
-body > .app-header,
-body > .site-header,
-body > .global-header,
-.fm-sidebar{
-  display:none!important;
-}
-.fm-shell,
-.fm-workspace{
-  display:block!important;
-  width:100%!important;
-  min-width:0!important;
-  margin-left:0!important;
-  transform:none!important;
-}
-body.fm-sidebar-hidden .fm-workspace{
-  margin-left:0!important;
-}
-</style></head>
+</head>
 <body>
 <div class="app">
+<header class="topbar"><div class="topbar-inner"><div class="brand"><div class="crest">AC</div><div><h1>Aurora City FC</h1><p>Matchday Centre • Daily portfolio full-time report</p></div></div><button class="btn" id="refreshBtn">Refresh report</button></div></header>
 
 <section class="hero">
-<article class="hero-main panel">
-<div class="eyebrow">Aurora portfolio matchday</div>
-<div class="fulltime"><span class="pulse"></span><span id="matchStatus">FULL TIME</span></div>
-<div class="scoreboard">
-<div class="club-side">
-<div class="club-name">Aurora City FC</div>
-<div class="club-sub">Income Squad</div>
-</div>
-<div class="score-orb" id="scoreOrb"><span id="resultTitle">+0.64%</span></div>
-<div class="club-side right">
-<div class="club-name">The Market</div>
-<div class="club-sub">Daily Session</div>
-</div>
-</div>
-<div class="result-kicker">Full-time portfolio performance</div>
-<p class="lede" id="resultSummary">A positive session led by the strongest income holdings, with the squad finishing ahead of the wider market.</p>
-<div class="hero-meta"><span class="pill" id="reportDate">Report date: —</span><span class="pill" id="marketResult">Market result: —</span><span class="pill" id="reportSource">Source: AuroraData</span></div>
-</article>
-<aside class="hero-side panel">
-<div class="status-card"><div class="status-label">Market regime</div><div class="status-value cyan" id="regime">Normal / stable income</div><div class="status-note" id="regimeNote">Conditions favour disciplined selective accumulation.</div></div>
-<div class="status-card"><div class="status-label">Buy mode</div><div class="status-value amber" id="buyMode">Selective accumulation</div><div class="status-note" id="buyModeNote">Follow the plan; no forced transfers.</div></div>
-<div class="status-card"><div class="status-label">Next report</div><div class="status-value" id="nextReport">Today at 5:00pm</div><div class="status-note">The page displays the latest completed Aurora report.</div></div>
-</aside>
+  <article class="hero-main panel">
+    <div class="eyebrow">Aurora portfolio matchday</div>
+    <div class="fulltime"><span class="pulse"></span><span id="matchStatus">FULL TIME</span></div>
+    <div class="scoreboard">
+      <div class="club-side">
+        <div class="club-name">Aurora City FC</div>
+        <div class="club-sub">Income Squad</div>
+      </div>
+      <div class="score-orb" id="scoreOrb"><span id="resultTitle">+0.64%</span></div>
+      <div class="club-side right">
+        <div class="club-name">The Market</div>
+        <div class="club-sub">Daily Session</div>
+      </div>
+    </div>
+    <div class="result-kicker">Full-time portfolio performance</div>
+    <p class="lede" id="resultSummary">A positive session led by the strongest income holdings, with the squad finishing ahead of the wider market.</p>
+    <div class="hero-meta"><span class="pill" id="reportDate">Report date: —</span><span class="pill" id="marketResult">Market result: —</span><span class="pill" id="reportSource">Source: AuroraData</span></div>
+  </article>
+  <aside class="hero-side panel">
+    <div class="status-card"><div class="status-label">Market regime</div><div class="status-value cyan" id="regime">Normal / stable income</div><div class="status-note" id="regimeNote">Conditions favour disciplined selective accumulation.</div></div>
+    <div class="status-card"><div class="status-label">Buy mode</div><div class="status-value amber" id="buyMode">Selective accumulation</div><div class="status-note" id="buyModeNote">Follow the plan; no forced transfers.</div></div>
+    <div class="status-card"><div class="status-label">Next report</div><div class="status-value" id="nextReport">Today at 5:00pm</div><div class="status-note">The page displays the latest completed Aurora report.</div></div>
+  </aside>
 </section>
+
+
+<section class="intelligence-command">
+  <div class="intelligence-command-grid">
+    <article class="intelligence-panel">
+      <div class="intelligence-head">
+        <div>
+          <h3>🧠 Aurora Intelligence Command</h3>
+          <p>The latest portfolio confidence, restrictions and manager verdict.</p>
+        </div>
+        <span class="intelligence-live"><span class="pulse"></span> LIVE DATA</span>
+      </div>
+      <div class="intelligence-kpis">
+        <div class="intel-kpi"><small>Squad confidence</small><strong id="intelAverage">—</strong><span id="intelBand">Awaiting intelligence</span></div>
+        <div class="intel-kpi"><small>Top confidence</small><strong id="intelTop">—</strong><span id="intelTopScore">—</span></div>
+        <div class="intel-kpi"><small>Restrictions</small><strong id="intelRestrictions">—</strong><span>No-new-money instructions</span></div>
+        <div class="intel-kpi"><small>News balance</small><strong id="intelNewsBalance">—</strong><span id="intelNewsDetail">Positive vs negative</span></div>
+      </div>
+      <div class="intel-verdict">
+        <small>Intelligence verdict</small>
+        <strong id="intelVerdict">Awaiting ManagerBriefing</strong>
+        <span id="intelUpdated">Last update: —</span>
+      </div>
+    </article>
+
+    <article class="intelligence-panel">
+      <div class="intelligence-head">
+        <div>
+          <h3>🎯 Tactical Bench</h3>
+          <p>The highest-priority intelligence instructions across the squad.</p>
+        </div>
+      </div>
+      <div class="tactical-bench" id="tacticalBench">
+        <div class="empty">Awaiting AuroraIntelligence data.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section matchday-headlines">
+  <article class="card w12">
+    <div class="section-head">
+      <div><h3>Matchday intelligence headlines</h3><p>The most relevant recent holding stories detected by Aurora.</p></div>
+      <span class="pill" id="headlineCount">0 stories</span>
+    </div>
+    <div class="headline-list" id="intelligenceHeadlines">
+      <div class="empty">Awaiting matched news headlines.</div>
+    </div>
+  </article>
+</section>
+
 <section class="section"><div class="section-head"><div><h3>Daily awards</h3><p>The standout performers from today’s portfolio session.</p></div></div><div class="grid">
-<article class="card award"><div class="award-icon">🏆</div><div class="award-title">Man of the Match</div><div class="award-name" id="motmName">Tesco</div><div class="award-note" id="motmNote">Led the squad with the strongest overall contribution.</div><div class="rating" id="motmRating">8.8</div></article>
-<article class="card award"><div class="award-icon">🛡️</div><div class="award-title">Defensive Hero</div><div class="award-name" id="defName">ARCC</div><div class="award-note" id="defNote">Protected the income line while market conditions shifted.</div><div class="rating" id="defRating">8.2</div></article>
-<article class="card award"><div class="award-icon">💷</div><div class="award-title">Income Star</div><div class="award-name" id="incomeName">LondonMetric</div><div class="award-note" id="incomeNote">Best income contribution in today’s report.</div><div class="rating" id="incomeRating">7.7</div></article>
-<article class="card award"><div class="award-icon">📉</div><div class="award-title">Toughest Match</div><div class="award-name" id="worstName">UKW</div><div class="award-note" id="worstNote">The weakest daily result, but still under tactical review.</div><div class="rating bad" id="worstRating">5.4</div></article>
+  <article class="card award"><div class="award-icon">🏆</div><div class="award-title">Man of the Match</div><div class="award-name" id="motmName">Tesco</div><div class="award-note" id="motmNote">Led the squad with the strongest overall contribution.</div><div class="rating" id="motmRating">8.8</div></article>
+  <article class="card award"><div class="award-icon">🛡️</div><div class="award-title">Defensive Hero</div><div class="award-name" id="defName">ARCC</div><div class="award-note" id="defNote">Protected the income line while market conditions shifted.</div><div class="rating" id="defRating">8.2</div></article>
+  <article class="card award"><div class="award-icon">💷</div><div class="award-title">Income Star</div><div class="award-name" id="incomeName">LondonMetric</div><div class="award-note" id="incomeNote">Best income contribution in today’s report.</div><div class="rating" id="incomeRating">7.7</div></article>
+  <article class="card award"><div class="award-icon">📉</div><div class="award-title">Toughest Match</div><div class="award-name" id="worstName">UKW</div><div class="award-note" id="worstNote">The weakest daily result, but still under tactical review.</div><div class="rating bad" id="worstRating">5.4</div></article>
 </div></section>
+
 <section class="section"><div class="grid">
-<article class="card w5"><div class="section-head"><div><h3>Match statistics</h3><p>Today’s portfolio scoreboard.</p></div></div><div class="stat-grid">
-<div class="stat"><b class="green" id="upCount">11</b><span>Holdings rising</span></div><div class="stat"><b class="red" id="downCount">6</b><span>Holdings falling</span></div><div class="stat"><b id="flatCount">2</b><span>Unchanged</span></div><div class="stat"><b id="portfolioValue">—</b><span>Portfolio value</span></div><div class="stat"><b class="green" id="dayGain">+£0.00</b><span>Daily gain / loss</span></div><div class="stat"><b id="annualIncome">—</b><span>Annual income</span></div>
-</div></article>
-<article class="card w7"><div class="section-head"><div><h3>Playing conditions</h3><p>Signals supplied by the Market Regime engine.</p></div></div>
-<div class="condition"><strong>Volatility</strong><span id="volatility">Normal</span></div><div class="condition"><strong>Rate environment</strong><span id="rateEnvironment">High but stable</span></div><div class="condition"><strong>Inflation pressure</strong><span id="inflationPressure">Neutral / easing</span></div><div class="condition"><strong>Preferred sectors</strong><span id="preferredSectors">Defensive income, infrastructure, quality REITs</span></div><div class="condition"><strong>Avoid today</strong><span id="avoidList">Overconcentration, overvalued low-yield positions</span></div>
-</article>
+  <article class="card w5"><div class="section-head"><div><h3>Match statistics</h3><p>Today’s portfolio scoreboard.</p></div></div><div class="stat-grid">
+    <div class="stat"><b class="green" id="upCount">11</b><span>Holdings rising</span></div><div class="stat"><b class="red" id="downCount">6</b><span>Holdings falling</span></div><div class="stat"><b id="flatCount">2</b><span>Unchanged</span></div><div class="stat"><b id="portfolioValue">—</b><span>Portfolio value</span></div><div class="stat"><b class="green" id="dayGain">+£0.00</b><span>Daily gain / loss</span></div><div class="stat"><b id="annualIncome">—</b><span>Annual income</span></div>
+  </div></article>
+  <article class="card w7"><div class="section-head"><div><h3>Playing conditions</h3><p>Signals supplied by the Market Regime engine.</p></div></div>
+    <div class="condition"><strong>Volatility</strong><span id="volatility">Normal</span></div><div class="condition"><strong>Rate environment</strong><span id="rateEnvironment">High but stable</span></div><div class="condition"><strong>Inflation pressure</strong><span id="inflationPressure">Neutral / easing</span></div><div class="condition"><strong>Preferred sectors</strong><span id="preferredSectors">Defensive income, infrastructure, quality REITs</span></div><div class="condition"><strong>Avoid today</strong><span id="avoidList">Overconcentration, overvalued low-yield positions</span></div>
+  </article>
 </div></section>
+
 <section class="section"><div class="grid">
-<article class="card w7">
-<div class="section-head"><div><h3>Manager’s report</h3><p>The written 5 p.m. assessment.</p></div></div>
-<p class="manager-copy" id="managerReport">Aurora has completed the daily review.</p>
-<div class="manager-decision">
-<div class="decision-label">Manager’s decision</div>
-<div class="decision-main" id="managerDecisionMain">HOLD</div>
-<div class="decision-sub" id="managerDecisionSub">Selective accumulation</div>
-<span id="managerVerdict" style="display:none"></span>
-</div>
-</article>
-<article class="card w5">
-<div class="section-head"><div><h3>Tomorrow’s objectives</h3><p>The next tactical briefing.</p></div></div>
-<div class="objective-list" id="watchItems">
-<div class="objective"><div class="objective-icon">👀</div><div><strong>One to watch</strong><span>Tesco price and momentum</span></div></div>
-<div class="objective"><div class="objective-icon">📅</div><div><strong>Calendar</strong><span>Upcoming dividend dates</span></div></div>
-<div class="objective"><div class="objective-icon">🏦</div><div><strong>Macro</strong><span>Rates and inflation headlines</span></div></div>
-</div>
-</article>
+  <article class="card w7">
+    <div class="section-head"><div><h3>Manager’s report</h3><p>The written 5 p.m. assessment.</p></div></div>
+    <p class="manager-copy" id="managerReport">Aurora has completed the daily review.</p>
+    <div class="manager-decision">
+      <div class="decision-label">Manager’s decision</div>
+      <div class="decision-main" id="managerDecisionMain">HOLD</div>
+      <div class="decision-sub" id="managerDecisionSub">Selective accumulation</div>
+      <span id="managerVerdict" style="display:none"></span>
+    </div>
+  </article>
+  <article class="card w5">
+    <div class="section-head"><div><h3>Tomorrow’s objectives</h3><p>The next tactical briefing.</p></div></div>
+    <div class="objective-list" id="watchItems">
+      <div class="objective"><div class="objective-icon">👀</div><div><strong>One to watch</strong><span>Tesco price and momentum</span></div></div>
+      <div class="objective"><div class="objective-icon">📅</div><div><strong>Calendar</strong><span>Upcoming dividend dates</span></div></div>
+      <div class="objective"><div class="objective-icon">🏦</div><div><strong>Macro</strong><span>Rates and inflation headlines</span></div></div>
+    </div>
+  </article>
 </div></section>
+
 <section class="section"><article class="card w12">
-<div class="section-head"><div><h3>Matchday leaderboard</h3><p>The four official full-time awards.</p></div><span class="pill" id="ratingCount">0 published</span></div>
-<div class="ratings-grid" id="ratingsBody"></div>
+  <div class="section-head"><div><h3>Matchday leaderboard</h3><p>The four official full-time awards.</p></div><span class="pill" id="ratingCount">0 published</span></div>
+  <div class="ratings-grid" id="ratingsBody"></div>
 </article></section>
+
 <section class="section"><article class="card w12">
-<div class="section-head"><div><h3>Season form</h3><p>Every completed report becomes a fixture result.</p></div></div>
-<div class="form-strip" id="history"></div>
+  <div class="section-head"><div><h3>Season form</h3><p>Every completed report becomes a fixture result.</p></div></div>
+  <div class="form-strip" id="history"></div>
 </article></section>
 <footer class="footer">Aurora City FC • Matchday Centre • Powered by AuroraData</footer>
 </div>
@@ -619,6 +866,151 @@ function renderHistory(reportRows){
     }).join("");
 }
 
+
+function latestBriefingRow(data){
+  const list = rows(data,"ManagerBriefing");
+  return list[0] || {};
+}
+
+function intelligenceRows(data){
+  return rows(data,"AuroraIntelligence")
+    .filter(row=>String(val(row,"ticker") || "").trim() !== "");
+}
+
+function actionClass(action){
+  const text = String(action || "").toLowerCase();
+  if(/priority buy|selective buy|accumulate/.test(text)) return "buy";
+  if(/no new money|avoid|locked|review/.test(text)) return "block";
+  return "watch";
+}
+
+function intelligenceBand(score){
+  if(score >= 85) return "Elite";
+  if(score >= 75) return "Strong";
+  if(score >= 65) return "Good";
+  if(score >= 50) return "Watch";
+  return "Concern";
+}
+
+function renderIntelligence(data){
+  const intel = intelligenceRows(data);
+  const briefing = latestBriefingRow(data);
+
+  if(!intel.length){
+    $("intelAverage").textContent = "—";
+    $("intelBand").textContent = "No AuroraIntelligence rows found";
+    $("tacticalBench").innerHTML = `<div class="empty">AuroraIntelligence is not present in AuroraMaster.json.</div>`;
+    $("intelligenceHeadlines").innerHTML = `<div class="empty">No matched intelligence headlines available.</div>`;
+    $("headlineCount").textContent = "0 stories";
+    return;
+  }
+
+  const scores = intel
+    .map(row=>num(val(row,"confidence_score")))
+    .filter(Number.isFinite);
+
+  const average = scores.length
+    ? scores.reduce((sum,value)=>sum+value,0) / scores.length
+    : NaN;
+
+  const ranked = intel.slice().sort((a,b)=>
+    (num(val(b,"confidence_score")) || 0) -
+    (num(val(a,"confidence_score")) || 0)
+  );
+
+  const top = ranked[0] || {};
+  const restrictions = intel.filter(row=>
+    /no new money|monitor only|watch \/ no new money|locked legacy/i.test(
+      String(val(row,"action") || "")
+    )
+  ).length;
+
+  const positive = intel.reduce((sum,row)=>
+    sum + (num(val(row,"positive_news")) || 0),0
+  );
+  const negative = intel.reduce((sum,row)=>
+    sum + (num(val(row,"negative_news")) || 0),0
+  );
+
+  $("intelAverage").textContent = Number.isFinite(average)
+    ? `${average.toFixed(1)}/100`
+    : "—";
+  $("intelBand").textContent = Number.isFinite(average)
+    ? `${intelligenceBand(average)} overall squad confidence`
+    : "Confidence unavailable";
+  $("intelTop").textContent = val(top,"ticker") || "—";
+  $("intelTopScore").textContent = Number.isFinite(num(val(top,"confidence_score")))
+    ? `${num(val(top,"confidence_score")).toFixed(0)}/100 • ${val(top,"action") || "No action"}`
+    : "—";
+  $("intelRestrictions").textContent = String(restrictions);
+  $("intelNewsBalance").textContent = `${positive}-${negative}`;
+  $("intelNewsDetail").textContent = `${positive} positive • ${negative} negative`;
+
+  const verdict =
+    val(briefing,"Manager verdict","manager verdict","manager_verdict","Value","value") ||
+    val(briefing,"manager_verdict") ||
+    "Selective accumulation remains appropriate";
+
+  $("intelVerdict").textContent = verdict;
+
+  const generated =
+    val(briefing,"Generated","generated") ||
+    val(top,"generated_at");
+
+  const generatedDate = generated ? new Date(generated) : null;
+  $("intelUpdated").textContent =
+    generatedDate && !Number.isNaN(generatedDate.getTime())
+      ? `Last update: ${generatedDate.toLocaleString("en-GB")}`
+      : "Last update: Aurora Intelligence v1.1";
+
+  const bench = ranked.slice(0,5);
+  $("tacticalBench").innerHTML = bench.map((row,index)=>{
+    const score = num(val(row,"confidence_score"));
+    const action = val(row,"action") || "HOLD / WATCH";
+    return `
+      <div class="tactical-row">
+        <div class="tactical-rank">${index+1}</div>
+        <div>
+          <strong>${val(row,"ticker") || "—"} • ${val(row,"company") || ""}</strong>
+          <span>${Number.isFinite(score) ? score.toFixed(0)+"/100" : "No score"} • ${val(row,"risk_level") || "Risk not stated"}</span>
+        </div>
+        <div class="action-chip ${actionClass(action)}">${action}</div>
+      </div>
+    `;
+  }).join("");
+
+  const headlineRows = intel
+    .filter(row=>String(val(row,"latest_news") || "").trim() !== "")
+    .slice()
+    .sort((a,b)=>
+      (num(val(b,"news_score")) || 0) -
+      (num(val(a,"news_score")) || 0)
+    )
+    .slice(0,6);
+
+  $("intelligenceHeadlines").innerHTML = headlineRows.length
+    ? headlineRows.map(row=>{
+        const pos = num(val(row,"positive_news")) || 0;
+        const neg = num(val(row,"negative_news")) || 0;
+        const impact = pos > neg ? "positive" : neg > pos ? "negative" : "";
+        const label = pos > neg ? "POSITIVE" : neg > pos ? "NEGATIVE" : "NEUTRAL";
+        const official = (num(val(row,"official_news")) || 0) > 0;
+        return `
+          <div class="headline-row">
+            <div class="headline-icon">${official ? "📢" : "📰"}</div>
+            <div>
+              <strong>${val(row,"ticker") || "—"} — ${val(row,"latest_news")}</strong>
+              <span>${official ? "Official announcement detected" : "Matched portfolio news"} • News score ${num(val(row,"news_score")) || "—"}</span>
+            </div>
+            <div class="headline-impact ${impact}">${label}</div>
+          </div>
+        `;
+      }).join("")
+    : `<div class="empty">No recent matched headlines were published by Aurora Intelligence.</div>`;
+
+  $("headlineCount").textContent = `${headlineRows.length} ${headlineRows.length === 1 ? "story" : "stories"}`;
+}
+
 function render(report,data){
   const movement = num(val(report,"portfolio_change_pct"));
   const gain = num(val(report,"portfolio_change_gbp"));
@@ -748,6 +1140,7 @@ function render(report,data){
 
   renderPublishedRatings(report);
   renderHistory(rows(data,"MatchdayReport","MatchdayReports"));
+  renderIntelligence(data);
 }
 
 function renderNoReport(message){
@@ -796,6 +1189,7 @@ async function load(){
 
     if(!report){
       renderNoReport();
+      renderIntelligence(data);
       return;
     }
 
@@ -814,7 +1208,47 @@ async function load(){
 $("refreshBtn").addEventListener("click",load);
 load();
 </script>
-<script src="aurora-navigation.js?v=20260731-single-header-1"></script>
+<script src="aurora-navigation.js?v=20260731-matchday-v3-menu-inline-1"></script>
+
+<script>
+(function placeMatchdayMenuInHeader(){
+  function moveToggle(){
+    const toggle = document.getElementById("auroraNavToggle");
+    const header = document.querySelector(".topbar-inner");
+    const brand = header && header.querySelector(".brand");
+
+    if(!toggle || !header || !brand) return false;
+
+    if(toggle.parentElement !== header){
+      header.insertBefore(toggle,brand);
+    }
+
+    toggle.classList.add("aurora-matchday-inline-menu");
+    toggle.setAttribute("aria-label","Open Aurora mission navigation");
+    toggle.title = "Open mission navigation";
+
+    return true;
+  }
+
+  if(moveToggle()) return;
+
+  const observer = new MutationObserver(function(){
+    if(moveToggle()){
+      observer.disconnect();
+    }
+  });
+
+  observer.observe(document.body,{
+    childList:true,
+    subtree:true
+  });
+
+  window.setTimeout(function(){
+    observer.disconnect();
+    moveToggle();
+  },5000);
+})();
+</script>
 
 </body>
 </html>

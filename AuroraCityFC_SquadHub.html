@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head><!-- Build: Universal Page Section Navigation • 24 Jul 2026 -->
+<head><!-- Build: Squad Hub Aurora Intelligence • 01 Aug 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
@@ -4906,6 +4906,33 @@ body{
     margin:0!important;
   }
 }
+
+/* ===================== AURORA INTELLIGENCE — SQUAD HUB ===================== */
+.intelligence-command{
+  border:1px solid rgba(34,211,238,.28);
+  background:radial-gradient(circle at top right,rgba(34,211,238,.13),transparent 34%),linear-gradient(180deg,rgba(8,24,48,.92),rgba(3,10,24,.97));
+  border-radius:24px;padding:16px;box-shadow:0 16px 44px rgba(0,0,0,.28)
+}
+.intelligence-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.intelligence-head h3{margin:0;font-size:21px;letter-spacing:-.04em}
+.intelligence-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.4}
+.intelligence-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.intelligence-kpi{border:1px solid var(--line);background:rgba(2,6,23,.34);border-radius:16px;padding:11px;min-width:0}
+.intelligence-kpi small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.intelligence-kpi strong{display:block;margin-top:5px;font-size:18px;letter-spacing:-.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intelligence-kpi span{display:block;margin-top:4px;color:var(--muted);font-size:10px;line-height:1.3}
+.intelligence-rankings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px}
+.intelligence-player{border:1px solid rgba(96,165,250,.18);background:rgba(2,6,23,.27);border-radius:15px;padding:10px;min-width:0}
+.intelligence-player strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intelligence-player span{display:block;color:var(--muted);font-size:10px;margin-top:4px;line-height:1.3}
+.intelligence-action{display:inline-flex!important;width:max-content;max-width:100%;margin-top:7px!important;border-radius:999px;padding:5px 8px;font-size:9px!important;font-weight:1000;white-space:normal}
+.intelligence-action.good{color:#bbf7d0;border:1px solid rgba(52,211,153,.30);background:rgba(20,83,45,.22)}
+.intelligence-action.watch{color:#fde68a;border:1px solid rgba(251,191,36,.28);background:rgba(120,53,15,.22)}
+.intelligence-action.block{color:#fecdd3;border:1px solid rgba(251,113,133,.28);background:rgba(127,29,29,.22)}
+.intelligence-verdict{margin-top:10px;border:1px solid rgba(167,139,250,.24);background:rgba(76,29,149,.14);border-radius:16px;padding:11px;color:var(--soft);font-size:12px;line-height:1.45}
+@media(max-width:1000px){.intelligence-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.intelligence-rankings{grid-template-columns:1fr}}
+@media(max-width:560px){.intelligence-kpis{grid-template-columns:1fr}.intelligence-head{flex-direction:column}}
+
 </style>
 <!-- Aurora universal workflow navigation -->
 <link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
@@ -4952,6 +4979,18 @@ body{
 <div class="squad-kpi"><strong id="currentDivision">—</strong><span id="divisionNote">Checking league table…</span></div>
 </div>
 </div>
+</section>
+<!-- ===================== SECTION: AURORA INTELLIGENCE COMMAND ===================== -->
+<section class="section aurora-section-anchor" id="squad-intelligence">
+  <div class="intelligence-command">
+    <div class="intelligence-head">
+      <div><h3>🧠 Aurora Intelligence Command</h3><p>Live squad confidence, restrictions, news impact and manager verdict from AuroraIntelligence.</p></div>
+      <span class="badge purple" id="intelligenceStatus">Loading intelligence…</span>
+    </div>
+    <div class="intelligence-kpis" id="intelligenceKpis"><div class="loading">Reading Aurora Intelligence…</div></div>
+    <div class="intelligence-rankings" id="intelligenceRankings"></div>
+    <div class="intelligence-verdict" id="intelligenceVerdict">Waiting for the manager briefing…</div>
+  </div>
 </section>
 <!-- ===================== SECTION: FIRST TEAM + RELEGATION WATCH ===================== -->
 <section class="section squad-matchday-section">
@@ -5187,7 +5226,7 @@ body{
 <script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE = null;
-let state = { holdings:[], watchlist:[], scout:[], news:[], livePrices:[], dailyPriceSummary:[], priceLog:[] };
+let state = { holdings:[], watchlist:[], scout:[], news:[], livePrices:[], dailyPriceSummary:[], priceLog:[], intelligence:[], briefing:[] };
 
 const $ = id => document.getElementById(id);
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n) : '—';
@@ -5266,7 +5305,27 @@ function portfolioAnnualIncome(){
   // are not accidentally reduced to a single account.
   return (state.holdings || []).filter(isActiveHolding).reduce((sum,row)=>sum + annualIncomeFromRow(row),0);
 }
+function intelligenceForTicker(ticker){
+  return (state.intelligence || []).find(r=>tickerMatch(r.ticker ?? r.Ticker, ticker)) || null;
+}
+function intelligenceScore(row){
+  const intel=intelligenceForTicker(row?.ticker);
+  const score=parseNum(intel?.confidence_score ?? intel?.ConfidenceScore ?? intel?.confidence);
+  return Number.isFinite(score) ? score : NaN;
+}
+function intelligenceAction(row){
+  const intel=intelligenceForTicker(row?.ticker);
+  return String(intel?.action ?? intel?.Action ?? '').trim();
+}
+function intelligenceTone(action,score){
+  const text=String(action||'').toLowerCase();
+  if(/no new money|avoid|review|locked/.test(text)) return 'block';
+  if(/watch|monitor|small buy/.test(text) || score<65) return 'watch';
+  return 'good';
+}
 function squadScore(row){
+  const ai = intelligenceScore(row);
+  if(Number.isFinite(ai)) return ai;
   const bs = buyStrength(row);
   const imp = impact(row);
   if(Number.isFinite(bs) && Number.isFinite(imp)) return (bs * .65) + (imp * .35);
@@ -5322,7 +5381,7 @@ async function loadData(){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
-    const [holdings, watchlist, scout, newsA, newsB, livePrices, dailyPriceSummary, priceLog] = await Promise.all([
+    const [holdings, watchlist, scout, newsA, newsB, livePrices, dailyPriceSummary, priceLog, intelligence, briefing] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
       fetchTab('AuroraScout').catch(()=>[]),
@@ -5330,10 +5389,12 @@ async function loadData(){
       fetchTab('Aurora Times').catch(()=>[]),
       fetchTab('LivePrices').catch(()=>[]),
       fetchTab('DailyPriceSummary').catch(()=>[]),
-      fetchTab('PriceLog').catch(()=>[])
+      fetchTab('PriceLog').catch(()=>[]),
+      fetchTab('AuroraIntelligence').catch(()=>[]),
+      fetchTab('ManagerBriefing').catch(()=>[])
     ]);
     const news = newsA.length ? newsA : newsB;
-    state = { holdings, watchlist, scout, news, livePrices, dailyPriceSummary, priceLog };
+    state = { holdings, watchlist, scout, news, livePrices, dailyPriceSummary, priceLog, intelligence, briefing };
     renderAll();
   }catch(err){
     console.error(err);
@@ -5902,6 +5963,7 @@ function openPlayerDrawer(ticker){
             <div class="player-profile-badges">
               <span class="role-chip ${roleClass(slot.role)}">${slot.role}</span>
               <span class="position-chip">Rating ${score}</span>
+              ${intelligenceAction(r) ? `<span class="intelligence-action ${intelligenceTone(intelligenceAction(r),score)}">${intelligenceAction(r)}</span>` : ''}
             </div>
           </div>
         </div>
@@ -6508,6 +6570,42 @@ function renderSquadDevelopment(rows, annualIncome){
   renderFatigueWatch(rows);
 }
 
+function briefingValue(label){
+  const row=(state.briefing||[]).find(r=>String(r.label ?? r.Label ?? r["Aurora Intelligence Engine"] ?? Object.values(r||{})[0] ?? '').trim().toLowerCase()===String(label).toLowerCase());
+  if(!row) return '';
+  const vals=Object.values(row);
+  return String(row.value ?? row.Value ?? vals[1] ?? '').trim();
+}
+function renderIntelligenceCommand(rows){
+  const kpis=$('intelligenceKpis'), ranks=$('intelligenceRankings'), verdict=$('intelligenceVerdict'), status=$('intelligenceStatus');
+  if(!kpis||!ranks||!verdict||!status) return;
+  const intel=(state.intelligence||[]).filter(r=>cleanTicker(r.ticker ?? r.Ticker));
+  if(!intel.length){
+    status.textContent='Awaiting export'; status.className='badge amber';
+    kpis.innerHTML='<div class="loading">AuroraIntelligence is not present in AuroraMaster.json yet.</div>';
+    ranks.innerHTML=''; verdict.textContent='Run Aurora Intelligence and export AuroraMaster.json to activate this panel.'; return;
+  }
+  const sorted=[...intel].sort((a,b)=>(parseNum(b.confidence_score)||0)-(parseNum(a.confidence_score)||0));
+  const avg=sorted.reduce((s,r)=>s+(parseNum(r.confidence_score)||0),0)/sorted.length;
+  const restrictions=sorted.filter(r=>/no new money|avoid|review|locked/i.test(String(r.action||''))).length;
+  const positive=sorted.reduce((s,r)=>s+(parseNum(r.positive_news)||0),0);
+  const negative=sorted.reduce((s,r)=>s+(parseNum(r.negative_news)||0),0);
+  const official=sorted.reduce((s,r)=>s+(parseNum(r.official_news)||0),0);
+  status.textContent=`Live • ${sorted.length} holdings`; status.className='badge green';
+  kpis.innerHTML=`
+    <div class="intelligence-kpi"><small>Average confidence</small><strong>${Math.round(avg)}/100</strong><span>${scoreLabel(avg)}</span></div>
+    <div class="intelligence-kpi"><small>Buying restrictions</small><strong>${restrictions}</strong><span>No-new-money / locked calls</span></div>
+    <div class="intelligence-kpi"><small>Positive news</small><strong>${positive}</strong><span>Matched portfolio stories</span></div>
+    <div class="intelligence-kpi"><small>Negative news</small><strong>${negative}</strong><span>Items needing review</span></div>
+    <div class="intelligence-kpi"><small>Official news</small><strong>${official}</strong><span>RNS / company announcements</span></div>`;
+  ranks.innerHTML=sorted.slice(0,3).map((r,i)=>{
+    const score=parseNum(r.confidence_score)||0, action=String(r.action||'Hold / Review');
+    return `<div class="intelligence-player"><strong>${i+1}. ${displayTicker(r.ticker)} — ${r.company||''}</strong><span>${Math.round(score)}/100 • ${r.confidence_band||scoreLabel(score)}</span><span class="intelligence-action ${intelligenceTone(action,score)}">${action}</span></div>`;
+  }).join('');
+  const briefingVerdict=briefingValue('Manager verdict');
+  verdict.innerHTML=`<strong>Manager verdict:</strong> ${briefingVerdict || (restrictions>=4?'Squad healthy, but portfolio limits restrict new buying.':'Selective accumulation remains appropriate.')}<br><span style="color:var(--muted)">The pitch, teamsheet and player profiles now use Aurora confidence scores whenever available.</span>`;
+}
+
 function renderAll(){
   if($('lastUpdated')) { if(window.AuroraFC) AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'}); else $('lastUpdated').textContent='Aurora generated: unavailable'; }
 
@@ -6524,6 +6622,7 @@ function renderAll(){
   $('monthlyIncome').textContent = `${money(monthly)} monthly`;
   $('currentDivision').textContent = division;
   $('divisionNote').textContent = divisionNote;
+  renderIntelligenceCommand(rows);
 
   renderFormation(rows,'firstTeamPitch');
   renderBench(rows,'benchList');
