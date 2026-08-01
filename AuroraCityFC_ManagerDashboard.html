@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html data-aurora-page="manager" lang="en">
 <head><script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -1391,7 +1391,7 @@ dialog#beastHoldingDrawer .beast-panel-head{
     margin:-16px -16px 12px!important;
   }
 }
-</style><meta content="manager-intelligence-command-20260801" name="aurora-build"/>
+</style><meta content="manager-command-hero-v4-20260801" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 /*
  * Manager Office scroll stability:
@@ -1494,6 +1494,586 @@ dialog#beastHoldingDrawer .beast-panel-head{
 @media(max-width:1180px){.aic-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.aic-verdict{grid-template-columns:1fr}}
 @media(max-width:680px){.aic-head{flex-direction:column}.aic-summary{grid-template-columns:1fr 1fr}.aic-stat strong{font-size:17px}}
 </style>
+
+<style id="auroraManagerCommandHeroV4Styles">
+/* ================= MANAGER COMMAND HERO V4 ================= */
+#club-overview.manager-command-hero-v4{
+  position:relative;
+  isolation:isolate;
+  display:block;
+  min-height:0;
+  margin:18px 0 16px;
+  padding:24px;
+  overflow:hidden;
+  border:1px solid rgba(103,232,249,.28);
+  border-radius:32px;
+  background:
+    linear-gradient(132deg,rgba(3,11,28,.985),rgba(7,25,50,.965) 48%,rgba(17,24,63,.94)),
+    radial-gradient(circle at 12% 15%,rgba(34,211,238,.20),transparent 32%);
+  box-shadow:
+    0 30px 95px rgba(0,0,0,.50),
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 0 36px rgba(34,211,238,.08);
+}
+
+#club-overview.manager-command-hero-v4:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-3;
+  pointer-events:none;
+  opacity:.44;
+  background:
+    linear-gradient(rgba(125,211,252,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(125,211,252,.045) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(135deg,#000 0%,rgba(0,0,0,.72) 52%,transparent 100%);
+  -webkit-mask-image:linear-gradient(135deg,#000 0%,rgba(0,0,0,.72) 52%,transparent 100%);
+}
+
+#club-overview.manager-command-hero-v4:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:3px;
+  z-index:8;
+  background:linear-gradient(90deg,transparent,#22d3ee,#34d399,#a78bfa,#fbbf24,transparent);
+  background-size:220% 100%;
+  box-shadow:0 0 22px rgba(34,211,238,.42);
+  animation:managerHeroLineFlow 8s ease-in-out infinite;
+}
+
+.manager-hero-aura{
+  position:absolute;
+  z-index:-2;
+  width:520px;
+  height:520px;
+  border-radius:50%;
+  pointer-events:none;
+  filter:blur(46px);
+  opacity:.20;
+}
+
+.manager-hero-aura-one{
+  left:-190px;
+  top:-280px;
+  background:#22d3ee;
+  animation:managerHeroAuraOne 10s ease-in-out infinite;
+}
+
+.manager-hero-aura-two{
+  right:-180px;
+  top:-250px;
+  background:#a78bfa;
+  animation:managerHeroAuraTwo 12s ease-in-out infinite;
+}
+
+.manager-hero-topline{
+  position:relative;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.manager-hero-session{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+  flex-wrap:wrap;
+  color:#8ea6bd;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.manager-hero-session > span{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 9px;
+  border:1px solid rgba(52,211,153,.20);
+  border-radius:999px;
+  color:#bbf7d0;
+  background:rgba(20,83,45,.16);
+}
+
+.manager-hero-session i{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:0 0 0 5px rgba(52,211,153,.08),0 0 14px rgba(52,211,153,.38);
+}
+
+.manager-hero-session time{
+  padding:7px 9px;
+  border:1px solid rgba(148,163,184,.14);
+  border-radius:999px;
+  background:rgba(2,8,22,.34);
+}
+
+.manager-hero-stage{
+  position:relative;
+  z-index:3;
+  display:grid;
+  grid-template-columns:minmax(300px,1.08fr) minmax(310px,.96fr) minmax(280px,.76fr);
+  gap:16px;
+  align-items:stretch;
+}
+
+.manager-hero-identity{
+  align-self:center;
+  padding:8px 4px 8px 2px;
+}
+
+.manager-hero-greeting{
+  margin:0 0 8px!important;
+  color:#a5f3fc!important;
+  font-size:13px!important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+#club-overview .manager-hero-identity h2{
+  margin:0 0 13px;
+  font-size:clamp(44px,5.4vw,82px);
+  line-height:.84;
+  letter-spacing:-.078em;
+  text-shadow:0 18px 50px rgba(0,0,0,.52);
+}
+
+#club-overview .manager-hero-title-main{
+  display:block;
+  background:linear-gradient(90deg,#f8fbff 0%,#67e8f9 28%,#34d399 50%,#a78bfa 75%,#f8fbff 100%);
+  background-size:240% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:managerHeroTitleFlow 8s ease-in-out infinite;
+}
+
+#club-overview .manager-hero-identity h2 > span:last-child{
+  display:block;
+  color:#dbeafe;
+  font-size:.58em;
+  line-height:1.02;
+  letter-spacing:-.055em;
+}
+
+#club-overview .manager-hero-identity > #heroSub{
+  max-width:650px;
+  margin:0;
+  color:#c9d8e8;
+  font-size:14px;
+  line-height:1.55;
+}
+
+.manager-hero-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+.manager-hero-action{
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  padding:10px 13px;
+  border:1px solid rgba(125,211,252,.20);
+  border-radius:13px;
+  color:#cfefff;
+  background:rgba(8,47,73,.26);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  font-size:10px;
+  font-weight:950;
+  text-decoration:none;
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+
+.manager-hero-action:hover,
+.manager-hero-action:focus-visible{
+  transform:translateY(-2px);
+  border-color:rgba(103,232,249,.50);
+  background:rgba(8,75,97,.42);
+  outline:none;
+}
+
+.manager-hero-action.primary{
+  color:#ecfeff;
+  border-color:rgba(34,211,238,.36);
+  background:linear-gradient(135deg,rgba(8,145,178,.34),rgba(30,64,175,.28));
+}
+
+.manager-hero-action b{
+  min-width:23px;
+  height:23px;
+  display:grid;
+  place-items:center;
+  padding:0 6px;
+  border-radius:999px;
+  color:#1c1202;
+  background:#fbbf24;
+  font-size:9px;
+}
+
+#club-overview .command-meta{
+  margin-top:15px;
+}
+
+.manager-hero-priority,
+.manager-hero-position{
+  position:relative;
+  overflow:hidden;
+  min-width:0;
+  padding:18px;
+  border:1px solid rgba(125,211,252,.18);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(34,211,238,.11),transparent 38%),
+    linear-gradient(160deg,rgba(11,29,55,.82),rgba(3,11,26,.90));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 16px 40px rgba(0,0,0,.24);
+}
+
+.manager-hero-priority{
+  border-color:rgba(251,191,36,.23);
+  background:
+    radial-gradient(circle at 100% 0%,rgba(251,191,36,.13),transparent 39%),
+    linear-gradient(160deg,rgba(38,29,12,.74),rgba(5,12,27,.92));
+}
+
+.manager-hero-priority:after,
+.manager-hero-position:after{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:3px;
+  background:linear-gradient(180deg,transparent,#fbbf24,transparent);
+}
+
+.manager-hero-position:after{
+  background:linear-gradient(180deg,transparent,#a78bfa,#22d3ee,transparent);
+}
+
+.manager-hero-card-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.manager-hero-card-head small,
+.manager-hero-position-label{
+  display:block;
+  color:#9fb0c4;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.manager-hero-priority-state{
+  display:inline-flex;
+  margin-top:7px;
+  padding:6px 8px;
+  border:1px solid rgba(148,163,184,.17);
+  border-radius:999px;
+  color:#cbd5e1;
+  background:rgba(15,23,42,.40);
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.manager-hero-priority-state[data-state="action"]{
+  color:#fecdd3;
+  border-color:rgba(251,113,133,.35);
+  background:rgba(127,29,29,.23);
+}
+
+.manager-hero-priority-state[data-state="priority"]{
+  color:#fde68a;
+  border-color:rgba(251,191,36,.34);
+  background:rgba(120,53,15,.24);
+}
+
+.manager-hero-priority-state[data-state="clear"]{
+  color:#bbf7d0;
+  border-color:rgba(52,211,153,.30);
+  background:rgba(20,83,45,.22);
+}
+
+.manager-hero-priority-icon{
+  width:42px;
+  height:42px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(251,191,36,.24);
+  border-radius:14px;
+  color:#fde68a;
+  background:rgba(120,53,15,.20);
+  font-size:21px;
+  box-shadow:0 0 20px rgba(251,191,36,.08);
+}
+
+.manager-hero-priority h3{
+  margin:18px 0 9px;
+  color:#fff7da;
+  font-size:clamp(22px,2.1vw,32px);
+  line-height:1.02;
+  letter-spacing:-.05em;
+}
+
+.manager-hero-priority > p{
+  margin:0;
+  color:#aebed1;
+  font-size:11px;
+  line-height:1.55;
+}
+
+.manager-hero-priority-foot{
+  margin-top:17px;
+  padding-top:14px;
+  border-top:1px solid rgba(251,191,36,.13);
+}
+
+.manager-hero-priority-foot > span{
+  display:block;
+  color:#7f8ea1;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.manager-hero-priority-foot strong{
+  display:block;
+  margin-top:6px;
+  color:#eaf4ff;
+  font-size:13px;
+}
+
+.manager-hero-priority-foot small{
+  display:block;
+  margin-top:4px;
+  color:#8293a8;
+  font-size:9px;
+  line-height:1.4;
+}
+
+.manager-hero-position > strong{
+  display:block;
+  margin-top:8px;
+  color:#a7f3d0;
+  font-size:clamp(32px,3.2vw,47px);
+  line-height:.95;
+  letter-spacing:-.065em;
+  text-shadow:0 0 22px rgba(52,211,153,.17);
+}
+
+.manager-hero-position > p{
+  min-height:34px;
+  margin:8px 0 0;
+  color:#93a6ba;
+  font-size:10px;
+  line-height:1.45;
+}
+
+.manager-hero-position-grid{
+  display:grid;
+  gap:7px;
+  margin-top:15px;
+}
+
+.manager-hero-position-grid > div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:9px 10px;
+  border:1px solid rgba(148,163,184,.12);
+  border-radius:12px;
+  background:rgba(2,8,22,.32);
+}
+
+.manager-hero-position-grid small{
+  color:#7f91a6;
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+}
+
+.manager-hero-position-grid strong{
+  color:#dbeafe;
+  font-size:10px;
+  text-align:right;
+}
+
+.manager-hero-brain-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+  color:#98a9bc;
+  font-size:9px;
+  line-height:1.35;
+}
+
+.manager-hero-brain-dot{
+  width:8px;
+  height:8px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#a78bfa;
+  box-shadow:0 0 0 5px rgba(167,139,250,.08),0 0 14px rgba(167,139,250,.35);
+}
+
+#club-overview .manager-hero-kpi-strip{
+  position:relative;
+  z-index:3;
+  display:grid!important;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:9px;
+  margin-top:18px;
+}
+
+#club-overview .manager-hero-kpi-strip .command-metric{
+  min-height:112px;
+  padding:13px;
+  border-radius:17px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(96,165,250,.09),transparent 40%),
+    rgba(2,9,24,.53);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+#club-overview .manager-hero-kpi-strip .command-metric:hover{
+  transform:translateY(-2px);
+}
+
+#club-overview .manager-hero-kpi-strip .command-metric strong{
+  font-size:21px;
+}
+
+#club-overview .manager-hero-kpi-strip .command-metric > span{
+  font-size:9px;
+}
+
+@keyframes managerHeroTitleFlow{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+
+@keyframes managerHeroLineFlow{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+
+@keyframes managerHeroAuraOne{
+  0%,100%{transform:translate(0,0) scale(1);opacity:.14}
+  50%{transform:translate(80px,45px) scale(1.15);opacity:.24}
+}
+
+@keyframes managerHeroAuraTwo{
+  0%,100%{transform:translate(0,0) scale(1);opacity:.15}
+  50%{transform:translate(-70px,55px) scale(1.13);opacity:.25}
+}
+
+@media(max-width:1320px){
+  .manager-hero-stage{
+    grid-template-columns:1.05fr .95fr;
+  }
+
+  .manager-hero-position{
+    grid-column:1/-1;
+  }
+
+  .manager-hero-position-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:1040px){
+  .manager-hero-stage{
+    grid-template-columns:1fr;
+  }
+
+  .manager-hero-position{
+    grid-column:auto;
+  }
+
+  #club-overview .manager-hero-kpi-strip{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:700px){
+  #club-overview.manager-command-hero-v4{
+    padding:17px;
+    border-radius:25px;
+  }
+
+  .manager-hero-topline{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .manager-hero-session{
+    justify-content:flex-start;
+  }
+
+  #club-overview .manager-hero-identity h2{
+    font-size:48px;
+  }
+
+  .manager-hero-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .manager-hero-action{
+    width:100%;
+  }
+
+  .manager-hero-position-grid,
+  #club-overview .manager-hero-kpi-strip{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:460px){
+  .manager-hero-position-grid,
+  #club-overview .manager-hero-kpi-strip{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  #club-overview.manager-command-hero-v4 *,
+  #club-overview.manager-command-hero-v4:after{
+    animation:none!important;
+    transition:none!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="fm-shell">
@@ -1521,24 +2101,94 @@ dialog#beastHoldingDrawer .beast-panel-head{
 </div>
 </div>
 <main class="app fm-command-app">
-<section class="manager-command-header aurora-section-anchor" id="club-overview">
-<div class="command-identity">
-<div class="hero-kicker"><span class="hero-dot"></span> Live manager command centre</div>
-<h2>Aurora City FC <span>Manager Dashboard</span></h2>
-<p id="heroSub">Loading the latest club position, recruitment route and income target.</p>
-<div class="command-meta">
-<span id="lastUpdated">Last updated: loading…</span>
-<span><b id="currentDivision">Loading…</b></span>
-<span id="divisionProgress">Next promotion loading…</span>
+<section class="manager-command-header manager-command-hero-v4 aurora-section-anchor" id="club-overview">
+<div aria-hidden="true" class="manager-hero-aura manager-hero-aura-one"></div>
+<div aria-hidden="true" class="manager-hero-aura manager-hero-aura-two"></div>
+
+<div class="manager-hero-topline">
+  <div class="hero-kicker"><span class="hero-dot"></span> Live manager command centre</div>
+  <div class="manager-hero-session">
+    <span><i></i> Manager session live</span>
+    <time id="managerHeroTime">Loading time…</time>
+  </div>
 </div>
+
+<div class="manager-hero-stage">
+  <div class="command-identity manager-hero-identity">
+    <p class="manager-hero-greeting" id="managerHeroGreeting">Welcome back, Webby</p>
+    <h2>
+      <span class="manager-hero-title-main">Manager</span>
+      <span>Command Centre</span>
+    </h2>
+    <p id="heroSub">Loading the latest club position, recruitment route and income target.</p>
+
+    <div class="manager-hero-actions">
+      <button class="manager-hero-action primary" id="managerHeroDecisionButton" type="button">
+        <span>Open Decision Queue</span>
+        <b id="managerHeroDecisionCount">0</b>
+      </button>
+      <a class="manager-hero-action" href="AuroraCityFC_TransferCentre.html">Open Transfer Centre</a>
+      <a class="manager-hero-action" href="AuroraCityFC_LearningCentre.html">View Learning Centre</a>
+    </div>
+
+    <div class="command-meta">
+      <span id="lastUpdated">Last updated: loading…</span>
+      <span><b id="currentDivision">Loading…</b></span>
+      <span id="divisionProgress">Next promotion loading…</span>
+    </div>
+  </div>
+
+  <article class="manager-hero-priority" aria-labelledby="managerHeroPriorityTitle">
+    <div class="manager-hero-card-head">
+      <div>
+        <small>Today’s manager priority</small>
+        <span class="manager-hero-priority-state" data-state="loading" id="managerHeroPriorityState">Reviewing</span>
+      </div>
+      <span aria-hidden="true" class="manager-hero-priority-icon">◎</span>
+    </div>
+    <h3 id="managerHeroPriorityTitle">Aurora is preparing today’s instruction</h3>
+    <p id="managerHeroPriorityText">The Decision Queue and daily briefing are being checked.</p>
+    <div class="manager-hero-priority-foot">
+      <span>Next club event</span>
+      <strong id="managerHeroNextEvent">Checking schedule…</strong>
+      <small id="managerHeroNextEventNote">Aurora is reading the dividend calendar.</small>
+    </div>
+  </article>
+
+  <article class="manager-hero-position">
+    <small class="manager-hero-position-label">Club position</small>
+    <strong id="managerHeroClubPosition">Assessing</strong>
+    <p id="managerHeroClubPositionNote">Aurora is calculating the latest board and income position.</p>
+
+    <div class="manager-hero-position-grid">
+      <div>
+        <small>Board confidence</small>
+        <strong id="managerHeroPositionBoard">—</strong>
+      </div>
+      <div>
+        <small>Portfolio yield</small>
+        <strong id="managerHeroPositionYield">—</strong>
+      </div>
+      <div>
+        <small>Aurora brain</small>
+        <strong id="managerHeroBrainStatus">Learning active</strong>
+      </div>
+    </div>
+
+    <div class="manager-hero-brain-line">
+      <span class="manager-hero-brain-dot"></span>
+      <span id="managerHeroBrainNote">Outcome reviews are running in the background</span>
+    </div>
+  </article>
 </div>
-<div class="command-metric-grid">
-<article class="command-metric"><small>Club Value</small><strong id="heroClubValue">—</strong><span class="hero-detail neutral" id="clubValueTrend">Waiting for previous snapshot…</span></article>
-<article class="command-metric green"><small>Annual Income</small><strong id="heroAnnualIncome">—</strong><span class="hero-detail neutral" id="annualIncomeTrend">Waiting for latest purchase…</span></article>
-<article class="command-metric green"><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span>Current passive-income run rate</span><span hidden="" id="heroMonthlyIncome">—</span></article>
-<article class="command-metric amber"><small>Gap to £625/month</small><strong id="heroTargetGap">—</strong><span id="targetProgressText">Progress loading…</span><div class="hero-progress"><div class="hero-progress-fill" id="targetProgressFill"></div></div></article>
-<article class="command-metric"><small>Portfolio Yield</small><strong id="portfolioYield">—</strong><span>IG ISA and Trading 212 holdings</span></article>
-<article class="command-metric"><small>Board Confidence</small><strong id="portfolioStrength">—</strong><span>Overall club-health rating</span></article>
+
+<div class="command-metric-grid manager-hero-kpi-strip">
+  <article class="command-metric"><small>Club Value</small><strong id="heroClubValue">—</strong><span class="hero-detail neutral" id="clubValueTrend">Waiting for previous snapshot…</span></article>
+  <article class="command-metric green"><small>Annual Income</small><strong id="heroAnnualIncome">—</strong><span class="hero-detail neutral" id="annualIncomeTrend">Waiting for latest purchase…</span></article>
+  <article class="command-metric green"><small>Monthly Income</small><strong id="monthlyIncome">—</strong><span>Current passive-income run rate</span><span hidden="" id="heroMonthlyIncome">—</span></article>
+  <article class="command-metric amber"><small>Gap to £625/month</small><strong id="heroTargetGap">—</strong><span id="targetProgressText">Progress loading…</span><div class="hero-progress"><div class="hero-progress-fill" id="targetProgressFill"></div></div></article>
+  <article class="command-metric"><small>Portfolio Yield</small><strong id="portfolioYield">—</strong><span>IG ISA and Trading 212 holdings</span></article>
+  <article class="command-metric"><small>Board Confidence</small><strong id="portfolioStrength">—</strong><span>Overall club-health rating</span></article>
 </div>
 </section>
 <section class="manager-verdict">
@@ -3620,6 +4270,331 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     if(target) observer.observe(target,{childList:true,subtree:true});
     setTimeout(apply,500);
   });
+})();
+</script>
+
+
+<script id="auroraManagerCommandHeroV4Script">
+(function(){
+  "use strict";
+
+  const byId = function(id){
+    return document.getElementById(id);
+  };
+
+  function cleanText(value){
+    return String(value || "").replace(/\s+/g," ").trim();
+  }
+
+  function numberFromText(value){
+    const match = cleanText(value).match(/-?\d+(?:\.\d+)?/);
+    return match ? Number(match[0]) : NaN;
+  }
+
+  function greetingForHour(hour){
+    if(hour < 5) return "Late-night command, Webby";
+    if(hour < 12) return "Good morning, Webby";
+    if(hour < 18) return "Good afternoon, Webby";
+    return "Good evening, Webby";
+  }
+
+  function updateClock(){
+    const now = new Date();
+    const greeting = byId("managerHeroGreeting");
+    const clock = byId("managerHeroTime");
+
+    if(greeting){
+      greeting.textContent = greetingForHour(now.getHours());
+    }
+
+    if(clock){
+      clock.textContent = now.toLocaleString("en-GB",{
+        weekday:"short",
+        day:"numeric",
+        month:"short",
+        hour:"2-digit",
+        minute:"2-digit"
+      });
+    }
+  }
+
+  function firstDecisionCopy(){
+    const first = document.querySelector(
+      "#beastDecisionList .beast-decision"
+    );
+
+    if(!first) return null;
+
+    return {
+      title:cleanText(
+        first.querySelector(".beast-decision-top strong")?.textContent
+      ),
+      detail:cleanText(
+        first.querySelector(".beast-decision-copy p")?.textContent
+      )
+    };
+  }
+
+  function syncPriority(){
+    const countText =
+      byId("beastDecisionPanelCount")?.textContent
+      || byId("beastDecisionCount")?.textContent
+      || "0";
+
+    const count = Math.max(
+      0,
+      Number.parseInt(countText,10) || 0
+    );
+
+    const countBadge = byId("managerHeroDecisionCount");
+    const state = byId("managerHeroPriorityState");
+    const title = byId("managerHeroPriorityTitle");
+    const detail = byId("managerHeroPriorityText");
+    const firstDecision = firstDecisionCopy();
+
+    if(countBadge){
+      countBadge.textContent = String(count);
+    }
+
+    const dailyTitle = cleanText(
+      byId("m3DecisionTitle")?.textContent
+    );
+
+    const dailyText = cleanText(
+      byId("m3DecisionText")?.textContent
+    );
+
+    const briefingTitle = cleanText(
+      byId("briefingTitle")?.textContent
+    );
+
+    const briefingText = cleanText(
+      byId("briefingText")?.textContent
+    );
+
+    if(count > 0){
+      if(state){
+        state.dataset.state = "action";
+        state.textContent = "Action required";
+      }
+
+      if(title){
+        title.textContent =
+          firstDecision?.title
+          || `${count} manager decision${count === 1 ? "" : "s"} waiting`;
+      }
+
+      if(detail){
+        detail.textContent =
+          firstDecision?.detail
+          || briefingText
+          || "Open the Decision Queue to review Aurora’s outstanding manager actions.";
+      }
+
+      return;
+    }
+
+    if(
+      dailyTitle
+      && !/loading|hold\s*[—-]\s*no action required/i.test(dailyTitle)
+    ){
+      if(state){
+        state.dataset.state = "priority";
+        state.textContent = "Today’s priority";
+      }
+
+      if(title) title.textContent = dailyTitle;
+      if(detail){
+        detail.textContent =
+          dailyText
+          || briefingText
+          || "Aurora has identified today’s clearest manager instruction.";
+      }
+
+      return;
+    }
+
+    if(state){
+      state.dataset.state = "clear";
+      state.textContent = "No urgent action";
+    }
+
+    if(title){
+      title.textContent =
+        briefingTitle && !/loading/i.test(briefingTitle)
+          ? briefingTitle
+          : "Aurora is monitoring the club";
+    }
+
+    if(detail){
+      detail.textContent =
+        briefingText && !/loading|preparing/i.test(briefingText)
+          ? briefingText
+          : "No unresolved manager decision is waiting. Aurora continues monitoring the squad, income route and learning reviews.";
+    }
+  }
+
+  function syncPosition(){
+    const boardText = cleanText(
+      byId("portfolioStrength")?.textContent
+    );
+
+    const yieldText = cleanText(
+      byId("portfolioYield")?.textContent
+    );
+
+    const board = numberFromText(boardText);
+    const position = byId("managerHeroClubPosition");
+    const note = byId("managerHeroClubPositionNote");
+
+    if(byId("managerHeroPositionBoard")){
+      byId("managerHeroPositionBoard").textContent =
+        boardText || "—";
+    }
+
+    if(byId("managerHeroPositionYield")){
+      byId("managerHeroPositionYield").textContent =
+        yieldText || "—";
+    }
+
+    let label = "Assessing";
+    let copy = "Aurora is calculating the latest board and income position.";
+
+    if(Number.isFinite(board)){
+      if(board >= 88){
+        label = "Strong Position";
+        copy = "Income growth and board confidence are both supporting the current plan.";
+      }else if(board >= 78){
+        label = "On Track";
+        copy = "The club is stable, with the next income step still clearly defined.";
+      }else{
+        label = "Building";
+        copy = "Aurora is keeping the rebuild under review while the next transfer route develops.";
+      }
+    }
+
+    if(position) position.textContent = label;
+    if(note) note.textContent = copy;
+
+    const intelligence = cleanText(
+      byId("aicStatus")?.textContent
+    );
+
+    if(byId("managerHeroBrainStatus")){
+      byId("managerHeroBrainStatus").textContent =
+        /loading/i.test(intelligence)
+          ? "Learning active"
+          : intelligence || "Learning active";
+    }
+
+    if(byId("managerHeroBrainNote")){
+      byId("managerHeroBrainNote").textContent =
+        "7, 30 and 90-day outcome reviews are running in the background";
+    }
+  }
+
+  function syncNextEvent(){
+    const ticker = cleanText(
+      byId("nextDividendTicker")?.textContent
+    );
+
+    const note = cleanText(
+      byId("nextDividendNote")?.textContent
+    );
+
+    const event = byId("managerHeroNextEvent");
+    const eventNote = byId("managerHeroNextEventNote");
+
+    if(event){
+      event.textContent =
+        ticker && ticker !== "—"
+          ? ticker
+          : "Schedule is being checked";
+    }
+
+    if(eventNote){
+      eventNote.textContent =
+        note && !/checking|loading/i.test(note)
+          ? note
+          : "Aurora is reading the dividend and transfer calendar.";
+    }
+  }
+
+  function syncHero(){
+    updateClock();
+    syncPriority();
+    syncPosition();
+    syncNextEvent();
+  }
+
+  function wireHero(){
+    const button = byId("managerHeroDecisionButton");
+
+    if(button && !button.dataset.wired){
+      button.dataset.wired = "true";
+
+      button.addEventListener("click",function(){
+        const queueButton = byId("beastDecisionButton");
+
+        if(queueButton && typeof queueButton.click === "function"){
+          queueButton.click();
+          return;
+        }
+
+        byId("beastDecisionQueue")?.scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
+      });
+    }
+
+    [
+      "beastDecisionPanelCount",
+      "beastDecisionList",
+      "m3DecisionTitle",
+      "m3DecisionText",
+      "briefingTitle",
+      "briefingText",
+      "portfolioStrength",
+      "portfolioYield",
+      "nextDividendTicker",
+      "nextDividendNote",
+      "aicStatus"
+    ].forEach(function(id){
+      const element = byId(id);
+
+      if(!element || element.dataset.heroObserved) return;
+
+      element.dataset.heroObserved = "true";
+
+      new MutationObserver(syncHero).observe(
+        element,
+        {
+          childList:true,
+          subtree:true,
+          characterData:true,
+          attributes:true
+        }
+      );
+    });
+
+    syncHero();
+    window.setInterval(updateClock,30000);
+    window.setInterval(syncHero,60000);
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      wireHero,
+      {once:true}
+    );
+  }else{
+    wireHero();
+  }
+
+  window.addEventListener("pageshow",syncHero);
+  window.addEventListener("focus",syncHero);
 })();
 </script>
 
