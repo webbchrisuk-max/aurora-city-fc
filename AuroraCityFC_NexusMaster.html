@@ -1397,6 +1397,139 @@ body,body.aufc-nav-ready,body.aufc-nav-ready.aufc-nav-collapsed{padding-left:14p
 @media(max-width:980px){.nexus-brain-command{grid-template-columns:1fr}}@media(max-width:700px){.nexus-brain-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.nexus-brain-row{grid-template-columns:30px minmax(0,1fr)}.nexus-brain-action{grid-column:2;justify-self:start}}
 </style>
 
+
+<style id="nexus-overhaul-v5">
+/* ===================== NEXUS V5 EXECUTIVE OVERHAUL ===================== */
+.nexus-command-ticker{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(34,211,238,.16);
+  border-radius:16px;
+  background:linear-gradient(90deg,rgba(3,11,23,.96),rgba(10,26,44,.94),rgba(3,11,23,.96));
+  min-height:44px;
+}
+.nexus-command-ticker:before,.nexus-command-ticker:after{
+  content:"";position:absolute;top:0;bottom:0;width:42px;z-index:2;pointer-events:none;
+}
+.nexus-command-ticker:before{left:0;background:linear-gradient(90deg,#07111f,transparent)}
+.nexus-command-ticker:after{right:0;background:linear-gradient(270deg,#07111f,transparent)}
+.nexus-ticker-track{
+  display:flex;align-items:center;gap:28px;min-width:max-content;
+  padding:12px 24px;
+  animation:nexusTicker 42s linear infinite;
+  color:#c6d9e8;font-size:11px;font-weight:850;letter-spacing:.2px;
+}
+.nexus-ticker-track span{white-space:nowrap}
+.nexus-ticker-track b{color:#5eeaff;margin-right:6px}
+@keyframes nexusTicker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.nexus-executive-grid{
+  display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:13px;
+}
+.nexus-exec-card{
+  grid-column:span 3;position:relative;overflow:hidden;
+  min-height:136px;padding:16px;border-radius:20px;
+  border:1px solid rgba(125,211,252,.12);
+  background:
+    radial-gradient(circle at 100% 0%,rgba(var(--exec-rgb,34,211,238),.12),transparent 42%),
+    linear-gradient(145deg,rgba(13,28,47,.91),rgba(5,12,24,.95));
+  box-shadow:0 14px 35px rgba(0,0,0,.20);
+}
+.nexus-exec-card:before{
+  content:"";position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:999px;
+  background:rgb(var(--exec-rgb,34,211,238));box-shadow:0 0 15px rgba(var(--exec-rgb,34,211,238),.65);
+}
+.nexus-exec-card>*{position:relative;z-index:1}
+.nexus-exec-card small{display:block;color:#8ea9be;font-size:9px;font-weight:950;text-transform:uppercase;letter-spacing:1px}
+.nexus-exec-card strong{display:block;margin-top:8px;font-size:25px;letter-spacing:-.7px;line-height:1.02}
+.nexus-exec-card p{margin-top:8px;color:#91a9bd;font-size:11px;line-height:1.42}
+.nexus-exec-card .exec-tag{
+  display:inline-flex;margin-top:10px;padding:5px 7px;border-radius:999px;
+  border:1px solid rgba(var(--exec-rgb,34,211,238),.25);
+  background:rgba(var(--exec-rgb,34,211,238),.07);
+  color:rgb(var(--exec-rgb,34,211,238));font-size:8px;font-weight:1000;text-transform:uppercase;
+}
+.nexus-exec-card.wide{grid-column:span 6}
+.nexus-exec-card.tall{min-height:184px}
+
+.nexus-signal-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;
+}
+.nexus-signal-panel{
+  border:1px solid rgba(125,211,252,.12);border-radius:22px;padding:16px;
+  background:linear-gradient(145deg,rgba(11,23,40,.93),rgba(5,12,24,.96));
+}
+.nexus-signal-panel h3{font-size:17px;margin:0}
+.nexus-signal-panel>p{color:var(--muted);font-size:11px;line-height:1.4;margin-top:4px}
+.nexus-signal-list{display:grid;gap:8px;margin-top:12px}
+.nexus-signal-row{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;
+  padding:10px 11px;border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;background:rgba(255,255,255,.025);
+}
+.nexus-signal-row strong{font-size:12px}
+.nexus-signal-row span{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+.nexus-signal-value{font-size:12px;font-weight:1000;text-align:right}
+.nexus-signal-value.good{color:#6ee7a6}.nexus-signal-value.watch{color:#facc63}.nexus-signal-value.risk{color:#fb7185}.nexus-signal-value.cyan{color:#67e8f9}
+
+.nexus-decision-board{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:13px;
+}
+.nexus-decision-primary{
+  border:1px solid rgba(74,222,128,.22);border-radius:23px;padding:18px;
+  background:radial-gradient(circle at 90% 0%,rgba(74,222,128,.12),transparent 35%),linear-gradient(145deg,rgba(10,29,42,.94),rgba(5,12,24,.97));
+}
+.nexus-decision-primary small{color:#77edaa;font-size:9px;font-weight:1000;text-transform:uppercase;letter-spacing:1px}
+.nexus-decision-primary h2{margin-top:8px;font-size:clamp(28px,3.4vw,44px);letter-spacing:-1.4px}
+.nexus-decision-primary p{margin-top:9px;color:#a0b7c9;font-size:12px;line-height:1.55}
+.nexus-decision-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.nexus-decision-meta span{padding:6px 8px;border-radius:999px;border:1px solid rgba(125,211,252,.14);background:rgba(255,255,255,.035);font-size:9px;font-weight:900;color:#bed4e5}
+.nexus-decision-stack{display:grid;gap:9px}
+.nexus-decision-mini{
+  border:1px solid rgba(125,211,252,.12);border-radius:17px;padding:13px;
+  background:rgba(255,255,255,.028);
+}
+.nexus-decision-mini small{font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:950;letter-spacing:.8px}
+.nexus-decision-mini strong{display:block;margin-top:5px;font-size:18px}
+.nexus-decision-mini span{display:block;margin-top:4px;color:var(--muted);font-size:10px;line-height:1.35}
+
+.nexus-room-card{min-height:148px}
+.nexus-room-card .nexus-room-copy em{font-size:11px}
+.nexus-room-metric{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;
+  padding-top:8px;border-top:1px solid rgba(255,255,255,.06);
+  color:#b7ccdc;font-size:9px;font-weight:900;
+}
+.nexus-room-metric b{color:var(--room);font-size:10px}
+
+.nexus-system-summary{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;
+}
+.nexus-system-item{
+  border:1px solid rgba(125,211,252,.10);border-radius:15px;padding:11px;background:rgba(255,255,255,.025);
+}
+.nexus-system-item small{color:var(--muted);font-size:8px;text-transform:uppercase;font-weight:950;letter-spacing:.8px}
+.nexus-system-item strong{display:block;margin-top:5px;font-size:14px}
+.nexus-system-item span{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+
+@media(max-width:1100px){
+  .nexus-exec-card{grid-column:span 6}
+  .nexus-signal-grid{grid-template-columns:1fr 1fr}
+  .nexus-signal-panel:last-child{grid-column:1/-1}
+}
+@media(max-width:760px){
+  .nexus-ticker-track{animation-duration:30s}
+  .nexus-executive-grid{grid-template-columns:1fr}
+  .nexus-exec-card,.nexus-exec-card.wide{grid-column:auto}
+  .nexus-signal-grid,.nexus-decision-board{grid-template-columns:1fr}
+  .nexus-signal-panel:last-child{grid-column:auto}
+  .nexus-system-summary{grid-template-columns:1fr 1fr}
+}
+@media(max-width:430px){
+  .nexus-system-summary{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){.nexus-ticker-track{animation:none;min-width:0;flex-wrap:wrap}}
+</style>
+
 </head>
 <body>
 
@@ -1441,9 +1574,29 @@ body,body.aufc-nav-ready,body.aufc-nav-ready.aufc-nav-collapsed{padding-left:14p
   </div>
 </section>
 
+
+<section class="nexus-command-ticker" aria-label="Aurora live intelligence ticker">
+  <div class="nexus-ticker-track" id="nexusTickerTrack">
+    <span><b>AURORA BRAIN</b> Connecting to the shared intelligence engine</span>
+    <span><b>MARKET REGIME</b> Awaiting live context</span>
+    <span><b>MANAGER VERDICT</b> Awaiting briefing</span>
+    <span><b>PORTFOLIO</b> Checking squad confidence</span>
+    <span><b>DIVIDENDS</b> Scanning the next income event</span>
+    <span><b>AURORA BRAIN</b> Connecting to the shared intelligence engine</span>
+    <span><b>MARKET REGIME</b> Awaiting live context</span>
+    <span><b>MANAGER VERDICT</b> Awaiting briefing</span>
+    <span><b>PORTFOLIO</b> Checking squad confidence</span>
+    <span><b>DIVIDENDS</b> Scanning the next income event</span>
+  </div>
+</section>
+
+
 <!-- ===================== SECTION: NEXUS QUICK RAIL ===================== -->
 <nav class="nexus-quick-rail" aria-label="Nexus page sections">
   <a href="#nexus-brain-command">Aurora Brain</a>
+  <a href="#nexus-executive-overview">Situation room</a>
+  <a href="#nexus-decision-board">Decision board</a>
+  <a href="#nexus-squad-signals">Squad signals</a>
   <a href="#nexus-command-rooms">Command rooms</a>
   <a href="#auroraMissionPipeline">Mission pipeline</a>
   <a href="#nexus-data-health">Data health</a>
@@ -1473,6 +1626,48 @@ body,body.aufc-nav-ready,body.aufc-nav-ready.aufc-nav-collapsed{padding-left:14p
 </section>
 
 
+
+<section class="card panel aurora-section-anchor" id="nexus-executive-overview">
+  <div class="section-head">
+    <div class="left"><span class="orb"></span><div><div class="k">Executive situation room</div><h2>Club Intelligence Overview</h2></div></div>
+    <span class="badge cyan" id="nexusExecutiveStatus">LIVE CLUB VIEW</span>
+  </div>
+  <div class="nexus-executive-grid">
+    <article class="nexus-exec-card" style="--exec-rgb:34,211,238"><small>Market regime</small><strong id="nexusExecRegime">—</strong><p id="nexusExecRegimeNote">Awaiting Aurora Brain.</p><span class="exec-tag">Macro context</span></article>
+    <article class="nexus-exec-card" style="--exec-rgb:74,222,128"><small>Buy mode</small><strong id="nexusExecBuyMode">—</strong><p id="nexusExecBuyModeNote">Awaiting manager guidance.</p><span class="exec-tag">Capital deployment</span></article>
+    <article class="nexus-exec-card" style="--exec-rgb:251,191,36"><small>News balance</small><strong id="nexusExecNews">—</strong><p id="nexusExecNewsNote">Positive versus negative portfolio stories.</p><span class="exec-tag">Media pressure</span></article>
+    <article class="nexus-exec-card" style="--exec-rgb:251,113,133"><small>Risk pressure</small><strong id="nexusExecRisk">—</strong><p id="nexusExecRiskNote">The squad’s current restriction burden.</p><span class="exec-tag">Control room</span></article>
+    <article class="nexus-exec-card wide tall" style="--exec-rgb:167,139,250"><small>Manager’s full interpretation</small><strong id="nexusExecThought">Aurora is preparing the club briefing.</strong><p id="nexusExecThoughtNote">The Brain will explain the strongest opportunity, weakest holding and present market context.</p><span class="exec-tag">Shared intelligence</span></article>
+    <article class="nexus-exec-card wide tall" style="--exec-rgb:96,165,250"><small>Income engine</small><strong id="nexusExecIncome">—</strong><p id="nexusExecIncomeNote">Annual income and portfolio value from intelligence-rated holdings.</p><span class="exec-tag">Financial position</span></article>
+  </div>
+</section>
+
+<section class="card panel aurora-section-anchor" id="nexus-decision-board">
+  <div class="section-head"><div class="left"><span class="orb"></span><div><div class="k">One instruction • one reason</div><h2>Manager Decision Board</h2></div></div><span class="badge good" id="nexusDecisionBadge">BRAIN CONTROLLED</span></div>
+  <div class="nexus-decision-board">
+    <article class="nexus-decision-primary">
+      <small>Primary manager action</small><h2 id="nexusDecisionPrimary">Hold discipline</h2>
+      <p id="nexusDecisionPrimaryNote">Aurora is checking confidence, restrictions, news and market regime before selecting the club’s primary action.</p>
+      <div class="nexus-decision-meta"><span id="nexusDecisionConfidence">Confidence —</span><span id="nexusDecisionRisk">Risk —</span><span id="nexusDecisionMode">Mode —</span></div>
+    </article>
+    <div class="nexus-decision-stack">
+      <article class="nexus-decision-mini"><small>Best permitted opportunity</small><strong id="nexusDecisionBuy">—</strong><span id="nexusDecisionBuyNote">No permitted buy identified yet.</span></article>
+      <article class="nexus-decision-mini"><small>Most urgent review</small><strong id="nexusDecisionReview">—</strong><span id="nexusDecisionReviewNote">No restriction review identified yet.</span></article>
+      <article class="nexus-decision-mini"><small>Strongest comparison</small><strong id="nexusDecisionCompare">—</strong><span id="nexusDecisionCompareNote">Waiting for two rated holdings.</span></article>
+    </div>
+  </div>
+</section>
+
+<section class="card panel aurora-section-anchor" id="nexus-squad-signals">
+  <div class="section-head"><div class="left"><span class="orb"></span><div><div class="k">Portfolio dressing room</div><h2>Squad Signals</h2></div></div><span class="badge cyan">LIVE INTELLIGENCE</span></div>
+  <div class="nexus-signal-grid">
+    <article class="nexus-signal-panel"><h3>🏆 Confidence leaders</h3><p>The strongest holdings in the current intelligence run.</p><div class="nexus-signal-list" id="nexusSignalLeaders"></div></article>
+    <article class="nexus-signal-panel"><h3>⚠ Review queue</h3><p>Restrictions, low confidence and higher-risk instructions.</p><div class="nexus-signal-list" id="nexusSignalReviews"></div></article>
+    <article class="nexus-signal-panel"><h3>📈 Training groups</h3><p>How the Brain currently classifies the full squad.</p><div class="nexus-signal-list" id="nexusSignalTraining"></div></article>
+  </div>
+</section>
+
+
 <!-- ===================== SECTION: COMMAND ROOMS ===================== -->
 <section class="card panel nexus-room-section aurora-section-anchor" id="nexus-command-rooms">
   <div class="section-head nexus-room-head">
@@ -1481,31 +1676,31 @@ body,body.aufc-nav-ready,body.aufc-nav-ready.aufc-nav-collapsed{padding-left:14p
   </div>
   <div class="nexus-room-grid">
     <a class="nexus-room-card featured" href="AuroraCityFC_FinanceDepartment.html" style="--room:#22d3ee;--room-rgb:34,211,238">
-      <span class="nexus-room-icon">£</span><span class="nexus-room-copy"><small>Money &amp; payday</small><strong>Finance Department</strong><em>Pots, bills, payday missions and House Ledger.</em></span><span class="nexus-room-state" id="nexusFinanceState">SYNCED</span><b>→</b>
+      <span class="nexus-room-icon">£</span><span class="nexus-room-copy"><small>Money &amp; payday</small><strong>Finance Department</strong><em>Pots, bills, payday missions and House Ledger.</em><span class="nexus-room-metric"><span>Mission pipeline</span><b>LIVE</b></span></span><span class="nexus-room-state" id="nexusFinanceState">SYNCED</span><b>→</b>
     </a>
     <a class="nexus-room-card" href="AuroraCityFC_ManagerDashboard.html" style="--room:#38bdf8;--room-rgb:56,189,248">
-      <span class="nexus-room-icon">⌂</span><span class="nexus-room-copy"><small>Daily command</small><strong>Manager Dashboard</strong><em>Portfolio overview, actions and the manager’s briefing.</em></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
+      <span class="nexus-room-icon">⌂</span><span class="nexus-room-copy"><small>Daily command</small><strong>Manager Dashboard</strong><em>Portfolio overview, actions and the manager’s briefing.</em><span class="nexus-room-metric"><span>Brain summary</span><b>CONNECTED</b></span></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
     </a>
     <a class="nexus-room-card" href="AuroraCityFC_SquadHub.html" style="--room:#a78bfa;--room-rgb:167,139,250">
-      <span class="nexus-room-icon">♟</span><span class="nexus-room-copy"><small>First team</small><strong>Squad Hub</strong><em>Holdings, roles, chemistry and squad strength.</em></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
+      <span class="nexus-room-icon">♟</span><span class="nexus-room-copy"><small>First team</small><strong>Squad Hub</strong><em>Holdings, roles, chemistry and squad strength.</em><span class="nexus-room-metric"><span>First-team view</span><b>CONNECTED</b></span></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
     </a>
     <a class="nexus-room-card" href="AuroraCityFC_ScoutingCentre.html" style="--room:#4ade80;--room-rgb:74,222,128">
-      <span class="nexus-room-icon">◎</span><span class="nexus-room-copy"><small>Recruitment network</small><strong>Scouting Centre</strong><em>Rank prospects and build the next investment plan.</em></span><span class="nexus-room-state" id="nexusScoutingState">SCANNING</span><b>→</b>
+      <span class="nexus-room-icon">◎</span><span class="nexus-room-copy"><small>Recruitment network</small><strong>Scouting Centre</strong><em>Rank prospects and build the next investment plan.</em><span class="nexus-room-metric"><span>Recruitment scan</span><b>ACTIVE</b></span></span><span class="nexus-room-state" id="nexusScoutingState">SCANNING</span><b>→</b>
     </a>
     <a class="nexus-room-card" href="AuroraCityFC_TransferCentre.html" style="--room:#fbbf24;--room-rgb:251,191,36">
-      <span class="nexus-room-icon">⇄</span><span class="nexus-room-copy"><small>Execution desk</small><strong>Transfer Centre</strong><em>Approve purchases and complete registrations.</em></span><span class="nexus-room-state" id="nexusTransferState">READY</span><b>→</b>
+      <span class="nexus-room-icon">⇄</span><span class="nexus-room-copy"><small>Execution desk</small><strong>Transfer Centre</strong><em>Approve purchases and complete registrations.</em><span class="nexus-room-metric"><span>Execution desk</span><b>READY</b></span></span><span class="nexus-room-state" id="nexusTransferState">READY</span><b>→</b>
     </a>
     <a class="nexus-room-card" href="AuroraCityFC_AnalysisRoom.html" style="--room:#c084fc;--room-rgb:192,132,252">
-      <span class="nexus-room-icon">⌁</span><span class="nexus-room-copy"><small>Intelligence</small><strong>Analysis Room</strong><em>Form, valuation, risk and deeper portfolio signals.</em></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
+      <span class="nexus-room-icon">⌁</span><span class="nexus-room-copy"><small>Intelligence</small><strong>Analysis Room</strong><em>Form, valuation, risk and deeper portfolio signals.</em><span class="nexus-room-metric"><span>Deep analysis</span><b>CONNECTED</b></span></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
     </a>
     <a class="nexus-room-card" href="AuroraCityFC_TrainingGround.html" style="--room:#34d399;--room-rgb:52,211,153">
-      <span class="nexus-room-icon">⚙</span><span class="nexus-room-copy"><small>Performance</small><strong>Training Ground</strong><em>Share-price form, development and coach reports.</em></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
+      <span class="nexus-room-icon">⚙</span><span class="nexus-room-copy"><small>Performance</small><strong>Training Ground</strong><em>Share-price form, development and coach reports.</em><span class="nexus-room-metric"><span>Development</span><b>CONNECTED</b></span></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
     </a>
     <a class="nexus-room-card" href="AuroraCityFC_Boardroom.html" style="--room:#60a5fa;--room-rgb:96,165,250">
-      <span class="nexus-room-icon">♜</span><span class="nexus-room-copy"><small>Club leadership</small><strong>Boardroom</strong><em>Confidence, objectives and long-term mission control.</em></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
+      <span class="nexus-room-icon">♜</span><span class="nexus-room-copy"><small>Club leadership</small><strong>Boardroom</strong><em>Confidence, objectives and long-term mission control.</em><span class="nexus-room-metric"><span>Executive view</span><b>CONNECTED</b></span></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
     </a>
     <a class="nexus-room-card" href="AuroraCityFC_MediaCentre.html" style="--room:#fb7185;--room-rgb:251,113,133">
-      <span class="nexus-room-icon">◫</span><span class="nexus-room-copy"><small>Communications</small><strong>Media Centre</strong><em>Headlines, storylines and the club’s live narrative.</em></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
+      <span class="nexus-room-icon">◫</span><span class="nexus-room-copy"><small>Communications</small><strong>Media Centre</strong><em>Headlines, storylines and the club’s live narrative.</em><span class="nexus-room-metric"><span>News intelligence</span><b>CONNECTED</b></span></span><span class="nexus-room-state">CONNECTED</span><b>→</b>
     </a>
   </div>
 </section>
@@ -1672,7 +1867,19 @@ body,body.aufc-nav-ready,body.aufc-nav-ready.aufc-nav-collapsed{padding-left:14p
 </section>
 
 
-<div class="muted footer">Aurora Nexus HQ • Brain-Powered Command Centre v4 • AuroraBrain.js connected</div>
+
+<section class="card panel aurora-section-anchor" id="nexus-system-summary">
+  <div class="section-head"><div class="left"><span class="orb"></span><div><div class="k">Aurora operating system</div><h2>System Summary</h2></div></div><span class="badge good">ONE CLUB • ONE BRAIN</span></div>
+  <div class="nexus-system-summary">
+    <div class="nexus-system-item"><small>Brain module</small><strong>AuroraBrain.js</strong><span>Shared intelligence API</span></div>
+    <div class="nexus-system-item"><small>Master feed</small><strong>AuroraMaster.json</strong><span>Live GitHub data</span></div>
+    <div class="nexus-system-item"><small>Navigation</small><strong>Universal JS</strong><span>Web + app header</span></div>
+    <div class="nexus-system-item"><small>Departments</small><strong>9 connected</strong><span>Specialist club rooms</span></div>
+    <div class="nexus-system-item"><small>Nexus build</small><strong>V5 Overhaul</strong><span>Executive command centre</span></div>
+  </div>
+</section>
+
+<div class="muted footer">Aurora Nexus HQ • Executive Brain Command Centre v5 • AuroraBrain.js connected</div>
 </div>
 
 
@@ -1866,8 +2073,115 @@ function nexusBrainActionClass(action){
   if(/no new money|avoid|review|locked legacy|monitor only/.test(text))return"block";
   return"watch";
 }
+
+function nexusSignalRow(title,sub,value,cls="cyan"){
+  return `<div class="nexus-signal-row"><div><strong>${title}</strong><span>${sub}</span></div><div class="nexus-signal-value ${cls}">${value}</div></div>`;
+}
+function renderNexusOverhaul(brain){
+  const p=brain.portfolio;
+  const all=brain.getAllHoldings();
+  const buys=brain.getPriorityBuys();
+  const blocked=brain.getBlockedHoldings();
+  const top=p.topHolding, low=p.lowestHolding;
+
+  setText("nexusExecRegime",p.marketRegime||"Unavailable");
+  setText("nexusExecRegimeNote",p.marketRegime?`The current macro backdrop is ${p.marketRegime.toLowerCase()}.`:"MarketRegime is not available.");
+  setText("nexusExecBuyMode",p.buyMode||"Unavailable");
+  setText("nexusExecBuyModeNote",p.buyMode?`Capital deployment mode: ${p.buyMode}.`:"No buy mode has been published.");
+  setText("nexusExecNews",`${p.positiveNews}-${p.negativeNews}`);
+  setText("nexusExecNewsNote",`${p.positiveNews} positive and ${p.negativeNews} negative portfolio stories.`);
+  setText("nexusExecRisk",`${p.restrictionCount} restricted`);
+  setText("nexusExecRiskNote",`${blocked.length} holding${blocked.length===1?" is":"s are"} currently blocked, locked or under review.`);
+  setText("nexusExecIncome",`£${money(p.annualIncome,0)}/yr`);
+  setText("nexusExecIncomeNote",`£${money(p.marketValue,0)} intelligence-rated portfolio value • £${money(p.annualIncome/12,0)}/month average.`);
+
+  const topThought=top?brain.getManagerThought(top.ticker):"No top holding is available.";
+  const lowThought=low?brain.getManagerThought(low.ticker):"No lowest-confidence holding is available.";
+  setText("nexusExecThought",p.managerVerdict||"Aurora manager verdict unavailable");
+  setText("nexusExecThoughtNote",`${topThought} ${lowThought}`);
+
+  // Smarter mission: weakest restricted holding first, then high risk, then best permitted buy.
+  const restrictedRanked=blocked.slice().sort((a,b)=>a.confidence-b.confidence);
+  const highRisk=all.filter(h=>String(h.riskLevel).toLowerCase()==="high").sort((a,b)=>a.confidence-b.confidence);
+  const permitted=buys.slice().sort((a,b)=>b.confidence-a.confidence);
+
+  let target=null, mission="Hold discipline", missionNote="No urgent change is required. Continue monitoring the current squad.";
+  if(restrictedRanked.length){
+    target=restrictedRanked[0];
+    mission=`Review ${target.ticker}`;
+    missionNote=brain.getManagerThought(target.ticker);
+  }else if(highRisk.length){
+    target=highRisk[0];
+    mission=`Protect against ${target.ticker} risk`;
+    missionNote=brain.getManagerThought(target.ticker);
+  }else if(permitted.length){
+    target=permitted[0];
+    mission=`Consider ${target.ticker}`;
+    missionNote=brain.getBuyReason(target.ticker);
+  }else if(top){
+    target=top;
+    mission=`Monitor ${top.ticker}`;
+    missionNote=brain.getManagerThought(top.ticker);
+  }
+
+  setText("nexusBrainMission",mission);
+  setText("nexusBrainMissionNote",missionNote);
+  setText("nexusDecisionPrimary",mission);
+  setText("nexusDecisionPrimaryNote",missionNote);
+  setText("nexusDecisionConfidence",`Confidence ${target?target.confidence:"—"}/100`);
+  setText("nexusDecisionRisk",`Risk ${target?target.riskLevel:"—"}`);
+  setText("nexusDecisionMode",`Mode ${p.buyMode||"—"}`);
+
+  const bestBuy=permitted[0]||null;
+  setText("nexusDecisionBuy",bestBuy?bestBuy.ticker:"No permitted buy");
+  setText("nexusDecisionBuyNote",bestBuy?brain.getBuyReason(bestBuy.ticker):"Every rated holding is currently a hold, monitor or restricted instruction.");
+
+  const review=restrictedRanked[0]||low||null;
+  setText("nexusDecisionReview",review?review.ticker:"No urgent review");
+  setText("nexusDecisionReviewNote",review?brain.getManagerThought(review.ticker):"No holding currently requires an urgent manager review.");
+
+  if(all.length>=2){
+    const comparison=brain.compareHoldings(all[0].ticker,all[1].ticker);
+    setText("nexusDecisionCompare",comparison?.winner?`${comparison.winner} leads`:"Scores level");
+    setText("nexusDecisionCompareNote",comparison?.summary||"Comparison unavailable.");
+  }
+
+  const leaderBox=document.getElementById("nexusSignalLeaders");
+  if(leaderBox)leaderBox.innerHTML=all.slice(0,5).map(h=>nexusSignalRow(`${h.ticker} • ${h.company}`,`${h.action} • ${h.riskLevel} risk`,`${h.confidence}/100`,h.confidence>=75?"good":h.confidence>=65?"cyan":"watch")).join("");
+
+  const reviewRows=(restrictedRanked.length?restrictedRanked:all.slice().sort((a,b)=>a.confidence-b.confidence)).slice(0,5);
+  const reviewBox=document.getElementById("nexusSignalReviews");
+  if(reviewBox)reviewBox.innerHTML=reviewRows.map(h=>nexusSignalRow(`${h.ticker} • ${h.company}`,`${h.action} • ${h.riskLevel} risk`,`${h.confidence}/100`,h.confidence<50?"risk":"watch")).join("");
+
+  const groupCounts={};
+  all.forEach(h=>groupCounts[h.trainingGroup]=(groupCounts[h.trainingGroup]||0)+1);
+  const trainingBox=document.getElementById("nexusSignalTraining");
+  if(trainingBox)trainingBox.innerHTML=[
+    ["Elite Squad","Top confidence group","good"],
+    ["First Team","Strong core holdings","cyan"],
+    ["Development Squad","Monitoring and improvement","watch"],
+    ["Recovery Squad","Lowest-confidence holdings","risk"]
+  ].map(([name,sub,cls])=>nexusSignalRow(name,sub,String(groupCounts[name]||0),cls)).join("");
+
+  const tickerItems=[
+    `<span><b>MANAGER VERDICT</b>${p.managerVerdict}</span>`,
+    `<span><b>MARKET REGIME</b>${p.marketRegime||"Unavailable"}</span>`,
+    `<span><b>BUY MODE</b>${p.buyMode||"Unavailable"}</span>`,
+    `<span><b>TOP HOLDING</b>${top?`${top.ticker} ${top.confidence}/100`:"Unavailable"}</span>`,
+    `<span><b>REVIEW</b>${review?`${review.ticker} ${review.confidence}/100`:"No urgent review"}</span>`,
+    `<span><b>NEWS</b>${p.positiveNews} positive • ${p.negativeNews} negative</span>`
+  ];
+  const ticker=document.getElementById("nexusTickerTrack");
+  if(ticker)ticker.innerHTML=[...tickerItems,...tickerItems].join("");
+
+  setText("commandDecision",mission);
+  setText("commandReason",missionNote);
+  setText("commandRoute",p.restrictionCount>0?"MANAGER REVIEW":"BRAIN ROUTE");
+}
+
 function renderNexusBrain(brain){
   AURORA_BRAIN_INSTANCE=brain;
+  renderNexusOverhaul(brain);
   const p=brain&&brain.portfolio;
   if(!p){setText("nexusBrainStatus","NO DATA");setText("nexusBrainVerdict","Aurora Brain could not create a portfolio view.");return;}
   setText("nexusBrainStatus","BRAIN ONLINE");
@@ -1880,15 +2194,10 @@ function renderNexusBrain(brain){
   setText("nexusBrainRestrictions",String(p.restrictionCount||0));
   setText("nexusBrainVerdict",p.managerVerdict||"No manager verdict");
   setText("nexusBrainContext",`${p.marketRegime||"Regime unavailable"} • ${p.buyMode||"Buy mode unavailable"} • ${p.positiveNews||0} positive / ${p.negativeNews||0} negative stories`);
-  const blocked=brain.getBlockedHoldings(),buys=brain.getPriorityBuys();
-  let mission="Hold discipline",note="No urgent transfer is required. Continue monitoring the current squad.";
-  if(blocked.length){mission=`Review ${blocked[0].ticker}`;note=brain.getManagerThought(blocked[0].ticker);}
-  else if(buys.length){mission=`Back ${buys[0].ticker}`;note=brain.getBuyReason(buys[0].ticker);}
-  else if(p.topHolding){mission=`Monitor ${p.topHolding.ticker}`;note=brain.getManagerThought(p.topHolding.ticker);}
-  setText("nexusBrainMission",mission);setText("nexusBrainMissionNote",note);
+
   const list=document.getElementById("nexusBrainLeaders");
   if(list)list.innerHTML=brain.getAllHoldings().slice(0,6).map((h,i)=>`<div class="nexus-brain-row"><div class="nexus-brain-rank">${i+1}</div><div><strong>${h.ticker} • ${h.company}</strong><span>${h.confidence}/100 • ${h.riskLevel} risk • ${h.newsImpact} news</span></div><div class="nexus-brain-action ${nexusBrainActionClass(h.action)}">${h.action}</div></div>`).join("");
-  setText("commandDecision",mission);setText("commandReason",note);setText("commandRoute",p.restrictionCount>0?"REVIEW":"BRAIN ROUTE");
+
 }
 
 /* ===================== SECTION: DAILY PRICE SUMMARY ===================== */
