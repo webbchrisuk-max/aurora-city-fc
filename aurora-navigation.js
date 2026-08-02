@@ -1794,7 +1794,7 @@
     }
   }
 
-  function installMenuIntoAuroraAppShell(toggle){
+  function installMenuIntoAuroraAppShell(openNavigation){
     const shell = getVerifiedAuroraAppShell();
     if(!shell) return false;
 
@@ -1855,12 +1855,8 @@
       event.preventDefault();
       event.stopPropagation();
 
-      if(
-        toggle
-        && toggle.isConnected
-        && typeof toggle.click === "function"
-      ){
-        toggle.click();
+      if(typeof openNavigation === "function"){
+        openNavigation();
       }
     };
 
@@ -1903,12 +1899,6 @@
     header.style.setProperty("align-items","center","important");
     header.style.setProperty("justify-content","space-between","important");
 
-    toggle.style.setProperty(
-      "display",
-      "none",
-      "important"
-    );
-
     /*
       Remove the local universal header if this page was previously
       rendered outside the app and then restored inside the shell.
@@ -1917,14 +1907,6 @@
       document.getElementById("auroraUniversalHeader");
 
     if(localHeader){
-      /*
-        The controller may currently live inside the browser-only header.
-        Move it back to the page before removing that header so the app-shell
-        proxy always retains a live button to click.
-      */
-      if(toggle && localHeader.contains(toggle)){
-        document.body.appendChild(toggle);
-      }
       localHeader.remove();
     }
 
@@ -1934,7 +1916,56 @@
     return true;
   }
 
-  function buildUniversalAuroraHeader(toggle){
+
+  function installMenuIntoPageOwnedHeader(openNavigation){
+    const inner = document.querySelector(
+      ".fm-workspace > .topbar .topbar-inner"
+    );
+
+    const brand = inner && inner.querySelector(".brand");
+    if(!inner || !brand) return false;
+
+    let button = brand.querySelector(
+      "#auroraPageHeaderMenuButton"
+    );
+
+    /*
+      Clone an existing proxy button to remove any old listener that tried
+      to click #auroraNavToggle. The new button opens the panel directly.
+    */
+    if(button){
+      const fresh = button.cloneNode(true);
+      button.replaceWith(fresh);
+      button = fresh;
+    }else{
+      button = document.createElement("button");
+      button.id = "auroraPageHeaderMenuButton";
+      button.type = "button";
+      button.textContent = "☰";
+      brand.insertBefore(button,brand.firstChild);
+    }
+
+    button.setAttribute(
+      "aria-label",
+      "Open Aurora mission navigation"
+    );
+    button.setAttribute("aria-expanded","false");
+    button.title = "Open mission navigation";
+    button.dataset.auroraDirectNavigation = "true";
+
+    button.onclick = function(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(typeof openNavigation === "function"){
+        openNavigation();
+      }
+    };
+
+    return true;
+  }
+
+  function buildUniversalAuroraHeader(openNavigation){
     injectUniversalHeaderStyles();
 
     /*
@@ -1944,22 +1975,13 @@
       floating launcher on those pages.
     */
     if(document.documentElement.dataset.auroraHeader === "page"){
-      const localHeader = document.getElementById("auroraUniversalHeader");
-
-      if(localHeader){
-        if(toggle && localHeader.contains(toggle)){
-          document.body.appendChild(toggle);
-        }
-        localHeader.remove();
-      }
-
-      if(toggle){
-        toggle.style.setProperty("display","none","important");
-      }
+      document.getElementById("auroraUniversalHeader")?.remove();
 
       document.body.classList.remove("aurora-running-in-app-shell");
       document.body.classList.add("aurora-page-owned-header");
       document.body.style.removeProperty("padding-top");
+
+      installMenuIntoPageOwnedHeader(openNavigation);
       return null;
     }
 
@@ -1967,7 +1989,7 @@
       Inside the installed Aurora app, the persistent app shell already
       owns the top header. Use that header and do not build a second one.
     */
-    if(installMenuIntoAuroraAppShell(toggle)){
+    if(installMenuIntoAuroraAppShell(openNavigation)){
       return null;
     }
 
@@ -1981,6 +2003,13 @@
       header.setAttribute("role","banner");
       header.innerHTML = `
         <div class="aurora-universal-left">
+          <button
+            id="auroraUniversalMenuButton"
+            type="button"
+            aria-label="Open Aurora mission navigation"
+            aria-expanded="false"
+            title="Open mission navigation"
+          >☰</button>
           <div class="aurora-universal-crest" aria-hidden="true">AFC</div>
           <div class="aurora-universal-brand">
             <strong>Aurora City FC</strong>
@@ -2005,12 +2034,20 @@
       document.body.prepend(header);
     }
 
-    const left = header.querySelector(".aurora-universal-left");
-    const crest = header.querySelector(".aurora-universal-crest");
 
-    if(toggle && left && crest){
-      left.insertBefore(toggle,crest);
-      toggle.style.removeProperty("display");
+    const menuButton = header.querySelector(
+      "#auroraUniversalMenuButton"
+    );
+
+    if(menuButton){
+      menuButton.onclick = function(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        if(typeof openNavigation === "function"){
+          openNavigation();
+        }
+      };
     }
 
     const logout = header.querySelector("#auroraUniversalLogout");
@@ -2051,7 +2088,19 @@
     return header;
   }
 
+
+  function removeLegacyFloatingNavigationLaunchers(){
+    document.querySelectorAll(
+      "#auroraNavToggle,.aurora-nav-edge-toggle,"
+      + ".aurora-nav-edge-button,.aurora-floating-nav,"
+      + ".aurora-floating-menu"
+    ).forEach(function(node){
+      node.remove();
+    });
+  }
+
   function build(){
+    removeLegacyFloatingNavigationLaunchers();
     if(document.getElementById("auroraNavPanel")) return;
 
     injectUniversalHeaderStyles();
@@ -2061,22 +2110,6 @@
     injectMissionProgressStyles();
 
     injectBottomCloudStyles();
-
-    const toggle = document.createElement("button");
-    toggle.id = "auroraNavToggle";
-    toggle.type = "button";
-    toggle.style.setProperty("display","none","important");
-    toggle.setAttribute(
-      "aria-label",
-      "Open Aurora navigation"
-    );
-    toggle.setAttribute("aria-expanded","false");
-    toggle.setAttribute(
-      "aria-controls",
-      "auroraNavPanel"
-    );
-    toggle.innerHTML =
-      '<span aria-hidden="true"></span>';
 
     const overlay = document.createElement("div");
     overlay.id = "auroraNavOverlay";
@@ -2246,7 +2279,13 @@
       </footer>
     `;
 
-    document.body.append(toggle,overlay,panel);
+    document.querySelectorAll(
+      "#auroraNavToggle,.aurora-nav-edge-toggle,.aurora-floating-nav"
+    ).forEach(function(node){
+      node.remove();
+    });
+
+    document.body.append(overlay,panel);
     refreshWorkflowActiveState();
 
     /*
@@ -2254,7 +2293,7 @@
       This does not touch any genuine page/app header.
     */
 
-    buildUniversalAuroraHeader(toggle);
+    buildUniversalAuroraHeader(toggleNavigation);
 
     const closeButton =
       panel.querySelector(".aurora-nav-close");
@@ -2265,22 +2304,49 @@
     const navigationScroll =
       panel.querySelector(".aurora-nav-scroll");
 
+    function syncNavigationOpenerState(open){
+      const localButtons = document.querySelectorAll(
+        "#auroraPageHeaderMenuButton,#auroraUniversalMenuButton"
+      );
+
+      localButtons.forEach(function(button){
+        button.setAttribute("aria-expanded",String(open));
+        button.setAttribute(
+          "aria-label",
+          open
+            ? "Close Aurora mission navigation"
+            : "Open Aurora mission navigation"
+        );
+      });
+
+      try{
+        if(window.parent && window.parent !== window){
+          const parentButton = window.parent.document.getElementById(
+            "auroraTopHeaderMenuButton"
+          );
+
+          if(parentButton){
+            parentButton.setAttribute(
+              "aria-expanded",
+              String(open)
+            );
+          }
+        }
+      }catch(_){}
+    }
+
+    function toggleNavigation(){
+      setOpen(
+        !document.body.classList.contains(
+          "aurora-nav-open"
+        )
+      );
+    }
+
     function setOpen(open){
       document.body.classList.toggle(
         "aurora-nav-open",
         open
-      );
-
-      toggle.setAttribute(
-        "aria-expanded",
-        String(open)
-      );
-
-      toggle.setAttribute(
-        "aria-label",
-        open
-          ? "Close Aurora navigation"
-          : "Open Aurora navigation"
       );
 
       panel.setAttribute(
@@ -2292,6 +2358,8 @@
         "aria-hidden",
         String(!open)
       );
+
+      syncNavigationOpenerState(open);
 
       if(open){
         /*
@@ -2334,13 +2402,25 @@
       }
     }
 
-    toggle.addEventListener("click",function(){
-      setOpen(
-        !document.body.classList.contains(
-          "aurora-nav-open"
-        )
-      );
-    });
+    document.addEventListener(
+      "click",
+      function(event){
+        const opener = event.target.closest
+          ? event.target.closest(
+              "#auroraPageHeaderMenuButton,"
+              + "#auroraUniversalMenuButton,"
+              + "[data-aurora-nav-opener]"
+            )
+          : null;
+
+        if(!opener) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        toggleNavigation();
+      },
+      true
+    );
 
     closeButton.addEventListener(
       "click",
@@ -2355,6 +2435,17 @@
         setOpen(false);
       }
     );
+
+    window.AuroraNavigation = Object.freeze({
+      open:function(){ setOpen(true); },
+      close:function(){ setOpen(false); },
+      toggle:toggleNavigation,
+      isOpen:function(){
+        return document.body.classList.contains(
+          "aurora-nav-open"
+        );
+      }
+    });
 
     if(cloudControl){
       cloudControl.addEventListener(
@@ -2714,7 +2805,11 @@
           )
         ){
           setOpen(false);
-          toggle.focus({
+          const opener = document.querySelector(
+            "#auroraPageHeaderMenuButton,#auroraUniversalMenuButton"
+          );
+
+          opener?.focus({
             preventScroll:true
           });
         }
@@ -2731,19 +2826,45 @@
       refreshWorkflowActiveState
     );
 
+    const headerObserver = new MutationObserver(function(){
+      if(document.documentElement.dataset.auroraHeader === "page"){
+        const button = document.getElementById(
+          "auroraPageHeaderMenuButton"
+        );
+
+        if(
+          !button
+          || button.dataset.auroraDirectNavigation !== "true"
+        ){
+          installMenuIntoPageOwnedHeader(toggleNavigation);
+        }
+      }
+    });
+
+    headerObserver.observe(document.documentElement,{
+      childList:true,
+      subtree:true
+    });
+
+    [100,350,900,2000].forEach(function(delay){
+      window.setTimeout(function(){
+        buildUniversalAuroraHeader(toggleNavigation);
+      },delay);
+    });
+
     window.addEventListener(
       "pageshow",
       function(){
         setOpen(false);
         refreshWorkflowActiveState();
-        buildUniversalAuroraHeader(toggle);
+        buildUniversalAuroraHeader(toggleNavigation);
       }
     );
 
     window.addEventListener(
       "resize",
       function(){
-        buildUniversalAuroraHeader(toggle);
+        buildUniversalAuroraHeader(toggleNavigation);
       }
     );
 
