@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 
-<html data-aurora-page="manager" lang="en">
+<html data-aurora-page="manager" data-aurora-header="page" lang="en">
 <head>
-<!-- Build: Aurora Manager Dashboard • Single Header Fix • 2 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
+<!-- Build: Aurora Manager Dashboard • Page-Owned Header Fix v2 • 2 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
 
@@ -515,8 +515,8 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 }@media(max-width:760px){.fm-workspace .app{padding:12px 10px 24px!important}.beast-top-actions{position:static!important;right:auto!important;bottom:auto!important;margin-top:10px!important;width:auto!important}.manager-command-header{margin-top:10px!important}}
 </style>
 <!-- Aurora universal workflow navigation -->
-<link href="aurora-navigation.css?v=20260729-crossbrowser-1" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260729-crossbrowser-1"></script>
+<link href="aurora-navigation.css?v=20260802-manager-page-header-3" rel="stylesheet"/>
+<script defer="" src="aurora-navigation.js?v=20260802-manager-page-header-3"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
@@ -652,7 +652,7 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-single-header-fix-20260802-1" name="aurora-build"/>
+</style><meta content="manager-shared-hero-step3-load-fix-20260802" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -1121,68 +1121,90 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 
 <link rel="stylesheet" href="aurora-hero.css?v=20260802-manager-step3-fix1">
 
-<style id="auroraManagerSingleHeaderFix">
-/*
- * Manager Dashboard owns its large dark crest header.
- * aurora-navigation.js still supplies the working sidebar, but its separate
- * universal/browser header is suppressed on this page to prevent two bars.
- */
-html body.aurora-manager-dashboard-page{
+<style id="auroraManagerPageOwnedHeaderStylesV2">
+/* Manager Dashboard owns the large black crest header. */
+html[data-aurora-header="page"] body{
   padding-top:0!important;
 }
-body.aurora-manager-dashboard-page.aurora-browser-header-active{
-  padding-top:0!important;
-}
-body.aurora-manager-dashboard-page #auroraUniversalHeader,
-body.aurora-manager-dashboard-page #auroraBrowserFallbackHeader{
+html[data-aurora-header="page"] body #auroraUniversalHeader,
+html[data-aurora-header="page"] body #auroraBrowserFallbackHeader,
+html[data-aurora-header="page"] body .aurora-universal-header{
   display:none!important;
   visibility:hidden!important;
   height:0!important;
   min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
   overflow:hidden!important;
   pointer-events:none!important;
 }
-body.aurora-manager-dashboard-page .fm-shell,
-body.aurora-manager-dashboard-page .fm-workspace{
+html[data-aurora-header="page"] body .fm-shell,
+html[data-aurora-header="page"] body .fm-workspace{
   margin-top:0!important;
   padding-top:0!important;
 }
-body.aurora-manager-dashboard-page .fm-workspace > .topbar{
+html[data-aurora-header="page"] body .fm-workspace > .topbar{
   display:block!important;
   position:sticky!important;
   top:0!important;
   margin-top:0!important;
   z-index:2147482000!important;
 }
-body.aurora-manager-dashboard-page .fm-workspace > .topbar .topbar-inner{
-  padding-top:14px!important;
+html[data-aurora-header="page"] body .fm-page-path{
+  display:none!important;
 }
-body.aurora-manager-dashboard-page #auroraNavToggle.aurora-manager-inline-toggle{
+html[data-aurora-header="page"] body .fm-top-context{
+  justify-content:flex-end!important;
+  flex-wrap:nowrap!important;
+}
+html[data-aurora-header="page"] body .aurora-page-header-logout{
+  min-height:38px;
+  padding:0 14px;
+  border:1px solid rgba(251,113,133,.34);
+  border-radius:12px;
+  color:#fecdd3;
+  background:linear-gradient(145deg,rgba(76,5,25,.76),rgba(44,7,20,.90));
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  cursor:pointer;
+}
+html[data-aurora-header="page"] body .aurora-page-header-logout:hover,
+html[data-aurora-header="page"] body .aurora-page-header-logout:focus-visible{
+  border-color:rgba(251,113,133,.58);
+  outline:none;
+}
+html[data-aurora-header="page"] body #auroraPageHeaderMenuButton{
   position:static!important;
   inset:auto!important;
   transform:none!important;
-  display:grid!important;
-  flex:0 0 auto!important;
   width:42px!important;
   height:42px!important;
   min-width:42px!important;
-  margin:0 2px 0 0!important;
-  z-index:auto!important;
+  display:grid!important;
+  place-items:center!important;
+  flex:0 0 auto!important;
+  margin:0 10px 0 0!important;
+  border:1px solid rgba(125,211,252,.22)!important;
+  border-radius:13px!important;
+  color:#dff7ff!important;
+  background:linear-gradient(145deg,rgba(8,47,73,.72),rgba(15,23,42,.92))!important;
+  cursor:pointer!important;
 }
 @media(max-width:760px){
-  body.aurora-manager-dashboard-page .fm-workspace > .topbar .topbar-inner{
-    padding-top:10px!important;
-  }
-  body.aurora-manager-dashboard-page #auroraNavToggle.aurora-manager-inline-toggle{
-    width:40px!important;
-    height:40px!important;
-    min-width:40px!important;
+  html[data-aurora-header="page"] body .fm-top-context{
+    width:100%;
+    justify-content:flex-start!important;
+    flex-wrap:wrap!important;
   }
 }
 </style>
 
 </head>
-<body class="aurora-manager-dashboard-page">
+<body>
 <div class="fm-shell">
 <div class="fm-workspace">
 <div class="topbar">
@@ -1203,7 +1225,7 @@ body.aurora-manager-dashboard-page #auroraNavToggle.aurora-manager-inline-toggle
 <button aria-label="Open dashboard controls" class="beast-icon-button" id="beastLayoutButton" title="Dashboard controls" type="button">⚙</button>
 <button aria-label="Toggle presentation mode" class="beast-icon-button" id="beastPresentationButton" title="Presentation mode" type="button">▣</button>
 </div>
-<span class="fm-top-pill"><span class="fm-top-dot"></span>Live</span>
+<span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
 </div>
 </div>
 </div>
@@ -3578,86 +3600,198 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </script>
 
 
-<script id="auroraManagerSingleHeaderGuard">
+<script id="auroraManagerPageOwnedHeaderGuardV2">
 (function(){
   "use strict";
 
-  let scheduled = false;
+  document.documentElement.dataset.auroraHeader = "page";
+  let queued = false;
 
-  function hideExtraHeader(doc){
-    if(!doc || !doc.body) return;
-
-    ["auroraUniversalHeader","auroraBrowserFallbackHeader"].forEach(function(id){
-      const header = doc.getElementById(id);
-      if(header){
-        header.style.setProperty("display","none","important");
-        header.setAttribute("aria-hidden","true");
-      }
-    });
-
-    doc.body.classList.remove("aurora-browser-header-active");
-    doc.body.style.setProperty("padding-top","0px","important");
+  function normalise(value){
+    return String(value || "").replace(/\s+/g," ").trim().toLowerCase();
   }
 
-  function placeSidebarButtonInManagerHeader(){
-    const toggle = document.getElementById("auroraNavToggle");
+  function getShell(){
+    try{
+      if(!window.parent || window.parent === window) return null;
+      const doc = window.parent.document;
+      if(!doc || !doc.body) return null;
+
+      const header = Array.from(doc.querySelectorAll(
+        ".session-bar,header,.topbar,.app-header,.global-header,[role='banner']"
+      )).find(function(node){
+        const value = normalise(node.textContent);
+        return value.includes("manager session")
+          && value.includes("webby")
+          && (value.includes("log out") || value.includes("logout"));
+      });
+
+      return header ? {doc:doc,header:header} : null;
+    }catch(_){
+      return null;
+    }
+  }
+
+  function releaseInstalledAppSpace(shell){
+    if(!shell) return;
+    const doc = shell.doc;
+    const root = doc.documentElement;
+
+    let style = doc.getElementById("auroraManagerPageOwnedShellStyleV2");
+    if(!style){
+      style = doc.createElement("style");
+      style.id = "auroraManagerPageOwnedShellStyleV2";
+      style.textContent = `
+        html.aurora-manager-page-owned-shell{--shell-height:0px!important}
+        html.aurora-manager-page-owned-shell .session-bar{
+          display:none!important;height:0!important;min-height:0!important;
+          padding:0!important;margin:0!important;border:0!important;
+          overflow:hidden!important;visibility:hidden!important;
+          pointer-events:none!important
+        }
+        html.aurora-manager-page-owned-shell .club-frame{
+          top:var(--safe-top,0px)!important;
+          height:calc(100% - var(--safe-top,0px))!important
+        }
+        html.aurora-manager-page-owned-shell .frame-fallback{
+          inset:var(--safe-top,0px) 0 0!important
+        }
+      `;
+      doc.head.appendChild(style);
+    }
+
+    root.classList.add("aurora-manager-page-owned-shell");
+    shell.header.style.setProperty("display","none","important");
+    shell.header.style.setProperty("height","0","important");
+    shell.header.style.setProperty("min-height","0","important");
+    shell.header.setAttribute("aria-hidden","true");
+  }
+
+  function removeLocalDuplicate(){
+    document.querySelectorAll(
+      "#auroraUniversalHeader,#auroraBrowserFallbackHeader,.aurora-universal-header"
+    ).forEach(function(node){
+      node.remove();
+    });
+    document.body.classList.add("aurora-page-owned-header");
+    document.body.classList.remove("aurora-browser-header-active");
+    document.body.style.setProperty("padding-top","0px","important");
+  }
+
+  function findExistingLogout(exclude){
+    return Array.from(document.querySelectorAll("button,a")).find(function(node){
+      if(node === exclude) return false;
+      const value = normalise(node.textContent);
+      return value === "log out" || value === "logout";
+    });
+  }
+
+  function wireLogout(button,shell){
+    if(!button || button.dataset.auroraLogoutWiredV2 === "true") return;
+    button.dataset.auroraLogoutWiredV2 = "true";
+    button.addEventListener("click",function(){
+      try{
+        const parentLogout = shell && shell.header.querySelector(".logout-button");
+        if(parentLogout && typeof parentLogout.click === "function"){
+          parentLogout.click();
+          return;
+        }
+      }catch(_){}
+
+      const oldLogout = findExistingLogout(button);
+      if(oldLogout && typeof oldLogout.click === "function"){
+        oldLogout.click();
+        return;
+      }
+
+      try{
+        localStorage.removeItem("aurora_session");
+        localStorage.removeItem("aurora_manager_session");
+        sessionStorage.clear();
+      }catch(_){}
+      location.href = "index.html";
+    });
+  }
+
+  function ensureHeaderControls(shell){
     const inner = document.querySelector(".fm-workspace > .topbar .topbar-inner");
     const brand = inner && inner.querySelector(".brand");
+    const context = inner && inner.querySelector(".fm-top-context");
+    if(!inner || !brand || !context) return;
 
-    if(!toggle || !inner || !brand) return;
+    const path = context.querySelector(".fm-page-path");
+    if(path) path.hidden = true;
 
-    if(toggle.parentElement !== inner){
-      inner.insertBefore(toggle,brand);
+    let menu = brand.querySelector("#auroraPageHeaderMenuButton");
+    const realToggle = document.getElementById("auroraNavToggle");
+    if(!menu && realToggle){
+      menu = document.createElement("button");
+      menu.id = "auroraPageHeaderMenuButton";
+      menu.type = "button";
+      menu.textContent = "☰";
+      menu.setAttribute("aria-label","Open Aurora mission navigation");
+      menu.title = "Open mission navigation";
+      brand.insertBefore(menu,brand.firstChild);
+      menu.addEventListener("click",function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        realToggle.click();
+      });
     }
 
-    toggle.classList.add("aurora-manager-inline-toggle");
-    toggle.style.setProperty("display","grid","important");
-    toggle.style.setProperty("position","static","important");
-    toggle.style.setProperty("transform","none","important");
+    if(realToggle){
+      realToggle.style.setProperty("display","none","important");
+    }
+
+    let logout = context.querySelector(".aurora-page-header-logout");
+    if(!logout){
+      logout = document.createElement("button");
+      logout.type = "button";
+      logout.className = "aurora-page-header-logout";
+      logout.textContent = "Log out";
+      context.appendChild(logout);
+    }
+
+    const live = context.querySelector(".fm-top-pill");
+    if(live){
+      live.innerHTML = '<span class="fm-top-dot"></span>Live';
+      context.insertBefore(live,logout);
+    }
+
+    wireLogout(logout,shell);
   }
 
-  function applySingleHeader(){
-    scheduled = false;
-    hideExtraHeader(document);
-    placeSidebarButtonInManagerHeader();
-
-    /*
-     * Some installed-app builds expose the app-shell document to the page.
-     * Only suppress a recognised Aurora universal/browser duplicate there;
-     * unrelated parent headers are never touched.
-     */
-    try{
-      if(window.parent && window.parent !== window){
-        const parentDoc = window.parent.document;
-        const duplicate = parentDoc && (
-          parentDoc.getElementById("auroraUniversalHeader") ||
-          parentDoc.getElementById("auroraBrowserFallbackHeader")
-        );
-        if(duplicate){
-          hideExtraHeader(parentDoc);
-        }
-      }
-    }catch(_){
-      /* Cross-origin app shells are intentionally left alone. */
+  function shortenHeroSession(){
+    const label = document.querySelector(
+      "#auroraHero .manager-hero-session > span"
+    );
+    if(label && normalise(label.textContent) !== "live"){
+      label.innerHTML = "<i></i>Live";
     }
   }
 
-  function scheduleApply(){
-    if(scheduled) return;
-    scheduled = true;
-    window.requestAnimationFrame(applySingleHeader);
+  function apply(){
+    queued = false;
+    const shell = getShell();
+    releaseInstalledAppSpace(shell);
+    removeLocalDuplicate();
+    ensureHeaderControls(shell);
+    shortenHeroSession();
   }
 
-  const observer = new MutationObserver(scheduleApply);
+  function schedule(){
+    if(queued) return;
+    queued = true;
+    requestAnimationFrame(apply);
+  }
 
   function start(){
-    applySingleHeader();
-    observer.observe(document.documentElement,{
-      childList:true,
-      subtree:true,
-      attributes:true,
-      attributeFilter:["class","style"]
-    });
+    apply();
+    const observer = new MutationObserver(schedule);
+    observer.observe(document.documentElement,{childList:true,subtree:true});
+    window.setTimeout(apply,250);
+    window.setTimeout(apply,1000);
+    window.setTimeout(apply,3000);
   }
 
   if(document.readyState === "loading"){
@@ -3666,10 +3800,9 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     start();
   }
 
-  window.addEventListener("load",scheduleApply);
-  window.addEventListener("pageshow",scheduleApply);
-  window.addEventListener("focus",scheduleApply);
-  window.addEventListener("resize",scheduleApply);
+  window.addEventListener("load",schedule);
+  window.addEventListener("pageshow",schedule);
+  window.addEventListener("focus",schedule);
 })();
 </script>
 
