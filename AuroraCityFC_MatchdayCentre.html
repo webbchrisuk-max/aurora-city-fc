@@ -78,18 +78,190 @@ button{font:inherit}
   cursor:pointer;
 }
 
-/* Matchday stadium artwork supplied through GitHub. */
+
+
+/* ===================== MATCHDAY HERO COMMAND OVERLAY ===================== */
 .matchday-stadium-hero{
+  position:relative;
+  overflow:hidden;
   width:100%;
-  height:clamp(320px,38vw,520px);
-  margin-bottom:14px;
+  min-height:560px;
+  margin-bottom:16px;
   border:1px solid rgba(96,165,250,.28);
   border-radius:28px;
   background:
-    linear-gradient(180deg,rgba(2,6,23,.03),rgba(2,6,23,.08) 62%,rgba(2,6,23,.32)),
+    linear-gradient(180deg,rgba(2,6,23,.06),rgba(2,6,23,.10) 24%,rgba(2,6,23,.35) 58%,rgba(2,6,23,.75)),
     url("assets/aurora-city-fc/hero/matchday.PNG") center center/cover no-repeat;
   box-shadow:0 22px 65px rgba(0,0,0,.38),0 0 32px rgba(34,211,238,.08);
 }
+.matchday-stadium-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255,255,255,.12), transparent 24%),
+    linear-gradient(180deg, rgba(3,8,20,.10) 0%, rgba(3,8,20,.20) 22%, rgba(3,8,20,.34) 48%, rgba(3,8,20,.72) 100%);
+  pointer-events:none;
+}
+.matchday-overlay-inner{
+  position:relative;
+  z-index:2;
+  min-height:560px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:28px;
+}
+.matchday-overlay-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr) minmax(280px,.74fr);
+  gap:18px;
+  align-items:start;
+}
+.overlay-panel{
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:24px;
+  background:linear-gradient(145deg, rgba(6,18,35,.44), rgba(4,12,24,.74));
+  -webkit-backdrop-filter:blur(16px) saturate(125%);
+  backdrop-filter:blur(16px) saturate(125%);
+  box-shadow:0 22px 60px rgba(0,0,0,.34), inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.overlay-main{
+  padding:28px;
+  min-height:300px;
+}
+.overlay-main h2{
+  margin:10px 0 12px;
+  font-size:clamp(34px,4.4vw,72px);
+  line-height:.96;
+  letter-spacing:-.04em;
+}
+.overlay-main .lede{
+  max-width:640px;
+  margin:0;
+  color:var(--soft);
+  font-size:15px;
+  line-height:1.62;
+}
+.overlay-main .hero-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:18px;
+}
+.overlay-main .pill{
+  background:rgba(3,10,22,.36);
+  border-color:rgba(148,163,184,.16);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+}
+.hero-verdict-card{
+  padding:20px;
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background:linear-gradient(145deg, rgba(15,23,42,.50), rgba(6,12,24,.82));
+}
+.hero-verdict-label,
+.overlay-right .status-label,
+.overlay-ribbon .status-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#fbbf24;
+  font-weight:800;
+}
+.hero-verdict-body{
+  border-top:1px solid rgba(148,163,184,.14);
+  border-bottom:1px solid rgba(148,163,184,.14);
+  padding:18px 0;
+  margin:16px 0;
+}
+.hero-verdict-title{
+  font-size:34px;
+  font-weight:950;
+  line-height:.96;
+  letter-spacing:-.04em;
+  margin-bottom:10px;
+}
+.hero-verdict-text{
+  color:var(--soft);
+  font-size:14px;
+  line-height:1.58;
+}
+.hero-verdict-footer{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:12px;
+}
+.hero-verdict-footer strong{
+  font-size:26px;
+  line-height:1;
+}
+.hero-verdict-footer span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+}
+.overlay-right{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.overlay-right .status-card{
+  padding:16px;
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:20px;
+  background:linear-gradient(145deg, rgba(5,14,27,.54), rgba(4,10,22,.78));
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+}
+.overlay-ribbon{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+}
+.overlay-mini{
+  padding:14px 16px;
+  border:1px solid rgba(148,163,184,.14);
+  border-radius:18px;
+  background:linear-gradient(145deg, rgba(6,18,35,.36), rgba(4,12,24,.72));
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  box-shadow:0 12px 28px rgba(0,0,0,.24);
+}
+.overlay-mini strong{
+  display:block;
+  margin-top:5px;
+  font-size:20px;
+  line-height:1.05;
+}
+.overlay-mini span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+@media(max-width:1180px){
+  .matchday-overlay-grid{grid-template-columns:1fr;}
+  .overlay-right{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media(max-width:980px){
+  .overlay-right{grid-template-columns:1fr;}
+  .overlay-ribbon{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:640px){
+  .matchday-stadium-hero{min-height:unset;border-radius:22px;}
+  .matchday-overlay-inner{min-height:unset;padding:18px;}
+  .overlay-main,.hero-verdict-card{min-height:unset;padding:20px;}
+  .overlay-ribbon{grid-template-columns:1fr;}
+}
+
 
 .hero{display:grid;grid-template-columns:1.35fr .65fr;gap:14px;margin-bottom:14px}
 .hero-main,.panel{
@@ -746,32 +918,81 @@ button{font:inherit}
   class="matchday-stadium-hero"
   role="img"
   aria-label="Aurora FC matchday stadium under floodlights with a packed crowd and scoreboard"
-></section>
+>
+  <div class="matchday-overlay-inner">
+    <div class="matchday-overlay-grid">
+      <article class="overlay-panel overlay-main">
+        <div class="eyebrow">Aurora portfolio matchday</div>
+        <div class="fulltime"><span class="pulse"></span><span id="matchStatus">FULL TIME</span></div>
+        <h2>Matchday<br>Command Centre</h2>
+        <p class="lede" id="resultSummary">A positive session led by the strongest income holdings, with the squad finishing ahead of the wider market.</p>
+        <div class="hero-meta">
+          <span class="pill" id="reportDate">Report date: —</span>
+          <span class="pill" id="marketResult">Market result: —</span>
+          <span class="pill" id="reportSource">Source: AuroraData</span>
+        </div>
+      </article>
 
-<section class="hero">
-  <article class="hero-main panel">
-    <div class="eyebrow">Aurora portfolio matchday</div>
-    <div class="fulltime"><span class="pulse"></span><span id="matchStatus">FULL TIME</span></div>
-    <div class="scoreboard">
-      <div class="club-side">
-        <div class="club-name">Aurora City FC</div>
-        <div class="club-sub">Income Squad</div>
+      <article class="overlay-panel hero-verdict-card">
+        <div>
+          <div class="hero-verdict-label">Today’s match verdict</div>
+          <div class="hero-verdict-body">
+            <div class="hero-verdict-title" id="resultTitle">+0.64%</div>
+            <div class="hero-verdict-text">Aurora City FC versus The Market. Full-time portfolio performance and daily result briefing.</div>
+          </div>
+        </div>
+        <div class="hero-verdict-footer">
+          <div>
+            <div class="hero-verdict-label">Fixture</div>
+            <strong>Aurora City FC</strong>
+            <span>Income Squad vs The Market</span>
+          </div>
+          <div class="score-orb" id="scoreOrb"><span>FT</span></div>
+        </div>
+      </article>
+
+      <aside class="overlay-right">
+        <div class="status-card">
+          <div class="status-label">Market regime</div>
+          <div class="status-value cyan" id="regime">Normal / stable income</div>
+          <div class="status-note" id="regimeNote">Conditions favour disciplined selective accumulation.</div>
+        </div>
+        <div class="status-card">
+          <div class="status-label">Buy mode</div>
+          <div class="status-value amber" id="buyMode">Selective accumulation</div>
+          <div class="status-note" id="buyModeNote">Follow the plan; no forced transfers.</div>
+        </div>
+        <div class="status-card">
+          <div class="status-label">Next report</div>
+          <div class="status-value" id="nextReport">Today at 5:00pm</div>
+          <div class="status-note">The page displays the latest completed Aurora report.</div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="overlay-ribbon">
+      <div class="overlay-mini">
+        <div class="status-label">Competition</div>
+        <strong>Aurora Portfolio Matchday</strong>
+        <span>Full-time report and end-of-session review.</span>
       </div>
-      <div class="score-orb" id="scoreOrb"><span id="resultTitle">+0.64%</span></div>
-      <div class="club-side right">
-        <div class="club-name">The Market</div>
-        <div class="club-sub">Daily Session</div>
+      <div class="overlay-mini">
+        <div class="status-label">Manager focus</div>
+        <strong>Protect income lead</strong>
+        <span>Back the strongest squad names and respect restrictions.</span>
+      </div>
+      <div class="overlay-mini">
+        <div class="status-label">Aurora call</div>
+        <strong>Selective accumulation</strong>
+        <span>Wait for the best entry rather than forcing buys.</span>
+      </div>
+      <div class="overlay-mini">
+        <div class="status-label">Data source</div>
+        <strong>AuroraData + Briefing</strong>
+        <span>Live report built from the latest completed market snapshot.</span>
       </div>
     </div>
-    <div class="result-kicker">Full-time portfolio performance</div>
-    <p class="lede" id="resultSummary">A positive session led by the strongest income holdings, with the squad finishing ahead of the wider market.</p>
-    <div class="hero-meta"><span class="pill" id="reportDate">Report date: —</span><span class="pill" id="marketResult">Market result: —</span><span class="pill" id="reportSource">Source: AuroraData</span></div>
-  </article>
-  <aside class="hero-side panel">
-    <div class="status-card"><div class="status-label">Market regime</div><div class="status-value cyan" id="regime">Normal / stable income</div><div class="status-note" id="regimeNote">Conditions favour disciplined selective accumulation.</div></div>
-    <div class="status-card"><div class="status-label">Buy mode</div><div class="status-value amber" id="buyMode">Selective accumulation</div><div class="status-note" id="buyModeNote">Follow the plan; no forced transfers.</div></div>
-    <div class="status-card"><div class="status-label">Next report</div><div class="status-value" id="nextReport">Today at 5:00pm</div><div class="status-note">The page displays the latest completed Aurora report.</div></div>
-  </aside>
+  </div>
 </section>
 
 
