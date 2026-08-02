@@ -2216,6 +2216,9 @@
     const cloudControl =
       panel.querySelector("#auroraNavCloud");
 
+    const navigationScroll =
+      panel.querySelector(".aurora-nav-scroll");
+
     function setOpen(open){
       document.body.classList.toggle(
         "aurora-nav-open",
@@ -2245,6 +2248,18 @@
       );
 
       if(open){
+        /*
+          Always reopen at the beginning of the mission list. This prevents
+          the Transfer Centre (or any other long menu visit) from reopening
+          halfway down the sidebar. Payday Plan is therefore visible first.
+        */
+        if(navigationScroll){
+          navigationScroll.scrollTop = 0;
+          window.requestAnimationFrame(function(){
+            navigationScroll.scrollTop = 0;
+          });
+        }
+
         window.setTimeout(function(){
           if(closeButton){
             closeButton.focus({
@@ -2301,18 +2316,27 @@
       if(window.__AURORA_EDGE_GESTURES__) return;
       window.__AURORA_EDGE_GESTURES__ = true;
 
-      const EDGE_INSET = 6;
-      const EDGE_WIDTH = 30;
-      const TOUCH_TRIGGER = 54;
-      const WHEEL_TRIGGER = 90;
+      /*
+        The visible page underneath the gesture can differ between Aurora
+        departments. Boardroom in particular contains several older fixed
+        layers. Touch detection therefore runs on the document in capture
+        mode instead of relying only on a small overlay div.
+      */
+      const EDGE_INSET = 8;
+      const EDGE_WIDTH = 46;
+      const LEFT_TOUCH_WIDTH = 72;
+      const RIGHT_TOUCH_WIDTH = 92;
+      const TOUCH_TRIGGER = 44;
+      const WHEEL_TRIGGER = 82;
       const NAVIGATION_COOLDOWN = 1250;
 
       let lastNavigationAt = 0;
       let wheelAmount = 0;
       let wheelResetTimer = 0;
-      let rightTouchStartX = 0;
-      let rightTouchStartY = 0;
-      let rightTouchHandled = false;
+      let touchMode = "";
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchHandled = false;
 
       function hasBlockingOverlay(){
         return Boolean(
@@ -2321,6 +2345,16 @@
             + "[aria-modal='true']:not(#auroraNavPanel),"
             + ".modal.open,.modal.show,.drawer.open,"
             + ".analysis-player-drawer.open"
+          )
+        );
+      }
+
+      function isInteractiveTarget(target){
+        return Boolean(
+          target
+          && target.closest
+          && target.closest(
+            "input,textarea,select,button,a,[contenteditable='true']"
           )
         );
       }
@@ -2385,13 +2419,13 @@
         zone.style.bottom = "76px";
         zone.style.width = EDGE_WIDTH + "px";
         zone.style[side] = EDGE_INSET + "px";
-        zone.style.zIndex = "2147482000";
+        zone.style.zIndex = "2147483400";
         zone.style.background = "transparent";
         zone.style.pointerEvents = "auto";
         zone.style.touchAction = "none";
         zone.style.webkitTapHighlightColor = "transparent";
         zone.style.userSelect = "none";
-        document.body.appendChild(zone);
+        document.documentElement.appendChild(zone);
         return zone;
       }
 
@@ -2412,6 +2446,7 @@
           && !document.body.classList.contains("aurora-nav-open");
       }
 
+      /* Mouse and trackpad behaviour remains attached to the fixed zones. */
       leftZone.addEventListener(
         "pointerenter",
         function(event){
@@ -2423,20 +2458,6 @@
           }
         },
         {passive:true}
-      );
-
-      leftZone.addEventListener(
-        "touchstart",
-        function(event){
-          if(
-            event.touches.length === 1
-            && edgeControlsAvailable()
-          ){
-            event.preventDefault();
-            setOpen(true);
-          }
-        },
-        {passive:false}
       );
 
       rightZone.addEventListener(
@@ -2459,7 +2480,7 @@
 
           if(wheelAmount >= WHEEL_TRIGGER){
             wheelAmount = 0;
-            if(goToNextMissionStep()){
+            if(goToNextMissionStep() && event.cancelable){
               event.preventDefault();
             }
           }
@@ -2467,10 +2488,18 @@
         {passive:false}
       );
 
-      rightZone.addEventListener(
+      /*
+        Capture-mode touch handling works even when an Aurora page has its own
+        fixed cards, legacy sidebar remnants or full-width overlays. A touch
+        beginning near the left edge opens the menu. A touch beginning near
+        the right edge advances after either an upward scroll gesture or a
+        left swipe.
+      */
+      document.addEventListener(
         "touchstart",
         function(event){
-          rightTouchHandled = false;
+          touchMode = "";
+          touchHandled = false;
 
           if(
             event.touches.length !== 1
@@ -2479,17 +2508,36 @@
             return;
           }
 
-          rightTouchStartX = event.touches[0].clientX;
-          rightTouchStartY = event.touches[0].clientY;
+          const touch = event.touches[0];
+          touchStartX = touch.clientX;
+          touchStartY = touch.clientY;
+
+          if(touchStartX <= LEFT_TOUCH_WIDTH){
+            touchMode = "left";
+            touchHandled = true;
+            if(event.cancelable){
+              event.preventDefault();
+            }
+            setOpen(true);
+            return;
+          }
+
+          if(
+            window.innerWidth - touchStartX <= RIGHT_TOUCH_WIDTH
+            && !isInteractiveTarget(event.target)
+          ){
+            touchMode = "right";
+          }
         },
-        {passive:true}
+        {capture:true,passive:false}
       );
 
-      rightZone.addEventListener(
+      document.addEventListener(
         "touchmove",
         function(event){
           if(
-            rightTouchHandled
+            touchMode !== "right"
+            || touchHandled
             || event.touches.length !== 1
             || !edgeControlsAvailable()
           ){
@@ -2497,30 +2545,41 @@
           }
 
           const touch = event.touches[0];
-          const dx = touch.clientX - rightTouchStartX;
-          const dy = touch.clientY - rightTouchStartY;
+          const dx = touch.clientX - touchStartX;
+          const dy = touch.clientY - touchStartY;
 
-          const scrolledDown = dy <= -TOUCH_TRIGGER
-            && Math.abs(dy) >= Math.abs(dx) * 0.72;
+          const upwardScroll = dy <= -TOUCH_TRIGGER
+            && Math.abs(dy) >= Math.abs(dx) * 0.55;
 
-          const swipedLeft = dx <= -TOUCH_TRIGGER
-            && Math.abs(dx) >= Math.abs(dy) * 0.72;
+          const leftSwipe = dx <= -TOUCH_TRIGGER
+            && Math.abs(dx) >= Math.abs(dy) * 0.55;
 
-          if(scrolledDown || swipedLeft){
-            rightTouchHandled = true;
-            event.preventDefault();
+          if(upwardScroll || leftSwipe){
+            touchHandled = true;
+            if(event.cancelable){
+              event.preventDefault();
+            }
             goToNextMissionStep();
           }
         },
-        {passive:false}
+        {capture:true,passive:false}
       );
 
-      rightZone.addEventListener(
+      function resetTouchGesture(){
+        touchMode = "";
+        touchHandled = false;
+      }
+
+      document.addEventListener(
         "touchend",
-        function(){
-          rightTouchHandled = false;
-        },
-        {passive:true}
+        resetTouchGesture,
+        {capture:true,passive:true}
+      );
+
+      document.addEventListener(
+        "touchcancel",
+        resetTouchGesture,
+        {capture:true,passive:true}
       );
 
       function syncEdgeZones(){
