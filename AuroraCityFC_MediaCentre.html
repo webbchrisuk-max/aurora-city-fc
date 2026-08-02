@@ -183,6 +183,7 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
   <!-- Aurora universal workflow navigation -->
   <link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
   <script src="aurora-navigation.js?v=20260729-3" defer></script>
+<script defer src="aurora-notifications.js?v=20260802-1"></script>
 </head>
 <body>
 <main class="app">
@@ -382,27 +383,20 @@ $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuro
     const box=document.getElementById('breakingStories');
     if(!box)return;
     const life=lifecycle();
-    const existing=document.getElementById('m4SigningStory');
-    if(life.stage<3){existing?.remove();return;}
+    document.getElementById('m4SigningStory')?.remove();
+    if(life.stage<3)return;
     const tickerText=life.ticker||life.routeTickers.join(' / ')||'Aurora signing';
     const detail=life.stage>=5
       ?'Registration confirmed and the player is now live in the Aurora squad.'
       :life.stage>=4
         ?'Purchase registered with AuroraData; awaiting the refreshed squad confirmation.'
         :'Broker purchases completed; registration is the next action.';
-    const signature=`${life.stage}|${tickerText}|${detail}`;
-    if(existing?.dataset.signature===signature)return;
-    const markup=`<div class="icon">📝</div><div><strong>${tickerText} — signing lifecycle update</strong><span>${detail}</span></div><div class="score-pill">M4</div>`;
+    const node=document.createElement('div');
+    node.id='m4SigningStory';
+    node.className='row';
+    node.innerHTML=`<div class="icon">📝</div><div><strong>${tickerText} — signing lifecycle update</strong><span>${detail}</span></div><div class="score-pill">M4</div>`;
     rendering=true;
-    if(existing){existing.dataset.signature=signature;existing.innerHTML=markup;}
-    else{
-      const node=document.createElement('div');
-      node.id='m4SigningStory';
-      node.className='row';
-      node.dataset.signature=signature;
-      node.innerHTML=markup;
-      box.prepend(node);
-    }
+    box.prepend(node);
     rendering=false;
   }
 
