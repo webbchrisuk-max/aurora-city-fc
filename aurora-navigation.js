@@ -1,6 +1,8 @@
 (function(){
   "use strict";
 
+  // Build: Aurora universal sidebar edge reveal restored • 2 Aug 2026
+
   if(!window.__AURORA_CLOUD_ENGINE_LOADING__ && !window.AuroraCloudSync){
     window.__AURORA_CLOUD_ENGINE_LOADING__ = true;
     const cloudScript = document.createElement("script");
@@ -2600,7 +2602,38 @@
     const cloudControl =
       panel.querySelector("#auroraNavCloud");
 
+    /*
+      Universal edge reveal and inactivity close.
+      Desktop pointer movement into the far-left edge opens the shared
+      sidebar on every Aurora page. Touch devices continue to use the
+      visible menu button.
+    */
+    const SIDEBAR_EDGE_REVEAL_PX = 18;
+    const SIDEBAR_INACTIVITY_MS = 5000;
+    let sidebarInactivityTimer = null;
+
+    function clearSidebarInactivityTimer(){
+      if(sidebarInactivityTimer !== null){
+        window.clearTimeout(sidebarInactivityTimer);
+        sidebarInactivityTimer = null;
+      }
+    }
+
+    function scheduleSidebarInactivityClose(){
+      clearSidebarInactivityTimer();
+
+      if(!document.body.classList.contains("aurora-nav-open")){
+        return;
+      }
+
+      sidebarInactivityTimer = window.setTimeout(function(){
+        setOpen(false);
+      },SIDEBAR_INACTIVITY_MS);
+    }
+
     function setOpen(open){
+      clearSidebarInactivityTimer();
+
       document.body.classList.toggle(
         "aurora-nav-open",
         open
@@ -2629,6 +2662,8 @@
       );
 
       if(open){
+        scheduleSidebarInactivityClose();
+
         window.setTimeout(function(){
           if(closeButton){
             closeButton.focus({
@@ -2638,6 +2673,50 @@
         },40);
       }
     }
+
+    document.addEventListener(
+      "pointermove",
+      function(event){
+        if(event.pointerType === "touch") return;
+
+        const isOpen = document.body.classList.contains(
+          "aurora-nav-open"
+        );
+
+        if(!isOpen && event.clientX <= SIDEBAR_EDGE_REVEAL_PX){
+          setOpen(true);
+          return;
+        }
+
+        if(isOpen){
+          scheduleSidebarInactivityClose();
+        }
+      },
+      {passive:true}
+    );
+
+    panel.addEventListener(
+      "scroll",
+      scheduleSidebarInactivityClose,
+      {passive:true}
+    );
+
+    panel.addEventListener(
+      "touchstart",
+      scheduleSidebarInactivityClose,
+      {passive:true}
+    );
+
+    panel.addEventListener(
+      "keydown",
+      scheduleSidebarInactivityClose
+    );
+
+    panel.addEventListener(
+      "click",
+      scheduleSidebarInactivityClose,
+      true
+    );
 
     toggle.addEventListener("click",function(){
       setOpen(
