@@ -3205,7 +3205,47 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
     grid-template-columns:1fr;
   }
 }
-</style></head>
+</style>
+<style id="aurora-payday-strategy-choice-styles">
+/* Aurora Payday Strategy Choice • Sustainable vs Maximum Income */
+.aurora-strategy-choice{
+  margin:0 0 14px;
+  border:1px solid rgba(34,211,238,.24);
+  border-radius:22px;
+  padding:15px;
+  background:
+    radial-gradient(circle at 8% 0%,rgba(52,211,153,.10),transparent 36%),
+    radial-gradient(circle at 94% 0%,rgba(251,191,36,.09),transparent 34%),
+    linear-gradient(145deg,rgba(8,22,42,.97),rgba(4,12,25,.98));
+  box-shadow:0 16px 40px rgba(0,0,0,.26);
+}
+.aurora-strategy-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.aurora-strategy-head h3{margin:3px 0 5px;font-size:19px;letter-spacing:-.35px}
+.aurora-strategy-head p{margin:0;color:#92a7bf;font-size:10px;line-height:1.5;max-width:780px}
+.aurora-strategy-selected-badge{padding:7px 10px;border-radius:999px;border:1px solid rgba(52,211,153,.30);background:rgba(52,211,153,.08);color:#9affc3;font-size:9px;font-weight:950;letter-spacing:.65px;white-space:nowrap}
+.aurora-strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.aurora-strategy-card{position:relative;overflow:hidden;border:1px solid rgba(125,211,252,.16);border-radius:18px;padding:13px;background:rgba(255,255,255,.024);transition:.18s ease}
+.aurora-strategy-card.selected{border-color:rgba(52,211,153,.48);background:radial-gradient(circle at 100% 0%,rgba(52,211,153,.12),transparent 36%),rgba(52,211,153,.035);box-shadow:0 0 22px rgba(52,211,153,.08)}
+.aurora-strategy-card.maximum.selected{border-color:rgba(251,191,36,.48);background:radial-gradient(circle at 100% 0%,rgba(251,191,36,.12),transparent 36%),rgba(251,191,36,.035);box-shadow:0 0 22px rgba(251,191,36,.07)}
+.aurora-strategy-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.aurora-strategy-card small{display:block;color:#8196ad;font-size:8px;text-transform:uppercase;letter-spacing:.65px;font-weight:950}
+.aurora-strategy-card h4{margin:5px 0 5px;font-size:17px}
+.aurora-strategy-card p{margin:0;color:#91a5bc;font-size:9px;line-height:1.45}
+.aurora-strategy-recommended{display:inline-flex;padding:5px 7px;border-radius:999px;border:1px solid rgba(52,211,153,.27);background:rgba(52,211,153,.07);color:#8cffb8;font-size:8px;font-weight:950;white-space:nowrap}
+.aurora-strategy-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:11px}
+.aurora-strategy-metric{padding:9px;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(2,6,23,.28);min-width:0}
+.aurora-strategy-metric span{display:block;color:#8196ad;font-size:7px;text-transform:uppercase;letter-spacing:.5px;font-weight:900}
+.aurora-strategy-metric strong{display:block;margin-top:4px;color:#eef8ff;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aurora-strategy-card button{width:100%;margin-top:11px;border:1px solid rgba(96,165,250,.30);border-radius:11px;padding:9px 11px;background:rgba(12,28,50,.78);color:#eaf4ff;font-size:10px;font-weight:950;cursor:pointer}
+.aurora-strategy-card.selected button{border-color:rgba(52,211,153,.38);background:rgba(52,211,153,.10);color:#9affc3}
+.aurora-strategy-card.maximum.selected button{border-color:rgba(251,191,36,.38);background:rgba(251,191,36,.09);color:#ffe08a}
+.aurora-strategy-summary{margin-top:10px;padding:10px 12px;border-radius:14px;border-left:3px solid #22d3ee;background:rgba(34,211,238,.055);color:#c6d7e8;font-size:10px;line-height:1.5}
+.aurora-strategy-summary strong{color:#eafcff}
+@media(max-width:1050px){.aurora-strategy-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.aurora-strategy-head{display:grid}.aurora-strategy-grid{grid-template-columns:1fr}.aurora-strategy-metrics{grid-template-columns:1fr 1fr}}
+</style>
+
+</head>
 <body>
 <div class="m13-app">
 <div aria-hidden="true" class="m13-nav aurora-finance-submenu aurora-finance-view-compat" hidden="hidden" id="m13Nav" style="display:none!important">
@@ -3528,6 +3568,48 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 </div>
 <span class="m15-live-badge m22-live" id="m22MissionBadge">DRAFT PLAN</span>
 </div>
+
+<section aria-label="Choose payday investment strategy" class="aurora-strategy-choice" id="auroraPaydayStrategyChoice">
+  <div class="aurora-strategy-head">
+    <div>
+      <span class="m13-eyebrow">CHOOSE BEFORE RELEASE</span>
+      <h3>Payday investment strategy</h3>
+      <p>The strategy decides which shares Aurora selects, the IG ISA and Trading 212 cash totals, and the projected dividend income. Sustainable Income is the recommended default.</p>
+    </div>
+    <span class="aurora-strategy-selected-badge" id="auroraSelectedStrategyBadge">SUSTAINABLE SELECTED</span>
+  </div>
+  <div class="aurora-strategy-grid">
+    <article class="aurora-strategy-card selected" data-aurora-investment-strategy="sustainable" id="auroraSustainableStrategyCard">
+      <div class="aurora-strategy-card-top">
+        <div><small>Recommended regular payday route</small><h4>Sustainable Income Growth</h4><p>Prioritises dividend safety, value, portfolio fit, dividend growth and business quality alongside income.</p></div>
+        <span class="aurora-strategy-recommended">RECOMMENDED</span>
+      </div>
+      <div class="aurora-strategy-metrics">
+        <div class="aurora-strategy-metric"><span>IG ISA</span><strong id="auroraSustainableIg">—</strong></div>
+        <div class="aurora-strategy-metric"><span>Trading 212</span><strong id="auroraSustainableT212">—</strong></div>
+        <div class="aurora-strategy-metric"><span>Annual income</span><strong id="auroraSustainableAnnual">—</strong></div>
+        <div class="aurora-strategy-metric"><span>Monthly income</span><strong id="auroraSustainableMonthly">—</strong></div>
+        <div class="aurora-strategy-metric"><span>Shares selected</span><strong id="auroraSustainableShares">—</strong></div>
+      </div>
+      <button data-aurora-select-strategy="sustainable" type="button">Use Sustainable Income</button>
+    </article>
+    <article class="aurora-strategy-card maximum" data-aurora-investment-strategy="maximum" id="auroraMaximumStrategyCard">
+      <div class="aurora-strategy-card-top">
+        <div><small>Higher-income alternative</small><h4>Maximum Income</h4><p>Targets the strongest immediate income while still respecting the Transfer Centre safety and concentration limits.</p></div>
+      </div>
+      <div class="aurora-strategy-metrics">
+        <div class="aurora-strategy-metric"><span>IG ISA</span><strong id="auroraMaximumIg">—</strong></div>
+        <div class="aurora-strategy-metric"><span>Trading 212</span><strong id="auroraMaximumT212">—</strong></div>
+        <div class="aurora-strategy-metric"><span>Annual income</span><strong id="auroraMaximumAnnual">—</strong></div>
+        <div class="aurora-strategy-metric"><span>Monthly income</span><strong id="auroraMaximumMonthly">—</strong></div>
+        <div class="aurora-strategy-metric"><span>Shares selected</span><strong id="auroraMaximumShares">—</strong></div>
+      </div>
+      <button data-aurora-select-strategy="maximum" type="button">Use Maximum Income</button>
+    </article>
+  </div>
+  <div class="aurora-strategy-summary" id="auroraStrategySummary"><strong>Sustainable Income selected.</strong> Release the mission and the Transfer Centre will build that exact share route. Exact broker and income figures return here when calculated.</div>
+</section>
+
 <section aria-label="Final broker route after Transfer Centre allocation" class="m51-account-preview m51-first-action" id="m51AccountTransferPreview">
 <div class="m51-account-head">
 <div>
@@ -8629,6 +8711,16 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
   const num=id=>Math.max(0,Number(el(id)?.value||0));
   const round=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
   const accountLabel=value=>value==="t212"?"Trading 212 ISA":value==="split"?"Split IG / Trading 212":"IG ISA";
+  const strategyLabel=value=>value==="maximum"?"Maximum Income":"Sustainable Income";
+  const selectedInvestmentStrategy=()=>{
+    const selected=document.querySelector('[data-aurora-investment-strategy].selected')?.dataset.auroraInvestmentStrategy;
+    if(selected==="maximum")return "maximum";
+    try{
+      const saved=JSON.parse(localStorage.getItem("aurora_investment_strategy_selection_v1")||"null");
+      if(saved?.strategy==="maximum")return "maximum";
+    }catch(_){}
+    return "sustainable";
+  };
   function loadFunding(){
     const saved=read(FUNDING_KEY)||{};
     if(el("m50CapitalBalance"))el("m50CapitalBalance").value=Number(saved.capitalBalance??7000).toFixed(2);
@@ -8675,7 +8767,7 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     el("m37InvestmentAccount").textContent=accountLabel(snapshot.platform);el("m37InvestmentPayday").textContent=snapshot.mission?.paydayDate?new Date(`${snapshot.mission.paydayDate}T12:00:00`).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"—";
     el("m37PipelineStage").textContent=stage.label;el("m37HandoffStatus").textContent=stage.label.toUpperCase();el("m37HandoffStatus").dataset.state=stage.state;
     el("m37InvestmentRoute").innerHTML=snapshot.budget>0?`<strong>Combined mission ready:</strong> ${parts.join(" • ")} • <strong>${gbp(snapshot.budget)} total</strong> will be sent to the Transfer Centre for portfolio-aware sizing.`:`<strong>No investment mission yet:</strong> Add a payday share contribution or make a capital funding pool available.`;
-    const send=el("m37SendToTradingBrain");if(send){send.disabled=snapshot.budget<=0;send.textContent=snapshot.budget>0?`Release ${gbp(snapshot.budget)} to Transfer Centre`:"No Investment Allocation to Release"}
+    const send=el("m37SendToTradingBrain");if(send){const strategy=selectedInvestmentStrategy();send.disabled=snapshot.budget<=0;send.textContent=snapshot.budget>0?`Release ${gbp(snapshot.budget)} — ${strategyLabel(strategy)} to Transfer Centre`:"No Investment Allocation to Release"}
     ["m50CapitalBalance","m50CapitalRelease","m50EtfBalance","m50EtfRelease"].forEach(id=>{const node=el(id)?.closest(".m50-source");if(node)node.classList.toggle("is-empty",num(id)===0)});
   }
   function sendMission(){
@@ -8691,16 +8783,8 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     saveFunding(false);
     const f=snapshot.funding;
     const total=Number(snapshot.budget.toFixed(2));
-    let ig=0,t212=0;
-
-    if(snapshot.platform==="split"){
-      ig=Number((total/2).toFixed(2));
-      t212=Number((total-ig).toFixed(2));
-    }else if(snapshot.platform==="t212"){
-      t212=total;
-    }else{
-      ig=total;
-    }
+    const strategy=selectedInvestmentStrategy();
+    const ig=0,t212=0;
 
     const payload={
       schemaVersion:2,
@@ -8717,13 +8801,16 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
       actualPay:Number(snapshot.plan.actual||0),
       expectedPay:Number(snapshot.plan.expected||0),
       status:"READY_FOR_TRANSFER_CENTRE",
-      tradingMode:"income",
+      selectedStrategy:strategy,
+      strategyLabel:strategyLabel(strategy),
+      tradingMode:strategy==="maximum"?"maximum":"sustainable",
+      routeMode:strategy==="maximum"?"maximum":"balanced",
       destination:"Aurora FC Transfer Centre",
       accountTransfers:[
-        {account:"IG ISA",amount:ig,status:"RELEASED"},
-        {account:"Trading 212 ISA",amount:t212,status:"RELEASED"}
+        {account:"IG ISA",amount:0,status:"AWAITING_ROUTE"},
+        {account:"Trading 212 ISA",amount:0,status:"AWAITING_ROUTE"}
       ],
-      accountTransferStatus:"RELEASED",
+      accountTransferStatus:"AWAITING_TRANSFER_CENTRE_ROUTE",
       accountTransferGeneratedAt:new Date().toISOString(),
       fundingSources:[
         {id:"payday",name:"Payday share contribution",available:Number(f.paydayRelease.toFixed(2)),release:Number(f.paydayRelease.toFixed(2)),type:"income"},
@@ -8747,18 +8834,26 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     }
 
     write(ACCOUNT_KEY,{
+      budget:total,
       total,
       platform:snapshot.platform,
-      ig,
-      t212,
-      source:"FINANCE_RELEASE",
-      status:"RELEASED",
+      preferredPlatform:snapshot.platform,
+      strategy,
+      strategyLabel:strategyLabel(strategy),
+      ig:0,
+      t212:0,
+      unassigned:total,
+      purchases:[],
+      projectedAnnualIncome:0,
+      projectedMonthlyIncome:0,
+      source:"FINANCE_AUTHORISED",
+      status:"AWAITING_ROUTE",
       missionId:payload.id,
       generatedAt:new Date().toISOString()
     });
 
     if(feedback){
-      feedback.textContent=`Mission released. Transfer ${gbp(ig)} to IG ISA and ${gbp(t212)} to Trading 212 ISA using the broker panel at the top of Payday Mission Control.`;
+      feedback.textContent=`${strategyLabel(strategy)} mission released. Do not move broker cash yet; the Transfer Centre will choose the shares and return the exact IG ISA, Trading 212 and projected-income figures.`;
       feedback.className="m37-feedback good";
     }
 
@@ -9639,6 +9734,10 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       t212:0,
       unassigned:round(Number(mission.budget || 0)),
       purchases:[],
+      strategy:String(mission.selectedStrategy || mission.tradingMode || "sustainable").toLowerCase().includes("max") ? "maximum" : "sustainable",
+      strategyLabel:String(mission.selectedStrategy || mission.tradingMode || "sustainable").toLowerCase().includes("max") ? "Maximum Income" : "Sustainable Income",
+      projectedAnnualIncome:0,
+      projectedMonthlyIncome:0,
       source:"FINANCE_AUTHORISED",
       status:"AWAITING_ROUTE",
       missionId:mission.id || null,
@@ -10996,5 +11095,126 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
   },true);
 })();
 </script>
+
+<script id="aurora-payday-strategy-choice-script">
+(function(){
+  "use strict";
+  const SELECT_KEY="aurora_investment_strategy_selection_v1";
+  const COMPARE_KEY="aurora_strategy_route_comparison_v1";
+  const WEALTH_KEY="aurora_wealth_investment_mission_v1";
+  const ACCOUNT_KEY="aurora_account_transfer_instruction_v1";
+  const byId=id=>document.getElementById(id);
+  const read=key=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch(_){return null}};
+  const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}};
+  const number=value=>{const n=Number(String(value??"").replace(/[^0-9.-]/g,""));return Number.isFinite(n)?n:0};
+  const round=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
+  const money=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.max(0,Number(value||0)));
+  const label=strategy=>strategy==="maximum"?"Maximum Income":"Sustainable Income";
+  function currentBudget(){
+    const combined=number(byId("m50CombinedMission")?.textContent);
+    if(combined>0)return round(combined);
+    const mission=read(WEALTH_KEY);
+    return round(Number(mission?.budget||0));
+  }
+  function currentStrategy(){
+    const mission=read(WEALTH_KEY);
+    const status=String(mission?.status||"").toUpperCase();
+    const active=["READY_FOR_TRANSFER_CENTRE","AWAITING_TRANSFER_CENTRE_ROUTE","FINAL_ROUTE_READY"].includes(status);
+    if(active){
+      const missionStrategy=String(mission?.selectedStrategy||mission?.tradingMode||"").toLowerCase();
+      return missionStrategy.includes("max")?"maximum":"sustainable";
+    }
+    const saved=read(SELECT_KEY);
+    return saved?.strategy==="maximum"?"maximum":"sustainable";
+  }
+  function setMetric(id,value){const node=byId(id);if(node)node.textContent=value;}
+  function routeFor(strategy,budget){
+    const comparison=read(COMPARE_KEY);
+    const account=read(ACCOUNT_KEY);
+    const mission=read(WEALTH_KEY);
+    const missionId=mission?.id||null;
+    if(comparison&&missionId&&comparison.missionId===missionId&&Math.abs(Number(comparison.budget||0)-budget)<=.03){
+      const route=comparison[strategy];
+      if(route&&Number(route.budget)>0)return route;
+    }
+    if(account&&missionId&&(!account.missionId||account.missionId===missionId)&&String(account.status||"").toUpperCase()==="FINAL_ROUTE"&&Math.abs(Number(account.budget||account.total||0)-budget)<=.03&&String(account.strategy||"")===strategy){
+      return account;
+    }
+    return null;
+  }
+  function showRoute(prefix,route){
+    setMetric(`${prefix}Ig`,route?money(route.ig):"—");
+    setMetric(`${prefix}T212`,route?money(route.t212):"—");
+    setMetric(`${prefix}Annual`,route?money(route.projectedAnnualIncome):"—");
+    setMetric(`${prefix}Monthly`,route?money(route.projectedMonthlyIncome??Number(route.projectedAnnualIncome||0)/12):"—");
+    const count=route?Number(route.targetCount||route.shareCount||route.purchases?.length||0):0;
+    setMetric(`${prefix}Shares`,route?String(count):"—");
+  }
+  function updateReleaseButton(strategy){
+    const button=byId("m37SendToTradingBrain");
+    const budget=currentBudget();
+    if(button&&budget>0)button.textContent=`Release ${money(budget)} — ${label(strategy)} to Transfer Centre`;
+  }
+  function render(){
+    const strategy=currentStrategy();
+    document.querySelectorAll("[data-aurora-investment-strategy]").forEach(card=>card.classList.toggle("selected",card.dataset.auroraInvestmentStrategy===strategy));
+    const badge=byId("auroraSelectedStrategyBadge");if(badge)badge.textContent=`${label(strategy).toUpperCase()} SELECTED`;
+    const budget=currentBudget();
+    const sustainable=routeFor("sustainable",budget);
+    const maximum=routeFor("maximum",budget);
+    showRoute("auroraSustainable",sustainable);
+    showRoute("auroraMaximum",maximum);
+    const summary=byId("auroraStrategySummary");
+    if(summary){
+      const selected=strategy==="maximum"?maximum:sustainable;
+      const other=strategy==="maximum"?sustainable:maximum;
+      if(selected){
+        const extra=other?Number(selected.projectedAnnualIncome||0)-Number(other.projectedAnnualIncome||0):null;
+        summary.innerHTML=`<strong>${label(strategy)} selected.</strong> Current ${money(budget)} route: ${money(selected.ig)} to IG ISA, ${money(selected.t212)} to Trading 212, producing approximately ${money(selected.projectedAnnualIncome)} a year (${money(selected.projectedMonthlyIncome??Number(selected.projectedAnnualIncome||0)/12)} a month).${extra!==null?` Difference versus the other route: ${extra>=0?"+":"−"}${money(Math.abs(extra))} a year.`:""}`;
+      }else{
+        summary.innerHTML=`<strong>${label(strategy)} selected.</strong> The choice will travel with the released mission. Exact broker totals, shares and projected income appear here after the Transfer Centre calculates the current ${money(budget)} route.`;
+      }
+    }
+    updateReleaseButton(strategy);
+  }
+  function select(strategy){
+    strategy=strategy==="maximum"?"maximum":"sustainable";
+    write(SELECT_KEY,{strategy,updatedAt:new Date().toISOString()});
+    const mission=read(WEALTH_KEY);
+    if(mission&&Number(mission.budget)>0&&!["CASH_TRANSFER_COMPLETE","COMPLETE"].includes(String(mission.status||"").toUpperCase())){
+      mission.selectedStrategy=strategy;
+      mission.strategyLabel=label(strategy);
+      mission.tradingMode=strategy==="maximum"?"maximum":"sustainable";
+      mission.routeMode=strategy==="maximum"?"maximum":"balanced";
+      mission.status="AWAITING_TRANSFER_CENTRE_ROUTE";
+      mission.accountTransfers=[];
+      mission.accountTransferPurchases=[];
+      mission.finalPurchaseRoute=[];
+      mission.accountTransferStatus="AWAITING_TRANSFER_CENTRE_ROUTE";
+      mission.accountTransferHoldback=Number(mission.budget||0);
+      mission.updatedAt=new Date().toISOString();
+      write(WEALTH_KEY,mission);
+      write(ACCOUNT_KEY,{budget:Number(mission.budget||0),total:Number(mission.budget||0),ig:0,t212:0,unassigned:Number(mission.budget||0),purchases:[],strategy,strategyLabel:label(strategy),projectedAnnualIncome:0,projectedMonthlyIncome:0,status:"AWAITING_ROUTE",source:"FINANCE_STRATEGY_CHANGED",missionId:mission.id,generatedAt:new Date().toISOString()});
+      try{window.dispatchEvent(new CustomEvent("aurora:wealth-mission",{detail:mission}))}catch(_){}
+    }
+    render();
+  }
+  document.addEventListener("click",event=>{
+    const button=event.target.closest("[data-aurora-select-strategy]");
+    if(!button)return;
+    event.preventDefault();
+    select(button.dataset.auroraSelectStrategy);
+  });
+  const combined=byId("m50CombinedMission");
+  if(combined)new MutationObserver(()=>render()).observe(combined,{childList:true,characterData:true,subtree:true});
+  window.addEventListener("storage",event=>{if([SELECT_KEY,COMPARE_KEY,WEALTH_KEY,ACCOUNT_KEY].includes(event.key))setTimeout(render,20)});
+  window.addEventListener("pageshow",()=>setTimeout(render,120));
+  window.addEventListener("aurora:strategy-comparison",()=>setTimeout(render,20));
+  window.addEventListener("aurora:wealth-mission",()=>setTimeout(render,40));
+  window.AuroraPaydayStrategy={select,render,current:currentStrategy};
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(render,180));else setTimeout(render,120);
+})();
+</script>
+
 </body>
 </html>
