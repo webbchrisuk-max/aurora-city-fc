@@ -34,17 +34,17 @@
   ];
 
   const DEPARTMENTS = [
-    ["⌂","Aurora Nexus HQ","AuroraCityFC_NexusMaster.html"],
     ["▦","Manager Dashboard","AuroraCityFC_ManagerDashboard.html"],
+    ["⌂","Aurora Nexus HQ","AuroraCityFC_NexusMaster.html"],
     ["£","Finance Department","AuroraCityFC_FinanceDepartment.html"],
+    ["⇄","Transfer Centre","AuroraCityFC_TransferCentre.html"],
+    ["⚽","Matchday Centre","AuroraCityFC_MatchdayCentre.html"],
     ["♟","Squad Hub","AuroraCityFC_SquadHub.html"],
     ["↗","Analysis Room","AuroraCityFC_AnalysisRoom.html"],
-    ["🧠","Learning Centre","AuroraCityFC_LearningCentre.html"],
-    ["▲","Training Ground","AuroraCityFC_TrainingGround.html"],
     ["⌕","Scouting Centre","AuroraCityFC_ScoutingCentre.html"],
-    ["⇄","Transfer Centre","AuroraCityFC_TransferCentre.html"],
+    ["▲","Training Ground","AuroraCityFC_TrainingGround.html"],
+    ["🧠","Learning Centre","AuroraCityFC_LearningCentre.html"],
     ["♜","Boardroom","AuroraCityFC_Boardroom.html"],
-    ["⚽","Matchday Centre","AuroraCityFC_MatchdayCentre.html"],
     ["●","Media Centre","AuroraCityFC_MediaCentre.html"],
   ];
 
