@@ -2232,7 +2232,18 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     const plan=typeof readTransferPlanSnapshot==="function"?readTransferPlanSnapshot():null;
     const routeCount=plan?.rows?.length||0;
     const dataAge=Number.isFinite(daily.time)?(Date.now()-daily.time)/36e5:NaN;
-    const dailyLevel=!daily.rows.length?"bad":dataAge>30?"bad":dataAge>8?"warn":"ok";
+    const now=new Date();
+    const dayOfWeek=now.getDay();
+    const marketWeekend=dayOfWeek===0||dayOfWeek===6;
+    const mondayBeforeDailyClose=dayOfWeek===1&&now.getHours()<17;
+    const previousSessionGrace=marketWeekend||mondayBeforeDailyClose;
+    const dailyLevel=!daily.rows.length
+      ? "bad"
+      : marketWeekend
+        ? dataAge>96?"bad":"ok"
+        : previousSessionGrace
+          ? dataAge>96?"bad":dataAge>8?"warn":"ok"
+          : dataAge>30?"bad":dataAge>8?"warn":"ok";
     const routeLevel=routeCount>=4?"ok":routeCount?"warn":"bad";
 
     if(el("m3TodayMove")){
@@ -2254,7 +2265,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     if(el("m3IncomeTargets")) el("m3IncomeTargets").innerHTML=targets.map(target=>`<span class="m3-target-chip ${monthly>=target?"hit":""}">${cash(target)}/m ${monthly>=target?"✓":""}</span>`).join("");
     if(el("m3DataLights")) el("m3DataLights").innerHTML=[
       ["ok",`Holdings ${holdings.size} active`],
-      [dailyLevel,`Daily summary ${daily.rows.length?new Date(daily.time).toLocaleDateString("en-GB"):"missing"}`],
+      [dailyLevel,`${marketWeekend?"Last market session":"Daily summary"} ${daily.rows.length?new Date(daily.time).toLocaleDateString("en-GB"):"missing"}`],
       [state.livePrices?.length?"ok":"warn",`Live prices ${state.livePrices?.length||0} rows`],
       [routeLevel,`Transfer route ${routeCount} approved`],
       [annual>0?"ok":"bad",`Dividend engine ${annual>0?"online":"waiting"}`]
@@ -2265,6 +2276,9 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     if(dailyLevel==="bad"){
       decisionTitle="Refresh AuroraData before acting";
       decisionText="The daily comparison is missing or stale, so do not make a price-led decision until the sheet and GitHub export refresh.";
+    }else if(marketWeekend){
+      decisionTitle="Markets closed — hold discipline";
+      decisionText="AuroraData is current. The latest trading comparison is from the last market session, so no price-led action is required until markets reopen.";
     }else if(routeCount>=4){
       decisionTitle="Prepare the four-share payday route";
       decisionText="The Transfer Centre has a full approved route. Confirm the real budget, execute each broker purchase, record the fills once and complete the window.";
