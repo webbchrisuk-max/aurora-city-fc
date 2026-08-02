@@ -11092,5 +11092,311 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
   },true);
 })();
 </script>
+
+<!-- Build: M55 Canonical Funding Engine + M56 Live Investment Mission Rebase • 02 Aug 2026 -->
+<script id="auroraFundingAndMissionSyncFix">
+(function(){
+  "use strict";
+
+  const WEALTH_KEY = "aurora_wealth_investment_mission_v1";
+  const FUNDING_KEY = "aurora_wealth_investment_funding_v1";
+  const ACCOUNT_KEY = "aurora_account_transfer_instruction_v1";
+  const COMPLETION_KEY = "aurora_investment_handoff_completion_v1";
+
+  const byId = id => document.getElementById(id);
+  const read = key => {
+    try { return JSON.parse(localStorage.getItem(key) || "null"); }
+    catch (_) { return null; }
+  };
+  const write = (key,value) => {
+    try {
+      localStorage.setItem(key,JSON.stringify(value));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+  const n = value => {
+    const parsed = Number(String(value ?? "").replace(/[^0-9.-]/g,""));
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+  const round = value =>
+    Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+  const money = value =>
+    new Intl.NumberFormat("en-GB",{
+      style:"currency",
+      currency:"GBP",
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }).format(Math.max(0,Number(value || 0)));
+
+  /*
+   * One calculation owns the Funding Engine recommendation.
+   * Older M25 display writers are redirected here so changing the saved
+   * regular contribution cannot remove the next-pay-cycle requirement.
+   */
+  let fundingRefreshTimer = 0;
+
+  function canonicalFundingRefresh(){
+    if(typeof window.m40RenderClarity === "function"){
+      window.m40RenderClarity();
+    }
+  }
+
+  function scheduleFundingRefresh(){
+    clearTimeout(fundingRefreshTimer);
+    [0,50,160,360].forEach(delay => {
+      fundingRefreshTimer = window.setTimeout(canonicalFundingRefresh,delay);
+    });
+  }
+
+  if(typeof window.m40RenderClarity === "function"){
+    window.m25ApplyPlannerClarity = canonicalFundingRefresh;
+  }
+
+  ["updatePlannerTotals","runPlanner","m13Render","m22Render"].forEach(name => {
+    const original = window[name];
+    if(typeof original !== "function" || original.__auroraM55Wrapped) return;
+    const wrapped = function(){
+      const result = original.apply(this,arguments);
+      scheduleFundingRefresh();
+      return result;
+    };
+    wrapped.__auroraM55Wrapped = true;
+    window[name] = wrapped;
+  });
+
+  [
+    "paydayContributionInput",
+    "holdingBalanceInput",
+    "minimumBufferInput",
+    "customAddInput",
+    "customRemoveInput"
+  ].forEach(id => {
+    const node = byId(id);
+    node?.addEventListener("input",scheduleFundingRefresh);
+    node?.addEventListener("change",scheduleFundingRefresh);
+  });
+
+  byId("addPaydayBtn")?.addEventListener("click",scheduleFundingRefresh);
+  byId("addCustomBtn")?.addEventListener("click",scheduleFundingRefresh);
+  byId("removeCustomBtn")?.addEventListener("click",scheduleFundingRefresh);
+
+  /*
+   * Rebase an already-released investment mission whenever its live
+   * payday/core or capital inputs change. A stale final broker route is
+   * cleared immediately; the Transfer Centre then rebuilds the shares
+   * against the new authoritative total.
+   */
+  function currentPaydayInvestment(){
+    try {
+      if(typeof window.m22CurrentPlan === "function"){
+        const plan = window.m22CurrentPlan();
+        return round((plan?.actions || [])
+          .filter(action => action?.type === "investment")
+          .reduce((sum,action) => sum + Number(action.amount || 0),0));
+      }
+    } catch (_) {}
+    return round(Math.max(0,n(byId("m22CoreInvestment")?.value)));
+  }
+
+  function fundingSnapshot(){
+    const payday = currentPaydayInvestment();
+    const capitalBalance = Math.max(0,n(byId("m50CapitalBalance")?.value));
+    const capitalTarget = Math.max(0,n(byId("m50CapitalRelease")?.value));
+    const etfBalance = Math.max(0,n(byId("m50EtfBalance")?.value));
+    const etfTarget = Math.max(0,n(byId("m50EtfRelease")?.value));
+    const capitalRelease = round(Math.min(capitalBalance,capitalTarget));
+    const etfRelease = round(Math.min(etfBalance,etfTarget));
+
+    return {
+      payday:round(payday),
+      capitalBalance:round(capitalBalance),
+      capitalTarget:round(capitalTarget),
+      capitalRelease,
+      etfBalance:round(etfBalance),
+      etfTarget:round(etfTarget),
+      etfRelease,
+      total:round(payday + capitalRelease + etfRelease)
+    };
+  }
+
+  function missionCanBeUpdated(mission){
+    if(!mission || !mission.id || !(Number(mission.budget) >= 0)) return false;
+    const status = String(mission.status || "").toUpperCase();
+    if(status === "CASH_TRANSFER_COMPLETE" || status === "MISSION_COMPLETE") return false;
+    const completion = read(COMPLETION_KEY);
+    if(completion && completion.sourceMissionId === mission.id) return false;
+    return true;
+  }
+
+  function refreshFinanceDisplays(){
+    try {
+      window.m22Render?.();
+    } catch (_) {}
+    try {
+      window.m40RenderClarity?.();
+    } catch (_) {}
+    window.dispatchEvent(new Event("aurora:finance-mission-refresh"));
+  }
+
+  function setFeedback(message,tone){
+    const feedback = byId("m37HandoffFeedback");
+    if(!feedback) return;
+    feedback.textContent = message;
+    feedback.className = "m37-feedback " + (tone || "");
+  }
+
+  function rebaseReleasedMission(reason){
+    const mission = read(WEALTH_KEY);
+    if(!missionCanBeUpdated(mission)) return false;
+
+    const funding = fundingSnapshot();
+    const changed =
+      Math.abs(Number(mission.budget || 0) - funding.total) > .009
+      || Math.abs(Number(mission.paydayContribution || 0) - funding.payday) > .009;
+
+    if(!changed && reason === "input") return false;
+
+    const now = new Date().toISOString();
+    mission.budget = funding.total;
+    mission.paydayContribution = funding.payday;
+    mission.updatedAt = now;
+    mission.status = "AWAITING_TRANSFER_CENTRE_ROUTE";
+    mission.accountTransfers = [];
+    mission.accountTransferPurchases = [];
+    mission.finalPurchaseRoute = [];
+    mission.accountTransferHoldback = funding.total;
+    mission.accountTransferStatus = "AWAITING_TRANSFER_CENTRE_ROUTE";
+    mission.accountTransferGeneratedAt = now;
+    mission.fundingSources = [
+      {
+        id:"payday",
+        name:"Payday share contribution",
+        available:funding.payday,
+        release:funding.payday,
+        type:"income"
+      },
+      {
+        id:"existing-capital",
+        name:"Existing capital pot",
+        available:funding.capitalBalance,
+        release:funding.capitalRelease,
+        type:"capital"
+      },
+      {
+        id:"etf-sale",
+        name:"ETF/share-sale pot",
+        available:funding.etfBalance,
+        release:funding.etfRelease,
+        type:"sale-proceeds"
+      }
+    ].filter(source => source.release > 0);
+
+    write(FUNDING_KEY,{
+      capitalBalance:funding.capitalBalance,
+      capitalRelease:funding.capitalTarget,
+      etfBalance:funding.etfBalance,
+      etfRelease:funding.etfTarget,
+      updatedAt:now
+    });
+
+    write(WEALTH_KEY,mission);
+    write(ACCOUNT_KEY,{
+      budget:funding.total,
+      total:funding.total,
+      ig:0,
+      t212:0,
+      unassigned:funding.total,
+      purchases:[],
+      source:"FINANCE_MISSION_REBASED",
+      status:"AWAITING_ROUTE",
+      missionId:mission.id,
+      generatedAt:now,
+      updatedAt:now
+    });
+
+    setFeedback(
+      `${money(funding.total)} is now the authoritative investment mission. ` +
+      `The previous broker route was cleared so the Transfer Centre can rebuild the exact shares and IG / Trading 212 totals.`,
+      "good"
+    );
+
+    try {
+      window.dispatchEvent(new CustomEvent("aurora:wealth-mission",{
+        detail:mission
+      }));
+    } catch (_) {}
+
+    window.setTimeout(refreshFinanceDisplays,30);
+    window.setTimeout(refreshFinanceDisplays,180);
+    return true;
+  }
+
+  function rebuildDraftThenRebase(reason){
+    try {
+      if(typeof window.m22EnsureState === "function"){
+        const paydayMission = window.m22EnsureState();
+        const executed =
+          typeof window.m22AnyExecuted === "function"
+            ? window.m22AnyExecuted()
+            : Boolean(Object.keys(paydayMission?.executed || {}).length);
+
+        if(paydayMission && !executed && !paydayMission.completed){
+          paydayMission.inputs =
+            typeof window.m22InputSnapshot === "function"
+              ? window.m22InputSnapshot()
+              : paydayMission.inputs;
+          paydayMission.plan = null;
+          window.m22Save?.();
+          window.m22Render?.();
+        }
+      }
+    } catch (_) {}
+
+    window.setTimeout(() => rebaseReleasedMission(reason),80);
+  }
+
+  [
+    "m22CoreInvestment",
+    "m22InvestmentPlatform",
+    "m50CapitalBalance",
+    "m50CapitalRelease",
+    "m50EtfBalance",
+    "m50EtfRelease"
+  ].forEach(id => {
+    const node = byId(id);
+    node?.addEventListener("input",() => rebuildDraftThenRebase("input"));
+    node?.addEventListener("change",() => rebuildDraftThenRebase("input"));
+  });
+
+  byId("m50SaveFunding")?.addEventListener("click",() => {
+    rebuildDraftThenRebase("save");
+  });
+
+  byId("m37RefreshHandoff")?.addEventListener("click",() => {
+    rebuildDraftThenRebase("refresh");
+  });
+
+  byId("m37SendToTradingBrain")?.addEventListener("click",() => {
+    window.setTimeout(() => rebaseReleasedMission("release"),140);
+  });
+
+  window.addEventListener("pageshow",() => {
+    scheduleFundingRefresh();
+    window.setTimeout(() => rebaseReleasedMission("pageshow"),180);
+  });
+
+  window.addEventListener("load",() => {
+    scheduleFundingRefresh();
+    window.setTimeout(() => rebaseReleasedMission("load"),420);
+  });
+
+  if(document.readyState !== "loading"){
+    scheduleFundingRefresh();
+    window.setTimeout(() => rebaseReleasedMission("ready"),260);
+  }
+})();
+</script>
 </body>
 </html>
