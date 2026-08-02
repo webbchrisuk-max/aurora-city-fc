@@ -1459,6 +1459,64 @@
     });
   }
 
+  function setPageOwnedAppShellLayout(shell,enabled){
+    if(!shell || !shell.document) return;
+
+    const parentDocument = shell.document;
+    const root = parentDocument.documentElement;
+
+    if(!root) return;
+
+    let style = parentDocument.getElementById(
+      "auroraPageOwnedShellLayoutStyles"
+    );
+
+    if(!style){
+      style = parentDocument.createElement("style");
+      style.id = "auroraPageOwnedShellLayoutStyles";
+      style.textContent = `
+        html.aurora-page-owned-shell-layout{
+          --shell-height:0px!important;
+        }
+
+        html.aurora-page-owned-shell-layout .session-bar{
+          display:none!important;
+          height:0!important;
+          min-height:0!important;
+          padding:0!important;
+          margin:0!important;
+          border:0!important;
+          overflow:hidden!important;
+        }
+
+        html.aurora-page-owned-shell-layout .club-frame{
+          top:var(--safe-top)!important;
+          height:calc(100% - var(--safe-top))!important;
+        }
+
+        html.aurora-page-owned-shell-layout .frame-fallback{
+          inset:var(--safe-top) 0 0!important;
+        }
+      `;
+      parentDocument.head.appendChild(style);
+    }
+
+    root.classList.toggle(
+      "aurora-page-owned-shell-layout",
+      Boolean(enabled)
+    );
+
+    if(!enabled && shell.header){
+      shell.header.style.removeProperty("display");
+      shell.header.style.removeProperty("height");
+      shell.header.style.removeProperty("min-height");
+      shell.header.style.removeProperty("padding");
+      shell.header.style.removeProperty("margin");
+      shell.header.style.removeProperty("border");
+      shell.header.style.removeProperty("overflow");
+    }
+  }
+
   function installUniversalControlsIntoPageHeader(toggle,shell){
     if(!pageOwnsAuroraHeader()) return false;
 
@@ -1574,11 +1632,12 @@
     if(localHeader) localHeader.remove();
 
     if(shell){
-      shell.header.style.setProperty(
-        "display",
-        "none",
-        "important"
-      );
+      /*
+        Remove the old shell header from the layout, not merely from
+        view. The iframe is moved into the released 48px space so the
+        black department header becomes the genuine top app header.
+      */
+      setPageOwnedAppShellLayout(shell,true);
       shell.header.setAttribute("aria-hidden","true");
       shell.header.dataset.auroraHiddenForPageHeader = "true";
       shell.document.body.classList.add(
@@ -2094,6 +2153,7 @@
       );
     }
 
+    setPageOwnedAppShellLayout(shell,false);
     shell.header.style.removeProperty("display");
     shell.header.removeAttribute("aria-hidden");
     delete shell.header.dataset.auroraHiddenForPageHeader;

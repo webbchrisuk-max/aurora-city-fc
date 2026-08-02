@@ -2,7 +2,56 @@
 
 <html data-aurora-page="manager" data-aurora-header="page" lang="en">
 <head>
-<!-- Build: Aurora Manager Dashboard • Black Header Cleanup • 2 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
+<!-- Build: Aurora Manager Dashboard • True Top Black Header • 2 Aug 2026 --><script id="auroraPageOwnedShellBootstrap">
+(function(){
+  "use strict";
+
+  try{
+    if(!window.parent || window.parent === window) return;
+
+    const parentDocument = window.parent.document;
+    const root = parentDocument && parentDocument.documentElement;
+
+    if(!root) return;
+
+    let style = parentDocument.getElementById(
+      "auroraPageOwnedShellLayoutStyles"
+    );
+
+    if(!style){
+      style = parentDocument.createElement("style");
+      style.id = "auroraPageOwnedShellLayoutStyles";
+      style.textContent = `
+        html.aurora-page-owned-shell-layout{
+          --shell-height:0px!important;
+        }
+        html.aurora-page-owned-shell-layout .session-bar{
+          display:none!important;
+          height:0!important;
+          min-height:0!important;
+          padding:0!important;
+          margin:0!important;
+          border:0!important;
+          overflow:hidden!important;
+        }
+        html.aurora-page-owned-shell-layout .club-frame{
+          top:var(--safe-top)!important;
+          height:calc(100% - var(--safe-top))!important;
+        }
+        html.aurora-page-owned-shell-layout .frame-fallback{
+          inset:var(--safe-top) 0 0!important;
+        }
+      `;
+      parentDocument.head.appendChild(style);
+    }
+
+    root.classList.add("aurora-page-owned-shell-layout");
+  }catch(_){
+    /* Standalone browser view: there is no parent app shell. */
+  }
+})();
+</script>
+<script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
 
@@ -516,7 +565,7 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 </style>
 <!-- Aurora universal workflow navigation -->
 <link href="aurora-navigation.css?v=20260729-crossbrowser-1" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260802-black-header-cleanup-1"></script>
+<script defer="" src="aurora-navigation.js?v=20260802-true-top-header-1"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
