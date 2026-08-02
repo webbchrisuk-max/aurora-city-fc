@@ -6059,12 +6059,59 @@ body{
   .transfer-intelligence-action{grid-column:2;justify-self:start}
 }
 </style>
+
+<style id="m53TransferFinanceRoutes">
+/* ===================== M53 TRANSFER / FINANCE QUICK ROUTES ===================== */
+.m53-transfer-routebar{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:0 0 12px;
+}
+.m53-transfer-routebar a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 12px;
+  border:1px solid rgba(96,165,250,.28);
+  border-radius:12px;
+  background:rgba(15,23,42,.72);
+  color:#dbeafe!important;
+  text-decoration:none!important;
+  font-size:11px;
+  font-weight:900;
+  transition:.18s ease;
+}
+.m53-transfer-routebar a:first-child{
+  border-color:rgba(34,211,238,.30);
+  background:rgba(8,47,73,.32);
+  color:#cffafe!important;
+}
+.m53-transfer-routebar a:hover,
+.m53-transfer-routebar a:focus-visible{
+  transform:translateY(-2px);
+  border-color:#22d3ee;
+  outline:none;
+  box-shadow:0 0 18px rgba(34,211,238,.10);
+}
+@media(max-width:560px){
+  .m53-transfer-routebar{display:grid;grid-template-columns:1fr 1fr;}
+  .m53-transfer-routebar a{width:100%;}
+}
+</style>
 </head>
 <body>
 <div class="fm-shell">
 <div class="fm-workspace">
 <!-- ===================== SECTION: TRANSFER COMMAND BAR ===================== -->
 <main class="app">
+<nav aria-label="Finance and Transfer Centre routes" class="m53-transfer-routebar">
+<a href="AuroraCityFC_FinanceDepartment.html" target="_self">← Budget Manager</a>
+<a href="AuroraCityFC_FinanceDepartment.html#m13PaydayPlan" target="_self">£ Payday Plan</a>
+</nav>
 <!-- ===================== SECTION: TRANSFER NEWS TICKER ===================== -->
 <section aria-label="Transfer news ticker" class="transfer-ticker">
 <div class="transfer-ticker-track" id="transferTicker">
@@ -10348,34 +10395,19 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     return "Check platform";
   }
 
-  function buildDetailedRoute(strategyOverride){
+  function buildDetailedRoute(){
     const current = mission();
     const fallback = authorisedPlan();
     const preferred = String(current?.preferredPlatform || current?.preferredAccount || "split").toLowerCase();
-    const strategy = strategyOverride === "maximum"
-      ? "maximum"
-      : strategyOverride === "sustainable"
-        ? "sustainable"
-        : String(current?.selectedStrategy || current?.tradingMode || "sustainable").toLowerCase().includes("max")
-          ? "maximum"
-          : "sustainable";
-    const strategyLabel = strategy === "maximum" ? "Maximum Income" : "Sustainable Income";
 
     let deal = null;
-    let previousMode;
     try {
-      if(typeof routeMode !== "undefined"){
-        previousMode = routeMode;
-        routeMode = strategy === "maximum" ? "maximum" : "balanced";
-      }
       if(typeof buildDealSheet === "function") deal = buildDealSheet();
     } catch (_) {
       deal = null;
-    } finally {
-      if(strategyOverride && previousMode !== undefined && typeof routeMode !== "undefined") routeMode = previousMode;
     }
 
-    if(!deal || !Array.isArray(deal.rows) || !deal.rows.length) return {...fallback,strategy,strategyLabel};
+    if(!deal || !Array.isArray(deal.rows) || !deal.rows.length) return fallback;
 
     const totals = {ig:0,t212:0,unassigned:0};
     const purchases = [];
@@ -10443,10 +10475,7 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
       generatedAt:new Date().toISOString(),
       missionId:current?.id || null,
       routeName:String(deal.route || "Transfer Centre final route"),
-      strategy,
-      strategyLabel,
-      projectedAnnualIncome:round(Number(deal.totalIncome || purchases.reduce((sum,item) => sum + item.projectedIncome,0))),
-      projectedMonthlyIncome:round(Number(deal.totalIncome || purchases.reduce((sum,item) => sum + item.projectedIncome,0)) / 12)
+      projectedAnnualIncome:round(Number(deal.totalIncome || purchases.reduce((sum,item) => sum + item.projectedIncome,0)))
     };
   }
 
@@ -10508,12 +10537,6 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
         current.accountTransferHoldback = saved.unassigned;
         current.accountTransferStatus = "FINAL_ROUTE";
         current.accountTransferGeneratedAt = saved.updatedAt;
-        current.selectedStrategy = saved.strategy || current.selectedStrategy || "sustainable";
-        current.strategyLabel = saved.strategyLabel || (current.selectedStrategy === "maximum" ? "Maximum Income" : "Sustainable Income");
-        current.tradingMode = current.selectedStrategy === "maximum" ? "maximum" : "sustainable";
-        current.routeMode = current.selectedStrategy === "maximum" ? "maximum" : "balanced";
-        current.projectedAnnualIncome = Number(saved.projectedAnnualIncome || 0);
-        current.projectedMonthlyIncome = Number(saved.projectedMonthlyIncome || 0);
         current.status = "FINAL_ROUTE_READY";
       }else{
         current.accountTransferStatus = "AWAITING_TRANSFER_CENTRE_ROUTE";
@@ -10601,8 +10624,6 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
     setTimeout(render,520);
     setTimeout(render,1500);
   });
-  window.addEventListener("aurora:investment-strategy",() => setTimeout(render,40));
-  window.AuroraFinalAccountTransfer={render,buildDetailedRoute};
   if(document.readyState !== "loading") setTimeout(render,350);
 })();
 </script>
@@ -10861,104 +10882,5 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
   setTimeout(()=>{try{renderAll();relabelInterface();injectTransferPanel();}catch(error){console.error(error);}},1800);
 })();
 </script>
-
-<script id="aurora-payday-strategy-sync-script">
-(function(){
-  "use strict";
-  const WEALTH_KEY="aurora_wealth_investment_mission_v1";
-  const ACCOUNT_KEY="aurora_account_transfer_instruction_v1";
-  const SELECT_KEY="aurora_investment_strategy_selection_v1";
-  const COMPARE_KEY="aurora_strategy_route_comparison_v1";
-  const read=key=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch(_){return null}};
-  const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}};
-  const label=strategy=>strategy==="maximum"?"Maximum Income":"Sustainable Income";
-  function mission(){return read(WEALTH_KEY)}
-  function strategyFromMission(){
-    const current=mission();
-    const value=String(current?.selectedStrategy||current?.tradingMode||read(SELECT_KEY)?.strategy||"sustainable").toLowerCase();
-    return value.includes("max")?"maximum":"sustainable";
-  }
-  function applyMode(strategy,rerender=true){
-    strategy=strategy==="maximum"?"maximum":"sustainable";
-    try{if(typeof routeMode!=="undefined")routeMode=strategy==="maximum"?"maximum":"balanced"}catch(_){}
-    const routeSelect=document.getElementById("m5Route");if(routeSelect)routeSelect.value=strategy==="maximum"?"maximum":"balanced";
-    document.querySelectorAll("[data-m11-route]").forEach(button=>button.classList.toggle("active",button.dataset.m11Route===(strategy==="maximum"?"maximum":"balanced")));
-    const strategyNode=document.getElementById("m7Strategy");if(strategyNode)strategyNode.textContent=label(strategy);
-    const badge=document.getElementById("routeModeBadge");if(badge)badge.textContent=`${label(strategy)} route active`;
-    if(rerender){
-      try{if(typeof renderAll==="function")renderAll()}catch(_){}
-      try{window.AuroraFinalAccountTransfer?.render()}catch(_){}
-    }
-  }
-  function saveSelection(strategy){
-    strategy=strategy==="maximum"?"maximum":"sustainable";
-    write(SELECT_KEY,{strategy,updatedAt:new Date().toISOString()});
-    const current=mission();
-    if(current){
-      const changed=current.selectedStrategy!==strategy;
-      current.selectedStrategy=strategy;
-      current.strategyLabel=label(strategy);
-      current.tradingMode=strategy==="maximum"?"maximum":"sustainable";
-      current.routeMode=strategy==="maximum"?"maximum":"balanced";
-      if(changed){
-        current.status="AWAITING_TRANSFER_CENTRE_ROUTE";
-        current.accountTransfers=[];
-        current.accountTransferPurchases=[];
-        current.finalPurchaseRoute=[];
-        current.accountTransferHoldback=Number(current.budget||0);
-        current.accountTransferStatus="AWAITING_TRANSFER_CENTRE_ROUTE";
-        write(ACCOUNT_KEY,{budget:Number(current.budget||0),total:Number(current.budget||0),ig:0,t212:0,unassigned:Number(current.budget||0),purchases:[],strategy,strategyLabel:label(strategy),projectedAnnualIncome:0,projectedMonthlyIncome:0,status:"AWAITING_ROUTE",source:"TRANSFER_STRATEGY_CHANGED",missionId:current.id,generatedAt:new Date().toISOString()});
-      }
-      current.updatedAt=new Date().toISOString();
-      write(WEALTH_KEY,current);
-    }
-    applyMode(strategy,true);
-    try{window.dispatchEvent(new CustomEvent("aurora:investment-strategy",{detail:{strategy}}))}catch(_){}
-    setTimeout(saveComparison,120);
-  }
-  function saveComparison(){
-    const current=mission();
-    if(!current||!(Number(current.budget)>0)||!window.AuroraFinalAccountTransfer?.buildDetailedRoute)return;
-    let sustainable=null,maximum=null;
-    try{
-      sustainable=window.AuroraFinalAccountTransfer.buildDetailedRoute("sustainable");
-      maximum=window.AuroraFinalAccountTransfer.buildDetailedRoute("maximum");
-    }catch(error){console.warn("Aurora strategy comparison",error);return}
-    if(!sustainable||!maximum||sustainable.status!=="FINAL_ROUTE"||maximum.status!=="FINAL_ROUTE")return;
-    const comparison={
-      version:1,
-      missionId:current.id,
-      budget:Number(current.budget||0),
-      generatedAt:new Date().toISOString(),
-      sustainable:{...sustainable,shareCount:Number(sustainable.targetCount||sustainable.purchases?.length||0)},
-      maximum:{...maximum,shareCount:Number(maximum.targetCount||maximum.purchases?.length||0)}
-    };
-    write(COMPARE_KEY,comparison);
-    try{window.dispatchEvent(new CustomEvent("aurora:strategy-comparison",{detail:comparison}))}catch(_){}
-  }
-  document.addEventListener("click",event=>{
-    const routeButton=event.target.closest("[data-m11-route],#applyBalancedRoute,#applyBestReturn");
-    if(!routeButton)return;
-    const raw=routeButton.dataset.m11Route||routeButton.id;
-    saveSelection(String(raw).toLowerCase().includes("maximum")||String(raw).toLowerCase().includes("bestreturn")?"maximum":"sustainable");
-  },true);
-  document.addEventListener("change",event=>{
-    if(event.target?.id!=="m5Route")return;
-    saveSelection(event.target.value==="maximum"?"maximum":"sustainable");
-  },true);
-  function initialise(){
-    const strategy=strategyFromMission();
-    write(SELECT_KEY,{strategy,updatedAt:new Date().toISOString(),source:"TRANSFER_CENTRE"});
-    applyMode(strategy,true);
-    setTimeout(()=>{applyMode(strategy,true);saveComparison()},450);
-    setTimeout(saveComparison,1600);
-  }
-  window.addEventListener("storage",event=>{if([WEALTH_KEY,SELECT_KEY].includes(event.key))setTimeout(initialise,80)});
-  window.addEventListener("pageshow",()=>setTimeout(initialise,140));
-  window.AuroraTransferStrategy={select:saveSelection,current:strategyFromMission,compare:saveComparison};
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(initialise,260));else setTimeout(initialise,220);
-})();
-</script>
-
 </body>
 </html>
