@@ -4,7 +4,7 @@
 (function(global){
   "use strict";
 
-  const HERO_VERSION = "1.0.0-manager-connected";
+  const HERO_VERSION = "1.0.1-manager-load-fix";
 
   const CONFIG = Object.freeze({
     manager: {
@@ -266,6 +266,11 @@
     autoMount
   });
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", autoMount, {once:true});
-  else autoMount();
+  // Mount immediately when a hero host already exists (for pages that load this
+  // file directly after the placeholder), and run once more after parsing for
+  // pages that include the shared script in the document head.
+  autoMount();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", autoMount, {once:true});
+  }
 })(window);
