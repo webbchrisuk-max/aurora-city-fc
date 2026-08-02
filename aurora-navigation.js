@@ -2249,14 +2249,32 @@
 
       if(open){
         /*
-          Always reopen at the beginning of the mission list. This prevents
-          the Transfer Centre (or any other long menu visit) from reopening
-          halfway down the sidebar. Payday Plan is therefore visible first.
+          Reopen beside the current Aurora location instead of jumping back
+          to Payday Plan. Transfer Centre pages show the active mission step;
+          other department pages show their current department entry.
         */
+        refreshWorkflowActiveState();
+
         if(navigationScroll){
-          navigationScroll.scrollTop = 0;
           window.requestAnimationFrame(function(){
-            navigationScroll.scrollTop = 0;
+            const currentNavigationItem = panel.querySelector(
+              ".aurora-nav-step.is-active, .aurora-nav-dept.is-current"
+            );
+
+            if(!currentNavigationItem) return;
+
+            const scrollRect = navigationScroll.getBoundingClientRect();
+            const itemRect = currentNavigationItem.getBoundingClientRect();
+            const itemIsVisible = itemRect.top >= scrollRect.top + 8
+              && itemRect.bottom <= scrollRect.bottom - 8;
+
+            if(!itemIsVisible){
+              currentNavigationItem.scrollIntoView({
+                block:"center",
+                inline:"nearest",
+                behavior:"auto"
+              });
+            }
           });
         }
 
