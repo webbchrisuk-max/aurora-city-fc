@@ -2093,7 +2093,8 @@
     document.querySelectorAll(
       "#auroraNavToggle,.aurora-nav-edge-toggle,"
       + ".aurora-nav-edge-button,.aurora-floating-nav,"
-      + ".aurora-floating-menu"
+      + ".aurora-floating-menu,#auroraLeftEdgeGestureZone,"
+      + "#auroraRightEdgeGestureZone,[data-aurora-edge]"
     ).forEach(function(node){
       node.remove();
     });
@@ -2402,25 +2403,6 @@
       }
     }
 
-    document.addEventListener(
-      "click",
-      function(event){
-        const opener = event.target.closest
-          ? event.target.closest(
-              "#auroraPageHeaderMenuButton,"
-              + "#auroraUniversalMenuButton,"
-              + "[data-aurora-nav-opener]"
-            )
-          : null;
-
-        if(!opener) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        toggleNavigation();
-      },
-      true
-    );
 
     closeButton.addEventListener(
       "click",
@@ -2477,8 +2459,6 @@
         layers. Touch detection therefore runs on the document in capture
         mode instead of relying only on a small overlay div.
       */
-      const EDGE_INSET = 8;
-      const EDGE_WIDTH = 46;
       const LEFT_TOUCH_WIDTH = 72;
       const RIGHT_TOUCH_WIDTH = 92;
       const TOUCH_TRIGGER = 44;
@@ -2560,96 +2540,12 @@
         return true;
       }
 
-      function createEdgeZone(id,side,label){
-        let zone = document.getElementById(id);
-        if(zone) return zone;
-
-        zone = document.createElement("div");
-        zone.id = id;
-        zone.setAttribute("aria-hidden","true");
-        zone.setAttribute("data-aurora-edge",side);
-        zone.title = label;
-        zone.style.position = "fixed";
-        zone.style.top = "76px";
-        zone.style.bottom = "76px";
-        zone.style.width = EDGE_WIDTH + "px";
-        zone.style[side] = EDGE_INSET + "px";
-        zone.style.zIndex = "2147483400";
-        zone.style.background = "transparent";
-        zone.style.pointerEvents = "auto";
-        zone.style.touchAction = "none";
-        zone.style.webkitTapHighlightColor = "transparent";
-        zone.style.userSelect = "none";
-        document.documentElement.appendChild(zone);
-        return zone;
-      }
-
-      const leftZone = createEdgeZone(
-        "auroraLeftEdgeGestureZone",
-        "left",
-        "Open Aurora menu"
-      );
-
-      const rightZone = createEdgeZone(
-        "auroraRightEdgeGestureZone",
-        "right",
-        "Next Payday Mission step"
-      );
-
-      function edgeControlsAvailable(){
-        return !hasBlockingOverlay()
-          && !document.body.classList.contains("aurora-nav-open");
-      }
-
-      /* Mouse and trackpad behaviour remains attached to the fixed zones. */
-      leftZone.addEventListener(
-        "pointerenter",
-        function(event){
-          if(
-            event.pointerType !== "touch"
-            && edgeControlsAvailable()
-          ){
-            setOpen(true);
-          }
-        },
-        {passive:true}
-      );
-
-      rightZone.addEventListener(
-        "wheel",
-        function(event){
-          if(
-            !edgeControlsAvailable()
-            || event.deltaY <= 0
-            || Math.abs(event.deltaY) < Math.abs(event.deltaX)
-          ){
-            wheelAmount = 0;
-            return;
-          }
-
-          wheelAmount += Math.abs(event.deltaY);
-          window.clearTimeout(wheelResetTimer);
-          wheelResetTimer = window.setTimeout(function(){
-            wheelAmount = 0;
-          },500);
-
-          if(wheelAmount >= WHEEL_TRIGGER){
-            wheelAmount = 0;
-            if(goToNextMissionStep() && event.cancelable){
-              event.preventDefault();
-            }
-          }
-        },
-        {passive:false}
-      );
-
       /*
-        Capture-mode touch handling works even when an Aurora page has its own
-        fixed cards, legacy sidebar remnants or full-width overlays. A touch
-        beginning near the left edge opens the menu. A touch beginning near
-        the right edge advances after either an upward scroll gesture or a
-        left swipe.
+        No fixed left/right edge elements are created. Document-level touch
+        capture below keeps the iPad swipe behaviour without leaving a
+        visible or clickable object at either side of the dashboard.
       */
+
       document.addEventListener(
         "touchstart",
         function(event){
@@ -2737,18 +2633,6 @@
         {capture:true,passive:true}
       );
 
-      function syncEdgeZones(){
-        const hidden = document.body.classList.contains("aurora-nav-open");
-        leftZone.style.pointerEvents = hidden ? "none" : "auto";
-        rightZone.style.pointerEvents = hidden ? "none" : "auto";
-      }
-
-      const bodyObserver = new MutationObserver(syncEdgeZones);
-      bodyObserver.observe(document.body,{
-        attributes:true,
-        attributeFilter:["class"]
-      });
-      syncEdgeZones();
     })();
 
     panel.addEventListener(
@@ -2815,6 +2699,9 @@
         }
       }
     );
+
+    window.addEventListener("pageshow",removeLegacyFloatingNavigationLaunchers);
+    window.addEventListener("focus",removeLegacyFloatingNavigationLaunchers);
 
     window.addEventListener(
       "hashchange",
