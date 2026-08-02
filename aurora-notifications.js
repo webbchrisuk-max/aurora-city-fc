@@ -18,7 +18,7 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '1.2.0';
+  const VERSION = '1.3.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
@@ -164,6 +164,23 @@
     }
   }
 
+  function isSuppressedZeroValueNotification(row) {
+    const source = String(row?.source || '');
+    const message = String(row?.message || '');
+    const missionSources = new Set([
+      'aurora_finance_department_mission_v1',
+      'aurora_wealth_investment_mission_v1'
+    ]);
+
+    if (missionSources.has(source)) {
+      return /Mission value\s+£0(?:\.00)?(?![\d.])/i.test(message);
+    }
+    if (source === 'aurora_transfer_plan_v2') {
+      return /Total\s+£0(?:\.00)?(?![\d.])/i.test(message);
+    }
+    return false;
+  }
+
   function cleanStore(rows = readStore()) {
     const timestamp = now();
     const seenIds = new Set();
@@ -171,6 +188,7 @@
 
     return rows
       .filter(row => row && typeof row === 'object')
+      .filter(row => !isSuppressedZeroValueNotification(row))
       .filter(row => !Number(row.expiresAt) || Number(row.expiresAt) > timestamp)
       .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
       .filter(row => {
@@ -579,8 +597,29 @@
     return stage ? `${fallback} Current stage: ${String(stage)}.` : fallback;
   }
 
+  function shouldNotifyStorageRule(rule, rawValue) {
+    if (rawValue === null || rawValue === undefined || rawValue === '') return false;
+
+    if (rule.key === 'aurora_finance_department_mission_v1' ||
+        rule.key === 'aurora_wealth_investment_mission_v1') {
+      const data = parseStored(rawValue);
+      if (!data || typeof data !== 'object') return false;
+      const total = firstFinite(data.total, data.budget, data.investmentTotal, data.totalInvestment, data.requiredTotal);
+      return Number.isFinite(total) && total > 0;
+    }
+
+    if (rule.key === 'aurora_transfer_plan_v2') {
+      const data = parseStored(rawValue);
+      if (!data || typeof data !== 'object') return false;
+      const total = firstFinite(data.total, data.totalBudget, data.budget, data.totalInvestment);
+      return Number.isFinite(total) && total > 0;
+    }
+
+    return true;
+  }
+
   function handleStorageRule(rule, rawValue) {
-    if (rawValue === null || rawValue === undefined || rawValue === '') return;
+    if (!shouldNotifyStorageRule(rule, rawValue)) return;
     const message = typeof rule.message === 'function' ? rule.message(rawValue) : String(rule.message || 'Aurora data updated.');
     const fingerprint = hashString(`${rule.key}|${message}`);
     const dedupeKey = `storage:${rule.key}`;
