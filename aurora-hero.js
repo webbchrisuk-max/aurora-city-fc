@@ -4,7 +4,7 @@
 (function(global){
   "use strict";
 
-  const HERO_VERSION = "1.1.0-nexus-step1";
+  const HERO_VERSION = "1.1.1-nexus-image-cache-fix";
 
   const CONFIG = Object.freeze({
     manager: {
@@ -77,7 +77,7 @@
       titleSub: "Nexus HQ",
       description: "Connecting the club's live intelligence, market context and manager instruction.",
       descriptionId: "nexusHeroDescription",
-      image: "assets/aurora-city-fc/hero/nexus.PNG",
+      image: "assets/aurora-city-fc/hero/nexus.PNG?v=20260802-nexus-command-centre-1",
       actions: [
         { label: "Open Manager Dashboard", href: "AuroraCityFC_ManagerDashboard.html", primary: true },
         { label: "Open Finance Department", href: "AuroraCityFC_FinanceDepartment.html" },
