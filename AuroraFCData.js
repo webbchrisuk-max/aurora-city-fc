@@ -16,12 +16,17 @@
 
   const PAGE_BY_FILE = Object.freeze({
     'auroracityfc_managerdashboard.html':'home',
+    'auroracityfc_nexusmaster.html':'nexus',
+    'auroracityfc_financedepartment.html':'finance',
     'auroracityfc_transfercentre.html':'transfers',
-    'auroracityfc_boardroom.html':'boardroom',
+    'auroracityfc_matchdaycentre.html':'matchday',
     'auroracityfc_squadhub.html':'squad',
     'auroracityfc_analysisroom.html':'analysis',
-    'auroracityfc_mediacentre.html':'media',
-    'auroracityfc_trainingground.html':'training'
+    'auroracityfc_scoutingcentre.html':'scouting',
+    'auroracityfc_trainingground.html':'training',
+    'auroracityfc_learningcentre.html':'learning',
+    'auroracityfc_boardroom.html':'boardroom',
+    'auroracityfc_mediacentre.html':'media'
   });
 
   function currentFile(){
@@ -506,7 +511,7 @@
 
 
   /* ===================== SHARED AURORA DATA ENGINE ===================== */
-  const DATA_ENGINE_VERSION='1.0.0';
+  const DATA_ENGINE_VERSION='1.1.0';
   const MASTER_CACHE_KEY='aurora:master-cache:v1';
   const MASTER_DATA_EVENT='aurora:data-changed';
   const MASTER_STATUS_EVENT='aurora:data-status';
@@ -770,8 +775,37 @@
     return fallback;
   }
 
+  function rowsFromSection(value){
+    if(Array.isArray(value)) return value;
+    if(!isObject(value)) return null;
+
+    for(const key of ['rows','data','values','items']){
+      if(Array.isArray(value[key])) return value[key];
+    }
+
+    if(isObject(value.table) && Array.isArray(value.table.rows)){
+      const cols=Array.isArray(value.table.cols) ? value.table.cols : [];
+      const headers=cols.map((column,index)=>String(column?.label || column?.id || `column_${index+1}`));
+      return value.table.rows.map(row=>{
+        const cells=Array.isArray(row?.c) ? row.c : [];
+        const record={};
+        headers.forEach((header,index)=>{
+          record[header]=cells[index]?.v ?? cells[index]?.f ?? '';
+        });
+        return record;
+      });
+    }
+
+    return null;
+  }
+
   function getTab(name,fallback=[]){
-    return getSection(name,fallback);
+    const rows=rowsFromSection(getSection(name,undefined));
+    return rows===null ? fallback : rows;
+  }
+
+  function getRows(name,fallback=[]){
+    return getTab(name,fallback);
   }
 
   function getDataStatus(){
@@ -982,6 +1016,7 @@
     getData,
     getSection,
     getTab,
+    getRows,
     getDataStatus,
     onDataChanged,
     onDataError,
