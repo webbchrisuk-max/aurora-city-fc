@@ -11398,5 +11398,181 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
   }
 })();
 </script>
+
+<!-- Build: M57 Automatic Required Payday Contribution • 02 Aug 2026 -->
+<script id="auroraAutoRequiredPaydayContribution">
+(function(){
+  "use strict";
+
+  const byId = id => document.getElementById(id);
+  const numberFrom = value => {
+    const parsed = Number(String(value ?? "").replace(/[^0-9.-]/g,""));
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+  const money = value =>
+    new Intl.NumberFormat("en-GB",{
+      style:"currency",
+      currency:"GBP",
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }).format(Math.max(0,Number(value || 0)));
+
+  let syncing = false;
+  let syncTimer = 0;
+
+  function requiredPaydayRate(){
+    /*
+     * This is the existing Funding Engine guide:
+     * remaining planner gap divided across 13 four-weekly paydays.
+     */
+    return Math.max(0,numberFrom(byId("suggestedContributionNow")?.textContent));
+  }
+
+  function updateCardCopy(required){
+    const input = byId("paydayContributionInput");
+    const button = byId("addPaydayBtn");
+    const status = byId("m41ContributionStatus");
+    const card = input?.closest(".m36-transfer-card");
+
+    const title = card?.querySelector(".m36-transfer-copy span");
+    const copy = card?.querySelector(".m36-transfer-copy small");
+
+    if(title) title.textContent = "Automatic payday contribution";
+    if(copy) copy.textContent =
+      "Calculated from the active 13-payday funding gap. Record the real Holding Pot move through the Payday Allocation checklist.";
+
+    if(input){
+      input.readOnly = true;
+      input.setAttribute("aria-readonly","true");
+      input.title = "Automatically calculated by Aurora";
+    }
+
+    if(button){
+      button.textContent = "Open Payday Allocation";
+      button.title = "Use the Payday Allocation checklist to record the real transfer";
+    }
+
+    if(status){
+      status.textContent =
+        "Auto-set to " + money(required) +
+        " per payday. This is a planning guide only; the checklist records the actual Holding Pot transfer.";
+      status.className = "m41-contribution-status good";
+    }
+  }
+
+  function normaliseSmallVariance(){
+    const value = byId("surplusShortfall");
+    const meta = byId("surplusShortfallMeta");
+    if(!value) return;
+
+    const variance = numberFrom(value.textContent);
+    if(Math.abs(variance) <= 0.10){
+      value.textContent = "+£0.00";
+      value.classList.remove("good","risk");
+      value.classList.add("neutral");
+      if(meta) meta.textContent = "Automatic rate matches the active planner target";
+    }
+  }
+
+  function syncAutomaticRate(){
+    if(syncing) return;
+    syncing = true;
+
+    try {
+      const input = byId("paydayContributionInput");
+      if(!input) return;
+
+      const required = requiredPaydayRate();
+      const current = numberFrom(input.value);
+      const changed = Math.abs(current - required) > 0.009;
+
+      input.value = required.toFixed(2);
+
+      if(typeof plannerState !== "undefined"){
+        plannerState.paydayContribution = required;
+      }
+
+      updateCardCopy(required);
+
+      if(changed && typeof savePlannerData === "function"){
+        savePlannerData();
+      }
+
+      /*
+       * Refresh the annual coverage cards once using the automatic rate.
+       * The guard prevents the wrapped function from looping.
+       */
+      if(changed && typeof window.updatePlannerTotals === "function"){
+        window.updatePlannerTotals();
+      }
+
+      normaliseSmallVariance();
+    } finally {
+      syncing = false;
+    }
+  }
+
+  function scheduleSync(){
+    clearTimeout(syncTimer);
+    syncTimer = window.setTimeout(syncAutomaticRate,0);
+  }
+
+  /*
+   * The old button used to add the displayed rate directly to the Holding
+   * Pot. That would duplicate the Payday Allocation checklist. It now opens
+   * the checklist and never changes the balance itself.
+   */
+  byId("addPaydayBtn")?.addEventListener("click",event => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if(typeof window.m14ShowView === "function"){
+      window.m14ShowView("m13PaydayPlan");
+    } else {
+      byId("m13PaydayPlan")?.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+  },true);
+
+  ["updatePlannerTotals","runPlanner","m22Render","m40RenderClarity"].forEach(name => {
+    const original = window[name];
+    if(typeof original !== "function" || original.__auroraM57Wrapped) return;
+
+    const wrapped = function(){
+      const result = original.apply(this,arguments);
+      if(!syncing) scheduleSync();
+      return result;
+    };
+    wrapped.__auroraM57Wrapped = true;
+    window[name] = wrapped;
+  });
+
+  /*
+   * Any funding/bill change can alter the required payday rate.
+   * Re-run after edits, saves, checklist changes, and page restores.
+   */
+  document.addEventListener("input",event => {
+    if(event.target?.id === "paydayContributionInput") return;
+    scheduleSync();
+  },true);
+
+  document.addEventListener("change",event => {
+    if(event.target?.id === "paydayContributionInput") return;
+    scheduleSync();
+  },true);
+
+  window.addEventListener("pageshow",() => {
+    [0,80,220,500].forEach(delay => window.setTimeout(syncAutomaticRate,delay));
+  });
+
+  window.addEventListener("load",() => {
+    [0,120,320,700].forEach(delay => window.setTimeout(syncAutomaticRate,delay));
+  });
+
+  if(document.readyState !== "loading"){
+    [0,100,300].forEach(delay => window.setTimeout(syncAutomaticRate,delay));
+  }
+})();
+</script>
+
 </body>
 </html>
