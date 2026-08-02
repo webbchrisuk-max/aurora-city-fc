@@ -217,7 +217,6 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
   </style>
   <link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
   <script src="aurora-navigation.js?v=20260729-3" defer></script>
-<script defer src="aurora-notifications.js?v=20260802-1"></script>
 </head>
 <body>
 <main class="app">
@@ -268,8 +267,24 @@ const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/Auro
 let AURORA_MASTER_CACHE=null,state={holdings:[],watchlist:[],scout:[],dividends:[],income:[],intelligence:[],briefing:[]};
 const $=id=>document.getElementById(id);const money=n=>Number.isFinite(n)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n):'—';
 function parseNum(v){if(v===null||v===undefined)return NaN;const s=String(v).replace(/£|,|%/g,'').trim();return s?Number(s):NaN}function cleanTicker(t){return String(t||'').trim().toUpperCase()}function displayTicker(t){return String(t||'').replace('LON:','')}function displayName(r){return r.name||r.company_name||r.company||r.Company||r.Name||displayTicker(r.ticker)||'—'}function impact(r){return parseNum(r.impact??r.impact_score??r.promotion_impact_score??r['Impact Score'])}function buyStrength(r){return parseNum(r.buy_strength??r.buy_strength_score??r.score??r.buy_score)}function yieldPct(r){const n=parseNum(r.yield_pct??r.Yield??r.yield??r.dividend_yield);return Number.isFinite(n)?(n>1?n:n*100):NaN}function annualIncomeFromRow(r){const d=parseNum(r.annual_income??r.income_annual??r.dividend_income??r['Annual Income']);if(Number.isFinite(d))return d;const v=parseNum(r.value??r.market_value??r.current_value??r.holding_value??r['Market Value']);const y=yieldPct(r);return Number.isFinite(v)&&Number.isFinite(y)?v*(y/100):0}function uniqueByTicker(rows){const m=new Map();rows.forEach(r=>{const t=cleanTicker(r.ticker);if(!t)return;const e=m.get(t);if(!e||(impact(r)||buyStrength(r)||0)>(impact(e)||buyStrength(e)||0))m.set(t,r)});return[...m.values()]}
-async function fetchMaster(){if(!AURORA_MASTER_CACHE){const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});if(!res.ok)throw new Error(`AuroraData failed: ${res.status}`);AURORA_MASTER_CACHE=await res.json()}return AURORA_MASTER_CACHE}
-async function loadAuroraData(){const b=$('refreshBtn');if(b){b.textContent='Loading…';b.disabled=true}try{const data=await fetchMaster();state={holdings:Array.isArray(data.Holdings)?data.Holdings:[],watchlist:Array.isArray(data.Watchlist)?data.Watchlist:[],scout:Array.isArray(data.AuroraScout)?data.AuroraScout:[],dividends:Array.isArray(data.Dividends)?data.Dividends:[],income:Array.isArray(data.IncomeLog)?data.IncomeLog:[],intelligence:Array.isArray(data.AuroraIntelligence)?data.AuroraIntelligence:[],briefing:Array.isArray(data.ManagerBriefing)?data.ManagerBriefing:[]};renderAll()}catch(e){console.error(e);if(!(state.holdings||[]).length)document.querySelectorAll('[data-loading-target]').forEach(el=>el.innerHTML=`<div class="loading error">${e.message||'Unable to load AuroraData'}</div>`);else if($('topHeadlineNote'))$('topHeadlineNote').textContent='Refresh failed — showing the previous successful Aurora data.'}finally{if(b){b.textContent='Refresh';b.disabled=false}}}
+async function fetchMaster(force=false){
+  if(window.AuroraFC?.loadMaster){
+    window.AuroraFC.setMasterUrl(AURORA_MASTER_URL);
+    AURORA_MASTER_CACHE=force
+      ? await window.AuroraFC.refreshMaster({url:AURORA_MASTER_URL})
+      : await window.AuroraFC.loadMaster({url:AURORA_MASTER_URL});
+    return AURORA_MASTER_CACHE;
+  }
+
+  if(force) AURORA_MASTER_CACHE=null;
+  if(!AURORA_MASTER_CACHE){
+    const res=await fetch(AURORA_MASTER_URL,{cache:"no-store"});
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE=await res.json();
+  }
+  return AURORA_MASTER_CACHE;
+}
+async function loadAuroraData(force=false){const b=$('refreshBtn');if(b){b.textContent='Loading…';b.disabled=true}try{const data=await fetchMaster(force);state={holdings:Array.isArray(data.Holdings)?data.Holdings:[],watchlist:Array.isArray(data.Watchlist)?data.Watchlist:[],scout:Array.isArray(data.AuroraScout)?data.AuroraScout:[],dividends:Array.isArray(data.Dividends)?data.Dividends:[],income:Array.isArray(data.IncomeLog)?data.IncomeLog:[],intelligence:Array.isArray(data.AuroraIntelligence)?data.AuroraIntelligence:[],briefing:Array.isArray(data.ManagerBriefing)?data.ManagerBriefing:[]};renderAll()}catch(e){console.error(e);if(!(state.holdings||[]).length)document.querySelectorAll('[data-loading-target]').forEach(el=>el.innerHTML=`<div class="loading error">${e.message||'Unable to load AuroraData'}</div>`);else if($('topHeadlineNote'))$('topHeadlineNote').textContent='Refresh failed — showing the previous successful Aurora data.'}finally{if(b){b.textContent='Refresh';b.disabled=false}}}
 
 function players(){
   const scoreRows = uniqueByTicker([...(state.watchlist||[]), ...(state.scout||[])]);
@@ -371,7 +386,18 @@ function renderTrainingIntelligence(){
 function renderAll(){renderTrainingIntelligence();if($('lastUpdated')){if(window.AuroraFC)AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'});else $('lastUpdated').textContent='Aurora generated: unavailable'};const ps=players(),top=ps[0],elite=ps.filter(p=>p._score>=90),risks=ps.filter(p=>p._score&&p._score<75).slice(0,8),topScore=top?Math.round(top._score):NaN;$('topHeadline').textContent=top?displayTicker(top.ticker):'—';$('topHeadlineNote').textContent=top?`${topScore} training score`:'No form data found';$('dividendCount').textContent=elite.length;$('rumourCount').textContent=risks.length;$('pressMood').textContent=elite.length>=3?'Flying':elite.length>=1?'Strong':'Building';$('pressMoodNote').textContent=elite.length>=3?'The lads are training like monsters.':'Training plan still building.';const intelRows=intelligenceRows(),intelTop=intelRows[0]||{},intelLow=intelRows[intelRows.length-1]||{},briefing=(state.briefing||[])[0]||{},briefingVerdict=intelVal(briefing,'Manager verdict','manager verdict','manager_verdict','Value','value');
 $('coachReport').innerHTML=`<strong>${intelVal(intelTop,'ticker')?intelVal(intelTop,'ticker')+' leads development':top?displayTicker(top.ticker)+' leads training':'Coach waiting for fresh data'}</strong><p>${briefingVerdict?briefingVerdict+'. ':''}${intelVal(intelTop,'ticker')?`${intelVal(intelTop,'ticker')} holds the strongest current confidence at ${parseNum(intelVal(intelTop,'confidence_score'))||'—'}/100. ${intelVal(intelLow,'ticker')||'The lowest-confidence holding'} remains the main recovery focus, while the medical room monitors risk and negative-news pressure.`:top?`${displayTicker(top.ticker)} is currently the standout performer with a score of ${topScore}. The elite group contains ${elite.length} player${elite.length===1?'':'s'}, while the medical room keeps an eye on lower-score holdings.`:'No player development data is available yet.'}</p>`;$('risingStars').innerHTML=ps.slice(0,8).map((p,i)=>{const s=Math.round(p._score||0);return `<div class="row"><div class="icon">${i===0?'🔥':'📈'}</div><div><strong>${displayTicker(p.ticker)} training well</strong><span>${displayName(p)}${Number.isFinite(p._yield)?' • '+p._yield.toFixed(1)+'% yield':''}</span>${trainingIntelMeta(p.ticker)}</div><div class="score-pill ${cls(s)}">${s}</div></div>`}).join('')||'<div class="loading">No rising stars found.</div>';const intelMedical=intelligenceRows().filter(r=>String(intelVal(r,'risk_level')).toLowerCase()!=='low'||(parseNum(intelVal(r,'confidence_score'))||0)<50||String(intelVal(r,'action')).toLowerCase().includes('no new money')).slice(0,8);
 $('medicalRoom').innerHTML=intelMedical.length?intelMedical.map(r=>{const score=parseNum(intelVal(r,'confidence_score'))||0;const risk=intelVal(r,'risk_level')||'Watch';return `<div class="row aurora-medical-watch"><div class="icon">🩺</div><div><strong>${intelVal(r,'ticker')||'—'} needs monitoring</strong><span>${intelVal(r,'company')||''} • ${risk} risk • ${intelVal(r,'action')||'HOLD / WATCH'}</span>${trainingIntelMeta(intelVal(r,'ticker'))}</div><div class="score-pill red">${score.toFixed(0)}</div></div>`}).join(''):[row('✅','Medical room clear','No intelligence-led recovery or risk alerts detected.','Clear'),row('🛡️','Risk control active','Keep watching dividend health, confidence and news changes.','Monitor','amber')].join('');$('formList').innerHTML=ps.slice(0,10).map(p=>{const s=Math.round(p._score||0);return `<div class="row"><div class="icon">🏃</div><div><strong>${displayTicker(p.ticker)} — ${status(s)}</strong><span>${displayName(p)}${Number.isFinite(p._yield)?' • '+p._yield.toFixed(1)+'% yield':''}</span>${trainingIntelMeta(p.ticker)}</div><div class="score-pill ${cls(s)}">${s}</div></div>`}).join('')||'<div class="loading">No form data found.</div>';$('trainingFocus').innerHTML=[row('⭐','Elite group',elite.length?elite.map(p=>displayTicker(p.ticker)).slice(0,4).join(', '):'Find next 90+ candidate',`${elite.length}`),row('🎯','Development focus',top?`${displayTicker(top.ticker)} is the benchmark`:'Build score history','Active'),row('🩺','Medical watch',risks.length?`${risks.length} players need monitoring`:'No major issues',risks.length?'Watch':'Clear',risks.length?'amber':'')].join('')}
-$('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuroraData();});loadAuroraData();if(window.AuroraFC)AuroraFC.registerServiceWorker()
+$('refreshBtn')?.addEventListener('click',()=>loadAuroraData(true));
+
+if(window.AuroraFC?.onDataChanged){
+  window.AuroraFC.onDataChanged((master,meta)=>{
+    if(meta?.source!=="cross-tab-cache") return;
+    AURORA_MASTER_CACHE=master;
+    queueMicrotask(()=>loadAuroraData(false));
+  });
+}
+
+loadAuroraData(false);
+if(window.AuroraFC)AuroraFC.registerServiceWorker()
 
   </script>
   <script>

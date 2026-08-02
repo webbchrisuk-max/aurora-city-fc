@@ -1134,7 +1134,6 @@ body{padding-bottom:0}
 <!-- Aurora universal workflow navigation -->
 <link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
 <script src="aurora-navigation.js?v=20260729-3" defer></script>
-<script defer src="aurora-notifications.js?v=20260802-1"></script>
 </head>
 <body>
 
@@ -1543,18 +1542,34 @@ function currentReputation(annualIncome){
   const next = ladder.find(step=>monthly < step.monthly);
   return { current, next, monthly };
 }
-async function fetchTab(tab){
-  if(!AURORA_MASTER_CACHE){
-    const res = await fetch(AURORA_MASTER_URL, { cache:'no-store' });
-    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
-    AURORA_MASTER_CACHE = await res.json();
+async function ensureBoardMaster(force=false){
+  if(window.AuroraFC?.loadMaster){
+    window.AuroraFC.setMasterUrl(AURORA_MASTER_URL);
+    AURORA_MASTER_CACHE=force
+      ? await window.AuroraFC.refreshMaster({url:AURORA_MASTER_URL})
+      : await window.AuroraFC.loadMaster({url:AURORA_MASTER_URL});
+    return AURORA_MASTER_CACHE;
   }
+
+  if(force) AURORA_MASTER_CACHE=null;
+  if(!AURORA_MASTER_CACHE){
+    const res=await fetch(AURORA_MASTER_URL,{cache:"no-store"});
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE=await res.json();
+  }
+  return AURORA_MASTER_CACHE;
+}
+
+async function fetchTab(tab){
+  await ensureBoardMaster(false);
+  if(window.AuroraFC?.getRows) return window.AuroraFC.getRows(tab,[]);
   return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
 }
-async function loadData(){
+async function loadData(force=false){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
+    await ensureBoardMaster(force);
     const tabPairs = await Promise.all(
       MASTER_TABS.map(async tab => [tab, await fetchTab(tab).catch(()=>[])])
     );
@@ -2061,8 +2076,17 @@ function renderAll(){
     {level:targets.length>=3?'ok':'warn',title:`${targets.length} viable recruitment targets`,detail:targets.length>=3?'Transfer pipeline has reasonable depth.':'The board should review shortlist depth.'}
   ];
 }
-$('refreshBtn')?.addEventListener('click', ()=>{ AURORA_MASTER_CACHE=null; loadData(); });
-loadData();
+$('refreshBtn')?.addEventListener('click',()=>loadData(true));
+
+if(window.AuroraFC?.onDataChanged){
+  window.AuroraFC.onDataChanged((master,meta)=>{
+    if(meta?.source!=="cross-tab-cache") return;
+    AURORA_MASTER_CACHE=master;
+    queueMicrotask(()=>loadData(false));
+  });
+}
+
+loadData(false);
 
 /* ===================== SECTION: EXECUTIVE CONTROL FALLBACK GUARD ===================== */
 setTimeout(()=>{

@@ -183,7 +183,6 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
   <!-- Aurora universal workflow navigation -->
   <link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
   <script src="aurora-navigation.js?v=20260729-3" defer></script>
-<script defer src="aurora-notifications.js?v=20260802-1"></script>
 </head>
 <body>
 <main class="app">
@@ -235,8 +234,24 @@ const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/Auro
 let AURORA_MASTER_CACHE=null,state={holdings:[],watchlist:[],scout:[],dividends:[],income:[],news:[],intelligence:[],briefing:[]};
 const $=id=>document.getElementById(id);const money=n=>Number.isFinite(n)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n):'—';
 function parseNum(v){if(v===null||v===undefined)return NaN;const s=String(v).replace(/£|,|%/g,'').trim();return s?Number(s):NaN}function cleanTicker(t){return String(t||'').trim().toUpperCase()}function displayTicker(t){return String(t||'').replace('LON:','')}function displayName(r){return r.name||r.company_name||r.company||r.Company||r.Name||displayTicker(r.ticker)||'—'}function impact(r){return parseNum(r.impact??r.impact_score??r.promotion_impact_score??r['Impact Score'])}function buyStrength(r){return parseNum(r.buy_strength??r.buy_strength_score??r.score??r.buy_score)}function yieldPct(r){const n=parseNum(r.yield_pct??r.Yield??r.yield??r.dividend_yield);return Number.isFinite(n)?(n>1?n:n*100):NaN}function annualIncomeFromRow(r){const d=parseNum(r.annual_income??r.income_annual??r.dividend_income??r['Annual Income']);if(Number.isFinite(d))return d;const v=parseNum(r.value??r.market_value??r.current_value??r.holding_value??r['Market Value']);const y=yieldPct(r);return Number.isFinite(v)&&Number.isFinite(y)?v*(y/100):0}function uniqueByTicker(rows){const m=new Map();rows.forEach(r=>{const t=cleanTicker(r.ticker);if(!t)return;const e=m.get(t);if(!e||(impact(r)||buyStrength(r)||0)>(impact(e)||buyStrength(e)||0))m.set(t,r)});return[...m.values()]}
-async function fetchMaster(){if(!AURORA_MASTER_CACHE){const res=await fetch(AURORA_MASTER_URL,{cache:'no-store'});if(!res.ok)throw new Error(`AuroraData failed: ${res.status}`);AURORA_MASTER_CACHE=await res.json()}return AURORA_MASTER_CACHE}
-async function loadAuroraData(){const b=$('refreshBtn');if(b){b.textContent='Loading…';b.disabled=true}try{const data=await fetchMaster();state={holdings:Array.isArray(data.Holdings)?data.Holdings:[],watchlist:Array.isArray(data.Watchlist)?data.Watchlist:[],scout:Array.isArray(data.AuroraScout)?data.AuroraScout:[],dividends:Array.isArray(data.Dividends)?data.Dividends:[],income:Array.isArray(data.IncomeLog)?data.IncomeLog:[],news:Array.isArray(data.AuroraTimes)?data.AuroraTimes:[],intelligence:Array.isArray(data.AuroraIntelligence)?data.AuroraIntelligence:[],briefing:Array.isArray(data.ManagerBriefing)?data.ManagerBriefing:[]};renderAll()}catch(e){console.error(e);if(!(state.holdings||[]).length)document.querySelectorAll('[data-loading-target]').forEach(el=>el.innerHTML=`<div class="loading error">${e.message||'Unable to load AuroraData'}</div>`);else if($('topHeadlineNote'))$('topHeadlineNote').textContent='Refresh failed — showing the previous successful Aurora data.'}finally{if(b){b.textContent='Refresh';b.disabled=false}}}
+async function fetchMaster(force=false){
+  if(window.AuroraFC?.loadMaster){
+    window.AuroraFC.setMasterUrl(AURORA_MASTER_URL);
+    AURORA_MASTER_CACHE=force
+      ? await window.AuroraFC.refreshMaster({url:AURORA_MASTER_URL})
+      : await window.AuroraFC.loadMaster({url:AURORA_MASTER_URL});
+    return AURORA_MASTER_CACHE;
+  }
+
+  if(force) AURORA_MASTER_CACHE=null;
+  if(!AURORA_MASTER_CACHE){
+    const res=await fetch(AURORA_MASTER_URL,{cache:"no-store"});
+    if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
+    AURORA_MASTER_CACHE=await res.json();
+  }
+  return AURORA_MASTER_CACHE;
+}
+async function loadAuroraData(force=false){const b=$('refreshBtn');if(b){b.textContent='Loading…';b.disabled=true}try{const data=await fetchMaster(force);state={holdings:Array.isArray(data.Holdings)?data.Holdings:[],watchlist:Array.isArray(data.Watchlist)?data.Watchlist:[],scout:Array.isArray(data.AuroraScout)?data.AuroraScout:[],dividends:Array.isArray(data.Dividends)?data.Dividends:[],income:Array.isArray(data.IncomeLog)?data.IncomeLog:[],news:Array.isArray(data.AuroraTimes)?data.AuroraTimes:[],intelligence:Array.isArray(data.AuroraIntelligence)?data.AuroraIntelligence:[],briefing:Array.isArray(data.ManagerBriefing)?data.ManagerBriefing:[]};renderAll()}catch(e){console.error(e);if(!(state.holdings||[]).length)document.querySelectorAll('[data-loading-target]').forEach(el=>el.innerHTML=`<div class="loading error">${e.message||'Unable to load AuroraData'}</div>`);else if($('topHeadlineNote'))$('topHeadlineNote').textContent='Refresh failed — showing the previous successful Aurora data.'}finally{if(b){b.textContent='Refresh';b.disabled=false}}}
 
 function val(r,...keys){for(const k of keys){if(r&&r[k]!==undefined&&r[k]!==null&&String(r[k]).trim()!=='')return r[k]}return ''}
 function yes(v){return ['yes','y','true','1','published','show'].includes(String(v||'').trim().toLowerCase())}
@@ -345,7 +360,18 @@ $('dividendDesk').innerHTML=divs.length?divs.map(d=>{const t=displayTicker(d.tic
 $('rumourMill').innerHTML=ts.slice(0,8).map((t,i)=>{const s=Math.round(impact(t)||buyStrength(t)||0);return `<div class="row"><div class="icon">${i===0?'🔥':i<3?'👀':'📋'}</div><div><strong>${displayTicker(t.ticker)} under media watch</strong><span>${displayName(t)}</span>${mediaIntelMetaForTicker(t.ticker)}</div><div class="score-pill ${cls(s)}">${s}</div></div>`}).join('')||'<div class="loading">No rumour targets found.</div>';
 $('matchReport').innerHTML=[row('🏟️','Income match report',`Annual tracked income: ${money(annual)}`,`${money(monthly)}/m`),row('⭐','Man of the Match',top?`${displayTicker(top.ticker)} leads the headlines.`:'No clear winner yet.',top?`${topScore}`:'—',top?cls(topScore):''),row('📣','Supporter reaction',news.length?'Aurora Times is now live from the sheet newsroom.':topScore>=90?'Fans are excited by the current transfer shortlist.':'Fans want steady progress.',news.length?'Live':topScore>=90?'Positive':'Stable')].join('')
 }
-$('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuroraData();});loadAuroraData();if(window.AuroraFC)AuroraFC.registerServiceWorker()
+$('refreshBtn')?.addEventListener('click',()=>loadAuroraData(true));
+
+if(window.AuroraFC?.onDataChanged){
+  window.AuroraFC.onDataChanged((master,meta)=>{
+    if(meta?.source!=="cross-tab-cache") return;
+    AURORA_MASTER_CACHE=master;
+    queueMicrotask(()=>loadAuroraData(false));
+  });
+}
+
+loadAuroraData(false);
+if(window.AuroraFC)AuroraFC.registerServiceWorker()
   </script>
   <script>
 (function(){
@@ -383,20 +409,27 @@ $('refreshBtn')?.addEventListener('click',()=>{AURORA_MASTER_CACHE=null;loadAuro
     const box=document.getElementById('breakingStories');
     if(!box)return;
     const life=lifecycle();
-    document.getElementById('m4SigningStory')?.remove();
-    if(life.stage<3)return;
+    const existing=document.getElementById('m4SigningStory');
+    if(life.stage<3){existing?.remove();return;}
     const tickerText=life.ticker||life.routeTickers.join(' / ')||'Aurora signing';
     const detail=life.stage>=5
       ?'Registration confirmed and the player is now live in the Aurora squad.'
       :life.stage>=4
         ?'Purchase registered with AuroraData; awaiting the refreshed squad confirmation.'
         :'Broker purchases completed; registration is the next action.';
-    const node=document.createElement('div');
-    node.id='m4SigningStory';
-    node.className='row';
-    node.innerHTML=`<div class="icon">📝</div><div><strong>${tickerText} — signing lifecycle update</strong><span>${detail}</span></div><div class="score-pill">M4</div>`;
+    const signature=`${life.stage}|${tickerText}|${detail}`;
+    if(existing?.dataset.signature===signature)return;
+    const markup=`<div class="icon">📝</div><div><strong>${tickerText} — signing lifecycle update</strong><span>${detail}</span></div><div class="score-pill">M4</div>`;
     rendering=true;
-    box.prepend(node);
+    if(existing){existing.dataset.signature=signature;existing.innerHTML=markup;}
+    else{
+      const node=document.createElement('div');
+      node.id='m4SigningStory';
+      node.className='row';
+      node.dataset.signature=signature;
+      node.innerHTML=markup;
+      box.prepend(node);
+    }
     rendering=false;
   }
 

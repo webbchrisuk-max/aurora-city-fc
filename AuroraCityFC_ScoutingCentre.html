@@ -1430,7 +1430,7 @@ body{
 <!-- Aurora universal workflow navigation -->
 <link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
 <script src="aurora-navigation.js?v=20260729-3" defer></script>
-<script defer src="aurora-notifications.js?v=20260802-1"></script>
+<script src="AuroraFCData.js"></script>
 </head>
 <body>
 
@@ -1617,9 +1617,10 @@ body{
 </aside>
 <div aria-live="polite" class="toast" id="toast" role="status"></div>
 <script>
+const AURORA_MASTER_URL="https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 const DATA_URLS=[
-  `AuroraMaster.json?v=${Date.now()}`,
-  `https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json?v=${Date.now()}`
+  "AuroraMaster.json",
+  AURORA_MASTER_URL
 ];
 const SHORTLIST_KEY="auroraScoutingRecruitmentMeeting";
 const FALLBACK_SCOUTS=[
@@ -1693,11 +1694,37 @@ function normaliseScout(row){
   if(risk.includes("HIGH")||risk.includes("DIVIDEND")) ranking-=10;
   return {...row,live,fair,upside,strength,impact,yieldPct,risk,valuation,ranking};
 }
-async function fetchAurora(){
+async function fetchAurora(force=false){
   let lastError=null;
+
+  if(window.AuroraFC?.loadMaster){
+    try{
+      window.AuroraFC.setMasterUrl(AURORA_MASTER_URL);
+      const data=force
+        ? await window.AuroraFC.refreshMaster({url:AURORA_MASTER_URL})
+        : await window.AuroraFC.loadMaster({url:AURORA_MASTER_URL});
+      const rows=window.AuroraFC.getRows("AuroraScout",[]);
+      const validRows=rows.filter(row=>{
+        const ticker=text(row?.ticker).trim();
+        const company=text(row?.company_name).trim();
+        const strength=num(row?.buy_strength);
+        return ticker && company && Number.isFinite(strength) && strength>0 && ticker!=="Returned Watchlist";
+      });
+      if(!validRows.length) throw new Error("AuroraScout contains no valid scout rows");
+      state.scouts=validRows.map(normaliseScout);
+      state.meta=data.meta||{};
+      const status=window.AuroraFC.getDataStatus();
+      state.source=status.fromCache?"Shared AuroraData cache":"Shared AuroraData";
+      return;
+    }catch(error){
+      lastError=error;
+    }
+  }
+
   for(const url of DATA_URLS){
     try{
-      const response=await fetch(url,{cache:"no-store"});
+      const separator=url.includes("?")?"&":"?";
+      const response=await fetch(`${url}${separator}v=${Date.now()}`,{cache:"no-store"});
       if(!response.ok) throw new Error(`HTTP ${response.status}`);
       const data=await response.json();
       const rows=Array.isArray(data.AuroraScout)?data.AuroraScout:[];
@@ -2154,7 +2181,7 @@ function bindEvents(){
     toast("Recruitment meeting cleared");
   });
   $("detailOverlay").addEventListener("click",closeDetail);
-  $("refreshBtn")?.addEventListener("click",init);
+  $("refreshBtn")?.addEventListener("click",()=>init(true));
   document.addEventListener("keydown",event=>{
     if(event.key==="Escape"){
       document.body.classList.remove("drawer-open");
@@ -2274,11 +2301,11 @@ function renderAll(){
   renderMeeting();
   renderFlagship();
 }
-async function init(){
+async function init(force=false){
   const refreshButton=$("refreshBtn");
   if(refreshButton){refreshButton.disabled=true;refreshButton.textContent="Loading…";}
   try{
-    await fetchAurora();
+    await fetchAurora(force);
     const renderers=[
       ["Header",renderHeader],
       ["KPIs",renderKpis],
@@ -2310,7 +2337,14 @@ async function init(){
   }
 }
 try{bindEvents();}catch(error){console.error("Scouting controls failed to bind",error);}
-init();
+
+if(window.AuroraFC?.onDataChanged){
+  window.AuroraFC.onDataChanged((_master,meta)=>{
+    if(meta?.source==="cross-tab-cache") queueMicrotask(()=>init(false));
+  });
+}
+
+init(false);
 </script>
 </div>
 </div>

@@ -1187,7 +1187,6 @@ body{
   .analysis-intelligence-action{grid-column:2;justify-self:start}
 }
 </style>
-<script defer src="aurora-notifications.js?v=20260802-1"></script>
 </head>
 <body>
 
@@ -1749,10 +1748,11 @@ body{
 </aside>
 </main>
 <script>
+const AURORA_MASTER_URL="https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 const AURORA_MASTER_URLS = [
-  `./AuroraMaster.json?v=${Date.now()}`,
-  `AuroraMaster.json?v=${Date.now()}`,
-  `https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json?v=${Date.now()}`
+  "./AuroraMaster.json",
+  "AuroraMaster.json",
+  AURORA_MASTER_URL
 ];
 const MONTHLY_TARGET = 625;
 const TABS = ["Holdings","IncomeLog","TradeReviewLog","PriceLog","DailyPriceSummary","LivePrices","Dividends","SectorLimits","MarketRegime","AuroraIntelligence","ManagerBriefing"];
@@ -2610,10 +2610,25 @@ function renderTable(){
   const rows=combinedHoldings().sort((a,b)=>b.value-a.value),totalIncome=rows.reduce((s,x)=>s+x.income,0);rows.forEach(x=>x.incomeShare=totalIncome>0?x.income/totalIncome:0);$("playerCountBadge").textContent=`${rows.length} players`;
   $("playerTable").innerHTML=rows.length?rows.map(x=>`<tr><td><span class="ticker">${x.ticker}</span><br><span style="color:#8295af">${x.name}</span></td><td>${x.role}<br><span style="color:#8295af">${x.sector}</span></td><td>${money(x.value)}</td><td class="${x.income>0?"positive":"neutral"}">${money(x.income)}</td><td>${pct(x.yield)}</td><td class="${x.profit>0?"positive":x.profit<0?"negative":"neutral"}">${money(x.profit)}</td><td>${x.buyStrength||"—"}</td><td><div style="display:flex;align-items:center;gap:9px"><div class="mini-bar"><i style="width:${Math.min(100,x.incomeShare*100)}%"></i></div><span>${(x.incomeShare*100).toFixed(1)}%</span></div></td></tr>`).join(""):`<tr><td colspan="8" class="loading">No active holdings found.</td></tr>`;
 }
-async function fetchMaster(){
+async function fetchMaster(force=false){
+  if(window.AuroraFC?.loadMaster){
+    window.AuroraFC.setMasterUrl(AURORA_MASTER_URL);
+    const data=force
+      ? await window.AuroraFC.refreshMaster({url:AURORA_MASTER_URL})
+      : await window.AuroraFC.loadMaster({url:AURORA_MASTER_URL});
+    if(!data || typeof data!=="object") throw new Error("Invalid JSON payload");
+    if(!Array.isArray(window.AuroraFC.getRows("Holdings",[]))) throw new Error("Holdings tab missing");
+    AURORA_MASTER_CACHE=data;
+    window.__AURORA_DATA_SOURCE__=window.AuroraFC.getDataStatus().source;
+    return data;
+  }
+
+  if(force) AURORA_MASTER_CACHE=null;
   if(AURORA_MASTER_CACHE) return AURORA_MASTER_CACHE;
   let lastError=null;
-  for(const url of AURORA_MASTER_URLS){
+  for(const baseUrl of AURORA_MASTER_URLS){
+    const separator=baseUrl.includes("?")?"&":"?";
+    const url=`${baseUrl}${separator}v=${Date.now()}`;
     try{
       const res=await fetch(url,{cache:"no-store",headers:{"Cache-Control":"no-cache"}});
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -2631,9 +2646,9 @@ async function fetchMaster(){
   throw new Error(`AuroraMaster could not be loaded${lastError?`: ${lastError.message}`:""}`);
 }
 async function loadData(force=false){
-  const btn=$("refreshBtn");if(btn){btn.disabled=true;btn.textContent="Loading…";}if(force)AURORA_MASTER_CACHE=null;
+  const btn=$("refreshBtn");if(btn){btn.disabled=true;btn.textContent="Loading…";}
   try{
-    const master=await fetchMaster(),tabs={};
+    const master=await fetchMaster(force),tabs={};
     TABS.forEach(t=>tabs[t]=readTab(master,t));
     state={
       holdings:tabs.Holdings||[],
@@ -2673,7 +2688,16 @@ async function loadData(force=false){
   finally{if(btn){btn.disabled=false;btn.textContent="Refresh";}}
 }
 $("refreshBtn")?.addEventListener("click",()=>loadData(true));
-loadData();
+
+if(window.AuroraFC?.onDataChanged){
+  window.AuroraFC.onDataChanged((master,meta)=>{
+    if(meta?.source!=="cross-tab-cache") return;
+    AURORA_MASTER_CACHE=master;
+    queueMicrotask(()=>loadData(false));
+  });
+}
+
+loadData(false);
 if(window.AuroraFC) AuroraFC.registerServiceWorker();
 </script>
 </div>
