@@ -516,7 +516,7 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 </style>
 <!-- Aurora universal workflow navigation -->
 <link href="aurora-navigation.css?v=20260729-crossbrowser-1" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260802-manager-black-header-1"></script>
+<script defer="" src="aurora-navigation.js?v=20260802-manager-header-stable-2"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
@@ -2604,7 +2604,15 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
       const sameSource=String(refreshAck.sourceFingerprint||'')===sourceFingerprint;
       const recentlyChecked=sameSource&&(Date.now()-Number(refreshAck.at||0))<12*60*60*1000;
 
-      if(age>8&&!recentlyChecked){
+      const now=new Date();
+      const day=now.getDay();
+      const previousSessionGrace=
+        day===0
+        || day===6
+        || (day===1&&now.getHours()<17);
+      const staleThreshold=previousSessionGrace?96:8;
+
+      if(age>staleThreshold&&!recentlyChecked){
         items.push({
           id:'refresh-data',
           fingerprint:sourceFingerprint,
@@ -2824,7 +2832,17 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   }
   function alertData(){
     const m=journeyMetrics(),alerts=[];const now='Now';
-    if(m.latest){const age=(Date.now()-m.latest.getTime())/36e5;if(age>8)alerts.push({level:age>26?'bad':'warn',icon:'↻',title:'Aurora data needs a refresh',text:`The newest dated row is ${age.toFixed(1)} hours old.`,time:'Data'});}
+    if(m.latest){
+      const age=(Date.now()-m.latest.getTime())/36e5;
+      const dateNow=new Date();
+      const day=dateNow.getDay();
+      const previousSessionGrace=
+        day===0
+        || day===6
+        || (day===1&&dateNow.getHours()<17);
+      const staleThreshold=previousSessionGrace?96:8;
+      if(age>staleThreshold)alerts.push({level:age>Math.max(26,staleThreshold)?'bad':'warn',icon:'↻',title:'Aurora data needs a refresh',text:`The newest dated row is ${age.toFixed(1)} hours old.`,time:'Data'});
+    }
     if(m.plan?.rows?.length)alerts.push({level:'ok',icon:'⇄',title:'Payday route is synced',text:`${m.plan.rows.map(r=>r.displayTicker||r.ticker).join(' / ')} • ${cash(num(m.plan.totalIncome))}/year estimated income.`,time:'Transfer'});else alerts.push({level:'warn',icon:'⇄',title:'Transfer deal sheet not synced',text:'Open the Transfer Centre before payday so the dashboard can read the final allocation.',time:'Transfer'});
     try{const d=nextDividendPayment();if(d)alerts.push({level:'ok',icon:'💷',title:`${d.ticker} dividend is next`,text:`Due ${d.date.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}${d.amountKnown?` • ${cash(d.amount)}`:''}.`,time:'Income'})}catch(_){}
     const weak=activeRows().filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60}).sort((a,b)=>strength(a)-strength(b)).slice(0,2);weak.forEach(r=>alerts.push({level:'warn',icon:'⚠',title:`${ticker(r)} is under review`,text:`Buy-strength score ${Math.round(strength(r))}. Open the player profile before adding more.`,time:'Squad'}));

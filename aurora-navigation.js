@@ -1488,11 +1488,47 @@
       "Open Aurora mission navigation"
     );
     toggle.title = "Open mission navigation";
-    toggle.style.removeProperty("display");
 
-    if(toggle.parentElement !== brand){
-      brand.insertBefore(toggle,brand.firstChild);
+    /*
+      Keep a stable page-header menu button in the black header.
+      The real navigation toggle remains hidden and only acts as the
+      controller, so it cannot detach and reappear halfway down the page.
+    */
+    let menuButton = brand.querySelector(
+      "#auroraPageHeaderMenuButton"
+    );
+
+    if(!menuButton){
+      menuButton = document.createElement("button");
+      menuButton.id = "auroraPageHeaderMenuButton";
+      menuButton.type = "button";
+      menuButton.textContent = "☰";
+      menuButton.setAttribute(
+        "aria-label",
+        "Open Aurora mission navigation"
+      );
+      menuButton.title = "Open mission navigation";
+      brand.insertBefore(menuButton,brand.firstChild);
     }
+
+    if(menuButton.dataset.auroraMenuBound !== "true"){
+      menuButton.dataset.auroraMenuBound = "true";
+      menuButton.addEventListener("click",function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        toggle.click();
+      });
+    }
+
+    if(toggle.parentElement !== document.body){
+      document.body.appendChild(toggle);
+    }
+
+    toggle.style.setProperty(
+      "display",
+      "none",
+      "important"
+    );
 
     let department = context.querySelector(
       ".aurora-page-header-department"
@@ -1764,7 +1800,13 @@
         flex:1 1 auto;
       }
 
-      body.aurora-page-owned-header .topbar-inner #auroraNavToggle{
+      body.aurora-page-owned-header #auroraNavToggle{
+        display:none!important;
+        visibility:hidden!important;
+        pointer-events:none!important;
+      }
+
+      body.aurora-page-owned-header .topbar-inner #auroraPageHeaderMenuButton{
         position:static!important;
         inset:auto!important;
         transform:none!important;
@@ -1772,7 +1814,10 @@
         height:42px!important;
         min-width:42px!important;
         flex:0 0 42px!important;
+        display:grid!important;
+        place-items:center!important;
         margin:0!important;
+        padding:0!important;
         border:1px solid rgba(125,211,252,.26)!important;
         border-radius:13px!important;
         color:#dff7ff!important;
@@ -1785,9 +1830,15 @@
         box-shadow:
           inset 0 1px 0 rgba(255,255,255,.07),
           0 8px 18px rgba(0,0,0,.20)!important;
+        font:900 20px/1 system-ui,sans-serif!important;
+        cursor:pointer!important;
         z-index:auto!important;
         opacity:1!important;
-        display:grid!important;
+      }
+
+      body.aurora-page-owned-header .fm-shell,
+      body.aurora-page-owned-header .fm-workspace{
+        overflow:visible!important;
       }
 
       body.aurora-page-owned-header .fm-page-path{
