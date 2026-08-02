@@ -4,7 +4,7 @@
 (function(global){
   "use strict";
 
-  const HERO_VERSION = "1.0.2-stable-page-header";
+  const HERO_VERSION = "1.1.0-nexus-step1";
 
   const CONFIG = Object.freeze({
     manager: {
@@ -64,6 +64,65 @@
         { label: "Gap to £625/month", value: "—", valueId: "heroTargetGap", note: "Progress loading…", noteId: "targetProgressText", tone: "amber", progress: 0, progressId: "targetProgressFill" },
         { label: "Portfolio Yield", value: "—", valueId: "portfolioYield", note: "IG ISA and Trading 212 holdings" },
         { label: "Board Confidence", value: "—", valueId: "portfolioStrength", note: "Overall club-health rating" }
+      ]
+    },
+    nexus: {
+      pageId: "nexus",
+      rootId: "nexus-overview",
+      rootClass: "aurora-section-anchor",
+      kicker: "Live club intelligence system",
+      greeting: "Aurora City FC headquarters",
+      greetingId: "nexusHeroGreeting",
+      titleMain: "Aurora",
+      titleSub: "Nexus HQ",
+      description: "Connecting the club's live intelligence, market context and manager instruction.",
+      descriptionId: "nexusHeroDescription",
+      image: "assets/aurora-city-fc/hero/nexus.PNG",
+      actions: [
+        { label: "Open Manager Dashboard", href: "AuroraCityFC_ManagerDashboard.html", primary: true },
+        { label: "Open Finance Department", href: "AuroraCityFC_FinanceDepartment.html" },
+        { label: "Open Transfer Centre", href: "AuroraCityFC_TransferCentre.html" }
+      ],
+      meta: [
+        { text: "Aurora generated: loading…", id: "nexusHeroUpdated" },
+        { text: "Market regime loading…", id: "nexusHeroRegimeMeta", strong: true },
+        { text: "Buy mode loading…", id: "nexusHeroBuyModeMeta" }
+      ],
+      priority: {
+        state: "loading",
+        stateLabel: "Reviewing",
+        stateId: "nexusHeroPriorityState",
+        title: "Aurora Brain is preparing today's instruction",
+        titleId: "nexusHeroPriorityTitle",
+        text: "The club intelligence engine is checking confidence, restrictions and the strongest permitted route.",
+        textId: "nexusHeroPriorityText",
+        nextEventLabel: "Current squad leader",
+        nextEvent: "Checking the latest ranking…",
+        nextEventId: "nexusHeroNextEvent",
+        nextEventNote: "Aurora is reading the shared intelligence feed.",
+        nextEventNoteId: "nexusHeroNextEventNote"
+      },
+      position: {
+        label: "Club intelligence",
+        value: "Assessing",
+        valueId: "nexusHeroPositionValue",
+        note: "Aurora is calculating the current squad and market position.",
+        noteId: "nexusHeroPositionNote",
+        rows: [
+          { label: "Market regime", value: "—", valueId: "nexusHeroMarketRegime" },
+          { label: "Buy mode", value: "—", valueId: "nexusHeroBuyMode" },
+          { label: "Restrictions", value: "—", valueId: "nexusHeroRestrictions" }
+        ],
+        brainNote: "Aurora Brain is connecting to the shared club data",
+        brainNoteId: "nexusHeroBrainNote"
+      },
+      kpis: [
+        { label: "Rated Portfolio Value", value: "—", valueId: "nexusHeroPortfolioValue", note: "Intelligence-rated holdings" },
+        { label: "Annual Income", value: "—", valueId: "nexusHeroAnnualIncome", note: "Current dividend run rate", tone: "green" },
+        { label: "Monthly Income", value: "—", valueId: "nexusHeroMonthlyIncome", note: "Average passive-income rate", tone: "green" },
+        { label: "Average Confidence", value: "—", valueId: "nexusHeroAverageConfidence", note: "Squad reading loading…", noteId: "nexusHeroConfidenceNote", tone: "amber", progress: 0, progressId: "nexusHeroConfidenceProgress" },
+        { label: "Positive News", value: "—", valueId: "nexusHeroPositiveNews", note: "Current portfolio stories" },
+        { label: "Rated Holdings", value: "—", valueId: "nexusHeroHoldingCount", note: "Aurora Brain squad size" }
       ]
     }
   });
