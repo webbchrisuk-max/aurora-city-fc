@@ -18,7 +18,7 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.2.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
@@ -108,6 +108,8 @@
     }
   ];
 
+  const STORAGE_SOURCE_KEYS = new Set(STORAGE_RULES.map(rule => rule.key));
+
   const subscribers = new Set();
   const watchedValues = new Map();
   let channel = null;
@@ -164,17 +166,32 @@
 
   function cleanStore(rows = readStore()) {
     const timestamp = now();
-    const seen = new Set();
+    const seenIds = new Set();
+    const seenStorageStates = new Set();
+
     return rows
       .filter(row => row && typeof row === 'object')
       .filter(row => !Number(row.expiresAt) || Number(row.expiresAt) > timestamp)
+      .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
       .filter(row => {
         const id = String(row.id || '');
-        if (!id || seen.has(id)) return false;
-        seen.add(id);
+        if (!id || seenIds.has(id)) return false;
+        seenIds.add(id);
+
+        const source = String(row.source || '');
+        if (STORAGE_SOURCE_KEYS.has(source)) {
+          const semanticState = [
+            source,
+            String(row.department || ''),
+            String(row.title || ''),
+            String(row.message || ''),
+            String(row.page || '')
+          ].join('|');
+          if (seenStorageStates.has(semanticState)) return false;
+          seenStorageStates.add(semanticState);
+        }
         return true;
       })
-      .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
       .slice(0, MAX_ITEMS);
   }
 
@@ -261,6 +278,11 @@
     const rows = cleanStore();
     const duplicate = rows.find(row => {
       if (item.dedupeKey && row.dedupeKey === item.dedupeKey && row.fingerprint === item.fingerprint) return true;
+      if (STORAGE_SOURCE_KEYS.has(String(item.source || '')) &&
+          String(row.source || '') === String(item.source || '') &&
+          String(row.title || '') === item.title &&
+          String(row.message || '') === item.message &&
+          String(row.page || '') === item.page) return true;
       return !item.dedupeKey && row.fingerprint === item.fingerprint && now() - Number(row.createdAt || 0) < 60000;
     });
     if (duplicate) return duplicate;
@@ -379,11 +401,14 @@
     const style = document.createElement('style');
     style.id = 'auroraSharedNotificationStyles';
     style.textContent = `
-      .aurora-shared-notification-section{margin-top:14px;padding-top:13px;border-top:1px solid rgba(148,163,184,.12)}
-      .aurora-shared-notification-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+      #beastNotificationPanel>.beast-panel-head{position:sticky;top:-16px;z-index:8;margin:-16px -16px 0;padding:16px 16px 12px;background:linear-gradient(180deg,rgba(7,20,40,.995),rgba(7,20,40,.97));border-bottom:1px solid rgba(148,163,184,.10)}
+      .aurora-shared-notification-section{margin-top:0;padding-top:0}
+      .aurora-shared-notification-head{position:sticky;top:58px;z-index:7;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 -16px 9px;padding:10px 16px;background:linear-gradient(180deg,rgba(5,17,35,.99),rgba(5,17,35,.96));border-bottom:1px solid rgba(148,163,184,.10);box-shadow:0 8px 20px rgba(0,0,0,.18)}
       .aurora-shared-notification-head strong{font-size:12px;color:#e5eefc}
       .aurora-shared-notification-head span{display:block;margin-top:2px;color:#8495ad;font-size:9px}
-      .aurora-shared-mark-read{border:1px solid rgba(96,165,250,.22);border-radius:999px;background:rgba(30,64,175,.12);color:#bfdbfe;padding:6px 8px;font-size:8px;font-weight:900;cursor:pointer}
+      .aurora-shared-notification-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+      .aurora-shared-mark-read,.aurora-shared-clear-all{border:1px solid rgba(96,165,250,.22);border-radius:999px;background:rgba(30,64,175,.12);color:#bfdbfe;padding:6px 8px;font-size:8px;font-weight:900;cursor:pointer}
+      .aurora-shared-clear-all{border-color:rgba(248,113,113,.24);background:rgba(127,29,29,.16);color:#fecaca}
       .aurora-shared-alert-list{display:grid;gap:8px}
       .aurora-shared-alert-list .beast-alert{color:inherit;text-decoration:none;cursor:pointer}
       .aurora-shared-alert-list .aurora-shared-unread{border-color:rgba(34,211,238,.30);background:rgba(8,47,73,.28);box-shadow:inset 3px 0 0 #22d3ee}
@@ -408,29 +433,38 @@
       section.innerHTML = `
         <div class="aurora-shared-notification-head">
           <div><strong>Department Notifications</strong><span>Shared updates from every Aurora page.</span></div>
-          <button class="aurora-shared-mark-read" id="auroraSharedMarkRead" type="button">Mark all read</button>
+          <div class="aurora-shared-notification-actions">
+            <button class="aurora-shared-mark-read" id="auroraSharedMarkRead" type="button">Mark all read</button>
+            <button class="aurora-shared-clear-all" id="auroraSharedClearAll" type="button">Clear all</button>
+          </div>
         </div>
         <div class="aurora-shared-alert-list" id="auroraSharedAlertList"></div>`;
-      nativeList.insertAdjacentElement('afterend', section);
+      const panelHead = panel.querySelector('.beast-panel-head');
+      if (panelHead) panelHead.insertAdjacentElement('afterend', section);
+      else nativeList.insertAdjacentElement('beforebegin', section);
+    } else {
+      const panelHead = panel.querySelector('.beast-panel-head');
+      if (panelHead && section.previousElementSibling !== panelHead) panelHead.insertAdjacentElement('afterend', section);
     }
+
+    nativeList.hidden = true;
+    nativeList.setAttribute('aria-hidden', 'true');
 
     dashboardBridge = {
       panel,
       badge,
       list: document.getElementById('auroraSharedAlertList'),
-      nativeUnread: badge.hidden ? 0 : Number.parseInt(badge.textContent || '0', 10) || 0,
       expectedTotal: null
     };
 
-    const syncNativeBadge = () => {
+    const keepSharedBadgeAuthoritative = () => {
       if (!dashboardBridge) return;
       const current = badge.hidden ? 0 : Number.parseInt(badge.textContent || '0', 10) || 0;
       if (dashboardBridge.expectedTotal !== null && current === dashboardBridge.expectedTotal) return;
-      dashboardBridge.nativeUnread = current;
       renderDashboardBridge();
     };
 
-    new MutationObserver(syncNativeBadge).observe(badge, { attributes: true, childList: true, characterData: true, subtree: true });
+    new MutationObserver(keepSharedBadgeAuthoritative).observe(badge, { attributes: true, childList: true, characterData: true, subtree: true });
 
     section.addEventListener('click', event => {
       const markAll = event.target.closest('#auroraSharedMarkRead');
@@ -439,13 +473,25 @@
         markAllRead();
         return;
       }
+      const clearAll = event.target.closest('#auroraSharedClearAll');
+      if (clearAll) {
+        event.preventDefault();
+        clear();
+        return;
+      }
       const alert = event.target.closest('[data-aurora-notification-id]');
       if (alert) markRead(alert.dataset.auroraNotificationId);
     });
 
-    panel.addEventListener('click', event => {
-      if (!event.target.closest('#auroraSharedMarkRead')) markAllRead();
-    });
+    const notificationButton = document.getElementById('beastNotificationButton');
+    if (notificationButton && !notificationButton.dataset.auroraScrollReset) {
+      notificationButton.dataset.auroraScrollReset = '1';
+      notificationButton.addEventListener('click', () => {
+        window.setTimeout(() => {
+          if (panel.classList.contains('open')) panel.scrollTop = 0;
+        }, 0);
+      });
+    }
 
     renderDashboardBridge();
     return true;
@@ -456,11 +502,10 @@
     const rows = list({ limit: 24 });
     if (dashboardBridge.list) dashboardBridge.list.innerHTML = dashboardMarkup(rows);
 
-    const sharedUnread = rows.filter(row => !row.read).length;
-    const total = Math.max(0, Number(dashboardBridge.nativeUnread) || 0) + sharedUnread;
-    dashboardBridge.expectedTotal = total;
-    dashboardBridge.badge.textContent = String(total);
-    dashboardBridge.badge.hidden = total === 0;
+    const sharedUnread = unreadCount();
+    dashboardBridge.expectedTotal = sharedUnread;
+    dashboardBridge.badge.textContent = String(sharedUnread);
+    dashboardBridge.badge.hidden = sharedUnread === 0;
   }
 
   function parseStored(value) {
@@ -536,9 +581,9 @@
 
   function handleStorageRule(rule, rawValue) {
     if (rawValue === null || rawValue === undefined || rawValue === '') return;
-    const fingerprint = hashString(rawValue);
-    const dedupeKey = `storage:${rule.key}:${fingerprint}`;
     const message = typeof rule.message === 'function' ? rule.message(rawValue) : String(rule.message || 'Aurora data updated.');
+    const fingerprint = hashString(`${rule.key}|${message}`);
+    const dedupeKey = `storage:${rule.key}`;
     add({
       department: rule.department,
       page: rule.page,
