@@ -1842,7 +1842,7 @@ tr:hover td{background:rgba(96,165,250,.06)}
   .deal-budget-context{max-width:none;text-align:left}
 }
 </style>
-<script src="AuroraFCData.js"></script>
+<script src="AuroraFCData.js?v=20260802-shared-data-1"></script>
 <style>
 
 .sell-desk-shell{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);gap:16px}
@@ -3077,7 +3077,6 @@ body{
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<script defer src="aurora-notifications.js?v=20260802-1"></script>
 </head>
 <body>
 <div class="fm-shell">
@@ -5735,18 +5734,51 @@ function renderAll(){
     {level:(state.intelligence||[]).length?'ok':'warn',title:(state.intelligence||[]).length?'Aurora Intelligence connected':'Aurora Intelligence missing',detail:(state.intelligence||[]).length?`${state.intelligence.length} intelligence rows available to the transfer desk.`:'AuroraIntelligence was not found in AuroraMaster.json.'}
   ];
 }
-async function fetchTab(tab){
+function transferRowsFromMaster(master,tab){
+  if(window.AuroraFC?.getTab && window.AuroraFC.getData() === master){
+    const sharedRows=window.AuroraFC.getTab(tab,[]);
+    if(Array.isArray(sharedRows)) return sharedRows;
+  }
+
+  const wanted=String(tab||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const containers=[master,master?.data,master?.tabs,master?.sheets,master?.feeds].filter(value=>value&&typeof value==='object');
+  for(const container of containers){
+    const key=Object.keys(container).find(candidate=>String(candidate).toLowerCase().replace(/[^a-z0-9]/g,'')===wanted);
+    const value=key ? container[key] : null;
+    if(Array.isArray(value)) return value;
+    if(Array.isArray(value?.rows)) return value.rows;
+    if(Array.isArray(value?.data)) return value.data;
+  }
+  return [];
+}
+
+async function ensureTransferMaster(force=false){
+  if(window.AuroraFC?.loadMaster){
+    window.AuroraFC.setMasterUrl(AURORA_MASTER_URL);
+    AURORA_MASTER_CACHE = force
+      ? await window.AuroraFC.refreshMaster({url:AURORA_MASTER_URL})
+      : await window.AuroraFC.loadMaster({url:AURORA_MASTER_URL});
+    return AURORA_MASTER_CACHE;
+  }
+
+  if(force) AURORA_MASTER_CACHE = null;
   if(!AURORA_MASTER_CACHE){
     const res = await fetch(AURORA_MASTER_URL, {cache:'no-store'});
     if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
   }
-  return Array.isArray(AURORA_MASTER_CACHE?.[tab]) ? AURORA_MASTER_CACHE[tab] : [];
+  return AURORA_MASTER_CACHE;
 }
-async function loadData(){
+
+async function fetchTab(tab){
+  const master=AURORA_MASTER_CACHE || await ensureTransferMaster(false);
+  return transferRowsFromMaster(master,tab);
+}
+async function loadData(force=false){
   const btn = $('refreshBtn');
   if(btn){ btn.textContent = 'Loading…'; btn.disabled = true; }
   try{
+    await ensureTransferMaster(force);
     const [holdings, watchlist, scout, auroraTimes, fxRates, livePrices, intelligence, briefing] = await Promise.all([
       fetchTab('Holdings'),
       fetchTab('Watchlist'),
@@ -5776,14 +5808,11 @@ async function loadData(){
     if(btn){ btn.textContent = 'Refresh'; btn.disabled = false; }
   }
 }
-$('refreshBtn')?.addEventListener('click', () => {
-  AURORA_MASTER_CACHE = null;
-  loadData();
-});
+$('refreshBtn')?.addEventListener('click', () => loadData(true));
 $('transferBudgetInput')?.addEventListener('input',()=>{manualAmounts.clear();renderAll();});
 ['corePotInput','coreMonthlyInput','etfPotInput','etfMonthlyInput','deploymentMonthInput'].forEach(id=>$(id)?.addEventListener('input',renderDeploymentPlan));
 $('nextPaydayInput')?.addEventListener('change',()=>{persistExitFundingSettings();renderExitFundingRoom();});
-$('refreshExitFunding')?.addEventListener('click',()=>{persistExitFundingSettings();AURORA_MASTER_CACHE=null;loadData();loadIncomingOffers(false);});
+$('refreshExitFunding')?.addEventListener('click',()=>{persistExitFundingSettings();loadData(true);loadIncomingOffers(false);});
 $('applyMonthlyBudget')?.addEventListener('click',()=>{readDeploymentInputs();const release=deploymentReleaseForMonth(deploymentPlan.currentMonth);if($('transferBudgetInput'))$('transferBudgetInput').value=release.total;routeMode='balanced';manualAmounts.clear();excludedTickers.clear();persistDeploymentPlan();renderAll();document.getElementById('best-return-allocation')?.scrollIntoView({behavior:'smooth',block:'start'});});
 document.addEventListener('change',event=>{
   const input=event.target.closest?.('[data-allocation-ticker]'); if(!input) return;
@@ -5874,7 +5903,7 @@ document.addEventListener('click',async event=>{
   const transactionId=button.dataset.undoRegistration; const label=button.dataset.undoLabel||transactionId;
   if(!window.confirm(`Undo this registration?\n\n${label}\n\nAurora will restore the previous Holdings data and log the reversal.`)) return;
   button.disabled=true;button.textContent='Undoing…';
-  try{const result=await postRegistration({action:'undoRegistration',transactionId,newTransactionId:`UNDO-${Date.now()}`,source:'Aurora City FC Transfer Centre',userAgent:navigator.userAgent});registrationMessage(result.message||'Registration was undone.','success');AURORA_MASTER_CACHE=null;await loadData();await loadRegistrationHistory();}
+  try{const result=await postRegistration({action:'undoRegistration',transactionId,newTransactionId:`UNDO-${Date.now()}`,source:'Aurora City FC Transfer Centre',userAgent:navigator.userAgent});registrationMessage(result.message||'Registration was undone.','success');await loadData(true);await loadRegistrationHistory();}
   catch(err){registrationMessage(err.message||'Undo failed.','error');button.disabled=false;button.textContent='Undo';}
 });
 $('resetTransferPlan')?.addEventListener('click',()=>{excludedTickers.clear();manualAmounts.clear();routeMode='balanced';const release=deploymentReleaseForMonth(deploymentPlan.currentMonth);if($('transferBudgetInput'))$('transferBudgetInput').value=release.total;renderAll();});
@@ -6399,15 +6428,13 @@ function startIncomingOfferLiveChecks(){
   if(incomingOfferLiveTimer) clearInterval(incomingOfferLiveTimer);
   incomingOfferLiveTimer=setInterval(()=>{
     if(incomingOffers.length){
-      AURORA_MASTER_CACHE=null;
-      loadData();
+      loadData(true);
     }
   },300000);
 }
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&incomingOffers.length){
-    AURORA_MASTER_CACHE=null;
-    loadData();
+    loadData(true);
   }
 });
 startIncomingOfferLiveChecks();
@@ -6464,6 +6491,14 @@ document.addEventListener('DOMContentLoaded',forcePostTransferImpactPlacement,{o
 window.addEventListener('load',forcePostTransferImpactPlacement,{once:true});
 setTimeout(forcePostTransferImpactPlacement,250);
 setTimeout(forcePostTransferImpactPlacement,1500);
+
+if(window.AuroraFC?.onDataChanged){
+  window.AuroraFC.onDataChanged((master,meta)=>{
+    if(meta?.source !== 'cross-tab-cache') return;
+    AURORA_MASTER_CACHE = master;
+    queueMicrotask(()=>loadData(false));
+  });
+}
 
 restoreDeploymentPlan();
 restoreTransferSettings();

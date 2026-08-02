@@ -1241,6 +1241,7 @@ body{
 </style>
 <!-- Aurora universal workflow navigation -->
 <link href="aurora-navigation.css?v=20260729-crossbrowser-1" rel="stylesheet"/>
+<script defer="" src="AuroraFCData.js?v=20260802-shared-data-1"></script>
 <script defer="" src="aurora-navigation.js?v=20260729-crossbrowser-1"></script>
 <script defer="" src="AuroraBrain.js?v=3.1.0"></script>
 <style id="nexus-brain-command-style">
@@ -2960,7 +2961,6 @@ body{
 }
 </style>
 
-<script defer src="aurora-notifications.js?v=20260802-1"></script>
 </head>
 <body>
 <div class="wrap">
@@ -3492,6 +3492,18 @@ function readMasterTab(master,label){
   return[];
 }
 async function loadAuroraMasterRobust(force=false){
+  if(window.AuroraFC?.loadMaster){
+    window.AuroraFC.setMasterUrl(AURORA_MASTER_URL);
+    const data=force
+      ? await window.AuroraFC.refreshMaster({url:AURORA_MASTER_URL})
+      : await window.AuroraFC.loadMaster({url:AURORA_MASTER_URL});
+    const status=window.AuroraFC.getDataStatus();
+    data.__aurora_loaded_from=status.fromCache
+      ? `${status.source} • ${status.url}`
+      : status.url;
+    return data;
+  }
+
   if(force)AURORA_MASTER_PROMISE=null;
   if(AURORA_MASTER_PROMISE)return AURORA_MASTER_PROMISE;
   const stamp=Date.now();
@@ -3906,7 +3918,7 @@ function nextExDividendFromRows(dividends){
 function renderRunway(dividends){const now=new Date();const year=now.getFullYear();const byMonth=Array.from({length:12},()=>({amount:0,count:0,next:null}));(dividends||[]).forEach(row=>{const pay=getCell(row,["pay_date","pay date","payment_date","payment date","date","Date"]);const amount=parseNum(getCell(row,["dividend_due","dividend due"]))||parseNum(getCell(row,["dividend_received","dividend received"]))||parseNum(getCell(row,["total_dividend","total dividend","amount","Amount"]));if(!pay||amount<=0)return;const d=parseDate(pay);if(!d||isNaN(d)||d.getFullYear()!==year)return;const m=byMonth[d.getMonth()];m.amount+=amount;m.count++;if(!m.next||d<m.next.d)m.next={d,ticker:getCell(row,["ticker","Ticker"])||"--",amount}});const max=Math.max(...byMonth.map(m=>m.amount),1);document.getElementById("dividendRunway").innerHTML=byMonth.map((m,i)=>{const cls=m.amount<=0?"":m.amount<max*.35?"weak":"covered";return `<div class="month-tile ${cls}"><div class="month-name">${MONTHS[i]}</div><div class="month-cash">£${money(m.amount,0)}</div><div class="month-count">${m.count?`${m.count} payment${m.count>1?"s":""}`:"No cash scheduled"}</div></div>`}).join("");const covered=byMonth.filter(m=>m.amount>0).length;setText("coveredMonths",`${covered}/12`);setText("incomeMonths",`${covered}/12`);setText("gapCount",`${12-covered}`);setText("gapMeta",`${12-covered} income gaps`);setText("runwayBadge",`${covered}/12 COVERED`);const best=byMonth.map((m,i)=>({...m,i})).sort((a,b)=>b.amount-a.amount)[0];const weakest=byMonth.map((m,i)=>({...m,i})).sort((a,b)=>a.amount-b.amount)[0];setText("bestMonth",MONTHS[best.i]);setText("bestMonthMeta",`£${money(best.amount,2)} expected`);setText("weakestMonth",MONTHS[weakest.i]);setText("weakestMonthMeta",weakest.amount>0?`£${money(weakest.amount,2)} expected`:"No scheduled cash");const nextEx=nextExDividendFromRows(dividends);if(nextEx){const days=daysAway(nextEx.d);setText("nextDividend",tickerName(nextEx.ticker));setText("nextDividendMeta",`Ex-div ${nextEx.d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})}${days===0?" • Today":days>0?` • ${days} days`:""}`)}else{setText("nextDividend","None");setText("nextDividendMeta","No future ex-div date found")}}
 
 /* ===================== SECTION: MAIN ENGINE ===================== */
-async function runNexus(){try{setText("syncBadge","DATA LIVE");const[holdings,dividends,watchlist,dailyPriceSummary,auroraMaster]=await Promise.all([fetchSheetJson(HOLDINGS_URL,"Holdings"),fetchSheetJson(DIVIDENDS_URL,"Dividends"),fetchSheetJson(WATCHLIST_URL,"Watchlist"),fetchSheetJson(DAILY_PRICE_SUMMARY_URL,"DailyPriceSummary"),loadAuroraMasterRobust()]);
+async function runNexus(force=false){try{setText("syncBadge","DATA LIVE");if(force)await loadAuroraMasterRobust(true);const[holdings,dividends,watchlist,dailyPriceSummary,auroraMaster]=await Promise.all([fetchSheetJson(HOLDINGS_URL,"Holdings"),fetchSheetJson(DIVIDENDS_URL,"Dividends"),fetchSheetJson(WATCHLIST_URL,"Watchlist"),fetchSheetJson(DAILY_PRICE_SUMMARY_URL,"DailyPriceSummary"),loadAuroraMasterRobust(false)]);
 setText("masterFeedStatus","LIVE");
 setText("masterFeedMeta",`Loaded from ${auroraMaster?.__aurora_loaded_from||"AuroraMaster.json"}`);
 if(window.AuroraBrain){
@@ -3922,7 +3934,16 @@ function updateTodayActionDeck(holdingsParsed,bestWatch,bestCore,monthlyIncome){
 
 /* ===================== SECTION: LOGIN + STARTUP ===================== */
 const AURORA_ACCESS_CODE=atob("V0UwOUJCWTE5ODI=").trim().toUpperCase();const AURORA_SESSION_KEY="aurora_hq_unlocked";let failedAuroraAttempts=0;function safeGetSession(){try{return localStorage.getItem(AURORA_SESSION_KEY)==="yes"}catch(e){return false}}function safeSetSession(){try{localStorage.setItem(AURORA_SESSION_KEY,"yes")}catch(e){}}function safeClearSession(){try{localStorage.removeItem(AURORA_SESSION_KEY)}catch(e){}}function normaliseAccessCode(v){return String(v||"").trim().replace(/\s+/g,"").toUpperCase()}function unlockAuroraHQ(){document.body.classList.remove("locked");const gate=document.getElementById("auroraBootGate");if(gate)gate.classList.add("hidden");safeSetSession()}function lockAuroraHQ(){safeClearSession();document.body.classList.add("locked");const gate=document.getElementById("auroraBootGate"),input=document.getElementById("auroraAccessInput"),err=document.getElementById("bootError"),btn=document.getElementById("auroraAccessBtn");if(gate)gate.classList.remove("hidden");if(btn)btn.disabled=false;if(input){input.disabled=false;input.value="";setTimeout(()=>input.focus(),120)}if(err)err.innerText=""}function runBootSequence(){const terminal=document.getElementById("bootTerminal"),bar=document.getElementById("bootProgressBar"),badge=document.getElementById("bootStatusBadge");if(!terminal||!bar)return;const lines=["Initialising Aurora Core...","Checking Holdings Sheet... PASSED","Checking Dividend Engine... PASSED","Checking Scouting Centre Link... PASSED","Checking Premier League Table... PASSED","Mission Target: £2,000/month loaded","Awaiting access code..."];terminal.innerHTML="";lines.forEach((line,i)=>{setTimeout(()=>{terminal.innerHTML+=`<div class="boot-line">${line}</div>`;terminal.scrollTop=terminal.scrollHeight;bar.style.width=`${Math.min(100,Math.round(((i+1)/lines.length)*100))}%`;if(i===lines.length-1&&badge)badge.innerText="LOCKED"},i*220)})}function initAuroraLogin(){const btn=document.getElementById("auroraAccessBtn"),input=document.getElementById("auroraAccessInput"),err=document.getElementById("bootError"),lockBtn=document.getElementById("lockHqBtn");if(safeGetSession())unlockAuroraHQ();else{runBootSequence();setTimeout(()=>input&&input.focus(),1600)}function check(){const val=normaliseAccessCode(input?.value);if(val===AURORA_ACCESS_CODE){failedAuroraAttempts=0;if(err)err.innerText="ACCESS GRANTED — LAUNCHING AURORA HQ";const badge=document.getElementById("bootStatusBadge"),bar=document.getElementById("bootProgressBar");if(badge)badge.innerText="ACCESS GRANTED";if(bar)bar.style.width="100%";setTimeout(unlockAuroraHQ,250);return}failedAuroraAttempts+=1;if(input){input.value="";input.focus()}if(failedAuroraAttempts>=3){if(err)err.innerText="AURORA SECURITY LOCK — too many failed attempts.";if(btn)btn.disabled=true;if(input)input.disabled=true;setTimeout(()=>{failedAuroraAttempts=0;if(btn)btn.disabled=false;if(input){input.disabled=false;input.focus()}if(err)err.innerText="ACCESS REQUIRED — try again."},4000)}else if(err)err.innerText=`ACCESS DENIED — ${3-failedAuroraAttempts} attempt${3-failedAuroraAttempts===1?"":"s"} before security lock.`}if(btn)btn.addEventListener("click",check);if(input)input.addEventListener("keydown",e=>{if(e.key==="Enter")check()});if(lockBtn)lockBtn.addEventListener("click",lockAuroraHQ)}
-document.addEventListener("DOMContentLoaded",()=>{document.body.classList.remove("locked");runNexus();setInterval(runNexus,300000)});
+document.addEventListener("DOMContentLoaded",()=>{
+  document.body.classList.remove("locked");
+  runNexus(false);
+  setInterval(()=>runNexus(true),300000);
+  if(window.AuroraFC?.onDataChanged){
+    window.AuroraFC.onDataChanged((_master,meta)=>{
+      if(meta?.source === "cross-tab-cache") queueMicrotask(()=>runNexus(false));
+    });
+  }
+});
 </script>
 <script>
 /* ===================== M6 CONNECTED MISSION PIPELINE ===================== */
@@ -4109,7 +4130,7 @@ function hydrate(brain){
 async function start(){
   try{
     const master=typeof loadAuroraMasterRobust==="function"
-      ? await loadAuroraMasterRobust(true)
+      ? await loadAuroraMasterRobust(false)
       : await fetch(`AuroraMaster.json?v=${Date.now()}`,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json()});
     if(!window.AuroraBrain?.create)throw new Error("AuroraBrain v3 did not load.");
     const brain=window.AuroraBrain.create(master);
