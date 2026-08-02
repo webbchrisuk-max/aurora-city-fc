@@ -2,7 +2,7 @@
 
 <html data-aurora-page="manager" lang="en">
 <head>
-<!-- Build: Aurora Manager Dashboard • Shared Hero Step 3 Load Fix • 2 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
+<!-- Build: Aurora Manager Dashboard • Single Header Fix • 2 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
 
@@ -652,7 +652,7 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-shared-hero-step3-load-fix-20260802" name="aurora-build"/>
+</style><meta content="manager-single-header-fix-20260802-1" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -1120,8 +1120,69 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 <script defer src="aurora-notifications.js?v=20260802-2"></script>
 
 <link rel="stylesheet" href="aurora-hero.css?v=20260802-manager-step3-fix1">
+
+<style id="auroraManagerSingleHeaderFix">
+/*
+ * Manager Dashboard owns its large dark crest header.
+ * aurora-navigation.js still supplies the working sidebar, but its separate
+ * universal/browser header is suppressed on this page to prevent two bars.
+ */
+html body.aurora-manager-dashboard-page{
+  padding-top:0!important;
+}
+body.aurora-manager-dashboard-page.aurora-browser-header-active{
+  padding-top:0!important;
+}
+body.aurora-manager-dashboard-page #auroraUniversalHeader,
+body.aurora-manager-dashboard-page #auroraBrowserFallbackHeader{
+  display:none!important;
+  visibility:hidden!important;
+  height:0!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+}
+body.aurora-manager-dashboard-page .fm-shell,
+body.aurora-manager-dashboard-page .fm-workspace{
+  margin-top:0!important;
+  padding-top:0!important;
+}
+body.aurora-manager-dashboard-page .fm-workspace > .topbar{
+  display:block!important;
+  position:sticky!important;
+  top:0!important;
+  margin-top:0!important;
+  z-index:2147482000!important;
+}
+body.aurora-manager-dashboard-page .fm-workspace > .topbar .topbar-inner{
+  padding-top:14px!important;
+}
+body.aurora-manager-dashboard-page #auroraNavToggle.aurora-manager-inline-toggle{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  display:grid!important;
+  flex:0 0 auto!important;
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  margin:0 2px 0 0!important;
+  z-index:auto!important;
+}
+@media(max-width:760px){
+  body.aurora-manager-dashboard-page .fm-workspace > .topbar .topbar-inner{
+    padding-top:10px!important;
+  }
+  body.aurora-manager-dashboard-page #auroraNavToggle.aurora-manager-inline-toggle{
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+  }
+}
+</style>
+
 </head>
-<body>
+<body class="aurora-manager-dashboard-page">
 <div class="fm-shell">
 <div class="fm-workspace">
 <div class="topbar">
@@ -1142,7 +1203,7 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 <button aria-label="Open dashboard controls" class="beast-icon-button" id="beastLayoutButton" title="Dashboard controls" type="button">⚙</button>
 <button aria-label="Toggle presentation mode" class="beast-icon-button" id="beastPresentationButton" title="Presentation mode" type="button">▣</button>
 </div>
-<span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
+<span class="fm-top-pill"><span class="fm-top-dot"></span>Live</span>
 </div>
 </div>
 </div>
@@ -3513,6 +3574,102 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
   window.addEventListener("pageshow",syncHero);
   window.addEventListener("focus",syncHero);
+})();
+</script>
+
+
+<script id="auroraManagerSingleHeaderGuard">
+(function(){
+  "use strict";
+
+  let scheduled = false;
+
+  function hideExtraHeader(doc){
+    if(!doc || !doc.body) return;
+
+    ["auroraUniversalHeader","auroraBrowserFallbackHeader"].forEach(function(id){
+      const header = doc.getElementById(id);
+      if(header){
+        header.style.setProperty("display","none","important");
+        header.setAttribute("aria-hidden","true");
+      }
+    });
+
+    doc.body.classList.remove("aurora-browser-header-active");
+    doc.body.style.setProperty("padding-top","0px","important");
+  }
+
+  function placeSidebarButtonInManagerHeader(){
+    const toggle = document.getElementById("auroraNavToggle");
+    const inner = document.querySelector(".fm-workspace > .topbar .topbar-inner");
+    const brand = inner && inner.querySelector(".brand");
+
+    if(!toggle || !inner || !brand) return;
+
+    if(toggle.parentElement !== inner){
+      inner.insertBefore(toggle,brand);
+    }
+
+    toggle.classList.add("aurora-manager-inline-toggle");
+    toggle.style.setProperty("display","grid","important");
+    toggle.style.setProperty("position","static","important");
+    toggle.style.setProperty("transform","none","important");
+  }
+
+  function applySingleHeader(){
+    scheduled = false;
+    hideExtraHeader(document);
+    placeSidebarButtonInManagerHeader();
+
+    /*
+     * Some installed-app builds expose the app-shell document to the page.
+     * Only suppress a recognised Aurora universal/browser duplicate there;
+     * unrelated parent headers are never touched.
+     */
+    try{
+      if(window.parent && window.parent !== window){
+        const parentDoc = window.parent.document;
+        const duplicate = parentDoc && (
+          parentDoc.getElementById("auroraUniversalHeader") ||
+          parentDoc.getElementById("auroraBrowserFallbackHeader")
+        );
+        if(duplicate){
+          hideExtraHeader(parentDoc);
+        }
+      }
+    }catch(_){
+      /* Cross-origin app shells are intentionally left alone. */
+    }
+  }
+
+  function scheduleApply(){
+    if(scheduled) return;
+    scheduled = true;
+    window.requestAnimationFrame(applySingleHeader);
+  }
+
+  const observer = new MutationObserver(scheduleApply);
+
+  function start(){
+    applySingleHeader();
+    observer.observe(document.documentElement,{
+      childList:true,
+      subtree:true,
+      attributes:true,
+      attributeFilter:["class","style"]
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded",start,{once:true});
+  }else{
+    start();
+  }
+
+  window.addEventListener("load",scheduleApply);
+  window.addEventListener("pageshow",scheduleApply);
+  window.addEventListener("focus",scheduleApply);
+  window.addEventListener("resize",scheduleApply);
 })();
 </script>
 
