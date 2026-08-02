@@ -6161,9 +6161,9 @@ body{
 <div>
 <span class="m11-eyebrow">CASH MOVEMENT INSTRUCTION</span>
 <h2>Broker Account Transfers</h2>
-<p>Before the route is ready, Aurora shows the Finance Department preview. Once the deal sheet assigns the shares, these figures become the exact cash needed in each broker account.</p>
+<p>The Finance Department authorises the total budget first. Once the deal sheet assigns the shares, Aurora calculates the exact cash needed in IG ISA and Trading 212.</p>
 </div>
-<span class="m12-transfer-status" data-state="preview" id="m12AccountTransferStatus">PREVIEW SPLIT</span>
+<span class="m12-transfer-status" data-state="preview" id="m12AccountTransferStatus">AWAITING ROUTE</span>
 </div>
 <div class="m12-transfer-grid">
 <article class="m12-transfer-card ig">
@@ -6183,7 +6183,7 @@ body{
 </article>
 </div>
 <div class="m12-transfer-command" id="m12TransferCommand">
-      Load the Finance Department mission to create the initial broker-cash preview.
+      Load the Finance Department mission, then build the share route before moving broker cash.
     </div>
 <div class="m12-transfer-actions">
 <button id="m12CopyAccountTransfers" type="button">Copy transfer instructions</button>
@@ -10299,164 +10299,142 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     const n = Number(String(value ?? "").replace(/[^0-9.-]/g,""));
     return Number.isFinite(n) ? n : 0;
   };
+  const round = value => Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
   const money = value => new Intl.NumberFormat(
     "en-GB",
-    {style:"currency",currency:"GBP"}
+    {style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}
   ).format(Math.max(0,Number(value || 0)));
 
   function mission(){
     return read(WEALTH_KEY);
   }
 
-  function fallbackPlan(){
+  function authorisedPlan(){
     const current = mission();
     const stored = read(ACCOUNT_KEY);
-    const budget = Math.max(
-      0,
-      Number(current?.budget || stored?.total || 0)
-    );
-
-    if(Array.isArray(current?.accountTransfers)){
-      const ig = current.accountTransfers.find(item =>
-        String(item.account || "").toUpperCase().includes("IG")
-      );
-      const t212 = current.accountTransfers.find(item =>
-        String(item.account || "").toUpperCase().includes("212")
-      );
-
-      return {
-        ig:Number(ig?.amount || 0),
-        t212:Number(t212?.amount || 0),
-        unassigned:Math.max(
-          0,
-          budget - Number(ig?.amount || 0) - Number(t212?.amount || 0)
-        ),
-        budget,
-        source:"FINANCE_PREVIEW",
-        status:"PREVIEW"
-      };
-    }
-
-    const preferred = String(
-      current?.preferredPlatform
-      || current?.preferredAccount
-      || "ig"
-    ).toLowerCase();
-
-    let ig = 0;
-    let t212 = 0;
-
-    if(preferred.includes("split")){
-      ig = Math.round((budget / 2) * 100) / 100;
-      t212 = Math.round((budget - ig) * 100) / 100;
-    }else if(preferred.includes("212")){
-      t212 = budget;
-    }else{
-      ig = budget;
-    }
-
+    const budget = round(Math.max(0,Number(current?.budget || stored?.budget || stored?.total || 0)));
     return {
-      ig,
-      t212,
-      unassigned:0,
+      ig:0,
+      t212:0,
+      unassigned:budget,
       budget,
-      source:"FINANCE_PREVIEW",
-      status:"PREVIEW"
+      total:budget,
+      purchases:[],
+      source:"FINANCE_AUTHORISED",
+      status:budget > 0 ? "AWAITING_ROUTE" : "WAITING",
+      missionId:current?.id || stored?.missionId || null
     };
   }
 
-  function allocationFromCard(card){
-    const stat = [...card.querySelectorAll(".m7-target-stat")]
-      .find(node =>
-        String(node.querySelector("small")?.textContent || "")
-          .toLowerCase()
-          .includes("allocation")
-      );
-
-    return number(stat?.querySelector("strong")?.textContent);
-  }
-
-  function accountFromCard(card,totals,preferred){
-    const label = String(
-      card.querySelector(".platform-tag")?.textContent || ""
-    ).toUpperCase();
-
-    const hasIg = label.includes("IG");
-    const has212 = label.includes("212");
+  function accountKeyFromLabel(label,totals,preferred){
+    const text = String(label || "").toUpperCase();
+    const hasIg = text.includes("IG");
+    const has212 = text.includes("212");
 
     if(hasIg && !has212) return "ig";
     if(has212 && !hasIg) return "t212";
 
     if(hasIg && has212){
-      if(preferred.includes("212") && !preferred.includes("split")){
-        return "t212";
-      }
-      if(preferred.includes("ig") && !preferred.includes("split")){
-        return "ig";
-      }
-
+      if(preferred.includes("212") && !preferred.includes("split")) return "t212";
+      if(preferred.includes("ig") && !preferred.includes("split")) return "ig";
       return totals.ig <= totals.t212 ? "ig" : "t212";
     }
-
     return "unassigned";
   }
 
-  function finalRoutePlan(){
+  function normalAccount(key){
+    if(key === "ig") return "IG ISA";
+    if(key === "t212") return "Trading 212 ISA";
+    return "Check platform";
+  }
+
+  function buildDetailedRoute(){
     const current = mission();
-    const fallback = fallbackPlan();
-    const preferred = String(
-      current?.preferredPlatform
-      || current?.preferredAccount
-      || "split"
-    ).toLowerCase();
+    const fallback = authorisedPlan();
+    const preferred = String(current?.preferredPlatform || current?.preferredAccount || "split").toLowerCase();
 
-    const cards = [...document.querySelectorAll(
-      "#m7TargetGrid .m7-target"
-    )];
+    let deal = null;
+    try {
+      if(typeof buildDealSheet === "function") deal = buildDealSheet();
+    } catch (_) {
+      deal = null;
+    }
 
-    if(!cards.length) return fallback;
+    if(!deal || !Array.isArray(deal.rows) || !deal.rows.length) return fallback;
 
     const totals = {ig:0,t212:0,unassigned:0};
-    let allocated = 0;
+    const purchases = [];
 
-    cards.forEach(card => {
-      const amount = allocationFromCard(card);
+    deal.rows.forEach((item,index) => {
+      const amount = round(Number(item?.amount || 0));
       if(!(amount > 0)) return;
 
-      const account = accountFromCard(
-        card,
-        totals,
-        preferred
-      );
+      const row = item.row || {};
+      let platformLabel = "Check platform";
+      try {
+        if(typeof platformFor === "function") platformLabel = platformFor(row.ticker);
+      } catch (_) {}
 
-      totals[account] += amount;
-      allocated += amount;
+      const accountKey = accountKeyFromLabel(platformLabel,totals,preferred);
+      totals[accountKey] = round(totals[accountKey] + amount);
+
+      let priceGbp = NaN;
+      try {
+        if(typeof unitPriceGbp === "function") priceGbp = unitPriceGbp(row);
+      } catch (_) {}
+
+      const estimatedShares = Number.isFinite(priceGbp) && priceGbp > 0
+        ? Math.floor(amount / priceGbp)
+        : null;
+
+      let ticker = String(row.ticker || "").replace(/^LON:/i,"").toUpperCase();
+      let company = String(row.name || row.company || "");
+      try {
+        if(typeof displayTicker === "function") ticker = displayTicker(row.ticker);
+        if(typeof displayName === "function") company = displayName(row);
+      } catch (_) {}
+
+      purchases.push({
+        rank:index + 1,
+        ticker,
+        canonicalTicker:String(row.ticker || ticker),
+        company,
+        account:normalAccount(accountKey),
+        amount,
+        estimatedShares,
+        estimatedPriceGbp:Number.isFinite(priceGbp) ? round(priceGbp) : null,
+        projectedIncome:round(Number(item.income || 0)),
+        quoteNote:Number.isFinite(estimatedShares) ? "Estimated from the live GBP unit price" : "Check platform quote / FX",
+        platformRule:String(platformLabel || "Check platform")
+      });
     });
 
+    const allocated = round(purchases.reduce((sum,item) => sum + Number(item.amount || 0),0));
     if(!(allocated > 0)) return fallback;
 
-    const budget = Math.max(
-      allocated,
-      Number(current?.budget || fallback.budget || 0)
-    );
-
-    const routeRemainder = Math.max(0,budget - allocated);
-    totals.unassigned += routeRemainder;
+    const budget = round(Math.max(allocated,Number(current?.budget || fallback.budget || deal.budget || 0)));
+    totals.unassigned = round(totals.unassigned + Math.max(0,budget - allocated));
 
     return {
-      ...totals,
+      ig:round(totals.ig),
+      t212:round(totals.t212),
+      unassigned:round(totals.unassigned),
       budget,
+      total:budget,
+      purchases,
       source:"TRANSFER_CENTRE_ROUTE",
       status:"FINAL_ROUTE",
-      targetCount:cards.length,
+      targetCount:purchases.length,
       generatedAt:new Date().toISOString(),
-      missionId:current?.id || null
+      missionId:current?.id || null,
+      routeName:String(deal.route || "Transfer Centre final route"),
+      projectedAnnualIncome:round(Number(deal.totalIncome || purchases.reduce((sum,item) => sum + item.projectedIncome,0)))
     };
   }
 
   function render(){
-    const plan = finalRoutePlan();
-    const isFinal = plan.source === "TRANSFER_CENTRE_ROUTE";
+    const plan = buildDetailedRoute();
+    const isFinal = plan.status === "FINAL_ROUTE";
 
     const ig = byId("m12IgCash");
     const t212 = byId("m12T212Cash");
@@ -10464,127 +10442,112 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     const command = byId("m12TransferCommand");
     const status = byId("m12AccountTransferStatus");
     const savedNote = byId("m12TransferSavedNote");
-
-    if(!ig || !t212 || !held || !command) return;
+    if(!ig || !t212 || !held || !command || !status) return;
 
     ig.textContent = money(plan.ig);
     t212.textContent = money(plan.t212);
     held.textContent = money(plan.unassigned);
 
     byId("m12IgCashNote").textContent = isFinal
-      ? "Total of purchases assigned to IG ISA"
-      : "Initial Finance Department preview";
-
+      ? `${plan.purchases.filter(item => item.account === "IG ISA").length} planned purchase${plan.purchases.filter(item => item.account === "IG ISA").length === 1 ? "" : "s"}`
+      : "Set after the final share route";
     byId("m12T212CashNote").textContent = isFinal
-      ? "Total of purchases assigned to Trading 212"
-      : "Initial Finance Department preview";
-
+      ? `${plan.purchases.filter(item => item.account === "Trading 212 ISA").length} planned purchase${plan.purchases.filter(item => item.account === "Trading 212 ISA").length === 1 ? "" : "s"}`
+      : "Set after the final share route";
     byId("m12UnassignedNote").textContent = isFinal
-      ? (
-          plan.unassigned > 0
-            ? "Holdback or cash not yet assigned by the approved route"
-            : "The complete mission has been assigned"
-        )
-      : "The final deal sheet can change the initial split";
+      ? (plan.unassigned > 0 ? "Approved cash holdback" : "The complete mission has been assigned")
+      : "Authorised cash awaiting share allocation";
 
     if(plan.budget <= 0){
-      command.textContent =
-        "Load the Finance Department mission to create the initial broker-cash preview.";
+      command.textContent = "Load the Finance Department investment mission first.";
       status.textContent = "WAITING";
       status.dataset.state = "preview";
       return;
     }
 
     if(isFinal){
-      command.innerHTML =
-        `<strong>Final cash instruction:</strong> Transfer ${money(plan.ig)} to IG ISA`
-        + ` and ${money(plan.t212)} to Trading 212 ISA.`
-        + (
-          plan.unassigned > 0
-            ? ` Keep ${money(plan.unassigned)} untransferred until Aurora assigns it or you approve a revised route.`
-            : ` The full ${money(plan.budget)} mission is now allocated.`
-        );
-
+      command.innerHTML = `<strong>Final cash instruction:</strong> Transfer ${money(plan.ig)} to IG ISA and ${money(plan.t212)} to Trading 212 ISA.${plan.unassigned > 0 ? ` Keep ${money(plan.unassigned)} untransferred.` : ` The full ${money(plan.budget)} mission is assigned.`}`;
       status.textContent = "FINAL ROUTE";
       status.dataset.state = "final";
     }else{
-      command.innerHTML =
-        `<strong>Initial preview:</strong> Transfer ${money(plan.ig)} to IG ISA`
-        + ` and ${money(plan.t212)} to Trading 212 ISA. `
-        + `Do not move the cash yet—the final share route will replace these preview figures.`;
-
-      status.textContent = "PREVIEW SPLIT";
+      command.innerHTML = `<strong>${money(plan.budget)} authorised.</strong> Do not transfer broker cash yet. Aurora is waiting for the share allocation to determine the exact account totals.`;
+      status.textContent = "AWAITING ROUTE";
       status.dataset.state = "preview";
     }
 
-    const saved = {
-      ...plan,
-      ig:Number(plan.ig.toFixed(2)),
-      t212:Number(plan.t212.toFixed(2)),
-      unassigned:Number(plan.unassigned.toFixed(2)),
-      updatedAt:new Date().toISOString()
-    };
-
+    const saved = {...plan,updatedAt:new Date().toISOString()};
     write(ACCOUNT_KEY,saved);
 
     const current = mission();
-    if(current && isFinal){
-      current.accountTransfers = [
-        {
-          account:"IG ISA",
-          amount:saved.ig,
-          status:"FINAL_ROUTE"
-        },
-        {
-          account:"Trading 212 ISA",
-          amount:saved.t212,
-          status:"FINAL_ROUTE"
-        }
-      ];
-      current.accountTransferHoldback = saved.unassigned;
-      current.accountTransferStatus = "FINAL_ROUTE";
-      current.accountTransferGeneratedAt = saved.updatedAt;
+    if(current){
+      if(isFinal){
+        current.accountTransfers = [
+          {account:"IG ISA",amount:saved.ig,status:"FINAL_ROUTE"},
+          {account:"Trading 212 ISA",amount:saved.t212,status:"FINAL_ROUTE"}
+        ];
+        current.accountTransferPurchases = saved.purchases;
+        current.finalPurchaseRoute = saved.purchases;
+        current.accountTransferHoldback = saved.unassigned;
+        current.accountTransferStatus = "FINAL_ROUTE";
+        current.accountTransferGeneratedAt = saved.updatedAt;
+        current.status = "FINAL_ROUTE_READY";
+      }else{
+        current.accountTransferStatus = "AWAITING_TRANSFER_CENTRE_ROUTE";
+      }
+      current.updatedAt = saved.updatedAt;
       write(WEALTH_KEY,current);
     }
 
     if(savedNote){
       savedNote.textContent = isFinal
-        ? `Final instruction saved for ${plan.targetCount || 0} planned purchase${plan.targetCount === 1 ? "" : "s"}.`
-        : "Initial preview saved; waiting for the final deal route.";
+        ? `Final instruction saved: ${plan.targetCount} planned purchase${plan.targetCount === 1 ? "" : "s"} • ${money(plan.projectedAnnualIncome)}/yr projected income.`
+        : "Mission authorised; exact broker transfers will appear after the deal route is built.";
     }
   }
 
   function copyInstructions(){
-    const plan = finalRoutePlan();
-    const text =
-      `Aurora broker cash transfers\n`
-      + `IG ISA: ${money(plan.ig)}\n`
-      + `Trading 212 ISA: ${money(plan.t212)}\n`
-      + `Keep untransferred: ${money(plan.unassigned)}\n`
-      + `${plan.source === "TRANSFER_CENTRE_ROUTE" ? "Final deal route" : "Finance preview"}`;
+    const plan = buildDetailedRoute();
+    const purchaseLines = Array.isArray(plan.purchases)
+      ? plan.purchases.map(item => {
+          const shares = Number.isFinite(Number(item.estimatedShares)) && Number(item.estimatedShares) > 0
+            ? `approx. ${Number(item.estimatedShares).toLocaleString("en-GB")} shares`
+            : (item.quoteNote || "check quote / FX");
+          return `${item.account}: ${item.ticker} ${money(item.amount)} (${shares})`;
+        }).join("\n")
+      : "";
+    const text = `Aurora broker cash transfers
+IG ISA: ${money(plan.ig)}
+Trading 212 ISA: ${money(plan.t212)}
+Keep untransferred: ${money(plan.unassigned)}${purchaseLines ? `
+
+Planned purchases
+${purchaseLines}` : ""}
+${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
 
     if(navigator.clipboard?.writeText){
       navigator.clipboard.writeText(text).then(() => {
         const note = byId("m12TransferSavedNote");
-        if(note) note.textContent = "Transfer instructions copied.";
+        if(note) note.textContent = "Final transfer and purchase instructions copied.";
       }).catch(() => {});
     }
   }
 
-  byId("m12CopyAccountTransfers")?.addEventListener(
-    "click",
-    copyInstructions
-  );
+  byId("m12CopyAccountTransfers")?.addEventListener("click",copyInstructions);
 
   const targetGrid = byId("m7TargetGrid");
   if(targetGrid){
     new MutationObserver(() => {
       clearTimeout(window.__auroraAccountTransferRender);
       window.__auroraAccountTransferRender = setTimeout(render,80);
-    }).observe(
-      targetGrid,
-      {childList:true,subtree:true,characterData:true}
-    );
+    }).observe(targetGrid,{childList:true,subtree:true,characterData:true});
+  }
+
+  const dealSheet = byId("finalDealSheet");
+  if(dealSheet){
+    new MutationObserver(() => {
+      clearTimeout(window.__auroraAccountTransferDealRender);
+      window.__auroraAccountTransferDealRender = setTimeout(render,100);
+    }).observe(dealSheet,{childList:true,subtree:true,characterData:true,attributes:true});
   }
 
   [
@@ -10594,37 +10557,27 @@ document.documentElement.dataset.transferFiveUpgradesDate = "2026-07-23";
     "m11MaximumRoute",
     "applyBestReturn",
     "applyBalancedRoute",
-    "resetTransferPlan"
-  ].forEach(id => {
-    byId(id)?.addEventListener(
-      "click",
-      () => setTimeout(render,280)
-    );
+    "resetTransferPlan",
+    "m7ApprovePlan"
+  ].forEach(id => byId(id)?.addEventListener("click",() => setTimeout(render,280)));
+
+  document.addEventListener("input",event => {
+    if(event.target?.matches?.(".allocation-input")) setTimeout(render,120);
+  });
+  document.addEventListener("change",event => {
+    if(event.target?.matches?.(".allocation-input")) setTimeout(render,120);
   });
 
   window.addEventListener("storage",event => {
-    if(
-      event.key === WEALTH_KEY
-      || event.key === ACCOUNT_KEY
-      || event.key === "aurora_trading_brain_decision_v1"
-    ){
-      setTimeout(render,80);
-    }
+    if(event.key === WEALTH_KEY || event.key === ACCOUNT_KEY || event.key === "aurora_trading_brain_decision_v1") setTimeout(render,80);
   });
-
-  window.addEventListener(
-    "aurora:wealth-mission",
-    () => setTimeout(render,100)
-  );
-
+  window.addEventListener("aurora:wealth-mission",() => setTimeout(render,100));
+  window.addEventListener("pageshow",() => setTimeout(render,180));
   window.addEventListener("load",() => {
     setTimeout(render,520);
     setTimeout(render,1500);
   });
-
-  if(document.readyState !== "loading"){
-    setTimeout(render,350);
-  }
+  if(document.readyState !== "loading") setTimeout(render,350);
 })();
 </script>
 <!-- Build: Aurora Sustainable Income Growth • 29 Jul 2026 -->
