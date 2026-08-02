@@ -2287,6 +2287,275 @@
       );
     }
 
+    /*
+      Aurora edge gestures
+      - Fine-pointer devices: moving to the extreme left edge opens the menu.
+      - Fine-pointer devices: scrolling down at the extreme right edge advances
+        to the next Payday Mission step.
+      - Touch devices: swipe inward from the left edge to open the menu, or
+        swipe left from the right edge to advance to the next mission step.
+      Horizontal tables/carousels and form controls are deliberately ignored.
+    */
+    (function installAuroraEdgeGestures(){
+      if(window.__AURORA_EDGE_GESTURES__) return;
+      window.__AURORA_EDGE_GESTURES__ = true;
+
+      const LEFT_MOUSE_EDGE = 12;
+      const RIGHT_MOUSE_EDGE = 26;
+      const TOUCH_EDGE = 30;
+      const TOUCH_TRIGGER = 82;
+      const WHEEL_TRIGGER = 120;
+      const NAVIGATION_COOLDOWN = 1250;
+
+      let lastPointerX = window.innerWidth / 2;
+      let wheelAmount = 0;
+      let wheelResetTimer = 0;
+      let lastNavigationAt = 0;
+      let touchMode = "";
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchHandled = false;
+
+      function isFinePointer(){
+        return Boolean(
+          window.matchMedia
+          && window.matchMedia(
+            "(hover:hover) and (pointer:fine)"
+          ).matches
+        );
+      }
+
+      function hasBlockingOverlay(){
+        return Boolean(
+          document.querySelector(
+            "dialog[open],"
+            + "[aria-modal='true']:not(#auroraNavPanel),"
+            + ".modal.open,.modal.show,.drawer.open,"
+            + ".analysis-player-drawer.open"
+          )
+        );
+      }
+
+      function isInteractiveTarget(target){
+        return Boolean(
+          target
+          && target.closest
+          && target.closest(
+            "input,textarea,select,button,a,"
+            + "[contenteditable='true'],[role='slider']"
+          )
+        );
+      }
+
+      function isInsideHorizontalScroller(target){
+        let node = target instanceof Element
+          ? target
+          : null;
+
+        while(node && node !== document.body){
+          const style = window.getComputedStyle(node);
+          const overflowX = style.overflowX;
+          const scrollable = (
+            (overflowX === "auto" || overflowX === "scroll")
+            && node.scrollWidth > node.clientWidth + 8
+          );
+
+          if(scrollable) return true;
+          node = node.parentElement;
+        }
+
+        return false;
+      }
+
+      function currentMissionIndex(){
+        for(let index = 0; index < WORKFLOW.length; index += 1){
+          if(isWorkflowActive(WORKFLOW[index].href)){
+            return index;
+          }
+        }
+
+        const samePage = [];
+        for(let index = 0; index < WORKFLOW.length; index += 1){
+          if(splitTarget(WORKFLOW[index].href).file === currentFile){
+            samePage.push(index);
+          }
+        }
+
+        if(samePage.length === 1){
+          return samePage[0];
+        }
+
+        return -1;
+      }
+
+      function goToNextMissionStep(){
+        const now = Date.now();
+        if(now - lastNavigationAt < NAVIGATION_COOLDOWN){
+          return false;
+        }
+
+        const currentIndex = currentMissionIndex();
+        const nextIndex = currentIndex >= 0
+          ? currentIndex + 1
+          : nextMissionIndex();
+
+        if(
+          nextIndex < 0
+          || nextIndex >= WORKFLOW.length
+          || !WORKFLOW[nextIndex]
+        ){
+          return false;
+        }
+
+        lastNavigationAt = now;
+        setOpen(false);
+        location.href = WORKFLOW[nextIndex].href;
+        return true;
+      }
+
+      document.addEventListener(
+        "pointermove",
+        function(event){
+          lastPointerX = event.clientX;
+
+          if(
+            !isFinePointer()
+            || event.pointerType === "touch"
+            || hasBlockingOverlay()
+            || document.body.classList.contains("aurora-nav-open")
+          ){
+            return;
+          }
+
+          if(event.clientX <= LEFT_MOUSE_EDGE){
+            setOpen(true);
+          }
+        },
+        {passive:true}
+      );
+
+      document.addEventListener(
+        "wheel",
+        function(event){
+          if(
+            !isFinePointer()
+            || hasBlockingOverlay()
+            || document.body.classList.contains("aurora-nav-open")
+            || isInteractiveTarget(event.target)
+            || isInsideHorizontalScroller(event.target)
+            || lastPointerX < window.innerWidth - RIGHT_MOUSE_EDGE
+            || event.deltaY <= 0
+            || Math.abs(event.deltaY) < Math.abs(event.deltaX)
+          ){
+            wheelAmount = 0;
+            return;
+          }
+
+          wheelAmount += Math.abs(event.deltaY);
+          window.clearTimeout(wheelResetTimer);
+          wheelResetTimer = window.setTimeout(function(){
+            wheelAmount = 0;
+          },500);
+
+          if(wheelAmount >= WHEEL_TRIGGER){
+            wheelAmount = 0;
+            if(goToNextMissionStep()){
+              event.preventDefault();
+            }
+          }
+        },
+        {passive:false}
+      );
+
+      document.addEventListener(
+        "touchstart",
+        function(event){
+          touchMode = "";
+          touchHandled = false;
+
+          if(
+            event.touches.length !== 1
+            || hasBlockingOverlay()
+            || isInteractiveTarget(event.target)
+            || isInsideHorizontalScroller(event.target)
+          ){
+            return;
+          }
+
+          const touch = event.touches[0];
+          touchStartX = touch.clientX;
+          touchStartY = touch.clientY;
+
+          if(
+            touchStartX <= TOUCH_EDGE
+            && !document.body.classList.contains("aurora-nav-open")
+          ){
+            touchMode = "open";
+          }else if(
+            touchStartX >= window.innerWidth - TOUCH_EDGE
+            && !document.body.classList.contains("aurora-nav-open")
+          ){
+            touchMode = "next";
+          }
+        },
+        {passive:true}
+      );
+
+      document.addEventListener(
+        "touchmove",
+        function(event){
+          if(
+            !touchMode
+            || touchHandled
+            || event.touches.length !== 1
+          ){
+            return;
+          }
+
+          const touch = event.touches[0];
+          const dx = touch.clientX - touchStartX;
+          const dy = touch.clientY - touchStartY;
+
+          if(Math.abs(dy) > Math.abs(dx) * 0.72){
+            return;
+          }
+
+          if(touchMode === "open" && dx >= TOUCH_TRIGGER){
+            touchHandled = true;
+            event.preventDefault();
+            setOpen(true);
+            return;
+          }
+
+          if(touchMode === "next" && dx <= -TOUCH_TRIGGER){
+            touchHandled = true;
+            event.preventDefault();
+            goToNextMissionStep();
+          }
+        },
+        {passive:false}
+      );
+
+      document.addEventListener(
+        "touchend",
+        function(){
+          touchMode = "";
+          touchHandled = false;
+        },
+        {passive:true}
+      );
+
+      window.addEventListener(
+        "resize",
+        function(){
+          lastPointerX = Math.min(
+            lastPointerX,
+            window.innerWidth
+          );
+        }
+      );
+    })();
+
     panel.addEventListener(
       "click",
       function(event){
