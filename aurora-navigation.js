@@ -195,7 +195,9 @@
     || "AuroraCityFC_NexusMaster.html"
   ).toLowerCase();
 
-  const currentHash = location.hash.toLowerCase();
+  function currentWorkflowHash(){
+    return location.hash.toLowerCase();
+  }
 
   function splitTarget(href){
     const parts = href.split("#");
@@ -209,7 +211,42 @@
     const target = splitTarget(href);
     return target.file === currentFile
       && target.hash
-      && target.hash === currentHash;
+      && target.hash === currentWorkflowHash();
+  }
+
+  function refreshWorkflowActiveState(){
+    const panel = document.getElementById("auroraNavPanel");
+    if(!panel) return;
+
+    panel.querySelectorAll(
+      ".aurora-nav-step[data-mission-index]"
+    ).forEach(function(stepElement){
+      const index = Number(
+        stepElement.dataset.missionIndex
+      );
+
+      const step = WORKFLOW[index];
+      const active = Boolean(
+        step && isWorkflowActive(step.href)
+      );
+
+      stepElement.classList.toggle(
+        "is-active",
+        active
+      );
+
+      const link = stepElement.querySelector(
+        ".aurora-nav-step-copy"
+      );
+
+      if(link){
+        if(active){
+          link.setAttribute("aria-current","step");
+        }else{
+          link.removeAttribute("aria-current");
+        }
+      }
+    });
   }
 
   function esc(value){
@@ -1321,9 +1358,31 @@
     const style = document.createElement("style");
     style.id = "auroraSofterMissionColours";
     style.textContent = `
-      /* Softer supporting text beneath each mission title */
-      #auroraNavPanel .aurora-nav-step-copy span{
+      /*
+        Keep the mission title as the visible link, while the smaller
+        supporting line underneath displays as ordinary text.
+      */
+      #auroraNavPanel .aurora-nav-step-copy,
+      #auroraNavPanel .aurora-nav-step-copy:link,
+      #auroraNavPanel .aurora-nav-step-copy:visited,
+      #auroraNavPanel .aurora-nav-step-copy:hover,
+      #auroraNavPanel .aurora-nav-step-copy:active{
+        color:inherit!important;
+        text-decoration:none!important;
+      }
+
+      #auroraNavPanel .aurora-nav-step-copy strong{
+        text-decoration:underline;
+        text-decoration-thickness:1px;
+        text-underline-offset:2px;
+      }
+
+      #auroraNavPanel .aurora-nav-step-copy span,
+      #auroraNavPanel .aurora-nav-step.is-next-mission .aurora-nav-step-copy span,
+      #auroraNavPanel .aurora-nav-step.is-active .aurora-nav-step-copy span{
         color:#9aa9bc!important;
+        -webkit-text-fill-color:#9aa9bc!important;
+        text-decoration:none!important;
         text-shadow:none!important;
       }
 
@@ -1349,11 +1408,7 @@
         color:#f3f7fc!important;
       }
 
-      /* Current/next mission remains highlighted without blue subtitle glare */
-      #auroraNavPanel .aurora-nav-step.is-next-mission .aurora-nav-step-copy span,
-      #auroraNavPanel .aurora-nav-step.is-active .aurora-nav-step-copy span{
-        color:#b8c4d4!important;
-      }
+      /* Active highlighting stays on the row, not on the helper text. */
     `;
 
     document.head.appendChild(style);
@@ -1739,62 +1794,25 @@
     const actions = shell.actions;
     const logout = shell.logout;
 
-    /*
-      The shell may already contain its own hamburger button. Reuse that
-      button instead of adding a second one, then wire it to the current
-      department page's real navigation toggle.
-    */
-    function isMenuControl(node){
-      if(!node || node === logout) return false;
-
-      const text = String(node.textContent || "")
-        .replace(/\s+/g," ")
-        .trim()
-        .toLowerCase();
-
-      const signature = [
-        node.id || "",
-        node.className || "",
-        node.getAttribute("aria-label") || "",
-        node.getAttribute("title") || "",
-        text
-      ].join(" ").toLowerCase();
-
-      return (
-        signature.includes("menu")
-        || signature.includes("navigation")
-        || text === "☰"
-        || text === "≡"
-        || text === "三"
-      );
-    }
-
-    const candidates = Array.from(
-      header.querySelectorAll("button")
-    ).filter(isMenuControl);
+    let button = parentDocument.getElementById(
+      "auroraTopHeaderMenuButton"
+    );
 
     /*
-      Prefer the shell's original button when it exists. A proxy left by
-      an earlier page is only used when no original control is available.
+      The app shell survives while department pages change.
+      Replace the proxy button so it always controls the current page.
     */
-    let button =
-      candidates.find(function(candidate){
-        return candidate.id !== "auroraTopHeaderMenuButton";
-      })
-      || parentDocument.getElementById("auroraTopHeaderMenuButton")
-      || null;
-
     if(button){
       const fresh = button.cloneNode(true);
       button.replaceWith(fresh);
       button = fresh;
     }else{
       button = parentDocument.createElement("button");
+      button.id = "auroraTopHeaderMenuButton";
+      button.type = "button";
+      button.textContent = "☰";
     }
 
-    button.id = "auroraTopHeaderMenuButton";
-    button.type = "button";
-    button.textContent = "☰";
     button.setAttribute(
       "aria-label",
       "Open Aurora mission navigation"
@@ -1819,10 +1837,7 @@
       "box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 18px rgba(0,0,0,.22)!important",
       "font:900 20px/1 system-ui,sans-serif!important",
       "cursor:pointer!important",
-      "z-index:auto!important",
-      "opacity:1!important",
-      "visibility:visible!important",
-      "pointer-events:auto!important"
+      "z-index:auto!important"
     ].join(";");
 
     button.onclick = function(event){
@@ -1839,17 +1854,9 @@
     };
 
     /*
-      Remove every other shell hamburger control. This leaves one visible,
-      working button on both the browser shell and installed app shell.
+      Exact Aurora GameShell layout:
+      menu button + session brand on the left.
     */
-    Array.from(
-      header.querySelectorAll("button")
-    ).forEach(function(candidate){
-      if(candidate !== button && isMenuControl(candidate)){
-        candidate.remove();
-      }
-    });
-
     if(brand){
       brand.style.setProperty("display","flex","important");
       brand.style.setProperty("align-items","center","important");
@@ -1861,6 +1868,10 @@
       header.prepend(button);
     }
 
+    /*
+      Current department route goes into the existing right-side
+      action group immediately before Log out.
+    */
     if(actions){
       actions.style.setProperty("display","flex","important");
       actions.style.setProperty("align-items","center","important");
@@ -1881,21 +1892,16 @@
     header.style.setProperty("align-items","center","important");
     header.style.setProperty("justify-content","space-between","important");
 
-    /*
-      Hide the page-local toggle only after the shell button is confirmed
-      in the DOM. This prevents the web version losing every menu button.
-    */
-    if(button.isConnected){
-      toggle.style.setProperty(
-        "display",
-        "none",
-        "important"
-      );
-    }else{
-      toggle.style.removeProperty("display");
-      return false;
-    }
+    toggle.style.setProperty(
+      "display",
+      "none",
+      "important"
+    );
 
+    /*
+      Remove the local universal header if this page was previously
+      rendered outside the app and then restored inside the shell.
+    */
     const localHeader =
       document.getElementById("auroraUniversalHeader");
 
@@ -1907,47 +1913,6 @@
     document.body.classList.add("aurora-running-in-app-shell");
 
     return true;
-  }
-
-  function removeDuplicateUniversalMenuButtons(header,toggle){
-    if(!header) return;
-
-    const left = header.querySelector(".aurora-universal-left");
-
-    /*
-      The web header must contain exactly one menu control: the live
-      #auroraNavToggle created by this shared navigation controller.
-      Remove stale proxy or legacy menu buttons without touching Log out.
-    */
-    if(left){
-      Array.from(left.querySelectorAll("button")).forEach(function(button){
-        if(button !== toggle){
-          button.remove();
-        }
-      });
-    }
-
-    Array.from(
-      header.querySelectorAll(
-        "#auroraTopHeaderMenuButton," +
-        "[data-aurora-menu-button]," +
-        ".aurora-menu-button," +
-        ".menu-button," +
-        ".hamburger-button"
-      )
-    ).forEach(function(button){
-      if(button !== toggle){
-        button.remove();
-      }
-    });
-
-    const staleProxy = document.getElementById(
-      "auroraTopHeaderMenuButton"
-    );
-
-    if(staleProxy && staleProxy.ownerDocument === document){
-      staleProxy.remove();
-    }
   }
 
   function buildUniversalAuroraHeader(toggle){
@@ -1994,8 +1959,6 @@
 
       document.body.prepend(header);
     }
-
-    removeDuplicateUniversalMenuButtons(header,toggle);
 
     const left = header.querySelector(".aurora-universal-left");
     const crest = header.querySelector(".aurora-universal-crest");
@@ -2045,13 +2008,6 @@
 
   function build(){
     if(document.getElementById("auroraNavPanel")) return;
-
-    /* Remove any stale web toggle left by an older navigation build. */
-    Array.from(
-      document.querySelectorAll("#auroraNavToggle")
-    ).forEach(function(button){
-      button.remove();
-    });
 
     injectUniversalHeaderStyles();
     injectSofterMissionColours();
@@ -2103,6 +2059,7 @@
             <a
               class="aurora-nav-step-copy"
               href="${esc(step.href)}"
+              ${active ? 'aria-current="step"' : ""}
             >
               <strong>${esc(step.title)}</strong>
               <span>${esc(step.note)}</span>
@@ -2244,6 +2201,7 @@
     `;
 
     document.body.append(toggle,overlay,panel);
+    refreshWorkflowActiveState();
 
     /*
       Clean up remnants created by older navigation builds.
@@ -2391,9 +2349,21 @@
     );
 
     window.addEventListener(
+      "hashchange",
+      refreshWorkflowActiveState
+    );
+
+    window.addEventListener(
+      "popstate",
+      refreshWorkflowActiveState
+    );
+
+    window.addEventListener(
       "pageshow",
       function(){
         setOpen(false);
+        refreshWorkflowActiveState();
+        buildUniversalAuroraHeader(toggle);
         buildUniversalAuroraHeader(toggle);
       }
     );
