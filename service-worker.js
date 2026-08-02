@@ -1,54 +1,42 @@
 /*
  * Aurora City FC — fast-update service worker
+ * Build: 2026-08-02 22:50 BST
  *
- * IMPORTANT:
- * Change CACHE_VERSION whenever you publish a new Aurora build.
- * Example: 2026-08-02-01 -> 2026-08-03-01
+ * Change CACHE_VERSION for every published Aurora build.
  */
 
-const CACHE_VERSION = '2026-08-02-01';
+const CACHE_VERSION = '2026-08-02-02';
 const CACHE_PREFIX = 'aurora-city-fc';
 
 const PAGE_CACHE = `${CACHE_PREFIX}-pages-${CACHE_VERSION}`;
 const ASSET_CACHE = `${CACHE_PREFIX}-assets-${CACHE_VERSION}`;
 const DATA_CACHE = `${CACHE_PREFIX}-data-${CACHE_VERSION}`;
 
-const CURRENT_CACHES = new Set([
-  PAGE_CACHE,
-  ASSET_CACHE,
-  DATA_CACHE
-]);
+const CURRENT_CACHES = new Set([PAGE_CACHE, ASSET_CACHE, DATA_CACHE]);
 
-const APP_SHELL = [
+/*
+ * Keep installation quick: only cache the small core shell here.
+ * Department pages are cached automatically when they are opened.
+ */
+const CORE_SHELL = [
   './',
+  './index.html',
   './AuroraCityFC_ManagerDashboard.html',
-  './AuroraCityFC_SquadHub.html',
-  './AuroraCityFC_TrainingGround.html',
-  './AuroraCityFC_Boardroom.html',
-  './AuroraCityFC_MediaCentre.html',
-  './AuroraCityFC_TransferCentre.html',
-  './manifest.json',
-  './AuroraFCData.js',
-
-  // Current Aurora artwork used by the supplied pages.
-  './assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png',
-  './assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png',
-  './assets/aurora-city-fc/EA9B5F84-50A9-439D-A901-16917F9A1E5B.png',
-  './assets/aurora-city-fc/fixture/payday.png'
+  './aurora-unified-shell.css',
+  './aurora-unified-shell.js',
+  './aurora-hero.css',
+  './aurora-hero.js',
+  './manifest.json'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(PAGE_CACHE);
 
-    // One missing optional file must not prevent the new worker installing.
     await Promise.allSettled(
-      APP_SHELL.map(url =>
-        cache.add(new Request(url, { cache: 'reload' }))
-      )
+      CORE_SHELL.map(url => cache.add(new Request(url, { cache: 'reload' })))
     );
 
-    // Activate this build immediately instead of leaving it waiting.
     await self.skipWaiting();
   })());
 });
@@ -71,7 +59,6 @@ self.addEventListener('activate', event => {
       })
     );
 
-    // Take control of all open Aurora pages immediately.
     await self.clients.claim();
   })());
 });
@@ -80,14 +67,13 @@ self.addEventListener('message', event => {
   const type = event.data?.type;
 
   if (type === 'SKIP_WAITING') {
-    self.skipWaiting();
+    event.waitUntil(self.skipWaiting());
     return;
   }
 
   if (type === 'CLEAR_AURORA_CACHES') {
     event.waitUntil((async () => {
       const cacheNames = await caches.keys();
-
       await Promise.all(
         cacheNames
           .filter(name =>
@@ -102,15 +88,14 @@ self.addEventListener('message', event => {
 
 self.addEventListener('fetch', event => {
   const request = event.request;
-
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
 
-  // Leave Firebase, Google APIs and all other external services untouched.
+  /* Firebase, Google APIs and remote GitHub images stay untouched. */
   if (url.origin !== self.location.origin) return;
 
-  // Never intercept the worker file itself.
+  /* The browser must always check the worker file itself directly. */
   if (url.pathname.endsWith('/service-worker.js')) return;
 
   if (
@@ -118,7 +103,7 @@ self.addEventListener('fetch', event => {
     request.destination === 'document' ||
     url.pathname.endsWith('.html')
   ) {
-    event.respondWith(networkFirst(request, PAGE_CACHE, 5000));
+    event.respondWith(networkFirst(request, PAGE_CACHE, 4500));
     return;
   }
 
@@ -132,12 +117,23 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  /*
+   * Images are network-first so replacing a hero under the same filename
+   * appears immediately. Cached artwork is still used if the network fails.
+   */
   if (
     request.destination === 'image' ||
-    request.destination === 'font' ||
-    /\.(?:png|jpe?g|webp|gif|svg|ico|woff2?|ttf|otf)$/i.test(url.pathname)
+    /\.(?:png|jpe?g|webp|gif|svg|ico)$/i.test(url.pathname)
   ) {
-    event.respondWith(fastAsset(request));
+    event.respondWith(networkFirst(request, ASSET_CACHE, 3200));
+    return;
+  }
+
+  if (
+    request.destination === 'font' ||
+    /\.(?:woff2?|ttf|otf)$/i.test(url.pathname)
+  ) {
+    event.respondWith(cacheFirst(request, ASSET_CACHE));
     return;
   }
 
@@ -162,13 +158,8 @@ async function networkFirst(request, cacheName, timeoutMs) {
   } catch (error) {
     if (cachedResponse) return cachedResponse;
 
-    if (
-      request.mode === 'navigate' ||
-      request.destination === 'document'
-    ) {
-      const dashboard =
-        await caches.match('./AuroraCityFC_ManagerDashboard.html');
-
+    if (request.mode === 'navigate' || request.destination === 'document') {
+      const dashboard = await caches.match('./AuroraCityFC_ManagerDashboard.html');
       if (dashboard) return dashboard;
 
       return new Response(
@@ -193,36 +184,16 @@ async function networkFirst(request, cacheName, timeoutMs) {
   }
 }
 
-/*
- * Images appear quickly from cache, while a live revalidation starts at the
- * same time. On a new service-worker version, APP_SHELL is refreshed during
- * installation, so changed Aurora hero artwork is ready immediately.
- */
-async function fastAsset(request) {
-  const cache = await caches.open(ASSET_CACHE);
+async function cacheFirst(request, cacheName) {
+  const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
+  if (cachedResponse) return cachedResponse;
 
-  const updatePromise = fetch(
-    new Request(request, { cache: 'no-cache' })
-  )
-    .then(async response => {
-      if (canCache(response)) {
-        await cache.put(request, response.clone());
-      }
-      return response;
-    })
-    .catch(() => null);
-
-  if (cachedResponse) {
-    // Do not delay the visible page while the newest asset is downloaded.
-    updatePromise.catch(() => null);
-    return cachedResponse;
+  const response = await fetch(request);
+  if (canCache(response)) {
+    await cache.put(request, response.clone());
   }
-
-  const networkResponse = await updatePromise;
-  if (networkResponse) return networkResponse;
-
-  return new Response('', { status: 504, statusText: 'Asset unavailable' });
+  return response;
 }
 
 function canCache(response) {
