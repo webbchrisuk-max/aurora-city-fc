@@ -12052,5 +12052,110 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 })();
 </script>
 
+
+<!-- Build: M61 Exact Payday Reconciliation • 02 Aug 2026 -->
+<script id="m61ExactPaydayReconciliation">
+(function(){
+  "use strict";
+
+  const VERSION=61;
+  const round=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
+
+  function actualPay(plan){
+    const direct=Number(plan?.actual);
+    if(Number.isFinite(direct))return round(Math.max(0,direct));
+    const input=Number(document.getElementById("m15ActualPay")?.value||0);
+    return round(Math.max(0,input));
+  }
+
+  function sumActions(plan,filter){
+    return round((plan?.actions||[])
+      .filter(action=>!filter||filter(action))
+      .reduce((sum,action)=>sum+Number(action?.amount||0),0));
+  }
+
+  function normalise(plan){
+    if(!plan||!Array.isArray(plan.actions))return plan;
+
+    const pay=actualPay(plan);
+    if(pay<=0)return plan;
+
+    let total=sumActions(plan);
+    let difference=round(pay-total);
+
+    /*
+      Individual pot calculations can create a one-penny rounding drift.
+      The retained-cash action is the balancing line, so adjust only that
+      line and never alter bills, pots, Holding Pot funding or shares.
+    */
+    if(Math.abs(difference)<=0.10&&Math.abs(difference)>=0.005){
+      const buffers=plan.actions.filter(action=>action?.type==="buffer");
+      const buffer=buffers[0];
+
+      if(buffer){
+        const corrected=round(Number(buffer.amount||0)+difference);
+        if(corrected>=0){
+          buffer.amount=corrected;
+          buffer.meta="Exact balancing amount so the payday plan equals the real wage received";
+        }
+      }else if(difference>0){
+        plan.actions.push({
+          id:"buffer:exact-payday-balance",
+          name:"Keep buffered",
+          amount:difference,
+          type:"buffer",
+          meta:"Exact balancing amount so the payday plan equals the real wage received"
+        });
+      }
+    }
+
+    total=sumActions(plan);
+    plan.buffered=sumActions(plan,action=>action?.type==="buffer");
+    plan.planned=total;
+    plan.exactPaydayReconciliationVersion=VERSION;
+    plan.exactPaydayDifference=round(pay-total);
+    return plan;
+  }
+
+  const baseCompute=window.m22ComputePlan;
+  if(typeof baseCompute==="function"){
+    const wrappedCompute=function(){
+      return normalise(baseCompute.apply(this,arguments));
+    };
+    window.m22ComputePlan=wrappedCompute;
+    try{m22ComputePlan=wrappedCompute}catch(_){ }
+  }
+
+  const baseCurrent=window.m22CurrentPlan;
+  if(typeof baseCurrent==="function"){
+    const wrappedCurrent=function(){
+      return normalise(baseCurrent.apply(this,arguments));
+    };
+    window.m22CurrentPlan=wrappedCurrent;
+    try{m22CurrentPlan=wrappedCurrent}catch(_){ }
+  }
+
+  function repairAndRender(){
+    try{
+      const mission=typeof window.m22EnsureState==="function"?window.m22EnsureState():null;
+      if(mission?.plan){
+        normalise(mission.plan);
+        if(typeof window.m22Save==="function")window.m22Save();
+      }
+      if(typeof window.m22Render==="function")window.m22Render();
+    }catch(error){
+      console.warn("Aurora exact-payday reconciliation could not refresh",error);
+    }
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",()=>setTimeout(repairAndRender,180),{once:true});
+  }else{
+    setTimeout(repairAndRender,180);
+  }
+  window.addEventListener("pageshow",()=>setTimeout(repairAndRender,180));
+})();
+</script>
+
 </body>
 </html>
