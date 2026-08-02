@@ -515,8 +515,8 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 }@media(max-width:760px){.fm-workspace .app{padding:12px 10px 24px!important}.beast-top-actions{position:static!important;right:auto!important;bottom:auto!important;margin-top:10px!important;width:auto!important}.manager-command-header{margin-top:10px!important}}
 </style>
 <!-- Aurora universal workflow navigation -->
-<link href="aurora-navigation.css?v=20260802-manager-page-header-3" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260802-manager-page-header-3"></script>
+<link href="aurora-navigation.css?v=20260802-manager-page-header-4" rel="stylesheet"/>
+<script defer="" src="aurora-navigation.js?v=20260802-manager-page-header-4"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
@@ -1200,6 +1200,59 @@ html[data-aurora-header="page"] body #auroraPageHeaderMenuButton{
     justify-content:flex-start!important;
     flex-wrap:wrap!important;
   }
+}
+</style>
+
+
+<style id="auroraManagerNoFloatingNavigationV3">
+/*
+  Manager Dashboard: the real Aurora navigation controller must remain
+  available to JavaScript, but it must never appear as an edge/floating
+  button. The visible controller belongs inside the retained dark header.
+*/
+html[data-aurora-page="manager"] body #auroraNavToggle{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  position:fixed!important;
+  left:-10000px!important;
+  top:-10000px!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:0!important;
+  height:0!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:0!important;
+  max-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  transform:none!important;
+  z-index:-1!important;
+}
+
+/* Only the proper header menu button is allowed to be visible. */
+html[data-aurora-page="manager"]
+body .fm-workspace > .topbar
+#auroraPageHeaderMenuButton{
+  display:grid!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  position:static!important;
+  left:auto!important;
+  top:auto!important;
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  margin:0!important;
+  z-index:auto!important;
 }
 </style>
 
@@ -3803,6 +3856,107 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   window.addEventListener("load",schedule);
   window.addEventListener("pageshow",schedule);
   window.addEventListener("focus",schedule);
+})();
+</script>
+
+
+<script id="auroraManagerNoFloatingNavigationScriptV3">
+(function(){
+  "use strict";
+
+  function lockRealToggle(){
+    document.querySelectorAll("#auroraNavToggle").forEach(function(toggle){
+      toggle.setAttribute("aria-hidden","true");
+      toggle.tabIndex = -1;
+
+      [
+        ["display","none"],
+        ["visibility","hidden"],
+        ["opacity","0"],
+        ["pointer-events","none"],
+        ["position","fixed"],
+        ["left","-10000px"],
+        ["top","-10000px"],
+        ["right","auto"],
+        ["bottom","auto"],
+        ["width","0"],
+        ["height","0"],
+        ["min-width","0"],
+        ["min-height","0"],
+        ["max-width","0"],
+        ["max-height","0"],
+        ["padding","0"],
+        ["margin","0"],
+        ["border","0"],
+        ["box-shadow","none"],
+        ["overflow","hidden"],
+        ["transform","none"],
+        ["z-index","-1"]
+      ].forEach(function(rule){
+        toggle.style.setProperty(rule[0],rule[1],"important");
+      });
+    });
+  }
+
+  function keepHeaderButtonConnected(){
+    const headerButton = document.getElementById(
+      "auroraPageHeaderMenuButton"
+    );
+    const realToggle = document.getElementById("auroraNavToggle");
+
+    if(
+      headerButton &&
+      realToggle &&
+      headerButton.dataset.auroraPermanentProxyV3 !== "true"
+    ){
+      headerButton.dataset.auroraPermanentProxyV3 = "true";
+      headerButton.addEventListener("click",function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        realToggle.click();
+      });
+    }
+  }
+
+  function apply(){
+    lockRealToggle();
+    keepHeaderButtonConnected();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded",apply,{once:true});
+  }else{
+    apply();
+  }
+
+  window.addEventListener("load",apply);
+  window.addEventListener("pageshow",apply);
+  window.addEventListener("focus",apply);
+
+  /*
+    The navigation script may rewrite the controller after startup.
+    Watch both inserted nodes and style/class changes, then reapply the lock.
+  */
+  let applying = false;
+  const observer = new MutationObserver(function(){
+    if(applying) return;
+    applying = true;
+    requestAnimationFrame(function(){
+      apply();
+      applying = false;
+    });
+  });
+
+  observer.observe(document.documentElement,{
+    childList:true,
+    subtree:true,
+    attributes:true,
+    attributeFilter:["style","class"]
+  });
+
+  [100,300,750,1500,3000,6000].forEach(function(delay){
+    window.setTimeout(apply,delay);
+  });
 })();
 </script>
 
