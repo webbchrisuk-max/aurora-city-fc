@@ -31,26 +31,38 @@
   display:none!important;
 }
 
-/* Small, understated opener. */
+/*
+  Hidden navigation controller.
+  It remains in the DOM so the approved top-header menu buttons and the
+  left-edge gesture can open the sidebar, but it must never float over a page.
+  The universal header rule injected by aurora-navigation.js overrides this
+  only when the controller is physically inside #auroraUniversalHeader.
+*/
 #auroraNavToggle{
-  position:fixed;
-  z-index:2147483002;
-  top:calc(9px + env(safe-area-inset-top,0px));
-  left:9px;
-  width:36px;
-  height:36px;
-  display:grid;
+  position:fixed!important;
+  z-index:-1!important;
+  top:-10000px!important;
+  left:-10000px!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:0!important;
+  height:0!important;
+  min-width:0!important;
+  min-height:0!important;
+  display:none!important;
   place-items:center;
   padding:0;
-  border:1px solid rgba(125,211,252,.18);
-  border-radius:11px;
-  background:rgba(3,11,24,.56);
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
   color:rgba(226,244,255,.78);
-  box-shadow:0 5px 15px rgba(0,0,0,.18);
-  backdrop-filter:blur(9px);
-  -webkit-backdrop-filter:blur(9px);
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
   cursor:pointer;
-  opacity:.72;
+  opacity:0!important;
+  overflow:hidden!important;
   -webkit-tap-highlight-color:transparent;
   transition:
     opacity .18s ease,
@@ -747,13 +759,31 @@ body.aurora-nav-open{
   color:#9cb0c9;
 }
 
+/* Payday Plan: keep the existing title link and make only its helper line plain. */
+#auroraNavPanel .aurora-nav-step[data-mission-index="0"] .aurora-nav-step-copy,
+#auroraNavPanel .aurora-nav-step[data-mission-index="0"] .aurora-nav-step-copy:link,
+#auroraNavPanel .aurora-nav-step[data-mission-index="0"] .aurora-nav-step-copy:visited,
+#auroraNavPanel .aurora-nav-step[data-mission-index="0"] .aurora-nav-step-copy:hover,
+#auroraNavPanel .aurora-nav-step[data-mission-index="0"] .aurora-nav-step-copy:active{
+  color:inherit!important;
+  text-decoration:none!important;
+}
+
+#auroraNavPanel .aurora-nav-step[data-mission-index="0"] .aurora-nav-step-copy strong{
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+
+#auroraNavPanel .aurora-nav-step[data-mission-index="0"] .aurora-nav-step-copy span{
+  text-decoration:none!important;
+}
+
 @media(max-width:520px){
-  #auroraNavToggle{
-    top:calc(7px + env(safe-area-inset-top,0px));
-    left:7px;
-    width:32px;
-    height:32px;
-    border-radius:10px;
+  #auroraUniversalHeader #auroraNavToggle{
+    width:32px!important;
+    height:32px!important;
+    min-width:32px!important;
+    border-radius:10px!important;
   }
 
   #auroraNavToggle span,
