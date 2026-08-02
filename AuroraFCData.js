@@ -504,6 +504,439 @@
     document.head.appendChild(style);
   }
 
+
+  /* ===================== SHARED AURORA DATA ENGINE ===================== */
+  const DATA_ENGINE_VERSION='1.0.0';
+  const MASTER_CACHE_KEY='aurora:master-cache:v1';
+  const MASTER_DATA_EVENT='aurora:data-changed';
+  const MASTER_STATUS_EVENT='aurora:data-status';
+  const MASTER_ERROR_EVENT='aurora:data-error';
+  const DEFAULT_CACHE_MAX_AGE_MS=5*60*1000;
+  const DEFAULT_CACHE_FALLBACK_MAX_AGE_MS=7*24*60*60*1000;
+
+  let masterUrl='./AuroraMaster.json';
+  let masterData=null;
+  let masterFingerprint='';
+  let masterPromise=null;
+  let masterStatus={
+    state:'idle',
+    source:'none',
+    url:masterUrl,
+    fetchedAt:null,
+    cachedAt:null,
+    fromCache:false,
+    stale:false,
+    error:null
+  };
+
+  const dataListeners=new Set();
+  const errorListeners=new Set();
+
+  function isObject(value){
+    return value!==null && typeof value==='object' && !Array.isArray(value);
+  }
+
+  function cloneStatus(){
+    return {...masterStatus};
+  }
+
+  function emitWindowEvent(name, detail){
+    if(typeof window==='undefined' || typeof window.dispatchEvent!=='function') return;
+    try{
+      window.dispatchEvent(new CustomEvent(name,{detail}));
+    }catch(_){
+      /* Older embedded browsers may not expose CustomEvent correctly. */
+    }
+  }
+
+  function emitStatus(){
+    emitWindowEvent(MASTER_STATUS_EVENT,cloneStatus());
+  }
+
+  function emitData(data, meta){
+    const detail={data,meta:{...meta}};
+    dataListeners.forEach(listener=>{
+      try{ listener(data,{...meta}); }
+      catch(err){ console.warn('Aurora data listener failed:',err); }
+    });
+    emitWindowEvent(MASTER_DATA_EVENT,detail);
+  }
+
+  function emitError(error, meta={}){
+    const normalized=error instanceof Error ? error : new Error(String(error || 'Unknown Aurora data error'));
+    const detail={error:normalized,meta:{...meta}};
+    errorListeners.forEach(listener=>{
+      try{ listener(normalized,{...meta}); }
+      catch(err){ console.warn('Aurora data error listener failed:',err); }
+    });
+    emitWindowEvent(MASTER_ERROR_EVENT,detail);
+  }
+
+  function safeStorageGet(key){
+    try{ return window.localStorage?.getItem(key) ?? null; }
+    catch(_){ return null; }
+  }
+
+  function safeStorageSet(key,value){
+    try{
+      window.localStorage?.setItem(key,value);
+      return true;
+    }catch(_){
+      return false;
+    }
+  }
+
+  function safeStorageRemove(key){
+    try{ window.localStorage?.removeItem(key); }
+    catch(_){ /* Storage can be blocked in private mode. */ }
+  }
+
+  function hashText(value){
+    const text=String(value || '');
+    let hash=2166136261;
+    for(let i=0;i<text.length;i+=1){
+      hash^=text.charCodeAt(i);
+      hash=Math.imul(hash,16777619);
+    }
+    return (hash>>>0).toString(36);
+  }
+
+  function fingerprintData(data){
+    try{ return hashText(JSON.stringify(data)); }
+    catch(_){ return `${Date.now()}-${Math.random()}`; }
+  }
+
+  function validateMaster(data){
+    if(!isObject(data)) throw new TypeError('AuroraMaster.json must contain a JSON object.');
+    return data;
+  }
+
+  function readCache(maxAgeMs=DEFAULT_CACHE_MAX_AGE_MS){
+    const raw=safeStorageGet(MASTER_CACHE_KEY);
+    if(!raw) return null;
+
+    try{
+      const record=JSON.parse(raw);
+      if(!record || record.version!==1 || !isObject(record.data)) return null;
+      const cachedAt=Number(record.cachedAt || 0);
+      if(!Number.isFinite(cachedAt) || cachedAt<=0) return null;
+      const ageMs=Math.max(0,Date.now()-cachedAt);
+      return {
+        data:record.data,
+        url:String(record.url || masterUrl),
+        cachedAt,
+        ageMs,
+        stale:ageMs>maxAgeMs
+      };
+    }catch(_){
+      safeStorageRemove(MASTER_CACHE_KEY);
+      return null;
+    }
+  }
+
+  function writeCache(data,url){
+    const record={
+      version:1,
+      engineVersion:DATA_ENGINE_VERSION,
+      url,
+      cachedAt:Date.now(),
+      data
+    };
+    safeStorageSet(MASTER_CACHE_KEY,JSON.stringify(record));
+    return record.cachedAt;
+  }
+
+  function updateStatus(patch){
+    masterStatus={...masterStatus,...patch};
+    emitStatus();
+    return cloneStatus();
+  }
+
+  function commitMaster(data, meta={}){
+    const validated=validateMaster(data);
+    const nextFingerprint=fingerprintData(validated);
+    const changed=nextFingerprint!==masterFingerprint;
+
+    masterData=validated;
+    masterFingerprint=nextFingerprint;
+    masterStatus={
+      ...masterStatus,
+      state:'ready',
+      source:meta.source || 'memory',
+      url:meta.url || masterUrl,
+      fetchedAt:meta.fetchedAt || masterStatus.fetchedAt || null,
+      cachedAt:meta.cachedAt || masterStatus.cachedAt || null,
+      fromCache:Boolean(meta.fromCache),
+      stale:Boolean(meta.stale),
+      error:null
+    };
+    emitStatus();
+
+    if(changed || meta.alwaysNotify){
+      emitData(masterData,{
+        ...cloneStatus(),
+        changed
+      });
+    }
+
+    return masterData;
+  }
+
+  function buildRequestUrl(url, force){
+    const absolute=new URL(url,window.location.href);
+    if(force) absolute.searchParams.set('_aurora',String(Date.now()));
+    return absolute.href;
+  }
+
+  async function fetchJson(url, options={}){
+    const timeoutMs=Number.isFinite(options.timeoutMs) ? Math.max(1000,options.timeoutMs) : 15000;
+    const controller=typeof AbortController==='function' ? new AbortController() : null;
+    const timer=controller ? window.setTimeout(()=>controller.abort(),timeoutMs) : null;
+
+    try{
+      const response=await fetch(buildRequestUrl(url,Boolean(options.force)),{
+        method:'GET',
+        cache:'no-store',
+        credentials:'same-origin',
+        headers:{Accept:'application/json'},
+        signal:controller?.signal
+      });
+
+      if(!response.ok){
+        throw new Error(`Aurora data request failed (${response.status} ${response.statusText || ''})`.trim());
+      }
+
+      return validateMaster(await response.json());
+    }finally{
+      if(timer!==null) window.clearTimeout(timer);
+    }
+  }
+
+  function setMasterUrl(url){
+    const next=String(url || '').trim();
+    if(!next) throw new TypeError('Aurora master data URL cannot be empty.');
+    masterUrl=next;
+    updateStatus({url:masterUrl});
+    return masterUrl;
+  }
+
+  function getMasterUrl(){
+    return masterUrl;
+  }
+
+  function getData(){
+    return masterData;
+  }
+
+  function normalizeLookupKey(value){
+    return String(value || '').trim().toLowerCase().replace(/[\s_-]+/g,'');
+  }
+
+  function findObjectKey(object, requestedKey){
+    if(!isObject(object)) return null;
+    if(Object.prototype.hasOwnProperty.call(object,requestedKey)) return requestedKey;
+    const normalized=normalizeLookupKey(requestedKey);
+    return Object.keys(object).find(key=>normalizeLookupKey(key)===normalized) || null;
+  }
+
+  function readPath(object,path){
+    const parts=Array.isArray(path)
+      ? path
+      : String(path || '').split('.').map(part=>part.trim()).filter(Boolean);
+    let current=object;
+
+    for(const part of parts){
+      const key=findObjectKey(current,part);
+      if(key===null) return undefined;
+      current=current[key];
+    }
+    return current;
+  }
+
+  function getSection(path,fallback=null){
+    if(masterData===null) return fallback;
+
+    const direct=readPath(masterData,path);
+    if(direct!==undefined) return direct;
+
+    const containers=['tabs','sheets','sections','data'];
+    for(const containerName of containers){
+      const containerKey=findObjectKey(masterData,containerName);
+      if(containerKey===null) continue;
+      const nested=readPath(masterData[containerKey],path);
+      if(nested!==undefined) return nested;
+    }
+
+    return fallback;
+  }
+
+  function getTab(name,fallback=[]){
+    return getSection(name,fallback);
+  }
+
+  function getDataStatus(){
+    const status=cloneStatus();
+    return {
+      ...status,
+      loaded:masterData!==null,
+      freshness:masterData ? freshness(masterData) : null
+    };
+  }
+
+  function onDataChanged(callback,options={}){
+    if(typeof callback!=='function') throw new TypeError('Aurora data listener must be a function.');
+    dataListeners.add(callback);
+
+    if(options.immediate && masterData!==null){
+      try{ callback(masterData,{...getDataStatus(),changed:false}); }
+      catch(err){ console.warn('Aurora immediate data listener failed:',err); }
+    }
+
+    return ()=>dataListeners.delete(callback);
+  }
+
+  function onDataError(callback){
+    if(typeof callback!=='function') throw new TypeError('Aurora error listener must be a function.');
+    errorListeners.add(callback);
+    return ()=>errorListeners.delete(callback);
+  }
+
+  async function loadMaster(options={}){
+    const url=String(options.url || masterUrl);
+    const force=Boolean(options.force);
+    const preferCache=options.preferCache!==false;
+    const allowCacheFallback=options.allowCacheFallback!==false;
+    const cacheMaxAgeMs=Number.isFinite(options.cacheMaxAgeMs)
+      ? Math.max(0,options.cacheMaxAgeMs)
+      : DEFAULT_CACHE_MAX_AGE_MS;
+    const fallbackMaxAgeMs=Number.isFinite(options.fallbackMaxAgeMs)
+      ? Math.max(0,options.fallbackMaxAgeMs)
+      : DEFAULT_CACHE_FALLBACK_MAX_AGE_MS;
+
+    if(!force && masterData!==null && masterStatus.url===url){
+      return masterData;
+    }
+
+    if(!force && masterPromise) return masterPromise;
+
+    if(!force && preferCache){
+      const cached=readCache(cacheMaxAgeMs);
+      if(cached && !cached.stale && cached.url===url){
+        return commitMaster(cached.data,{
+          source:'cache',
+          url,
+          cachedAt:cached.cachedAt,
+          fromCache:true,
+          stale:false
+        });
+      }
+    }
+
+    updateStatus({
+      state:'loading',
+      source:'network',
+      url,
+      fromCache:false,
+      stale:false,
+      error:null
+    });
+
+    masterPromise=(async()=>{
+      try{
+        const data=await fetchJson(url,{force,timeoutMs:options.timeoutMs});
+        const fetchedAt=Date.now();
+        const cachedAt=writeCache(data,url);
+        return commitMaster(data,{
+          source:'network',
+          url,
+          fetchedAt,
+          cachedAt,
+          fromCache:false,
+          stale:false
+        });
+      }catch(error){
+        const fallback=allowCacheFallback ? readCache(fallbackMaxAgeMs) : null;
+        if(fallback && fallback.url===url && !fallback.stale){
+          commitMaster(fallback.data,{
+            source:'cache-fallback',
+            url,
+            cachedAt:fallback.cachedAt,
+            fromCache:true,
+            stale:true
+          });
+          emitError(error,{url,recoveredFromCache:true});
+          return masterData;
+        }
+
+        updateStatus({
+          state:'error',
+          source:'network',
+          url,
+          fromCache:false,
+          stale:false,
+          error:error instanceof Error ? error.message : String(error)
+        });
+        emitError(error,{url,recoveredFromCache:false});
+        throw error;
+      }finally{
+        masterPromise=null;
+      }
+    })();
+
+    return masterPromise;
+  }
+
+  function refreshMaster(options={}){
+    return loadMaster({...options,force:true,preferCache:false});
+  }
+
+  function clearCache(options={}){
+    safeStorageRemove(MASTER_CACHE_KEY);
+
+    if(options.memory!==false){
+      masterData=null;
+      masterFingerprint='';
+      masterPromise=null;
+      masterStatus={
+        state:'idle',
+        source:'none',
+        url:masterUrl,
+        fetchedAt:null,
+        cachedAt:null,
+        fromCache:false,
+        stale:false,
+        error:null
+      };
+      emitStatus();
+    }
+
+    return true;
+  }
+
+  function installCrossTabDataSync(){
+    if(typeof window==='undefined' || !window.addEventListener) return;
+
+    window.addEventListener('storage',event=>{
+      if(event.key!==MASTER_CACHE_KEY || !event.newValue) return;
+      try{
+        const record=JSON.parse(event.newValue);
+        if(!record || record.version!==1 || !isObject(record.data)) return;
+        if(String(record.url || masterUrl)!==masterUrl) return;
+        if(Number(record.cachedAt || 0)<=Number(masterStatus.cachedAt || 0)) return;
+
+        commitMaster(record.data,{
+          source:'cross-tab-cache',
+          url:masterUrl,
+          cachedAt:Number(record.cachedAt || Date.now()),
+          fromCache:true,
+          stale:false
+        });
+      }catch(_){
+        /* Ignore invalid cache events from older builds. */
+      }
+    });
+  }
+
   function registerServiceWorker(){
     if(!('serviceWorker' in navigator)) return;
 
@@ -522,9 +955,16 @@
 
   window.AURORA_PLATFORM_RULES=PLATFORM_RULES;
   window.AURORA_ACCOUNT_AVAILABILITY=ACCOUNT_AVAILABILITY;
+  installCrossTabDataSync();
+
   window.AuroraFC=Object.freeze({
     PLATFORM_RULES,
     ACCOUNT_AVAILABILITY,
+    DATA_ENGINE_VERSION,
+    MASTER_CACHE_KEY,
+    MASTER_DATA_EVENT,
+    MASTER_STATUS_EVENT,
+    MASTER_ERROR_EVENT,
     shortTicker,
     normalizeAccount,
     platformFor,
@@ -533,6 +973,19 @@
     generatedAt,
     freshness,
     setFreshness,
+    setMasterUrl,
+    getMasterUrl,
+    loadMaster,
+    refreshMaster,
+    loadData:loadMaster,
+    refreshData:refreshMaster,
+    getData,
+    getSection,
+    getTab,
+    getDataStatus,
+    onDataChanged,
+    onDataError,
+    clearCache,
     registerServiceWorker
   });
 })();
