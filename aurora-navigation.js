@@ -1530,17 +1530,16 @@
       "important"
     );
 
-    let department = context.querySelector(
+    /*
+      The department is already shown beneath Aurora City FC on the
+      left side of the black header. Remove the duplicate right-side
+      department label so each page name appears only once.
+    */
+    const duplicateDepartment = context.querySelector(
       ".aurora-page-header-department"
     );
 
-    if(!department){
-      department = document.createElement("span");
-      department.className = "aurora-page-header-department";
-      context.appendChild(department);
-    }
-
-    department.textContent = currentAuroraDepartment();
+    if(duplicateDepartment) duplicateDepartment.remove();
 
     let logout = context.querySelector(
       ".aurora-page-header-logout"
@@ -1555,6 +1554,18 @@
     }
 
     wirePageHeaderLogout(logout,shell);
+
+    /*
+      Keep one compact live state directly beside Log out. The green
+      dot remains, while the repeated "Manager Session" wording is
+      shortened to the single word "Live".
+    */
+    const livePill = context.querySelector(".fm-top-pill");
+
+    if(livePill){
+      livePill.innerHTML = '<span class="fm-top-dot"></span>Live';
+      context.insertBefore(livePill,logout);
+    }
 
     const localHeader = document.getElementById(
       "auroraUniversalHeader"
