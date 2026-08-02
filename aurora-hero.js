@@ -1,54 +1,71 @@
 /* Aurora City FC — Shared Master Hero prototype
-   Step 2: standalone Manager Dashboard master design.
-   Existing Aurora pages are not modified by this file. */
+   Shared Manager Dashboard master hero.
+   Step 3: connected to the live Manager Dashboard while remaining reusable by other departments. */
 (function(global){
   "use strict";
 
-  const HERO_VERSION = "1.0.0-prototype";
+  const HERO_VERSION = "1.0.0-manager-connected";
 
   const CONFIG = Object.freeze({
     manager: {
       pageId: "manager",
+      rootId: "club-overview",
+      rootClass: "aurora-section-anchor",
       kicker: "Live manager command centre",
       sessionLabel: "Manager session live",
+      clockId: "managerHeroTime",
       greeting: "Welcome back, Webby",
+      greetingId: "managerHeroGreeting",
       titleMain: "Manager",
       titleSub: "Command Centre",
-      description: "The latest club position, recruitment route, daily priority and income target — all in one command view.",
+      description: "Loading the latest club position, recruitment route and income target.",
+      descriptionId: "heroSub",
       image: "assets/aurora-city-fc/hero/managerdash.PNG",
       actions: [
-        { label: "Open Decision Queue", href: "#decision-queue", primary: true, count: 2 },
+        { label: "Open Decision Queue", type: "button", primary: true, id: "managerHeroDecisionButton", count: 0, countId: "managerHeroDecisionCount" },
         { label: "Open Transfer Centre", href: "AuroraCityFC_TransferCentre.html" },
         { label: "View Learning Centre", href: "AuroraCityFC_LearningCentre.html" }
       ],
-      meta: ["Last updated: just now", "Premier League", "Next promotion secured"],
+      meta: [
+        { text: "Last updated: loading…", id: "lastUpdated" },
+        { text: "Loading…", id: "currentDivision", strong: true },
+        { text: "Next promotion loading…", id: "divisionProgress" }
+      ],
       priority: {
-        state: "clear",
-        stateLabel: "Markets closed",
-        title: "Markets closed — hold discipline",
-        text: "AuroraData is current. The latest comparison is from the last market session, so no price-led action is required until markets reopen.",
+        state: "loading",
+        stateLabel: "Reviewing",
+        stateId: "managerHeroPriorityState",
+        title: "Aurora is preparing today’s instruction",
+        titleId: "managerHeroPriorityTitle",
+        text: "The Decision Queue and daily briefing are being checked.",
+        textId: "managerHeroPriorityText",
         nextEventLabel: "Next club event",
-        nextEvent: "Monday market open",
-        nextEventNote: "Aurora will expect the next trading comparison after the market session."
+        nextEvent: "Checking schedule…",
+        nextEventId: "managerHeroNextEvent",
+        nextEventNote: "Aurora is reading the dividend calendar.",
+        nextEventNoteId: "managerHeroNextEventNote"
       },
       position: {
         label: "Club position",
-        value: "On course",
-        note: "The current income route remains aligned with the board-approved long-term target.",
+        value: "Assessing",
+        valueId: "managerHeroClubPosition",
+        note: "Aurora is calculating the latest board and income position.",
+        noteId: "managerHeroClubPositionNote",
         rows: [
-          ["Board confidence", "91%"],
-          ["Portfolio yield", "8.1%"],
-          ["Aurora brain", "Learning active"]
+          { label: "Board confidence", value: "—", valueId: "managerHeroPositionBoard" },
+          { label: "Portfolio yield", value: "—", valueId: "managerHeroPositionYield" },
+          { label: "Aurora brain", value: "Learning active", valueId: "managerHeroBrainStatus" }
         ],
-        brainNote: "Outcome reviews are running in the background"
+        brainNote: "Outcome reviews are running in the background",
+        brainNoteId: "managerHeroBrainNote"
       },
       kpis: [
-        { label: "Club Value", value: "£63,482", note: "+£1,248 from previous snapshot" },
-        { label: "Annual Income", value: "£5,126", note: "+£84 after latest purchases", tone: "green" },
-        { label: "Monthly Income", value: "£427.17", note: "Current passive-income run rate", tone: "green" },
-        { label: "Gap to £625/month", value: "£197.83", note: "68.3% of target reached", tone: "amber", progress: 68.3 },
-        { label: "Portfolio Yield", value: "8.1%", note: "IG ISA and Trading 212 holdings" },
-        { label: "Board Confidence", value: "91%", note: "Overall club-health rating" }
+        { label: "Club Value", value: "—", valueId: "heroClubValue", note: "Waiting for previous snapshot…", noteId: "clubValueTrend", noteClass: "hero-detail neutral" },
+        { label: "Annual Income", value: "—", valueId: "heroAnnualIncome", note: "Waiting for latest purchase…", noteId: "annualIncomeTrend", noteClass: "hero-detail neutral", tone: "green" },
+        { label: "Monthly Income", value: "—", valueId: "monthlyIncome", note: "Current passive-income run rate", hiddenValueId: "heroMonthlyIncome", tone: "green" },
+        { label: "Gap to £625/month", value: "—", valueId: "heroTargetGap", note: "Progress loading…", noteId: "targetProgressText", tone: "amber", progress: 0, progressId: "targetProgressFill" },
+        { label: "Portfolio Yield", value: "—", valueId: "portfolioYield", note: "IG ISA and Trading 212 holdings" },
+        { label: "Board Confidence", value: "—", valueId: "portfolioStrength", note: "Overall club-health rating" }
       ]
     }
   });
@@ -64,6 +81,15 @@
       .replaceAll("'", "&#039;");
   }
 
+  function attr(name, value){
+    const text = String(value || "").trim();
+    return text ? ` ${name}="${escapeHtml(text)}"` : "";
+  }
+
+  function classNames(...values){
+    return values.filter(Boolean).join(" ");
+  }
+
   function safeHref(value){
     const href = String(value || "#").trim();
     if (/^(?:javascript|data):/i.test(href)) return "#";
@@ -71,26 +97,41 @@
   }
 
   function actionMarkup(action){
-    const classes = `aurora-hero-action${action.primary ? " primary" : ""}`;
-    const badge = Number.isFinite(Number(action.count)) ? `<b>${escapeHtml(action.count)}</b>` : "";
-    return `<a class="${classes}" href="${escapeHtml(safeHref(action.href))}"><span>${escapeHtml(action.label)}</span>${badge}</a>`;
+    const classes = classNames("aurora-hero-action", action.primary && "primary");
+    const badge = Number.isFinite(Number(action.count))
+      ? `<b${attr("id", action.countId)}>${escapeHtml(action.count)}</b>`
+      : "";
+    const inner = `<span>${escapeHtml(action.label)}</span>${badge}`;
+    if (action.type === "button") {
+      return `<button class="${classes}" type="button"${attr("id", action.id)}>${inner}</button>`;
+    }
+    return `<a class="${classes}" href="${escapeHtml(safeHref(action.href))}"${attr("id", action.id)}>${inner}</a>`;
+  }
+
+  function metaMarkup(item){
+    if (typeof item === "string") return `<span>${escapeHtml(item)}</span>`;
+    const content = item.strong ? `<b>${escapeHtml(item.text)}</b>` : escapeHtml(item.text);
+    return `<span${attr("id", item.id)}>${content}</span>`;
   }
 
   function rowMarkup(row){
-    return `<div><small>${escapeHtml(row[0])}</small><strong>${escapeHtml(row[1])}</strong></div>`;
+    if (Array.isArray(row)) return `<div><small>${escapeHtml(row[0])}</small><strong>${escapeHtml(row[1])}</strong></div>`;
+    return `<div><small>${escapeHtml(row.label)}</small><strong${attr("id", row.valueId)}>${escapeHtml(row.value)}</strong></div>`;
   }
 
   function kpiMarkup(kpi, index){
     const tone = ["green", "amber"].includes(kpi.tone) ? ` ${kpi.tone}` : "";
     const progress = Number.isFinite(Number(kpi.progress))
-      ? `<div class="aurora-hero-progress"><div class="aurora-hero-progress-fill" data-hero-progress="${index}" style="width:${Math.max(0, Math.min(100, Number(kpi.progress)))}%"></div></div>`
+      ? `<div class="aurora-hero-progress"><div class="aurora-hero-progress-fill" data-hero-progress="${index}"${attr("id", kpi.progressId)} style="width:${Math.max(0, Math.min(100, Number(kpi.progress)))}%"></div></div>`
       : "";
-    return `<article class="aurora-hero-kpi${tone}" data-hero-kpi="${index}"><small>${escapeHtml(kpi.label)}</small><strong>${escapeHtml(kpi.value)}</strong><span>${escapeHtml(kpi.note)}</span>${progress}</article>`;
+    const noteClass = classNames(kpi.noteClass);
+    const hiddenValue = kpi.hiddenValueId ? `<span hidden${attr("id", kpi.hiddenValueId)}>${escapeHtml(kpi.value)}</span>` : "";
+    return `<article class="aurora-hero-kpi${tone}" data-hero-kpi="${index}"><small>${escapeHtml(kpi.label)}</small><strong${attr("id", kpi.valueId)}>${escapeHtml(kpi.value)}</strong><span${attr("id", kpi.noteId)}${attr("class", noteClass)}>${escapeHtml(kpi.note)}</span>${hiddenValue}${progress}</article>`;
   }
 
   function buildMarkup(config){
     return `
-      <section class="aurora-master-hero" data-aurora-hero-root data-page="${escapeHtml(config.pageId)}">
+      <section class="${classNames("aurora-master-hero", config.rootClass)}"${attr("id", config.rootId)} data-aurora-hero-root data-page="${escapeHtml(config.pageId)}">
         <div aria-hidden="true" class="aurora-hero-aura aurora-hero-aura-one"></div>
         <div aria-hidden="true" class="aurora-hero-aura aurora-hero-aura-two"></div>
 
@@ -98,45 +139,45 @@
           <div class="aurora-hero-kicker"><span class="aurora-hero-dot"></span>${escapeHtml(config.kicker)}</div>
           <div class="aurora-hero-session">
             <span><i></i>${escapeHtml(config.sessionLabel)}</span>
-            <time data-hero-clock>Loading time…</time>
+            <time data-hero-clock${attr("id", config.clockId)}>Loading time…</time>
           </div>
         </div>
 
         <div class="aurora-hero-stage">
           <div class="aurora-hero-identity">
-            <p class="aurora-hero-greeting" data-hero-greeting>${escapeHtml(config.greeting)}</p>
+            <p class="aurora-hero-greeting" data-hero-greeting${attr("id", config.greetingId)}>${escapeHtml(config.greeting)}</p>
             <h1 class="aurora-hero-title">
               <span class="aurora-hero-title-main" data-hero-title-main>${escapeHtml(config.titleMain)}</span>
               <span class="aurora-hero-title-sub" data-hero-title-sub>${escapeHtml(config.titleSub)}</span>
             </h1>
-            <p class="aurora-hero-description" data-hero-description>${escapeHtml(config.description)}</p>
+            <p class="aurora-hero-description" data-hero-description${attr("id", config.descriptionId)}>${escapeHtml(config.description)}</p>
             <div class="aurora-hero-actions" data-hero-actions>${config.actions.map(actionMarkup).join("")}</div>
-            <div class="aurora-hero-meta" data-hero-meta>${config.meta.map(item => `<span>${escapeHtml(item)}</span>`).join("")}</div>
+            <div class="aurora-hero-meta" data-hero-meta>${config.meta.map(metaMarkup).join("")}</div>
           </div>
 
-          <article class="aurora-hero-priority" aria-labelledby="auroraHeroPriorityTitle">
+          <article class="aurora-hero-priority" aria-labelledby="${escapeHtml(config.priority.titleId || "auroraHeroPriorityTitle")}">
             <div class="aurora-hero-card-head">
               <div>
                 <small>Today’s manager priority</small>
-                <span class="aurora-hero-priority-state" data-hero-priority-state data-state="${escapeHtml(config.priority.state)}">${escapeHtml(config.priority.stateLabel)}</span>
+                <span class="aurora-hero-priority-state" data-hero-priority-state data-state="${escapeHtml(config.priority.state)}"${attr("id", config.priority.stateId)}>${escapeHtml(config.priority.stateLabel)}</span>
               </div>
               <span aria-hidden="true" class="aurora-hero-priority-icon">◎</span>
             </div>
-            <h3 id="auroraHeroPriorityTitle" data-hero-priority-title>${escapeHtml(config.priority.title)}</h3>
-            <p data-hero-priority-text>${escapeHtml(config.priority.text)}</p>
+            <h3${attr("id", config.priority.titleId || "auroraHeroPriorityTitle")} data-hero-priority-title>${escapeHtml(config.priority.title)}</h3>
+            <p data-hero-priority-text${attr("id", config.priority.textId)}>${escapeHtml(config.priority.text)}</p>
             <div class="aurora-hero-priority-foot">
               <span>${escapeHtml(config.priority.nextEventLabel)}</span>
-              <strong data-hero-next-event>${escapeHtml(config.priority.nextEvent)}</strong>
-              <small data-hero-next-event-note>${escapeHtml(config.priority.nextEventNote)}</small>
+              <strong data-hero-next-event${attr("id", config.priority.nextEventId)}>${escapeHtml(config.priority.nextEvent)}</strong>
+              <small data-hero-next-event-note${attr("id", config.priority.nextEventNoteId)}>${escapeHtml(config.priority.nextEventNote)}</small>
             </div>
           </article>
 
           <article class="aurora-hero-position">
             <small class="aurora-hero-position-label">${escapeHtml(config.position.label)}</small>
-            <strong data-hero-position-value>${escapeHtml(config.position.value)}</strong>
-            <p data-hero-position-note>${escapeHtml(config.position.note)}</p>
+            <strong data-hero-position-value${attr("id", config.position.valueId)}>${escapeHtml(config.position.value)}</strong>
+            <p data-hero-position-note${attr("id", config.position.noteId)}>${escapeHtml(config.position.note)}</p>
             <div class="aurora-hero-position-grid" data-hero-position-rows>${config.position.rows.map(rowMarkup).join("")}</div>
-            <div class="aurora-hero-brain-line"><span class="aurora-hero-brain-dot"></span><span data-hero-brain-note>${escapeHtml(config.position.brainNote)}</span></div>
+            <div class="aurora-hero-brain-line"><span class="aurora-hero-brain-dot"></span><span data-hero-brain-note${attr("id", config.position.brainNoteId)}>${escapeHtml(config.position.brainNote)}</span></div>
           </article>
         </div>
 
