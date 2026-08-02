@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
 <!-- Build: Aurora City FC Unified Finance Sidebar • 26 Jul 2026 -->
+<!-- Build: M58B Canonical Whole-Pound Mission Fix • 02 Aug 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Aurora Finance Department — Payday &amp; Capital Control</title>
@@ -3871,6 +3872,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
 <article class="m50-source total"><span>Combined monthly mission</span><strong id="m50CombinedMission">£0.00</strong><small id="m50MissionBreakdown">Payday only</small></article>
 </div>
 <div class="m50-note">Aurora never assumes sale proceeds are available. The ETF release stays at £0 until a balance is entered. Releasing a mission authorises the plan only; it does not move cash or place trades.</div>
+<div class="m58-whole-pound-note" id="m58WholePoundMissionNote"><strong>Whole-pound mission rule active:</strong> broker missions are rounded down to full pounds and any pence remain in the payday buffer.</div>
 </div><section aria-label="Complete the combined investment mission" class="m52-investment-completion" id="m52InvestmentMissionCompletion">
 <div class="m52-completion-head">
 <div>
@@ -8703,6 +8705,8 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
 })();
 </script>
 <style>
+/* ===================== M58 WHOLE-POUND INVESTMENT MISSION ===================== */
+.m58-whole-pound-note{margin-top:10px;padding:10px 12px;border-radius:13px;border:1px solid rgba(89,255,154,.22);background:rgba(89,255,154,.055);color:#c8f8da;font-size:9px;line-height:1.5}.m58-whole-pound-note strong{color:#98ffc4}
 /* ===================== M50 MULTI-SOURCE INVESTMENT FUNDING ===================== */
 .m50-funding-panel{margin:14px 0;border:1px solid rgba(88,244,255,.18);border-radius:20px;padding:14px;background:linear-gradient(145deg,rgba(88,244,255,.055),rgba(181,156,255,.025))}
 .m50-funding-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}.m50-funding-head h4{margin:3px 0 4px;font-size:16px}.m50-funding-head p{margin:0;color:#8498ad;font-size:10px;line-height:1.45}.m50-funding-head button{border:1px solid rgba(88,244,255,.25);background:rgba(88,244,255,.08);color:#bdf9ff;border-radius:11px;padding:9px 11px;font-size:9px;font-weight:900;white-space:nowrap}
@@ -8720,6 +8724,8 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
   const ACCOUNT_KEY="aurora_account_transfer_instruction_v1";
   const el=id=>document.getElementById(id);
   const gbp=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(value||0));
+  const whole=value=>Math.floor(Math.max(0,Number(value||0))+1e-9);
+  const gbpWhole=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:0,maximumFractionDigits:0}).format(whole(value));
   const read=key=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch(_){return null}};
   const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(error){console.warn(error);return false}};
   const num=id=>Math.max(0,Number(el(id)?.value||0));
@@ -8733,11 +8739,12 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
     if(el("m50EtfRelease"))el("m50EtfRelease").value=Number(saved.etfRelease??1000).toFixed(2);
   }
   function fundingState(paydayBudget=0){
-    const capitalBalance=num("m50CapitalBalance"),capitalTarget=num("m50CapitalRelease");
-    const etfBalance=num("m50EtfBalance"),etfTarget=num("m50EtfRelease");
-    const capitalRelease=Math.min(capitalBalance,capitalTarget);
-    const etfRelease=Math.min(etfBalance,etfTarget);
-    return {paydayRelease:round(paydayBudget),capitalBalance:round(capitalBalance),capitalTarget:round(capitalTarget),capitalRelease:round(capitalRelease),etfBalance:round(etfBalance),etfTarget:round(etfTarget),etfRelease:round(etfRelease),total:round(paydayBudget+capitalRelease+etfRelease)};
+    const capitalBalance=num("m50CapitalBalance"),capitalTarget=whole(num("m50CapitalRelease"));
+    const etfBalance=num("m50EtfBalance"),etfTarget=whole(num("m50EtfRelease"));
+    const paydayRelease=whole(paydayBudget);
+    const capitalRelease=whole(Math.min(capitalBalance,capitalTarget));
+    const etfRelease=whole(Math.min(etfBalance,etfTarget));
+    return {paydayRelease,capitalBalance:round(capitalBalance),capitalTarget,capitalRelease,etfBalance:round(etfBalance),etfTarget,etfRelease,total:whole(paydayRelease+capitalRelease+etfRelease)};
   }
   function saveFunding(show=true){
     const f=fundingState(0);write(FUNDING_KEY,{capitalBalance:f.capitalBalance,capitalRelease:f.capitalTarget,etfBalance:f.etfBalance,etfRelease:f.etfTarget,updatedAt:new Date().toISOString()});
@@ -8764,14 +8771,15 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
   function render(){
     const snapshot=liveSnapshot();if(!snapshot||!el("m37InvestmentHandoff"))return;
     const f=snapshot.funding,payload=read(WEALTH_KEY),stage=linkedStage(snapshot,payload);
-    el("m37InvestmentBudget").textContent=gbp(snapshot.budget);el("m50PaydayRelease").textContent=gbp(f.paydayRelease);el("m50CombinedMission").textContent=gbp(f.total);
+    el("m37InvestmentBudget").textContent=gbpWhole(snapshot.budget);el("m50PaydayRelease").textContent=gbpWhole(f.paydayRelease);el("m50CombinedMission").textContent=gbpWhole(f.total);
     el("m50CapitalRunway").textContent=f.capitalBalance>0&&f.capitalRelease>0?`${Math.ceil(f.capitalBalance/f.capitalRelease)} monthly release${Math.ceil(f.capitalBalance/f.capitalRelease)===1?'':'s'} available`:"No existing capital available";
     el("m50EtfRunway").textContent=f.etfBalance>0&&f.etfRelease>0?`${Math.ceil(f.etfBalance/f.etfRelease)} monthly release${Math.ceil(f.etfBalance/f.etfRelease)===1?'':'s'} available`:"Waiting for sale proceeds";
-    const parts=[`Payday ${gbp(f.paydayRelease)}`];if(f.capitalRelease>0)parts.push(`Existing capital ${gbp(f.capitalRelease)}`);if(f.etfRelease>0)parts.push(`ETF/share-sale pot ${gbp(f.etfRelease)}`);el("m50MissionBreakdown").textContent=parts.join(" + ");
+    const parts=[`Payday ${gbpWhole(f.paydayRelease)}`];if(f.capitalRelease>0)parts.push(`Existing capital ${gbpWhole(f.capitalRelease)}`);if(f.etfRelease>0)parts.push(`ETF/share-sale pot ${gbpWhole(f.etfRelease)}`);el("m50MissionBreakdown").textContent=parts.join(" + ");
     el("m37InvestmentAccount").textContent=accountLabel(snapshot.platform);el("m37InvestmentPayday").textContent=snapshot.mission?.paydayDate?new Date(`${snapshot.mission.paydayDate}T12:00:00`).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"—";
     el("m37PipelineStage").textContent=stage.label;el("m37HandoffStatus").textContent=stage.label.toUpperCase();el("m37HandoffStatus").dataset.state=stage.state;
-    el("m37InvestmentRoute").innerHTML=snapshot.budget>0?`<strong>Combined mission ready:</strong> ${parts.join(" • ")} • <strong>${gbp(snapshot.budget)} total</strong> will be sent to the Transfer Centre for portfolio-aware sizing.`:`<strong>No investment mission yet:</strong> Add a payday share contribution or make a capital funding pool available.`;
-    const send=el("m37SendToTradingBrain");if(send){send.disabled=snapshot.budget<=0;send.textContent=snapshot.budget>0?`Release ${gbp(snapshot.budget)} to Transfer Centre`:"No Investment Allocation to Release"}
+    el("m37InvestmentRoute").innerHTML=snapshot.budget>0?`<strong>Combined mission ready:</strong> ${parts.join(" • ")} • <strong>${gbpWhole(snapshot.budget)} total</strong> will be sent to the Transfer Centre for portfolio-aware sizing.`:`<strong>No investment mission yet:</strong> Add a payday share contribution or make a capital funding pool available.`;
+    const retained=round(Number(snapshot.plan?.wholePoundInvestmentRemainder||0));const wholeNote=el("m58WholePoundMissionNote");if(wholeNote)wholeNote.innerHTML=retained>.009?`<strong>Whole-pound mission rule active:</strong> ${gbp(retained)} remains in the payday buffer. ${gbpWhole(snapshot.budget)} is authorised for the Transfer Centre.`:`<strong>Whole-pound mission rule active:</strong> the Transfer Centre receives full-pound budgets only.`;
+    const send=el("m37SendToTradingBrain");if(send){send.disabled=snapshot.budget<=0;send.textContent=snapshot.budget>0?`Release ${gbpWhole(snapshot.budget)} to Transfer Centre`:"No Investment Allocation to Release"}
     ["m50CapitalBalance","m50CapitalRelease","m50EtfBalance","m50EtfRelease"].forEach(id=>{const node=el(id)?.closest(".m50-source");if(node)node.classList.toggle("is-empty",num(id)===0)});
   }
   function sendMission(){
@@ -8786,7 +8794,7 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
 
     saveFunding(false);
     const f=snapshot.funding;
-    const total=Number(snapshot.budget.toFixed(2));
+    const total=whole(snapshot.budget);
     let ig=0,t212=0;
 
     if(snapshot.platform==="split"){
@@ -8807,7 +8815,7 @@ body:not(.m30-calm) .m13-content:after{content:"";position:fixed;inset:0;pointer
       updatedAt:new Date().toISOString(),
       paydayDate:snapshot.mission.paydayDate,
       budget:total,
-      paydayContribution:Number(f.paydayRelease.toFixed(2)),
+      paydayContribution:whole(f.paydayRelease),
       preferredPlatform:snapshot.platform,
       preferredAccount:accountLabel(snapshot.platform),
       actualPay:Number(snapshot.plan.actual||0),
@@ -9813,6 +9821,17 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       }
     ).format(Math.max(0,Number(value || 0)));
 
+  const moneyWhole = value =>
+    new Intl.NumberFormat(
+      "en-GB",
+      {
+        style:"currency",
+        currency:"GBP",
+        minimumFractionDigits:0,
+        maximumFractionDigits:0
+      }
+    ).format(Math.floor(Math.max(0,Number(value || 0)) + 1e-9));
+
   function flattenComponents(action){
     if(Array.isArray(action.components) && action.components.length){
       return action.components.map(component => ({...component}));
@@ -9824,6 +9843,29 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       amount:Number(action.amount || 0),
       meta:action.meta || ""
     }];
+  }
+
+  function retainInvestmentPence(plan,retained){
+    retained = round(Math.max(0,Number(retained || 0)));
+    if(retained <= .009 || !Array.isArray(plan.actions)) return;
+
+    const buffer = plan.actions.find(action => action?.type === "buffer");
+    if(buffer){
+      buffer.amount = round(Number(buffer.amount || 0) + retained);
+      buffer.meta = "Includes pence retained by the whole-pound investment mission rule";
+    }else{
+      plan.actions.push({
+        id:"buffer:whole-pound-investment-remainder",
+        name:"Keep investment pence buffered",
+        amount:retained,
+        type:"buffer",
+        meta:"Pence remain in the payday account instead of being sent to a broker"
+      });
+    }
+
+    plan.buffered = round(Number(plan.buffered || 0) + retained);
+    plan.wholePoundInvestmentRemainder = retained;
+    plan.wholePoundInvestmentRule = "ROUND_DOWN_TO_NEAREST_POUND";
   }
 
   function groupInvestmentActions(plan){
@@ -9844,24 +9886,34 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       return plan;
     }
 
-    if(
-      investments.length === 1
-      && investments[0].id === GROUP_ID
-    ){
-      investments[0].name = "Investment Mission Handoff";
-      investments[0].meta =
-        "Payday contribution reserved here; complete both broker cash transfers together in the Investment Mission Handoff.";
-      investments[0].handoffOnly = true;
-      plan.investmentMissionVersion = GROUP_VERSION;
-      return plan;
-    }
-
-    const amount = round(
+    const rawAmount = round(
       investments.reduce(
         (sum,action) => sum + Number(action.amount || 0),
         0
       )
     );
+    const amount = Math.floor(Math.max(0,rawAmount) + 1e-9);
+    const retained = round(rawAmount - amount);
+
+    if(
+      investments.length === 1
+      && investments[0].id === GROUP_ID
+    ){
+      investments[0].name = "Investment Mission Handoff";
+      investments[0].amount = amount;
+      investments[0].meta =
+        "Whole-pound payday contribution reserved here; complete both broker cash transfers together in the Investment Mission Handoff.";
+      investments[0].handoffOnly = true;
+      retainInvestmentPence(plan,retained);
+      plan.planned = round(
+        plan.actions.reduce(
+          (sum,action) => sum + Number(action.amount || 0),
+          0
+        )
+      );
+      plan.investmentMissionVersion = GROUP_VERSION;
+      return plan;
+    }
 
     const components = investments.flatMap(flattenComponents);
     const originalIds = investments.flatMap(action =>
@@ -9876,7 +9928,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       amount,
       type:"investment",
       meta:
-        "Payday contribution reserved here; complete both broker cash transfers together in the Investment Mission Handoff.",
+        "Whole-pound payday contribution reserved here; complete both broker cash transfers together in the Investment Mission Handoff.",
       components,
       originalIds,
       handoffOnly:true
@@ -9888,6 +9940,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       action => action?.type !== "investment"
     );
     plan.actions.splice(firstIndex,0,grouped);
+    retainInvestmentPence(plan,retained);
     plan.planned = round(
       plan.actions.reduce(
         (sum,action) => sum + Number(action.amount || 0),
@@ -10284,7 +10337,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
     const meta = row.querySelector(".m22-action-meta");
     if(meta){
       meta.textContent =
-        `${money(action.amount)} from this payday is reserved. Complete the broker transfers together in the Investment Mission Handoff below.`;
+        `${moneyWhole(action.amount)} from this payday is reserved. Complete the broker transfers together in the Investment Mission Handoff below.`;
     }
 
     const actualInput = row.querySelector(
@@ -10292,7 +10345,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
     );
     if(actualInput){
       actualInput.value =
-        Number(action.amount || 0).toFixed(2);
+        Number(action.amount || 0).toFixed(0);
       actualInput.disabled = true;
     }
 
@@ -10349,13 +10402,13 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       : live;
 
     byId("m52PaydayUsed").textContent =
-      money(values.payday);
+      moneyWhole(values.payday);
     byId("m52CapitalUsed").textContent =
-      money(values.capitalRelease);
+      moneyWhole(values.capitalRelease);
     byId("m52EtfUsed").textContent =
-      money(values.etfRelease);
+      moneyWhole(values.etfRelease);
     byId("m52MissionTotal").textContent =
-      money(values.total);
+      moneyWhole(values.total);
 
     const status = byId("m52CompletionStatus");
     const button = byId(
@@ -10377,8 +10430,8 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
         + `${money(values.ig)} transferred to IG ISA and `
         + `${money(values.t212)} transferred to Trading 212 ISA. `
         + (values.unassigned > 0 ? `${money(values.unassigned)} remained as approved cash holdback. ` : ``)
-        + `${money(values.payday)} was marked against this payday; `
-        + `${money(values.capitalRelease + values.etfRelease)} came from existing investment capital.`;
+        + `${moneyWhole(values.payday)} was marked against this payday; `
+        + `${moneyWhole(values.capitalRelease + values.etfRelease)} came from existing investment capital.`;
 
       note.textContent =
         `Completed ${new Date(
@@ -10407,7 +10460,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 
     button.disabled = !ready;
     button.textContent =
-      `Complete ${money(live.total)} Investment Mission`;
+      `Complete ${moneyWhole(live.total)} Investment Mission`;
 
     if(ready){
       command.innerHTML =
@@ -10415,7 +10468,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
         + `${money(live.ig)} to IG ISA and `
         + `${money(live.t212)} to Trading 212 ISA. `
         + (live.unassigned > 0 ? `Keep ${money(live.unassigned)} untransferred as the approved holdback. ` : ``)
-        + `Then press Complete Investment Mission. Aurora will mark only ${money(live.payday)} against the payday checklist.`;
+        + `Then press Complete Investment Mission. Aurora will mark only ${moneyWhole(live.payday)} against the payday checklist.`;
     }else{
       command.textContent =
         "Awaiting the final Transfer Centre share route. Do not move broker cash from a preview split.";
@@ -11575,206 +11628,6 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 </script>
 
 
-<!-- Build: M58 Whole-Pound Investment Mission Rule • 02 Aug 2026 -->
-<style id="auroraWholePoundMissionRuleStyles">
-.m58-whole-pound-note{
-  margin-top:10px;
-  padding:10px 12px;
-  border-radius:13px;
-  border:1px solid rgba(89,255,154,.22);
-  background:rgba(89,255,154,.055);
-  color:#c8f8da;
-  font-size:9px;
-  line-height:1.5;
-}
-.m58-whole-pound-note strong{color:#98ffc4}
-</style>
-<script id="auroraWholePoundMissionRule">
-(function(){
-  "use strict";
-
-  const byId=id=>document.getElementById(id);
-  const round=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
-  const whole=value=>Math.floor(Math.max(0,Number(value||0))+1e-9);
-  const moneyWhole=value=>new Intl.NumberFormat("en-GB",{
-    style:"currency",currency:"GBP",minimumFractionDigits:0,maximumFractionDigits:0
-  }).format(whole(value));
-  const money=value=>new Intl.NumberFormat("en-GB",{
-    style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2
-  }).format(Math.max(0,Number(value||0)));
-
-  function applyWholePoundPlan(plan){
-    if(!plan||!Array.isArray(plan.actions))return plan;
-
-    const actions=plan.actions.map(action=>({...action}));
-    const investmentIndexes=[];
-    let rawInvestment=0;
-
-    actions.forEach((action,index)=>{
-      if(action?.type==="investment"){
-        investmentIndexes.push(index);
-        rawInvestment+=Number(action.amount||0);
-      }
-    });
-
-    if(!investmentIndexes.length)return {...plan,actions};
-
-    rawInvestment=round(rawInvestment);
-    const authorised=whole(rawInvestment);
-    let remainder=round(rawInvestment-authorised);
-
-    for(let cursor=investmentIndexes.length-1;cursor>=0&&remainder>.009;cursor--){
-      const index=investmentIndexes[cursor];
-      const current=Math.max(0,Number(actions[index].amount||0));
-      const reduction=Math.min(current,remainder);
-      actions[index].amount=round(current-reduction);
-      remainder=round(remainder-reduction);
-    }
-
-    const retained=round(rawInvestment-authorised);
-    if(retained>.009){
-      const bufferIndex=actions.findIndex(action=>action?.type==="buffer");
-      if(bufferIndex>=0){
-        actions[bufferIndex].amount=round(Number(actions[bufferIndex].amount||0)+retained);
-        actions[bufferIndex].meta="Includes the pence retained by the whole-pound investment mission rule";
-      }else{
-        actions.push({
-          id:"buffer:whole-pound-investment-remainder",
-          name:"Keep investment pence buffered",
-          amount:retained,
-          type:"buffer",
-          meta:"Pence are retained in the payday account instead of being sent to the Transfer Centre"
-        });
-      }
-    }
-
-    return {
-      ...plan,
-      actions,
-      buffered:round(Number(plan.buffered||0)+retained),
-      wholePoundInvestmentBudget:authorised,
-      wholePoundInvestmentRemainder:retained,
-      wholePoundInvestmentRule:"ROUND_DOWN_TO_NEAREST_POUND"
-    };
-  }
-
-  const originalCurrentPlan=window.m22CurrentPlan;
-  if(typeof originalCurrentPlan==="function"&&!originalCurrentPlan.__auroraWholePoundWrapped){
-    const wrapped=function(){
-      return applyWholePoundPlan(originalCurrentPlan.apply(this,arguments));
-    };
-    wrapped.__auroraWholePoundWrapped=true;
-    window.m22CurrentPlan=wrapped;
-  }
-
-  function normaliseReleaseInput(input){
-    if(!input)return;
-    input.step="1";
-    const value=whole(input.value);
-    const formatted=String(value);
-    if(input.value!==formatted)input.value=formatted;
-  }
-
-  ["m50CapitalRelease","m50EtfRelease"].forEach(id=>{
-    const input=byId(id);
-    if(!input)return;
-    normaliseReleaseInput(input);
-    input.addEventListener("change",()=>{
-      normaliseReleaseInput(input);
-      input.dispatchEvent(new Event("input",{bubbles:true}));
-    });
-  });
-
-  function liveMissionNumbers(){
-    let payday=0;
-    try{
-      const plan=window.m22CurrentPlan?.();
-      payday=round((plan?.actions||[])
-        .filter(action=>action?.type==="investment")
-        .reduce((sum,action)=>sum+Number(action.amount||0),0));
-    }catch(_){}
-
-    const capitalBalance=Math.max(0,Number(byId("m50CapitalBalance")?.value||0));
-    const capitalRelease=whole(Math.min(capitalBalance,Number(byId("m50CapitalRelease")?.value||0)));
-    const etfBalance=Math.max(0,Number(byId("m50EtfBalance")?.value||0));
-    const etfRelease=whole(Math.min(etfBalance,Number(byId("m50EtfRelease")?.value||0)));
-    const total=whole(payday+capitalRelease+etfRelease);
-
-    let rawPayday=payday;
-    try{
-      const basePlan=originalCurrentPlan?.();
-      rawPayday=round((basePlan?.actions||[])
-        .filter(action=>action?.type==="investment")
-        .reduce((sum,action)=>sum+Number(action.amount||0),0));
-    }catch(_){}
-
-    const retained=round(Math.max(0,rawPayday-payday));
-    return {payday,capitalRelease,etfRelease,total,retained};
-  }
-
-  function ensureNote(){
-    let note=byId("m58WholePoundMissionNote");
-    if(note)return note;
-    const host=document.querySelector("#m37InvestmentHandoff .m50-note");
-    if(!host)return null;
-    note=document.createElement("div");
-    note.id="m58WholePoundMissionNote";
-    note.className="m58-whole-pound-note";
-    host.insertAdjacentElement("afterend",note);
-    return note;
-  }
-
-  let painting=false;
-  function paint(){
-    if(painting)return;
-    painting=true;
-    try{
-      const values=liveMissionNumbers();
-      const budget=byId("m37InvestmentBudget");
-      const combined=byId("m50CombinedMission");
-      const button=byId("m37SendToTradingBrain");
-      const wholeLabel=moneyWhole(values.total);
-      if(budget&&budget.textContent!==wholeLabel)budget.textContent=wholeLabel;
-      if(combined&&combined.textContent!==wholeLabel)combined.textContent=wholeLabel;
-      const buttonLabel=`Release ${wholeLabel} to Transfer Centre`;
-      if(button&&values.total>0&&button.textContent!==buttonLabel)button.textContent=buttonLabel;
-
-      const note=ensureNote();
-      if(note){
-        note.innerHTML=values.retained>.009
-          ? `<strong>Whole-pound mission rule active:</strong> ${money(values.retained)} remains buffered in the payday account. ${moneyWhole(values.total)} is authorised for the Transfer Centre.`
-          : `<strong>Whole-pound mission rule active:</strong> the Transfer Centre receives whole-pound budgets only.`;
-      }
-    }finally{
-      painting=false;
-    }
-  }
-
-  const observer=new MutationObserver(()=>window.requestAnimationFrame(paint));
-  ["m37InvestmentBudget","m50CombinedMission","m37SendToTradingBrain"].forEach(id=>{
-    const node=byId(id);
-    if(node)observer.observe(node,{subtree:true,childList:true,characterData:true});
-  });
-
-  [
-    "m22CoreInvestment","m22ActualPay","m22ExpectedPay","m22ExtraAllocate",
-    "m50CapitalBalance","m50CapitalRelease","m50EtfBalance","m50EtfRelease"
-  ].forEach(id=>{
-    byId(id)?.addEventListener("input",()=>setTimeout(()=>{window.m22Render?.();paint();},0));
-    byId(id)?.addEventListener("change",()=>setTimeout(()=>{window.m22Render?.();paint();},0));
-  });
-
-  ["m50SaveFunding","m37RefreshHandoff","m37SendToTradingBrain","m33ApplyScenario"].forEach(id=>{
-    byId(id)?.addEventListener("click",()=>{
-      [0,80,180,360].forEach(delay=>setTimeout(()=>{window.m22Render?.();paint();},delay));
-    });
-  });
-
-  window.addEventListener("pageshow",()=>[0,120,320].forEach(delay=>setTimeout(()=>{window.m22Render?.();paint();},delay)));
-  window.addEventListener("load",()=>[0,140,360,700].forEach(delay=>setTimeout(()=>{window.m22Render?.();paint();},delay)));
-  if(document.readyState!=="loading")setTimeout(()=>{window.m22Render?.();paint();},80);
-})();
-</script>
 
 </body>
 </html>
