@@ -2288,42 +2288,31 @@
     }
 
     /*
-      Aurora edge gestures
-      - Fine-pointer devices: moving to the extreme left edge opens the menu.
-      - Fine-pointer devices: scrolling down at the extreme right edge advances
-        to the next Payday Mission step.
-      - Touch devices: swipe inward from the left edge to open the menu, or
-        swipe left from the right edge to advance to the next mission step.
-      Horizontal tables/carousels and form controls are deliberately ignored.
+      Aurora edge controls
+      - iPad / touch: touching the inset left edge opens the menu immediately.
+      - iPad / touch: scrolling upward from the inset right edge advances to
+        the next Payday Mission step. A left swipe also advances.
+      - Mouse / trackpad: entering the left edge opens the menu; scrolling down
+        over the right edge advances to the next Payday Mission step.
+      Fixed inset activation zones are used because iPadOS can reserve the true
+      screen edge and prevent document-level edge gestures from reaching Aurora.
     */
     (function installAuroraEdgeGestures(){
       if(window.__AURORA_EDGE_GESTURES__) return;
       window.__AURORA_EDGE_GESTURES__ = true;
 
-      const LEFT_MOUSE_EDGE = 12;
-      const RIGHT_MOUSE_EDGE = 26;
-      const TOUCH_EDGE = 30;
-      const TOUCH_TRIGGER = 82;
-      const WHEEL_TRIGGER = 120;
+      const EDGE_INSET = 6;
+      const EDGE_WIDTH = 30;
+      const TOUCH_TRIGGER = 54;
+      const WHEEL_TRIGGER = 90;
       const NAVIGATION_COOLDOWN = 1250;
 
-      let lastPointerX = window.innerWidth / 2;
+      let lastNavigationAt = 0;
       let wheelAmount = 0;
       let wheelResetTimer = 0;
-      let lastNavigationAt = 0;
-      let touchMode = "";
-      let touchStartX = 0;
-      let touchStartY = 0;
-      let touchHandled = false;
-
-      function isFinePointer(){
-        return Boolean(
-          window.matchMedia
-          && window.matchMedia(
-            "(hover:hover) and (pointer:fine)"
-          ).matches
-        );
-      }
+      let rightTouchStartX = 0;
+      let rightTouchStartY = 0;
+      let rightTouchHandled = false;
 
       function hasBlockingOverlay(){
         return Boolean(
@@ -2334,37 +2323,6 @@
             + ".analysis-player-drawer.open"
           )
         );
-      }
-
-      function isInteractiveTarget(target){
-        return Boolean(
-          target
-          && target.closest
-          && target.closest(
-            "input,textarea,select,button,a,"
-            + "[contenteditable='true'],[role='slider']"
-          )
-        );
-      }
-
-      function isInsideHorizontalScroller(target){
-        let node = target instanceof Element
-          ? target
-          : null;
-
-        while(node && node !== document.body){
-          const style = window.getComputedStyle(node);
-          const overflowX = style.overflowX;
-          const scrollable = (
-            (overflowX === "auto" || overflowX === "scroll")
-            && node.scrollWidth > node.clientWidth + 8
-          );
-
-          if(scrollable) return true;
-          node = node.parentElement;
-        }
-
-        return false;
       }
 
       function currentMissionIndex(){
@@ -2413,37 +2371,79 @@
         return true;
       }
 
-      document.addEventListener(
-        "pointermove",
+      function createEdgeZone(id,side,label){
+        let zone = document.getElementById(id);
+        if(zone) return zone;
+
+        zone = document.createElement("div");
+        zone.id = id;
+        zone.setAttribute("aria-hidden","true");
+        zone.setAttribute("data-aurora-edge",side);
+        zone.title = label;
+        zone.style.position = "fixed";
+        zone.style.top = "76px";
+        zone.style.bottom = "76px";
+        zone.style.width = EDGE_WIDTH + "px";
+        zone.style[side] = EDGE_INSET + "px";
+        zone.style.zIndex = "2147482000";
+        zone.style.background = "transparent";
+        zone.style.pointerEvents = "auto";
+        zone.style.touchAction = "none";
+        zone.style.webkitTapHighlightColor = "transparent";
+        zone.style.userSelect = "none";
+        document.body.appendChild(zone);
+        return zone;
+      }
+
+      const leftZone = createEdgeZone(
+        "auroraLeftEdgeGestureZone",
+        "left",
+        "Open Aurora menu"
+      );
+
+      const rightZone = createEdgeZone(
+        "auroraRightEdgeGestureZone",
+        "right",
+        "Next Payday Mission step"
+      );
+
+      function edgeControlsAvailable(){
+        return !hasBlockingOverlay()
+          && !document.body.classList.contains("aurora-nav-open");
+      }
+
+      leftZone.addEventListener(
+        "pointerenter",
         function(event){
-          lastPointerX = event.clientX;
-
           if(
-            !isFinePointer()
-            || event.pointerType === "touch"
-            || hasBlockingOverlay()
-            || document.body.classList.contains("aurora-nav-open")
+            event.pointerType !== "touch"
+            && edgeControlsAvailable()
           ){
-            return;
-          }
-
-          if(event.clientX <= LEFT_MOUSE_EDGE){
             setOpen(true);
           }
         },
         {passive:true}
       );
 
-      document.addEventListener(
+      leftZone.addEventListener(
+        "touchstart",
+        function(event){
+          if(
+            event.touches.length === 1
+            && edgeControlsAvailable()
+          ){
+            event.preventDefault();
+            setOpen(true);
+          }
+        },
+        {passive:false}
+      );
+
+      rightZone.addEventListener(
         "wheel",
         function(event){
           if(
-            !isFinePointer()
-            || hasBlockingOverlay()
-            || document.body.classList.contains("aurora-nav-open")
-            || isInteractiveTarget(event.target)
-            || isInsideHorizontalScroller(event.target)
-            || lastPointerX < window.innerWidth - RIGHT_MOUSE_EDGE
+            !edgeControlsAvailable()
             || event.deltaY <= 0
             || Math.abs(event.deltaY) < Math.abs(event.deltaX)
           ){
@@ -2467,68 +2467,47 @@
         {passive:false}
       );
 
-      document.addEventListener(
+      rightZone.addEventListener(
         "touchstart",
         function(event){
-          touchMode = "";
-          touchHandled = false;
+          rightTouchHandled = false;
 
           if(
             event.touches.length !== 1
-            || hasBlockingOverlay()
-            || isInteractiveTarget(event.target)
-            || isInsideHorizontalScroller(event.target)
+            || !edgeControlsAvailable()
           ){
             return;
           }
 
-          const touch = event.touches[0];
-          touchStartX = touch.clientX;
-          touchStartY = touch.clientY;
-
-          if(
-            touchStartX <= TOUCH_EDGE
-            && !document.body.classList.contains("aurora-nav-open")
-          ){
-            touchMode = "open";
-          }else if(
-            touchStartX >= window.innerWidth - TOUCH_EDGE
-            && !document.body.classList.contains("aurora-nav-open")
-          ){
-            touchMode = "next";
-          }
+          rightTouchStartX = event.touches[0].clientX;
+          rightTouchStartY = event.touches[0].clientY;
         },
         {passive:true}
       );
 
-      document.addEventListener(
+      rightZone.addEventListener(
         "touchmove",
         function(event){
           if(
-            !touchMode
-            || touchHandled
+            rightTouchHandled
             || event.touches.length !== 1
+            || !edgeControlsAvailable()
           ){
             return;
           }
 
           const touch = event.touches[0];
-          const dx = touch.clientX - touchStartX;
-          const dy = touch.clientY - touchStartY;
+          const dx = touch.clientX - rightTouchStartX;
+          const dy = touch.clientY - rightTouchStartY;
 
-          if(Math.abs(dy) > Math.abs(dx) * 0.72){
-            return;
-          }
+          const scrolledDown = dy <= -TOUCH_TRIGGER
+            && Math.abs(dy) >= Math.abs(dx) * 0.72;
 
-          if(touchMode === "open" && dx >= TOUCH_TRIGGER){
-            touchHandled = true;
-            event.preventDefault();
-            setOpen(true);
-            return;
-          }
+          const swipedLeft = dx <= -TOUCH_TRIGGER
+            && Math.abs(dx) >= Math.abs(dy) * 0.72;
 
-          if(touchMode === "next" && dx <= -TOUCH_TRIGGER){
-            touchHandled = true;
+          if(scrolledDown || swipedLeft){
+            rightTouchHandled = true;
             event.preventDefault();
             goToNextMissionStep();
           }
@@ -2536,24 +2515,26 @@
         {passive:false}
       );
 
-      document.addEventListener(
+      rightZone.addEventListener(
         "touchend",
         function(){
-          touchMode = "";
-          touchHandled = false;
+          rightTouchHandled = false;
         },
         {passive:true}
       );
 
-      window.addEventListener(
-        "resize",
-        function(){
-          lastPointerX = Math.min(
-            lastPointerX,
-            window.innerWidth
-          );
-        }
-      );
+      function syncEdgeZones(){
+        const hidden = document.body.classList.contains("aurora-nav-open");
+        leftZone.style.pointerEvents = hidden ? "none" : "auto";
+        rightZone.style.pointerEvents = hidden ? "none" : "auto";
+      }
+
+      const bodyObserver = new MutationObserver(syncEdgeZones);
+      bodyObserver.observe(document.body,{
+        attributes:true,
+        attributeFilter:["class"]
+      });
+      syncEdgeZones();
     })();
 
     panel.addEventListener(
