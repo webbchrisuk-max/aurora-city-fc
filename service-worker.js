@@ -1,221 +1,242 @@
-/* Aurora City FC — shared-data service worker
- * Build: 02 Aug 2026
+/*
+ * Aurora City FC — fast-update service worker
  *
- * Goals:
- * - activate new Aurora builds immediately;
- * - keep HTML, JavaScript and CSS network-first so updates are not trapped;
- * - never serve a service-worker-cached AuroraMaster.json;
- * - keep images and icons available offline;
- * - remove obsolete Aurora caches during activation.
+ * IMPORTANT:
+ * Change CACHE_VERSION whenever you publish a new Aurora build.
+ * Example: 2026-08-02-01 -> 2026-08-03-01
  */
 
-const CACHE_NAME = "aurora-city-fc-v2026-08-02-shared-data-1";
-const CACHE_PREFIX = "aurora-city-fc-";
+const CACHE_VERSION = '2026-08-02-01';
+const CACHE_PREFIX = 'aurora-city-fc';
 
-const CORE_FILES = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./AuroraCityFC_GameShell.html",
-  "./AuroraFCData.js",
-  "./aurora-navigation.js",
-  "./aurora-navigation.css",
-  "./aurora-notifications.js",
-  "./AuroraCityFC_ManagerDashboard.html",
-  "./AuroraCityFC_NexusMaster.html",
-  "./AuroraCityFC_FinanceDepartment.html",
-  "./AuroraCityFC_TransferCentre.html",
-  "./AuroraCityFC_MatchdayCentre.html",
-  "./AuroraCityFC_SquadHub.html",
-  "./AuroraCityFC_AnalysisRoom.html",
-  "./AuroraCityFC_ScoutingCentre.html",
-  "./AuroraCityFC_TrainingGround.html",
-  "./AuroraCityFC_LearningCentre.html",
-  "./AuroraCityFC_Boardroom.html",
-  "./AuroraCityFC_MediaCentre.html",
-  "./assets/aurora-city-fc/icons/icon-192.png",
-  "./assets/aurora-city-fc/icons/icon-512.png"
+const PAGE_CACHE = `${CACHE_PREFIX}-pages-${CACHE_VERSION}`;
+const ASSET_CACHE = `${CACHE_PREFIX}-assets-${CACHE_VERSION}`;
+const DATA_CACHE = `${CACHE_PREFIX}-data-${CACHE_VERSION}`;
+
+const CURRENT_CACHES = new Set([
+  PAGE_CACHE,
+  ASSET_CACHE,
+  DATA_CACHE
+]);
+
+const APP_SHELL = [
+  './',
+  './AuroraCityFC_ManagerDashboard.html',
+  './AuroraCityFC_SquadHub.html',
+  './AuroraCityFC_TrainingGround.html',
+  './AuroraCityFC_Boardroom.html',
+  './AuroraCityFC_MediaCentre.html',
+  './AuroraCityFC_TransferCentre.html',
+  './manifest.json',
+  './AuroraFCData.js',
+
+  // Current Aurora artwork used by the supplied pages.
+  './assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png',
+  './assets/aurora-city-fc/1485E058-D5FB-4DF2-8C37-A520FF55A246.png',
+  './assets/aurora-city-fc/EA9B5F84-50A9-439D-A901-16917F9A1E5B.png',
+  './assets/aurora-city-fc/fixture/payday.png'
 ];
 
-const CODE_FILE_PATTERN = /\.(?:html?|js|css)$/i;
-const STATIC_FILE_PATTERN = /\.(?:png|jpe?g|webp|gif|svg|ico|woff2?)$/i;
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(PAGE_CACHE);
 
-function isCacheable(response) {
-  return Boolean(response && response.ok && response.type !== "opaque");
-}
+    // One missing optional file must not prevent the new worker installing.
+    await Promise.allSettled(
+      APP_SHELL.map(url =>
+        cache.add(new Request(url, { cache: 'reload' }))
+      )
+    );
 
-async function putInRuntimeCache(request, response) {
-  if (!isCacheable(response)) return;
-
-  const cache = await caches.open(CACHE_NAME);
-  await cache.put(request, response.clone());
-}
-
-async function findCached(request) {
-  return (
-    (await caches.match(request)) ||
-    (await caches.match(request, { ignoreSearch: true })) ||
-    null
-  );
-}
-
-async function safePrecache() {
-  const cache = await caches.open(CACHE_NAME);
-
-  await Promise.allSettled(
-    CORE_FILES.map(async file => {
-      const request = new Request(file, { cache: "reload" });
-      const response = await fetch(request);
-
-      if (!isCacheable(response)) {
-        throw new Error(`Unable to precache ${file}`);
-      }
-
-      await cache.put(file, response);
-    })
-  );
-}
-
-async function networkFirst(request, fallbackToShell = false) {
-  try {
-    const response = await fetch(request);
-    await putInRuntimeCache(request, response);
-    return response;
-  } catch (_) {
-    const cached = await findCached(request);
-    if (cached) return cached;
-
-    if (fallbackToShell) {
-      return (
-        (await caches.match("./index.html")) ||
-        (await caches.match("./AuroraCityFC_GameShell.html")) ||
-        Response.error()
-      );
-    }
-
-    return Response.error();
-  }
-}
-
-async function cacheFirst(request) {
-  const cached = await findCached(request);
-  if (cached) return cached;
-
-  try {
-    const response = await fetch(request);
-    await putInRuntimeCache(request, response);
-    return response;
-  } catch (_) {
-    return Response.error();
-  }
-}
-
-async function freshAuroraMaster(request) {
-  /*
-   * AuroraFCData.js already owns the approved local-storage fallback.
-   * The service worker deliberately avoids caching AuroraMaster.json so an
-   * old data export cannot override a newer shared-data refresh.
-   */
-  try {
-    return await fetch(new Request(request, { cache: "no-store" }));
-  } catch (_) {
-    return Response.error();
-  }
-}
-
-self.addEventListener("install", event => {
-  event.waitUntil(
-    (async () => {
-      await safePrecache();
-      await self.skipWaiting();
-    })()
-  );
+    // Activate this build immediately instead of leaving it waiting.
+    await self.skipWaiting();
+  })());
 });
 
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const cacheNames = await caches.keys();
 
-      await Promise.all(
-        keys
-          .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      );
+    await Promise.all(
+      cacheNames.map(cacheName => {
+        const isAuroraCache =
+          cacheName.startsWith(`${CACHE_PREFIX}-`) ||
+          cacheName.toLowerCase().includes('aurora');
 
-      if (self.registration.navigationPreload) {
-        try {
-          await self.registration.navigationPreload.enable();
-        } catch (_) {
-          /* Navigation preload is optional. */
+        if (isAuroraCache && !CURRENT_CACHES.has(cacheName)) {
+          return caches.delete(cacheName);
         }
-      }
 
-      await self.clients.claim();
+        return Promise.resolve(false);
+      })
+    );
 
-      const clients = await self.clients.matchAll({
-        type: "window",
-        includeUncontrolled: true
-      });
-
-      clients.forEach(client => {
-        client.postMessage({
-          type: "AURORA_SERVICE_WORKER_UPDATED",
-          cacheName: CACHE_NAME
-        });
-      });
-    })()
-  );
+    // Take control of all open Aurora pages immediately.
+    await self.clients.claim();
+  })());
 });
 
-self.addEventListener("fetch", event => {
-  const request = event.request;
+self.addEventListener('message', event => {
+  const type = event.data?.type;
 
-  if (request.method !== "GET") return;
-
-  const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
-
-  if (/\/AuroraMaster\.json$/i.test(url.pathname)) {
-    event.respondWith(freshAuroraMaster(request));
-    return;
-  }
-
-  if (request.mode === "navigate") {
-    event.respondWith(networkFirst(request, true));
-    return;
-  }
-
-  if (CODE_FILE_PATTERN.test(url.pathname)) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-
-  if (STATIC_FILE_PATTERN.test(url.pathname)) {
-    event.respondWith(cacheFirst(request));
-    return;
-  }
-
-  event.respondWith(networkFirst(request));
-});
-
-self.addEventListener("message", event => {
-  const type = event.data && event.data.type;
-
-  if (type === "SKIP_WAITING") {
+  if (type === 'SKIP_WAITING') {
     self.skipWaiting();
     return;
   }
 
-  if (type === "CLEAR_AURORA_CACHES") {
-    event.waitUntil(
-      caches.keys().then(keys =>
-        Promise.all(
-          keys
-            .filter(key => key.startsWith(CACHE_PREFIX))
-            .map(key => caches.delete(key))
-        )
-      )
-    );
+  if (type === 'CLEAR_AURORA_CACHES') {
+    event.waitUntil((async () => {
+      const cacheNames = await caches.keys();
+
+      await Promise.all(
+        cacheNames
+          .filter(name =>
+            name.startsWith(`${CACHE_PREFIX}-`) ||
+            name.toLowerCase().includes('aurora')
+          )
+          .map(name => caches.delete(name))
+      );
+    })());
   }
 });
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+
+  // Leave Firebase, Google APIs and all other external services untouched.
+  if (url.origin !== self.location.origin) return;
+
+  // Never intercept the worker file itself.
+  if (url.pathname.endsWith('/service-worker.js')) return;
+
+  if (
+    request.mode === 'navigate' ||
+    request.destination === 'document' ||
+    url.pathname.endsWith('.html')
+  ) {
+    event.respondWith(networkFirst(request, PAGE_CACHE, 5000));
+    return;
+  }
+
+  if (
+    url.pathname.endsWith('/manifest.json') ||
+    url.pathname.endsWith('.json') ||
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.css')
+  ) {
+    event.respondWith(networkFirst(request, DATA_CACHE, 3500));
+    return;
+  }
+
+  if (
+    request.destination === 'image' ||
+    request.destination === 'font' ||
+    /\.(?:png|jpe?g|webp|gif|svg|ico|woff2?|ttf|otf)$/i.test(url.pathname)
+  ) {
+    event.respondWith(fastAsset(request));
+    return;
+  }
+
+  event.respondWith(networkFirst(request, ASSET_CACHE, 3500));
+});
+
+async function networkFirst(request, cacheName, timeoutMs) {
+  const cache = await caches.open(cacheName);
+  const cachedResponse = await cache.match(request);
+
+  try {
+    const response = await fetchWithTimeout(
+      new Request(request, { cache: 'no-cache' }),
+      timeoutMs
+    );
+
+    if (canCache(response)) {
+      await cache.put(request, response.clone());
+    }
+
+    return response;
+  } catch (error) {
+    if (cachedResponse) return cachedResponse;
+
+    if (
+      request.mode === 'navigate' ||
+      request.destination === 'document'
+    ) {
+      const dashboard =
+        await caches.match('./AuroraCityFC_ManagerDashboard.html');
+
+      if (dashboard) return dashboard;
+
+      return new Response(
+        `<!doctype html>
+        <html lang="en">
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <title>Aurora City FC — Offline</title>
+          <body style="font-family:system-ui;background:#07111f;color:#fff;padding:2rem">
+            <h1>Aurora is offline</h1>
+            <p>Reconnect to the internet and reopen the app.</p>
+          </body>
+        </html>`,
+        {
+          status: 503,
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        }
+      );
+    }
+
+    throw error;
+  }
+}
+
+/*
+ * Images appear quickly from cache, while a live revalidation starts at the
+ * same time. On a new service-worker version, APP_SHELL is refreshed during
+ * installation, so changed Aurora hero artwork is ready immediately.
+ */
+async function fastAsset(request) {
+  const cache = await caches.open(ASSET_CACHE);
+  const cachedResponse = await cache.match(request);
+
+  const updatePromise = fetch(
+    new Request(request, { cache: 'no-cache' })
+  )
+    .then(async response => {
+      if (canCache(response)) {
+        await cache.put(request, response.clone());
+      }
+      return response;
+    })
+    .catch(() => null);
+
+  if (cachedResponse) {
+    // Do not delay the visible page while the newest asset is downloaded.
+    updatePromise.catch(() => null);
+    return cachedResponse;
+  }
+
+  const networkResponse = await updatePromise;
+  if (networkResponse) return networkResponse;
+
+  return new Response('', { status: 504, statusText: 'Asset unavailable' });
+}
+
+function canCache(response) {
+  return Boolean(
+    response &&
+    response.ok &&
+    (response.type === 'basic' || response.type === 'default')
+  );
+}
+
+function fetchWithTimeout(request, timeoutMs) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  return fetch(request, { signal: controller.signal })
+    .finally(() => clearTimeout(timeout));
+}
