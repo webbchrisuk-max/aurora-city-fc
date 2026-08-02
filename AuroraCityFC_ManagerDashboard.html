@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html data-aurora-page="manager" lang="en">
+<html data-aurora-page="manager" data-aurora-header="page" lang="en">
 <head>
 <!-- Build: Aurora Manager Dashboard • Shared Hero Step 3 Load Fix • 2 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
 (function(){
@@ -516,7 +516,7 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 </style>
 <!-- Aurora universal workflow navigation -->
 <link href="aurora-navigation.css?v=20260729-crossbrowser-1" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260729-crossbrowser-1"></script>
+<script defer="" src="aurora-navigation.js?v=20260802-manager-black-header-1"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
@@ -1119,7 +1119,7 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 
 <script defer src="aurora-notifications.js?v=20260802-2"></script>
 
-<link rel="stylesheet" href="aurora-hero.css?v=20260802-manager-step3-fix1">
+<link rel="stylesheet" href="aurora-hero.css?v=20260802-stable-header-1">
 </head>
 <body>
 <div class="fm-shell">
@@ -1148,7 +1148,7 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 </div>
 <main class="app fm-command-app">
 <div id="auroraHero" data-aurora-hero data-page="manager" data-hero-image="assets/aurora-city-fc/hero/managerdash.PNG"></div>
-<script src="aurora-hero.js?v=20260802-manager-step3-fix1"></script>
+<script src="aurora-hero.js?v=20260802-stable-header-1"></script>
 <section class="manager-verdict">
 <div class="verdict-copy">
 <span class="badge green" id="briefingStatus">Loading</span>
@@ -3216,23 +3216,13 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     return "Good evening, Webby";
   }
 
-  function updateClock(){
-    const now = new Date();
+  function updateGreeting(){
     const greeting = byId("managerHeroGreeting");
-    const clock = byId("managerHeroTime");
 
     if(greeting){
-      greeting.textContent = greetingForHour(now.getHours());
-    }
-
-    if(clock){
-      clock.textContent = now.toLocaleString("en-GB",{
-        weekday:"short",
-        day:"numeric",
-        month:"short",
-        hour:"2-digit",
-        minute:"2-digit"
-      });
+      greeting.textContent = greetingForHour(
+        new Date().getHours()
+      );
     }
   }
 
@@ -3439,7 +3429,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   }
 
   function syncHero(){
-    updateClock();
+    updateGreeting();
     syncPriority();
     syncPosition();
     syncNextEvent();
@@ -3497,7 +3487,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     });
 
     syncHero();
-    window.setInterval(updateClock,30000);
+    window.setInterval(updateGreeting,300000);
     window.setInterval(syncHero,60000);
   }
 

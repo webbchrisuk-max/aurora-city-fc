@@ -4,7 +4,7 @@
 (function(global){
   "use strict";
 
-  const HERO_VERSION = "1.0.1-manager-load-fix";
+  const HERO_VERSION = "1.0.2-stable-page-header";
 
   const CONFIG = Object.freeze({
     manager: {
@@ -12,8 +12,6 @@
       rootId: "club-overview",
       rootClass: "aurora-section-anchor",
       kicker: "Live manager command centre",
-      sessionLabel: "Manager session live",
-      clockId: "managerHeroTime",
       greeting: "Welcome back, Webby",
       greetingId: "managerHeroGreeting",
       titleMain: "Manager",
@@ -137,10 +135,6 @@
 
         <div class="aurora-hero-topline">
           <div class="aurora-hero-kicker"><span class="aurora-hero-dot"></span>${escapeHtml(config.kicker)}</div>
-          <div class="aurora-hero-session">
-            <span><i></i>${escapeHtml(config.sessionLabel)}</span>
-            <time data-hero-clock${attr("id", config.clockId)}>Loading time…</time>
-          </div>
         </div>
 
         <div class="aurora-hero-stage">
@@ -185,19 +179,6 @@
       </section>`;
   }
 
-  function updateClock(root){
-    const clock = root.querySelector("[data-hero-clock]");
-    if (!clock) return;
-    clock.textContent = new Intl.DateTimeFormat("en-GB", {
-      weekday: "short",
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit"
-    }).format(new Date());
-  }
-
   function resolveImage(host, config){
     return host.dataset.heroImage || config.image || "";
   }
@@ -224,9 +205,7 @@
     const image = resolveImage(host, config);
     if (image) root.style.setProperty("--aurora-hero-image", `url("${String(image).replaceAll('"', '%22')}")`);
 
-    updateClock(root);
-    const timer = global.setInterval(() => updateClock(root), 1000);
-    mounted.set(host, {root, timer, pageId, config});
+    mounted.set(host, {root, pageId, config});
 
     host.dispatchEvent(new CustomEvent("aurora:hero-mounted", {bubbles:true, detail:{pageId, version:HERO_VERSION}}));
     return root;
@@ -244,7 +223,6 @@
     const host = typeof hostOrSelector === "string" ? document.querySelector(hostOrSelector) : hostOrSelector;
     const state = mounted.get(host);
     if (!state) return;
-    global.clearInterval(state.timer);
     mounted.delete(host);
     host.innerHTML = "";
   }

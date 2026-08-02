@@ -34,17 +34,17 @@
   ];
 
   const DEPARTMENTS = [
-    ["▦","Manager Dashboard","AuroraCityFC_ManagerDashboard.html"],
     ["⌂","Aurora Nexus HQ","AuroraCityFC_NexusMaster.html"],
+    ["▦","Manager Dashboard","AuroraCityFC_ManagerDashboard.html"],
     ["£","Finance Department","AuroraCityFC_FinanceDepartment.html"],
-    ["⇄","Transfer Centre","AuroraCityFC_TransferCentre.html"],
-    ["⚽","Matchday Centre","AuroraCityFC_MatchdayCentre.html"],
     ["♟","Squad Hub","AuroraCityFC_SquadHub.html"],
     ["↗","Analysis Room","AuroraCityFC_AnalysisRoom.html"],
-    ["⌕","Scouting Centre","AuroraCityFC_ScoutingCentre.html"],
-    ["▲","Training Ground","AuroraCityFC_TrainingGround.html"],
     ["🧠","Learning Centre","AuroraCityFC_LearningCentre.html"],
+    ["▲","Training Ground","AuroraCityFC_TrainingGround.html"],
+    ["⌕","Scouting Centre","AuroraCityFC_ScoutingCentre.html"],
+    ["⇄","Transfer Centre","AuroraCityFC_TransferCentre.html"],
     ["♜","Boardroom","AuroraCityFC_Boardroom.html"],
+    ["⚽","Matchday Centre","AuroraCityFC_MatchdayCentre.html"],
     ["●","Media Centre","AuroraCityFC_MediaCentre.html"],
   ];
 
@@ -195,9 +195,7 @@
     || "AuroraCityFC_NexusMaster.html"
   ).toLowerCase();
 
-  function currentWorkflowHash(){
-    return location.hash.toLowerCase();
-  }
+  const currentHash = location.hash.toLowerCase();
 
   function splitTarget(href){
     const parts = href.split("#");
@@ -211,42 +209,7 @@
     const target = splitTarget(href);
     return target.file === currentFile
       && target.hash
-      && target.hash === currentWorkflowHash();
-  }
-
-  function refreshWorkflowActiveState(){
-    const panel = document.getElementById("auroraNavPanel");
-    if(!panel) return;
-
-    panel.querySelectorAll(
-      ".aurora-nav-step[data-mission-index]"
-    ).forEach(function(stepElement){
-      const index = Number(
-        stepElement.dataset.missionIndex
-      );
-
-      const step = WORKFLOW[index];
-      const active = Boolean(
-        step && isWorkflowActive(step.href)
-      );
-
-      stepElement.classList.toggle(
-        "is-active",
-        active
-      );
-
-      const link = stepElement.querySelector(
-        ".aurora-nav-step-copy"
-      );
-
-      if(link){
-        if(active){
-          link.setAttribute("aria-current","step");
-        }else{
-          link.removeAttribute("aria-current");
-        }
-      }
-    });
+      && target.hash === currentHash;
   }
 
   function esc(value){
@@ -1447,6 +1410,141 @@
     );
   }
 
+  function pageOwnsAuroraHeader(){
+    return String(
+      document.documentElement.dataset.auroraHeader || ""
+    ).toLowerCase() === "page";
+  }
+
+  function wirePageHeaderLogout(button,shell){
+    if(!button || button.dataset.wired === "true") return;
+
+    button.dataset.wired = "true";
+    button.addEventListener("click",function(){
+      if(
+        shell
+        && shell.logout
+        && typeof shell.logout.click === "function"
+      ){
+        shell.logout.click();
+        return;
+      }
+
+      const oldLogout = Array.from(
+        document.querySelectorAll("button,a")
+      ).find(function(node){
+        const value = String(node.textContent || "")
+          .replace(/\s+/g," ")
+          .trim()
+          .toLowerCase();
+
+        return (
+          node !== button
+          && (value === "log out" || value === "logout")
+        );
+      });
+
+      if(oldLogout && typeof oldLogout.click === "function"){
+        oldLogout.click();
+        return;
+      }
+
+      try{
+        localStorage.removeItem("aurora_session");
+        localStorage.removeItem("aurora_manager_session");
+        sessionStorage.clear();
+      }catch(_){}
+
+      location.href = "index.html";
+    });
+  }
+
+  function installUniversalControlsIntoPageHeader(toggle,shell){
+    if(!pageOwnsAuroraHeader()) return false;
+
+    const topbar = document.querySelector(
+      ".fm-workspace > .topbar"
+    );
+
+    const inner = topbar && topbar.querySelector(
+      ".topbar-inner"
+    );
+
+    const brand = inner && inner.querySelector(".brand");
+    const context = inner && inner.querySelector(
+      ".fm-top-context"
+    );
+
+    if(!topbar || !inner || !brand || !context) return false;
+
+    document.body.classList.add("aurora-page-owned-header");
+    document.body.style.removeProperty("padding-top");
+
+    const oldPath = context.querySelector(".fm-page-path");
+    if(oldPath) oldPath.hidden = true;
+
+    toggle.setAttribute(
+      "aria-label",
+      "Open Aurora mission navigation"
+    );
+    toggle.title = "Open mission navigation";
+    toggle.style.removeProperty("display");
+
+    if(toggle.parentElement !== brand){
+      brand.insertBefore(toggle,brand.firstChild);
+    }
+
+    let department = context.querySelector(
+      ".aurora-page-header-department"
+    );
+
+    if(!department){
+      department = document.createElement("span");
+      department.className = "aurora-page-header-department";
+      context.appendChild(department);
+    }
+
+    department.textContent = currentAuroraDepartment();
+
+    let logout = context.querySelector(
+      ".aurora-page-header-logout"
+    );
+
+    if(!logout){
+      logout = document.createElement("button");
+      logout.type = "button";
+      logout.className = "aurora-page-header-logout";
+      logout.textContent = "Log out";
+      context.appendChild(logout);
+    }
+
+    wirePageHeaderLogout(logout,shell);
+
+    const localHeader = document.getElementById(
+      "auroraUniversalHeader"
+    );
+
+    if(localHeader) localHeader.remove();
+
+    if(shell){
+      shell.header.style.setProperty(
+        "display",
+        "none",
+        "important"
+      );
+      shell.header.setAttribute("aria-hidden","true");
+      shell.header.dataset.auroraHiddenForPageHeader = "true";
+      shell.document.body.classList.add(
+        "aurora-page-owned-header-shell"
+      );
+      document.body.classList.add("aurora-running-in-app-shell");
+    }else{
+      document.body.classList.remove("aurora-running-in-app-shell");
+    }
+
+    return true;
+  }
+
   function injectUniversalHeaderStyles(){
     if(document.getElementById("auroraUniversalHeaderStyles")) return;
 
@@ -1648,6 +1746,146 @@
       }
 
 
+      body.aurora-page-owned-header{
+        padding-top:0!important;
+      }
+
+      body.aurora-page-owned-header #auroraUniversalHeader{
+        display:none!important;
+      }
+
+      body.aurora-page-owned-header .fm-workspace > .topbar{
+        display:block!important;
+        position:sticky!important;
+        top:0!important;
+      }
+
+      body.aurora-page-owned-header .topbar-inner .brand{
+        flex:1 1 auto;
+      }
+
+      body.aurora-page-owned-header .topbar-inner #auroraNavToggle{
+        position:static!important;
+        inset:auto!important;
+        transform:none!important;
+        width:42px!important;
+        height:42px!important;
+        min-width:42px!important;
+        flex:0 0 42px!important;
+        margin:0!important;
+        border:1px solid rgba(125,211,252,.26)!important;
+        border-radius:13px!important;
+        color:#dff7ff!important;
+        background:
+          linear-gradient(
+            145deg,
+            rgba(8,47,73,.92),
+            rgba(15,23,42,.98)
+          )!important;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.07),
+          0 8px 18px rgba(0,0,0,.20)!important;
+        z-index:auto!important;
+        opacity:1!important;
+        display:grid!important;
+      }
+
+      body.aurora-page-owned-header .fm-page-path{
+        display:none!important;
+      }
+
+      body.aurora-page-owned-header .fm-top-context{
+        justify-content:flex-end;
+        flex:0 1 auto;
+        min-width:0;
+        flex-wrap:nowrap;
+      }
+
+      body.aurora-page-owned-header .aurora-page-header-department{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        color:#b7c7dd;
+        font-size:10px;
+        font-weight:900;
+        letter-spacing:.12em;
+        text-transform:uppercase;
+        white-space:nowrap;
+      }
+
+      body.aurora-page-owned-header .aurora-page-header-department::before{
+        content:"";
+        width:8px;
+        height:8px;
+        flex:0 0 auto;
+        border-radius:50%;
+        background:#34d399;
+        box-shadow:
+          0 0 0 4px rgba(52,211,153,.10),
+          0 0 13px rgba(52,211,153,.45);
+      }
+
+      body.aurora-page-owned-header .aurora-page-header-logout{
+        min-height:38px;
+        padding:0 14px;
+        border:1px solid rgba(251,113,133,.34);
+        border-radius:12px;
+        color:#fecdd3;
+        background:
+          linear-gradient(
+            145deg,
+            rgba(76,5,25,.76),
+            rgba(44,7,20,.90)
+          );
+        font-size:10px;
+        font-weight:950;
+        letter-spacing:.12em;
+        text-transform:uppercase;
+        white-space:nowrap;
+        cursor:pointer;
+      }
+
+      body.aurora-page-owned-header .aurora-page-header-logout:hover,
+      body.aurora-page-owned-header .aurora-page-header-logout:focus-visible{
+        border-color:rgba(251,113,133,.58);
+        outline:none;
+      }
+
+      @media(max-width:1120px){
+        body.aurora-page-owned-header .topbar-inner{
+          gap:10px;
+        }
+
+        body.aurora-page-owned-header .fm-top-context{
+          gap:7px;
+        }
+
+        body.aurora-page-owned-header .aurora-page-header-department{
+          display:none;
+        }
+      }
+
+      @media(max-width:760px){
+        body.aurora-page-owned-header .topbar-inner{
+          align-items:center;
+          flex-wrap:wrap;
+        }
+
+        body.aurora-page-owned-header .brand{
+          min-width:min(100%,360px);
+        }
+
+        body.aurora-page-owned-header .fm-top-context{
+          width:100%;
+          justify-content:flex-start;
+          flex-wrap:wrap;
+        }
+
+        body.aurora-page-owned-header .aurora-page-header-department{
+          display:inline-flex;
+        }
+      }
+
       body.aurora-running-in-app-shell{
         padding-top:0!important;
       }
@@ -1787,6 +2025,20 @@
     const shell = getVerifiedAuroraAppShell();
     if(!shell) return false;
 
+    if(pageOwnsAuroraHeader()){
+      return installUniversalControlsIntoPageHeader(
+        toggle,
+        shell
+      );
+    }
+
+    shell.header.style.removeProperty("display");
+    shell.header.removeAttribute("aria-hidden");
+    delete shell.header.dataset.auroraHiddenForPageHeader;
+    shell.document.body.classList.remove(
+      "aurora-page-owned-header-shell"
+    );
+
     const parentDocument = shell.document;
     const header = shell.header;
     const brand = shell.brand;
@@ -1919,10 +2171,22 @@
     injectUniversalHeaderStyles();
 
     /*
-      Inside the installed Aurora app, the persistent app shell already
-      owns the top header. Use that header and do not build a second one.
+      Inside the installed Aurora app, first detect the persistent shell.
+      Opt-in pages hide that shell header and move the shared controls into
+      their own black department header.
     */
     if(installMenuIntoAuroraAppShell(toggle)){
+      return null;
+    }
+
+    /*
+      Outside the installed app, an opt-in page uses its own black header
+      instead of building the separate navy universal header.
+    */
+    if(
+      pageOwnsAuroraHeader()
+      && installUniversalControlsIntoPageHeader(toggle,null)
+    ){
       return null;
     }
 
@@ -2059,7 +2323,6 @@
             <a
               class="aurora-nav-step-copy"
               href="${esc(step.href)}"
-              ${active ? 'aria-current="step"' : ""}
             >
               <strong>${esc(step.title)}</strong>
               <span>${esc(step.note)}</span>
@@ -2201,7 +2464,6 @@
     `;
 
     document.body.append(toggle,overlay,panel);
-    refreshWorkflowActiveState();
 
     /*
       Clean up remnants created by older navigation builds.
@@ -2215,9 +2477,6 @@
 
     const cloudControl =
       panel.querySelector("#auroraNavCloud");
-
-    const navigationScroll =
-      panel.querySelector(".aurora-nav-scroll");
 
     function setOpen(open){
       document.body.classList.toggle(
@@ -2248,36 +2507,6 @@
       );
 
       if(open){
-        /*
-          Reopen beside the current Aurora location instead of jumping back
-          to Payday Plan. Transfer Centre pages show the active mission step;
-          other department pages show their current department entry.
-        */
-        refreshWorkflowActiveState();
-
-        if(navigationScroll){
-          window.requestAnimationFrame(function(){
-            const currentNavigationItem = panel.querySelector(
-              ".aurora-nav-step.is-active, .aurora-nav-dept.is-current"
-            );
-
-            if(!currentNavigationItem) return;
-
-            const scrollRect = navigationScroll.getBoundingClientRect();
-            const itemRect = currentNavigationItem.getBoundingClientRect();
-            const itemIsVisible = itemRect.top >= scrollRect.top + 8
-              && itemRect.bottom <= scrollRect.bottom - 8;
-
-            if(!itemIsVisible){
-              currentNavigationItem.scrollIntoView({
-                block:"center",
-                inline:"nearest",
-                behavior:"auto"
-              });
-            }
-          });
-        }
-
         window.setTimeout(function(){
           if(closeButton){
             closeButton.focus({
@@ -2319,300 +2548,6 @@
         }
       );
     }
-
-    /*
-      Aurora edge controls
-      - iPad / touch: touching the inset left edge opens the menu immediately.
-      - iPad / touch: scrolling upward from the inset right edge advances to
-        the next Payday Mission step. A left swipe also advances.
-      - Mouse / trackpad: entering the left edge opens the menu; scrolling down
-        over the right edge advances to the next Payday Mission step.
-      Fixed inset activation zones are used because iPadOS can reserve the true
-      screen edge and prevent document-level edge gestures from reaching Aurora.
-    */
-    (function installAuroraEdgeGestures(){
-      if(window.__AURORA_EDGE_GESTURES__) return;
-      window.__AURORA_EDGE_GESTURES__ = true;
-
-      /*
-        The visible page underneath the gesture can differ between Aurora
-        departments. Boardroom in particular contains several older fixed
-        layers. Touch detection therefore runs on the document in capture
-        mode instead of relying only on a small overlay div.
-      */
-      const EDGE_INSET = 8;
-      const EDGE_WIDTH = 46;
-      const LEFT_TOUCH_WIDTH = 72;
-      const RIGHT_TOUCH_WIDTH = 92;
-      const TOUCH_TRIGGER = 44;
-      const WHEEL_TRIGGER = 82;
-      const NAVIGATION_COOLDOWN = 1250;
-
-      let lastNavigationAt = 0;
-      let wheelAmount = 0;
-      let wheelResetTimer = 0;
-      let touchMode = "";
-      let touchStartX = 0;
-      let touchStartY = 0;
-      let touchHandled = false;
-
-      function hasBlockingOverlay(){
-        return Boolean(
-          document.querySelector(
-            "dialog[open],"
-            + "[aria-modal='true']:not(#auroraNavPanel),"
-            + ".modal.open,.modal.show,.drawer.open,"
-            + ".analysis-player-drawer.open"
-          )
-        );
-      }
-
-      function isInteractiveTarget(target){
-        return Boolean(
-          target
-          && target.closest
-          && target.closest(
-            "input,textarea,select,button,a,[contenteditable='true']"
-          )
-        );
-      }
-
-      function currentMissionIndex(){
-        for(let index = 0; index < WORKFLOW.length; index += 1){
-          if(isWorkflowActive(WORKFLOW[index].href)){
-            return index;
-          }
-        }
-
-        const samePage = [];
-        for(let index = 0; index < WORKFLOW.length; index += 1){
-          if(splitTarget(WORKFLOW[index].href).file === currentFile){
-            samePage.push(index);
-          }
-        }
-
-        if(samePage.length === 1){
-          return samePage[0];
-        }
-
-        return -1;
-      }
-
-      function goToNextMissionStep(){
-        const now = Date.now();
-        if(now - lastNavigationAt < NAVIGATION_COOLDOWN){
-          return false;
-        }
-
-        const currentIndex = currentMissionIndex();
-        const nextIndex = currentIndex >= 0
-          ? currentIndex + 1
-          : nextMissionIndex();
-
-        if(
-          nextIndex < 0
-          || nextIndex >= WORKFLOW.length
-          || !WORKFLOW[nextIndex]
-        ){
-          return false;
-        }
-
-        lastNavigationAt = now;
-        setOpen(false);
-        location.href = WORKFLOW[nextIndex].href;
-        return true;
-      }
-
-      function createEdgeZone(id,side,label){
-        let zone = document.getElementById(id);
-        if(zone) return zone;
-
-        zone = document.createElement("div");
-        zone.id = id;
-        zone.setAttribute("aria-hidden","true");
-        zone.setAttribute("data-aurora-edge",side);
-        zone.title = label;
-        zone.style.position = "fixed";
-        zone.style.top = "76px";
-        zone.style.bottom = "76px";
-        zone.style.width = EDGE_WIDTH + "px";
-        zone.style[side] = EDGE_INSET + "px";
-        zone.style.zIndex = "2147483400";
-        zone.style.background = "transparent";
-        zone.style.pointerEvents = "auto";
-        zone.style.touchAction = "none";
-        zone.style.webkitTapHighlightColor = "transparent";
-        zone.style.userSelect = "none";
-        document.documentElement.appendChild(zone);
-        return zone;
-      }
-
-      const leftZone = createEdgeZone(
-        "auroraLeftEdgeGestureZone",
-        "left",
-        "Open Aurora menu"
-      );
-
-      const rightZone = createEdgeZone(
-        "auroraRightEdgeGestureZone",
-        "right",
-        "Next Payday Mission step"
-      );
-
-      function edgeControlsAvailable(){
-        return !hasBlockingOverlay()
-          && !document.body.classList.contains("aurora-nav-open");
-      }
-
-      /* Mouse and trackpad behaviour remains attached to the fixed zones. */
-      leftZone.addEventListener(
-        "pointerenter",
-        function(event){
-          if(
-            event.pointerType !== "touch"
-            && edgeControlsAvailable()
-          ){
-            setOpen(true);
-          }
-        },
-        {passive:true}
-      );
-
-      rightZone.addEventListener(
-        "wheel",
-        function(event){
-          if(
-            !edgeControlsAvailable()
-            || event.deltaY <= 0
-            || Math.abs(event.deltaY) < Math.abs(event.deltaX)
-          ){
-            wheelAmount = 0;
-            return;
-          }
-
-          wheelAmount += Math.abs(event.deltaY);
-          window.clearTimeout(wheelResetTimer);
-          wheelResetTimer = window.setTimeout(function(){
-            wheelAmount = 0;
-          },500);
-
-          if(wheelAmount >= WHEEL_TRIGGER){
-            wheelAmount = 0;
-            if(goToNextMissionStep() && event.cancelable){
-              event.preventDefault();
-            }
-          }
-        },
-        {passive:false}
-      );
-
-      /*
-        Capture-mode touch handling works even when an Aurora page has its own
-        fixed cards, legacy sidebar remnants or full-width overlays. A touch
-        beginning near the left edge opens the menu. A touch beginning near
-        the right edge advances after either an upward scroll gesture or a
-        left swipe.
-      */
-      document.addEventListener(
-        "touchstart",
-        function(event){
-          touchMode = "";
-          touchHandled = false;
-
-          if(
-            event.touches.length !== 1
-            || !edgeControlsAvailable()
-          ){
-            return;
-          }
-
-          const touch = event.touches[0];
-          touchStartX = touch.clientX;
-          touchStartY = touch.clientY;
-
-          if(touchStartX <= LEFT_TOUCH_WIDTH){
-            touchMode = "left";
-            touchHandled = true;
-            if(event.cancelable){
-              event.preventDefault();
-            }
-            setOpen(true);
-            return;
-          }
-
-          if(
-            window.innerWidth - touchStartX <= RIGHT_TOUCH_WIDTH
-            && !isInteractiveTarget(event.target)
-          ){
-            touchMode = "right";
-          }
-        },
-        {capture:true,passive:false}
-      );
-
-      document.addEventListener(
-        "touchmove",
-        function(event){
-          if(
-            touchMode !== "right"
-            || touchHandled
-            || event.touches.length !== 1
-            || !edgeControlsAvailable()
-          ){
-            return;
-          }
-
-          const touch = event.touches[0];
-          const dx = touch.clientX - touchStartX;
-          const dy = touch.clientY - touchStartY;
-
-          const upwardScroll = dy <= -TOUCH_TRIGGER
-            && Math.abs(dy) >= Math.abs(dx) * 0.55;
-
-          const leftSwipe = dx <= -TOUCH_TRIGGER
-            && Math.abs(dx) >= Math.abs(dy) * 0.55;
-
-          if(upwardScroll || leftSwipe){
-            touchHandled = true;
-            if(event.cancelable){
-              event.preventDefault();
-            }
-            goToNextMissionStep();
-          }
-        },
-        {capture:true,passive:false}
-      );
-
-      function resetTouchGesture(){
-        touchMode = "";
-        touchHandled = false;
-      }
-
-      document.addEventListener(
-        "touchend",
-        resetTouchGesture,
-        {capture:true,passive:true}
-      );
-
-      document.addEventListener(
-        "touchcancel",
-        resetTouchGesture,
-        {capture:true,passive:true}
-      );
-
-      function syncEdgeZones(){
-        const hidden = document.body.classList.contains("aurora-nav-open");
-        leftZone.style.pointerEvents = hidden ? "none" : "auto";
-        rightZone.style.pointerEvents = hidden ? "none" : "auto";
-      }
-
-      const bodyObserver = new MutationObserver(syncEdgeZones);
-      bodyObserver.observe(document.body,{
-        attributes:true,
-        attributeFilter:["class"]
-      });
-      syncEdgeZones();
-    })();
 
     panel.addEventListener(
       "click",
@@ -2676,20 +2611,9 @@
     );
 
     window.addEventListener(
-      "hashchange",
-      refreshWorkflowActiveState
-    );
-
-    window.addEventListener(
-      "popstate",
-      refreshWorkflowActiveState
-    );
-
-    window.addEventListener(
       "pageshow",
       function(){
         setOpen(false);
-        refreshWorkflowActiveState();
         buildUniversalAuroraHeader(toggle);
         buildUniversalAuroraHeader(toggle);
       }
