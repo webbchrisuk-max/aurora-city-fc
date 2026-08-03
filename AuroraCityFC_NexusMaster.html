@@ -2,7 +2,7 @@
 
 <html data-aurora-page="nexus" data-aurora-header="page" lang="en">
 <head>
-<!-- Build: Aurora Nexus HQ • Stable Page Header + Direct Navigation • 03 Aug 2026 -->
+<!-- Build: Aurora Nexus HQ • Manager Dashboard Layout • Nexus Identity • 03 Aug 2026 -->
 <script id="auroraPageOwnedShellBootstrap">
 (function(){
   "use strict";
@@ -3047,7 +3047,6 @@ body.nexus-presentation .nexus-quick-rail{top:8px!important}
   .beast-top-actions{order:2}
 }
 </style>
-<link rel="stylesheet" href="aurora-hero.css?v=20260802-nexus-step1-1">
 <script defer src="aurora-notifications.js?v=20260802-2"></script>
 
 
@@ -3163,6 +3162,756 @@ body #auroraRightEdgeGestureZone{
 }
 </style>
 
+
+<style id="auroraNexusManagerLayoutHeroV1">
+/*
+  Nexus uses the Manager Dashboard's visual composition:
+  three-column command stage plus six-metric lower strip.
+  Content and imagery remain Nexus-specific.
+*/
+#nexus-overview.nexus-command-hero{
+  position:relative;
+  isolation:isolate;
+  display:block;
+  min-height:0;
+  margin:18px 0 16px;
+  padding:24px;
+  overflow:hidden;
+  border:1px solid rgba(103,232,249,.28);
+  border-radius:32px;
+  background:
+    linear-gradient(
+      110deg,
+      rgba(3,11,28,.78) 0%,
+      rgba(7,25,50,.55) 46%,
+      rgba(17,24,63,.35) 100%
+    ),
+    radial-gradient(
+      circle at 12% 15%,
+      rgba(34,211,238,.22),
+      transparent 32%
+    ),
+    url(
+      "assets/aurora-city-fc/hero/nexus.PNG?v=20260803-manager-layout-1"
+    ) center center/cover no-repeat;
+  box-shadow:
+    0 30px 95px rgba(0,0,0,.50),
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 0 36px rgba(34,211,238,.08);
+}
+
+#nexus-overview.nexus-command-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-3;
+  pointer-events:none;
+  opacity:.18;
+  background:
+    linear-gradient(
+      rgba(125,211,252,.045) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(125,211,252,.045) 1px,
+      transparent 1px
+    );
+  background-size:42px 42px;
+  -webkit-mask-image:linear-gradient(
+    135deg,
+    #000 0%,
+    rgba(0,0,0,.72) 52%,
+    transparent 100%
+  );
+  mask-image:linear-gradient(
+    135deg,
+    #000 0%,
+    rgba(0,0,0,.72) 52%,
+    transparent 100%
+  );
+}
+
+#nexus-overview.nexus-command-hero:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:3px;
+  z-index:8;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    #22d3ee,
+    #34d399,
+    #a78bfa,
+    #fbbf24,
+    transparent
+  );
+  background-size:220% 100%;
+  box-shadow:0 0 22px rgba(34,211,238,.42);
+  animation:nexusManagerHeroLineFlow 8s ease-in-out infinite;
+}
+
+.nexus-hero-aura{
+  position:absolute;
+  z-index:-2;
+  width:520px;
+  height:520px;
+  border-radius:50%;
+  pointer-events:none;
+  filter:blur(46px);
+  opacity:.20;
+}
+
+.nexus-hero-aura-one{
+  left:-190px;
+  top:-280px;
+  background:#22d3ee;
+  animation:nexusManagerHeroAuraOne 10s ease-in-out infinite;
+}
+
+.nexus-hero-aura-two{
+  right:-180px;
+  top:-250px;
+  background:#a78bfa;
+  animation:nexusManagerHeroAuraTwo 12s ease-in-out infinite;
+}
+
+.nexus-hero-topline{
+  position:relative;
+  z-index:3;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.nexus-panel-kicker{
+  display:block;
+  color:#67e8f9;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.nexus-hero-session{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+  flex-wrap:wrap;
+  color:#8ea6bd;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.nexus-hero-session > span{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 9px;
+  border:1px solid rgba(52,211,153,.20);
+  border-radius:999px;
+  color:#bbf7d0;
+  background:rgba(20,83,45,.16);
+}
+
+.nexus-hero-session > span b{
+  font:inherit;
+}
+
+.nexus-hero-session i{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:
+    0 0 0 5px rgba(52,211,153,.08),
+    0 0 14px rgba(52,211,153,.38);
+}
+
+.nexus-hero-session time{
+  padding:7px 9px;
+  border:1px solid rgba(148,163,184,.14);
+  border-radius:999px;
+  background:rgba(2,8,22,.34);
+}
+
+.nexus-hero-stage{
+  position:relative;
+  z-index:3;
+  display:grid;
+  grid-template-columns:
+    minmax(300px,1.08fr)
+    minmax(310px,.96fr)
+    minmax(280px,.76fr);
+  gap:16px;
+  align-items:stretch;
+}
+
+.nexus-hero-identity{
+  align-self:center;
+  padding:8px 4px 8px 2px;
+}
+
+.nexus-hero-greeting{
+  margin:0 0 8px!important;
+  color:#a5f3fc!important;
+  font-size:13px!important;
+  font-weight:950;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+#nexus-overview .nexus-hero-identity h1{
+  margin:0 0 13px;
+  font-size:clamp(44px,5.4vw,82px);
+  line-height:.84;
+  letter-spacing:-.078em;
+  text-shadow:0 18px 50px rgba(0,0,0,.52);
+}
+
+#nexus-overview .nexus-hero-title-main{
+  display:block;
+  background:linear-gradient(
+    90deg,
+    #f8fbff 0%,
+    #67e8f9 28%,
+    #34d399 50%,
+    #a78bfa 75%,
+    #f8fbff 100%
+  );
+  background-size:240% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:nexusManagerHeroTitleFlow 8s ease-in-out infinite;
+}
+
+#nexus-overview .nexus-hero-identity h1 > span:last-child{
+  display:block;
+  color:#dbeafe;
+  font-size:.58em;
+  line-height:1.02;
+  letter-spacing:-.055em;
+}
+
+#nexus-overview .nexus-hero-identity > p:last-of-type{
+  max-width:650px;
+  margin:0;
+  color:#c9d8e8;
+  font-size:14px;
+  line-height:1.55;
+}
+
+.nexus-hero-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+.nexus-hero-action{
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  padding:10px 13px;
+  border:1px solid rgba(125,211,252,.20);
+  border-radius:13px;
+  color:#cfefff;
+  background:rgba(8,47,73,.26);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  font-size:10px;
+  font-weight:950;
+  text-decoration:none;
+  cursor:pointer;
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease;
+}
+
+.nexus-hero-action:hover,
+.nexus-hero-action:focus-visible{
+  transform:translateY(-2px);
+  border-color:rgba(103,232,249,.50);
+  background:rgba(8,75,97,.42);
+  outline:none;
+}
+
+.nexus-hero-action.primary{
+  color:#ecfeff;
+  border-color:rgba(34,211,238,.36);
+  background:linear-gradient(
+    135deg,
+    rgba(8,145,178,.34),
+    rgba(30,64,175,.28)
+  );
+}
+
+.nexus-hero-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+
+.nexus-hero-meta span{
+  min-width:0;
+  padding:8px 10px;
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:999px;
+  background:rgba(2,6,23,.42);
+  color:#aabbd1;
+  font-size:11px;
+  font-weight:800;
+}
+
+.nexus-hero-meta b{
+  color:#e0f2fe;
+}
+
+.nexus-hero-priority,
+.nexus-hero-position{
+  position:relative;
+  overflow:hidden;
+  min-width:0;
+  padding:18px;
+  border:1px solid rgba(125,211,252,.18);
+  border-radius:24px;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(34,211,238,.11),
+      transparent 38%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(11,29,55,.58),
+      rgba(3,11,26,.70)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 16px 40px rgba(0,0,0,.24);
+}
+
+.nexus-hero-priority{
+  border-color:rgba(167,139,250,.28);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(167,139,250,.15),
+      transparent 39%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(31,23,58,.58),
+      rgba(5,12,27,.72)
+    );
+}
+
+.nexus-hero-priority:after,
+.nexus-hero-position:after{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:3px;
+  background:linear-gradient(
+    180deg,
+    transparent,
+    #a78bfa,
+    transparent
+  );
+}
+
+.nexus-hero-position:after{
+  background:linear-gradient(
+    180deg,
+    transparent,
+    #22d3ee,
+    #34d399,
+    transparent
+  );
+}
+
+.nexus-hero-card-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.nexus-hero-card-head small,
+.nexus-hero-position-label{
+  display:block;
+  color:#9fb0c4;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.nexus-hero-priority-state{
+  display:inline-flex;
+  margin-top:7px;
+  padding:6px 8px;
+  border:1px solid rgba(167,139,250,.30);
+  border-radius:999px;
+  color:#ddd6fe;
+  background:rgba(76,29,149,.22);
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.nexus-hero-priority-icon{
+  width:42px;
+  height:42px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(167,139,250,.30);
+  border-radius:14px;
+  color:#ddd6fe;
+  background:rgba(76,29,149,.22);
+  font-size:21px;
+  box-shadow:0 0 20px rgba(167,139,250,.10);
+}
+
+.nexus-hero-priority h2{
+  margin:18px 0 9px;
+  color:#f3e8ff;
+  font-size:clamp(22px,2.1vw,32px);
+  line-height:1.02;
+  letter-spacing:-.05em;
+}
+
+.nexus-hero-priority > p{
+  margin:0;
+  color:#aebed1;
+  font-size:11px;
+  line-height:1.55;
+}
+
+.nexus-hero-priority-foot{
+  margin-top:17px;
+  padding-top:14px;
+  border-top:1px solid rgba(167,139,250,.16);
+}
+
+.nexus-hero-priority-foot > span{
+  display:block;
+  color:#7f8ea1;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.nexus-hero-priority-foot strong{
+  display:block;
+  margin-top:5px;
+  color:#f5f3ff;
+  font-size:17px;
+}
+
+.nexus-hero-priority-foot small{
+  display:block;
+  margin-top:5px;
+  color:#8fa0b5;
+  font-size:9px;
+  line-height:1.4;
+}
+
+.nexus-hero-priority-foot small b{
+  color:#c4b5fd;
+}
+
+.nexus-hero-position > strong{
+  display:block;
+  margin-top:13px;
+  color:#86efac;
+  font-size:clamp(29px,3vw,45px);
+  line-height:.95;
+  letter-spacing:-.07em;
+}
+
+.nexus-hero-position > p{
+  margin:9px 0 0;
+  color:#9fb1c5;
+  font-size:10px;
+  line-height:1.45;
+}
+
+.nexus-hero-position-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:7px;
+  margin-top:17px;
+}
+
+.nexus-hero-position-grid > div{
+  min-width:0;
+  padding:10px 11px;
+  border:1px solid rgba(125,211,252,.11);
+  border-radius:13px;
+  background:rgba(2,6,23,.25);
+}
+
+.nexus-hero-position-grid small{
+  display:block;
+  color:#7f92a8;
+  font-size:7px;
+  font-weight:1000;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+
+.nexus-hero-position-grid strong{
+  display:block;
+  margin-top:5px;
+  overflow:hidden;
+  color:#dff8ff;
+  font-size:13px;
+  text-overflow:ellipsis;
+}
+
+.nexus-hero-position-grid span{
+  display:block;
+  margin-top:4px;
+  color:#8497aa;
+  font-size:8px;
+  line-height:1.3;
+}
+
+.nexus-hero-brain-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  color:#8ea0b3;
+  font-size:9px;
+  line-height:1.4;
+}
+
+.nexus-hero-brain-dot{
+  width:8px;
+  height:8px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#a78bfa;
+  box-shadow:
+    0 0 0 5px rgba(167,139,250,.09),
+    0 0 13px rgba(167,139,250,.45);
+}
+
+.nexus-hero-kpi-strip{
+  position:relative;
+  z-index:3;
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+  margin-top:18px;
+}
+
+.nexus-hero-metric{
+  position:relative;
+  overflow:hidden;
+  min-height:118px;
+  padding:15px;
+  border:1px solid rgba(125,211,252,.17);
+  border-radius:19px;
+  background:linear-gradient(
+    180deg,
+    rgba(15,23,42,.75),
+    rgba(8,18,34,.92)
+  );
+}
+
+.nexus-hero-metric:before{
+  content:"";
+  position:absolute;
+  width:100px;
+  height:100px;
+  right:-38px;
+  top:-46px;
+  border-radius:50%;
+  background:rgba(96,165,250,.12);
+}
+
+.nexus-hero-metric.green:before{
+  background:rgba(52,211,153,.13);
+}
+
+.nexus-hero-metric.amber:before{
+  background:rgba(251,191,36,.13);
+}
+
+.nexus-hero-metric.cyan:before{
+  background:rgba(34,211,238,.13);
+}
+
+.nexus-hero-metric small{
+  position:relative;
+  display:block;
+  color:#94a3b8;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.nexus-hero-metric strong{
+  position:relative;
+  display:block;
+  margin-top:7px;
+  color:#e0f2fe;
+  font-size:23px;
+  letter-spacing:-.05em;
+}
+
+.nexus-hero-metric.green strong{
+  color:#86efac;
+}
+
+.nexus-hero-metric.amber strong{
+  color:#fde68a;
+}
+
+.nexus-hero-metric.cyan strong{
+  color:#67e8f9;
+}
+
+.nexus-hero-metric > span{
+  position:relative;
+  display:block;
+  margin-top:7px;
+  color:#94a3b8;
+  font-size:10px;
+  line-height:1.35;
+}
+
+@keyframes nexusManagerHeroTitleFlow{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+
+@keyframes nexusManagerHeroLineFlow{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+
+@keyframes nexusManagerHeroAuraOne{
+  0%,100%{
+    transform:translate(0,0) scale(1);
+    opacity:.14;
+  }
+  50%{
+    transform:translate(80px,45px) scale(1.15);
+    opacity:.24;
+  }
+}
+
+@keyframes nexusManagerHeroAuraTwo{
+  0%,100%{
+    transform:translate(0,0) scale(1);
+    opacity:.15;
+  }
+  50%{
+    transform:translate(-70px,55px) scale(1.13);
+    opacity:.25;
+  }
+}
+
+@media(max-width:1320px){
+  .nexus-hero-stage{
+    grid-template-columns:1.05fr .95fr;
+  }
+
+  .nexus-hero-position{
+    grid-column:1/-1;
+  }
+
+  .nexus-hero-position-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:1040px){
+  .nexus-hero-stage{
+    grid-template-columns:1fr;
+  }
+
+  .nexus-hero-position{
+    grid-column:auto;
+  }
+
+  .nexus-hero-kpi-strip{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:700px){
+  #nexus-overview.nexus-command-hero{
+    padding:17px;
+    border-radius:25px;
+  }
+
+  .nexus-hero-topline{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .nexus-hero-session{
+    justify-content:flex-start;
+  }
+
+  #nexus-overview .nexus-hero-identity h1{
+    font-size:48px;
+  }
+
+  .nexus-hero-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .nexus-hero-action{
+    width:100%;
+  }
+
+  .nexus-hero-position-grid,
+  .nexus-hero-kpi-strip{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:460px){
+  .nexus-hero-position-grid,
+  .nexus-hero-kpi-strip{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  #nexus-overview.nexus-command-hero *,
+  #nexus-overview.nexus-command-hero:after{
+    animation:none!important;
+    transition:none!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="fm-shell">
@@ -3177,7 +3926,7 @@ body #auroraRightEdgeGestureZone{
   title="Open mission navigation"
   type="button"
 >☰</button>
-<div class="crest"><img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"></div>
+<div class="crest"><img alt="Aurora City FC crest" src="assets/aurora-city-fc/icons/icon-192.png"></div>
 <div><h1>Aurora City FC</h1><p>Aurora Nexus HQ • Club Intelligence</p></div>
 </div>
 <div class="fm-top-context">
@@ -3199,8 +3948,187 @@ body #auroraRightEdgeGestureZone{
 </div>
 </div>
 <div class="wrap">
-<div id="auroraHero" data-aurora-hero data-page="nexus" data-hero-image="assets/aurora-city-fc/hero/nexus.PNG?v=20260802-nexus-command-centre-1"></div>
-<script src="aurora-hero.js?v=20260802-nexus-image-fix-1"></script><section class="card panel aurora-section-anchor aurora-league-hq" id="nexus-premier-league"><div class="nexus-question-label">WHERE ARE WE?<span>League position</span></div><div class="nexus-priority-ribbon">PRIORITY 1 • LEAGUE POSITION</div>
+
+<section
+  class="nexus-command-hero manager-layout-hero aurora-section-anchor"
+  id="nexus-overview"
+>
+  <span class="nexus-hero-aura nexus-hero-aura-one"></span>
+  <span class="nexus-hero-aura nexus-hero-aura-two"></span>
+
+  <div class="nexus-hero-topline">
+    <span class="nexus-panel-kicker">Aurora Nexus Command</span>
+
+    <div class="nexus-hero-session">
+      <span>
+        <i></i>
+        <b id="heroLiveSync">Club system live</b>
+      </span>
+      <time id="clockBadge">Loading time…</time>
+    </div>
+  </div>
+
+  <div class="nexus-hero-stage">
+    <div class="nexus-hero-identity">
+      <p class="nexus-hero-greeting">Aurora intelligence online</p>
+
+      <h1>
+        <span class="nexus-hero-title-main">Aurora Nexus</span>
+        <span>Command Centre</span>
+      </h1>
+
+      <p id="nexusHeroDescription">
+        Aurora is connecting the club's portfolio, income,
+        market and decision intelligence.
+      </p>
+
+      <div class="nexus-hero-actions">
+        <a
+          class="nexus-hero-action primary"
+          href="AuroraCityFC_ManagerDashboard.html"
+        >
+          Open Manager Dashboard
+        </a>
+
+        <a
+          class="nexus-hero-action"
+          href="#nexus-brain-command"
+        >
+          Open Aurora Brain
+        </a>
+      </div>
+
+      <div class="nexus-hero-meta">
+        <span id="syncBadge">Syncing data…</span>
+        <span><b id="heroBrainBadge">Brain connecting</b></span>
+        <span id="nexusHeroUpdated">Awaiting latest intelligence</span>
+      </div>
+    </div>
+
+    <article
+      class="nexus-hero-priority"
+      aria-labelledby="heroScoreVerdict"
+    >
+      <div class="nexus-hero-card-head">
+        <div>
+          <small>Today's Nexus verdict</small>
+          <span
+            class="nexus-hero-priority-state"
+            id="heroCommandStatus"
+          >
+            Reviewing
+          </span>
+        </div>
+
+        <span
+          class="nexus-hero-priority-icon"
+          aria-hidden="true"
+        >
+          🧠
+        </span>
+      </div>
+
+      <h2 id="heroScoreVerdict">Awaiting Aurora Brain</h2>
+
+      <p id="heroScoreVerdictNote">
+        Nexus is comparing the live squad, news and market regime.
+      </p>
+
+      <div class="nexus-hero-priority-foot">
+        <span>Top holding</span>
+        <strong id="heroTopHolding">—</strong>
+        <small>
+          Lowest confidence:
+          <b id="heroLowestHolding">—</b>
+        </small>
+      </div>
+    </article>
+
+    <article class="nexus-hero-position">
+      <small class="nexus-hero-position-label">
+        Club intelligence
+      </small>
+
+      <strong id="heroScoreRegime">Assessing market</strong>
+
+      <p id="heroScoreRegimeNote">
+        Aurora is reading the current match conditions.
+      </p>
+
+      <div class="nexus-hero-position-grid">
+        <div>
+          <small>Squad confidence</small>
+          <strong id="heroScoreConfidence">—</strong>
+          <span id="heroScoreConfidenceNote">
+            Current portfolio confidence
+          </span>
+        </div>
+
+        <div>
+          <small>Buy mode</small>
+          <strong id="heroScoreBuyMode">—</strong>
+          <span id="heroScoreBuyModeNote">
+            Capital deployment status
+          </span>
+        </div>
+
+        <div>
+          <small>News balance</small>
+          <strong id="heroNewsBalance">—</strong>
+          <span>Positive and negative stories</span>
+        </div>
+      </div>
+
+      <div class="nexus-hero-brain-line">
+        <span class="nexus-hero-brain-dot"></span>
+        <span>
+          Nexus intelligence and outcome reviews are live
+        </span>
+      </div>
+    </article>
+  </div>
+
+  <div class="nexus-hero-kpi-strip">
+    <article class="nexus-hero-metric">
+      <small>Rated Holdings</small>
+      <strong id="heroCommandHoldings">—</strong>
+      <span>Current first-team squad</span>
+    </article>
+
+    <article class="nexus-hero-metric green">
+      <small>Average Confidence</small>
+      <strong id="heroCommandConfidence">—</strong>
+      <span id="heroCommandConfidenceBand">
+        Squad reading
+      </span>
+    </article>
+
+    <article class="nexus-hero-metric cyan">
+      <small>News Balance</small>
+      <strong id="heroCommandNews">—</strong>
+      <span>Positive / negative stories</span>
+    </article>
+
+    <article class="nexus-hero-metric amber">
+      <small>Restrictions</small>
+      <strong id="heroCommandRestrictions">—</strong>
+      <span>Blocked or locked instructions</span>
+    </article>
+
+    <article class="nexus-hero-metric">
+      <small>Last Intelligence Update</small>
+      <strong id="heroCommandUpdated">—</strong>
+      <span>Latest Aurora Brain generation</span>
+    </article>
+
+    <article class="nexus-hero-metric green">
+      <small>Cloud Sync</small>
+      <strong id="heroCommandSync">LIVE</strong>
+      <span>Connected club records</span>
+    </article>
+  </div>
+</section>
+<section class="card panel aurora-section-anchor aurora-league-hq" id="nexus-premier-league"><div class="nexus-question-label">WHERE ARE WE?<span>League position</span></div><div class="nexus-priority-ribbon">PRIORITY 1 • LEAGUE POSITION</div>
 <div class="aurora-league-header">
 <div>
 <div class="aurora-league-kicker">AURORA HQ • LIVE SQUAD STANDINGS</div>
