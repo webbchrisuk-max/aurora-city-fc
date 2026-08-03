@@ -3,7 +3,7 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
-<!-- Build: Aurora Manager Dashboard • Embedded Notification Bridge v9 • 3 Aug 2026 -->
+<!-- Build: Aurora Manager Dashboard • Rich Command Notifications v11 • 3 Aug 2026 -->
 <script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-embedded-notification-bridge-v9-20260803" name="aurora-build"/>
+</style><meta content="manager-rich-command-notifications-v11-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -2884,7 +2884,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 <section class="aurora-shared-notification-section" id="auroraSharedNotificationSection">
 <div class="aurora-shared-alert-list" id="auroraSharedAlertList"><div class="beast-empty">Connecting notification feed…</div></div>
 </section>
-<div aria-hidden="true" class="beast-alert-list" hidden id="beastAlertList"><div class="beast-empty">Waiting for AuroraData…</div></div>
+<div aria-hidden="true" class="beast-alert-list" hidden id="beastAlertList" style="display:none!important"><div class="beast-empty">Waiting for AuroraData…</div></div>
 </div>
 <div aria-label="Dashboard controls" class="beast-layout-panel" id="beastLayoutPanel" role="dialog">
 <div class="beast-panel-head"><div><h3>Dashboard Controls</h3><p>Save the command centre exactly how you like it.</p></div><button aria-label="Close controls" class="beast-close" id="beastLayoutClose" type="button">×</button></div>
@@ -2904,8 +2904,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </div>
 <div class="beast-about-grid">
 <div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
-<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v9</strong></div>
-<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Embedded Notification Bridge</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v11</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Rich Command Notifications</strong></div>
 <div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
 <div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
 </div>
@@ -3262,65 +3262,319 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     q('beastManagerRating').textContent=m.rating.toFixed(1);const title=m.rating>=9.2?'Elite Income Architect':m.rating>=8.5?'Outstanding Rebuild':m.rating>=7.7?'Strong Manager Performance':m.rating>=6.8?'Steady Progress':'Rebuild in Development';q('beastManagerTitle').textContent=title;q('beastManagerNote').textContent=`Board ${m.board}/100 • ${Number.isFinite(m.yieldRate)?percent(m.yieldRate*100):'Yield building'} • ${m.plan?.rows?.length?'Deal sheet synced':'Route awaiting sync'}`;q('beastRatingStars').textContent='★'.repeat(Math.round(m.rating/2))+'☆'.repeat(5-Math.round(m.rating/2));
   }
   function alertData(){
-    const m=journeyMetrics(),alerts=[];const now='Now';
+    const m = journeyMetrics();
+    const alerts = [];
+    const rows = activeRows();
+
+    const rankedMovers = rows
+      .map(row => ({
+        row,
+        move: dayMove(row)
+      }))
+      .filter(item => Number.isFinite(item.move))
+      .sort((a,b) => b.move - a.move);
+
+    const topMover = rankedMovers[0];
+
+    if(topMover){
+      const move = topMover.move;
+      const live = price(topMover.row);
+
+      alerts.push({
+        level:move >= 0 ? "ok" : "warn",
+        icon:move >= 0 ? "⚡" : "📉",
+        title:`${ticker(topMover.row)} is today's top performer`,
+        text:
+          `${name(topMover.row)} leads today's squad form`
+          + `${Number.isFinite(live) ? ` at ${live.toFixed(2)} live.` : "."}`,
+        time:"Today",
+        metadata:{
+          rich:{
+            type:"performer",
+            kicker:"TODAY'S TOP PERFORMER",
+            badge:move >= 0 ? "TOP FORM" : "BEST TODAY",
+            value:`${move >= 0 ? "+" : ""}${move.toFixed(2)}%`,
+            valueLabel:"TODAY",
+            secondary:Number.isFinite(live)
+              ? `Live ${live.toFixed(2)}`
+              : "",
+            featured:true,
+            actionText:"Open Analysis Room"
+          }
+        }
+      });
+    }
+
     if(m.latest){
-      const age=(Date.now()-m.latest.getTime())/36e5;
-      if(age>8){
+      const age =
+        (Date.now() - m.latest.getTime()) / 36e5;
+
+      if(age > 8){
         alerts.push({
-          level:age>26?'bad':'warn',
-          icon:'↻',
-          title:'Aurora export needs a refresh',
+          level:age > 26 ? "bad" : "warn",
+          icon:"↻",
+          title:"Aurora export needs a refresh",
           text:`AuroraMaster was generated ${age.toFixed(1)} hours ago.`,
-          time:'Aurora HQ'
+          time:"Aurora HQ"
         });
       }
     }
-    if(m.plan?.rows?.length)alerts.push({level:'ok',icon:'⇄',title:'Payday route is synced',text:`${m.plan.rows.map(r=>r.displayTicker||r.ticker).join(' / ')} • ${cash(num(m.plan.totalIncome))}/year estimated income.`,time:'Transfer'});else alerts.push({level:'warn',icon:'⇄',title:'Transfer deal sheet not synced',text:'Open the Transfer Centre before payday so the dashboard can read the final allocation.',time:'Transfer'});
-    try{const d=nextDividendPayment();if(d)alerts.push({level:'ok',icon:'💷',title:`${d.ticker} dividend is next`,text:`Due ${d.date.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}${d.amountKnown?` • ${cash(d.amount)}`:''}.`,time:'Income'})}catch(_){}
-    const weak=activeRows().filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60}).sort((a,b)=>strength(a)-strength(b)).slice(0,2);weak.forEach(r=>alerts.push({level:'warn',icon:'⚠',title:`${ticker(r)} is under review`,text:`Buy-strength score ${Math.round(strength(r))}. Open the player profile before adding more.`,time:'Squad'}));
-    activeRows().forEach(r=>{const live=price(r),target=num(r?.target_price??r?.buy_price??r?.fair_value);if(Number.isFinite(live)&&Number.isFinite(target)&&live<=target)alerts.push({level:'ok',icon:'🎯',title:`${ticker(r)} has reached its target zone`,text:`Live ${live.toFixed(2)} versus target ${target.toFixed(2)}.`,time:'Price'})});
-    const gap=Math.max(0,625-m.monthly);alerts.push({level:gap<=0?'ok':'info',icon:'🏆',title:gap<=0?'£625 monthly objective achieved':`${cash(gap)} per month to the target`,text:gap<=0?'Aurora has reached the primary income objective.':'The target journey updates automatically after registered purchases.',time:'Objective'});
-    return alerts.slice(0,9);
+
+    let lifecycleStage = 1;
+
+    try{
+      lifecycleStage =
+        Number(lifecycleSnapshot()?.stage || 1);
+    }catch(_){}
+
+    if(m.plan?.rows?.length){
+      const routeTickers =
+        m.plan.rows.map(
+          row => row.displayTicker || row.ticker
+        );
+
+      const routeIncome =
+        num(m.plan.totalIncome);
+
+      alerts.push({
+        level:"ok",
+        icon:"🔄",
+        title:
+          lifecycleStage >= 5
+            ? "Transfer route completed"
+            : "You have an open transfer route",
+        text:
+          `${routeTickers.join(" / ")}`
+          + ` • ${cash(routeIncome)}/year estimated income.`,
+        time:"Transfer",
+        metadata:{
+          rich:{
+            type:"transfer",
+            kicker:
+              lifecycleStage >= 5
+                ? "TRANSFER COMPLETE"
+                : "TRANSFER WINDOW OPEN",
+            badge:
+              lifecycleStage >= 5
+                ? "REGISTERED"
+                : "ACTION READY",
+            value:String(routeTickers.length),
+            valueLabel:"SIGNINGS",
+            secondary:`${cash(routeIncome)}/year projected`,
+            progress:
+              Math.max(
+                20,
+                Math.min(
+                  100,
+                  lifecycleStage * 20
+                )
+              ),
+            actionText:"Open Transfer Centre"
+          }
+        }
+      });
+    }else{
+      alerts.push({
+        level:"warn",
+        icon:"🔄",
+        title:"Transfer deal sheet not synced",
+        text:
+          "Open the Transfer Centre before payday so the dashboard can read the final allocation.",
+        time:"Transfer"
+      });
+    }
+
+    try{
+      const dividend = nextDividendPayment();
+
+      if(dividend){
+        alerts.push({
+          level:"ok",
+          icon:"💷",
+          title:`${dividend.ticker} dividend is next`,
+          text:
+            `Due ${dividend.date.toLocaleDateString(
+              "en-GB",
+              {day:"numeric",month:"long"}
+            )}`
+            + `${dividend.amountKnown ? ` • ${cash(dividend.amount)}` : ""}.`,
+          time:"Income",
+          metadata:{
+            rich:{
+              type:"income",
+              kicker:"NEXT INCOME",
+              badge:"UPCOMING",
+              value:
+                dividend.amountKnown
+                  ? cash(dividend.amount)
+                  : dividend.ticker,
+              valueLabel:
+                dividend.amountKnown
+                  ? "DIVIDEND"
+                  : "TICKER",
+              secondary:
+                dividend.date.toLocaleDateString(
+                  "en-GB",
+                  {day:"numeric",month:"short"}
+                ),
+              actionText:"Open Finance"
+            }
+          }
+        });
+      }
+    }catch(_){}
+
+    rows.forEach(row => {
+      const live = price(row);
+      const target =
+        num(
+          row?.target_price
+          ?? row?.buy_price
+          ?? row?.fair_value
+        );
+
+      if(
+        Number.isFinite(live)
+        && Number.isFinite(target)
+        && live <= target
+      ){
+        alerts.push({
+          level:"ok",
+          icon:"🎯",
+          title:`${ticker(row)} has hit its target`,
+          text:
+            `${name(row)} is inside the target zone. `
+            + `Live ${live.toFixed(2)} versus target ${target.toFixed(2)}.`,
+          time:"Target",
+          metadata:{
+            rich:{
+              type:"target",
+              kicker:"TARGET HIT",
+              badge:"IN THE ZONE",
+              value:live.toFixed(2),
+              valueLabel:"LIVE",
+              secondary:`Target ${target.toFixed(2)}`,
+              progress:100,
+              actionText:"Review Holding"
+            }
+          }
+        });
+      }
+    });
+
+    const milestones = [350,425,500,625];
+    const achieved =
+      milestones
+        .filter(target => m.monthly >= target)
+        .pop();
+
+    if(achieved){
+      alerts.push({
+        level:"ok",
+        icon:"🏆",
+        title:`£${achieved} monthly income milestone achieved`,
+        text:
+          `Aurora is now producing ${cash(m.monthly)} per month. `
+          + `${
+              achieved >= 625
+                ? "The primary income objective has been reached."
+                : `${cash(Math.max(0,625-m.monthly))} remains to the £625 target.`
+            }`,
+        time:"Milestone",
+        metadata:{
+          rich:{
+            type:"milestone",
+            kicker:"MILESTONE ACHIEVED",
+            badge:"PROMOTED",
+            value:cash(m.monthly),
+            valueLabel:"PER MONTH",
+            secondary:
+              achieved >= 625
+                ? "Primary target complete"
+                : `Progress to £625/month`,
+            progress:
+              Math.max(
+                0,
+                Math.min(
+                  100,
+                  m.monthly / 625 * 100
+                )
+              ),
+            featured:achieved >= 625,
+            actionText:"Open Finance"
+          }
+        }
+      });
+    }
+
+    const weak = rows
+      .filter(row => {
+        const score = strength(row);
+        return Number.isFinite(score) && score < 60;
+      })
+      .sort((a,b) => strength(a) - strength(b))
+      .slice(0,2);
+
+    weak.forEach(row => {
+      alerts.push({
+        level:"warn",
+        icon:"⚠",
+        title:`${ticker(row)} is under review`,
+        text:
+          `Buy-strength score ${Math.round(strength(row))}. `
+          + "Open the player profile before adding more.",
+        time:"Squad"
+      });
+    });
+
+    return alerts.slice(0,12);
   }
   function sharedAlertDestination(alert){
-    const title = String(alert?.title || '').toLowerCase();
+    const title =
+      String(alert?.title || "").toLowerCase();
 
-    if(/transfer|deal sheet|payday route/.test(title)){
+    if(
+      /top performer|hit its target|target zone/.test(title)
+    ){
       return {
-        department:'Transfer Centre',
-        page:'AuroraCityFC_TransferCentre.html',
-        icon:alert.icon || '⇄'
+        department:"Analysis Room",
+        page:"AuroraCityFC_AnalysisRoom.html",
+        icon:alert.icon || "🎯"
       };
     }
 
-    if(/dividend|monthly objective|target/.test(title)){
+    if(
+      /transfer|deal sheet|payday route/.test(title)
+    ){
       return {
-        department:'Finance Department',
-        page:'AuroraCityFC_FinanceDepartment.html',
-        icon:alert.icon || '💷'
+        department:"Transfer Centre",
+        page:"AuroraCityFC_TransferCentre.html",
+        icon:alert.icon || "🔄"
+      };
+    }
+
+    if(
+      /dividend|monthly income|milestone|objective/.test(title)
+    ){
+      return {
+        department:"Finance Department",
+        page:"AuroraCityFC_FinanceDepartment.html",
+        icon:alert.icon || "💷"
       };
     }
 
     if(/under review/.test(title)){
       return {
-        department:'Squad Hub',
-        page:'AuroraCityFC_SquadHub.html',
-        icon:alert.icon || '⚠'
-      };
-    }
-
-    if(/target zone/.test(title)){
-      return {
-        department:'Analysis Room',
-        page:'AuroraCityFC_AnalysisRoom.html',
-        icon:alert.icon || '🎯'
+        department:"Squad Hub",
+        page:"AuroraCityFC_SquadHub.html",
+        icon:alert.icon || "⚠"
       };
     }
 
     return {
-      department:'Manager Dashboard',
-      page:'AuroraCityFC_ManagerDashboard.html',
-      icon:alert?.icon || '🔔'
+      department:"Manager Dashboard",
+      page:"AuroraCityFC_ManagerDashboard.html",
+      icon:alert?.icon || "🔔"
     };
   }
 
@@ -3338,74 +3592,162 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   }
 
   function renderAlerts(){
-    latestAlerts=alertData();
+    latestAlerts = alertData();
 
-    const box=q('beastAlertList');
+    const host = notificationHost();
+    const box = q("beastAlertList");
 
-    if(box){
-      box.innerHTML=latestAlerts.length
-        ?latestAlerts.map(a=>`<div class="beast-alert ${a.level==='info'?'':a.level}"><span class="beast-alert-icon">${a.icon}</span><span><strong>${a.title}</strong><p>${a.text}</p></span><span class="beast-alert-time">${a.time}</span></div>`).join('')
-        :'<div class="beast-empty">No manager alerts right now.</div>';
-    }
-
-    const signature=JSON.stringify(
-      latestAlerts.map(a=>[a.title,a.text])
+    const signature = JSON.stringify(
+      latestAlerts.map(alert => [
+        alert.title,
+        alert.text
+      ])
     );
 
-    latestAlertSignature=signature;
+    latestAlertSignature = signature;
 
-    const host=notificationHost();
+    const clearKey =
+      "aurora_manager_live_alerts_cleared_v2";
+
+    let clearedSignature = "";
+
+    try{
+      clearedSignature =
+        localStorage.getItem(clearKey) || "";
+    }catch(_){}
+
+    const managerAlertsCleared =
+      Boolean(clearedSignature)
+      && clearedSignature === signature;
+
+    /*
+     * A changed alert set is a genuinely new condition, so it may
+     * appear again after Clear all.
+     */
+    if(
+      clearedSignature
+      && clearedSignature !== signature
+    ){
+      try{
+        localStorage.removeItem(clearKey);
+      }catch(_){}
+    }
 
     if(host?.replaceLive){
-      host.replaceLive(
-        'manager-dashboard-alerts',
-        latestAlerts.map(alert=>{
-          const destination=
-            sharedAlertDestination(alert);
+      /*
+       * Inside GameShell the shared list is the only visible list.
+       * The old Manager list is physically disabled to prevent a
+       * second layer surviving after Clear all.
+       */
+      if(box){
+        box.hidden = true;
+        box.setAttribute("aria-hidden","true");
+        box.style.setProperty(
+          "display",
+          "none",
+          "important"
+        );
+        box.innerHTML = "";
+      }
 
-          return {
-            ...destination,
-            title:alert.title,
-            message:alert.text,
-            priority:
-              alert.level==='bad'
-                ?'critical'
-                :alert.level==='warn'
-                  ?'high'
-                  :alert.level==='ok'
-                    ?'normal'
-                    :'low',
-            dedupeKey:
-              `manager-live:${alert.title}`,
-            fingerprint:
-              String(
-                alert.title
-                +'|'
-                +alert.text
-                +'|'
-                +destination.page
-              ),
-            actionLabel:
-              `Open ${destination.department}`,
-            ttlDays:2
-          };
-        })
+      const sharedRows = managerAlertsCleared
+        ? []
+        : latestAlerts.map(alert => {
+            const destination =
+              sharedAlertDestination(alert);
+
+            return {
+              ...destination,
+              title:alert.title,
+              message:alert.text,
+              priority:
+                alert.level === "bad"
+                  ? "critical"
+                  : alert.level === "warn"
+                    ? "high"
+                    : alert.level === "ok"
+                      ? "normal"
+                      : "low",
+              dedupeKey:
+                `manager-live:${alert.title}`,
+              fingerprint:
+                String(
+                  alert.title
+                  + "|"
+                  + alert.text
+                  + "|"
+                  + destination.page
+                ),
+              actionLabel:
+                alert?.metadata?.rich?.actionText
+                || `Open ${destination.department}`,
+              ttlDays:2,
+              metadata:
+                alert.metadata
+                && typeof alert.metadata === "object"
+                  ? alert.metadata
+                  : {}
+            };
+          });
+
+      host.replaceLive(
+        "manager-dashboard-alerts",
+        sharedRows
       );
+
+      try{
+        host.attachDocument?.(document);
+      }catch(_){}
+
+      return;
     }
 
     /*
-     * Standalone Manager mode keeps its native badge. Inside GameShell
-     * the shared notification host owns the bell and unread count.
+     * Standalone Manager fallback.
      */
-    if(!host?.replaceLive){
-      const read=localStorage.getItem(READ_KEY);
-      const count=read===signature?0:latestAlerts.length;
-      const badge=q('beastNotificationCount');
+    const visibleAlerts =
+      managerAlertsCleared
+        ? []
+        : latestAlerts;
 
-      if(badge){
-        badge.hidden=count===0;
-        badge.textContent=String(count);
-      }
+    if(box){
+      box.hidden = false;
+      box.removeAttribute("aria-hidden");
+      box.style.removeProperty("display");
+
+      box.innerHTML = visibleAlerts.length
+        ? visibleAlerts.map(alert =>
+            `<div class="beast-alert ${
+              alert.level === "info"
+                ? ""
+                : alert.level
+            }"><span class="beast-alert-icon">${
+              alert.icon
+            }</span><span><strong>${
+              alert.title
+            }</strong><p>${
+              alert.text
+            }</p></span><span class="beast-alert-time">${
+              alert.time
+            }</span></div>`
+          ).join("")
+        : '<div class="beast-empty">No manager alerts right now.</div>';
+    }
+
+    const read =
+      localStorage.getItem(READ_KEY);
+
+    const count =
+      managerAlertsCleared || read === signature
+        ? 0
+        : visibleAlerts.length;
+
+    const badge =
+      q("beastNotificationCount");
+
+    if(badge){
+      badge.hidden = count === 0;
+      badge.textContent = String(count);
     }
   }
 
@@ -4203,6 +4545,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
       try{
         api.attachDocument?.(document);
+        renderSharedListNow(api);
       }catch(_){}
 
       return true;
@@ -4214,6 +4557,143 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     );
 
     return false;
+  }
+
+  const MANAGER_CLEAR_KEY =
+    "aurora_manager_live_alerts_cleared_v2";
+
+  function setManagerAlertsCleared(){
+    try{
+      const signature =
+        latestAlertSignature
+        || JSON.stringify(
+          (latestAlerts || []).map(alert => [
+            alert.title,
+            alert.text
+          ])
+        );
+
+      localStorage.setItem(
+        MANAGER_CLEAR_KEY,
+        signature
+      );
+    }catch(_){}
+  }
+
+  function escapeNotificationText(value){
+    return String(value ?? "").replace(
+      /[&<>"']/g,
+      character => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+      }[character])
+    );
+  }
+
+  function renderSharedListNow(api){
+    const list =
+      document.getElementById(
+        "auroraSharedAlertList"
+      );
+
+    const nativeList =
+      document.getElementById(
+        "beastAlertList"
+      );
+
+    if(nativeList){
+      nativeList.hidden = true;
+      nativeList.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+      nativeList.style.setProperty(
+        "display",
+        "none",
+        "important"
+      );
+      nativeList.innerHTML = "";
+    }
+
+    if(!list) return;
+
+    const rows =
+      api?.list
+        ? api.list({limit:24})
+        : [];
+
+    if(!rows.length){
+      list.innerHTML =
+        '<div class="beast-empty">No notifications right now.</div>';
+      return;
+    }
+
+    list.innerHTML = rows.map(row => {
+      const level =
+        row.priority === "critical"
+          ? " bad"
+          : row.priority === "high"
+            ? " warn"
+            : "";
+
+      const unread =
+        row.read
+          ? ""
+          : " aurora-shared-unread";
+
+      return `
+        <article
+          class="beast-alert${level}${unread}"
+          data-aurora-notification-id="${
+            escapeNotificationText(row.id)
+          }"
+        >
+          <a
+            class="aurora-shared-alert-open"
+            data-aurora-notification-open="${
+              escapeNotificationText(row.id)
+            }"
+            href="${
+              escapeNotificationText(
+                row.page
+                || "AuroraCityFC_ManagerDashboard.html"
+              )
+            }"
+          >
+            <span class="beast-alert-icon">${
+              escapeNotificationText(
+                row.icon || "🔔"
+              )
+            }</span>
+            <span class="aurora-shared-alert-copy">
+              <strong>${
+                escapeNotificationText(row.title)
+              }</strong>
+              <p>${
+                escapeNotificationText(
+                  row.message || row.department
+                )
+              }</p>
+              <small class="aurora-shared-department">${
+                escapeNotificationText(
+                  row.department
+                )
+              }</small>
+            </span>
+          </a>
+          <button
+            aria-label="Remove notification"
+            class="aurora-shared-remove"
+            data-aurora-notification-remove="${
+              escapeNotificationText(row.id)
+            }"
+            type="button"
+          >×</button>
+        </article>`;
+    }).join("");
   }
 
   function localFallback(action,id){
@@ -4319,6 +4799,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
         if(api?.markAllRead){
           api.markAllRead();
           api.attachDocument?.(document);
+          renderSharedListNow(api);
         }else{
           localFallback("markAllRead");
         }
@@ -4328,11 +4809,61 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
       }
 
       if(clearAll){
+        /*
+         * Clear the current Manager live-alert signature first.
+         * This prevents renderAlerts() rebuilding the same cards
+         * immediately after the store has been emptied.
+         */
+        setManagerAlertsCleared();
+
+        if(api?.replaceLive){
+          api.replaceLive(
+            "manager-dashboard-alerts",
+            []
+          );
+        }
+
         if(api?.clear){
           api.clear();
           api.attachDocument?.(document);
+          renderSharedListNow(api);
         }else{
           localFallback("clear");
+        }
+
+        const sharedList =
+          document.getElementById(
+            "auroraSharedAlertList"
+          );
+
+        if(sharedList){
+          sharedList.innerHTML =
+            '<div class="beast-empty">No notifications right now.</div>';
+        }
+
+        const nativeList =
+          document.getElementById(
+            "beastAlertList"
+          );
+
+        if(nativeList){
+          nativeList.hidden = true;
+          nativeList.style.setProperty(
+            "display",
+            "none",
+            "important"
+          );
+          nativeList.innerHTML = "";
+        }
+
+        const badge =
+          document.getElementById(
+            "beastNotificationCount"
+          );
+
+        if(badge){
+          badge.textContent = "0";
+          badge.hidden = true;
         }
 
         flash(clearAll,"Cleared");
@@ -4346,6 +4877,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
       if(api?.remove){
         api.remove(id);
         api.attachDocument?.(document);
+        renderSharedListNow(api);
       }else{
         localFallback("remove",id);
         removeButton.closest(

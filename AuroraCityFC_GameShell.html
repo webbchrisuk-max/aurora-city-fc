@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Build: Aurora Shared GameShell • Embedded Notification Bridge v11 • 03 Aug 2026 -->
+  <!-- Build: Aurora Shared GameShell • Rich Command Notifications v13 • 03 Aug 2026 -->
   <meta charset="UTF-8">
   <meta
     name="viewport"
@@ -2792,7 +2792,7 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '3.0.0';
+  const VERSION = '3.1.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
@@ -3324,12 +3324,42 @@
     );
   }
 
+  function liveSourceForRow(row) {
+    const metadataSource =
+      String(
+        row?.metadata?.liveSource || ""
+      ).trim();
+
+    if(metadataSource){
+      return metadataSource;
+    }
+
+    const source =
+      String(row?.source || "");
+
+    if(source.startsWith("live:")){
+      return source.slice(5);
+    }
+
+    const dedupeKey =
+      String(row?.dedupeKey || "");
+
+    if(dedupeKey.startsWith("manager-live:")){
+      return "manager-dashboard-alerts";
+    }
+
+    return "";
+  }
+
   function clear() {
     try {
       cleanStore(readStore()).forEach(row => {
-        if (row?.metadata?.liveSource) {
+        const liveSource =
+          liveSourceForRow(row);
+
+        if(liveSource && row?.fingerprint){
           dismissFingerprint(
-            row.metadata.liveSource,
+            liveSource,
             row.fingerprint
           );
         }
@@ -3337,6 +3367,17 @@
 
       localStorage.removeItem(STORE_KEY);
       localStorage.removeItem(READ_KEY);
+
+      if(dashboardBridge?.list){
+        dashboardBridge.list.innerHTML =
+          '<div class="beast-empty">No notifications right now.</div>';
+      }
+
+      if(dashboardBridge?.badge){
+        dashboardBridge.badge.textContent = "0";
+        dashboardBridge.badge.hidden = true;
+      }
+
       publishChange('clear');
       return true;
     } catch (_) {
@@ -3446,12 +3487,58 @@
     return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
   }
 
+  function richNotificationData(row) {
+    const rich =
+      row?.metadata?.rich
+      && typeof row.metadata.rich === "object"
+        ? row.metadata.rich
+        : null;
+
+    if (!rich) return null;
+
+    const progress = Number(rich.progress);
+
+    return {
+      type: String(rich.type || "update")
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, ""),
+      kicker: String(
+        rich.kicker || row.department || "Aurora Update"
+      ),
+      badge: String(rich.badge || ""),
+      value: String(rich.value || ""),
+      valueLabel: String(rich.valueLabel || ""),
+      secondary: String(rich.secondary || ""),
+      progress: Number.isFinite(progress)
+        ? Math.max(0, Math.min(100, progress))
+        : null,
+      featured: Boolean(rich.featured),
+      actionText: String(
+        rich.actionText
+        || row.actionLabel
+        || `Open ${row.department}`
+      )
+    };
+  }
+
   function dashboardMarkup(rows) {
     if (!rows.length) {
       return '<div class="beast-empty">No notifications right now.</div>';
     }
 
-    return rows.map(row => {
+    const ordered = rows.slice().sort((a, b) => {
+      const ar = richNotificationData(a);
+      const br = richNotificationData(b);
+      const featured =
+        Number(Boolean(br?.featured))
+        - Number(Boolean(ar?.featured));
+
+      return featured
+        || Number(b.createdAt || 0)
+        - Number(a.createdAt || 0);
+    });
+
+    return ordered.map(row => {
       const levelClass =
         row.priority === 'critical'
           ? ' bad'
@@ -3465,6 +3552,77 @@
       const href = row.page
         ? ` href="${escapeHtml(row.page)}"`
         : '';
+
+      const rich = richNotificationData(row);
+
+      if (rich) {
+        const badge = rich.badge
+          ? `<span class="aurora-rich-badge">${escapeHtml(rich.badge)}</span>`
+          : "";
+
+        const value = rich.value
+          ? `<span class="aurora-rich-value"><strong>${escapeHtml(rich.value)}</strong><small>${escapeHtml(rich.valueLabel)}</small></span>`
+          : "";
+
+        const progress = rich.progress === null
+          ? ""
+          : `<div class="aurora-rich-progress"><i style="width:${rich.progress}%"></i></div>`;
+
+        const secondary = rich.secondary
+          ? `<span class="aurora-rich-secondary">${escapeHtml(rich.secondary)}</span>`
+          : "";
+
+        return `
+          <article
+            class="beast-alert aurora-shared-alert aurora-rich-card aurora-rich-${escapeHtml(rich.type)}${rich.featured ? " aurora-rich-featured" : ""}${levelClass}${unreadClass}"
+            data-aurora-notification-id="${escapeHtml(row.id)}"
+          >
+            <a
+              class="aurora-shared-alert-open aurora-rich-open"
+              data-aurora-notification-open="${escapeHtml(row.id)}"
+              ${href}
+            >
+              <span class="aurora-rich-topline">
+                <small>${escapeHtml(rich.kicker)}</small>
+                ${badge}
+              </span>
+
+              <span class="aurora-rich-main">
+                <span class="beast-alert-icon aurora-rich-icon">${escapeHtml(row.icon)}</span>
+
+                <span class="aurora-shared-alert-copy aurora-rich-copy">
+                  <strong>${escapeHtml(row.title)}</strong>
+                  <p>${escapeHtml(row.message || row.department)}</p>
+                </span>
+
+                ${value}
+              </span>
+
+              ${progress}
+
+              <span class="aurora-rich-footer">
+                <span>
+                  <small class="aurora-shared-department">${escapeHtml(row.department)}</small>
+                  ${secondary}
+                </span>
+
+                <span class="aurora-rich-action">
+                  ${escapeHtml(rich.actionText)}
+                  <b>→</b>
+                </span>
+
+                <time>${escapeHtml(formatTime(row.createdAt))}</time>
+              </span>
+            </a>
+
+            <button
+              class="aurora-shared-remove"
+              data-aurora-notification-remove="${escapeHtml(row.id)}"
+              type="button"
+              aria-label="Remove ${escapeHtml(row.title)}"
+            >×</button>
+          </article>`;
+      }
 
       return `
         <div
@@ -3484,12 +3642,12 @@
             </span>
             <span class="beast-alert-time">${escapeHtml(formatTime(row.createdAt))}</span>
           </a>
+
           <button
             class="aurora-shared-remove"
             data-aurora-notification-remove="${escapeHtml(row.id)}"
             type="button"
             aria-label="Remove ${escapeHtml(row.title)}"
-            title="Remove notification"
           >×</button>
         </div>`;
     }).join('');
@@ -3656,6 +3814,212 @@
         font-weight:900;
         letter-spacing:.07em;
         text-transform:uppercase
+      }
+
+      .aurora-rich-card{
+        --rich-accent:34,211,238;
+        --rich-solid:#22d3ee;
+        border-color:rgba(var(--rich-accent),.28)!important;
+        background:
+          radial-gradient(
+            circle at 100% 0%,
+            rgba(var(--rich-accent),.18),
+            transparent 42%
+          ),
+          linear-gradient(
+            145deg,
+            rgba(8,18,38,.98),
+            rgba(4,10,24,.99)
+          )!important;
+        box-shadow:
+          inset 3px 0 0 rgba(var(--rich-accent),.76),
+          0 14px 30px rgba(0,0,0,.22);
+      }
+
+      .aurora-rich-featured{
+        min-height:158px;
+        border-color:rgba(var(--rich-accent),.45)!important;
+        box-shadow:
+          inset 4px 0 0 var(--rich-solid),
+          0 20px 44px rgba(0,0,0,.30),
+          0 0 28px rgba(var(--rich-accent),.10);
+      }
+
+      .aurora-rich-performer{
+        --rich-accent:52,211,153;
+        --rich-solid:#34d399;
+      }
+
+      .aurora-rich-transfer{
+        --rich-accent:245,158,11;
+        --rich-solid:#f59e0b;
+      }
+
+      .aurora-rich-target,
+      .aurora-rich-milestone{
+        --rich-accent:250,204,21;
+        --rich-solid:#facc15;
+      }
+
+      .aurora-rich-income{
+        --rich-accent:96,165,250;
+        --rich-solid:#60a5fa;
+      }
+
+      .aurora-rich-open{
+        display:flex!important;
+        flex-direction:column;
+        gap:10px;
+        padding:14px 42px 14px 14px!important;
+      }
+
+      .aurora-rich-topline,
+      .aurora-rich-main,
+      .aurora-rich-footer{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        width:100%;
+      }
+
+      .aurora-rich-topline{
+        justify-content:space-between;
+      }
+
+      .aurora-rich-topline>small{
+        color:rgb(var(--rich-accent));
+        font-size:8px;
+        font-weight:1000;
+        letter-spacing:.14em;
+        text-transform:uppercase;
+      }
+
+      .aurora-rich-badge{
+        padding:5px 8px;
+        border:1px solid rgba(var(--rich-accent),.30);
+        border-radius:999px;
+        color:rgb(var(--rich-accent));
+        background:rgba(var(--rich-accent),.10);
+        font-size:7px;
+        font-weight:1000;
+        letter-spacing:.09em;
+        text-transform:uppercase;
+      }
+
+      .aurora-rich-main{
+        align-items:flex-start;
+      }
+
+      .aurora-rich-icon{
+        width:44px!important;
+        height:44px!important;
+        flex:0 0 44px;
+        background:rgba(var(--rich-accent),.12)!important;
+        border-color:rgba(var(--rich-accent),.25)!important;
+        font-size:20px!important;
+      }
+
+      .aurora-rich-copy{
+        flex:1 1 auto;
+        min-width:0;
+      }
+
+      .aurora-rich-copy>strong{
+        display:block;
+        color:#f8fbff;
+        font-size:13px!important;
+        line-height:1.25;
+      }
+
+      .aurora-rich-copy>p{
+        margin-top:4px!important;
+        color:#98a9bf!important;
+        font-size:9px!important;
+        line-height:1.45!important;
+      }
+
+      .aurora-rich-value{
+        flex:0 0 auto;
+        min-width:70px;
+        text-align:right;
+      }
+
+      .aurora-rich-value strong{
+        display:block;
+        color:rgb(var(--rich-accent));
+        font-size:19px;
+        line-height:1;
+        white-space:nowrap;
+      }
+
+      .aurora-rich-value small{
+        display:block;
+        margin-top:5px;
+        color:#8193aa;
+        font-size:7px;
+        font-weight:950;
+        letter-spacing:.10em;
+        text-transform:uppercase;
+      }
+
+      .aurora-rich-progress{
+        width:100%;
+        height:5px;
+        overflow:hidden;
+        border-radius:999px;
+        background:rgba(148,163,184,.13);
+      }
+
+      .aurora-rich-progress i{
+        display:block;
+        height:100%;
+        border-radius:inherit;
+        background:linear-gradient(
+          90deg,
+          rgba(var(--rich-accent),.70),
+          var(--rich-solid)
+        );
+      }
+
+      .aurora-rich-footer{
+        justify-content:space-between;
+        color:#8294aa;
+        font-size:8px;
+      }
+
+      .aurora-rich-footer
+      .aurora-shared-department{
+        margin:0;
+        color:rgb(var(--rich-accent));
+      }
+
+      .aurora-rich-secondary{
+        display:block;
+        margin-top:3px;
+        color:#93a4bb;
+      }
+
+      .aurora-rich-action{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        margin-left:auto;
+        padding:6px 8px;
+        border:1px solid rgba(var(--rich-accent),.20);
+        border-radius:9px;
+        color:#dcecff;
+        background:rgba(var(--rich-accent),.07);
+        font-weight:900;
+        white-space:nowrap;
+      }
+
+      .aurora-rich-action b{
+        color:rgb(var(--rich-accent));
+      }
+
+      .aurora-rich-footer time{
+        min-width:36px;
+        text-align:right;
       }
     `;
 
