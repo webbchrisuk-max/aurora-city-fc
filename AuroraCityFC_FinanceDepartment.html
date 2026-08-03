@@ -2914,7 +2914,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
   transform:translateY(-1px);
 }
 </style>
-<meta content="finance-holding-balance-sync-v2-20260803" name="aurora-build"/><style id="auroraFinanceGameShellContentStyles">
+<meta content="finance-bill-persistence-v3-20260803" name="aurora-build"/><style id="auroraFinanceGameShellContentStyles">
 html,
 body{
   width:100%;
@@ -2958,7 +2958,18 @@ body{
     padding-right:10px!important;
   }
 }
-</style></head>
+</style>
+<style id="auroraFinancePlannerPersistenceStyles">
+#backupStatus[data-persistence-state="saved"]{
+  color:#9affc3;
+}
+
+#backupStatus[data-persistence-state="error"]{
+  color:#ff9ab1;
+}
+</style>
+
+</head>
 <body>
 <div class="m13-app">
 <main class="m13-content">
@@ -4200,6 +4211,109 @@ function setText(id, value) {
 }
 
 const STORAGE_KEY = "aurora_wealth_centre";
+const STORAGE_BACKUP_KEY =
+  "aurora_wealth_centre_backup_v3";
+const STORAGE_SESSION_KEY =
+  "aurora_wealth_centre_session_v3";
+const STORAGE_SCHEMA_VERSION = 3;
+let plannerPersistenceWarningShown = false;
+
+function plannerStorageGet_(area, key) {
+  try {
+    return area?.getItem(key) || "";
+  } catch (_) {
+    return "";
+  }
+}
+
+function plannerStorageSet_(area, key, value) {
+  try {
+    area?.setItem(key, value);
+    return area?.getItem(key) === value;
+  } catch (_) {
+    return false;
+  }
+}
+
+function plannerStateTimestamp_(state) {
+  const savedAt = Number(
+    state?._persistence?.savedAt || 0
+  );
+
+  return Number.isFinite(savedAt)
+    ? savedAt
+    : 0;
+}
+
+function validPlannerState_(value) {
+  return Boolean(
+    value
+    && typeof value === "object"
+    && !Array.isArray(value)
+    && (
+      Array.isArray(value.scheduledBills)
+      || Array.isArray(value.futureCosts)
+      || Object.prototype.hasOwnProperty.call(
+        value,
+        "holdingBalance"
+      )
+    )
+  );
+}
+
+function parsePlannerCandidate_(raw, source, priority) {
+  if (!raw) return null;
+
+  try {
+    const state = JSON.parse(raw);
+
+    if (!validPlannerState_(state)) {
+      return null;
+    }
+
+    return {
+      state,
+      raw,
+      source,
+      priority,
+      savedAt: plannerStateTimestamp_(state)
+    };
+  } catch (_) {
+    return null;
+  }
+}
+
+function plannerPersistenceMessage_(
+  message,
+  isError = false
+) {
+  const status =
+    document.getElementById("backupStatus");
+
+  if (status) {
+    status.textContent = message;
+    status.dataset.persistenceState =
+      isError ? "error" : "saved";
+  }
+}
+
+function preparePlannerPayload_(reason = "auto") {
+  const previousRevision = Number(
+    plannerState?._persistence?.revision || 0
+  );
+
+  plannerState._persistence = {
+    schemaVersion: STORAGE_SCHEMA_VERSION,
+    revision: previousRevision + 1,
+    savedAt: Date.now(),
+    savedIso: new Date().toISOString(),
+    reason: String(reason || "auto"),
+    page: "Finance Department"
+  };
+
+  return JSON.stringify(plannerState);
+}
+
 const FIRST_PAYDAY = "2026-04-24";
 const GROW_POT_TARGET = 7500;
 
@@ -4345,16 +4459,154 @@ function getFreshDefaults() {
 
 let plannerState = getFreshDefaults();
 
-function savePlannerData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(plannerState));
-}
-
-function loadPlannerData() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return;
+function savePlannerData(reason = "auto") {
+  let payload = "";
 
   try {
-    const parsed = JSON.parse(saved);
+    payload = preparePlannerPayload_(reason);
+  } catch (error) {
+    console.error(
+      "Could not prepare planner state",
+      error
+    );
+
+    plannerPersistenceMessage_(
+      "Planner changes could not be prepared",
+      true
+    );
+
+    return false;
+  }
+
+  const primarySaved = plannerStorageSet_(
+    window.localStorage,
+    STORAGE_KEY,
+    payload
+  );
+
+  const backupSaved = plannerStorageSet_(
+    window.localStorage,
+    STORAGE_BACKUP_KEY,
+    payload
+  );
+
+  const sessionSaved = plannerStorageSet_(
+    window.sessionStorage,
+    STORAGE_SESSION_KEY,
+    payload
+  );
+
+  const saved = Boolean(
+    primarySaved || backupSaved || sessionSaved
+  );
+
+  if (saved) {
+    plannerPersistenceMessage_(
+      `Planner saved: ${
+        new Date().toLocaleTimeString(
+          "en-GB",
+          {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+          }
+        )
+      }`
+    );
+
+    plannerPersistenceWarningShown = false;
+
+    try {
+      window.dispatchEvent(
+        new CustomEvent(
+          "aurora:finance-planner-saved",
+          {
+            detail: {
+              revision:
+                plannerState._persistence.revision,
+              savedAt:
+                plannerState._persistence.savedAt,
+              reason,
+              primarySaved,
+              backupSaved,
+              sessionSaved
+            }
+          }
+        )
+      );
+    } catch (_) {}
+
+    return true;
+  }
+
+  console.error(
+    "Finance planner save failed in all storage areas."
+  );
+
+  plannerPersistenceMessage_(
+    "Planner save failed — storage unavailable",
+    true
+  );
+
+  if (!plannerPersistenceWarningShown) {
+    plannerPersistenceWarningShown = true;
+
+    window.setTimeout(() => {
+      alert(
+        "Aurora could not save the Finance planner on this device. "
+        + "Keep this page open and export a planner backup before "
+        + "closing it."
+      );
+    }, 0);
+  }
+
+  return false;
+}
+
+window.savePlannerData = savePlannerData;
+
+function loadPlannerData() {
+  const candidates = [
+    parsePlannerCandidate_(
+      plannerStorageGet_(
+        window.localStorage,
+        STORAGE_KEY
+      ),
+      "primary",
+      3
+    ),
+    parsePlannerCandidate_(
+      plannerStorageGet_(
+        window.localStorage,
+        STORAGE_BACKUP_KEY
+      ),
+      "backup",
+      2
+    ),
+    parsePlannerCandidate_(
+      plannerStorageGet_(
+        window.sessionStorage,
+        STORAGE_SESSION_KEY
+      ),
+      "session",
+      1
+    )
+  ].filter(Boolean);
+
+  if (!candidates.length) return;
+
+  candidates.sort((a, b) => {
+    if (b.savedAt !== a.savedAt) {
+      return b.savedAt - a.savedAt;
+    }
+
+    return b.priority - a.priority;
+  });
+
+  const selected = candidates[0];
+
+  try {
+    const parsed = selected.state;
     plannerState = {
       ...getFreshDefaults(),
       ...parsed,
@@ -4405,13 +4657,40 @@ function loadPlannerData() {
     plannerState.recurringSpendHistory = Array.isArray(plannerState.recurringSpendHistory)
       ? plannerState.recurringSpendHistory
       : [];
+
+    if (selected.source !== "primary") {
+      plannerStorageSet_(
+        window.localStorage,
+        STORAGE_KEY,
+        selected.raw
+      );
+    }
+
+    plannerPersistenceMessage_(
+      selected.source === "primary"
+        ? "Planner data restored"
+        : `Planner recovered from ${selected.source}`
+    );
   } catch (err) {
-    console.error("Could not load planner data", err);
+    console.error(
+      "Could not load planner data",
+      err
+    );
+
+    plannerPersistenceMessage_(
+      "Planner restore failed",
+      true
+    );
   }
 }
 
 function resetPlannerData() {
-  localStorage.removeItem(STORAGE_KEY);
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_BACKUP_KEY);
+    sessionStorage.removeItem(STORAGE_SESSION_KEY);
+  } catch (_) {}
+
   plannerState = getFreshDefaults();
 }
 
@@ -5897,7 +6176,9 @@ function m38CompleteScheduledPayment(index) {
     if (nextDate) bill.due = m20DateInputValue(nextDate);
     bill.paid = false; bill.actualPaid = 0; bill.deducted = false;
   }
-  savePlannerData(); runPlanner();
+  savePlannerData("bill-complete-before-render");
+  runPlanner();
+  savePlannerData("bill-complete-final");
 }
 
 function m38ConvertFuture(index) {
@@ -5928,8 +6209,9 @@ function m44CompleteTimelineBill(index) {
   bill.completedAt = new Date().toISOString();
   m38SelectedBillId = bill.id;
   m38UrgencyFilter = "paid";
-  savePlannerData();
+  savePlannerData("timeline-bill-complete-before-render");
   runPlanner();
+  savePlannerData("timeline-bill-complete-final");
 }
 
 function m44ArchiveTimelineBill(index) {
@@ -5959,8 +6241,9 @@ function m44ArchiveTimelineBill(index) {
     delete bill.completedAt;
     m38SelectedBillId = bill.id;
   }
-  savePlannerData();
+  savePlannerData("timeline-bill-archive-before-render");
   runPlanner();
+  savePlannerData("timeline-bill-archive-final");
 }
 
 function m44DeleteTimelineBill(index) {
@@ -6463,8 +6746,9 @@ document.getElementById("savePlannerBtn")
        * The old order saved the previous balance before runPlanner().
        */
       runPlanner();
-      savePlannerData();
+      savePlannerData("manual-save");
       syncHoldingBalanceFromFundingEngine(true);
+      savePlannerData("manual-save-final");
     }
   );
 
@@ -11765,5 +12049,66 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       ? "connected"
       : "standalone";
 })();
-</script></body>
+</script>
+<script id="auroraFinancePlannerPersistenceLifecycle">
+(function(){
+  "use strict";
+
+  let lastLifecycleSave = 0;
+
+  function persistFinancePlanner(reason){
+    const timestamp = Date.now();
+
+    if(timestamp - lastLifecycleSave < 500){
+      return;
+    }
+
+    lastLifecycleSave = timestamp;
+
+    try{
+      if(
+        typeof window.savePlannerData
+        === "function"
+      ){
+        window.savePlannerData(reason);
+      }
+    }catch(error){
+      console.error(
+        "Finance lifecycle save failed",
+        error
+      );
+    }
+  }
+
+  window.addEventListener(
+    "pagehide",
+    () => persistFinancePlanner("pagehide")
+  );
+
+  window.addEventListener(
+    "beforeunload",
+    () => persistFinancePlanner("beforeunload")
+  );
+
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+      if(document.visibilityState === "hidden"){
+        persistFinancePlanner(
+          "visibility-hidden"
+        );
+      }
+    }
+  );
+
+  window.addEventListener(
+    "aurora:before-department-change",
+    () => persistFinancePlanner(
+      "department-change"
+    )
+  );
+})();
+</script>
+
+</body>
 </html>
