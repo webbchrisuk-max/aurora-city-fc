@@ -1,660 +1,3013 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#020612" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Aurora City FC | Manager Session</title>
+  <!-- Build: Aurora Shared GameShell • Nexus Command Frame v1 • 03 Aug 2026 -->
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+  <meta name="theme-color" content="#020612">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  >
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Aurora City FC"
+  >
+  <title>Aurora City FC</title>
+
   <style>
-    :root {
-      --shell-height: 48px;
-      --ink: #020612;
-      --panel: rgba(2, 8, 22, 0.94);
-      --line: rgba(125, 211, 252, 0.2);
-      --cyan: #22d3ee;
-      --blue: #60a5fa;
-      --green: #34d399;
-      --red: #fb7185;
-      --text: #eaf4ff;
-      --muted: #93a4bd;
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-right: env(safe-area-inset-right, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --safe-left: env(safe-area-inset-left, 0px);
+    :root{
+      --shell-header-height:86px;
+      --shell-ink:#020612;
+      --shell-panel:#030b18;
+      --shell-panel-2:#07172d;
+      --shell-line:rgba(125,211,252,.18);
+      --shell-line-strong:rgba(34,211,238,.38);
+      --shell-text:#eaf4ff;
+      --shell-muted:#93a4bd;
+      --shell-cyan:#22d3ee;
+      --shell-blue:#60a5fa;
+      --shell-green:#34d399;
+      --shell-amber:#fbbf24;
+      --shell-red:#fb7185;
+      --safe-top:env(safe-area-inset-top,0px);
+      --safe-right:env(safe-area-inset-right,0px);
+      --safe-bottom:env(safe-area-inset-bottom,0px);
+      --safe-left:env(safe-area-inset-left,0px);
     }
 
-    * {
-      box-sizing: border-box;
+    *{
+      box-sizing:border-box;
     }
 
     html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      background: var(--ink);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -webkit-tap-highlight-color: transparent;
+    body{
+      width:100%;
+      height:100%;
+      margin:0;
+      overflow:hidden;
+      background:var(--shell-ink);
+      color:var(--shell-text);
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      -webkit-font-smoothing:antialiased;
+      -webkit-tap-highlight-color:transparent;
     }
 
-    button {
-      font: inherit;
+    button,
+    a{
+      font:inherit;
     }
 
-    .game-shell {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: var(--ink);
+    button{
+      color:inherit;
     }
 
-    .session-bar {
-      position: absolute;
-      z-index: 30;
-      inset: 0 0 auto 0;
-      height: calc(var(--shell-height) + var(--safe-top));
+    body.shell-navigation-open,
+    body.shell-logout-open{
+      overflow:hidden;
+    }
+
+    .aurora-game-shell{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      background:
+        radial-gradient(
+          circle at 12% 0%,
+          rgba(34,211,238,.09),
+          transparent 27%
+        ),
+        var(--shell-ink);
+    }
+
+    /* ============================================================
+       ONE SHARED NEXUS-STYLE TOP BAR
+       ============================================================ */
+
+    .aurora-shell-header{
+      position:absolute;
+      z-index:500;
+      inset:0 0 auto 0;
+      height:calc(
+        var(--shell-header-height)
+        + var(--safe-top)
+      );
       padding:
         var(--safe-top)
-        calc(12px + var(--safe-right))
+        calc(16px + var(--safe-right))
         0
-        calc(12px + var(--safe-left));
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
+        calc(16px + var(--safe-left));
+      border-bottom:1px solid var(--shell-line);
       background:
-        linear-gradient(90deg, rgba(8, 47, 73, 0.55), transparent 34%, rgba(30, 64, 175, 0.2)),
-        var(--panel);
-      border-bottom: 1px solid var(--line);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.34);
-      backdrop-filter: blur(18px);
+        linear-gradient(
+          90deg,
+          rgba(8,47,73,.52),
+          transparent 34%,
+          rgba(30,64,175,.18)
+        ),
+        rgba(2,8,22,.94);
+      box-shadow:0 12px 38px rgba(0,0,0,.34);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
     }
 
-    .session-brand,
-    .session-actions,
-    .session-route {
-      display: flex;
-      align-items: center;
+    .aurora-shell-header-inner{
+      width:min(1660px,100%);
+      height:var(--shell-header-height);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      margin:0 auto;
     }
 
-    .session-brand {
-      min-width: 0;
-      gap: 10px;
+    .aurora-shell-brand,
+    .aurora-shell-context,
+    .aurora-shell-controls{
+      display:flex;
+      align-items:center;
     }
 
-    .session-crest {
-      width: 32px;
-      height: 32px;
-      flex: 0 0 auto;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid rgba(125, 211, 252, 0.3);
-      background: #020617;
-      box-shadow: 0 0 20px rgba(34, 211, 238, 0.14);
+    .aurora-shell-brand{
+      min-width:0;
+      gap:13px;
     }
 
-    .session-crest img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
+    #auroraShellMenuButton{
+      position:static;
+      width:44px;
+      height:44px;
+      min-width:44px;
+      display:grid;
+      place-items:center;
+      margin:0;
+      padding:0;
+      border:1px solid rgba(125,211,252,.25);
+      border-radius:14px;
+      color:#dff7ff;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(8,47,73,.90),
+          rgba(15,23,42,.98)
+        );
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.07),
+        0 9px 20px rgba(0,0,0,.23);
+      font-size:21px;
+      font-weight:950;
+      line-height:1;
+      cursor:pointer;
+      transition:
+        transform .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
     }
 
-    .session-copy {
-      min-width: 0;
+    #auroraShellMenuButton:hover,
+    #auroraShellMenuButton:focus-visible{
+      transform:translateY(-1px);
+      border-color:rgba(34,211,238,.58);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        0 10px 23px rgba(0,0,0,.25),
+        0 0 0 4px rgba(34,211,238,.08);
+      outline:none;
     }
 
-    .session-kicker {
-      margin: 0;
-      color: #7dd3fc;
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      white-space: nowrap;
+    .aurora-shell-crest{
+      width:58px;
+      height:58px;
+      flex:0 0 58px;
+      overflow:hidden;
+      border:1px solid rgba(125,211,252,.28);
+      border-radius:18px;
+      background:#020617;
+      box-shadow:
+        0 0 0 4px rgba(34,211,238,.04),
+        0 0 32px rgba(34,211,238,.18);
     }
 
-    .session-manager {
-      margin: 2px 0 0;
-      color: #e0f2fe;
-      font-size: 13px;
-      font-weight: 800;
-      white-space: nowrap;
+    .aurora-shell-crest img{
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .session-route {
-      min-width: 0;
-      justify-content: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    .aurora-shell-copy{
+      min-width:0;
     }
 
-    .online-dot {
-      width: 8px;
-      height: 8px;
-      flex: 0 0 auto;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.1), 0 0 15px rgba(52, 211, 153, 0.55);
+    .aurora-shell-copy h1{
+      margin:0;
+      overflow:hidden;
+      color:#f0f9ff;
+      font-size:23px;
+      line-height:1;
+      letter-spacing:-.045em;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
 
-    #routeName {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .aurora-shell-copy p{
+      margin:6px 0 0;
+      overflow:hidden;
+      color:#7dd3fc;
+      font-size:12px;
+      font-weight:750;
+      letter-spacing:.015em;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
 
-    .session-actions {
-      flex: 0 0 auto;
-      gap: 8px;
+    .aurora-shell-context{
+      min-width:0;
+      justify-content:flex-end;
+      gap:10px;
     }
 
-    .logout-button {
-      min-height: 34px;
-      border: 1px solid rgba(251, 113, 133, 0.28);
-      border-radius: 11px;
-      padding: 0 12px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      color: #fecdd3;
-      background: rgba(76, 5, 25, 0.38);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: 160ms ease;
+    .aurora-shell-route{
+      min-width:0;
+      max-width:280px;
+      overflow:hidden;
+      color:#71849c;
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-overflow:ellipsis;
+      text-transform:uppercase;
+      white-space:nowrap;
     }
 
-    .logout-button:hover,
-    .logout-button:focus-visible {
-      color: #fff1f2;
-      border-color: rgba(251, 113, 133, 0.58);
-      background: rgba(136, 19, 55, 0.48);
-      box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.1);
-      outline: none;
+    .aurora-shell-controls{
+      gap:7px;
     }
 
-    .power-icon {
-      width: 15px;
-      height: 15px;
-      display: block;
+    .aurora-shell-control{
+      position:relative;
+      width:40px;
+      height:40px;
+      display:grid;
+      place-items:center;
+      padding:0;
+      border:1px solid rgba(125,211,252,.18);
+      border-radius:13px;
+      color:#bae6fd;
+      background:rgba(2,6,23,.48);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+      cursor:pointer;
+      transition:
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease;
     }
 
-    .club-frame {
-      position: absolute;
-      z-index: 1;
-      left: 0;
-      right: 0;
-      top: calc(var(--shell-height) + var(--safe-top));
-      bottom: 0;
-      width: 100%;
-      height: calc(100% - var(--shell-height) - var(--safe-top));
-      border: 0;
-      background: var(--ink);
-      transition: filter 260ms ease, opacity 260ms ease, transform 420ms cubic-bezier(.2,.8,.2,1);
+    .aurora-shell-control:hover,
+    .aurora-shell-control:focus-visible,
+    .aurora-shell-control.is-active{
+      transform:translateY(-2px);
+      border-color:var(--shell-cyan);
+      color:#fff;
+      background:rgba(8,47,73,.68);
+      outline:none;
     }
 
-    .game-shell.is-paused .club-frame {
-      filter: blur(5px) brightness(0.52);
-      transform: scale(0.994);
+    .aurora-shell-count{
+      position:absolute;
+      right:-6px;
+      top:-7px;
+      min-width:20px;
+      height:20px;
+      display:grid;
+      place-items:center;
+      padding:0 5px;
+      border:2px solid #020612;
+      border-radius:999px;
+      color:#fff;
+      background:var(--shell-red);
+      font-size:9px;
+      font-weight:1000;
+      box-shadow:0 8px 17px rgba(0,0,0,.34);
     }
 
-    .modal-layer,
-    .exit-layer {
-      position: absolute;
-      inset: 0;
-      z-index: 70;
-      display: grid;
-      place-items: center;
+    .aurora-shell-count[hidden]{
+      display:none;
+    }
+
+    .aurora-shell-live{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height:38px;
+      padding:0 12px;
+      border:1px solid rgba(52,211,153,.26);
+      border-radius:999px;
+      color:#bbf7d0;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(6,78,59,.38),
+          rgba(8,47,73,.32)
+        );
+      font-size:10px;
+      font-weight:950;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    .aurora-shell-live i{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--shell-green);
+      box-shadow:
+        0 0 0 5px rgba(52,211,153,.09),
+        0 0 14px rgba(52,211,153,.48);
+      animation:auroraShellLivePulse 2.4s ease-in-out infinite;
+    }
+
+    #auroraShellLogoutButton{
+      min-height:40px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 13px;
+      border:1px solid rgba(251,113,133,.34);
+      border-radius:12px;
+      color:#fecdd3;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(76,5,25,.76),
+          rgba(44,7,20,.92)
+        );
+      font-size:10px;
+      font-weight:950;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      white-space:nowrap;
+      cursor:pointer;
+    }
+
+    #auroraShellLogoutButton:hover,
+    #auroraShellLogoutButton:focus-visible{
+      color:#fff1f2;
+      border-color:rgba(251,113,133,.60);
+      background:rgba(136,19,55,.52);
+      outline:none;
+    }
+
+    /* ============================================================
+       FULL APP FRAME
+       ID selector deliberately defeats old child-injected shell CSS.
+       ============================================================ */
+
+    #clubFrame{
+      position:absolute!important;
+      z-index:2!important;
+      left:0!important;
+      right:0!important;
+      top:calc(
+        var(--shell-header-height)
+        + var(--safe-top)
+      )!important;
+      bottom:0!important;
+      width:100%!important;
+      height:calc(
+        100%
+        - var(--shell-header-height)
+        - var(--safe-top)
+      )!important;
+      margin:0!important;
+      padding:0!important;
+      border:0!important;
+      background:var(--shell-ink)!important;
+    }
+
+    .aurora-shell-fallback{
+      position:absolute;
+      z-index:1;
+      inset:
+        calc(
+          var(--shell-header-height)
+          + var(--safe-top)
+        )
+        0
+        0;
+      display:grid;
+      place-items:center;
+      padding:30px;
+      color:var(--shell-muted);
+      text-align:center;
+    }
+
+    /* ============================================================
+       SHARED SLIDE-OUT NAVIGATION
+       No floating launcher and no edge-zone element exists.
+       ============================================================ */
+
+    #auroraShellNavigationOverlay{
+      position:fixed;
+      inset:0;
+      z-index:880;
+      background:rgba(1,5,15,.68);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transition:
+        opacity .22s ease,
+        visibility .22s ease;
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+    }
+
+    #auroraShellNavigation{
+      position:fixed;
+      z-index:890;
+      left:0;
+      top:0;
+      bottom:0;
+      width:min(400px,92vw);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      border-right:1px solid rgba(125,211,252,.24);
+      background:
+        radial-gradient(
+          circle at 15% 0%,
+          rgba(34,211,238,.16),
+          transparent 31%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(5,18,38,.998),
+          rgba(2,7,18,.999)
+        );
+      box-shadow:30px 0 95px rgba(0,0,0,.62);
+      transform:translateX(-104%);
+      transition:
+        transform .27s cubic-bezier(.2,.82,.22,1);
+    }
+
+    body.shell-navigation-open
+    #auroraShellNavigationOverlay{
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
+    }
+
+    body.shell-navigation-open
+    #auroraShellNavigation{
+      transform:translateX(0);
+    }
+
+    .aurora-shell-nav-head{
+      flex:0 0 auto;
+      min-height:82px;
+      display:grid;
+      grid-template-columns:50px minmax(0,1fr) 40px;
+      align-items:center;
+      gap:11px;
+      padding:
+        calc(13px + var(--safe-top))
+        14px
+        13px;
+      border-bottom:1px solid rgba(125,211,252,.16);
+      background:rgba(2,8,22,.52);
+    }
+
+    .aurora-shell-nav-crest{
+      width:48px;
+      height:48px;
+      overflow:hidden;
+      border:1px solid rgba(125,211,252,.30);
+      border-radius:15px;
+      background:#020617;
+      box-shadow:0 0 25px rgba(34,211,238,.16);
+    }
+
+    .aurora-shell-nav-crest img{
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .aurora-shell-nav-brand{
+      min-width:0;
+    }
+
+    .aurora-shell-nav-brand strong{
+      display:block;
+      overflow:hidden;
+      color:#f0f9ff;
+      font-size:17px;
+      line-height:1.15;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .aurora-shell-nav-brand span{
+      display:block;
+      margin-top:4px;
+      color:#67e8f9;
+      font-size:9px;
+      font-weight:950;
+      letter-spacing:.17em;
+      text-transform:uppercase;
+    }
+
+    #auroraShellNavigationClose{
+      width:40px;
+      height:40px;
+      display:grid;
+      place-items:center;
+      padding:0;
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:13px;
+      color:#dbeafe;
+      background:rgba(15,23,42,.66);
+      font-size:22px;
+      cursor:pointer;
+    }
+
+    .aurora-shell-nav-scroll{
+      flex:1 1 auto;
+      min-height:0;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding:12px 10px 18px;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(125,211,252,.24) transparent;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .aurora-shell-nav-section{
+      margin:14px 9px 7px;
+      color:#71849d;
+      font-size:9px;
+      font-weight:1000;
+      letter-spacing:.19em;
+      text-transform:uppercase;
+    }
+
+    .aurora-shell-mission-progress{
+      margin:0 9px 9px;
+      color:#60748c;
+      font-size:9px;
+      line-height:1.45;
+    }
+
+    .aurora-shell-mission-row,
+    .aurora-shell-department-row{
+      position:relative;
+      width:100%;
+      min-height:56px;
+      display:grid;
+      grid-template-columns:39px minmax(0,1fr) auto;
+      align-items:center;
+      gap:10px;
+      margin:3px 0;
+      padding:8px 9px;
+      border:1px solid transparent;
+      border-radius:14px;
+      color:#cbd5e1;
+      background:transparent;
+      text-decoration:none;
+      cursor:pointer;
+      transition:
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease;
+    }
+
+    .aurora-shell-mission-row:hover,
+    .aurora-shell-mission-row:focus-visible,
+    .aurora-shell-department-row:hover,
+    .aurora-shell-department-row:focus-visible{
+      transform:translateX(2px);
+      border-color:rgba(125,211,252,.17);
+      background:rgba(8,47,73,.34);
+      outline:none;
+    }
+
+    .aurora-shell-mission-row.is-current,
+    .aurora-shell-department-row.is-current{
+      color:#fff;
+      border-color:rgba(34,211,238,.38);
+      background:
+        linear-gradient(
+          90deg,
+          rgba(14,116,144,.58),
+          rgba(30,64,175,.30)
+        );
+      box-shadow:
+        inset 3px 0 0 #67e8f9,
+        0 9px 22px rgba(2,132,199,.12);
+    }
+
+    .aurora-shell-mission-row.is-next{
+      border-color:rgba(251,191,36,.26);
+      background:rgba(120,53,15,.14);
+    }
+
+    .aurora-shell-nav-number,
+    .aurora-shell-nav-icon{
+      width:37px;
+      height:37px;
+      display:grid;
+      place-items:center;
+      border:1px solid rgba(125,211,252,.18);
+      border-radius:12px;
+      color:#bcecff;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(8,71,96,.72),
+          rgba(6,32,54,.88)
+        );
+      font-size:16px;
+      font-weight:950;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .aurora-shell-nav-number{
+      color:#bfdbfe;
+      background:linear-gradient(145deg,#1e40af,#172554);
+      font-size:12px;
+    }
+
+    .aurora-shell-mission-row.is-complete
+    .aurora-shell-nav-number{
+      color:#fff7cc;
+      border-color:rgba(251,191,36,.34);
+      background:linear-gradient(145deg,#b45309,#78350f);
+    }
+
+    .aurora-shell-nav-copy{
+      min-width:0;
+    }
+
+    .aurora-shell-nav-copy strong{
+      display:block;
+      overflow:hidden;
+      color:inherit;
+      font-size:12px;
+      line-height:1.2;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .aurora-shell-nav-copy span{
+      display:block;
+      margin-top:4px;
+      overflow:hidden;
+      color:#8194aa;
+      font-size:9px;
+      line-height:1.3;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .aurora-shell-nav-end{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .aurora-shell-complete{
+      width:32px;
+      height:32px;
+      display:grid;
+      place-items:center;
+      padding:0;
+      border:1px solid rgba(148,163,184,.17);
+      border-radius:10px;
+      color:#7f91aa;
+      background:rgba(15,23,42,.44);
+      cursor:pointer;
+    }
+
+    .aurora-shell-complete.is-complete{
+      color:#fff7cc;
+      border-color:rgba(251,191,36,.34);
+      background:rgba(146,64,14,.42);
+    }
+
+    .aurora-shell-nav-arrow{
+      color:#64748b;
+      font-size:17px;
+    }
+
+    .aurora-shell-matchday-status{
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      padding:5px 7px;
+      border:1px solid rgba(148,163,184,.16);
+      border-radius:999px;
+      color:#94a3b8;
+      background:rgba(15,23,42,.50);
+      font-size:8px;
+      font-weight:1000;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    .aurora-shell-matchday-status::before{
+      content:"";
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:#94a3b8;
+    }
+
+    .aurora-shell-matchday-status[data-state="ready"]{
+      color:#bbf7d0;
+      border-color:rgba(52,211,153,.30);
+      background:rgba(20,83,45,.24);
+    }
+
+    .aurora-shell-matchday-status[data-state="ready"]::before{
+      background:#34d399;
+      box-shadow:0 0 10px rgba(52,211,153,.50);
+    }
+
+    .aurora-shell-matchday-status[data-state="progress"]{
+      color:#fde68a;
+      border-color:rgba(251,191,36,.30);
+      background:rgba(120,53,15,.24);
+    }
+
+    .aurora-shell-matchday-status[data-state="progress"]::before{
+      background:#fbbf24;
+    }
+
+    .aurora-shell-matchday-status[data-state="error"]{
+      color:#fecdd3;
+      border-color:rgba(251,113,133,.32);
+      background:rgba(127,29,29,.22);
+    }
+
+    .aurora-shell-matchday-status[data-state="error"]::before{
+      background:#fb7185;
+    }
+
+    .aurora-shell-nav-footer{
+      flex:0 0 auto;
+      padding:
+        10px 12px
+        calc(10px + var(--safe-bottom));
+      border-top:1px solid rgba(125,211,252,.16);
+      background:#030b18;
+      box-shadow:0 -10px 24px rgba(0,0,0,.22);
+    }
+
+    .aurora-shell-cloud{
+      min-height:51px;
+      display:grid;
+      grid-template-columns:34px minmax(0,1fr) auto;
+      align-items:center;
+      gap:9px;
+      padding:8px 10px;
+      border:1px solid rgba(52,211,153,.22);
+      border-radius:13px;
+      color:#dcecff;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(6,78,59,.32),
+          rgba(15,23,42,.62)
+        );
+      text-decoration:none;
+      cursor:pointer;
+    }
+
+    .aurora-shell-cloud-icon{
+      width:32px;
+      height:32px;
+      display:grid;
+      place-items:center;
+      border-radius:10px;
+      color:#bbf7d0;
+      background:rgba(20,83,45,.35);
+    }
+
+    .aurora-shell-cloud-copy{
+      min-width:0;
+    }
+
+    .aurora-shell-cloud-copy strong{
+      display:block;
+      font-size:11px;
+    }
+
+    .aurora-shell-cloud-copy span{
+      display:block;
+      margin-top:3px;
+      overflow:hidden;
+      color:#87a39a;
+      font-size:9px;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .aurora-shell-cloud-state{
+      color:#86efac;
+      font-size:8px;
+      font-weight:1000;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    /* ============================================================
+       LOGOUT MODAL OWNED ONLY BY THE GAMESHELL
+       ============================================================ */
+
+    #auroraShellLogoutLayer{
+      position:fixed;
+      inset:0;
+      z-index:980;
+      display:grid;
+      place-items:center;
       padding:
         calc(20px + var(--safe-top))
         calc(20px + var(--safe-right))
         calc(20px + var(--safe-bottom))
         calc(20px + var(--safe-left));
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 190ms ease, visibility 190ms ease;
+      background:rgba(1,4,12,.68);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transition:
+        opacity .19s ease,
+        visibility .19s ease;
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
     }
 
-    .modal-layer {
-      background: rgba(1, 4, 12, 0.66);
-      backdrop-filter: blur(12px);
+    body.shell-logout-open
+    #auroraShellLogoutLayer{
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
     }
 
-    .modal-layer.is-active,
-    .exit-layer.is-active {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
-
-    .logout-card {
-      width: min(430px, 100%);
-      overflow: hidden;
-      border: 1px solid rgba(125, 211, 252, 0.22);
-      border-radius: 24px;
+    .aurora-shell-logout-card{
+      width:min(440px,100%);
+      overflow:hidden;
+      border:1px solid rgba(125,211,252,.22);
+      border-radius:25px;
       background:
-        radial-gradient(circle at 86% 0%, rgba(34, 211, 238, 0.13), transparent 34%),
-        linear-gradient(180deg, rgba(10, 26, 48, 0.98), rgba(3, 10, 23, 0.99));
-      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58);
+        radial-gradient(
+          circle at 86% 0%,
+          rgba(34,211,238,.13),
+          transparent 34%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(10,26,48,.99),
+          rgba(3,10,23,.995)
+        );
+      box-shadow:0 32px 100px rgba(0,0,0,.62);
     }
 
-    .logout-card-top {
-      padding: 24px 24px 18px;
-      text-align: center;
+    .aurora-shell-logout-top{
+      padding:25px 25px 19px;
+      text-align:center;
     }
 
-    .logout-card-crest {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 16px;
-      overflow: hidden;
-      border: 1px solid rgba(125, 211, 252, 0.28);
-      border-radius: 22px;
-      background: #020617;
-      box-shadow: 0 0 34px rgba(34, 211, 238, 0.16);
+    .aurora-shell-logout-crest{
+      width:76px;
+      height:76px;
+      margin:0 auto 16px;
+      overflow:hidden;
+      border:1px solid rgba(125,211,252,.28);
+      border-radius:23px;
+      background:#020617;
+      box-shadow:0 0 36px rgba(34,211,238,.18);
     }
 
-    .logout-card-crest img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
+    .aurora-shell-logout-crest img{
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .logout-eyebrow {
-      margin: 0;
-      color: #7dd3fc;
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+    .aurora-shell-logout-top small{
+      display:block;
+      color:#7dd3fc;
+      font-size:9px;
+      font-weight:950;
+      letter-spacing:.17em;
+      text-transform:uppercase;
     }
 
-    .logout-title {
-      margin: 9px 0 8px;
-      color: #f8fbff;
-      font-size: clamp(25px, 4vw, 34px);
-      line-height: 1;
-      letter-spacing: -0.045em;
+    .aurora-shell-logout-top h2{
+      margin:10px 0 8px;
+      color:#f8fbff;
+      font-size:clamp(26px,4vw,35px);
+      line-height:1;
+      letter-spacing:-.05em;
     }
 
-    .logout-copy {
-      margin: 0 auto;
-      max-width: 330px;
-      color: #b6c6dd;
-      font-size: 14px;
-      line-height: 1.5;
+    .aurora-shell-logout-top p{
+      max-width:340px;
+      margin:0 auto;
+      color:#b6c6dd;
+      font-size:13px;
+      line-height:1.52;
     }
 
-    .logout-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding: 0 18px 18px;
+    .aurora-shell-logout-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      padding:0 18px 18px;
     }
 
-    .modal-button {
-      min-height: 46px;
-      border-radius: 14px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    .aurora-shell-modal-button{
+      min-height:47px;
+      border-radius:14px;
+      font-size:11px;
+      font-weight:950;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      cursor:pointer;
     }
 
-    .cancel-button {
-      color: #dbeafe;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      background: rgba(15, 23, 42, 0.72);
+    #auroraShellCancelLogout{
+      color:#dbeafe;
+      border:1px solid rgba(148,163,184,.20);
+      background:rgba(15,23,42,.74);
     }
 
-    .confirm-button {
-      color: #fff1f2;
-      border: 1px solid rgba(251, 113, 133, 0.42);
-      background: linear-gradient(135deg, rgba(159, 18, 57, 0.92), rgba(76, 5, 25, 0.95));
-    }
-
-    .cancel-button:hover,
-    .cancel-button:focus-visible {
-      border-color: rgba(125, 211, 252, 0.5);
-      outline: none;
-    }
-
-    .confirm-button:hover,
-    .confirm-button:focus-visible {
-      border-color: rgba(251, 113, 133, 0.74);
-      outline: none;
-    }
-
-    .exit-layer {
-      overflow: hidden;
+    #auroraShellConfirmLogout{
+      color:#fff1f2;
+      border:1px solid rgba(251,113,133,.42);
       background:
-        radial-gradient(circle at 50% 32%, rgba(34, 211, 238, 0.15), transparent 28%),
-        #01040b;
+        linear-gradient(
+          135deg,
+          rgba(159,18,57,.92),
+          rgba(76,5,25,.95)
+        );
     }
 
-    .exit-layer::before,
-    .exit-layer::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 50.5%;
-      background:
-        linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent),
-        linear-gradient(180deg, #071426, #020713);
-      border-color: rgba(125, 211, 252, 0.2);
-      transition: transform 720ms cubic-bezier(.72,0,.2,1);
-    }
-
-    .exit-layer::before {
-      left: 0;
-      border-right: 1px solid rgba(125, 211, 252, 0.22);
-      transform: translateX(-101%);
-    }
-
-    .exit-layer::after {
-      right: 0;
-      border-left: 1px solid rgba(125, 211, 252, 0.22);
-      transform: translateX(101%);
-    }
-
-    .exit-layer.is-active::before,
-    .exit-layer.is-active::after {
-      transform: translateX(0);
-    }
-
-    .exit-message {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 300ms ease 420ms, transform 300ms ease 420ms;
-    }
-
-    .exit-layer.is-active .exit-message {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .exit-message img {
-      width: 82px;
-      height: 82px;
-      display: block;
-      margin: 0 auto 18px;
-      border-radius: 24px;
-      border: 1px solid rgba(125, 211, 252, 0.28);
-      box-shadow: 0 0 38px rgba(34, 211, 238, 0.18);
-    }
-
-    .exit-message h2 {
-      margin: 0;
-      font-size: clamp(29px, 5vw, 48px);
-      letter-spacing: -0.055em;
-    }
-
-    .exit-message p {
-      margin: 8px 0 0;
-      color: #7dd3fc;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .frame-fallback {
-      position: absolute;
-      z-index: 0;
-      inset: calc(var(--shell-height) + var(--safe-top)) 0 0;
-      display: grid;
-      place-items: center;
-      padding: 30px;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    @media (max-width: 680px) {
-      :root {
-        --shell-height: 46px;
+    @keyframes auroraShellLivePulse{
+      0%,100%{
+        box-shadow:
+          0 0 0 5px rgba(52,211,153,.09),
+          0 0 14px rgba(52,211,153,.42);
       }
-
-      .session-route {
-        display: none;
-      }
-
-      .session-kicker {
-        font-size: 8px;
-      }
-
-      .session-manager {
-        font-size: 12px;
-      }
-
-      .logout-button {
-        min-width: 38px;
-        padding: 0 10px;
-      }
-
-      .logout-label {
-        display: none;
+      50%{
+        box-shadow:
+          0 0 0 9px rgba(52,211,153,.015),
+          0 0 20px rgba(52,211,153,.62);
       }
     }
 
-    @media (max-width: 390px) {
-      .session-copy {
-        display: none;
-      }
-
-      .logout-actions {
-        grid-template-columns: 1fr;
+    @media(max-width:1100px){
+      .aurora-shell-route{
+        display:none;
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
+    @media(max-width:860px){
+      :root{
+        --shell-header-height:76px;
+      }
+
+      .aurora-shell-header{
+        padding-left:
+          calc(10px + var(--safe-left));
+        padding-right:
+          calc(10px + var(--safe-right));
+      }
+
+      .aurora-shell-header-inner{
+        gap:10px;
+      }
+
+      .aurora-shell-crest{
+        width:48px;
+        height:48px;
+        flex-basis:48px;
+        border-radius:15px;
+      }
+
+      .aurora-shell-copy h1{
+        font-size:18px;
+      }
+
+      .aurora-shell-copy p{
+        font-size:10px;
+      }
+
+      .aurora-shell-control{
+        width:37px;
+        height:37px;
+      }
+
+      .aurora-shell-live{
+        min-height:36px;
+        padding:0 10px;
+      }
+
+      #auroraShellLogoutButton{
+        min-height:37px;
+        padding:0 10px;
+      }
+    }
+
+    @media(max-width:680px){
+      :root{
+        --shell-header-height:70px;
+      }
+
+      #auroraShellMenuButton{
+        width:40px;
+        height:40px;
+        min-width:40px;
+      }
+
+      .aurora-shell-crest{
+        width:44px;
+        height:44px;
+        flex-basis:44px;
+        border-radius:14px;
+      }
+
+      .aurora-shell-copy h1{
+        font-size:16px;
+      }
+
+      .aurora-shell-copy p{
+        max-width:170px;
+      }
+
+      .aurora-shell-controls{
+        position:fixed;
+        z-index:700;
+        right:
+          calc(10px + var(--safe-right));
+        bottom:
+          calc(10px + var(--safe-bottom));
+        padding:6px;
+        border:1px solid rgba(125,211,252,.18);
+        border-radius:16px;
+        background:rgba(2,6,18,.93);
+        box-shadow:0 17px 48px rgba(0,0,0,.46);
+        backdrop-filter:blur(15px);
+        -webkit-backdrop-filter:blur(15px);
+      }
+
+      .aurora-shell-live{
+        display:none;
+      }
+
+      #auroraShellLogoutButton{
+        font-size:0;
+        width:39px;
+        min-width:39px;
+        padding:0;
+      }
+
+      #auroraShellLogoutButton::before{
+        content:"⏻";
+        font-size:17px;
+      }
+    }
+
+    @media(max-width:480px){
+      .aurora-shell-copy h1{
+        display:none;
+      }
+
+      .aurora-shell-copy p{
+        max-width:128px;
+        margin:0;
+        font-size:9px;
+      }
+
+      .aurora-shell-logout-actions{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce){
       *,
       *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
+      *::after{
+        animation-duration:.01ms!important;
+        animation-iteration-count:1!important;
+        scroll-behavior:auto!important;
+        transition-duration:.01ms!important;
       }
     }
   </style>
 </head>
+
 <body>
-  <main class="game-shell" id="gameShell">
-    <header class="session-bar">
-      <div class="session-brand">
-        <div class="session-crest">
-          <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="Aurora City FC crest" />
-        </div>
-        <div class="session-copy">
-          <p class="session-kicker">Aurora City FC</p>
-          <p class="session-manager">Manager Session • Webby</p>
-        </div>
-      </div>
+  <main
+    class="aurora-game-shell"
+    id="auroraGameShell"
+  >
+    <header class="aurora-shell-header">
+      <div class="aurora-shell-header-inner">
+        <div class="aurora-shell-brand">
+          <button
+            id="auroraShellMenuButton"
+            type="button"
+            aria-label="Open Aurora navigation"
+            aria-expanded="false"
+            title="Open Aurora navigation"
+          >☰</button>
 
-      <div class="session-route" aria-live="polite">
-        <span class="online-dot" aria-hidden="true"></span>
-        <span id="routeName">Manager Dashboard</span>
-      </div>
+          <div class="aurora-shell-crest">
+            <img
+              src="./assets/aurora-city-fc/icons/icon-192.png"
+              alt="Aurora City FC crest"
+            >
+          </div>
 
-      <div class="session-actions">
-        <button class="logout-button" id="logoutButton" type="button" aria-haspopup="dialog">
-          <svg class="power-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 3v9" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
-            <path d="M7.35 5.9a8 8 0 1 0 9.3 0" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
-          </svg>
-          <span class="logout-label">Log Out</span>
-        </button>
+          <div class="aurora-shell-copy">
+            <h1>Aurora City FC</h1>
+            <p id="auroraShellSubtitle">
+              Manager Dashboard • Club HQ
+            </p>
+          </div>
+        </div>
+
+        <div class="aurora-shell-context">
+          <span
+            class="aurora-shell-route"
+            id="auroraShellRoute"
+          >
+            Home / Manager Dashboard
+          </span>
+
+          <div
+            class="aurora-shell-controls"
+            aria-label="Aurora command controls"
+          >
+            <button
+              class="aurora-shell-control"
+              id="auroraShellDecisionButton"
+              type="button"
+              aria-label="Open decision queue"
+              title="Decision Queue"
+            >📋</button>
+
+            <button
+              class="aurora-shell-control"
+              id="auroraShellLogButton"
+              type="button"
+              aria-label="Open manager action log"
+              title="Manager Action Log"
+            >🕘</button>
+
+            <button
+              class="aurora-shell-control"
+              id="auroraShellNotificationButton"
+              type="button"
+              aria-label="Open notifications"
+              title="Notifications"
+            >
+              🔔
+              <span
+                class="aurora-shell-count"
+                id="auroraShellNotificationCount"
+                hidden
+              >0</span>
+            </button>
+
+            <button
+              class="aurora-shell-control"
+              id="auroraShellLayoutButton"
+              type="button"
+              aria-label="Open dashboard controls"
+              title="Dashboard controls"
+            >⚙</button>
+
+            <button
+              class="aurora-shell-control"
+              id="auroraShellPresentationButton"
+              type="button"
+              aria-label="Toggle presentation mode"
+              title="Presentation mode"
+            >▣</button>
+          </div>
+
+          <span class="aurora-shell-live">
+            <i aria-hidden="true"></i>
+            Live
+          </span>
+
+          <button
+            id="auroraShellLogoutButton"
+            type="button"
+          >
+            Log Out
+          </button>
+        </div>
       </div>
     </header>
 
-    <div class="frame-fallback">
-      <p>Loading Aurora City FC Manager Dashboard…</p>
+    <div class="aurora-shell-fallback">
+      <p>Loading Aurora City FC…</p>
     </div>
 
     <iframe
-      class="club-frame"
       id="clubFrame"
       src="about:blank"
       title="Aurora City FC club system"
       allow="fullscreen"
     ></iframe>
-
-    <section class="modal-layer" id="logoutModal" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
-      <div class="logout-card">
-        <div class="logout-card-top">
-          <div class="logout-card-crest">
-            <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="" />
-          </div>
-          <p class="logout-eyebrow">Manager Session Control</p>
-          <h1 class="logout-title" id="logoutTitle">Exit Aurora City FC?</h1>
-          <p class="logout-copy">
-            Your club data remains saved. This closes the manager session and returns you to the Aurora access screen.
-          </p>
-        </div>
-
-        <div class="logout-actions">
-          <button class="modal-button cancel-button" id="cancelLogout" type="button">Stay in Club</button>
-          <button class="modal-button confirm-button" id="confirmLogout" type="button">Log Out</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="exit-layer" id="exitLayer" aria-live="polite">
-      <div class="exit-message">
-        <img src="./assets/aurora-city-fc/icons/icon-192.png" alt="" />
-        <h2>Session Closed</h2>
-        <p>Returning to manager access</p>
-      </div>
-    </section>
   </main>
+
+  <div
+    id="auroraShellNavigationOverlay"
+    aria-hidden="true"
+  ></div>
+
+  <aside
+    id="auroraShellNavigation"
+    aria-label="Aurora City FC workflow and departments"
+    aria-hidden="true"
+  >
+    <div class="aurora-shell-nav-head">
+      <div class="aurora-shell-nav-crest">
+        <img
+          src="./assets/aurora-city-fc/icons/icon-192.png"
+          alt="Aurora City FC crest"
+        >
+      </div>
+
+      <div class="aurora-shell-nav-brand">
+        <strong>Aurora City FC</strong>
+        <span>Club command navigation</span>
+      </div>
+
+      <button
+        id="auroraShellNavigationClose"
+        type="button"
+        aria-label="Close Aurora navigation"
+      >×</button>
+    </div>
+
+    <div
+      class="aurora-shell-nav-scroll"
+      id="auroraShellNavigationScroll"
+    ></div>
+
+    <div class="aurora-shell-nav-footer">
+      <a
+        class="aurora-shell-cloud"
+        href="AuroraBrowserDataTransfer.html"
+        data-shell-page="AuroraBrowserDataTransfer.html"
+      >
+        <span class="aurora-shell-cloud-icon">☁</span>
+        <span class="aurora-shell-cloud-copy">
+          <strong>Cloud Sync</strong>
+          <span>Open Aurora data transfer</span>
+        </span>
+        <span class="aurora-shell-cloud-state">
+          Synced
+        </span>
+      </a>
+    </div>
+  </aside>
+
+  <section
+    id="auroraShellLogoutLayer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="auroraShellLogoutTitle"
+  >
+    <div class="aurora-shell-logout-card">
+      <div class="aurora-shell-logout-top">
+        <div class="aurora-shell-logout-crest">
+          <img
+            src="./assets/aurora-city-fc/icons/icon-192.png"
+            alt=""
+          >
+        </div>
+
+        <small>Manager Session Control</small>
+
+        <h2 id="auroraShellLogoutTitle">
+          Exit Aurora City FC?
+        </h2>
+
+        <p>
+          Your club data remains saved. This closes the
+          manager session and returns to the Aurora access screen.
+        </p>
+      </div>
+
+      <div class="aurora-shell-logout-actions">
+        <button
+          class="aurora-shell-modal-button"
+          id="auroraShellCancelLogout"
+          type="button"
+        >
+          Stay in Club
+        </button>
+
+        <button
+          class="aurora-shell-modal-button"
+          id="auroraShellConfirmLogout"
+          type="button"
+        >
+          Log Out
+        </button>
+      </div>
+    </div>
+  </section>
 
   <script>
     (() => {
       "use strict";
 
-      const gameShell = document.getElementById("gameShell");
-      const clubFrame = document.getElementById("clubFrame");
-      const routeName = document.getElementById("routeName");
-      const logoutButton = document.getElementById("logoutButton");
-      const logoutModal = document.getElementById("logoutModal");
-      const cancelLogout = document.getElementById("cancelLogout");
-      const confirmLogout = document.getElementById("confirmLogout");
-      const exitLayer = document.getElementById("exitLayer");
+      const ROUTES = [
+        {
+          icon:"⌂",
+          title:"Aurora Nexus HQ",
+          subtitle:"Club Intelligence",
+          file:"AuroraCityFC_NexusMaster.html"
+        },
+        {
+          icon:"▦",
+          title:"Manager Dashboard",
+          subtitle:"Club HQ",
+          file:"AuroraCityFC_ManagerDashboard.html"
+        },
+        {
+          icon:"£",
+          title:"Finance Department",
+          subtitle:"Income & Budget",
+          file:"AuroraCityFC_FinanceDepartment.html"
+        },
+        {
+          icon:"⇄",
+          title:"Transfer Centre",
+          subtitle:"Recruitment & Purchases",
+          file:"AuroraCityFC_TransferCentre.html"
+        },
+        {
+          icon:"⚽",
+          title:"Matchday Centre",
+          subtitle:"Daily Club Report",
+          file:"AuroraCityFC_MatchdayCentre.html",
+          matchday:true
+        },
+        {
+          icon:"♟",
+          title:"Squad Hub",
+          subtitle:"Portfolio Squad",
+          file:"AuroraCityFC_SquadHub.html"
+        },
+        {
+          icon:"↗",
+          title:"Analysis Room",
+          subtitle:"Performance Intelligence",
+          file:"AuroraCityFC_AnalysisRoom.html"
+        },
+        {
+          icon:"⌕",
+          title:"Scouting Centre",
+          subtitle:"Recruitment Intelligence",
+          file:"AuroraCityFC_ScoutingCentre.html"
+        },
+        {
+          icon:"▲",
+          title:"Training Ground",
+          subtitle:"Development & Form",
+          file:"AuroraCityFC_TrainingGround.html"
+        },
+        {
+          icon:"🧠",
+          title:"Learning Centre",
+          subtitle:"Aurora Intelligence",
+          file:"AuroraCityFC_LearningCentre.html"
+        },
+        {
+          icon:"♜",
+          title:"Boardroom",
+          subtitle:"Club Leadership",
+          file:"AuroraCityFC_Boardroom.html"
+        },
+        {
+          icon:"●",
+          title:"Media Centre",
+          subtitle:"Club Newsroom",
+          file:"AuroraCityFC_MediaCentre.html"
+        }
+      ];
 
-      const routeLabels = {
-        "AuroraCityFC_ManagerDashboard.html": "Manager Dashboard",
-        "AuroraCityFC_TransferCentre.html": "Transfer Centre",
-        "AuroraCityFC_SquadHub.html": "Squad Hub",
-        "AuroraCityFC_Boardroom.html": "Boardroom",
-        "AuroraCityFC_TrainingGround.html": "Training Ground",
-        "AuroraCityFC_MediaCentre.html": "Media Centre",
-        "AuroraCityFC_AnalysisRoom.html": "Analysis Room"
-      };
+      const WORKFLOW = [
+        {
+          title:"Payday Plan",
+          note:"Set the monthly budget and allocation",
+          href:
+            "AuroraCityFC_FinanceDepartment.html"
+            + "#m15PaydayAllocationCentre"
+        },
+        {
+          title:"Portfolio Check",
+          note:"Review yield, value and concentration",
+          href:
+            "AuroraCityFC_AnalysisRoom.html"
+            + "#yield-strength-workbench"
+        },
+        {
+          title:"Scouting Shortlist",
+          note:"Review the recruitment pipeline",
+          href:
+            "AuroraCityFC_ScoutingCentre.html"
+            + "#scouting-pipeline"
+        },
+        {
+          title:"Build Deal Sheet",
+          note:"Create this month's transfer route",
+          href:
+            "AuroraCityFC_TransferCentre.html"
+            + "#top-transfer-board"
+        },
+        {
+          title:"Review Transfer Impact",
+          note:"Check income and portfolio effect",
+          href:
+            "AuroraCityFC_TransferCentre.html"
+            + "#post-transfer-impact"
+        },
+        {
+          title:"Execute Purchases",
+          note:"Record completed broker purchases",
+          href:
+            "AuroraCityFC_TransferCentre.html"
+            + "#payday-execution"
+        },
+        {
+          title:"Register Signings",
+          note:"Add purchases to Aurora",
+          href:
+            "AuroraCityFC_TransferCentre.html"
+            + "#registration-desk"
+        },
+        {
+          title:"Confirm Squad",
+          note:"Check the new holdings are live",
+          href:
+            "AuroraCityFC_SquadHub.html"
+            + "#squad-overview"
+        },
+        {
+          title:"Manager Review",
+          note:"Confirm income and mission progress",
+          href:
+            "AuroraCityFC_ManagerDashboard.html"
+            + "#club-overview"
+        }
+      ];
 
-      const allowedPages = new Set(Object.keys(routeLabels));
-      const requestedPage =
-        new URLSearchParams(window.location.search).get("page");
-      const initialPage = allowedPages.has(requestedPage)
-        ? requestedPage
-        : "AuroraCityFC_ManagerDashboard.html";
+      const MISSION_KEY =
+        "aurora_payday_mission_progress_v1";
 
-      clubFrame.src = initialPage;
-      routeName.textContent = routeLabels[initialPage];
-      document.title = `Aurora City FC | ${routeLabels[initialPage]}`;
+      const LEGACY_PARENT_IDS = [
+        "auroraTopHeaderMenuButton",
+        "auroraNavToggle",
+        "auroraLeftEdgeGestureZone",
+        "auroraRightEdgeGestureZone",
+        "auroraNavPanel",
+        "auroraNavOverlay",
+        "auroraUniversalHeader",
+        "auroraManagerCleanShellLayoutV4",
+        "auroraPageOwnedShellLayoutStyles"
+      ];
 
-      let previousFocus = null;
-      let loggingOut = false;
+      const LEGACY_CHILD_SELECTORS = [
+        ".fm-sidebar",
+        ".session-bar",
+        "#auroraNavPanel",
+        "#auroraNavOverlay",
+        "#auroraNavToggle",
+        "#auroraTopHeaderMenuButton",
+        "#auroraLeftEdgeGestureZone",
+        "#auroraRightEdgeGestureZone",
+        "#auroraUniversalHeader",
+        ".aurora-nav-edge-toggle",
+        ".aurora-nav-edge-button",
+        ".aurora-floating-nav",
+        ".aurora-floating-menu",
+        ".fm-sidebar-edge-zone",
+        ".fm-side-toggle",
+        ".fm-edge-toggle",
+        ".aufc-sidebar",
+        ".aufc-mobile-button",
+        ".aufc-mobile-shade"
+      ];
 
-      function updateRouteLabel() {
-        try {
-          const currentFile =
-            clubFrame.contentWindow.location.pathname.split("/").pop();
+      const shell = document.getElementById(
+        "auroraGameShell"
+      );
 
-          const currentLabel =
-            routeLabels[currentFile] || "Aurora Club System";
+      const frame = document.getElementById(
+        "clubFrame"
+      );
 
-          routeName.textContent = currentLabel;
-          document.title = `Aurora City FC | ${currentLabel}`;
+      const subtitle = document.getElementById(
+        "auroraShellSubtitle"
+      );
 
-          if (allowedPages.has(currentFile)) {
-            const nextUrl =
-              "AuroraCityFC_GameShell.html?page=" +
-              encodeURIComponent(currentFile);
+      const routeLabel = document.getElementById(
+        "auroraShellRoute"
+      );
 
-            window.history.replaceState({}, "", nextUrl);
+      const menuButton = document.getElementById(
+        "auroraShellMenuButton"
+      );
+
+      const navigation = document.getElementById(
+        "auroraShellNavigation"
+      );
+
+      const navigationOverlay = document.getElementById(
+        "auroraShellNavigationOverlay"
+      );
+
+      const navigationClose = document.getElementById(
+        "auroraShellNavigationClose"
+      );
+
+      const navigationScroll = document.getElementById(
+        "auroraShellNavigationScroll"
+      );
+
+      const logoutButton = document.getElementById(
+        "auroraShellLogoutButton"
+      );
+
+      const logoutLayer = document.getElementById(
+        "auroraShellLogoutLayer"
+      );
+
+      const cancelLogout = document.getElementById(
+        "auroraShellCancelLogout"
+      );
+
+      const confirmLogout = document.getElementById(
+        "auroraShellConfirmLogout"
+      );
+
+      const decisionButton = document.getElementById(
+        "auroraShellDecisionButton"
+      );
+
+      const logButton = document.getElementById(
+        "auroraShellLogButton"
+      );
+
+      const notificationButton = document.getElementById(
+        "auroraShellNotificationButton"
+      );
+
+      const notificationCount = document.getElementById(
+        "auroraShellNotificationCount"
+      );
+
+      const layoutButton = document.getElementById(
+        "auroraShellLayoutButton"
+      );
+
+      const presentationButton = document.getElementById(
+        "auroraShellPresentationButton"
+      );
+
+      const allowedFiles = new Set(
+        ROUTES.map(route => route.file)
+      );
+
+      allowedFiles.add("AuroraBrowserDataTransfer.html");
+
+      let currentFile =
+        "AuroraCityFC_ManagerDashboard.html";
+
+      let currentHash = "";
+      let childCleanupObserver = null;
+      let navigationCloseTimer = 0;
+      let childCountTimer = 0;
+      let pendingManagerAction = "";
+      let childPointerCleanup = null;
+
+      function escapeHtml(value){
+        return String(value).replace(
+          /[&<>"']/g,
+          character => ({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#39;"
+          })[character]
+        );
+      }
+
+      function splitTarget(target){
+        const raw = String(target || "");
+        const hashIndex = raw.indexOf("#");
+
+        return {
+          file:
+            hashIndex >= 0
+              ? raw.slice(0,hashIndex)
+              : raw,
+          hash:
+            hashIndex >= 0
+              ? raw.slice(hashIndex)
+              : ""
+        };
+      }
+
+      function routeFor(file){
+        return ROUTES.find(
+          route => route.file === file
+        ) || {
+          title:"Aurora Club System",
+          subtitle:"Club Department",
+          file:file
+        };
+      }
+
+      function readMissionProgress(){
+        try{
+          const parsed = JSON.parse(
+            localStorage.getItem(MISSION_KEY) || "[]"
+          );
+
+          if(!Array.isArray(parsed)){
+            return [];
           }
-        } catch (error) {
-          routeName.textContent = "Aurora Club System";
+
+          return parsed
+            .map(Number)
+            .filter(index =>
+              Number.isInteger(index)
+              && index >= 0
+              && index < WORKFLOW.length
+            );
+        }catch(_){
+          return [];
         }
       }
 
-      function openLogoutModal() {
-        if (loggingOut) return;
-        previousFocus = document.activeElement;
-        gameShell.classList.add("is-paused");
-        logoutModal.classList.add("is-active");
+      function saveMissionProgress(indices){
+        const clean = Array.from(
+          new Set(indices)
+        ).sort((a,b) => a - b);
+
+        localStorage.setItem(
+          MISSION_KEY,
+          JSON.stringify(clean)
+        );
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "aurora-mission-progress-changed",
+            {detail:{completed:clean}}
+          )
+        );
+      }
+
+      function toggleMission(index){
+        const completed = readMissionProgress();
+        const position = completed.indexOf(index);
+
+        if(position >= 0){
+          completed.splice(position,1);
+        }else{
+          completed.push(index);
+        }
+
+        saveMissionProgress(completed);
+        renderNavigation();
+      }
+
+      function currentWorkflowIndex(){
+        return WORKFLOW.findIndex(item => {
+          const target = splitTarget(item.href);
+
+          return target.file === currentFile
+            && (
+              !target.hash
+              || target.hash === currentHash
+            );
+        });
+      }
+
+      function renderNavigation(){
+        const completed = readMissionProgress();
+        const currentMission = currentWorkflowIndex();
+
+        let nextMission = WORKFLOW.findIndex(
+          (_,index) => !completed.includes(index)
+        );
+
+        if(nextMission < 0){
+          nextMission = WORKFLOW.length - 1;
+        }
+
+        const missionMarkup = WORKFLOW.map(
+          (item,index) => {
+            const complete = completed.includes(index);
+            const current = index === currentMission;
+            const next = index === nextMission;
+
+            return `
+              <div
+                class="
+                  aurora-shell-mission-row
+                  ${complete ? "is-complete" : ""}
+                  ${current ? "is-current" : ""}
+                  ${next ? "is-next" : ""}
+                "
+              >
+                <span class="aurora-shell-nav-number">
+                  ${complete ? "✓" : index + 1}
+                </span>
+
+                <a
+                  class="aurora-shell-nav-copy"
+                  href="${escapeHtml(item.href)}"
+                  data-shell-page="${escapeHtml(item.href)}"
+                >
+                  <strong>${escapeHtml(item.title)}</strong>
+                  <span>${escapeHtml(item.note)}</span>
+                </a>
+
+                <span class="aurora-shell-nav-end">
+                  <button
+                    class="
+                      aurora-shell-complete
+                      ${complete ? "is-complete" : ""}
+                    "
+                    type="button"
+                    data-mission-toggle="${index}"
+                    aria-label="${
+                      complete
+                        ? "Reopen " + escapeHtml(item.title)
+                        : "Mark " + escapeHtml(item.title)
+                          + " complete"
+                    }"
+                    title="${
+                      complete
+                        ? "Reopen mission step"
+                        : "Mark mission step complete"
+                    }"
+                  >${complete ? "↶" : "✓"}</button>
+
+                  <span class="aurora-shell-nav-arrow">
+                    ›
+                  </span>
+                </span>
+              </div>
+            `;
+          }
+        ).join("");
+
+        const departmentMarkup = ROUTES.map(route => {
+          const current = route.file === currentFile;
+
+          const end = route.matchday
+            ? `
+              <span
+                class="aurora-shell-matchday-status"
+                id="auroraShellMatchdayStatus"
+                data-state="none"
+              >
+                No report
+              </span>
+            `
+            : `
+              <span class="aurora-shell-nav-arrow">›</span>
+            `;
+
+          return `
+            <a
+              class="
+                aurora-shell-department-row
+                ${current ? "is-current" : ""}
+              "
+              href="${escapeHtml(route.file)}"
+              data-shell-page="${escapeHtml(route.file)}"
+              ${current ? 'aria-current="page"' : ""}
+            >
+              <span class="aurora-shell-nav-icon">
+                ${escapeHtml(route.icon)}
+              </span>
+
+              <span class="aurora-shell-nav-copy">
+                <strong>${escapeHtml(route.title)}</strong>
+                <span>${escapeHtml(route.subtitle)}</span>
+              </span>
+
+              ${end}
+            </a>
+          `;
+        }).join("");
+
+        navigationScroll.innerHTML = `
+          <div class="aurora-shell-nav-section">
+            Payday mission
+          </div>
+
+          <p class="aurora-shell-mission-progress">
+            ${completed.length} of ${WORKFLOW.length}
+            mission steps completed
+          </p>
+
+          ${missionMarkup}
+
+          <div class="aurora-shell-nav-section">
+            Club departments
+          </div>
+
+          ${departmentMarkup}
+        `;
+
+        refreshMatchdayStatus();
+      }
+
+      function updateShellIdentity(){
+        const route = routeFor(currentFile);
+
+        subtitle.textContent =
+          `${route.title} • ${route.subtitle}`;
+
+        routeLabel.textContent =
+          `Home / ${route.title}`;
+
+        document.title =
+          `Aurora City FC | ${route.title}`;
+
+        renderNavigation();
+      }
+
+      function openNavigation(){
+        window.clearTimeout(navigationCloseTimer);
+
+        document.body.classList.add(
+          "shell-navigation-open"
+        );
+
+        navigation.setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+        navigationOverlay.setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+        menuButton.setAttribute(
+          "aria-expanded",
+          "true"
+        );
+
+        menuButton.setAttribute(
+          "aria-label",
+          "Close Aurora navigation"
+        );
+
+        navigationCloseTimer = window.setTimeout(
+          closeNavigation,
+          7000
+        );
+      }
+
+      function closeNavigation(){
+        window.clearTimeout(navigationCloseTimer);
+
+        document.body.classList.remove(
+          "shell-navigation-open"
+        );
+
+        navigation.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+        navigationOverlay.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+        menuButton.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+        menuButton.setAttribute(
+          "aria-label",
+          "Open Aurora navigation"
+        );
+      }
+
+      function toggleNavigation(){
+        if(
+          document.body.classList.contains(
+            "shell-navigation-open"
+          )
+        ){
+          closeNavigation();
+        }else{
+          openNavigation();
+        }
+      }
+
+      function resetNavigationTimer(){
+        if(
+          document.body.classList.contains(
+            "shell-navigation-open"
+          )
+        ){
+          window.clearTimeout(navigationCloseTimer);
+          navigationCloseTimer = window.setTimeout(
+            closeNavigation,
+            7000
+          );
+        }
+      }
+
+      function openLogout(){
+        closeNavigation();
+
+        document.body.classList.add(
+          "shell-logout-open"
+        );
+
         confirmLogout.focus();
       }
 
-      function closeLogoutModal() {
-        logoutModal.classList.remove("is-active");
-        gameShell.classList.remove("is-paused");
-        if (previousFocus && typeof previousFocus.focus === "function") {
-          previousFocus.focus();
+      function closeLogout(){
+        document.body.classList.remove(
+          "shell-logout-open"
+        );
+
+        logoutButton.focus();
+      }
+
+      function completeLogout(){
+        try{
+          [
+            "aurora_hq_unlocked",
+            "aurora_session",
+            "aurora_manager_session"
+          ].forEach(key => {
+            localStorage.removeItem(key);
+          });
+
+          sessionStorage.clear();
+        }catch(_){}
+
+        window.location.replace(
+          "index.html?logout=1"
+        );
+      }
+
+      function protectShellFromChildInjection(){
+        document.documentElement.classList.remove(
+          "aurora-page-owned-shell-layout",
+          "aurora-manager-clean-shell"
+        );
+
+        LEGACY_PARENT_IDS.forEach(id => {
+          const element = document.getElementById(id);
+
+          if(element){
+            element.remove();
+          }
+        });
+
+        document.querySelectorAll(
+          ".aurora-nav-edge-toggle,"
+          + ".aurora-nav-edge-button,"
+          + ".aurora-floating-nav,"
+          + ".aurora-floating-menu"
+        ).forEach(element => {
+          element.remove();
+        });
+      }
+
+      const shellProtectionObserver =
+        new MutationObserver(
+          protectShellFromChildInjection
+        );
+
+      shellProtectionObserver.observe(
+        document.documentElement,
+        {
+          attributes:true,
+          childList:true,
+          subtree:true
+        }
+      );
+
+      function installChildLayout(documentObject){
+        let style = documentObject.getElementById(
+          "auroraSharedGameShellChildLayout"
+        );
+
+        if(!style){
+          style = documentObject.createElement("style");
+          style.id = "auroraSharedGameShellChildLayout";
+          style.textContent = `
+            html,
+            body{
+              width:100%!important;
+              max-width:100%!important;
+              min-width:0!important;
+              margin:0!important;
+              padding-left:0!important;
+              padding-right:0!important;
+              overflow-x:hidden!important;
+            }
+
+            .fm-shell{
+              display:block!important;
+              width:100%!important;
+              max-width:none!important;
+              min-width:0!important;
+              margin:0!important;
+              padding:0!important;
+              grid-template-columns:none!important;
+              transform:none!important;
+            }
+
+            .fm-workspace{
+              display:block!important;
+              position:relative!important;
+              left:auto!important;
+              right:auto!important;
+              width:100%!important;
+              max-width:none!important;
+              min-width:0!important;
+              margin:0!important;
+              padding:0!important;
+              transform:none!important;
+            }
+
+            .bottom-ticker{
+              left:0!important;
+            }
+          `;
+
+          documentObject.head.appendChild(style);
         }
       }
 
-      function completeLogout() {
-        if (loggingOut) return;
-        loggingOut = true;
-        logoutModal.classList.remove("is-active");
-        exitLayer.classList.add("is-active");
+      function removeLegacyChildShell(documentObject){
+        /*
+          This is a transitional physical DOM removal.
+          The old page header/sidebar is not hidden underneath the shell.
+          It is removed after the department finishes loading.
+        */
+        const pageTopbars = Array.from(
+          documentObject.querySelectorAll(
+            ".fm-workspace > .topbar,"
+            + "body > .topbar"
+          )
+        );
 
-        window.setTimeout(() => {
-          window.location.replace("index.html?logout=1");
-        }, 1350);
+        pageTopbars.forEach(element => {
+          element.remove();
+        });
+
+        LEGACY_CHILD_SELECTORS.forEach(selector => {
+          documentObject
+            .querySelectorAll(selector)
+            .forEach(element => {
+              element.remove();
+            });
+        });
+
+        [
+          "aurora-navigation.css",
+          "aurora-navigation.js"
+        ].forEach(fragment => {
+          documentObject
+            .querySelectorAll(
+              `[href*="${fragment}"],`
+              + `[src*="${fragment}"]`
+            )
+            .forEach(element => {
+              element.remove();
+            });
+        });
+
+        installChildLayout(documentObject);
       }
 
-      logoutButton.addEventListener("click", openLogoutModal);
-      cancelLogout.addEventListener("click", closeLogoutModal);
-      confirmLogout.addEventListener("click", completeLogout);
-
-      logoutModal.addEventListener("click", (event) => {
-        if (event.target === logoutModal) {
-          closeLogoutModal();
+      function installChildCleanupObserver(
+        documentObject
+      ){
+        if(childCleanupObserver){
+          childCleanupObserver.disconnect();
         }
-      });
 
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && logoutModal.classList.contains("is-active")) {
+        childCleanupObserver = new MutationObserver(
+          () => {
+            removeLegacyChildShell(documentObject);
+          }
+        );
+
+        childCleanupObserver.observe(
+          documentObject.documentElement,
+          {
+            childList:true,
+            subtree:true
+          }
+        );
+      }
+
+      function parseChildLocation(){
+        try{
+          const locationObject =
+            frame.contentWindow.location;
+
+          return {
+            file:
+              locationObject.pathname
+                .split("/")
+                .pop()
+              || currentFile,
+            hash:locationObject.hash || ""
+          };
+        }catch(_){
+          return {
+            file:currentFile,
+            hash:currentHash
+          };
+        }
+      }
+
+      function updateBrowserUrl(){
+        const target =
+          currentFile + currentHash;
+
+        const url =
+          "AuroraCityFC_GameShell.html?page="
+          + encodeURIComponent(target);
+
+        window.history.replaceState(
+          {},
+          "",
+          url
+        );
+      }
+
+      function loadPage(target,options = {}){
+        const split = splitTarget(target);
+        const file = split.file || currentFile;
+        const hash = split.hash || "";
+
+        if(!allowedFiles.has(file)){
+          console.warn(
+            "Aurora GameShell blocked unknown page:",
+            file
+          );
+          return;
+        }
+
+        closeNavigation();
+
+        if(
+          file === currentFile
+          && frame.contentWindow
+          && !options.force
+        ){
+          currentHash = hash;
+
+          try{
+            frame.contentWindow.location.hash = hash;
+          }catch(_){}
+
+          updateBrowserUrl();
+          updateShellIdentity();
+          return;
+        }
+
+        currentFile = file;
+        currentHash = hash;
+        updateShellIdentity();
+        updateBrowserUrl();
+
+        frame.src = file + hash;
+      }
+
+      function interceptChildNavigation(
+        documentObject
+      ){
+        documentObject.addEventListener(
+          "click",
+          event => {
+            const anchor = event.target.closest(
+              "a[href]"
+            );
+
+            if(!anchor) return;
+
+            const raw = anchor.getAttribute("href");
+
+            if(
+              !raw
+              || raw.startsWith("#")
+              || raw.startsWith("http:")
+              || raw.startsWith("https:")
+              || raw.startsWith("mailto:")
+              || raw.startsWith("tel:")
+              || raw.startsWith("javascript:")
+            ){
+              return;
+            }
+
+            const split = splitTarget(raw);
+
+            if(!allowedFiles.has(split.file)){
+              return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            loadPage(raw);
+          },
+          true
+        );
+      }
+
+      function installChildEdgeGestures(
+        documentObject
+      ){
+        if(childPointerCleanup){
+          childPointerCleanup();
+        }
+
+        let gesture = null;
+        let hoverTimer = 0;
+
+        const onPointerDown = event => {
+          if(event.isPrimary === false) return;
+
+          const width =
+            frame.contentWindow.innerWidth;
+
+          const fromLeft =
+            event.clientX <= 28;
+
+          const fromRight =
+            event.clientX >= width - 28;
+
+          if(!fromLeft && !fromRight){
+            return;
+          }
+
+          gesture = {
+            side:fromLeft ? "left" : "right",
+            startX:event.clientX,
+            startY:event.clientY,
+            lastX:event.clientX,
+            lastY:event.clientY
+          };
+        };
+
+        const onPointerMove = event => {
+          if(
+            event.pointerType === "mouse"
+            && event.clientX <= 2
+          ){
+            window.clearTimeout(hoverTimer);
+
+            hoverTimer = window.setTimeout(
+              openNavigation,
+              170
+            );
+          }else{
+            window.clearTimeout(hoverTimer);
+          }
+
+          if(!gesture) return;
+
+          gesture.lastX = event.clientX;
+          gesture.lastY = event.clientY;
+        };
+
+        const onPointerUp = () => {
+          if(!gesture) return;
+
+          const deltaX =
+            gesture.lastX - gesture.startX;
+
+          const deltaY =
+            Math.abs(
+              gesture.lastY - gesture.startY
+            );
+
+          if(
+            gesture.side === "left"
+            && deltaX >= 58
+            && deltaY <= 90
+          ){
+            openNavigation();
+          }
+
+          if(
+            gesture.side === "right"
+            && deltaX <= -72
+            && deltaY <= 90
+          ){
+            openNextDepartment();
+          }
+
+          gesture = null;
+        };
+
+        const onPointerCancel = () => {
+          gesture = null;
+        };
+
+        documentObject.addEventListener(
+          "pointerdown",
+          onPointerDown,
+          {passive:true}
+        );
+
+        documentObject.addEventListener(
+          "pointermove",
+          onPointerMove,
+          {passive:true}
+        );
+
+        documentObject.addEventListener(
+          "pointerup",
+          onPointerUp,
+          {passive:true}
+        );
+
+        documentObject.addEventListener(
+          "pointercancel",
+          onPointerCancel,
+          {passive:true}
+        );
+
+        childPointerCleanup = () => {
+          window.clearTimeout(hoverTimer);
+
+          documentObject.removeEventListener(
+            "pointerdown",
+            onPointerDown
+          );
+
+          documentObject.removeEventListener(
+            "pointermove",
+            onPointerMove
+          );
+
+          documentObject.removeEventListener(
+            "pointerup",
+            onPointerUp
+          );
+
+          documentObject.removeEventListener(
+            "pointercancel",
+            onPointerCancel
+          );
+        };
+      }
+
+      function openNextDepartment(){
+        const index = ROUTES.findIndex(
+          route => route.file === currentFile
+        );
+
+        const next =
+          index >= 0
+            ? ROUTES[(index + 1) % ROUTES.length]
+            : ROUTES[0];
+
+        loadPage(next.file);
+      }
+
+      function childDocument(){
+        try{
+          return frame.contentDocument;
+        }catch(_){
+          return null;
+        }
+      }
+
+      function routeManagerAction(action){
+        if(
+          currentFile
+          !== "AuroraCityFC_ManagerDashboard.html"
+        ){
+          pendingManagerAction = action;
+          loadPage(
+            "AuroraCityFC_ManagerDashboard.html"
+          );
+          return;
+        }
+
+        runManagerAction(action);
+      }
+
+      function runManagerAction(action){
+        const documentObject = childDocument();
+
+        if(!documentObject) return;
+
+        const body = documentObject.body;
+
+        if(action === "decision"){
+          body.classList.add(
+            "beast-decision-open"
+          );
+
+          documentObject
+            .getElementById("beastDecisionQueue")
+            ?.scrollIntoView({
+              behavior:"smooth",
+              block:"start"
+            });
+
+          return;
+        }
+
+        if(action === "log"){
+          documentObject
+            .getElementById("beastActionLog")
+            ?.scrollIntoView({
+              behavior:"smooth",
+              block:"start"
+            });
+
+          return;
+        }
+
+        if(action === "notifications"){
+          const panel = documentObject.getElementById(
+            "beastNotificationPanel"
+          );
+
+          if(panel){
+            panel.classList.toggle("open");
+          }
+
+          return;
+        }
+
+        if(action === "layout"){
+          const panel = documentObject.getElementById(
+            "beastLayoutPanel"
+          );
+
+          if(panel){
+            panel.classList.toggle("open");
+          }
+        }
+      }
+
+      function togglePresentation(){
+        const documentObject = childDocument();
+
+        if(!documentObject) return;
+
+        const body = documentObject.body;
+
+        const manager =
+          currentFile
+          === "AuroraCityFC_ManagerDashboard.html";
+
+        const className =
+          manager
+            ? "beast-presentation"
+            : "nexus-presentation";
+
+        const active =
+          body.classList.toggle(className);
+
+        presentationButton.classList.toggle(
+          "is-active",
+          active
+        );
+      }
+
+      function syncNotificationCount(){
+        window.clearInterval(childCountTimer);
+
+        const update = () => {
+          const documentObject = childDocument();
+
+          if(!documentObject){
+            notificationCount.hidden = true;
+            return;
+          }
+
+          const alertCount =
+            documentObject.querySelectorAll(
+              "#beastNotificationPanel .beast-alert"
+            ).length;
+
+          const decisionCount =
+            documentObject.querySelectorAll(
+              "#beastDecisionList .beast-decision"
+            ).length;
+
+          const count = Math.max(
+            alertCount,
+            decisionCount
+          );
+
+          notificationCount.textContent =
+            String(count);
+
+          notificationCount.hidden =
+            count <= 0;
+        };
+
+        update();
+        childCountTimer = window.setInterval(
+          update,
+          1800
+        );
+      }
+
+      async function refreshMatchdayStatus(){
+        const badge = document.getElementById(
+          "auroraShellMatchdayStatus"
+        );
+
+        if(!badge) return;
+
+        try{
+          const response = await fetch(
+            "AuroraMaster.json?shellStatus="
+            + Date.now(),
+            {cache:"no-store"}
+          );
+
+          if(!response.ok){
+            throw new Error(
+              "AuroraMaster unavailable"
+            );
+          }
+
+          const data = await response.json();
+
+          const keys = [
+            "MatchdayReport",
+            "MatchdayReports",
+            "DailyMatchReport",
+            "PortfolioMatchReport"
+          ];
+
+          let reports = [];
+
+          for(const key of keys){
+            if(Array.isArray(data?.[key])){
+              reports = data[key];
+              break;
+            }
+          }
+
+          const latest = reports
+            .map(report => {
+              const value =
+                report.report_date
+                || report.date
+                || report.Date
+                || report.timestamp
+                || report.submitted_at;
+
+              const date =
+                value ? new Date(value) : null;
+
+              return {date,report};
+            })
+            .filter(item =>
+              item.date
+              && !Number.isNaN(
+                item.date.getTime()
+              )
+            )
+            .sort(
+              (a,b) =>
+                b.date.getTime()
+                - a.date.getTime()
+            )[0];
+
+          const now = new Date();
+
+          const sameDay =
+            latest
+            && latest.date.getFullYear()
+              === now.getFullYear()
+            && latest.date.getMonth()
+              === now.getMonth()
+            && latest.date.getDate()
+              === now.getDate();
+
+          if(sameDay){
+            const status = String(
+              latest.report.status || ""
+            ).toUpperCase();
+
+            if(status === "READY"){
+              badge.dataset.state = "ready";
+              badge.textContent = "Ready";
+              return;
+            }
+
+            if(
+              status === "ERROR"
+              || status === "FAILED"
+              || status === "EXPORT_FAILED"
+            ){
+              badge.dataset.state = "error";
+              badge.textContent = "Error";
+              return;
+            }
+
+            badge.dataset.state = "progress";
+            badge.textContent = "In progress";
+            return;
+          }
+
+          const minutes =
+            now.getHours() * 60
+            + now.getMinutes();
+
+          if(
+            minutes >= 17 * 60
+            && minutes < 19 * 60
+          ){
+            badge.dataset.state = "progress";
+            badge.textContent = "In progress";
+            return;
+          }
+
+          badge.dataset.state = "none";
+          badge.textContent = "No report";
+        }catch(_){
+          badge.dataset.state = "error";
+          badge.textContent = "Error";
+        }
+      }
+
+      function onChildLoaded(){
+        protectShellFromChildInjection();
+
+        const locationState = parseChildLocation();
+
+        if(allowedFiles.has(locationState.file)){
+          currentFile = locationState.file;
+        }
+
+        currentHash = locationState.hash;
+
+        const documentObject = childDocument();
+
+        if(documentObject){
+          removeLegacyChildShell(documentObject);
+          installChildCleanupObserver(documentObject);
+          interceptChildNavigation(documentObject);
+          installChildEdgeGestures(documentObject);
+        }
+
+        updateShellIdentity();
+        updateBrowserUrl();
+        syncNotificationCount();
+
+        if(pendingManagerAction){
+          const action = pendingManagerAction;
+          pendingManagerAction = "";
+
+          window.setTimeout(
+            () => runManagerAction(action),
+            180
+          );
+        }
+      }
+
+      function initialTarget(){
+        const requested =
+          new URLSearchParams(
+            window.location.search
+          ).get("page");
+
+        if(!requested){
+          return "AuroraCityFC_ManagerDashboard.html";
+        }
+
+        const split = splitTarget(requested);
+
+        return allowedFiles.has(split.file)
+          ? requested
+          : "AuroraCityFC_ManagerDashboard.html";
+      }
+
+      menuButton.addEventListener(
+        "click",
+        toggleNavigation
+      );
+
+      navigationClose.addEventListener(
+        "click",
+        closeNavigation
+      );
+
+      navigationOverlay.addEventListener(
+        "click",
+        closeNavigation
+      );
+
+      navigation.addEventListener(
+        "pointerdown",
+        resetNavigationTimer
+      );
+
+      navigation.addEventListener(
+        "pointermove",
+        resetNavigationTimer
+      );
+
+      navigation.addEventListener(
+        "click",
+        event => {
+          resetNavigationTimer();
+
+          const missionToggle =
+            event.target.closest(
+              "[data-mission-toggle]"
+            );
+
+          if(missionToggle){
+            event.preventDefault();
+            event.stopPropagation();
+
+            toggleMission(
+              Number(
+                missionToggle.dataset
+                  .missionToggle
+              )
+            );
+
+            return;
+          }
+
+          const routeLink =
+            event.target.closest(
+              "[data-shell-page]"
+            );
+
+          if(!routeLink) return;
+
           event.preventDefault();
-          closeLogoutModal();
-        }
-      });
+          event.stopPropagation();
 
-      clubFrame.addEventListener("load", updateRouteLabel);
+          loadPage(
+            routeLink.dataset.shellPage
+          );
+        }
+      );
+
+      logoutButton.addEventListener(
+        "click",
+        openLogout
+      );
+
+      cancelLogout.addEventListener(
+        "click",
+        closeLogout
+      );
+
+      confirmLogout.addEventListener(
+        "click",
+        completeLogout
+      );
+
+      logoutLayer.addEventListener(
+        "click",
+        event => {
+          if(event.target === logoutLayer){
+            closeLogout();
+          }
+        }
+      );
+
+      decisionButton.addEventListener(
+        "click",
+        () => routeManagerAction("decision")
+      );
+
+      logButton.addEventListener(
+        "click",
+        () => routeManagerAction("log")
+      );
+
+      notificationButton.addEventListener(
+        "click",
+        () => routeManagerAction(
+          "notifications"
+        )
+      );
+
+      layoutButton.addEventListener(
+        "click",
+        () => routeManagerAction("layout")
+      );
+
+      presentationButton.addEventListener(
+        "click",
+        togglePresentation
+      );
+
+      document.addEventListener(
+        "keydown",
+        event => {
+          if(event.key !== "Escape") return;
+
+          if(
+            document.body.classList.contains(
+              "shell-logout-open"
+            )
+          ){
+            closeLogout();
+            return;
+          }
+
+          closeNavigation();
+        }
+      );
+
+      /*
+        Parent edge gesture.
+        Child iframe gestures are installed separately after every page load.
+        No fixed edge element or physical side launcher is created.
+      */
+      let parentGesture = null;
+      let parentHoverTimer = 0;
+
+      document.addEventListener(
+        "pointerdown",
+        event => {
+          if(event.isPrimary === false) return;
+
+          const fromLeft =
+            event.clientX <= 28;
+
+          const fromRight =
+            event.clientX
+            >= window.innerWidth - 28;
+
+          if(!fromLeft && !fromRight){
+            return;
+          }
+
+          parentGesture = {
+            side:fromLeft ? "left" : "right",
+            startX:event.clientX,
+            startY:event.clientY,
+            lastX:event.clientX,
+            lastY:event.clientY
+          };
+        },
+        {passive:true}
+      );
+
+      document.addEventListener(
+        "pointermove",
+        event => {
+          if(
+            event.pointerType === "mouse"
+            && event.clientX <= 2
+          ){
+            window.clearTimeout(
+              parentHoverTimer
+            );
+
+            parentHoverTimer =
+              window.setTimeout(
+                openNavigation,
+                170
+              );
+          }else{
+            window.clearTimeout(
+              parentHoverTimer
+            );
+          }
+
+          if(!parentGesture) return;
+
+          parentGesture.lastX = event.clientX;
+          parentGesture.lastY = event.clientY;
+        },
+        {passive:true}
+      );
+
+      document.addEventListener(
+        "pointerup",
+        () => {
+          if(!parentGesture) return;
+
+          const deltaX =
+            parentGesture.lastX
+            - parentGesture.startX;
+
+          const deltaY =
+            Math.abs(
+              parentGesture.lastY
+              - parentGesture.startY
+            );
+
+          if(
+            parentGesture.side === "left"
+            && deltaX >= 58
+            && deltaY <= 90
+          ){
+            openNavigation();
+          }
+
+          if(
+            parentGesture.side === "right"
+            && deltaX <= -72
+            && deltaY <= 90
+          ){
+            openNextDepartment();
+          }
+
+          parentGesture = null;
+        },
+        {passive:true}
+      );
+
+      document.addEventListener(
+        "pointercancel",
+        () => {
+          parentGesture = null;
+        },
+        {passive:true}
+      );
+
+      window.addEventListener(
+        "aurora-mission-progress-changed",
+        renderNavigation
+      );
+
+      frame.addEventListener(
+        "load",
+        onChildLoaded
+      );
+
+      window.setInterval(
+        refreshMatchdayStatus,
+        60000
+      );
+
+      protectShellFromChildInjection();
+      renderNavigation();
+      loadPage(
+        initialTarget(),
+        {force:true}
+      );
+
+      window.AuroraGameShell = Object.freeze({
+        loadPage,
+        openNavigation,
+        closeNavigation,
+        toggleNavigation,
+        currentPage:() => ({
+          file:currentFile,
+          hash:currentHash
+        })
+      });
     })();
   </script>
 </body>
