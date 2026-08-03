@@ -3,7 +3,7 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
-<!-- Build: Aurora Manager Dashboard • Rich Notification Layout Fix v12 • 3 Aug 2026 -->
+<!-- Build: Aurora Manager Dashboard • Direct Notification Renderer v13 • 3 Aug 2026 -->
 <script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-rich-notification-layout-v12-20260803" name="aurora-build"/>
+</style><meta content="manager-direct-notification-renderer-v13-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -1424,6 +1424,315 @@ html[data-aurora-manager-values="ready"]
 .aurora-notification-connection[data-state="fallback"]::before{
   background:#fb7185;
   box-shadow:0 0 10px rgba(251,113,133,.48);
+}
+</style>
+
+
+<style id="auroraManagerDirectNotificationStyles">
+#beastNotificationPanel{
+  width:min(540px,calc(100vw - 34px))!important;
+  max-height:min(760px,calc(100vh - 150px))!important;
+  overflow:auto!important;
+}
+
+#auroraSharedNotificationSection{
+  display:block!important;
+  min-height:74px;
+}
+
+#auroraSharedAlertList{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+
+#auroraSharedAlertList>.beast-empty{
+  padding:28px 16px!important;
+  text-align:center!important;
+  color:#91a3bb!important;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-card{
+  --card-accent:34,211,238;
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:1px solid rgba(var(--card-accent),.22)!important;
+  border-radius:18px!important;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(var(--card-accent),.15),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.98),
+      rgba(4,10,24,.99)
+    )!important;
+  box-shadow:
+    inset 3px 0 0 rgba(var(--card-accent),.70),
+    0 12px 28px rgba(0,0,0,.22)!important;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="performer"]{
+  --card-accent:52,211,153;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="transfer"]{
+  --card-accent:245,158,11;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="target"],
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="milestone"]{
+  --card-accent:250,204,21;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="income"],
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="finance"]{
+  --card-accent:96,165,250;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-card[data-featured="true"]{
+  border-color:rgba(var(--card-accent),.44)!important;
+  box-shadow:
+    inset 4px 0 0 rgb(var(--card-accent)),
+    0 18px 38px rgba(0,0,0,.28)!important;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-open{
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+  padding:14px 44px 14px 14px!important;
+  color:inherit!important;
+  text-decoration:none!important;
+}
+
+.aurora-manager-notification-top,
+.aurora-manager-notification-main,
+.aurora-manager-notification-footer{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+
+.aurora-manager-notification-top{
+  justify-content:space-between!important;
+}
+
+.aurora-manager-notification-kicker{
+  color:rgb(var(--card-accent))!important;
+  font-size:8px!important;
+  font-weight:1000!important;
+  letter-spacing:.13em!important;
+  text-transform:uppercase!important;
+}
+
+.aurora-manager-notification-badge{
+  flex:0 0 auto!important;
+  padding:5px 8px!important;
+  border:1px solid rgba(var(--card-accent),.28)!important;
+  border-radius:999px!important;
+  color:rgb(var(--card-accent))!important;
+  background:rgba(var(--card-accent),.09)!important;
+  font-size:7px!important;
+  font-weight:1000!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+}
+
+.aurora-manager-notification-main{
+  align-items:flex-start!important;
+}
+
+.aurora-manager-notification-icon{
+  width:42px!important;
+  height:42px!important;
+  flex:0 0 42px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid rgba(var(--card-accent),.22)!important;
+  border-radius:13px!important;
+  background:rgba(var(--card-accent),.10)!important;
+  font-size:19px!important;
+}
+
+.aurora-manager-notification-copy{
+  flex:1 1 auto!important;
+  min-width:0!important;
+}
+
+.aurora-manager-notification-copy strong{
+  display:block!important;
+  color:#f6fbff!important;
+  font-size:13px!important;
+  line-height:1.25!important;
+  overflow-wrap:anywhere!important;
+}
+
+.aurora-manager-notification-copy p{
+  margin:4px 0 0!important;
+  color:#94a5bc!important;
+  font-size:9px!important;
+  line-height:1.45!important;
+  overflow-wrap:anywhere!important;
+}
+
+.aurora-manager-notification-value{
+  flex:0 0 auto!important;
+  min-width:66px!important;
+  text-align:right!important;
+}
+
+.aurora-manager-notification-value strong{
+  display:block!important;
+  color:rgb(var(--card-accent))!important;
+  font-size:18px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+
+.aurora-manager-notification-value small{
+  display:block!important;
+  margin-top:5px!important;
+  color:#8294ab!important;
+  font-size:7px!important;
+  font-weight:950!important;
+  letter-spacing:.10em!important;
+  text-transform:uppercase!important;
+}
+
+.aurora-manager-notification-progress{
+  width:100%!important;
+  height:5px!important;
+  overflow:hidden!important;
+  border-radius:999px!important;
+  background:rgba(148,163,184,.13)!important;
+}
+
+.aurora-manager-notification-progress i{
+  display:block!important;
+  height:100%!important;
+  border-radius:inherit!important;
+  background:linear-gradient(
+    90deg,
+    rgba(var(--card-accent),.70),
+    rgb(var(--card-accent))
+  )!important;
+}
+
+.aurora-manager-notification-footer{
+  justify-content:space-between!important;
+  color:#8092a9!important;
+  font-size:8px!important;
+}
+
+.aurora-manager-notification-department{
+  display:block!important;
+  color:rgb(var(--card-accent))!important;
+  font-size:8px!important;
+  font-weight:950!important;
+  letter-spacing:.07em!important;
+  text-transform:uppercase!important;
+}
+
+.aurora-manager-notification-secondary{
+  display:block!important;
+  margin-top:3px!important;
+  color:#95a5ba!important;
+}
+
+.aurora-manager-notification-action{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:5px!important;
+  margin-left:auto!important;
+  padding:6px 8px!important;
+  border:1px solid rgba(var(--card-accent),.18)!important;
+  border-radius:9px!important;
+  color:#dcecff!important;
+  background:rgba(var(--card-accent),.07)!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-remove{
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  position:absolute!important;
+  z-index:7!important;
+  top:9px!important;
+  right:9px!important;
+  left:auto!important;
+  bottom:auto!important;
+  width:24px!important;
+  min-width:24px!important;
+  max-width:24px!important;
+  height:24px!important;
+  min-height:24px!important;
+  max-height:24px!important;
+  margin:0!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid rgba(248,113,113,.28)!important;
+  border-radius:50%!important;
+  background:rgba(127,29,29,.26)!important;
+  color:#fecaca!important;
+  box-shadow:none!important;
+  font-size:15px!important;
+  line-height:1!important;
+  cursor:pointer!important;
+}
+
+@media(max-width:560px){
+  #beastNotificationPanel{
+    width:calc(100vw - 18px)!important;
+  }
+
+  .aurora-manager-notification-main{
+    display:grid!important;
+    grid-template-columns:40px minmax(0,1fr)!important;
+  }
+
+  .aurora-manager-notification-value{
+    grid-column:2!important;
+    min-width:0!important;
+    text-align:left!important;
+  }
+
+  .aurora-manager-notification-footer{
+    flex-wrap:wrap!important;
+  }
+
+  .aurora-manager-notification-action{
+    order:3!important;
+    width:100%!important;
+    justify-content:center!important;
+  }
 }
 </style>
 
@@ -2904,8 +3213,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </div>
 <div class="beast-about-grid">
 <div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
-<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v12</strong></div>
-<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Rich Notification Layout Fix</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v13</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Direct Notification Renderer</strong></div>
 <div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
 <div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
 </div>
@@ -4545,8 +4854,19 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
       try{
         api.attachDocument?.(document);
-        renderSharedListNow(api);
       }catch(_){}
+
+      renderSharedListNow(api);
+
+      if(
+        api.subscribe
+        && !window.__auroraManagerNotificationSubscription
+      ){
+        window.__auroraManagerNotificationSubscription=
+          api.subscribe(
+            () => renderSharedListNow(api)
+          );
+      }
 
       return true;
     }
@@ -4593,14 +4913,132 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     );
   }
 
+  function notificationRichData(row){
+    let rich =
+      row?.metadata?.rich
+      && typeof row.metadata.rich === "object"
+        ? row.metadata.rich
+        : null;
+
+    const title =
+      String(row?.title || "").toLowerCase();
+
+    const message =
+      String(row?.message || "");
+
+    const percentMatch =
+      message.match(/[-+]?\d+(?:\.\d+)?%/);
+
+    const cashMatch =
+      message.match(/£[\d,]+(?:\.\d+)?/);
+
+    if(!rich){
+      if(/top performer|best performer/.test(title)){
+        rich={
+          type:"performer",
+          kicker:"TODAY'S TOP PERFORMER",
+          badge:"TOP FORM",
+          value:percentMatch?.[0] || "",
+          valueLabel:percentMatch ? "TODAY" : "",
+          featured:true,
+          actionText:"Open Analysis Room"
+        };
+      }else if(
+        /transfer|deal sheet|broker funding|mission handoff/.test(title)
+      ){
+        rich={
+          type:"transfer",
+          kicker:"TRANSFER CENTRE",
+          badge:"ACTION UPDATE",
+          value:cashMatch?.[0] || "",
+          valueLabel:cashMatch ? "VALUE" : "",
+          actionText:"Open Transfer Centre"
+        };
+      }else if(
+        /hit its target|target zone|target reached/.test(title)
+      ){
+        rich={
+          type:"target",
+          kicker:"TARGET HIT",
+          badge:"IN THE ZONE",
+          value:percentMatch?.[0] || "",
+          valueLabel:percentMatch ? "MOVE" : "",
+          progress:100,
+          actionText:"Review Holding"
+        };
+      }else if(/dividend|income is next/.test(title)){
+        rich={
+          type:"income",
+          kicker:"NEXT INCOME",
+          badge:"UPCOMING",
+          value:cashMatch?.[0] || "",
+          valueLabel:cashMatch ? "DIVIDEND" : "",
+          actionText:"Open Finance"
+        };
+      }else if(/milestone|objective achieved/.test(title)){
+        rich={
+          type:"milestone",
+          kicker:"MILESTONE ACHIEVED",
+          badge:"PROMOTED",
+          value:cashMatch?.[0] || "",
+          valueLabel:cashMatch ? "INCOME" : "",
+          actionText:"Open Finance"
+        };
+      }
+    }
+
+    const progress=Number(rich?.progress);
+
+    return {
+      type:String(rich?.type || "update")
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g,""),
+      kicker:String(
+        rich?.kicker
+        || row?.department
+        || "AURORA UPDATE"
+      ),
+      badge:String(rich?.badge || ""),
+      value:String(rich?.value || ""),
+      valueLabel:String(rich?.valueLabel || ""),
+      secondary:String(rich?.secondary || ""),
+      progress:Number.isFinite(progress)
+        ? Math.max(0,Math.min(100,progress))
+        : null,
+      featured:Boolean(rich?.featured),
+      actionText:String(
+        rich?.actionText
+        || row?.actionLabel
+        || `Open ${row?.department || "Aurora"}`
+      )
+    };
+  }
+
+  function notificationTime(timestamp){
+    const date=
+      new Date(Number(timestamp) || Date.now());
+
+    const today=new Date();
+
+    return date.toDateString()===today.toDateString()
+      ? date.toLocaleTimeString(
+          "en-GB",
+          {hour:"2-digit",minute:"2-digit"}
+        )
+      : date.toLocaleDateString(
+          "en-GB",
+          {day:"2-digit",month:"short"}
+        );
+  }
+
   function renderSharedListNow(api){
-    const nativeList =
+    const nativeList=
       document.getElementById(
         "beastAlertList"
       );
 
     if(nativeList){
-      nativeList.hidden = true;
+      nativeList.hidden=true;
       nativeList.setAttribute(
         "aria-hidden",
         "true"
@@ -4610,96 +5048,179 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
         "none",
         "important"
       );
-      nativeList.innerHTML = "";
+      nativeList.innerHTML="";
     }
 
-    /*
-     * GameShell owns the rich renderer. The previous Manager fallback
-     * rebuilt the list with plain markup immediately afterwards.
-     */
-    if(api?.attachDocument){
-      api.attachDocument(document);
-      return;
-    }
-
-    const list =
+    const list=
       document.getElementById(
         "auroraSharedAlertList"
       );
 
     if(!list) return;
 
-    const rows =
-      api?.list
-        ? api.list({limit:24})
-        : [];
+    let rows=[];
+
+    try{
+      rows=
+        api?.list
+          ? api.list({limit:30})
+          : [];
+    }catch(error){
+      console.error(
+        "Notification list read failed",
+        error
+      );
+    }
+
+    rows=Array.isArray(rows)
+      ? rows
+      : [];
+
+    rows.sort((a,b)=>{
+      const ar=notificationRichData(a);
+      const br=notificationRichData(b);
+
+      return (
+        Number(Boolean(br.featured))
+        - Number(Boolean(ar.featured))
+      ) || (
+        Number(b?.createdAt || 0)
+        - Number(a?.createdAt || 0)
+      );
+    });
 
     if(!rows.length){
-      list.innerHTML =
+      list.innerHTML=
         '<div class="beast-empty">No notifications right now.</div>';
       return;
     }
 
-    list.innerHTML = rows.map(row => {
-      const level =
-        row.priority === "critical"
-          ? " bad"
-          : row.priority === "high"
-            ? " warn"
-            : "";
+    list.innerHTML=rows.map(row=>{
+      const rich=notificationRichData(row);
 
-      const unread =
-        row.read
-          ? ""
-          : " aurora-shared-unread";
+      const badge=rich.badge
+        ? `<span class="aurora-manager-notification-badge">${
+            escapeNotificationText(rich.badge)
+          }</span>`
+        : "";
+
+      const value=rich.value
+        ? `<span class="aurora-manager-notification-value">
+            <strong>${
+              escapeNotificationText(rich.value)
+            }</strong>
+            <small>${
+              escapeNotificationText(rich.valueLabel)
+            }</small>
+          </span>`
+        : "";
+
+      const progress=rich.progress===null
+        ? ""
+        : `<div class="aurora-manager-notification-progress">
+            <i style="width:${rich.progress}%"></i>
+          </div>`;
+
+      const secondary=rich.secondary
+        ? `<span class="aurora-manager-notification-secondary">${
+            escapeNotificationText(rich.secondary)
+          }</span>`
+        : "";
+
+      const href=
+        escapeNotificationText(
+          row?.page
+          || "AuroraCityFC_ManagerDashboard.html"
+        );
 
       return `
         <article
-          class="beast-alert aurora-shared-alert${level}${unread}"
+          class="aurora-manager-notification-card"
           data-aurora-notification-id="${
-            escapeNotificationText(row.id)
+            escapeNotificationText(row?.id)
+          }"
+          data-rich-type="${
+            escapeNotificationText(rich.type)
+          }"
+          data-featured="${
+            rich.featured ? "true" : "false"
           }"
         >
           <a
-            class="aurora-shared-alert-open"
+            class="aurora-manager-notification-open"
             data-aurora-notification-open="${
-              escapeNotificationText(row.id)
+              escapeNotificationText(row?.id)
             }"
-            href="${
-              escapeNotificationText(
-                row.page
-                || "AuroraCityFC_ManagerDashboard.html"
-              )
-            }"
+            href="${href}"
           >
-            <span class="beast-alert-icon">${
-              escapeNotificationText(
-                row.icon || "🔔"
-              )
-            }</span>
-
-            <span class="aurora-shared-alert-copy">
-              <strong>${
-                escapeNotificationText(row.title)
-              }</strong>
-              <p>${
-                escapeNotificationText(
-                  row.message || row.department
-                )
-              }</p>
-              <small class="aurora-shared-department">${
-                escapeNotificationText(
-                  row.department
-                )
+            <span class="aurora-manager-notification-top">
+              <small class="aurora-manager-notification-kicker">${
+                escapeNotificationText(rich.kicker)
               }</small>
+              ${badge}
+            </span>
+
+            <span class="aurora-manager-notification-main">
+              <span class="aurora-manager-notification-icon">${
+                escapeNotificationText(
+                  row?.icon || "🔔"
+                )
+              }</span>
+
+              <span class="aurora-manager-notification-copy">
+                <strong>${
+                  escapeNotificationText(
+                    row?.title || "Aurora update"
+                  )
+                }</strong>
+                <p>${
+                  escapeNotificationText(
+                    row?.message
+                    || row?.department
+                    || ""
+                  )
+                }</p>
+              </span>
+
+              ${value}
+            </span>
+
+            ${progress}
+
+            <span class="aurora-manager-notification-footer">
+              <span>
+                <small class="aurora-manager-notification-department">${
+                  escapeNotificationText(
+                    row?.department
+                    || "Aurora HQ"
+                  )
+                }</small>
+                ${secondary}
+              </span>
+
+              <span class="aurora-manager-notification-action">
+                ${
+                  escapeNotificationText(
+                    rich.actionText
+                  )
+                } →
+              </span>
+
+              <time>${
+                escapeNotificationText(
+                  notificationTime(
+                    row?.createdAt
+                  )
+                )
+              }</time>
             </span>
           </a>
 
           <button
             aria-label="Remove notification"
-            class="aurora-shared-remove"
+            class="aurora-manager-notification-remove"
             data-aurora-notification-remove="${
-              escapeNotificationText(row.id)
+              escapeNotificationText(row?.id)
             }"
             type="button"
           >×</button>
@@ -4897,6 +5418,36 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
       }
     },
     true
+  );
+
+  document.getElementById(
+    "beastNotificationButton"
+  )?.addEventListener(
+    "click",
+    () => {
+      window.setTimeout(
+        () => {
+          const api=host();
+          if(api) renderSharedListNow(api);
+        },
+        40
+      );
+    }
+  );
+
+  window.setInterval(
+    () => {
+      const panel=
+        document.getElementById(
+          "beastNotificationPanel"
+        );
+
+      if(panel?.classList.contains("open")){
+        const api=host();
+        if(api) renderSharedListNow(api);
+      }
+    },
+    2500
   );
 
   window.addEventListener(
