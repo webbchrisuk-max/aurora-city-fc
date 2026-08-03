@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Build: Analysis Room Clean • 2 Aug 2026 -->
+<!-- Build: Analysis Room True Daily Form v1 • 3 Aug 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <link href="manifest.json" rel="manifest"/>
@@ -1187,6 +1187,7 @@ body{
   .analysis-intelligence-action{grid-column:2;justify-self:start}
 }
 </style>
+<meta content="analysis-room-true-daily-form-v1-20260803" name="aurora-build"/>
 </head>
 <body>
 
@@ -1206,7 +1207,7 @@ body{
 </div>
 <div class="aurora-photo-meta analysis-meta">
 <div class="aurora-photo-stat"><small>Coverage</small><strong id="boardCoverage">Players</strong><span>Active holdings analysed</span></div>
-<div class="aurora-photo-stat"><small>Form</small><strong id="boardForm">Loading</strong><span>Current squad momentum</span></div>
+<div class="aurora-photo-stat"><small>Form</small><strong id="boardForm">Loading</strong><span id="boardFormNote">Waiting for the previous market close</span></div>
 <div class="aurora-photo-stat"><small>Shape</small><strong id="boardShape">Balanced?</strong><span>Portfolio concentration</span></div>
 <div class="aurora-photo-stat"><small>Control</small><strong id="boardYield">Yield</strong><span>Income efficiency</span></div>
 <div class="aurora-photo-stat"><small>Quality</small><strong id="boardQuality">Score</strong><span>Average buy strength</span></div>
@@ -1853,16 +1854,230 @@ function movementPercentFromRow(row){
   if(!Number.isFinite(value)) return NaN;
   return Math.abs(value)<=1 ? value*100 : value;
 }
+function localDateKey(date){
+  if(!(date instanceof Date)||isNaN(date)) return "";
+
+  return [
+    date.getFullYear(),
+    String(date.getMonth()+1).padStart(2,"0"),
+    String(date.getDate()).padStart(2,"0")
+  ].join("-");
+}
+
+function currentLivePrice(ticker){
+  const target=shortTicker(ticker);
+
+  const live=latestRowForTicker(
+    state.livePrices,
+    target
+  );
+
+  const livePrice=parseNum(
+    live?.price
+    ?? live?.Price
+    ?? live?.live_price
+    ?? live?.Live_Price
+    ?? live?.close_price
+  );
+
+  if(Number.isFinite(livePrice)){
+    return livePrice;
+  }
+
+  const holding=activeHoldings().find(
+    row=>rowTicker(row)===target
+  );
+
+  const holdingPrice=parseNum(
+    holding?.live_price
+    ?? holding?.price
+    ?? holding?.Price
+  );
+
+  return Number.isFinite(holdingPrice)
+    ? holdingPrice
+    : NaN;
+}
+
+function previousMarketCloseSnapshot(){
+  const rows=(state.dailyPriceSummary||[])
+    .map(row=>{
+      const date=toDate(rowDate(row));
+      const ticker=rowTicker(row);
+
+      const close=parseNum(
+        row?.close_price
+        ?? row?.Close_Price
+        ?? row?.["Close Price"]
+        ?? row?.close
+        ?? row?.Close
+      );
+
+      const open=parseNum(
+        row?.open_price
+        ?? row?.Open_Price
+        ?? row?.["Open Price"]
+        ?? row?.open
+        ?? row?.Open
+      );
+
+      return {
+        row,
+        date,
+        key:localDateKey(date),
+        ticker,
+        close,
+        open
+      };
+    })
+    .filter(item=>item.date&&item.key&&item.ticker);
+
+  if(!rows.length){
+    return null;
+  }
+
+  const todayKey=localDateKey(new Date());
+
+  const dateKeys=[
+    ...new Set(rows.map(item=>item.key))
+  ].sort();
+
+  /*
+   * "Today" means current live value versus the previous
+   * completed market session. When today's summary already
+   * exists, deliberately step back one session.
+   */
+  let referenceKey=[
+    ...dateKeys
+  ].reverse().find(key=>key<todayKey);
+
+  let mode="previous-close";
+
+  /*
+   * Fallback for a brand-new dataset with no earlier session:
+   * use the latest session open instead of inventing a move.
+   */
+  if(!referenceKey){
+    referenceKey=dateKeys.at(-1);
+    mode=referenceKey===todayKey
+      ? "session-open"
+      : "latest-close";
+  }
+
+  const referenceRows=rows.filter(
+    item=>item.key===referenceKey
+  );
+
+  const prices=new Map();
+
+  referenceRows.forEach(item=>{
+    const referencePrice=
+      mode==="session-open"
+        ? item.open
+        : item.close;
+
+    if(Number.isFinite(referencePrice)){
+      prices.set(
+        item.ticker,
+        referencePrice
+      );
+    }
+  });
+
+  if(!prices.size){
+    return null;
+  }
+
+  return {
+    date:referenceRows[0]?.date||null,
+    key:referenceKey,
+    mode,
+    prices
+  };
+}
+
 function currentMovement(ticker){
-  const live=latestRowForTicker(state.livePrices,ticker);
-  const liveMove=movementPercentFromRow(live);
-  if(Number.isFinite(liveMove)) return liveMove;
+  const snapshot=previousMarketCloseSnapshot();
 
-  const summary=latestRowForTicker(state.dailyPriceSummary,ticker);
-  const summaryMove=movementPercentFromRow(summary);
-  if(Number.isFinite(summaryMove)) return summaryMove;
+  if(!snapshot) return NaN;
 
-  return 0;
+  const target=shortTicker(ticker);
+  const reference=snapshot.prices.get(target);
+  const live=currentLivePrice(target);
+
+  if(
+    !Number.isFinite(reference)
+    || reference<=0
+    || !Number.isFinite(live)
+  ){
+    return NaN;
+  }
+
+  return (
+    (live-reference)
+    / reference
+    * 100
+  );
+}
+
+function portfolioSessionMove(){
+  const snapshot=previousMarketCloseSnapshot();
+
+  if(!snapshot) return null;
+
+  const combined=combinedHoldings();
+
+  let movement=0;
+  let referenceValue=0;
+  let liveValue=0;
+  let covered=0;
+
+  combined.forEach(holding=>{
+    const shares=Number(holding.shares);
+    const reference=
+      snapshot.prices.get(holding.ticker);
+    const live=
+      currentLivePrice(holding.ticker);
+
+    if(
+      !Number.isFinite(shares)
+      || shares<=0
+      || !Number.isFinite(reference)
+      || reference<=0
+      || !Number.isFinite(live)
+    ){
+      return;
+    }
+
+    movement+=(live-reference)*shares;
+    referenceValue+=reference*shares;
+    liveValue+=live*shares;
+    covered+=1;
+  });
+
+  const minimumCoverage=Math.max(
+    3,
+    Math.ceil(combined.length*.5)
+  );
+
+  if(covered<minimumCoverage){
+    return null;
+  }
+
+  return {
+    movement,
+    movementPct:
+      referenceValue>0
+        ? movement/referenceValue*100
+        : NaN,
+    referenceValue,
+    liveValue,
+    covered,
+    total:combined.length,
+    date:snapshot.date,
+    key:snapshot.key,
+    mode:snapshot.mode
+  };
 }
 
 function annualTotal(){return activeHoldings().reduce((s,r)=>s+annualIncome(r),0);}
@@ -2460,13 +2675,41 @@ function renderKpis(){
     :"Buy-strength data unavailable";
 
   const y=portfolioYield();
-  const valPts=valueProgression();
-  const form=valPts.length>1?valPts.at(-1).value-valPts[0].value:NaN;
+  const sessionMove=portfolioSessionMove();
+  const form=sessionMove?.movement;
 
   $("boardCoverage").textContent=`${combined.length} players`;
   $("boardForm").textContent=Number.isFinite(form)
     ? `${form>=0?"▲":"▼"} ${money0(Math.abs(form))}`
     : "Building";
+
+  const formNote=$("boardFormNote");
+
+  if(formNote){
+    if(sessionMove?.date){
+      const referenceLabel=
+        sessionMove.mode==="session-open"
+          ? `From ${dateLabel(sessionMove.date)} market open`
+          : `Since ${dateLabel(sessionMove.date)} market close`;
+
+      const percentage=Number.isFinite(
+        sessionMove.movementPct
+      )
+        ? ` • ${
+            sessionMove.movementPct>=0
+              ? "+"
+              : ""
+          }${sessionMove.movementPct.toFixed(2)}%`
+        : "";
+
+      formNote.textContent=
+        `${referenceLabel}${percentage}`
+        + ` • ${sessionMove.covered}/${sessionMove.total} holdings`;
+    }else{
+      formNote.textContent=
+        "Waiting for live and previous-close prices";
+    }
+  }
   $("boardShape").textContent=topSector&&sectorTotal
     ? `${(concentration*100).toFixed(0)}% ${topSector.sector}`
     : "Loading";
