@@ -3,7 +3,8 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
- Build: Aurora Manager Dashboard • Natural GameShell Navigation v5 • 3 Aug 2026 <script id="auroraCrossBrowserCacheCleanup">
+<!-- Build: Aurora Manager Dashboard • Settings Version Display v6 • 3 Aug 2026 -->
+<script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
 
@@ -445,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-natural-gameshell-navigation-v5-20260803" name="aurora-build"/>
+</style><meta content="manager-settings-version-display-v6-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -1166,7 +1167,135 @@ html[data-aurora-manager-values="ready"]
     4200
   );
 })();
-</script></head>
+</script>
+<style id="auroraManagerAboutSettingsStyles">
+.beast-about-card{
+  margin-top:12px;
+  padding:14px;
+  border:1px solid rgba(34,211,238,.20);
+  border-radius:17px;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(34,211,238,.10),
+      transparent 40%
+    ),
+    rgba(2,6,23,.34);
+}
+
+.beast-about-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.beast-about-head small{
+  display:block;
+  color:#67e8f9;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.beast-about-head strong{
+  display:block;
+  margin-top:4px;
+  color:#e0f2fe;
+  font-size:14px;
+}
+
+.beast-about-status{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 8px;
+  border:1px solid rgba(52,211,153,.24);
+  border-radius:999px;
+  color:#bbf7d0;
+  background:rgba(20,83,45,.20);
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.beast-about-status i{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:
+    0 0 0 4px rgba(52,211,153,.08),
+    0 0 12px rgba(52,211,153,.34);
+}
+
+.beast-about-status[data-connected="false"]{
+  color:#fde68a;
+  border-color:rgba(251,191,36,.24);
+  background:rgba(120,53,15,.18);
+}
+
+.beast-about-status[data-connected="false"] i{
+  background:#fbbf24;
+  box-shadow:
+    0 0 0 4px rgba(251,191,36,.08),
+    0 0 12px rgba(251,191,36,.30);
+}
+
+.beast-about-grid{
+  display:grid;
+  gap:7px;
+  margin-top:12px;
+}
+
+.beast-about-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:9px 10px;
+  border:1px solid rgba(148,163,184,.12);
+  border-radius:12px;
+  background:rgba(2,8,22,.30);
+}
+
+.beast-about-row span{
+  color:#8294aa;
+  font-size:9px;
+  font-weight:850;
+}
+
+.beast-about-row strong{
+  color:#dbeafe;
+  font-size:9px;
+  text-align:right;
+}
+
+.beast-copy-diagnostics{
+  width:100%;
+  min-height:38px;
+  margin-top:10px;
+  border:1px solid rgba(34,211,238,.20);
+  border-radius:12px;
+  color:#c9f5ff;
+  background:rgba(8,47,73,.28);
+  font-size:9px;
+  font-weight:950;
+  cursor:pointer;
+}
+
+.beast-copy-diagnostics:hover,
+.beast-copy-diagnostics:focus-visible{
+  border-color:rgba(103,232,249,.46);
+  background:rgba(8,75,97,.38);
+  outline:none;
+}
+</style>
+
+</head>
 <body>
 
 
@@ -2507,6 +2636,20 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 <label class="beast-setting"><span><strong>Media story</strong><span>Keep the latest Aurora Times panel.</span></span><span class="beast-switch"><input checked="" id="beastMediaToggle" type="checkbox"/><i></i></span></label>
 <label class="beast-setting"><span><strong>Upcoming schedule</strong><span>Show dividends, transfers and data status.</span></span><span class="beast-switch"><input checked="" id="beastScheduleToggle" type="checkbox"/><i></i></span></label>
 </div>
+<div class="beast-about-card" id="beastAboutAurora">
+<div class="beast-about-head">
+<div><small>System Information</small><strong>About Aurora</strong></div>
+<span class="beast-about-status" data-connected="false" id="beastAboutConnection"><i></i><span>Checking</span></span>
+</div>
+<div class="beast-about-grid">
+<div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v6</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Settings Version Display</strong></div>
+<div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
+<div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
+</div>
+<button class="beast-copy-diagnostics" id="beastCopyDiagnostics" type="button">Copy diagnostics</button>
+</div>
 <div aria-label="Dashboard theme" class="beast-theme-grid"><button class="beast-theme-button active" data-beast-theme="night" type="button">Aurora Night</button><button class="beast-theme-button" data-beast-theme="deadline" type="button">Deadline Day</button><button class="beast-theme-button" data-beast-theme="gold" type="button">Boardroom Gold</button></div>
 <button class="beast-reset" id="beastResetLayout" type="button">Reset dashboard layout and theme</button>
 </div>
@@ -3515,5 +3658,112 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   window.addEventListener("focus",syncHero);
 })();
 </script>
+
+<script id="auroraManagerAboutSettingsScript">
+(function(){
+  "use strict";
+
+  const BUILD = Object.freeze({
+    page:"Manager Dashboard",
+    version:"v6",
+    build:"Settings Version Display",
+    date:"3 August 2026",
+    buildId:"manager-settings-version-display-v6-20260803"
+  });
+
+  function shellConnected(){
+    try{
+      return window.parent !== window
+        && Boolean(window.parent.AuroraGameShell);
+    }catch(_){
+      return false;
+    }
+  }
+
+  function updateAboutPanel(){
+    const connected = shellConnected();
+    const connection =
+      document.getElementById("beastAboutConnection");
+    const shell =
+      document.getElementById("beastAboutShell");
+
+    if(connection){
+      connection.dataset.connected =
+        connected ? "true" : "false";
+
+      const label = connection.querySelector("span");
+
+      if(label){
+        label.textContent =
+          connected ? "Connected" : "Standalone";
+      }
+    }
+
+    if(shell){
+      shell.textContent =
+        connected
+          ? "AuroraCityFC_GameShell.html"
+          : "Standalone page";
+    }
+  }
+
+  async function copyDiagnostics(){
+    const connected = shellConnected();
+    const diagnostics = [
+      "Aurora City FC",
+      `Page: ${BUILD.page}`,
+      `Version: ${BUILD.version}`,
+      `Build: ${BUILD.build}`,
+      `Build date: ${BUILD.date}`,
+      `Build ID: ${BUILD.buildId}`,
+      `GameShell: ${connected ? "Connected" : "Standalone"}`,
+      `User agent: ${navigator.userAgent}`
+    ].join("\n");
+
+    const button =
+      document.getElementById("beastCopyDiagnostics");
+
+    try{
+      await navigator.clipboard.writeText(diagnostics);
+
+      if(button){
+        button.textContent = "Diagnostics copied";
+        window.setTimeout(
+          () => {
+            button.textContent = "Copy diagnostics";
+          },
+          1600
+        );
+      }
+    }catch(_){
+      if(button){
+        button.textContent = "Copy unavailable";
+        window.setTimeout(
+          () => {
+            button.textContent = "Copy diagnostics";
+          },
+          1600
+        );
+      }
+    }
+  }
+
+  document.getElementById("beastCopyDiagnostics")
+    ?.addEventListener("click",copyDiagnostics);
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      updateAboutPanel,
+      {once:true}
+    );
+  }else{
+    updateAboutPanel();
+  }
+
+  window.addEventListener("pageshow",updateAboutPanel);
+})();
+</script>
+
 </body>
 </html>
