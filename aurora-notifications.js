@@ -5,12 +5,14 @@
  * Public API:
  *   AuroraNotifications.add({...})
  *   AuroraNotifications.notifyCurrent(title, message, options)
+ *   AuroraNotifications.replaceLive(source, notifications)
  *   AuroraNotifications.list({ unreadOnly, department, limit })
  *   AuroraNotifications.markRead(id)
  *   AuroraNotifications.markAllRead()
  *   AuroraNotifications.remove(id)
  *   AuroraNotifications.clear()
  *   AuroraNotifications.subscribe(callback)
+ *   AuroraNotifications.attachDocument(document)
  *   AuroraNotifications.test()
  */
 (() => {
@@ -18,10 +20,12 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '1.3.0';
+  const VERSION = '2.0.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
+  const WATCH_KEY = 'aurora_notifications_watch_state_v2';
+  const DISMISS_KEY = 'aurora_notifications_dismissed_v2';
   const EVENT_NAME = 'aurora:notifications-changed';
   const CHANNEL_NAME = 'aurora-notifications';
   const MAX_ITEMS = 120;
@@ -105,7 +109,44 @@
       icon: '🤝',
       priority: 'high',
       message: value => describeMoneyEvent(value, 'The Finance Department handoff has been completed.')
+    },
+    {
+      key: 'aurora_trading_brain_decision_v1',
+      department: 'Analysis Room',
+      page: 'AuroraCityFC_AnalysisRoom.html',
+      title: 'Investment decision updated',
+      icon: '🧠',
+      priority: 'high',
+      message: value => describeLifecycle(value, 'The Aurora decision engine has changed its current instruction.')
+    },
+    {
+      key: 'aurora_account_transfer_instruction_v1',
+      department: 'Finance Department',
+      page: 'AuroraCityFC_FinanceDepartment.html',
+      title: 'Broker funding instructions updated',
+      icon: '🏦',
+      priority: 'high',
+      message: value => describeMoneyEvent(value, 'The broker funding route has changed.')
+    },
+    {
+      key: 'aurora_transfer_centre_receipt_v1',
+      department: 'Transfer Centre',
+      page: 'AuroraCityFC_TransferCentre.html',
+      title: 'Transfer receipt updated',
+      icon: '🧾',
+      priority: 'normal',
+      message: value => describeMoneyEvent(value, 'The Transfer Centre receipt has changed.')
+    },
+    {
+      key: 'aurora_m7_manager_approval',
+      department: 'Transfer Centre',
+      page: 'AuroraCityFC_TransferCentre.html',
+      title: 'Manager approval updated',
+      icon: '✅',
+      priority: 'high',
+      message: value => describeLifecycle(value, 'The manager approval state has changed.')
     }
+
   ];
 
   const STORAGE_SOURCE_KEYS = new Set(STORAGE_RULES.map(rule => rule.key));
@@ -154,6 +195,88 @@
     }
   }
 
+
+  function readWatchState() {
+    try {
+      const value = safeJsonParse(
+        localStorage.getItem(WATCH_KEY) || '{}',
+        {}
+      );
+      return value && typeof value === 'object' ? value : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function writeWatchState(value) {
+    try {
+      localStorage.setItem(WATCH_KEY, JSON.stringify(value || {}));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function readDismissed() {
+    const timestamp = now();
+
+    try {
+      const value = safeJsonParse(
+        localStorage.getItem(DISMISS_KEY) || '{}',
+        {}
+      );
+
+      const clean = {};
+
+      Object.entries(
+        value && typeof value === 'object' ? value : {}
+      ).forEach(([key, expiresAt]) => {
+        if (Number(expiresAt) > timestamp) {
+          clean[key] = Number(expiresAt);
+        }
+      });
+
+      if (JSON.stringify(clean) !== JSON.stringify(value || {})) {
+        localStorage.setItem(DISMISS_KEY, JSON.stringify(clean));
+      }
+
+      return clean;
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function dismissFingerprint(source, fingerprint, days = 7) {
+    const sourceKey = String(source || '');
+    const value = String(fingerprint || '');
+
+    if (!sourceKey || !value) return false;
+
+    const dismissed = readDismissed();
+    dismissed[`${sourceKey}|${value}`] =
+      now() + Math.max(1, Number(days) || 7) * 86400000;
+
+    try {
+      localStorage.setItem(
+        DISMISS_KEY,
+        JSON.stringify(dismissed)
+      );
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function isDismissed(source, fingerprint) {
+    const dismissed = readDismissed();
+
+    return Boolean(
+      dismissed[
+        `${String(source || '')}|${String(fingerprint || '')}`
+      ]
+    );
+  }
+
   function writeState(state) {
     try {
       localStorage.setItem(READ_KEY, JSON.stringify(state));
@@ -181,6 +304,17 @@
     return false;
   }
 
+
+  function isLegacyRowAgeNotification(row) {
+    const title = String(row?.title || '');
+    const message = String(row?.message || '');
+
+    return (
+      /Aurora data needs a refresh/i.test(title)
+      && /newest dated row is\s+\d+(?:\.\d+)?\s+hours old/i.test(message)
+    );
+  }
+
   function cleanStore(rows = readStore()) {
     const timestamp = now();
     const seenIds = new Set();
@@ -189,6 +323,7 @@
     return rows
       .filter(row => row && typeof row === 'object')
       .filter(row => !isSuppressedZeroValueNotification(row))
+      .filter(row => !isLegacyRowAgeNotification(row))
       .filter(row => !Number(row.expiresAt) || Number(row.expiresAt) > timestamp)
       .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))
       .filter(row => {
@@ -351,11 +486,38 @@
 
   function remove(id) {
     const value = String(id || '');
-    return writeStore(readStore().filter(row => String(row.id) !== value), 'remove');
+
+    if (!value) return false;
+
+    const rows = cleanStore(readStore());
+    const row = rows.find(
+      item => String(item.id || '') === value
+    );
+
+    if (row?.metadata?.liveSource) {
+      dismissFingerprint(
+        row.metadata.liveSource,
+        row.fingerprint
+      );
+    }
+
+    return writeStore(
+      rows.filter(item => String(item.id || '') !== value),
+      'remove'
+    );
   }
 
   function clear() {
     try {
+      cleanStore(readStore()).forEach(row => {
+        if (row?.metadata?.liveSource) {
+          dismissFingerprint(
+            row.metadata.liveSource,
+            row.fingerprint
+          );
+        }
+      });
+
       localStorage.removeItem(STORE_KEY);
       localStorage.removeItem(READ_KEY);
       publishChange('clear');
@@ -363,6 +525,69 @@
     } catch (_) {
       return false;
     }
+  }
+
+  function replaceLive(source, items = []) {
+    const liveSource = String(source || '').trim();
+
+    if (!liveSource) return false;
+
+    const currentRows = cleanStore(readStore());
+    const existing = new Map(
+      currentRows
+        .filter(
+          row =>
+            String(row?.metadata?.liveSource || '')
+            === liveSource
+        )
+        .map(row => [String(row.fingerprint || ''), row])
+    );
+
+    const nextRows = currentRows.filter(
+      row =>
+        String(row?.metadata?.liveSource || '')
+        !== liveSource
+    );
+
+    (Array.isArray(items) ? items : []).forEach(input => {
+      const provisional = normaliseNotification({
+        ...input,
+        source: `live:${liveSource}`,
+        ttlDays:
+          Number.isFinite(Number(input?.ttlDays))
+            ? Number(input.ttlDays)
+            : 2,
+        metadata: {
+          ...(input?.metadata || {}),
+          liveSource
+        }
+      });
+
+      if (
+        isDismissed(
+          liveSource,
+          provisional.fingerprint
+        )
+      ) {
+        return;
+      }
+
+      const previous =
+        existing.get(provisional.fingerprint);
+
+      nextRows.push({
+        ...provisional,
+        id: previous?.id || provisional.id,
+        createdAt:
+          Number(previous?.createdAt)
+          || provisional.createdAt,
+        expiresAt:
+          Number(previous?.expiresAt)
+          || provisional.expiresAt
+      });
+    });
+
+    return writeStore(nextRows, 'replace-live');
   }
 
   function clearExpired() {
@@ -405,110 +630,398 @@
   }
 
   function dashboardMarkup(rows) {
-    if (!rows.length) return '<div class="beast-empty">No department notifications right now.</div>';
+    if (!rows.length) {
+      return '<div class="beast-empty">No notifications right now.</div>';
+    }
+
     return rows.map(row => {
-      const levelClass = row.priority === 'critical' ? 'bad' : row.priority === 'high' ? 'warn' : '';
-      const unreadClass = row.read ? '' : ' aurora-shared-unread';
-      const href = row.page ? ` href="${escapeHtml(row.page)}"` : '';
-      return `<a class="beast-alert ${levelClass}${unreadClass}" data-aurora-notification-id="${escapeHtml(row.id)}"${href}><span class="beast-alert-icon">${escapeHtml(row.icon)}</span><span><strong>${escapeHtml(row.title)}</strong><p>${escapeHtml(row.message || row.department)}</p><small class="aurora-shared-department">${escapeHtml(row.department)}</small></span><span class="beast-alert-time">${escapeHtml(formatTime(row.createdAt))}</span></a>`;
+      const levelClass =
+        row.priority === 'critical'
+          ? ' bad'
+          : row.priority === 'high'
+            ? ' warn'
+            : '';
+
+      const unreadClass =
+        row.read ? '' : ' aurora-shared-unread';
+
+      const href = row.page
+        ? ` href="${escapeHtml(row.page)}"`
+        : '';
+
+      return `
+        <div
+          class="beast-alert aurora-shared-alert${levelClass}${unreadClass}"
+          data-aurora-notification-id="${escapeHtml(row.id)}"
+        >
+          <a
+            class="aurora-shared-alert-open"
+            data-aurora-notification-open="${escapeHtml(row.id)}"
+            ${href}
+          >
+            <span class="beast-alert-icon">${escapeHtml(row.icon)}</span>
+            <span class="aurora-shared-alert-copy">
+              <strong>${escapeHtml(row.title)}</strong>
+              <p>${escapeHtml(row.message || row.department)}</p>
+              <small class="aurora-shared-department">${escapeHtml(row.department)}</small>
+            </span>
+            <span class="beast-alert-time">${escapeHtml(formatTime(row.createdAt))}</span>
+          </a>
+          <button
+            class="aurora-shared-remove"
+            data-aurora-notification-remove="${escapeHtml(row.id)}"
+            type="button"
+            aria-label="Remove ${escapeHtml(row.title)}"
+            title="Remove notification"
+          >×</button>
+        </div>`;
     }).join('');
   }
 
-  function injectDashboardStyles() {
-    if (document.getElementById('auroraSharedNotificationStyles')) return;
-    const style = document.createElement('style');
+  function injectDashboardStyles(documentObject = document) {
+    if (
+      !documentObject
+      || documentObject.getElementById(
+        'auroraSharedNotificationStyles'
+      )
+    ) {
+      return;
+    }
+
+    const style =
+      documentObject.createElement('style');
+
     style.id = 'auroraSharedNotificationStyles';
     style.textContent = `
-      #beastNotificationPanel>.beast-panel-head{position:sticky;top:-16px;z-index:8;margin:-16px -16px 0;padding:16px 16px 12px;background:linear-gradient(180deg,rgba(7,20,40,.995),rgba(7,20,40,.97));border-bottom:1px solid rgba(148,163,184,.10)}
-      .aurora-shared-notification-section{margin-top:0;padding-top:0}
-      .aurora-shared-notification-head{position:sticky;top:58px;z-index:7;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 -16px 9px;padding:10px 16px;background:linear-gradient(180deg,rgba(5,17,35,.99),rgba(5,17,35,.96));border-bottom:1px solid rgba(148,163,184,.10);box-shadow:0 8px 20px rgba(0,0,0,.18)}
-      .aurora-shared-notification-head strong{font-size:12px;color:#e5eefc}
-      .aurora-shared-notification-head span{display:block;margin-top:2px;color:#8495ad;font-size:9px}
-      .aurora-shared-notification-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-      .aurora-shared-mark-read,.aurora-shared-clear-all{border:1px solid rgba(96,165,250,.22);border-radius:999px;background:rgba(30,64,175,.12);color:#bfdbfe;padding:6px 8px;font-size:8px;font-weight:900;cursor:pointer}
-      .aurora-shared-clear-all{border-color:rgba(248,113,113,.24);background:rgba(127,29,29,.16);color:#fecaca}
-      .aurora-shared-alert-list{display:grid;gap:8px}
-      .aurora-shared-alert-list .beast-alert{color:inherit;text-decoration:none;cursor:pointer}
-      .aurora-shared-alert-list .aurora-shared-unread{border-color:rgba(34,211,238,.30);background:rgba(8,47,73,.28);box-shadow:inset 3px 0 0 #22d3ee}
-      .aurora-shared-department{display:block;margin-top:5px;color:#7dd3fc;font-size:8px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+      #beastNotificationPanel>.beast-panel-head{
+        position:sticky;
+        top:-16px;
+        z-index:8;
+        margin:-16px -16px 0;
+        padding:16px 16px 12px;
+        background:linear-gradient(
+          180deg,
+          rgba(7,20,40,.995),
+          rgba(7,20,40,.97)
+        );
+        border-bottom:1px solid rgba(148,163,184,.10)
+      }
+
+      #beastAlertList[hidden]{
+        display:none!important
+      }
+
+      .aurora-shared-notification-section{
+        margin-top:0;
+        padding-top:0
+      }
+
+      .aurora-shared-notification-head{
+        position:sticky;
+        top:58px;
+        z-index:7;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        margin:0 -16px 9px;
+        padding:10px 16px;
+        background:linear-gradient(
+          180deg,
+          rgba(5,17,35,.99),
+          rgba(5,17,35,.96)
+        );
+        border-bottom:1px solid rgba(148,163,184,.10);
+        box-shadow:0 8px 20px rgba(0,0,0,.18)
+      }
+
+      .aurora-shared-notification-head strong{
+        font-size:12px;
+        color:#e5eefc
+      }
+
+      .aurora-shared-notification-head span{
+        display:block;
+        margin-top:2px;
+        color:#8495ad;
+        font-size:9px
+      }
+
+      .aurora-shared-notification-actions{
+        display:flex;
+        align-items:center;
+        gap:6px;
+        flex-wrap:wrap;
+        justify-content:flex-end
+      }
+
+      .aurora-shared-mark-read,
+      .aurora-shared-clear-all{
+        border:1px solid rgba(96,165,250,.22);
+        border-radius:999px;
+        background:rgba(30,64,175,.12);
+        color:#bfdbfe;
+        padding:6px 8px;
+        font-size:8px;
+        font-weight:900;
+        cursor:pointer
+      }
+
+      .aurora-shared-clear-all{
+        border-color:rgba(248,113,113,.24);
+        background:rgba(127,29,29,.16);
+        color:#fecaca
+      }
+
+      .aurora-shared-alert-list{
+        display:grid;
+        gap:8px
+      }
+
+      .aurora-shared-alert{
+        position:relative;
+        display:block!important;
+        padding:0!important;
+        overflow:hidden
+      }
+
+      .aurora-shared-alert-open{
+        display:grid;
+        grid-template-columns:auto minmax(0,1fr) auto;
+        align-items:start;
+        gap:10px;
+        width:100%;
+        padding:12px 38px 12px 12px;
+        color:inherit;
+        text-decoration:none;
+        cursor:pointer
+      }
+
+      .aurora-shared-alert-copy{
+        min-width:0
+      }
+
+      .aurora-shared-remove{
+        position:absolute;
+        top:8px;
+        right:8px;
+        width:24px;
+        height:24px;
+        display:grid;
+        place-items:center;
+        border:1px solid rgba(248,113,113,.20);
+        border-radius:50%;
+        background:rgba(127,29,29,.16);
+        color:#fecaca;
+        font-size:15px;
+        line-height:1;
+        cursor:pointer
+      }
+
+      .aurora-shared-remove:hover,
+      .aurora-shared-remove:focus-visible{
+        border-color:rgba(248,113,113,.48);
+        background:rgba(127,29,29,.32);
+        outline:none
+      }
+
+      .aurora-shared-alert-list .aurora-shared-unread{
+        border-color:rgba(34,211,238,.30);
+        background:rgba(8,47,73,.28);
+        box-shadow:inset 3px 0 0 #22d3ee
+      }
+
+      .aurora-shared-department{
+        display:block;
+        margin-top:5px;
+        color:#7dd3fc;
+        font-size:8px;
+        font-weight:900;
+        letter-spacing:.07em;
+        text-transform:uppercase
+      }
     `;
-    document.head.appendChild(style);
+
+    documentObject.head?.appendChild(style);
   }
 
-  function attachManagerDashboard() {
-    const panel = document.getElementById('beastNotificationPanel');
-    const nativeList = document.getElementById('beastAlertList');
-    const badge = document.getElementById('beastNotificationCount');
-    if (!panel || !nativeList || !badge) return false;
+  function attachManagerDashboard(
+    documentObject = document
+  ) {
+    if (!documentObject) return false;
 
-    injectDashboardStyles();
+    const panel =
+      documentObject.getElementById(
+        'beastNotificationPanel'
+      );
 
-    let section = document.getElementById('auroraSharedNotificationSection');
+    const nativeList =
+      documentObject.getElementById(
+        'beastAlertList'
+      );
+
+    const badge =
+      documentObject.getElementById(
+        'beastNotificationCount'
+      );
+
+    if (!panel || !nativeList || !badge) {
+      return false;
+    }
+
+    injectDashboardStyles(documentObject);
+
+    let section =
+      documentObject.getElementById(
+        'auroraSharedNotificationSection'
+      );
+
     if (!section) {
-      section = document.createElement('section');
-      section.id = 'auroraSharedNotificationSection';
-      section.className = 'aurora-shared-notification-section';
+      section =
+        documentObject.createElement('section');
+
+      section.id =
+        'auroraSharedNotificationSection';
+
+      section.className =
+        'aurora-shared-notification-section';
+
       section.innerHTML = `
         <div class="aurora-shared-notification-head">
-          <div><strong>Department Notifications</strong><span>Shared updates from every Aurora page.</span></div>
+          <div>
+            <strong>Aurora Notifications</strong>
+            <span>Live dashboard alerts and shared department updates.</span>
+          </div>
           <div class="aurora-shared-notification-actions">
-            <button class="aurora-shared-mark-read" id="auroraSharedMarkRead" type="button">Mark all read</button>
-            <button class="aurora-shared-clear-all" id="auroraSharedClearAll" type="button">Clear all</button>
+            <button
+              class="aurora-shared-mark-read"
+              id="auroraSharedMarkRead"
+              type="button"
+            >Mark all read</button>
+            <button
+              class="aurora-shared-clear-all"
+              id="auroraSharedClearAll"
+              type="button"
+            >Clear all</button>
           </div>
         </div>
-        <div class="aurora-shared-alert-list" id="auroraSharedAlertList"></div>`;
-      const panelHead = panel.querySelector('.beast-panel-head');
-      if (panelHead) panelHead.insertAdjacentElement('afterend', section);
-      else nativeList.insertAdjacentElement('beforebegin', section);
-    } else {
-      const panelHead = panel.querySelector('.beast-panel-head');
-      if (panelHead && section.previousElementSibling !== panelHead) panelHead.insertAdjacentElement('afterend', section);
+        <div
+          class="aurora-shared-alert-list"
+          id="auroraSharedAlertList"
+        ></div>`;
+
+      const panelHead =
+        panel.querySelector('.beast-panel-head');
+
+      if (panelHead) {
+        panelHead.insertAdjacentElement(
+          'afterend',
+          section
+        );
+      } else {
+        nativeList.insertAdjacentElement(
+          'beforebegin',
+          section
+        );
+      }
     }
 
     nativeList.hidden = true;
-    nativeList.setAttribute('aria-hidden', 'true');
+    nativeList.setAttribute(
+      'aria-hidden',
+      'true'
+    );
 
     dashboardBridge = {
+      documentObject,
       panel,
       badge,
-      list: document.getElementById('auroraSharedAlertList'),
-      expectedTotal: null
+      list:
+        documentObject.getElementById(
+          'auroraSharedAlertList'
+        ),
+      expectedTotal:null
     };
 
-    const keepSharedBadgeAuthoritative = () => {
-      if (!dashboardBridge) return;
-      const current = badge.hidden ? 0 : Number.parseInt(badge.textContent || '0', 10) || 0;
-      if (dashboardBridge.expectedTotal !== null && current === dashboardBridge.expectedTotal) return;
-      renderDashboardBridge();
-    };
+    if (!section.dataset.auroraBound) {
+      section.dataset.auroraBound = '1';
 
-    new MutationObserver(keepSharedBadgeAuthoritative).observe(badge, { attributes: true, childList: true, characterData: true, subtree: true });
+      section.addEventListener('click', event => {
+        const removeButton =
+          event.target.closest(
+            '[data-aurora-notification-remove]'
+          );
 
-    section.addEventListener('click', event => {
-      const markAll = event.target.closest('#auroraSharedMarkRead');
-      if (markAll) {
-        event.preventDefault();
-        markAllRead();
-        return;
-      }
-      const clearAll = event.target.closest('#auroraSharedClearAll');
-      if (clearAll) {
-        event.preventDefault();
-        clear();
-        return;
-      }
-      const alert = event.target.closest('[data-aurora-notification-id]');
-      if (alert) markRead(alert.dataset.auroraNotificationId);
-    });
+        if (removeButton) {
+          event.preventDefault();
+          event.stopPropagation();
 
-    const notificationButton = document.getElementById('beastNotificationButton');
-    if (notificationButton && !notificationButton.dataset.auroraScrollReset) {
-      notificationButton.dataset.auroraScrollReset = '1';
-      notificationButton.addEventListener('click', () => {
-        window.setTimeout(() => {
-          if (panel.classList.contains('open')) panel.scrollTop = 0;
-        }, 0);
+          remove(
+            removeButton.dataset
+              .auroraNotificationRemove
+          );
+          return;
+        }
+
+        const markAll =
+          event.target.closest(
+            '#auroraSharedMarkRead'
+          );
+
+        if (markAll) {
+          event.preventDefault();
+          markAllRead();
+          return;
+        }
+
+        const clearAll =
+          event.target.closest(
+            '#auroraSharedClearAll'
+          );
+
+        if (clearAll) {
+          event.preventDefault();
+          clear();
+          return;
+        }
+
+        const alert =
+          event.target.closest(
+            '[data-aurora-notification-open]'
+          );
+
+        if (alert) {
+          markRead(
+            alert.dataset
+              .auroraNotificationOpen
+          );
+        }
       });
+    }
+
+    const notificationButton =
+      documentObject.getElementById(
+        'beastNotificationButton'
+      );
+
+    if (
+      notificationButton
+      && !notificationButton.dataset
+        .auroraScrollReset
+    ) {
+      notificationButton.dataset
+        .auroraScrollReset = '1';
+
+      notificationButton.addEventListener(
+        'click',
+        () => {
+          window.setTimeout(() => {
+            if (panel.classList.contains('open')) {
+              panel.scrollTop = 0;
+            }
+          }, 0);
+        }
+      );
     }
 
     renderDashboardBridge();
@@ -638,29 +1151,98 @@
   }
 
   function initialiseStorageWatchers() {
+    const saved = readWatchState();
+
+    const remember = (rule, rawValue, notify) => {
+      const fingerprint =
+        hashString(
+          rawValue === null
+            ? '__null__'
+            : String(rawValue)
+        );
+
+      const previous =
+        watchedValues.get(rule.key);
+
+      watchedValues.set(rule.key, fingerprint);
+      saved[rule.key] = fingerprint;
+
+      if (
+        notify
+        && previous !== undefined
+        && previous !== fingerprint
+      ) {
+        handleStorageRule(rule, rawValue);
+      }
+    };
+
     STORAGE_RULES.forEach(rule => {
-      try { watchedValues.set(rule.key, localStorage.getItem(rule.key)); } catch (_) { watchedValues.set(rule.key, null); }
+      let current = null;
+
+      try {
+        current = localStorage.getItem(rule.key);
+      } catch (_) {}
+
+      const currentFingerprint =
+        hashString(
+          current === null
+            ? '__null__'
+            : String(current)
+        );
+
+      const persistentPrevious =
+        Object.prototype.hasOwnProperty.call(
+          saved,
+          rule.key
+        )
+          ? String(saved[rule.key])
+          : undefined;
+
+      watchedValues.set(
+        rule.key,
+        persistentPrevious === undefined
+          ? currentFingerprint
+          : persistentPrevious
+      );
+
+      remember(
+        rule,
+        current,
+        persistentPrevious !== undefined
+      );
     });
+
+    writeWatchState(saved);
 
     const check = () => {
       STORAGE_RULES.forEach(rule => {
         let current = null;
-        try { current = localStorage.getItem(rule.key); } catch (_) {}
-        const previous = watchedValues.get(rule.key);
-        if (current !== previous) {
-          watchedValues.set(rule.key, current);
-          if (previous !== undefined) handleStorageRule(rule, current);
-        }
+
+        try {
+          current = localStorage.getItem(rule.key);
+        } catch (_) {}
+
+        remember(rule, current, true);
       });
+
+      writeWatchState(saved);
     };
 
     window.setInterval(check, 1600);
-    window.addEventListener('storage', event => {
-      const rule = STORAGE_RULES.find(item => item.key === event.key);
-      if (!rule) return;
-      watchedValues.set(rule.key, event.newValue);
-      handleStorageRule(rule, event.newValue);
-    });
+
+    window.addEventListener(
+      'storage',
+      event => {
+        const rule = STORAGE_RULES.find(
+          item => item.key === event.key
+        );
+
+        if (!rule) return;
+
+        remember(rule, event.newValue, true);
+        writeWatchState(saved);
+      }
+    );
   }
 
   function test() {
@@ -684,7 +1266,7 @@
         department: 'Aurora HQ',
         page: 'AuroraCityFC_ManagerDashboard.html',
         title: 'Shared notifications connected',
-        message: 'The Manager Dashboard can now receive shared updates from Aurora departments.',
+        message: 'The GameShell can now retain live alerts and department updates while you move between Aurora pages.',
         priority: 'normal',
         icon: '🔔',
         dedupeKey: 'aurora-notifications-installed-v1',
@@ -693,20 +1275,71 @@
     } catch (_) {}
   }
 
+  function attachCurrentChildDocument() {
+    const frame =
+      document.getElementById('clubFrame');
+
+    if (!frame) return false;
+
+    try {
+      const childWindow =
+        frame.contentWindow;
+
+      const childDocument =
+        frame.contentDocument;
+
+      if (
+        childWindow
+        && !childWindow.AuroraNotifications
+      ) {
+        childWindow.AuroraNotifications =
+          window.AuroraNotifications;
+      }
+
+      return attachManagerDashboard(
+        childDocument
+      );
+    } catch (_) {
+      return false;
+    }
+  }
+
   function start() {
     clearExpired();
     seedInstallNotice();
     initialiseStorageWatchers();
-    attachManagerDashboard();
-    window.setTimeout(attachManagerDashboard, 900);
-    window.setTimeout(attachManagerDashboard, 2500);
+    attachManagerDashboard(document);
+
+    const frame =
+      document.getElementById('clubFrame');
+
+    frame?.addEventListener(
+      'load',
+      () => {
+        window.setTimeout(
+          attachCurrentChildDocument,
+          0
+        );
+      }
+    );
+
+    window.setTimeout(
+      attachCurrentChildDocument,
+      300
+    );
+
+    window.setTimeout(
+      attachCurrentChildDocument,
+      1200
+    );
   }
 
   window.AuroraNotifications = Object.freeze({
-    version: VERSION,
+    version:VERSION,
     add,
-    notify: add,
+    notify:add,
     notifyCurrent,
+    replaceLive,
     list,
     unreadCount,
     markRead,
@@ -716,7 +1349,8 @@
     clearExpired,
     subscribe,
     test,
-    currentPage: detectPage
+    attachDocument:attachManagerDashboard,
+    currentPage:detectPage
   });
 
   document.addEventListener('aurora:notify', event => {

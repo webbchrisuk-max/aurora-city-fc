@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Build: Aurora Shared GameShell • Cloud Sync Route Fix v8 • 03 Aug 2026 -->
+  <!-- Build: Aurora Shared GameShell • Unified Notifications v9 • 03 Aug 2026 -->
   <meta charset="UTF-8">
   <meta
     name="viewport"
@@ -2769,6 +2769,8 @@
     </div>
   </section>
 
+  <script src="aurora-notifications.js?v=20260803-3"></script>
+
   <script>
     (() => {
       "use strict";
@@ -3964,6 +3966,27 @@
         window.clearInterval(childCountTimer);
 
         const update = () => {
+          const sharedCount =
+            Number(
+              window.AuroraNotifications
+                ?.unreadCount?.()
+            );
+
+          if(Number.isFinite(sharedCount)){
+            notificationCount.textContent =
+              String(sharedCount);
+
+            notificationCount.hidden =
+              sharedCount <= 0;
+
+            return;
+          }
+
+          /*
+           * Fallback for a slow or failed notification script load.
+           * Decision Queue items are deliberately not counted as bell
+           * notifications because they have their own control.
+           */
           const documentObject = childDocument();
 
           if(!documentObject){
@@ -3973,30 +3996,21 @@
 
           const alertCount =
             documentObject.querySelectorAll(
-              "#beastNotificationPanel .beast-alert"
+              "#auroraSharedAlertList .beast-alert"
             ).length;
-
-          const decisionCount =
-            documentObject.querySelectorAll(
-              "#beastDecisionList .beast-decision"
-            ).length;
-
-          const count = Math.max(
-            alertCount,
-            decisionCount
-          );
 
           notificationCount.textContent =
-            String(count);
+            String(alertCount);
 
           notificationCount.hidden =
-            count <= 0;
+            alertCount <= 0;
         };
 
         update();
+
         childCountTimer = window.setInterval(
           update,
-          1800
+          1200
         );
       }
 
@@ -4140,6 +4154,22 @@
           installChildCleanupObserver(documentObject);
           interceptChildNavigation(documentObject);
           installChildEdgeGestures(documentObject);
+
+          try{
+            const childWindow = frame.contentWindow;
+
+            if(
+              childWindow
+              && !childWindow.AuroraNotifications
+              && window.AuroraNotifications
+            ){
+              childWindow.AuroraNotifications =
+                window.AuroraNotifications;
+            }
+
+            window.AuroraNotifications
+              ?.attachDocument?.(documentObject);
+          }catch(_){}
         }
 
         updateShellIdentity();
@@ -4278,6 +4308,11 @@
         () => routeManagerAction(
           "notifications"
         )
+      );
+
+      window.addEventListener(
+        "aurora:notifications-changed",
+        syncNotificationCount
       );
 
       layoutButton.addEventListener(

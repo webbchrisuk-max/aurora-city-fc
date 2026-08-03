@@ -3,7 +3,7 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
-<!-- Build: Aurora Manager Dashboard • Settings Version Display v6 • 3 Aug 2026 -->
+<!-- Build: Aurora Manager Dashboard • Unified Notifications v7 • 3 Aug 2026 -->
 <script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-settings-version-display-v6-20260803" name="aurora-build"/>
+</style><meta content="manager-unified-notifications-v7-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -907,7 +907,7 @@
     transition:none!important;
   }}
 </style>
-<script defer="" src="aurora-notifications.js?v=20260802-2"></script>
+<!-- Shared notifications are hosted once by AuroraCityFC_GameShell.html. -->
 <link href="aurora-hero.css?v=20260802-manager-step3-fix1" rel="stylesheet"/>
 <style id="auroraManagerGameShellContentStyles">html,body{width:100%;min-width:0;margin:0;overflow-x:hidden}body{padding:0}main.app{width:min(1600px,100%);max-width:1600px;margin:0 auto;padding:14px 18px 32px}@media(max-width:760px){main.app{padding:10px 10px 24px}}</style>
 
@@ -1675,10 +1675,88 @@ function firstFinite(row, keys){
   }
   return NaN;
 }
+function auroraDateValue(raw){
+  if(
+    raw === null
+    || raw === undefined
+    || raw === ""
+  ){
+    return null;
+  }
+
+  if(
+    raw instanceof Date
+    && !Number.isNaN(raw.getTime())
+  ){
+    return raw;
+  }
+
+  if(
+    typeof raw === "number"
+    && Number.isFinite(raw)
+  ){
+    if(raw > 20000 && raw < 80000){
+      const serialDate = new Date(
+        Date.UTC(1899,11,30)
+        + Math.round(raw) * 86400000
+      );
+
+      return Number.isNaN(serialDate.getTime())
+        ? null
+        : serialDate;
+    }
+
+    const timestampDate = new Date(raw);
+
+    return Number.isNaN(timestampDate.getTime())
+      ? null
+      : timestampDate;
+  }
+
+  const text = String(raw).trim();
+
+  const uk = text.match(
+    /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/
+  );
+
+  if(uk){
+    const date = new Date(
+      Number(uk[3]),
+      Number(uk[2]) - 1,
+      Number(uk[1]),
+      Number(uk[4] || 12),
+      Number(uk[5] || 0),
+      Number(uk[6] || 0)
+    );
+
+    return Number.isNaN(date.getTime())
+      ? null
+      : date;
+  }
+
+  const parsed = new Date(text);
+
+  return Number.isNaN(parsed.getTime())
+    ? null
+    : parsed;
+}
+
 function rowDate(row){
-  const raw = row?.date ?? row?.Date ?? row?.timestamp ?? row?.Timestamp ?? row?.created_at ?? row?.updated_at ?? row?.time;
-  const d = raw ? new Date(raw) : null;
-  return d && !Number.isNaN(d.getTime()) ? d : null;
+  const raw =
+    row?.generated_at
+    ?? row?.generatedAt
+    ?? row?.last_updated
+    ?? row?.lastUpdated
+    ?? row?.updated_at
+    ?? row?.updatedAt
+    ?? row?.timestamp
+    ?? row?.Timestamp
+    ?? row?.date
+    ?? row?.Date
+    ?? row?.created_at
+    ?? row?.time;
+
+  return auroraDateValue(raw);
 }
 function dividendDateValue(raw){
   if(raw === null || raw === undefined || raw === "") return null;
@@ -1760,9 +1838,41 @@ function previousClubValue(current){
   const local=managerSnapshotHistory().slice().reverse().find(x=>Number.isFinite(x.value)&&Math.abs(x.value-current)>.005);
   return local?.value ?? NaN;
 }
+function masterGeneratedTimestamp(){
+  return auroraDateValue(
+    state?.meta?.generated_at
+    ?? state?.meta?.generatedAt
+    ?? AURORA_MASTER_CACHE?.meta?.generated_at
+    ?? AURORA_MASTER_CACHE?.meta?.generatedAt
+  );
+}
+
+function latestMarketTimestamp(){
+  const rows = [
+    ...(state.dailySummary || []),
+    ...(state.dailyPriceSummary || []),
+    ...(state.priceLog || []),
+    ...(state.incomeLog || []),
+    ...(state.livePrices || [])
+  ];
+
+  return rows
+    .map(rowDate)
+    .filter(Boolean)
+    .sort((a,b) => b - a)[0]
+    || null;
+}
+
+/*
+ * Notification freshness follows the AuroraMaster export itself.
+ * Market-session rows can legitimately be older over weekends,
+ * holidays or before the next scheduled market update.
+ */
 function latestDataTimestamp(){
-  const rows=[...(state.dailySummary||[]),...(state.dailyPriceSummary||[]),...(state.priceLog||[]),...(state.incomeLog||[]),...(state.livePrices||[])];
-  return rows.map(rowDate).filter(Boolean).sort((a,b)=>b-a)[0]||null;
+  return (
+    masterGeneratedTimestamp()
+    || latestMarketTimestamp()
+  );
 }
 function boardScore(monthly, value, yieldRate){
   const incomeScore = Math.min(100, Math.max(60, (monthly / MONTHLY_TARGET) * 100));
@@ -1832,6 +1942,11 @@ async function loadData(force=false){
     const tabs = {};
     TABS.forEach(tab => tabs[tab] = readTab(master, tab));
     state = {
+      meta:
+        master?.meta
+        && typeof master.meta === "object"
+          ? master.meta
+          : {},
       holdings:tabs.Holdings || [],
       watchlist:tabs.Watchlist || [],
       globalWatchlist:tabs["Global Watchlist"] || [],
@@ -1889,7 +2004,7 @@ async function loadData(force=false){
 
           if(Number.isFinite(age)&&age>8){
             managerNotice?.(
-              `Refresh completed. The downloaded source row is still ${age.toFixed(1)} hours old.`,
+              `Refresh completed. The downloaded AuroraMaster export is still ${age.toFixed(1)} hours old.`,
               'warn'
             );
           }else{
@@ -2194,8 +2309,8 @@ function renderAll(){
   $("scheduleTransferNote").textContent = route.length ? `${money(routeIncome)}/year expected from the current route.` : "Open the Transfer Centre to confirm the final route.";
   $("scheduleTargetStatus").textContent = gap > 0 ? `${money(gap)}/month required` : "Target achieved";
   $("scheduleTargetNote").textContent = gap > 0 ? `${targetPct.toFixed(1)}% of the £625/month objective completed.` : "The current monthly income objective has been reached.";
-  $("scheduleDataStatus").textContent = dataStamp ? "Aurora data live" : "Timestamp unavailable";
-  $("scheduleDataNote").textContent = dataStamp ? dataStamp.toLocaleString("en-GB") : "The page loaded, but no dated feed row was found.";
+  $("scheduleDataStatus").textContent = dataStamp ? "Aurora export live" : "Timestamp unavailable";
+  $("scheduleDataNote").textContent = dataStamp ? `Generated ${dataStamp.toLocaleString("en-GB")}` : "The page loaded, but no AuroraMaster generation timestamp was found.";
 
   renderPreviewRows(route.map(x=>x.row), "topTransferPreview", (row,i)=>`${money(route[i].income)}/yr`);
   const squadRows = active.slice().sort((a,b)=>annualIncomeFromRow(b)-annualIncomeFromRow(a)).slice(0,4);
@@ -2643,8 +2758,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </div>
 <div class="beast-about-grid">
 <div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
-<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v6</strong></div>
-<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Settings Version Display</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v7</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Unified Notifications</strong></div>
 <div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
 <div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
 </div>
@@ -2788,9 +2903,9 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
           fingerprint:sourceFingerprint,
           priority:'high',
           icon:'↻',
-          title:'Refresh Aurora data',
-          detail:`The newest dated row is ${age.toFixed(1)} hours old. Refresh will re-download AuroraMaster once and clear this task. The bell will still report an old source export when appropriate.`,
-          meta:'Data confidence',
+          title:'Refresh Aurora export',
+          detail:`AuroraMaster was generated ${age.toFixed(1)} hours ago. Refresh will download the latest export once and clear this task.`,
+          meta:'AuroraMaster freshness',
           action:'refresh',
           actionLabel:'Refresh now'
         });
@@ -3002,7 +3117,18 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   }
   function alertData(){
     const m=journeyMetrics(),alerts=[];const now='Now';
-    if(m.latest){const age=(Date.now()-m.latest.getTime())/36e5;if(age>8)alerts.push({level:age>26?'bad':'warn',icon:'↻',title:'Aurora data needs a refresh',text:`The newest dated row is ${age.toFixed(1)} hours old.`,time:'Data'});}
+    if(m.latest){
+      const age=(Date.now()-m.latest.getTime())/36e5;
+      if(age>8){
+        alerts.push({
+          level:age>26?'bad':'warn',
+          icon:'↻',
+          title:'Aurora export needs a refresh',
+          text:`AuroraMaster was generated ${age.toFixed(1)} hours ago.`,
+          time:'Aurora HQ'
+        });
+      }
+    }
     if(m.plan?.rows?.length)alerts.push({level:'ok',icon:'⇄',title:'Payday route is synced',text:`${m.plan.rows.map(r=>r.displayTicker||r.ticker).join(' / ')} • ${cash(num(m.plan.totalIncome))}/year estimated income.`,time:'Transfer'});else alerts.push({level:'warn',icon:'⇄',title:'Transfer deal sheet not synced',text:'Open the Transfer Centre before payday so the dashboard can read the final allocation.',time:'Transfer'});
     try{const d=nextDividendPayment();if(d)alerts.push({level:'ok',icon:'💷',title:`${d.ticker} dividend is next`,text:`Due ${d.date.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}${d.amountKnown?` • ${cash(d.amount)}`:''}.`,time:'Income'})}catch(_){}
     const weak=activeRows().filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60}).sort((a,b)=>strength(a)-strength(b)).slice(0,2);weak.forEach(r=>alerts.push({level:'warn',icon:'⚠',title:`${ticker(r)} is under review`,text:`Buy-strength score ${Math.round(strength(r))}. Open the player profile before adding more.`,time:'Squad'}));
@@ -3010,10 +3136,133 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     const gap=Math.max(0,625-m.monthly);alerts.push({level:gap<=0?'ok':'info',icon:'🏆',title:gap<=0?'£625 monthly objective achieved':`${cash(gap)} per month to the target`,text:gap<=0?'Aurora has reached the primary income objective.':'The target journey updates automatically after registered purchases.',time:'Objective'});
     return alerts.slice(0,9);
   }
-  function renderAlerts(){
-    latestAlerts=alertData();const box=q('beastAlertList');if(box)box.innerHTML=latestAlerts.length?latestAlerts.map(a=>`<div class="beast-alert ${a.level==='info'?'':a.level}"><span class="beast-alert-icon">${a.icon}</span><span><strong>${a.title}</strong><p>${a.text}</p></span><span class="beast-alert-time">${a.time}</span></div>`).join(''):'<div class="beast-empty">No manager alerts right now.</div>';
-    const signature=JSON.stringify(latestAlerts.map(a=>[a.title,a.text]));latestAlertSignature=signature;const read=localStorage.getItem(READ_KEY);const count=read===signature?0:latestAlerts.length;const badge=q('beastNotificationCount');if(badge){badge.hidden=count===0;badge.textContent=String(count)}
+  function sharedAlertDestination(alert){
+    const title = String(alert?.title || '').toLowerCase();
+
+    if(/transfer|deal sheet|payday route/.test(title)){
+      return {
+        department:'Transfer Centre',
+        page:'AuroraCityFC_TransferCentre.html',
+        icon:alert.icon || '⇄'
+      };
+    }
+
+    if(/dividend|monthly objective|target/.test(title)){
+      return {
+        department:'Finance Department',
+        page:'AuroraCityFC_FinanceDepartment.html',
+        icon:alert.icon || '💷'
+      };
+    }
+
+    if(/under review/.test(title)){
+      return {
+        department:'Squad Hub',
+        page:'AuroraCityFC_SquadHub.html',
+        icon:alert.icon || '⚠'
+      };
+    }
+
+    if(/target zone/.test(title)){
+      return {
+        department:'Analysis Room',
+        page:'AuroraCityFC_AnalysisRoom.html',
+        icon:alert.icon || '🎯'
+      };
+    }
+
+    return {
+      department:'Manager Dashboard',
+      page:'AuroraCityFC_ManagerDashboard.html',
+      icon:alert?.icon || '🔔'
+    };
   }
+
+  function notificationHost(){
+    try{
+      if(
+        window.parent !== window
+        && window.parent.AuroraNotifications
+      ){
+        return window.parent.AuroraNotifications;
+      }
+    }catch(_){}
+
+    return window.AuroraNotifications || null;
+  }
+
+  function renderAlerts(){
+    latestAlerts=alertData();
+
+    const box=q('beastAlertList');
+
+    if(box){
+      box.innerHTML=latestAlerts.length
+        ?latestAlerts.map(a=>`<div class="beast-alert ${a.level==='info'?'':a.level}"><span class="beast-alert-icon">${a.icon}</span><span><strong>${a.title}</strong><p>${a.text}</p></span><span class="beast-alert-time">${a.time}</span></div>`).join('')
+        :'<div class="beast-empty">No manager alerts right now.</div>';
+    }
+
+    const signature=JSON.stringify(
+      latestAlerts.map(a=>[a.title,a.text])
+    );
+
+    latestAlertSignature=signature;
+
+    const host=notificationHost();
+
+    if(host?.replaceLive){
+      host.replaceLive(
+        'manager-dashboard-alerts',
+        latestAlerts.map(alert=>{
+          const destination=
+            sharedAlertDestination(alert);
+
+          return {
+            ...destination,
+            title:alert.title,
+            message:alert.text,
+            priority:
+              alert.level==='bad'
+                ?'critical'
+                :alert.level==='warn'
+                  ?'high'
+                  :alert.level==='ok'
+                    ?'normal'
+                    :'low',
+            dedupeKey:
+              `manager-live:${alert.title}`,
+            fingerprint:
+              String(
+                alert.title
+                +'|'
+                +alert.text
+                +'|'
+                +destination.page
+              ),
+            actionLabel:
+              `Open ${destination.department}`,
+            ttlDays:2
+          };
+        })
+      );
+    }
+
+    /*
+     * Standalone Manager mode keeps its native badge. Inside GameShell
+     * the shared notification host owns the bell and unread count.
+     */
+    if(!host?.replaceLive){
+      const read=localStorage.getItem(READ_KEY);
+      const count=read===signature?0:latestAlerts.length;
+      const badge=q('beastNotificationCount');
+
+      if(badge){
+        badge.hidden=count===0;
+        badge.textContent=String(count);
+      }
+    }
+  }
+
   function tickerMessages(){
     const m=journeyMetrics(),items=[];items.push(`Manager Rating ${m.rating.toFixed(1)} • ${cash(m.monthly)}/month • ${cash(Math.max(0,625-m.monthly))} to the main objective`);
     const rows=sortedRows();if(rows[0])items.push(`Captain of income: ${ticker(rows[0])} • ${cash(annual(rows[0]))}/year • ${Number.isFinite(rate(rows[0]))?percent(rate(rows[0])*100)+' yield':'yield loading'}`);
@@ -3665,10 +3914,10 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
   const BUILD = Object.freeze({
     page:"Manager Dashboard",
-    version:"v6",
-    build:"Settings Version Display",
+    version:"v7",
+    build:"Unified Notifications",
     date:"3 August 2026",
-    buildId:"manager-settings-version-display-v6-20260803"
+    buildId:"manager-unified-notifications-v7-20260803"
   });
 
   function shellConnected(){
