@@ -3,7 +3,7 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
-<!-- Build: Aurora Manager Dashboard • Final Notification Controls v8 • 3 Aug 2026 -->
+<!-- Build: Aurora Manager Dashboard • Embedded Notification Bridge v9 • 3 Aug 2026 -->
 <script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-final-notification-controls-v8-20260803" name="aurora-build"/>
+</style><meta content="manager-embedded-notification-bridge-v9-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -1382,6 +1382,48 @@ html[data-aurora-manager-values="ready"]
   .beast-close{
     margin-left:auto;
   }
+}
+</style>
+
+
+<style id="auroraManagerNotificationDirectStyles">
+.aurora-notification-connection{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:5px;
+  color:#fbbf24;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+
+.aurora-notification-connection::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#fbbf24;
+  box-shadow:0 0 10px rgba(251,191,36,.42);
+}
+
+.aurora-notification-connection[data-state="connected"]{
+  color:#86efac;
+}
+
+.aurora-notification-connection[data-state="connected"]::before{
+  background:#34d399;
+  box-shadow:0 0 10px rgba(52,211,153,.48);
+}
+
+.aurora-notification-connection[data-state="fallback"]{
+  color:#fda4af;
+}
+
+.aurora-notification-connection[data-state="fallback"]::before{
+  background:#fb7185;
+  box-shadow:0 0 10px rgba(251,113,133,.48);
 }
 </style>
 
@@ -2828,7 +2870,11 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </script>
 <div aria-label="Aurora notifications" class="beast-panel beast-notification-panel" id="beastNotificationPanel" role="dialog">
 <div class="beast-panel-head aurora-command-notification-head">
-<div class="aurora-command-notification-title"><h3>Command Notifications</h3><p>Manager alerts and shared department updates from across Aurora HQ.</p></div>
+<div class="aurora-command-notification-title">
+<h3>Command Notifications</h3>
+<p>Manager alerts and shared department updates from across Aurora HQ.</p>
+<small class="aurora-notification-connection" id="auroraNotificationConnectionStatus">Connecting to GameShell…</small>
+</div>
 <div class="aurora-command-notification-actions">
 <button class="aurora-shared-mark-read" id="auroraSharedMarkRead" type="button">Mark all read</button>
 <button class="aurora-shared-clear-all" id="auroraSharedClearAll" type="button">Clear all</button>
@@ -2858,8 +2904,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </div>
 <div class="beast-about-grid">
 <div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
-<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v8</strong></div>
-<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Final Notification Controls</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v9</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Embedded Notification Bridge</strong></div>
 <div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
 <div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
 </div>
@@ -4111,6 +4157,231 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   }
 
   window.addEventListener("pageshow",updateAboutPanel);
+})();
+</script>
+
+
+<script id="auroraManagerNotificationDirectControls">
+(function(){
+  "use strict";
+
+  const STORE_KEY = "aurora_notifications_v1";
+  const READ_KEY = "aurora_notifications_read_v1";
+
+  function host(){
+    try{
+      if(
+        window.parent !== window
+        && window.parent.AuroraNotifications
+      ){
+        return window.parent.AuroraNotifications;
+      }
+    }catch(_){}
+
+    return window.AuroraNotifications || null;
+  }
+
+  function status(message,state){
+    const element = document.getElementById(
+      "auroraNotificationConnectionStatus"
+    );
+
+    if(!element) return;
+
+    element.textContent = message;
+    element.dataset.state = state;
+  }
+
+  function updateConnection(){
+    const api = host();
+
+    if(api?.version){
+      status(
+        `Connected • notification core ${api.version}`,
+        "connected"
+      );
+
+      try{
+        api.attachDocument?.(document);
+      }catch(_){}
+
+      return true;
+    }
+
+    status(
+      "Notification core unavailable",
+      "fallback"
+    );
+
+    return false;
+  }
+
+  function localFallback(action,id){
+    try{
+      if(action === "markAllRead"){
+        localStorage.setItem(
+          READ_KEY,
+          JSON.stringify({
+            allReadAt:Date.now(),
+            ids:[]
+          })
+        );
+      }
+
+      if(action === "clear"){
+        localStorage.removeItem(STORE_KEY);
+        localStorage.removeItem(READ_KEY);
+      }
+
+      if(action === "remove" && id){
+        const rows = JSON.parse(
+          localStorage.getItem(STORE_KEY) || "[]"
+        );
+
+        localStorage.setItem(
+          STORE_KEY,
+          JSON.stringify(
+            Array.isArray(rows)
+              ? rows.filter(
+                  row => String(row?.id || "") !== String(id)
+                )
+              : []
+          )
+        );
+      }
+    }catch(_){}
+
+    const badge = document.getElementById(
+      "beastNotificationCount"
+    );
+
+    if(action !== "remove" && badge){
+      badge.textContent = "0";
+      badge.hidden = true;
+    }
+
+    if(action === "clear"){
+      const list = document.getElementById(
+        "auroraSharedAlertList"
+      );
+
+      if(list){
+        list.innerHTML =
+          '<div class="beast-empty">No notifications right now.</div>';
+      }
+    }
+  }
+
+  function flash(button,text){
+    if(!button) return;
+
+    const original =
+      button.dataset.originalLabel
+      || button.textContent
+      || "";
+
+    button.dataset.originalLabel = original;
+    button.textContent = text;
+
+    window.setTimeout(
+      () => {
+        button.textContent = original;
+      },
+      1200
+    );
+  }
+
+  document.addEventListener(
+    "click",
+    event => {
+      const markAll = event.target.closest?.(
+        "#auroraSharedMarkRead"
+      );
+
+      const clearAll = event.target.closest?.(
+        "#auroraSharedClearAll"
+      );
+
+      const removeButton = event.target.closest?.(
+        "[data-aurora-notification-remove]"
+      );
+
+      if(!markAll && !clearAll && !removeButton){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const api = host();
+
+      if(markAll){
+        if(api?.markAllRead){
+          api.markAllRead();
+          api.attachDocument?.(document);
+        }else{
+          localFallback("markAllRead");
+        }
+
+        flash(markAll,"All read");
+        return;
+      }
+
+      if(clearAll){
+        if(api?.clear){
+          api.clear();
+          api.attachDocument?.(document);
+        }else{
+          localFallback("clear");
+        }
+
+        flash(clearAll,"Cleared");
+        return;
+      }
+
+      const id =
+        removeButton.dataset
+          .auroraNotificationRemove;
+
+      if(api?.remove){
+        api.remove(id);
+        api.attachDocument?.(document);
+      }else{
+        localFallback("remove",id);
+        removeButton.closest(
+          "[data-aurora-notification-id]"
+        )?.remove();
+      }
+    },
+    true
+  );
+
+  window.addEventListener(
+    "pageshow",
+    updateConnection
+  );
+
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+      if(document.visibilityState === "visible"){
+        updateConnection();
+      }
+    }
+  );
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      updateConnection,
+      {once:true}
+    );
+  }else{
+    updateConnection();
+  }
+
+  window.setTimeout(updateConnection,300);
+  window.setTimeout(updateConnection,1200);
 })();
 </script>
 

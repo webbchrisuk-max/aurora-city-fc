@@ -20,7 +20,7 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '2.0.1';
+  const VERSION = '3.0.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
@@ -145,6 +145,51 @@
       icon: '✅',
       priority: 'high',
       message: value => describeLifecycle(value, 'The manager approval state has changed.')
+    },
+    {
+      key: 'aurora_wealth_centre',
+      department: 'Finance Department',
+      page: 'AuroraCityFC_FinanceDepartment.html',
+      title: 'Finance planner updated',
+      icon: '💷',
+      priority: 'normal',
+      message: describeFinancePlanner
+    },
+    {
+      key: 'aurora_wealth_centre_history_v1',
+      department: 'Finance Department',
+      page: 'AuroraCityFC_FinanceDepartment.html',
+      title: 'Finance history updated',
+      icon: '📚',
+      priority: 'low',
+      message: value => describeCollection(value, 'Finance history')
+    },
+    {
+      key: 'aurora_pending_registrations_v1',
+      department: 'Transfer Centre',
+      page: 'AuroraCityFC_TransferCentre.html',
+      title: 'Registration queue updated',
+      icon: '🧾',
+      priority: 'normal',
+      message: value => describeCollection(value, 'Pending registrations')
+    },
+    {
+      key: 'aurora_m3_last_transfer_receipt_v1',
+      department: 'Transfer Centre',
+      page: 'AuroraCityFC_TransferCentre.html',
+      title: 'Latest transfer receipt updated',
+      icon: '🧾',
+      priority: 'normal',
+      message: value => describeMoneyEvent(value, 'The latest transfer receipt has changed.')
+    },
+    {
+      key: 'aurora_m3_dynamic_transfer_budget_v1',
+      department: 'Transfer Centre',
+      page: 'AuroraCityFC_TransferCentre.html',
+      title: 'Transfer budget recalculated',
+      icon: '💷',
+      priority: 'normal',
+      message: value => describeMoneyEvent(value, 'The live transfer budget has changed.')
     }
 
   ];
@@ -1144,6 +1189,293 @@
     return stage ? `${fallback} Current stage: ${String(stage)}.` : fallback;
   }
 
+
+  function describeFinancePlanner(value) {
+    const data = parseStored(value);
+
+    if (!data || typeof data !== 'object') {
+      return 'The Finance planner has been updated.';
+    }
+
+    const bills = Array.isArray(data.scheduledBills)
+      ? data.scheduledBills
+      : [];
+
+    const completed = bills.filter(item => {
+      const status = String(item?.status || '').toLowerCase();
+      return Boolean(
+        item?.archived
+        || item?.completed
+        || item?.paid
+        || /paid|complete|archived/.test(status)
+      );
+    }).length;
+
+    const due = bills.filter(item => {
+      const status = String(item?.status || '').toLowerCase();
+      return !item?.archived
+        && !item?.completed
+        && !item?.paid
+        && !/paid|complete|archived/.test(status);
+    }).length;
+
+    const holdingBalance = firstFinite(
+      data.holdingBalance,
+      data.currentHoldingPot,
+      data.balance
+    );
+
+    const parts = ['The Finance planner has been saved.'];
+
+    if (completed || due) {
+      parts.push(`${completed} completed and ${due} still due.`);
+    }
+
+    if (Number.isFinite(holdingBalance)) {
+      parts.push(`Holding Pot ${formatCash(holdingBalance)}.`);
+    }
+
+    return parts.join(' ');
+  }
+
+  function describeCollection(value, label) {
+    const data = parseStored(value);
+
+    const rows = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.rows)
+        ? data.rows
+        : Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data?.registrations)
+            ? data.registrations
+            : [];
+
+    if (rows.length) {
+      return `${label} now contains ${rows.length} item${rows.length === 1 ? '' : 's'}.`;
+    }
+
+    return `${label} has been updated.`;
+  }
+
+  function actionLabel_(control) {
+    if (!control) return '';
+
+    return String(
+      control.getAttribute?.('aria-label')
+      || control.getAttribute?.('title')
+      || control.value
+      || control.textContent
+      || ''
+    )
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function meaningfulAction_(label) {
+    const text = String(label || '').toLowerCase();
+
+    if (!text) return false;
+
+    if (
+      /mark all read|clear all|close|cancel|back|next|previous|menu|log out|logout|open |view |show |hide |copy /.test(text)
+    ) {
+      return false;
+    }
+
+    return /save|complete|approve|confirm|register|execute|submit|archive|mark paid|paid|recalculate|refresh|sync|generate|record|finish|apply|update|run planner/.test(text);
+  }
+
+  function describeDepartmentAction_(page, label) {
+    const lower = String(label || '').toLowerCase();
+
+    if (page.page.includes('FinanceDepartment')) {
+      if (/bill|paid/.test(lower)) {
+        return {
+          title: 'Finance bill updated',
+          message: `${label} was recorded in the Finance Department.`,
+          icon: '💷',
+          priority: 'normal'
+        };
+      }
+
+      if (/planner|budget|recalculate/.test(lower)) {
+        return {
+          title: 'Finance planner recalculated',
+          message: `${label} was completed in the Finance Department.`,
+          icon: '📊',
+          priority: 'normal'
+        };
+      }
+
+      if (/mission|handoff/.test(lower)) {
+        return {
+          title: 'Investment mission updated',
+          message: `${label} was completed in the Finance Department.`,
+          icon: '📈',
+          priority: 'high'
+        };
+      }
+    }
+
+    if (page.page.includes('TransferCentre')) {
+      if (/register|purchase/.test(lower)) {
+        return {
+          title: 'Purchase registration updated',
+          message: `${label} was completed in the Transfer Centre.`,
+          icon: '🧾',
+          priority: 'high'
+        };
+      }
+
+      if (/approve/.test(lower)) {
+        return {
+          title: 'Transfer plan approved',
+          message: `${label} was completed in the Transfer Centre.`,
+          icon: '✅',
+          priority: 'high'
+        };
+      }
+
+      if (/payday|execute|complete/.test(lower)) {
+        return {
+          title: 'Transfer workflow updated',
+          message: `${label} was completed in the Transfer Centre.`,
+          icon: '🔄',
+          priority: 'normal'
+        };
+      }
+    }
+
+    return {
+      title: 'Department action completed',
+      message: `${label} was completed in ${page.department || 'Aurora HQ'}.`,
+      icon: page.icon || '🔔',
+      priority: 'low'
+    };
+  }
+
+  function installDepartmentBridge(documentObject = document) {
+    if (!documentObject?.documentElement) return false;
+
+    const page = detectPageForDocument(documentObject);
+    const childWindow = documentObject.defaultView;
+
+    if (childWindow && childWindow !== window) {
+      try {
+        childWindow.AuroraNotifications =
+          window.AuroraNotifications;
+      } catch (_) {}
+    }
+
+    if (
+      documentObject.documentElement.dataset
+        .auroraNotificationBridge === '1'
+    ) {
+      return true;
+    }
+
+    documentObject.documentElement.dataset
+      .auroraNotificationBridge = '1';
+
+    const forward = detail => {
+      if (detail && typeof detail === 'object') {
+        add({
+          ...detail,
+          department:
+            detail.department || page.department,
+          page:
+            detail.page || page.page,
+          icon:
+            detail.icon || page.icon
+        });
+      }
+    };
+
+    documentObject.addEventListener(
+      'aurora:notify',
+      event => forward(event?.detail)
+    );
+
+    childWindow?.addEventListener?.(
+      'aurora:notify',
+      event => forward(event?.detail)
+    );
+
+    documentObject.addEventListener(
+      'click',
+      event => {
+        const control = event.target?.closest?.(
+          'button,[role="button"],input[type="submit"],input[type="button"]'
+        );
+
+        const label = actionLabel_(control);
+
+        if (!meaningfulAction_(label)) return;
+
+        const detail = describeDepartmentAction_(
+          page,
+          label
+        );
+
+        window.setTimeout(() => {
+          add({
+            ...detail,
+            department: page.department,
+            page: page.page,
+            dedupeKey:
+              `ui:${page.page}:${hashString(label.toLowerCase())}`,
+            fingerprint: hashString(
+              `${page.page}|${label}|${Math.floor(now() / 60000)}`
+            ),
+            source: 'aurora-child-action-bridge',
+            ttlDays: 14
+          });
+        }, 250);
+      },
+      true
+    );
+
+    return true;
+  }
+
+  function detectPageForDocument(documentObject) {
+    const pathname = String(
+      documentObject?.location?.pathname || ''
+    );
+
+    const title = String(
+      documentObject?.title || ''
+    );
+
+    const match = PAGE_MAP.find(([needle]) => {
+      const spaced = needle
+        .replace(/([A-Z])/g, ' $1')
+        .trim();
+
+      return pathname.includes(needle)
+        || title.includes(spaced);
+    });
+
+    if (match) {
+      return {
+        department: match[1],
+        page: match[2],
+        icon: match[3]
+      };
+    }
+
+    return {
+      department:
+        documentObject?.documentElement?.dataset
+          ?.auroraPage || 'Aurora HQ',
+      page:
+        pathname.split('/').pop()
+        || 'AuroraCityFC_ManagerDashboard.html',
+      icon: '🔔'
+    };
+  }
+
   function shouldNotifyStorageRule(rule, rawValue) {
     if (rawValue === null || rawValue === undefined || rawValue === '') return false;
 
@@ -1330,7 +1662,7 @@
           window.AuroraNotifications;
       }
 
-      return attachManagerDashboard(
+      return attachDocument(
         childDocument
       );
     } catch (_) {
@@ -1338,11 +1670,24 @@
     }
   }
 
+
+  function attachDocument(documentObject = document) {
+    const managerAttached =
+      attachManagerDashboard(documentObject);
+
+    const bridgeAttached =
+      installDepartmentBridge(documentObject);
+
+    return Boolean(
+      managerAttached || bridgeAttached
+    );
+  }
+
   function start() {
     clearExpired();
     seedInstallNotice();
     initialiseStorageWatchers();
-    attachManagerDashboard(document);
+    attachDocument(document);
 
     const frame =
       document.getElementById('clubFrame');
@@ -1383,7 +1728,7 @@
     clearExpired,
     subscribe,
     test,
-    attachDocument:attachManagerDashboard,
+    attachDocument,
     currentPage:detectPage
   });
 
