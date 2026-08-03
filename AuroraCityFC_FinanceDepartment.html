@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 
 <html data-aurora-finance-view="m13Dashboard" data-aurora-page="finance" data-aurora-shell-content="true" lang="en">
-<head><!-- Build: Aurora Finance Department • Holding Balance Sync Fix v2 • 03 Aug 2026 -->
+<head><!-- Build: Aurora Finance Department • Cloud Authoritative Restore v4 • 03 Aug 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Aurora Finance Department — Payday &amp; Capital Control</title>
+<script src="aurora-cloud-sync.js?v=20260803-authoritative-restore-v3"></script>
+
 <style>
  :root{
   --bg: #071018;
@@ -4215,8 +4217,49 @@ const STORAGE_BACKUP_KEY =
   "aurora_wealth_centre_backup_v3";
 const STORAGE_SESSION_KEY =
   "aurora_wealth_centre_session_v3";
-const STORAGE_SCHEMA_VERSION = 3;
+const CLOUD_RESTORE_MARKER_KEY =
+  "aurora_cloud_force_restore_v2";
+const STORAGE_SCHEMA_VERSION = 4;
 let plannerPersistenceWarningShown = false;
+let plannerWaitingForCloudRestore = false;
+
+function readCloudRestoreMarker_() {
+  try {
+    const marker = JSON.parse(
+      localStorage.getItem(
+        CLOUD_RESTORE_MARKER_KEY
+      ) || "null"
+    );
+
+    if (
+      !marker
+      || typeof marker !== "object"
+      || marker.key !== STORAGE_KEY
+    ) {
+      return null;
+    }
+
+    const restoredAt = Number(
+      marker.restoredAt || 0
+    );
+
+    if (
+      !Number.isFinite(restoredAt)
+      || Date.now() - restoredAt
+        > 10 * 60 * 1000
+    ) {
+      localStorage.removeItem(
+        CLOUD_RESTORE_MARKER_KEY
+      );
+
+      return null;
+    }
+
+    return marker;
+  } catch (_) {
+    return null;
+  }
+}
 
 function plannerStorageGet_(area, key) {
   try {
@@ -4438,7 +4481,7 @@ function getFreshDefaults() {
   });
 
   return {
-    holdingBalance: 2550.36,
+    holdingBalance: 0,
     paydayContribution: 140,
     minimumBuffer: 1000,
     growPotBalance: 700,
@@ -4460,6 +4503,18 @@ function getFreshDefaults() {
 let plannerState = getFreshDefaults();
 
 function savePlannerData(reason = "auto") {
+  if (
+    plannerWaitingForCloudRestore
+    && String(reason || "auto") === "auto"
+  ) {
+    plannerPersistenceMessage_(
+      "Waiting for Aurora Cloud restore",
+      true
+    );
+
+    return false;
+  }
+
   let payload = "";
 
   try {
@@ -4566,7 +4621,10 @@ function savePlannerData(reason = "auto") {
 window.savePlannerData = savePlannerData;
 
 function loadPlannerData() {
-  const candidates = [
+  const cloudMarker =
+    readCloudRestoreMarker_();
+
+  const primaryCandidate =
     parsePlannerCandidate_(
       plannerStorageGet_(
         window.localStorage,
@@ -4574,26 +4632,44 @@ function loadPlannerData() {
       ),
       "primary",
       3
-    ),
-    parsePlannerCandidate_(
-      plannerStorageGet_(
-        window.localStorage,
-        STORAGE_BACKUP_KEY
-      ),
-      "backup",
-      2
-    ),
-    parsePlannerCandidate_(
-      plannerStorageGet_(
-        window.sessionStorage,
-        STORAGE_SESSION_KEY
-      ),
-      "session",
-      1
-    )
-  ].filter(Boolean);
+    );
 
-  if (!candidates.length) return;
+  /*
+   * A completed authoritative cloud restore always wins. Stale Finance
+   * backup/session copies are not allowed to resurrect the starter data.
+   */
+  const candidates = cloudMarker
+    ? [primaryCandidate].filter(Boolean)
+    : [
+        primaryCandidate,
+        parsePlannerCandidate_(
+          plannerStorageGet_(
+            window.localStorage,
+            STORAGE_BACKUP_KEY
+          ),
+          "backup",
+          2
+        ),
+        parsePlannerCandidate_(
+          plannerStorageGet_(
+            window.sessionStorage,
+            STORAGE_SESSION_KEY
+          ),
+          "session",
+          1
+        )
+      ].filter(Boolean);
+
+  if (!candidates.length) {
+    plannerWaitingForCloudRestore = true;
+
+    plannerPersistenceMessage_(
+      "No Finance save found — download Aurora Cloud",
+      true
+    );
+
+    return;
+  }
 
   candidates.sort((a, b) => {
     if (b.savedAt !== a.savedAt) {
@@ -4607,58 +4683,126 @@ function loadPlannerData() {
 
   try {
     const parsed = selected.state;
+
     plannerState = {
       ...getFreshDefaults(),
       ...parsed,
-      paydayContribution: parseNum(parsed.paydayContribution ?? 140),
-      growPotBalance: parseNum(parsed.growPotBalance ?? 700),
-      growPotTarget: parseNum(parsed.growPotTarget ?? 7500),
-      editablePots: migrateLegacyPots(parsed),
+      paydayContribution:
+        parseNum(
+          parsed.paydayContribution
+          ?? 140
+        ),
+      growPotBalance:
+        parseNum(
+          parsed.growPotBalance
+          ?? 700
+        ),
+      growPotTarget:
+        parseNum(
+          parsed.growPotTarget
+          ?? 7500
+        ),
+      editablePots:
+        migrateLegacyPots(parsed),
 
-      scheduledBills: Array.isArray(parsed.scheduledBills)
-        ? parsed.scheduledBills.map(bill => ({
-            deducted: false,
-            ...bill
-          }))
-        : JSON.parse(JSON.stringify(defaultScheduledBills)),
+      scheduledBills:
+        Array.isArray(
+          parsed.scheduledBills
+        )
+          ? parsed.scheduledBills.map(
+              bill => ({
+                deducted:false,
+                ...bill
+              })
+            )
+          : JSON.parse(
+              JSON.stringify(
+                defaultScheduledBills
+              )
+            ),
 
-      futureCosts: Array.isArray(parsed.futureCosts)
-        ? parsed.futureCosts
-        : JSON.parse(JSON.stringify(defaultFutureCosts)),
+      futureCosts:
+        Array.isArray(
+          parsed.futureCosts
+        )
+          ? parsed.futureCosts
+          : JSON.parse(
+              JSON.stringify(
+                defaultFutureCosts
+              )
+            ),
 
-      recurringCosts: Array.isArray(parsed.recurringCosts)
-        ? parsed.recurringCosts
-        : JSON.parse(JSON.stringify(defaultRecurringCosts)),
+      recurringCosts:
+        Array.isArray(
+          parsed.recurringCosts
+        )
+          ? parsed.recurringCosts
+          : JSON.parse(
+              JSON.stringify(
+                defaultRecurringCosts
+              )
+            ),
 
-      yearlyRecurringCosts: normaliseYearlyRecurringCosts(
-        Array.isArray(parsed.yearlyRecurringCosts)
-          ? parsed.yearlyRecurringCosts
-          : JSON.parse(JSON.stringify(defaultYearlyRecurringCosts))
-      ),
+      yearlyRecurringCosts:
+        normaliseYearlyRecurringCosts(
+          Array.isArray(
+            parsed.yearlyRecurringCosts
+          )
+            ? parsed.yearlyRecurringCosts
+            : JSON.parse(
+                JSON.stringify(
+                  defaultYearlyRecurringCosts
+                )
+              )
+        ),
 
-      archivedBills: Array.isArray(parsed.archivedBills)
-        ? parsed.archivedBills
-        : [],
+      archivedBills:
+        Array.isArray(
+          parsed.archivedBills
+        )
+          ? parsed.archivedBills
+          : [],
 
-      canteen: parsed.canteen || {
-        budget: 80,
-        lastSpend: 0,
-        lastReleased: 0
-      }
+      canteen:
+        parsed.canteen || {
+          budget:80,
+          lastSpend:0,
+          lastReleased:0
+        }
     };
 
-    plannerState.recurringCosts = plannerState.recurringCosts.map(item => ({
-      ...item,
-      originalAmount: Number(item.originalAmount ?? item.amount ?? 0),
-      spentThisCycle: Number(item.spentThisCycle || 0),
-      payAmount: Number(item.payAmount ?? item.amount ?? 0),
-      lastPaidDate: item.lastPaidDate || ""
-    }));
-    plannerState.recurringSpendHistory = Array.isArray(plannerState.recurringSpendHistory)
-      ? plannerState.recurringSpendHistory
-      : [];
+    plannerState.recurringCosts =
+      plannerState.recurringCosts.map(
+        item => ({
+          ...item,
+          originalAmount:Number(
+            item.originalAmount
+            ?? item.amount
+            ?? 0
+          ),
+          spentThisCycle:Number(
+            item.spentThisCycle || 0
+          ),
+          payAmount:Number(
+            item.payAmount
+            ?? item.amount
+            ?? 0
+          ),
+          lastPaidDate:
+            item.lastPaidDate || ""
+        })
+      );
 
-    if (selected.source !== "primary") {
+    plannerState.recurringSpendHistory =
+      Array.isArray(
+        plannerState.recurringSpendHistory
+      )
+        ? plannerState.recurringSpendHistory
+        : [];
+
+    if (
+      selected.source !== "primary"
+    ) {
       plannerStorageSet_(
         window.localStorage,
         STORAGE_KEY,
@@ -4666,19 +4810,66 @@ function loadPlannerData() {
       );
     }
 
-    plannerPersistenceMessage_(
-      selected.source === "primary"
-        ? "Planner data restored"
-        : `Planner recovered from ${selected.source}`
-    );
+    if (cloudMarker) {
+      plannerStorageSet_(
+        window.localStorage,
+        STORAGE_BACKUP_KEY,
+        selected.raw
+      );
+
+      plannerStorageSet_(
+        window.sessionStorage,
+        STORAGE_SESSION_KEY,
+        selected.raw
+      );
+
+      localStorage.removeItem(
+        CLOUD_RESTORE_MARKER_KEY
+      );
+
+      plannerWaitingForCloudRestore = false;
+
+      plannerPersistenceMessage_(
+        "Finance restored from Aurora Cloud"
+      );
+
+      try {
+        window.dispatchEvent(
+          new CustomEvent(
+            "aurora:finance-cloud-restored",
+            {
+              detail:{
+                holdingBalance:
+                  Number(
+                    plannerState.holdingBalance
+                    || 0
+                  ),
+                restoredAt:
+                  cloudMarker.restoredAt
+              }
+            }
+          )
+        );
+      } catch (_) {}
+    } else {
+      plannerWaitingForCloudRestore = false;
+
+      plannerPersistenceMessage_(
+        selected.source === "primary"
+          ? "Planner data restored"
+          : `Planner recovered from ${selected.source}`
+      );
+    }
   } catch (err) {
     console.error(
       "Could not load planner data",
       err
     );
 
+    plannerWaitingForCloudRestore = true;
+
     plannerPersistenceMessage_(
-      "Planner restore failed",
+      "Planner restore failed — download Aurora Cloud",
       true
     );
   }
@@ -6678,7 +6869,21 @@ function runPlanner() {
 
 loadPlannerData();
 
-document.getElementById("holdingBalanceInput").value = plannerState.holdingBalance ?? 0;
+document.getElementById("holdingBalanceInput").value =
+  plannerState.holdingBalance ?? 0;
+
+if (plannerWaitingForCloudRestore) {
+  const holdingInput =
+    document.getElementById(
+      "holdingBalanceInput"
+    );
+
+  if (holdingInput) {
+    holdingInput.value = "0.00";
+    holdingInput.dataset.cloudRestoreRequired =
+      "true";
+  }
+}
 document.getElementById("paydayContributionInput").value = plannerState.paydayContribution ?? 0;
 document.getElementById("minimumBufferInput").value = plannerState.minimumBuffer ?? 1000;
 document.getElementById("growPotBalanceInput").value = plannerState.growPotBalance ?? 700;
