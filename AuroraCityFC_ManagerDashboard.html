@@ -3,99 +3,74 @@
 <html data-aurora-page="manager" data-aurora-header="page" lang="en">
 <head>
 
-<script id="auroraManagerCleanShellBootstrapV4">
+<script id="auroraPageOwnedShellBootstrap">
 (function(){
   "use strict";
 
-  function cleanParentShell(){
-    try{
-      if(!window.parent || window.parent === window) return;
-
-      const doc = window.parent.document;
-      const root = doc && doc.documentElement;
-      if(!doc || !root) return;
-
-      let style = doc.getElementById(
-        "auroraManagerCleanShellLayoutV4"
-      );
-
-      if(!style){
-        style = doc.createElement("style");
-        style.id = "auroraManagerCleanShellLayoutV4";
-        style.textContent = `
-          html.aurora-manager-clean-shell{
-            --shell-height:0px!important;
-          }
-
-          html.aurora-manager-clean-shell .session-bar{
-            display:none!important;
-            visibility:hidden!important;
-            pointer-events:none!important;
-            height:0!important;
-            min-height:0!important;
-            padding:0!important;
-            margin:0!important;
-            border:0!important;
-            overflow:hidden!important;
-          }
-
-          html.aurora-manager-clean-shell .club-frame{
-            top:var(--safe-top)!important;
-            height:calc(100% - var(--safe-top))!important;
-          }
-
-          html.aurora-manager-clean-shell .frame-fallback{
-            inset:var(--safe-top) 0 0!important;
-          }
-
-          html.aurora-manager-clean-shell
-          #auroraTopHeaderMenuButton{
-            display:none!important;
-            visibility:hidden!important;
-            pointer-events:none!important;
-          }
-        `;
-
-        doc.head.appendChild(style);
-      }
-
-      root.classList.add("aurora-manager-clean-shell");
-
-      doc.querySelectorAll(
-        "#auroraTopHeaderMenuButton,"
-        + "#auroraNavToggle,"
-        + "#auroraLeftEdgeGestureZone,"
-        + "#auroraRightEdgeGestureZone,"
-        + ".aurora-nav-edge-toggle,"
-        + ".aurora-nav-edge-button,"
-        + ".aurora-floating-nav,"
-        + ".aurora-floating-menu"
-      ).forEach(function(node){
-        node.remove();
-      });
-    }catch(_){}
-  }
-
-  cleanParentShell();
-
   try{
-    if(window.parent && window.parent !== window){
-      const parentDoc = window.parent.document;
+    if(!window.parent || window.parent === window) return;
 
-      const observer = new MutationObserver(function(){
-        cleanParentShell();
-      });
+    const parentDocument = window.parent.document;
+    const root =
+      parentDocument && parentDocument.documentElement;
 
-      observer.observe(parentDoc.documentElement,{
-        childList:true,
-        subtree:true
-      });
+    if(!root) return;
+
+    /*
+      Remove the old Manager-only shell class/style from earlier builds.
+      Those old rules repeatedly deleted navigation controls.
+    */
+    root.classList.remove("aurora-manager-clean-shell");
+
+    parentDocument
+      .getElementById("auroraManagerCleanShellLayoutV4")
+      ?.remove();
+
+    let style = parentDocument.getElementById(
+      "auroraPageOwnedShellLayoutStyles"
+    );
+
+    if(!style){
+      style = parentDocument.createElement("style");
+      style.id = "auroraPageOwnedShellLayoutStyles";
+
+      style.textContent = `
+        html.aurora-page-owned-shell-layout{
+          --shell-height:0px!important;
+        }
+
+        html.aurora-page-owned-shell-layout .session-bar{
+          display:none!important;
+          height:0!important;
+          min-height:0!important;
+          padding:0!important;
+          margin:0!important;
+          border:0!important;
+          overflow:hidden!important;
+        }
+
+        html.aurora-page-owned-shell-layout .club-frame{
+          top:var(--safe-top)!important;
+          height:calc(100% - var(--safe-top))!important;
+        }
+
+        html.aurora-page-owned-shell-layout .frame-fallback{
+          inset:var(--safe-top) 0 0!important;
+        }
+      `;
+
+      parentDocument.head.appendChild(style);
     }
+
+    root.classList.add("aurora-page-owned-shell-layout");
   }catch(_){}
 })();
 </script>
 
-<!-- Build: Aurora Manager Dashboard • Full-Width Shell Reset v5 • 03 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
+
+
+
+<!-- Build: Aurora Manager Dashboard • Nexus-Matched Navigation Shell v6 • 03 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
 
@@ -604,8 +579,8 @@
 </style>
 
 <!-- Aurora universal workflow navigation -->
-<link href="aurora-navigation.css?v=20260803-manager-fullwidth-v5" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260803-manager-fullwidth-v5"></script>
+<link href="aurora-navigation.css?v=20260803-no-edge-v3" rel="stylesheet"/>
+<script defer="" src="aurora-navigation.js?v=20260803-no-edge-v3"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
@@ -1216,142 +1191,7 @@
 
 
 
-<style id="auroraManagerCleanHeaderAndSideFixV4">
-html[data-aurora-page="manager"][data-aurora-header="page"]
-body #auroraPageHeaderMenuButton{
-  position:static!important;
-  inset:auto!important;
-  transform:none!important;
-  width:42px!important;
-  height:42px!important;
-  min-width:42px!important;
-  min-height:42px!important;
-  flex:0 0 42px!important;
-  display:grid!important;
-  place-items:center!important;
-  margin:0!important;
-  padding:0!important;
-  border:1px solid rgba(125,211,252,.24)!important;
-  border-radius:13px!important;
-  color:#dff7ff!important;
-  background:linear-gradient(
-    145deg,
-    rgba(8,47,73,.90),
-    rgba(15,23,42,.98)
-  )!important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.07),
-    0 8px 18px rgba(0,0,0,.20)!important;
-  font:900 20px/1 system-ui,sans-serif!important;
-  cursor:pointer!important;
-  opacity:1!important;
-  visibility:visible!important;
-  pointer-events:auto!important;
-  z-index:auto!important;
-}
 
-html[data-aurora-page="manager"][data-aurora-header="page"]
-body #auroraPageHeaderMenuButton:hover,
-html[data-aurora-page="manager"][data-aurora-header="page"]
-body #auroraPageHeaderMenuButton:focus-visible{
-  border-color:rgba(34,211,238,.54)!important;
-  outline:none!important;
-}
-
-html[data-aurora-page="manager"][data-aurora-header="page"]
-body .aurora-page-header-logout{
-  min-height:38px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  margin:0;
-  padding:0 13px;
-  border:1px solid rgba(251,113,133,.34);
-  border-radius:12px;
-  color:#fecdd3;
-  background:linear-gradient(
-    145deg,
-    rgba(76,5,25,.76),
-    rgba(44,7,20,.90)
-  );
-  font-size:10px;
-  font-weight:950;
-  letter-spacing:.10em;
-  text-transform:uppercase;
-  white-space:nowrap;
-  cursor:pointer;
-}
-
-html[data-aurora-page="manager"][data-aurora-header="page"]
-body .aurora-page-header-logout:hover,
-html[data-aurora-page="manager"][data-aurora-header="page"]
-body .aurora-page-header-logout:focus-visible{
-  border-color:rgba(251,113,133,.60);
-  outline:none;
-}
-
-/*
-  Retire every old physical side launcher on the Manager page.
-  Swipe-to-open remains in aurora-navigation.js and needs no DOM zone.
-*/
-html[data-aurora-page="manager"] body #auroraNavToggle,
-html[data-aurora-page="manager"] body #auroraLeftEdgeGestureZone,
-html[data-aurora-page="manager"] body #auroraRightEdgeGestureZone,
-html[data-aurora-page="manager"] body .fm-sidebar-edge-zone,
-html[data-aurora-page="manager"] body .fm-side-toggle,
-html[data-aurora-page="manager"] body .fm-edge-toggle,
-html[data-aurora-page="manager"] body .aufc-mobile-button,
-html[data-aurora-page="manager"] body .aurora-nav-edge-toggle,
-html[data-aurora-page="manager"] body .aurora-nav-edge-button,
-html[data-aurora-page="manager"] body .aurora-floating-nav,
-html[data-aurora-page="manager"] body .aurora-floating-menu,
-html[data-aurora-page="manager"] body [data-aurora-edge-toggle],
-html[data-aurora-page="manager"] body [data-aurora-floating-nav]{
-  display:none!important;
-  visibility:hidden!important;
-  opacity:0!important;
-  pointer-events:none!important;
-  position:fixed!important;
-  left:-10000px!important;
-  top:-10000px!important;
-  width:0!important;
-  height:0!important;
-  min-width:0!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  box-shadow:none!important;
-  overflow:hidden!important;
-  z-index:-1!important;
-}
-
-@media(max-width:760px){
-  html[data-aurora-page="manager"][data-aurora-header="page"]
-  body .fm-workspace>.topbar .topbar-inner{
-    flex-wrap:nowrap!important;
-    align-items:center!important;
-  }
-
-  html[data-aurora-page="manager"][data-aurora-header="page"]
-  body .fm-workspace>.topbar .brand{
-    min-width:0!important;
-    flex:1 1 auto!important;
-  }
-
-  html[data-aurora-page="manager"][data-aurora-header="page"]
-  body .fm-top-context{
-    width:auto!important;
-    flex:0 0 auto!important;
-    flex-wrap:nowrap!important;
-  }
-
-  html[data-aurora-page="manager"][data-aurora-header="page"]
-  body .fm-page-path{
-    display:none!important;
-  }
-}
-</style>
 
 
 <style id="auroraManagerFullWidthShellResetV5">
@@ -1447,6 +1287,103 @@ html[data-aurora-page="manager"] body .fm-sidebar{
   body .fm-workspace > .app{
     max-width:none!important;
   }
+}
+</style>
+
+
+<style id="auroraManagerStableHeaderControlsV6">
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraPageHeaderMenuButton{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  flex:0 0 42px!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  padding:0!important;
+  border:1px solid rgba(125,211,252,.24)!important;
+  border-radius:13px!important;
+  color:#dff7ff!important;
+  background:linear-gradient(
+    145deg,
+    rgba(8,47,73,.86),
+    rgba(15,23,42,.98)
+  )!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 8px 18px rgba(0,0,0,.20)!important;
+  font:900 20px/1 system-ui,sans-serif!important;
+  cursor:pointer!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  z-index:auto!important;
+}
+
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraPageHeaderMenuButton:hover,
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraPageHeaderMenuButton:focus-visible{
+  border-color:rgba(34,211,238,.54)!important;
+  outline:none!important;
+}
+
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body .aurora-page-header-logout{
+  min-height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin:0;
+  padding:0 13px;
+  border:1px solid rgba(251,113,133,.34);
+  border-radius:12px;
+  color:#fecdd3;
+  background:linear-gradient(
+    145deg,
+    rgba(76,5,25,.76),
+    rgba(44,7,20,.90)
+  );
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body .aurora-page-header-logout:hover,
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body .aurora-page-header-logout:focus-visible{
+  border-color:rgba(251,113,133,.60);
+  outline:none;
+}
+
+/*
+  Same rule used by Nexus:
+  old shared launchers are visually retired, but no script deletes
+  navigation controls or fights the app shell.
+*/
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraNavToggle,
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraLeftEdgeGestureZone,
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraRightEdgeGestureZone{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  width:0!important;
+  height:0!important;
+  left:-10000px!important;
+  top:-10000px!important;
 }
 </style>
 
@@ -3852,217 +3789,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
 
 
-<script id="auroraManagerCleanSideRuntimeV4">
-(function(){
-  "use strict";
 
-  const knownSelectors = [
-    "#auroraNavToggle",
-    "#auroraLeftEdgeGestureZone",
-    "#auroraRightEdgeGestureZone",
-    ".fm-sidebar-edge-zone",
-    ".fm-side-toggle",
-    ".fm-edge-toggle",
-    ".aufc-mobile-button",
-    ".aurora-nav-edge-toggle",
-    ".aurora-nav-edge-button",
-    ".aurora-floating-nav",
-    ".aurora-floating-menu",
-    "[data-aurora-edge-toggle]",
-    "[data-aurora-floating-nav]"
-  ];
-
-  function normalise(value){
-    return String(value || "")
-      .replace(/\s+/g," ")
-      .trim()
-      .toLowerCase();
-  }
-
-  function isApprovedHeaderMenu(node){
-    return Boolean(
-      node
-      && node.id === "auroraPageHeaderMenuButton"
-      && node.closest(".fm-workspace > .topbar")
-    );
-  }
-
-  function looksLikeFloatingMenu(node,doc){
-    if(!node || !doc || isApprovedHeaderMenu(node)){
-      return false;
-    }
-
-    const label = normalise(
-      node.getAttribute("aria-label")
-      || node.getAttribute("title")
-      || node.textContent
-    );
-
-    const looksLikeMenu =
-      label === "☰"
-      || label === "≡"
-      || label === "menu"
-      || label.includes("open navigation")
-      || label.includes("mission navigation")
-      || label.includes("aurora navigation")
-      || label.includes("open menu");
-
-    if(!looksLikeMenu) return false;
-
-    try{
-      const style = doc.defaultView.getComputedStyle(node);
-      const rect = node.getBoundingClientRect();
-
-      return (
-        (
-          style.position === "fixed"
-          || style.position === "absolute"
-          || style.position === "sticky"
-        )
-        && rect.left < 90
-        && rect.width > 0
-        && rect.width <= 100
-        && rect.height > 0
-        && rect.height <= 100
-        && !node.closest(".topbar")
-        && !node.closest("#auroraNavPanel")
-      );
-    }catch(_){
-      return false;
-    }
-  }
-
-  function cleanDocument(doc,isParent){
-    if(!doc || !doc.documentElement) return;
-
-    const selectors = knownSelectors.slice();
-
-    if(isParent){
-      selectors.push("#auroraTopHeaderMenuButton");
-    }
-
-    doc.querySelectorAll(selectors.join(","))
-      .forEach(function(node){
-        if(!isApprovedHeaderMenu(node)){
-          node.remove();
-        }
-      });
-
-    doc.querySelectorAll("button,[role='button']")
-      .forEach(function(node){
-        if(looksLikeFloatingMenu(node,doc)){
-          node.remove();
-        }
-      });
-  }
-
-  function clean(){
-    cleanDocument(document,false);
-
-    try{
-      if(window.parent && window.parent !== window){
-        cleanDocument(window.parent.document,true);
-      }
-    }catch(_){}
-  }
-
-  function wireLogout(){
-    const button = document.getElementById(
-      "auroraManagerLogoutButton"
-    );
-
-    if(!button || button.dataset.auroraCleanLogout === "true"){
-      return;
-    }
-
-    button.dataset.auroraCleanLogout = "true";
-
-    button.addEventListener("click",function(event){
-      event.preventDefault();
-      event.stopPropagation();
-
-      try{
-        if(window.parent && window.parent !== window){
-          const parentButton =
-            window.parent.document.querySelector(
-              ".logout-button,#logoutButton,"
-              + "[data-aurora-logout]"
-            );
-
-          if(
-            parentButton
-            && typeof parentButton.click === "function"
-          ){
-            parentButton.click();
-            return;
-          }
-        }
-      }catch(_){}
-
-      try{
-        [
-          "aurora_hq_unlocked",
-          "aurora_session",
-          "aurora_manager_session"
-        ].forEach(function(key){
-          localStorage.removeItem(key);
-        });
-
-        sessionStorage.clear();
-      }catch(_){}
-
-      location.href = "index.html";
-    });
-  }
-
-  function start(){
-    clean();
-    wireLogout();
-
-    const localObserver = new MutationObserver(function(){
-      clean();
-    });
-
-    localObserver.observe(document.documentElement,{
-      childList:true,
-      subtree:true
-    });
-
-    try{
-      if(window.parent && window.parent !== window){
-        const parentDoc = window.parent.document;
-
-        const parentObserver = new MutationObserver(function(){
-          clean();
-        });
-
-        parentObserver.observe(parentDoc.documentElement,{
-          childList:true,
-          subtree:true
-        });
-      }
-    }catch(_){}
-  }
-
-  if(document.readyState === "loading"){
-    document.addEventListener(
-      "DOMContentLoaded",
-      start,
-      {once:true}
-    );
-  }else{
-    start();
-  }
-
-  window.addEventListener("load",clean);
-  window.addEventListener("pageshow",clean);
-  window.addEventListener("focus",clean);
-
-  [50,150,350,700,1200,2500,5000].forEach(function(delay){
-    window.setTimeout(clean,delay);
-  });
-})();
-</script>
 
 
 <script id="auroraManagerHorizontalPositionResetV5">
