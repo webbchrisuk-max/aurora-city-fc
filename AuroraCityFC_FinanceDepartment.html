@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html data-aurora-finance-view="m13Dashboard" data-aurora-page="finance" data-aurora-shell-content="true" lang="en">
-<head><!-- Build: Aurora Finance Department • GameShell Content Page v1 • 03 Aug 2026 -->
+<head><!-- Build: Aurora Finance Department • Holding Balance Sync Fix v2 • 03 Aug 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Aurora Finance Department — Payday &amp; Capital Control</title>
@@ -2914,7 +2914,7 @@ body{background:radial-gradient(circle at 82% 2%,rgba(36,130,170,.10),transparen
   transform:translateY(-1px);
 }
 </style>
-<meta content="finance-gameshell-content-v1-20260803" name="aurora-build"/><style id="auroraFinanceGameShellContentStyles">
+<meta content="finance-holding-balance-sync-v2-20260803" name="aurora-build"/><style id="auroraFinanceGameShellContentStyles">
 html,
 body{
   width:100%;
@@ -4670,14 +4670,36 @@ function m38FindFundingPot(sourceName) {
 function m38DeductFundingSource(bill, amount) {
   const paid = Math.max(0, Number(amount || 0));
   if (!paid) return;
-  const source = String(bill?.fundingSource || (bill?.included === false ? "Current Account" : "Holding Pot"));
-  if (source === "Holding Pot") {
-    plannerState.holdingBalance = Math.max(0, Number(plannerState.holdingBalance || 0) - paid);
-    const holdingInput = document.getElementById("holdingBalanceInput");
-    if (holdingInput) holdingInput.value = Number(plannerState.holdingBalance || 0).toFixed(2);
+  const source = String(
+    bill?.fundingSource
+    || (
+      bill?.included === false
+        ? "Current Account"
+        : "Holding Pot"
+    )
+  ).trim();
+
+  const sourceKey = source.toLocaleLowerCase("en-GB");
+
+  if (sourceKey === "holding pot") {
+    plannerState.holdingBalance = Math.max(
+      0,
+      Number(plannerState.holdingBalance || 0) - paid
+    );
+
+    const holdingInput =
+      document.getElementById("holdingBalanceInput");
+
+    if (holdingInput){
+      holdingInput.value =
+        Number(plannerState.holdingBalance || 0).toFixed(2);
+    }
+
     return;
   }
-  if (source === "Current Account") return;
+
+  if (sourceKey === "current account") return;
+
   const pot = m38FindFundingPot(source);
   if (pot) pot.balance = Math.max(0, Number(pot.balance || 0) - paid);
 }
@@ -6349,6 +6371,26 @@ function runPlanner() {
   bindTableInputs();
   updatePlannerTotals();
   renderPotTrendChart();
+
+  /*
+   * Bill completion and Funding Engine actions previously refreshed
+   * their own panels but left the command-centre figures unchanged.
+   */
+  if(typeof m13Render === "function"){
+    m13Render();
+  }
+
+  document.dispatchEvent(
+    new CustomEvent(
+      "aurora:finance-holding-synced",
+      {
+        detail:{
+          holdingBalance:
+            Number(plannerState.holdingBalance || 0)
+        }
+      }
+    )
+  );
 }
 
 loadPlannerData();
@@ -6359,9 +6401,42 @@ document.getElementById("minimumBufferInput").value = plannerState.minimumBuffer
 document.getElementById("growPotBalanceInput").value = plannerState.growPotBalance ?? 700;
 document.getElementById("growPotTargetInput").value = plannerState.growPotTarget ?? 7500;
 
-document.getElementById("holdingBalanceInput")?.addEventListener("input", () => {
+function syncHoldingBalanceFromFundingEngine(
+  persist = false
+){
+  const input =
+    document.getElementById("holdingBalanceInput");
+  const next = parseNum(input?.value);
+
+  if(Number.isFinite(next)){
+    plannerState.holdingBalance = Math.max(0,next);
+  }
+
   updatePlannerTotals();
-});
+
+  if(typeof m13Render === "function"){
+    m13Render();
+  }
+
+  if(persist){
+    savePlannerData();
+  }
+}
+
+document.getElementById("holdingBalanceInput")
+  ?.addEventListener(
+    "input",
+    () => syncHoldingBalanceFromFundingEngine(false)
+  );
+
+document.getElementById("holdingBalanceInput")
+  ?.addEventListener(
+    "change",
+    () => syncHoldingBalanceFromFundingEngine(false)
+  );
+
+window.syncHoldingBalanceFromFundingEngine =
+  syncHoldingBalanceFromFundingEngine;
 
 document.getElementById("paydayContributionInput")?.addEventListener("input", () => {
   updatePlannerTotals();
@@ -6379,10 +6454,19 @@ document.getElementById("growPotTargetInput")?.addEventListener("input", () => {
   updatePlannerTotals();
 });
 
-document.getElementById("savePlannerBtn")?.addEventListener("click", () => {
-  savePlannerData();
-  runPlanner();
-});
+document.getElementById("savePlannerBtn")
+  ?.addEventListener(
+    "click",
+    () => {
+      /*
+       * Read the live inputs first, then save the corrected state.
+       * The old order saved the previous balance before runPlanner().
+       */
+      runPlanner();
+      savePlannerData();
+      syncHoldingBalanceFromFundingEngine(true);
+    }
+  );
 
 document.getElementById("resetPlannerBtn")?.addEventListener("click", () => {
   resetPlannerData();
@@ -6478,7 +6562,15 @@ document.getElementById("potEditorGrid")?.addEventListener("click",(event)=>{
 });
 
 runPlanner();
-setTimeout(m13Render,50);
+
+window.setTimeout(
+  () => {
+    if(typeof m13Render === "function"){
+      m13Render();
+    }
+  },
+  50
+);
 </script>
 <script>
 /* ===================== M23 RECURRING CASH-FLOW EXPANSION ===================== */
@@ -6583,7 +6675,26 @@ function m13Render(){
   const lifestyle=m13Num("simLifestyleInput");
   const goals=m13Num("simGoalsInput");
   const grow=m13Num("simGrowInput");
-  const holding=Number(plannerState.holdingBalance||0);
+  const holdingInput =
+    document.getElementById("holdingBalanceInput");
+  const holdingInputText =
+    String(holdingInput?.value ?? "").trim();
+  const holdingFromInput =
+    holdingInputText === ""
+      ? NaN
+      : Number(holdingInputText);
+  const holding = Number.isFinite(holdingFromInput)
+    ? Math.max(0,holdingFromInput)
+    : Math.max(0,Number(plannerState.holdingBalance||0));
+
+  /*
+   * The Funding Engine field is the authoritative live balance.
+   * Keep plannerState and the Budget Dashboard on the same figure.
+   */
+  if(Number.isFinite(holdingFromInput)){
+    plannerState.holdingBalance = holding;
+  }
+
   const flex=Math.max(0,pay-isa-lifestyle-goals-grow);
 
   const included=(plannerState.scheduledBills||[]).filter(x=>x&&x.included);
@@ -11623,8 +11734,31 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
       if(typeof window.m13Render==="function"){
         window.m13Render();
       }
+    },
+    syncHoldingBalance(){
+      if(
+        typeof window.syncHoldingBalanceFromFundingEngine
+        === "function"
+      ){
+        window.syncHoldingBalanceFromFundingEngine(false);
+      }else if(typeof window.m13Render === "function"){
+        window.m13Render();
+      }
     }
   });
+
+  window.addEventListener(
+    "pageshow",
+    () => {
+      window.setTimeout(
+        () => {
+          window.AuroraFinanceDepartment
+            ?.syncHoldingBalance();
+        },
+        40
+      );
+    }
+  );
 
   document.documentElement.dataset.auroraShellConnection=
     shellConnected()
