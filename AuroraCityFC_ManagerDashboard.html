@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 
-<html data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
+<html data-aurora-manager-hydration="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
-<!-- Build: Aurora Manager Dashboard • GameShell Content Page v1 • 3 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
+<!-- Build: Aurora Manager Dashboard • Startup Hydration Fix v2 • 3 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
 
@@ -448,7 +448,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-gameshell-content-v1-20260803" name="aurora-build"/>
+</style><meta content="manager-startup-hydration-fix-v2-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -913,10 +913,424 @@
 <link href="aurora-hero.css?v=20260802-manager-step3-fix1" rel="stylesheet"/>
 
 
-<style id="auroraManagerGameShellContentStyles">html,body{width:100%;min-width:0;margin:0;overflow-x:hidden}body{padding:0}main.app{width:min(1600px,100%);max-width:1600px;margin:0 auto;padding:14px 18px 32px}@media(max-width:760px){main.app{padding:10px 10px 24px}}</style></head>
+<style id="auroraManagerGameShellContentStyles">html,body{width:100%;min-width:0;margin:0;overflow-x:hidden}body{padding:0}main.app{width:min(1600px,100%);max-width:1600px;margin:0 auto;padding:14px 18px 32px}@media(max-width:760px){main.app{padding:10px 10px 24px}}</style>
+<style id="auroraManagerStartupHydrationStyles">
+html[data-aurora-manager-hydration="pending"] body > main.app{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+html[data-aurora-manager-hydration="ready"] body > main.app{
+  opacity:1;
+  visibility:visible;
+  transition:opacity .22s ease;
+}
+
+#auroraManagerHydrationScreen{
+  position:fixed;
+  z-index:2147483000;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:
+    calc(24px + env(safe-area-inset-top,0px))
+    calc(24px + env(safe-area-inset-right,0px))
+    calc(24px + env(safe-area-inset-bottom,0px))
+    calc(24px + env(safe-area-inset-left,0px));
+  color:#eaf7ff;
+  background:
+    radial-gradient(
+      circle at 24% 12%,
+      rgba(34,211,238,.17),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 82% 10%,
+      rgba(167,139,250,.14),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(2,8,22,.995),
+      rgba(1,5,15,.998)
+    );
+  opacity:1;
+  visibility:visible;
+  transition:
+    opacity .22s ease,
+    visibility .22s ease;
+}
+
+#auroraManagerHydrationScreen[data-state="ready"]{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.aurora-manager-hydration-card{
+  width:min(460px,100%);
+  padding:26px;
+  border:1px solid rgba(103,232,249,.25);
+  border-radius:26px;
+  background:
+    radial-gradient(
+      circle at 90% 0%,
+      rgba(96,165,250,.12),
+      transparent 38%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(8,34,58,.94),
+      rgba(3,12,28,.98)
+    );
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.52),
+    inset 0 1px 0 rgba(255,255,255,.055);
+  text-align:center;
+}
+
+.aurora-manager-hydration-crest{
+  width:68px;
+  height:68px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 17px;
+  border:1px solid rgba(103,232,249,.30);
+  border-radius:21px;
+  color:#dffbff;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,145,178,.34),
+      rgba(30,64,175,.26)
+    );
+  box-shadow:
+    0 0 0 6px rgba(34,211,238,.045),
+    0 0 28px rgba(34,211,238,.13);
+  font-size:27px;
+}
+
+.aurora-manager-hydration-card small{
+  display:block;
+  color:#67e8f9;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+.aurora-manager-hydration-card strong{
+  display:block;
+  margin-top:9px;
+  color:#f8fcff;
+  font-size:23px;
+  letter-spacing:-.04em;
+}
+
+.aurora-manager-hydration-card p{
+  margin:9px 0 0;
+  color:#9eb1c7;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.aurora-manager-hydration-track{
+  height:5px;
+  margin-top:20px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(148,163,184,.13);
+}
+
+.aurora-manager-hydration-track i{
+  display:block;
+  width:42%;
+  height:100%;
+  border-radius:inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #22d3ee,
+      #60a5fa,
+      #a78bfa,
+      #34d399
+    );
+  box-shadow:0 0 18px rgba(34,211,238,.32);
+  animation:auroraManagerHydrationMove 1.2s ease-in-out infinite;
+}
+
+#auroraManagerHydrationStatus{
+  display:block;
+  margin-top:12px;
+  color:#b9caDC;
+  font-size:10px;
+  font-weight:850;
+}
+
+@keyframes auroraManagerHydrationMove{
+  0%{
+    transform:translateX(-115%);
+  }
+  100%{
+    transform:translateX(340%);
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .aurora-manager-hydration-track i{
+    width:100%;
+    animation:none;
+  }
+
+  html[data-aurora-manager-hydration="ready"] body > main.app,
+  #auroraManagerHydrationScreen{
+    transition:none;
+  }
+}
+</style>
+
+</head>
 <body>
 
+<div
+  aria-live="polite"
+  aria-busy="true"
+  id="auroraManagerHydrationScreen"
+  role="status"
+>
+  <div class="aurora-manager-hydration-card">
+    <div
+      aria-hidden="true"
+      class="aurora-manager-hydration-crest"
+    >AFC</div>
+    <small>Aurora Manager Command</small>
+    <strong>Synchronising Manager Dashboard</strong>
+    <p>
+      Loading the latest club data, Transfer Centre route
+      and decision priorities.
+    </p>
+    <div
+      aria-hidden="true"
+      class="aurora-manager-hydration-track"
+    ><i></i></div>
+    <span id="auroraManagerHydrationStatus">
+      Loading club data…
+    </span>
+  </div>
+</div>
+<script id="auroraManagerStartupHydrationController">
+(function(){
+  "use strict";
 
+  const root = document.documentElement;
+  const readiness = {
+    data:false,
+    transfer:false,
+    hero:false,
+    revealed:false
+  };
+
+  let settleTimer = 0;
+  let safetyTimer = 0;
+  let heroObserver = null;
+
+  function screen(){
+    return document.getElementById(
+      "auroraManagerHydrationScreen"
+    );
+  }
+
+  function statusElement(){
+    return document.getElementById(
+      "auroraManagerHydrationStatus"
+    );
+  }
+
+  function setStatus(message){
+    const element = statusElement();
+
+    if(element){
+      element.textContent = message;
+    }
+  }
+
+  function snapshot(){
+    return {
+      data:readiness.data,
+      transfer:readiness.transfer,
+      hero:readiness.hero,
+      revealed:readiness.revealed
+    };
+  }
+
+  function reveal(reason){
+    if(readiness.revealed) return;
+
+    readiness.revealed = true;
+    window.clearTimeout(settleTimer);
+    window.clearTimeout(safetyTimer);
+    heroObserver?.disconnect();
+
+    setStatus("Manager Dashboard ready");
+
+    window.requestAnimationFrame(function(){
+      try{
+        window.AuroraManagerHeroSync?.();
+      }catch(error){
+        console.warn(
+          "Aurora Manager final hero sync",
+          error
+        );
+      }
+
+      root.dataset.auroraManagerHydration = "ready";
+
+      const loadingScreen = screen();
+
+      if(loadingScreen){
+        loadingScreen.dataset.state = "ready";
+        loadingScreen.setAttribute("aria-busy","false");
+
+        window.setTimeout(function(){
+          loadingScreen.remove();
+        },280);
+      }
+
+      document.dispatchEvent(
+        new CustomEvent(
+          "aurora:manager-hydrated",
+          {
+            detail:{
+              ...snapshot(),
+              reason
+            }
+          }
+        )
+      );
+    });
+  }
+
+  function maybeReveal(){
+    if(readiness.revealed) return;
+
+    if(
+      readiness.data
+      && readiness.transfer
+      && readiness.hero
+    ){
+      setStatus("Finalising manager priorities…");
+      window.clearTimeout(settleTimer);
+
+      /*
+       * Allow the Decision Queue and hero MutationObservers to process
+       * the final Transfer Centre message before the page is revealed.
+       */
+      settleTimer = window.setTimeout(
+        function(){
+          reveal("data-transfer-and-hero-ready");
+        },
+        520
+      );
+    }
+  }
+
+  function markDataReady(){
+    if(readiness.data) return;
+
+    readiness.data = true;
+
+    setStatus(
+      readiness.transfer
+        ? "Finalising manager priorities…"
+        : "Syncing the latest Transfer Centre route…"
+    );
+
+    maybeReveal();
+  }
+
+  function markTransferReady(){
+    readiness.transfer = true;
+
+    setStatus(
+      readiness.data
+        ? "Finalising manager priorities…"
+        : "Loading the latest club data…"
+    );
+
+    maybeReveal();
+  }
+
+  function markHeroReady(){
+    if(readiness.hero) return;
+
+    readiness.hero = true;
+    maybeReveal();
+  }
+
+  function watchForHero(){
+    if(
+      document.getElementById("club-overview")
+      || document.querySelector(
+        "#auroraHero .manager-command-hero-v4"
+      )
+    ){
+      markHeroReady();
+      return;
+    }
+
+    heroObserver = new MutationObserver(function(){
+      if(
+        document.getElementById("club-overview")
+        || document.querySelector(
+          "#auroraHero .manager-command-hero-v4"
+        )
+      ){
+        markHeroReady();
+        heroObserver?.disconnect();
+      }
+    });
+
+    heroObserver.observe(
+      document.body,
+      {
+        childList:true,
+        subtree:true
+      }
+    );
+  }
+
+  window.AuroraManagerHydration = Object.freeze({
+    markDataReady,
+    markTransferReady,
+    markHeroReady,
+    reveal,
+    state:snapshot
+  });
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      watchForHero,
+      {once:true}
+    );
+  }else{
+    watchForHero();
+  }
+
+  /*
+   * Never leave the dashboard inaccessible when a remote source fails.
+   * The stable loading screen remains visible for up to eight seconds,
+   * then the best available state is shown.
+   */
+  safetyTimer = window.setTimeout(
+    function(){
+      reveal("safety-timeout");
+    },
+    8000
+  );
+})();
+</script>
 
 <main class="app fm-command-app">
 <div data-aurora-hero="" data-hero-image="assets/aurora-city-fc/hero/managerdash.PNG" data-page="manager" id="auroraHero"></div>
@@ -1247,7 +1661,13 @@ window.addEventListener('message',event=>{
   const plan=normaliseTransferPlan(event.data.plan);
   if(!plan) return;
   syncedTransferPlan=plan;
-  if(Array.isArray(state.holdings)) renderAll();
+
+  if(Array.isArray(state.holdings)){
+    renderAll();
+  }
+
+  window.AuroraManagerHydration
+    ?.markTransferReady();
 });
 window.addEventListener('storage',event=>{
   if(event.key !== TRANSFER_PLAN_KEY || !event.newValue) return;
@@ -1255,7 +1675,13 @@ window.addEventListener('storage',event=>{
     const plan=normaliseTransferPlan(JSON.parse(event.newValue));
     if(!plan) return;
     syncedTransferPlan=plan;
-    if(Array.isArray(state.holdings)) renderAll();
+
+    if(Array.isArray(state.holdings)){
+      renderAll();
+    }
+
+    window.AuroraManagerHydration
+      ?.markTransferReady();
   }catch(_){}
 });
 function currentDivision(monthly){
@@ -1461,6 +1887,9 @@ async function loadData(force=false){
     };
     renderAll();
 
+    window.AuroraManagerHydration
+      ?.markDataReady();
+
     try{
       const params=new URLSearchParams(location.search);
 
@@ -1516,7 +1945,17 @@ async function loadData(force=false){
     return {ok:true,latest:latestDataTimestamp?.()||null};
   }catch(err){
     console.error(err);
-    if($("actionList")) $("actionList").innerHTML = `<div class="loading error">${err.message || "Unable to load AuroraData."}</div>`;
+
+    if($("actionList")){
+      $("actionList").innerHTML =
+        `<div class="loading error">${
+          err.message || "Unable to load AuroraData."
+        }</div>`;
+    }
+
+    window.AuroraManagerHydration
+      ?.markDataReady();
+
     return {ok:false,error:err};
   }finally{
     if(btn){
@@ -3171,6 +3610,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     syncPosition();
     syncNextEvent();
   }
+
+  window.AuroraManagerHeroSync = syncHero;
 
   function wireHero(){
     const button = byId("managerHeroDecisionButton");
