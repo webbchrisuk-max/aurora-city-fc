@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Build: Aurora Shared GameShell • Refined App Header v7 • 03 Aug 2026 -->
+  <!-- Build: Aurora Shared GameShell • Cloud Sync Route Fix v8 • 03 Aug 2026 -->
   <meta charset="UTF-8">
   <meta
     name="viewport"
@@ -2707,16 +2707,16 @@
     <div class="aurora-shell-nav-footer">
       <a
         class="aurora-shell-cloud"
-        href="AuroraBrowserDataTransfer.html"
-        data-shell-page="AuroraBrowserDataTransfer.html"
+        href="AuroraCloudSync.html"
+        data-shell-page="AuroraCloudSync.html"
       >
         <span class="aurora-shell-cloud-icon">☁</span>
         <span class="aurora-shell-cloud-copy">
           <strong>Cloud Sync</strong>
-          <span>Open Aurora data transfer</span>
+          <span>Sign in and sync this device</span>
         </span>
         <span class="aurora-shell-cloud-state">
-          Synced
+          Open
         </span>
       </a>
     </div>
@@ -3032,7 +3032,7 @@
         ROUTES.map(route => route.file)
       );
 
-      allowedFiles.add("AuroraBrowserDataTransfer.html");
+      allowedFiles.add("AuroraCloudSync.html");
 
       let currentFile =
         "AuroraCityFC_ManagerDashboard.html";
@@ -3074,6 +3074,15 @@
       }
 
       function routeFor(file){
+        if(file === "AuroraCloudSync.html"){
+          return {
+            icon:"☁",
+            title:"Cloud Sync",
+            subtitle:"Secure Shared Save",
+            file:file
+          };
+        }
+
         return ROUTES.find(
           route => route.file === file
         ) || {
