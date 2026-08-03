@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Build: Aurora Shared GameShell • Fresh Department Loader v17 • 04 Aug 2026 -->
+  <!-- Build: Aurora Shared GameShell • Loader Scope Repair v18 • 04 Aug 2026 -->
   <meta charset="UTF-8">
   <meta
     name="viewport"
@@ -7134,6 +7134,39 @@
 
       allowedFiles.add("AuroraCloudSync.html");
 
+      const CHILD_PAGE_DEPLOYMENT_VERSION =
+        "20260804-cloud-authoritative-v12";
+
+      function buildFreshChildUrl(
+        file,
+        hash = ""
+      ){
+        const base =
+          String(file || "").trim();
+
+        const cleanHash =
+          hash
+            ? (
+                String(hash).startsWith("#")
+                  ? String(hash)
+                  : `#${hash}`
+              )
+            : "";
+
+        const separator =
+          base.includes("?")
+            ? "&"
+            : "?";
+
+        return (
+          `${base}${separator}`
+          + `auroraBuild=${encodeURIComponent(
+              CHILD_PAGE_DEPLOYMENT_VERSION
+            )}`
+          + cleanHash
+        );
+      }
+
       let currentFile =
         "AuroraCityFC_ManagerDashboard.html";
 
@@ -7787,7 +7820,7 @@
         updateBrowserUrl();
 
         frame.src =
-          versionedChildUrl(
+          buildFreshChildUrl(
             file,
             hash
           );
