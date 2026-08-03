@@ -3,7 +3,7 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
-<!-- Build: Aurora Manager Dashboard • Rich Command Notifications v11 • 3 Aug 2026 -->
+<!-- Build: Aurora Manager Dashboard • Rich Notification Layout Fix v12 • 3 Aug 2026 -->
 <script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-rich-command-notifications-v11-20260803" name="aurora-build"/>
+</style><meta content="manager-rich-notification-layout-v12-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -2904,8 +2904,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </div>
 <div class="beast-about-grid">
 <div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
-<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v11</strong></div>
-<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Rich Command Notifications</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v12</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Rich Notification Layout Fix</strong></div>
 <div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
 <div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
 </div>
@@ -4594,11 +4594,6 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   }
 
   function renderSharedListNow(api){
-    const list =
-      document.getElementById(
-        "auroraSharedAlertList"
-      );
-
     const nativeList =
       document.getElementById(
         "beastAlertList"
@@ -4617,6 +4612,20 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
       );
       nativeList.innerHTML = "";
     }
+
+    /*
+     * GameShell owns the rich renderer. The previous Manager fallback
+     * rebuilt the list with plain markup immediately afterwards.
+     */
+    if(api?.attachDocument){
+      api.attachDocument(document);
+      return;
+    }
+
+    const list =
+      document.getElementById(
+        "auroraSharedAlertList"
+      );
 
     if(!list) return;
 
@@ -4646,7 +4655,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
       return `
         <article
-          class="beast-alert${level}${unread}"
+          class="beast-alert aurora-shared-alert${level}${unread}"
           data-aurora-notification-id="${
             escapeNotificationText(row.id)
           }"
@@ -4668,6 +4677,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
                 row.icon || "🔔"
               )
             }</span>
+
             <span class="aurora-shared-alert-copy">
               <strong>${
                 escapeNotificationText(row.title)
@@ -4684,6 +4694,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
               }</small>
             </span>
           </a>
+
           <button
             aria-label="Remove notification"
             class="aurora-shared-remove"

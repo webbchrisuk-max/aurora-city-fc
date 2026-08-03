@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Build: Aurora Shared GameShell • Rich Command Notifications v13 • 03 Aug 2026 -->
+  <!-- Build: Aurora Shared GameShell • Rich Notification Layout Fix v14 • 03 Aug 2026 -->
   <meta charset="UTF-8">
   <meta
     name="viewport"
@@ -2792,7 +2792,7 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '3.1.0';
+  const VERSION = '3.1.1';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
@@ -3488,11 +3488,82 @@
   }
 
   function richNotificationData(row) {
-    const rich =
+    let rich =
       row?.metadata?.rich
       && typeof row.metadata.rich === "object"
         ? row.metadata.rich
         : null;
+
+    /*
+     * Upgrade older stored notifications that were created before
+     * rich metadata existed.
+     */
+    if (!rich) {
+      const title =
+        String(row?.title || "").toLowerCase();
+
+      const message =
+        String(row?.message || "");
+
+      const percentMatch =
+        message.match(/[-+]?\d+(?:\.\d+)?%/);
+
+      const cashMatch =
+        message.match(/£[\d,]+(?:\.\d+)?/);
+
+      if (/top performer|best performer/.test(title)) {
+        rich = {
+          type:"performer",
+          kicker:"TODAY'S TOP PERFORMER",
+          badge:"TOP FORM",
+          value:percentMatch?.[0] || "",
+          valueLabel:percentMatch ? "TODAY" : "",
+          featured:true,
+          actionText:"Open Analysis Room"
+        };
+      } else if (
+        /transfer|deal sheet|broker funding|mission handoff/.test(title)
+      ) {
+        rich = {
+          type:"transfer",
+          kicker:"TRANSFER CENTRE",
+          badge:"ACTION UPDATE",
+          value:cashMatch?.[0] || "",
+          valueLabel:cashMatch ? "VALUE" : "",
+          actionText:"Open Transfer Centre"
+        };
+      } else if (
+        /hit its target|target zone|target reached/.test(title)
+      ) {
+        rich = {
+          type:"target",
+          kicker:"TARGET HIT",
+          badge:"IN THE ZONE",
+          value:percentMatch?.[0] || "",
+          valueLabel:percentMatch ? "MOVE" : "",
+          progress:100,
+          actionText:"Review Holding"
+        };
+      } else if (/dividend|income is next/.test(title)) {
+        rich = {
+          type:"income",
+          kicker:"NEXT INCOME",
+          badge:"UPCOMING",
+          value:cashMatch?.[0] || "",
+          valueLabel:cashMatch ? "DIVIDEND" : "",
+          actionText:"Open Finance"
+        };
+      } else if (/milestone|objective achieved/.test(title)) {
+        rich = {
+          type:"milestone",
+          kicker:"MILESTONE ACHIEVED",
+          badge:"PROMOTED",
+          value:cashMatch?.[0] || "",
+          valueLabel:cashMatch ? "INCOME" : "",
+          actionText:"Open Finance"
+        };
+      }
+    }
 
     if (!rich) return null;
 
@@ -3654,19 +3725,31 @@
   }
 
   function injectDashboardStyles(documentObject = document) {
-    if (
-      !documentObject
-      || documentObject.getElementById(
+    if (!documentObject) {
+      return;
+    }
+
+    const existingStyle =
+      documentObject.getElementById(
         'auroraSharedNotificationStyles'
-      )
+      );
+
+    if (
+      existingStyle
+      && existingStyle.dataset.version === VERSION
     ) {
       return;
+    }
+
+    if (existingStyle) {
+      existingStyle.remove();
     }
 
     const style =
       documentObject.createElement('style');
 
     style.id = 'auroraSharedNotificationStyles';
+    style.dataset.version = VERSION;
     style.textContent = `
       #beastNotificationPanel>.beast-panel-head{
         position:sticky;
@@ -3753,19 +3836,28 @@
         gap:8px
       }
 
+      #beastNotificationPanel{
+        width:min(520px,calc(100vw - 36px))!important;
+      }
+
       .aurora-shared-alert{
-        position:relative;
+        position:relative!important;
         display:block!important;
+        grid-template-columns:none!important;
+        width:100%!important;
+        min-width:0!important;
         padding:0!important;
-        overflow:hidden
+        overflow:hidden!important
       }
 
       .aurora-shared-alert-open{
+        box-sizing:border-box!important;
         display:grid;
         grid-template-columns:auto minmax(0,1fr) auto;
         align-items:start;
         gap:10px;
-        width:100%;
+        width:100%!important;
+        min-width:0!important;
         padding:12px 38px 12px 12px;
         color:inherit;
         text-decoration:none;
@@ -3776,28 +3868,48 @@
         min-width:0
       }
 
+      #beastNotificationPanel
       .aurora-shared-remove{
-        position:absolute;
-        top:8px;
-        right:8px;
-        width:24px;
-        height:24px;
-        display:grid;
-        place-items:center;
-        border:1px solid rgba(248,113,113,.20);
-        border-radius:50%;
-        background:rgba(127,29,29,.16);
-        color:#fecaca;
-        font-size:15px;
-        line-height:1;
-        cursor:pointer
+        -webkit-appearance:none!important;
+        appearance:none!important;
+        box-sizing:border-box!important;
+        position:absolute!important;
+        z-index:6!important;
+        top:8px!important;
+        right:8px!important;
+        left:auto!important;
+        bottom:auto!important;
+        width:24px!important;
+        min-width:24px!important;
+        max-width:24px!important;
+        height:24px!important;
+        min-height:24px!important;
+        max-height:24px!important;
+        margin:0!important;
+        padding:0!important;
+        display:grid!important;
+        place-items:center!important;
+        border:1px solid rgba(248,113,113,.25)!important;
+        border-radius:50%!important;
+        background:rgba(127,29,29,.24)!important;
+        color:#fecaca!important;
+        box-shadow:none!important;
+        font-size:15px!important;
+        font-weight:800!important;
+        line-height:1!important;
+        letter-spacing:0!important;
+        text-transform:none!important;
+        cursor:pointer!important;
+        flex:0 0 24px!important
       }
 
+      #beastNotificationPanel
       .aurora-shared-remove:hover,
+      #beastNotificationPanel
       .aurora-shared-remove:focus-visible{
-        border-color:rgba(248,113,113,.48);
-        background:rgba(127,29,29,.32);
-        outline:none
+        border-color:rgba(248,113,113,.55)!important;
+        background:rgba(127,29,29,.42)!important;
+        outline:none!important
       }
 
       .aurora-shared-alert-list .aurora-shared-unread{
@@ -3867,10 +3979,39 @@
       }
 
       .aurora-rich-open{
+        box-sizing:border-box!important;
         display:flex!important;
-        flex-direction:column;
-        gap:10px;
+        flex-direction:column!important;
+        align-items:stretch!important;
+        gap:10px!important;
+        width:100%!important;
+        min-width:0!important;
         padding:14px 42px 14px 14px!important;
+      }
+
+      .aurora-rich-card>*{
+        min-width:0
+      }
+
+      .aurora-rich-card
+      .aurora-rich-main{
+        display:grid!important;
+        grid-template-columns:44px minmax(0,1fr) auto!important;
+        align-items:start!important
+      }
+
+      .aurora-rich-card
+      .aurora-rich-copy{
+        width:auto!important;
+        min-width:0!important
+      }
+
+      .aurora-rich-card
+      .aurora-rich-copy>strong,
+      .aurora-rich-card
+      .aurora-rich-copy>p{
+        overflow-wrap:anywhere;
+        word-break:normal
       }
 
       .aurora-rich-topline,
@@ -4020,6 +4161,36 @@
       .aurora-rich-footer time{
         min-width:36px;
         text-align:right;
+      }
+
+      @media(max-width:760px){
+        #beastNotificationPanel{
+          width:calc(100vw - 20px)!important;
+        }
+      }
+
+      @media(max-width:560px){
+        .aurora-rich-card
+        .aurora-rich-main{
+          grid-template-columns:40px minmax(0,1fr)!important;
+        }
+
+        .aurora-rich-card
+        .aurora-rich-value{
+          grid-column:2;
+          margin-top:2px;
+          text-align:left;
+        }
+
+        .aurora-rich-footer{
+          flex-wrap:wrap;
+        }
+
+        .aurora-rich-action{
+          order:3;
+          width:100%;
+          justify-content:center;
+        }
       }
     `;
 
