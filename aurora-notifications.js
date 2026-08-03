@@ -20,11 +20,12 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '3.1.1';
+  const VERSION = '3.2.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
-  const WATCH_KEY = 'aurora_notifications_watch_state_v2';
+  const WATCH_KEY = 'aurora_notifications_watch_state_v3';
+  const SNAPSHOT_KEY = 'aurora_notification_snapshots_v1';
   const DISMISS_KEY = 'aurora_notifications_dismissed_v2';
   const EVENT_NAME = 'aurora:notifications-changed';
   const CHANNEL_NAME = 'aurora-notifications';
@@ -121,9 +122,9 @@
     },
     {
       key: 'aurora_account_transfer_instruction_v1',
-      department: 'Finance Department',
-      page: 'AuroraCityFC_FinanceDepartment.html',
-      title: 'Broker funding instructions updated',
+      department: 'Transfer Centre',
+      page: 'AuroraCityFC_TransferCentre.html',
+      title: 'Broker funding route changed',
       icon: '🏦',
       priority: 'high',
       message: value => describeMoneyEvent(value, 'The broker funding route has changed.')
@@ -150,19 +151,10 @@
       key: 'aurora_wealth_centre',
       department: 'Finance Department',
       page: 'AuroraCityFC_FinanceDepartment.html',
-      title: 'Finance planner updated',
+      title: 'Finance position updated',
       icon: '💷',
       priority: 'normal',
       message: describeFinancePlanner
-    },
-    {
-      key: 'aurora_wealth_centre_history_v1',
-      department: 'Finance Department',
-      page: 'AuroraCityFC_FinanceDepartment.html',
-      title: 'Finance history updated',
-      icon: '📚',
-      priority: 'low',
-      message: value => describeCollection(value, 'Finance history')
     },
     {
       key: 'aurora_pending_registrations_v1',
@@ -198,6 +190,7 @@
 
   const subscribers = new Set();
   const watchedValues = new Map();
+  const watchedSnapshots = new Map();
   let channel = null;
   let dashboardBridge = null;
 
@@ -256,6 +249,33 @@
   function writeWatchState(value) {
     try {
       localStorage.setItem(WATCH_KEY, JSON.stringify(value || {}));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function readSnapshotState() {
+    try {
+      const value = safeJsonParse(
+        localStorage.getItem(SNAPSHOT_KEY) || '{}',
+        {}
+      );
+
+      return value && typeof value === 'object'
+        ? value
+        : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function writeSnapshotState(value) {
+    try {
+      localStorage.setItem(
+        SNAPSHOT_KEY,
+        JSON.stringify(value || {})
+      );
       return true;
     } catch (_) {
       return false;
@@ -474,16 +494,58 @@
     if (!item.title) return null;
 
     const rows = cleanStore();
+
     const duplicate = rows.find(row => {
-      if (item.dedupeKey && row.dedupeKey === item.dedupeKey && row.fingerprint === item.fingerprint) return true;
-      if (STORAGE_SOURCE_KEYS.has(String(item.source || '')) &&
-          String(row.source || '') === String(item.source || '') &&
-          String(row.title || '') === item.title &&
-          String(row.message || '') === item.message &&
-          String(row.page || '') === item.page) return true;
-      return !item.dedupeKey && row.fingerprint === item.fingerprint && now() - Number(row.createdAt || 0) < 60000;
+      if (
+        item.dedupeKey
+        && row.dedupeKey === item.dedupeKey
+        && row.fingerprint === item.fingerprint
+      ) {
+        return true;
+      }
+
+      if (
+        STORAGE_SOURCE_KEYS.has(
+          String(item.source || '')
+        )
+        && String(row.source || '')
+          === String(item.source || '')
+        && String(row.title || '')
+          === item.title
+        && String(row.message || '')
+          === item.message
+        && String(row.page || '')
+          === item.page
+      ) {
+        return true;
+      }
+
+      return !item.dedupeKey
+        && row.fingerprint === item.fingerprint
+        && now() - Number(
+          row.createdAt || 0
+        ) < 60000;
     });
+
     if (duplicate) return duplicate;
+
+    const replaceExisting = Boolean(
+      item.metadata?.replaceExisting
+      || STORAGE_SOURCE_KEYS.has(
+        String(item.source || '')
+      )
+    );
+
+    if (replaceExisting && item.dedupeKey) {
+      for (let index = rows.length - 1; index >= 0; index -= 1) {
+        if (
+          String(rows[index]?.dedupeKey || '')
+          === item.dedupeKey
+        ) {
+          rows.splice(index, 1);
+        }
+      }
+    }
 
     rows.unshift(item);
     if (!writeStore(rows, 'add')) return null;
@@ -825,16 +887,50 @@
       return '<div class="beast-empty">No notifications right now.</div>';
     }
 
+    const categoryRank = row => {
+      const category = String(
+        row?.metadata?.category || ''
+      ).toLowerCase();
+
+      if (
+        category === 'critical'
+        || row?.priority === 'critical'
+      ) {
+        return 4;
+      }
+
+      if (
+        category === 'action'
+        || row?.priority === 'high'
+      ) {
+        return 3;
+      }
+
+      if (category === 'achievement') {
+        return 2;
+      }
+
+      if (category === 'information') {
+        return 1;
+      }
+
+      return 0;
+    };
+
     const ordered = rows.slice().sort((a, b) => {
       const ar = richNotificationData(a);
       const br = richNotificationData(b);
-      const featured =
-        Number(Boolean(br?.featured))
-        - Number(Boolean(ar?.featured));
 
-      return featured
-        || Number(b.createdAt || 0)
-        - Number(a.createdAt || 0);
+      return (
+        Number(Boolean(br?.featured))
+        - Number(Boolean(ar?.featured))
+      ) || (
+        categoryRank(b)
+        - categoryRank(a)
+      ) || (
+        Number(b.createdAt || 0)
+        - Number(a.createdAt || 0)
+      );
     });
 
     return ordered.map(row => {
@@ -1793,6 +1889,659 @@
     return `${label} has been updated.`;
   }
 
+  function finiteOrNull(value) {
+    const number = firstFinite(value);
+    return Number.isFinite(number)
+      ? Number(number)
+      : null;
+  }
+
+  function normalStatus(value) {
+    return String(value || '')
+      .trim()
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .toUpperCase();
+  }
+
+  function billIsComplete(item) {
+    const status = String(
+      item?.status || ''
+    ).toLowerCase();
+
+    return Boolean(
+      item?.archived
+      || item?.completed
+      || item?.paid
+      || /paid|complete|archived/.test(status)
+    );
+  }
+
+  function billAmount(item) {
+    return firstFinite(
+      item?.amount,
+      item?.cost,
+      item?.value,
+      item?.billAmount,
+      item?.bill_amount,
+      item?.expectedAmount,
+      item?.expected_amount
+    );
+  }
+
+  function financePlannerSummary(data) {
+    if (!data || typeof data !== 'object') {
+      return null;
+    }
+
+    const bills = Array.isArray(data.scheduledBills)
+      ? data.scheduledBills
+      : [];
+
+    let completed = 0;
+    let due = 0;
+    let completedValue = 0;
+    let dueValue = 0;
+
+    bills.forEach(item => {
+      const amount = billAmount(item);
+
+      if (billIsComplete(item)) {
+        completed += 1;
+        if (Number.isFinite(amount)) {
+          completedValue += amount;
+        }
+      } else {
+        due += 1;
+        if (Number.isFinite(amount)) {
+          dueValue += amount;
+        }
+      }
+    });
+
+    const holdingBalance = finiteOrNull(
+      firstFinite(
+        data.holdingBalance,
+        data.currentHoldingPot,
+        data.balance,
+        data.availableBalance
+      )
+    );
+
+    return {
+      completed,
+      due,
+      completedValue:
+        Number(completedValue.toFixed(2)),
+      dueValue:
+        Number(dueValue.toFixed(2)),
+      holdingBalance,
+      billCount:bills.length
+    };
+  }
+
+  function transferPlanSummary(data) {
+    if (!data || typeof data !== 'object') {
+      return null;
+    }
+
+    const rows = Array.isArray(data.rows)
+      ? data.rows
+      : Array.isArray(data.allocations)
+        ? data.allocations
+        : [];
+
+    const tickers = rows
+      .map(row =>
+        row?.displayTicker
+        || row?.ticker
+        || row?.symbol
+      )
+      .filter(Boolean)
+      .map(value => String(value).toUpperCase());
+
+    const total = finiteOrNull(
+      firstFinite(
+        data.total,
+        data.totalBudget,
+        data.budget,
+        data.totalInvestment,
+        data.investmentTotal
+      )
+    );
+
+    const income = finiteOrNull(
+      firstFinite(
+        data.totalIncome,
+        data.annualIncome,
+        data.estimatedIncome,
+        data.projectedIncome
+      )
+    );
+
+    return {
+      count:rows.length,
+      tickers,
+      total,
+      income,
+      status:normalStatus(
+        data.status
+        || data.stage
+        || data.state
+      )
+    };
+  }
+
+  function fundingRouteSummary(data) {
+    if (!data || typeof data !== 'object') {
+      return null;
+    }
+
+    const ig = finiteOrNull(
+      firstFinite(
+        data.ig,
+        data.igIsa,
+        data.igISA,
+        data.igAmount,
+        data.ig_amount,
+        data.igTotal,
+        data.ig_total,
+        data?.brokers?.ig,
+        data?.route?.ig
+      )
+    );
+
+    const trading212 = finiteOrNull(
+      firstFinite(
+        data.trading212,
+        data.trade212,
+        data.t212,
+        data.trading212Amount,
+        data.trading_212_amount,
+        data.t212Amount,
+        data.t212_amount,
+        data?.brokers?.trading212,
+        data?.brokers?.t212,
+        data?.route?.trading212,
+        data?.route?.t212
+      )
+    );
+
+    let total = finiteOrNull(
+      firstFinite(
+        data.total,
+        data.amount,
+        data.value,
+        data.totalFunding,
+        data.total_funding,
+        data.invested
+      )
+    );
+
+    if (
+      (!Number.isFinite(total) || total <= 0)
+      && (
+        Number.isFinite(ig)
+        || Number.isFinite(trading212)
+      )
+    ) {
+      total =
+        (Number.isFinite(ig) ? ig : 0)
+        + (Number.isFinite(trading212) ? trading212 : 0);
+    }
+
+    return {
+      status:normalStatus(
+        data.status
+        || data.stage
+        || data.state
+        || data.routeStatus
+      ),
+      total,
+      ig,
+      trading212
+    };
+  }
+
+  function semanticObject(value) {
+    if (Array.isArray(value)) {
+      return value.map(semanticObject);
+    }
+
+    if (!value || typeof value !== 'object') {
+      return value;
+    }
+
+    const output = {};
+
+    Object.keys(value)
+      .sort()
+      .forEach(key => {
+        if (
+          /^(saved|updated|generated|created|modified|last).*?(at|time|date)?$/i.test(key)
+          || /^(revision|timestamp|savedIso|savedAt)$/i.test(key)
+          || key === '_persistence'
+        ) {
+          return;
+        }
+
+        output[key] = semanticObject(value[key]);
+      });
+
+    return output;
+  }
+
+  function snapshotForRule(rule, rawValue) {
+    const data = parseStored(rawValue);
+
+    if (rule.key === 'aurora_wealth_centre') {
+      return financePlannerSummary(data);
+    }
+
+    if (rule.key === 'aurora_transfer_plan_v2') {
+      return transferPlanSummary(data);
+    }
+
+    if (
+      rule.key
+      === 'aurora_account_transfer_instruction_v1'
+    ) {
+      return fundingRouteSummary(data);
+    }
+
+    return semanticObject(data);
+  }
+
+  function numbersDiffer(a, b, tolerance = 0.005) {
+    if (
+      !Number.isFinite(Number(a))
+      && !Number.isFinite(Number(b))
+    ) {
+      return false;
+    }
+
+    if (
+      !Number.isFinite(Number(a))
+      || !Number.isFinite(Number(b))
+    ) {
+      return true;
+    }
+
+    return Math.abs(Number(a) - Number(b))
+      > tolerance;
+  }
+
+  function moneyArrow(previous, current) {
+    if (
+      !Number.isFinite(Number(previous))
+      || !Number.isFinite(Number(current))
+    ) {
+      return '';
+    }
+
+    return `${formatCash(previous)} → ${formatCash(current)}`;
+  }
+
+  function buildSmartStorageNotification(
+    rule,
+    previous,
+    current,
+    rawValue
+  ) {
+    if (rule.key === 'aurora_wealth_centre') {
+      if (!current) return null;
+
+      const previousValue =
+        previous && typeof previous === 'object'
+          ? previous
+          : null;
+
+      const completedDelta =
+        previousValue
+          ? current.completed - previousValue.completed
+          : 0;
+
+      const dueDelta =
+        previousValue
+          ? current.due - previousValue.due
+          : 0;
+
+      const balanceChanged =
+        previousValue
+        && numbersDiffer(
+          previousValue.holdingBalance,
+          current.holdingBalance
+        );
+
+      const dueValueChanged =
+        previousValue
+        && numbersDiffer(
+          previousValue.dueValue,
+          current.dueValue
+        );
+
+      /*
+       * A save timestamp or revision alone is not a notification.
+       */
+      if (
+        previousValue
+        && completedDelta === 0
+        && dueDelta === 0
+        && !balanceChanged
+        && !dueValueChanged
+      ) {
+        return null;
+      }
+
+      let title = 'Finance position updated';
+      let badge = 'POSITION CHANGED';
+      let category = 'information';
+      let priority = 'normal';
+
+      if (completedDelta > 0) {
+        title =
+          completedDelta === 1
+            ? 'Bill completed — finance position updated'
+            : `${completedDelta} bills completed — finance position updated`;
+        badge = 'BILL COMPLETED';
+        category = 'achievement';
+      } else if (balanceChanged) {
+        title = 'Holding Pot balance changed';
+        badge = 'BALANCE CHANGED';
+      }
+
+      const parts = [];
+
+      if (completedDelta > 0) {
+        parts.push(
+          `${completedDelta} newly completed.`
+        );
+      }
+
+      parts.push(
+        `${current.completed} completed • ${current.due} still due.`
+      );
+
+      if (balanceChanged) {
+        parts.push(
+          `Holding Pot ${moneyArrow(
+            previousValue.holdingBalance,
+            current.holdingBalance
+          )}.`
+        );
+      } else if (
+        Number.isFinite(current.holdingBalance)
+      ) {
+        parts.push(
+          `Holding Pot ${formatCash(
+            current.holdingBalance
+          )}.`
+        );
+      }
+
+      if (
+        dueValueChanged
+        && Number.isFinite(current.dueValue)
+      ) {
+        parts.push(
+          `Outstanding bills ${moneyArrow(
+            previousValue.dueValue,
+            current.dueValue
+          )}.`
+        );
+      }
+
+      return {
+        title,
+        message:parts.join(' '),
+        priority,
+        metadata:{
+          category,
+          replaceExisting:true,
+          rich:{
+            type:'finance',
+            kicker:'FINANCE POSITION',
+            badge,
+            value:Number.isFinite(current.holdingBalance)
+              ? formatCash(current.holdingBalance)
+              : String(current.due),
+            valueLabel:Number.isFinite(current.holdingBalance)
+              ? 'HOLDING POT'
+              : 'BILLS DUE',
+            secondary:
+              `${current.completed} completed • ${current.due} due`,
+            actionText:'Open Finance'
+          }
+        }
+      };
+    }
+
+    if (rule.key === 'aurora_transfer_plan_v2') {
+      if (!current) return null;
+
+      const previousValue =
+        previous && typeof previous === 'object'
+          ? previous
+          : null;
+
+      const tickersChanged =
+        JSON.stringify(previousValue?.tickers || [])
+        !== JSON.stringify(current.tickers || []);
+
+      const totalChanged =
+        previousValue
+        && numbersDiffer(
+          previousValue.total,
+          current.total
+        );
+
+      const incomeChanged =
+        previousValue
+        && numbersDiffer(
+          previousValue.income,
+          current.income
+        );
+
+      const statusChanged =
+        previousValue
+        && previousValue.status !== current.status;
+
+      if (
+        previousValue
+        && !tickersChanged
+        && !totalChanged
+        && !incomeChanged
+        && !statusChanged
+      ) {
+        return null;
+      }
+
+      if (
+        !current.count
+        && !(Number.isFinite(current.total)
+          && current.total > 0)
+      ) {
+        return null;
+      }
+
+      const parts = [];
+
+      if (tickersChanged && current.tickers.length) {
+        parts.push(
+          `Route: ${current.tickers.join(' / ')}.`
+        );
+      }
+
+      if (totalChanged) {
+        parts.push(
+          `Budget ${moneyArrow(
+            previousValue.total,
+            current.total
+          )}.`
+        );
+      } else if (Number.isFinite(current.total)) {
+        parts.push(`Budget ${formatCash(current.total)}.`);
+      }
+
+      if (incomeChanged) {
+        parts.push(
+          `Projected income ${moneyArrow(
+            previousValue.income,
+            current.income
+          )}/year.`
+        );
+      } else if (Number.isFinite(current.income)) {
+        parts.push(
+          `Projected income ${formatCash(
+            current.income
+          )}/year.`
+        );
+      }
+
+      return {
+        title:
+          current.status
+            ? `Transfer route — ${current.status}`
+            : 'Transfer route changed',
+        message:parts.join(' '),
+        priority:'high',
+        metadata:{
+          category:'action',
+          replaceExisting:true,
+          rich:{
+            type:'transfer',
+            kicker:'TRANSFER WINDOW',
+            badge:current.status || 'ACTION READY',
+            value:String(current.count),
+            valueLabel:'SIGNINGS',
+            secondary:Number.isFinite(current.income)
+              ? `${formatCash(current.income)}/year`
+              : Number.isFinite(current.total)
+                ? `${formatCash(current.total)} budget`
+                : '',
+            actionText:'Open Transfer Centre'
+          }
+        }
+      };
+    }
+
+    if (
+      rule.key
+      === 'aurora_account_transfer_instruction_v1'
+    ) {
+      if (!current) return null;
+
+      /*
+       * Zero-value routes are incomplete data, not useful alerts.
+       */
+      if (
+        !Number.isFinite(current.total)
+        || current.total <= 0
+      ) {
+        return null;
+      }
+
+      const previousValue =
+        previous && typeof previous === 'object'
+          ? previous
+          : null;
+
+      const changed =
+        !previousValue
+        || previousValue.status !== current.status
+        || numbersDiffer(
+          previousValue.total,
+          current.total
+        )
+        || numbersDiffer(
+          previousValue.ig,
+          current.ig
+        )
+        || numbersDiffer(
+          previousValue.trading212,
+          current.trading212
+        );
+
+      if (!changed) return null;
+
+      const parts = [];
+
+      if (
+        previousValue
+        && previousValue.status !== current.status
+      ) {
+        parts.push(
+          `Status ${previousValue.status || 'NOT SET'} → ${current.status || 'READY'}.`
+        );
+      } else if (current.status) {
+        parts.push(`Status ${current.status}.`);
+      }
+
+      if (Number.isFinite(current.ig)) {
+        parts.push(`IG ISA ${formatCash(current.ig)}.`);
+      }
+
+      if (Number.isFinite(current.trading212)) {
+        parts.push(
+          `Trading 212 ${formatCash(
+            current.trading212
+          )}.`
+        );
+      }
+
+      parts.push(
+        `Total funding ${formatCash(current.total)}.`
+      );
+
+      return {
+        title:'Broker funding route ready',
+        message:parts.join(' '),
+        priority:'high',
+        metadata:{
+          category:'action',
+          replaceExisting:true,
+          rich:{
+            type:'transfer',
+            kicker:'BROKER FUNDING',
+            badge:current.status || 'ACTION REQUIRED',
+            value:formatCash(current.total),
+            valueLabel:'TOTAL FUNDING',
+            secondary:[
+              Number.isFinite(current.ig)
+                ? `IG ${formatCash(current.ig)}`
+                : '',
+              Number.isFinite(current.trading212)
+                ? `T212 ${formatCash(current.trading212)}`
+                : ''
+            ].filter(Boolean).join(' • '),
+            actionText:'Open Transfer Centre'
+          }
+        }
+      };
+    }
+
+    return {
+      title:rule.title,
+      message:
+        typeof rule.message === 'function'
+          ? rule.message(rawValue)
+          : String(
+              rule.message
+              || 'Aurora data updated.'
+            ),
+      priority:rule.priority,
+      metadata:{
+        category:
+          rule.priority === 'critical'
+            ? 'critical'
+            : rule.priority === 'high'
+              ? 'action'
+              : 'information',
+        replaceExisting:true
+      }
+    };
+  }
+
   function actionLabel_(control) {
     if (!control) return '';
 
@@ -1818,7 +2567,17 @@
       return false;
     }
 
-    return /save|complete|approve|confirm|register|execute|submit|archive|mark paid|paid|recalculate|refresh|sync|generate|record|finish|apply|update|run planner/.test(text);
+    /*
+     * Routine saves, refreshes and recalculations are observed through
+     * semantic storage changes. A click alone is not a notification.
+     */
+    if (
+      /save|refresh|sync|recalculate|run planner|update/.test(text)
+    ) {
+      return false;
+    }
+
+    return /complete|approve|confirm|register|execute|submit|archive|mark paid|paid|generate|record purchase|finish mission|apply transfer/.test(text);
   }
 
   function describeDepartmentAction_(page, label) {
@@ -1948,6 +2707,13 @@
 
         if (!meaningfulAction_(label)) return;
 
+        if (
+          page.page.includes('FinanceDepartment')
+          || page.page.includes('TransferCentre')
+        ) {
+          return;
+        }
+
         const detail = describeDepartmentAction_(
           page,
           label
@@ -2011,69 +2777,175 @@
     };
   }
 
-  function shouldNotifyStorageRule(rule, rawValue) {
-    if (rawValue === null || rawValue === undefined || rawValue === '') return false;
+  function shouldNotifyStorageRule(
+    rule,
+    rawValue,
+    previousSnapshot,
+    currentSnapshot
+  ) {
+    if (
+      rawValue === null
+      || rawValue === undefined
+      || rawValue === ''
+      || currentSnapshot === null
+      || currentSnapshot === undefined
+    ) {
+      return false;
+    }
 
-    if (rule.key === 'aurora_finance_department_mission_v1' ||
-        rule.key === 'aurora_wealth_investment_mission_v1') {
+    if (
+      rule.key === 'aurora_finance_department_mission_v1'
+      || rule.key === 'aurora_wealth_investment_mission_v1'
+    ) {
       const data = parseStored(rawValue);
-      if (!data || typeof data !== 'object') return false;
-      const total = firstFinite(data.total, data.budget, data.investmentTotal, data.totalInvestment, data.requiredTotal);
+
+      if (!data || typeof data !== 'object') {
+        return false;
+      }
+
+      const total = firstFinite(
+        data.total,
+        data.budget,
+        data.investmentTotal,
+        data.totalInvestment,
+        data.requiredTotal
+      );
+
       return Number.isFinite(total) && total > 0;
     }
 
     if (rule.key === 'aurora_transfer_plan_v2') {
-      const data = parseStored(rawValue);
-      if (!data || typeof data !== 'object') return false;
-      const total = firstFinite(data.total, data.totalBudget, data.budget, data.totalInvestment);
-      return Number.isFinite(total) && total > 0;
+      return Boolean(
+        currentSnapshot?.count
+        || (
+          Number.isFinite(currentSnapshot?.total)
+          && currentSnapshot.total > 0
+        )
+      );
+    }
+
+    if (
+      rule.key
+      === 'aurora_account_transfer_instruction_v1'
+    ) {
+      return Boolean(
+        Number.isFinite(currentSnapshot?.total)
+        && currentSnapshot.total > 0
+      );
     }
 
     return true;
   }
 
-  function handleStorageRule(rule, rawValue) {
-    if (!shouldNotifyStorageRule(rule, rawValue)) return;
-    const message = typeof rule.message === 'function' ? rule.message(rawValue) : String(rule.message || 'Aurora data updated.');
-    const fingerprint = hashString(`${rule.key}|${message}`);
-    const dedupeKey = `storage:${rule.key}`;
+  function handleStorageRule(
+    rule,
+    rawValue,
+    previousSnapshot,
+    currentSnapshot
+  ) {
+    if (
+      !shouldNotifyStorageRule(
+        rule,
+        rawValue,
+        previousSnapshot,
+        currentSnapshot
+      )
+    ) {
+      return;
+    }
+
+    const smart = buildSmartStorageNotification(
+      rule,
+      previousSnapshot,
+      currentSnapshot,
+      rawValue
+    );
+
+    if (!smart) return;
+
+    const message = String(
+      smart.message || ''
+    ).trim();
+
+    if (!message) return;
+
+    const fingerprint = hashString(
+      `${rule.key}|${smart.title}|${message}`
+    );
+
     add({
       department: rule.department,
       page: rule.page,
-      title: rule.title,
+      title: smart.title || rule.title,
       message,
-      icon: rule.icon,
-      priority: rule.priority,
-      dedupeKey,
+      icon: smart.icon || rule.icon,
+      priority:
+        smart.priority || rule.priority,
+      dedupeKey:`storage:${rule.key}`,
       fingerprint,
-      source: rule.key,
-      actionLabel: `Open ${rule.department}`
+      source:rule.key,
+      actionLabel:
+        smart.metadata?.rich?.actionText
+        || `Open ${rule.department}`,
+      metadata:{
+        ...(smart.metadata || {}),
+        storageRule:rule.key
+      }
     });
   }
 
   function initialiseStorageWatchers() {
     const saved = readWatchState();
+    const snapshots = readSnapshotState();
 
-    const remember = (rule, rawValue, notify) => {
-      const fingerprint =
-        hashString(
-          rawValue === null
-            ? '__null__'
-            : String(rawValue)
-        );
+    const remember = (
+      rule,
+      rawValue,
+      notify
+    ) => {
+      const currentSnapshot =
+        snapshotForRule(rule, rawValue);
 
-      const previous =
+      const fingerprint = hashString(
+        JSON.stringify(
+          currentSnapshot === undefined
+            ? null
+            : currentSnapshot
+        )
+      );
+
+      const previousFingerprint =
         watchedValues.get(rule.key);
 
-      watchedValues.set(rule.key, fingerprint);
+      const previousSnapshot =
+        watchedSnapshots.has(rule.key)
+          ? watchedSnapshots.get(rule.key)
+          : snapshots[rule.key];
+
+      watchedValues.set(
+        rule.key,
+        fingerprint
+      );
+
+      watchedSnapshots.set(
+        rule.key,
+        currentSnapshot
+      );
+
       saved[rule.key] = fingerprint;
+      snapshots[rule.key] = currentSnapshot;
 
       if (
         notify
-        && previous !== undefined
-        && previous !== fingerprint
+        && previousFingerprint !== undefined
+        && previousFingerprint !== fingerprint
       ) {
-        handleStorageRule(rule, rawValue);
+        handleStorageRule(
+          rule,
+          rawValue,
+          previousSnapshot,
+          currentSnapshot
+        );
       }
     };
 
@@ -2081,14 +2953,20 @@
       let current = null;
 
       try {
-        current = localStorage.getItem(rule.key);
+        current =
+          localStorage.getItem(rule.key);
       } catch (_) {}
+
+      const currentSnapshot =
+        snapshotForRule(rule, current);
 
       const currentFingerprint =
         hashString(
-          current === null
-            ? '__null__'
-            : String(current)
+          JSON.stringify(
+            currentSnapshot === undefined
+              ? null
+              : currentSnapshot
+          )
         );
 
       const persistentPrevious =
@@ -2106,6 +2984,16 @@
           : persistentPrevious
       );
 
+      watchedSnapshots.set(
+        rule.key,
+        Object.prototype.hasOwnProperty.call(
+          snapshots,
+          rule.key
+        )
+          ? snapshots[rule.key]
+          : currentSnapshot
+      );
+
       remember(
         rule,
         current,
@@ -2114,19 +3002,26 @@
     });
 
     writeWatchState(saved);
+    writeSnapshotState(snapshots);
 
     const check = () => {
       STORAGE_RULES.forEach(rule => {
         let current = null;
 
         try {
-          current = localStorage.getItem(rule.key);
+          current =
+            localStorage.getItem(rule.key);
         } catch (_) {}
 
-        remember(rule, current, true);
+        remember(
+          rule,
+          current,
+          true
+        );
       });
 
       writeWatchState(saved);
+      writeSnapshotState(snapshots);
     };
 
     window.setInterval(check, 1600);
@@ -2134,14 +3029,21 @@
     window.addEventListener(
       'storage',
       event => {
-        const rule = STORAGE_RULES.find(
-          item => item.key === event.key
-        );
+        const rule =
+          STORAGE_RULES.find(
+            item => item.key === event.key
+          );
 
         if (!rule) return;
 
-        remember(rule, event.newValue, true);
+        remember(
+          rule,
+          event.newValue,
+          true
+        );
+
         writeWatchState(saved);
+        writeSnapshotState(snapshots);
       }
     );
   }

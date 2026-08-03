@@ -3,7 +3,7 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
-<!-- Build: Aurora Manager Dashboard • Direct Notification Renderer v13 • 3 Aug 2026 -->
+<!-- Build: Aurora Manager Dashboard • Smart Notification Intelligence v14 • 3 Aug 2026 -->
 <script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-direct-notification-renderer-v13-20260803" name="aurora-build"/>
+</style><meta content="manager-smart-notification-intelligence-v14-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -1504,6 +1504,11 @@ html[data-aurora-manager-values="ready"]
 #beastNotificationPanel
 .aurora-manager-notification-card[data-rich-type="finance"]{
   --card-accent:96,165,250;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="risk"]{
+  --card-accent:251,113,133;
 }
 
 #beastNotificationPanel
@@ -3213,8 +3218,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </div>
 <div class="beast-about-grid">
 <div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
-<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v13</strong></div>
-<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Direct Notification Renderer</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v14</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Smart Notification Intelligence</strong></div>
 <div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
 <div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
 </div>
@@ -3598,6 +3603,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
           + `${Number.isFinite(live) ? ` at ${live.toFixed(2)} live.` : "."}`,
         time:"Today",
         metadata:{
+          category:"achievement",
           rich:{
             type:"performer",
             kicker:"TODAY'S TOP PERFORMER",
@@ -3608,6 +3614,47 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
               ? `Live ${live.toFixed(2)}`
               : "",
             featured:true,
+            actionText:"Open Analysis Room"
+          }
+        }
+      });
+    }
+
+    const biggestDrag = rankedMovers
+      .slice()
+      .reverse()
+      .find(item => item.move < 0);
+
+    if(
+      biggestDrag
+      && (
+        !topMover
+        || ticker(biggestDrag.row)
+          !== ticker(topMover.row)
+      )
+    ){
+      const move = biggestDrag.move;
+      const live = price(biggestDrag.row);
+
+      alerts.push({
+        level:"warn",
+        icon:"📉",
+        title:`${ticker(biggestDrag.row)} is today's biggest drag`,
+        text:
+          `${name(biggestDrag.row)} is the weakest current mover`
+          + `${Number.isFinite(live) ? ` at ${live.toFixed(2)} live.` : "."}`,
+        time:"Today",
+        metadata:{
+          category:"information",
+          rich:{
+            type:"risk",
+            kicker:"TODAY'S BIGGEST DRAG",
+            badge:"WATCH",
+            value:`${move.toFixed(2)}%`,
+            valueLabel:"TODAY",
+            secondary:Number.isFinite(live)
+              ? `Live ${live.toFixed(2)}`
+              : "",
             actionText:"Open Analysis Room"
           }
         }
@@ -3657,6 +3704,9 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
           + ` • ${cash(routeIncome)}/year estimated income.`,
         time:"Transfer",
         metadata:{
+          category:lifecycleStage >= 5
+            ? "achievement"
+            : "action",
           rich:{
             type:"transfer",
             kicker:
@@ -3709,6 +3759,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
             + `${dividend.amountKnown ? ` • ${cash(dividend.amount)}` : ""}.`,
           time:"Income",
           metadata:{
+            category:"information",
             rich:{
               type:"income",
               kicker:"NEXT INCOME",
@@ -3733,43 +3784,78 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
       }
     }catch(_){}
 
-    rows.forEach(row => {
-      const live = price(row);
-      const target =
-        num(
+    const targetHits = rows
+      .map(row => {
+        const live = price(row);
+        const target = num(
           row?.target_price
           ?? row?.buy_price
           ?? row?.fair_value
         );
 
-      if(
-        Number.isFinite(live)
-        && Number.isFinite(target)
-        && live <= target
-      ){
-        alerts.push({
-          level:"ok",
-          icon:"🎯",
-          title:`${ticker(row)} has hit its target`,
-          text:
-            `${name(row)} is inside the target zone. `
-            + `Live ${live.toFixed(2)} versus target ${target.toFixed(2)}.`,
-          time:"Target",
-          metadata:{
-            rich:{
-              type:"target",
-              kicker:"TARGET HIT",
-              badge:"IN THE ZONE",
-              value:live.toFixed(2),
-              valueLabel:"LIVE",
-              secondary:`Target ${target.toFixed(2)}`,
-              progress:100,
-              actionText:"Review Holding"
-            }
+        if (
+          !Number.isFinite(live)
+          || !Number.isFinite(target)
+          || live > target
+        ) {
+          return null;
+        }
+
+        return {
+          row,
+          live,
+          target,
+          discount:
+            target > 0
+              ? (target - live) / target * 100
+              : 0
+        };
+      })
+      .filter(Boolean)
+      .sort((a,b) => b.discount - a.discount);
+
+    if(targetHits.length){
+      const best = targetHits[0];
+      const labels = targetHits
+        .map(item => ticker(item.row));
+
+      alerts.push({
+        level:"ok",
+        icon:"🎯",
+        title:
+          targetHits.length === 1
+            ? `${labels[0]} has hit its target`
+            : `${targetHits.length} holdings are in their target zones`,
+        text:
+          `${labels.join(" / ")}. `
+          + `Best value gap: ${ticker(best.row)} `
+          + `${best.discount.toFixed(1)}% below target.`,
+        time:"Target",
+        metadata:{
+          category:"action",
+          rich:{
+            type:"target",
+            kicker:"TARGET ZONE REPORT",
+            badge:
+              targetHits.length === 1
+                ? "IN THE ZONE"
+                : `${targetHits.length} OPPORTUNITIES`,
+            value:String(targetHits.length),
+            valueLabel:
+              targetHits.length === 1
+                ? "HOLDING"
+                : "HOLDINGS",
+            secondary:
+              `Best: ${ticker(best.row)} • `
+              + `Live ${best.live.toFixed(2)} / `
+              + `Target ${best.target.toFixed(2)}`,
+            progress:100,
+            featured:targetHits.length >= 3,
+            actionText:"Open Target Report"
           }
-        });
-      }
-    });
+        }
+      });
+    }
 
     const milestones = [350,425,500,625];
     const achieved =
@@ -3791,6 +3877,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
             }`,
         time:"Milestone",
         metadata:{
+          category:"achievement",
           rich:{
             type:"milestone",
             kicker:"MILESTONE ACHIEVED",
@@ -5076,6 +5163,27 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
       ? rows
       : [];
 
+    const categoryRank=row=>{
+      const category=String(
+        row?.metadata?.category || ""
+      ).toLowerCase();
+
+      if(
+        category==="critical"
+        || row?.priority==="critical"
+      ) return 4;
+
+      if(
+        category==="action"
+        || row?.priority==="high"
+      ) return 3;
+
+      if(category==="achievement") return 2;
+      if(category==="information") return 1;
+
+      return 0;
+    };
+
     rows.sort((a,b)=>{
       const ar=notificationRichData(a);
       const br=notificationRichData(b);
@@ -5083,6 +5191,9 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
       return (
         Number(Boolean(br.featured))
         - Number(Boolean(ar.featured))
+      ) || (
+        categoryRank(b)
+        - categoryRank(a)
       ) || (
         Number(b?.createdAt || 0)
         - Number(a?.createdAt || 0)
