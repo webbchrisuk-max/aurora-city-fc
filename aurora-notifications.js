@@ -20,7 +20,7 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '2.0.0';
+  const VERSION = '2.0.1';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
@@ -943,10 +943,14 @@
       expectedTotal:null
     };
 
-    if (!section.dataset.auroraBound) {
-      section.dataset.auroraBound = '1';
+    /*
+     * Bind at panel level so controls work whether they are placed
+     * directly in the Command Notifications header or injected later.
+     */
+    if (!panel.dataset.auroraControlsBound) {
+      panel.dataset.auroraControlsBound = '1';
 
-      section.addEventListener('click', event => {
+      panel.addEventListener('click', event => {
         const removeButton =
           event.target.closest(
             '[data-aurora-notification-remove]'
@@ -970,7 +974,22 @@
 
         if (markAll) {
           event.preventDefault();
+          event.stopPropagation();
+
           markAllRead();
+
+          const original =
+            markAll.dataset.originalLabel
+            || markAll.textContent
+            || 'Mark all read';
+
+          markAll.dataset.originalLabel = original;
+          markAll.textContent = 'All read';
+
+          window.setTimeout(() => {
+            markAll.textContent = original;
+          }, 1300);
+
           return;
         }
 
@@ -981,7 +1000,22 @@
 
         if (clearAll) {
           event.preventDefault();
+          event.stopPropagation();
+
           clear();
+
+          const original =
+            clearAll.dataset.originalLabel
+            || clearAll.textContent
+            || 'Clear all';
+
+          clearAll.dataset.originalLabel = original;
+          clearAll.textContent = 'Cleared';
+
+          window.setTimeout(() => {
+            clearAll.textContent = original;
+          }, 1300);
+
           return;
         }
 

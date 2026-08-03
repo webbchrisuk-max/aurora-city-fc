@@ -3,7 +3,7 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
-<!-- Build: Aurora Manager Dashboard • Unified Notifications v7 • 3 Aug 2026 -->
+<!-- Build: Aurora Manager Dashboard • Final Notification Controls v8 • 3 Aug 2026 -->
 <script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-unified-notifications-v7-20260803" name="aurora-build"/>
+</style><meta content="manager-final-notification-controls-v8-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -1292,6 +1292,96 @@ html[data-aurora-manager-values="ready"]
   border-color:rgba(103,232,249,.46);
   background:rgba(8,75,97,.38);
   outline:none;
+}
+</style>
+
+
+<style id="auroraFinalNotificationControlStyles">
+.aurora-command-notification-head{
+  align-items:center;
+}
+
+.aurora-command-notification-title{
+  min-width:0;
+}
+
+.aurora-command-notification-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+  flex:0 0 auto;
+}
+
+.aurora-command-notification-actions
+.aurora-shared-mark-read,
+.aurora-command-notification-actions
+.aurora-shared-clear-all{
+  min-height:34px;
+  padding:0 10px;
+  border-radius:10px;
+  font-size:8px;
+  font-weight:950;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.aurora-command-notification-actions
+.aurora-shared-mark-read{
+  border:1px solid rgba(96,165,250,.28);
+  background:rgba(30,64,175,.18);
+  color:#bfdbfe;
+}
+
+.aurora-command-notification-actions
+.aurora-shared-clear-all{
+  border:1px solid rgba(248,113,113,.28);
+  background:rgba(127,29,29,.18);
+  color:#fecaca;
+}
+
+.aurora-command-notification-actions
+.aurora-shared-mark-read:hover,
+.aurora-command-notification-actions
+.aurora-shared-mark-read:focus-visible{
+  border-color:rgba(125,211,252,.55);
+  background:rgba(30,64,175,.30);
+  outline:none;
+}
+
+.aurora-command-notification-actions
+.aurora-shared-clear-all:hover,
+.aurora-command-notification-actions
+.aurora-shared-clear-all:focus-visible{
+  border-color:rgba(251,113,133,.55);
+  background:rgba(127,29,29,.30);
+  outline:none;
+}
+
+#auroraSharedNotificationSection{
+  margin-top:0;
+}
+
+#auroraSharedAlertList{
+  display:grid;
+  gap:8px;
+}
+
+@media(max-width:620px){
+  .aurora-command-notification-head{
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+
+  .aurora-command-notification-actions{
+    width:100%;
+    justify-content:flex-start;
+  }
+
+  .aurora-command-notification-actions
+  .beast-close{
+    margin-left:auto;
+  }
 }
 </style>
 
@@ -2737,8 +2827,18 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 })();
 </script>
 <div aria-label="Aurora notifications" class="beast-panel beast-notification-panel" id="beastNotificationPanel" role="dialog">
-<div class="beast-panel-head"><div><h3>Command Notifications</h3><p>Manager alerts and shared department updates from across Aurora HQ.</p></div><button aria-label="Close notifications" class="beast-close" id="beastNotificationClose" type="button">×</button></div>
-<div class="beast-alert-list" id="beastAlertList"><div class="beast-empty">Waiting for AuroraData…</div></div>
+<div class="beast-panel-head aurora-command-notification-head">
+<div class="aurora-command-notification-title"><h3>Command Notifications</h3><p>Manager alerts and shared department updates from across Aurora HQ.</p></div>
+<div class="aurora-command-notification-actions">
+<button class="aurora-shared-mark-read" id="auroraSharedMarkRead" type="button">Mark all read</button>
+<button class="aurora-shared-clear-all" id="auroraSharedClearAll" type="button">Clear all</button>
+<button aria-label="Close notifications" class="beast-close" id="beastNotificationClose" type="button">×</button>
+</div>
+</div>
+<section class="aurora-shared-notification-section" id="auroraSharedNotificationSection">
+<div class="aurora-shared-alert-list" id="auroraSharedAlertList"><div class="beast-empty">Connecting notification feed…</div></div>
+</section>
+<div aria-hidden="true" class="beast-alert-list" hidden id="beastAlertList"><div class="beast-empty">Waiting for AuroraData…</div></div>
 </div>
 <div aria-label="Dashboard controls" class="beast-layout-panel" id="beastLayoutPanel" role="dialog">
 <div class="beast-panel-head"><div><h3>Dashboard Controls</h3><p>Save the command centre exactly how you like it.</p></div><button aria-label="Close controls" class="beast-close" id="beastLayoutClose" type="button">×</button></div>
@@ -2758,8 +2858,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </div>
 <div class="beast-about-grid">
 <div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
-<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v7</strong></div>
-<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Unified Notifications</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v8</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Final Notification Controls</strong></div>
 <div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
 <div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
 </div>
@@ -3395,7 +3495,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     q('beastDecisionOverlay')?.addEventListener('click',closeDecisionQueue);
     q('beastNotificationClose')?.addEventListener('click',()=>{q('beastNotificationPanel')?.classList.remove('open')});
     q('beastLayoutClose')?.addEventListener('click',()=>{q('beastLayoutPanel')?.classList.remove('open')});
-    q('beastNotificationPanel')?.addEventListener('click',()=>{if(latestAlertSignature)localStorage.setItem(READ_KEY,latestAlertSignature)});
+    q('beastNotificationPanel')?.addEventListener('click',()=>{if(!notificationHost()?.markAllRead&&latestAlertSignature)localStorage.setItem(READ_KEY,latestAlertSignature)});
     [['beastCompactToggle','compact'],['beastM3Toggle','m3'],['beastRadarToggle','radar'],['beastDecisionToggle','decisions'],['beastLogToggle','log'],['beastMediaToggle','media'],['beastScheduleToggle','schedule']].forEach(([id,key])=>q(id)?.addEventListener('change',e=>saveSettings({...settings(),[key]:e.target.checked})));
     document.querySelectorAll('.beast-theme-button').forEach(btn=>btn.addEventListener('click',()=>{saveSettings({...settings(),theme:btn.dataset.beastTheme});addLog('Dashboard theme changed',btn.textContent.trim(),'system','◈','theme-'+btn.dataset.beastTheme,30000)}));
     q('beastResetLayout')?.addEventListener('click',()=>{addLog('Dashboard layout reset','Panels, theme and visibility settings returned to defaults.','system','⚙','layout-reset',0);localStorage.removeItem(SETTINGS_KEY);localStorage.removeItem(ORDER_KEY);location.reload()});
