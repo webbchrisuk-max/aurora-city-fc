@@ -2,7 +2,7 @@
 
 <html data-aurora-manager-hydration="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
-<!-- Build: Aurora Manager Dashboard • Startup Hydration Fix v2 • 3 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
+<!-- Build: Aurora Manager Dashboard • Delayed Hydration Screen v3 • 3 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
 
@@ -448,7 +448,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-startup-hydration-fix-v2-20260803" name="aurora-build"/>
+</style><meta content="manager-delayed-hydration-screen-v3-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -955,11 +955,18 @@ html[data-aurora-manager-hydration="ready"] body > main.app{
       rgba(2,8,22,.995),
       rgba(1,5,15,.998)
     );
-  opacity:1;
-  visibility:visible;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
   transition:
     opacity .22s ease,
     visibility .22s ease;
+}
+
+#auroraManagerHydrationScreen[data-state="visible"]{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
 }
 
 #auroraManagerHydrationScreen[data-state="ready"]{
@@ -1132,6 +1139,7 @@ html[data-aurora-manager-hydration="ready"] body > main.app{
   };
 
   let settleTimer = 0;
+  let loadingScreenTimer = 0;
   let safetyTimer = 0;
   let heroObserver = null;
 
@@ -1155,6 +1163,16 @@ html[data-aurora-manager-hydration="ready"] body > main.app{
     }
   }
 
+  function showLoadingScreen(){
+    if(readiness.revealed) return;
+
+    const loadingScreen = screen();
+
+    if(loadingScreen){
+      loadingScreen.dataset.state = "visible";
+    }
+  }
+
   function snapshot(){
     return {
       data:readiness.data,
@@ -1169,6 +1187,7 @@ html[data-aurora-manager-hydration="ready"] body > main.app{
 
     readiness.revealed = true;
     window.clearTimeout(settleTimer);
+    window.clearTimeout(loadingScreenTimer);
     window.clearTimeout(safetyTimer);
     heroObserver?.disconnect();
 
@@ -1319,9 +1338,18 @@ html[data-aurora-manager-hydration="ready"] body > main.app{
   }
 
   /*
+   * Fast navigation stays clean: no startup card appears when the
+   * final dashboard state is ready within the first second.
+   */
+  loadingScreenTimer = window.setTimeout(
+    showLoadingScreen,
+    1050
+  );
+
+  /*
    * Never leave the dashboard inaccessible when a remote source fails.
-   * The stable loading screen remains visible for up to eight seconds,
-   * then the best available state is shown.
+   * Slow loads show the synchronising card, while an eight-second
+   * fallback reveals the best available dashboard state.
    */
   safetyTimer = window.setTimeout(
     function(){
