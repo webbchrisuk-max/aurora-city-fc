@@ -2,7 +2,100 @@
 
 <html data-aurora-page="manager" data-aurora-header="page" lang="en">
 <head>
-<!-- Build: Aurora Manager Dashboard • Page-Owned Header Fix v2 • 2 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
+
+<script id="auroraManagerCleanShellBootstrapV4">
+(function(){
+  "use strict";
+
+  function cleanParentShell(){
+    try{
+      if(!window.parent || window.parent === window) return;
+
+      const doc = window.parent.document;
+      const root = doc && doc.documentElement;
+      if(!doc || !root) return;
+
+      let style = doc.getElementById(
+        "auroraManagerCleanShellLayoutV4"
+      );
+
+      if(!style){
+        style = doc.createElement("style");
+        style.id = "auroraManagerCleanShellLayoutV4";
+        style.textContent = `
+          html.aurora-manager-clean-shell{
+            --shell-height:0px!important;
+          }
+
+          html.aurora-manager-clean-shell .session-bar{
+            display:none!important;
+            visibility:hidden!important;
+            pointer-events:none!important;
+            height:0!important;
+            min-height:0!important;
+            padding:0!important;
+            margin:0!important;
+            border:0!important;
+            overflow:hidden!important;
+          }
+
+          html.aurora-manager-clean-shell .club-frame{
+            top:var(--safe-top)!important;
+            height:calc(100% - var(--safe-top))!important;
+          }
+
+          html.aurora-manager-clean-shell .frame-fallback{
+            inset:var(--safe-top) 0 0!important;
+          }
+
+          html.aurora-manager-clean-shell
+          #auroraTopHeaderMenuButton{
+            display:none!important;
+            visibility:hidden!important;
+            pointer-events:none!important;
+          }
+        `;
+
+        doc.head.appendChild(style);
+      }
+
+      root.classList.add("aurora-manager-clean-shell");
+
+      doc.querySelectorAll(
+        "#auroraTopHeaderMenuButton,"
+        + "#auroraNavToggle,"
+        + "#auroraLeftEdgeGestureZone,"
+        + "#auroraRightEdgeGestureZone,"
+        + ".aurora-nav-edge-toggle,"
+        + ".aurora-nav-edge-button,"
+        + ".aurora-floating-nav,"
+        + ".aurora-floating-menu"
+      ).forEach(function(node){
+        node.remove();
+      });
+    }catch(_){}
+  }
+
+  cleanParentShell();
+
+  try{
+    if(window.parent && window.parent !== window){
+      const parentDoc = window.parent.document;
+
+      const observer = new MutationObserver(function(){
+        cleanParentShell();
+      });
+
+      observer.observe(parentDoc.documentElement,{
+        childList:true,
+        subtree:true
+      });
+    }
+  }catch(_){}
+})();
+</script>
+
+<!-- Build: Aurora Manager Dashboard • Clean Header + No Side Launcher v4 • 03 Aug 2026 --><script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
 
@@ -509,14 +602,10 @@
 <style id="aurora-beast-v3-panel-themes">
 #beastDecisionQueue,[data-decision-action],.beast-decision-actions{touch-action:manipulation}#beastDecisionQueue{user-select:text;-webkit-user-select:text}#beastDecisionQueue .beast-decision-btn{position:relative;z-index:8;min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 13px;pointer-events:auto!important;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease}#beastDecisionQueue .beast-decision-btn.primary{border-color:rgba(34,211,238,.34);background:linear-gradient(135deg,rgba(8,145,178,.28),rgba(30,64,175,.28));color:#e0f2fe;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}#beastDecisionQueue .beast-decision-btn.primary:hover,#beastDecisionQueue .beast-decision-btn.primary:focus-visible{transform:translateY(-1px);border-color:#67e8f9;box-shadow:0 0 0 4px rgba(34,211,238,.10),0 10px 24px rgba(0,0,0,.24);outline:none}#beastDecisionQueue .beast-decision-btn:active{transform:scale(.97)}#beastDecisionQueue .beast-decision-actions{position:relative;z-index:7}body.beast-decision-open .beast-drawer{z-index:1101}.beast-broadcast-panel{isolation:isolate;overflow:hidden;--panel-accent:96,165,250;--panel-accent-solid:#60a5fa}.beast-broadcast-panel:before{background:radial-gradient(circle at 92% 0%,rgba(var(--panel-accent),.17),transparent 31%),linear-gradient(125deg,transparent 0 58%,rgba(var(--panel-accent),.035) 58% 59%,transparent 59% 100%)!important}.beast-broadcast-panel:after{content:"";position:absolute;z-index:0;left:-35%;top:0;width:28%;height:100%;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(var(--panel-accent),.08),transparent);pointer-events:none;opacity:0}.beast-broadcast-panel>*{position:relative;z-index:1}.beast-theme-media{--panel-accent:250,204,21;--panel-accent-solid:#facc15;border-color:rgba(250,204,21,.25);background:radial-gradient(circle at 88% 0%,rgba(250,204,21,.11),transparent 33%),linear-gradient(180deg,rgba(28,23,8,.92),rgba(7,12,24,.97))}.beast-theme-transfer{--panel-accent:245,158,11;--panel-accent-solid:#f59e0b;border-color:rgba(245,158,11,.26);background:radial-gradient(circle at 90% 0%,rgba(245,158,11,.11),transparent 32%),linear-gradient(180deg,rgba(31,21,7,.92),rgba(7,12,24,.97))}.beast-theme-squad{--panel-accent:34,211,238;--panel-accent-solid:#22d3ee;border-color:rgba(34,211,238,.24);background:radial-gradient(circle at 90% 0%,rgba(34,211,238,.11),transparent 32%),linear-gradient(180deg,rgba(5,27,38,.92),rgba(6,12,25,.97))}.beast-theme-board{--panel-accent:244,114,182;--panel-accent-solid:#f472b6;border-color:rgba(244,114,182,.26);background:radial-gradient(circle at 90% 0%,rgba(244,114,182,.13),transparent 33%),linear-gradient(180deg,rgba(30,12,31,.94),rgba(8,10,24,.98))}.beast-theme-schedule{--panel-accent:167,139,250;--panel-accent-solid:#a78bfa;border-color:rgba(167,139,250,.24);background:radial-gradient(circle at 94% 0%,rgba(167,139,250,.12),transparent 30%),linear-gradient(180deg,rgba(17,15,39,.93),rgba(6,11,24,.98))}.beast-broadcast-panel .panel-kicker{color:rgb(var(--panel-accent))}.beast-broadcast-panel .panel-open-link{color:rgb(var(--panel-accent));border-top-color:rgba(var(--panel-accent),.16);background:linear-gradient(90deg,rgba(var(--panel-accent),.055),transparent)}.beast-broadcast-panel .panel-open-link:hover{background:rgba(var(--panel-accent),.12);color:#fff}.beast-broadcast-panel.beast-panel-updated{box-shadow:0 0 0 1px rgba(var(--panel-accent),.38),0 20px 70px rgba(0,0,0,.38),0 0 34px rgba(var(--panel-accent),.13)}.beast-broadcast-strip{display:flex;align-items:center;gap:8px;margin:13px 18px 0;padding:8px 10px;border:1px solid rgba(250,204,21,.16);border-radius:12px;background:rgba(66,49,4,.16);color:#fde68a;font-size:9px;letter-spacing:.09em;text-transform:uppercase}.beast-broadcast-strip span:last-child{margin-left:auto;color:#9b8e66;letter-spacing:0;text-transform:none}.beast-signal-dot{width:8px;height:8px;border-radius:50%;background:#facc15;box-shadow:0 0 0 5px rgba(250,204,21,.08)}.media-feature-icon{position:relative;overflow:visible}.media-feature-icon span{position:relative;z-index:2}.media-feature-icon i{position:absolute;inset:-7px;border:1px solid rgba(250,204,21,.24);border-radius:27px;opacity:.55}.beast-theme-media .media-feature h4{color:#fff7cc;text-shadow:0 0 20px rgba(250,204,21,.08)}.beast-route-wire{height:20px;margin:11px 30px -5px;display:grid;grid-template-columns:repeat(3,1fr);align-items:center;position:relative}.beast-route-wire:before{content:"";position:absolute;left:16.5%;right:16.5%;top:9px;height:2px;background:linear-gradient(90deg,rgba(245,158,11,.18),#f59e0b,rgba(245,158,11,.18))}.beast-route-wire i{position:relative;z-index:1;justify-self:center;width:12px;height:12px;border-radius:50%;border:2px solid #f59e0b;background:#241707;box-shadow:0 0 0 5px rgba(245,158,11,.08)}.beast-theme-transfer .panel-stat-row>div{border-color:rgba(245,158,11,.14)}.beast-theme-transfer #topTransferPreview .preview-row:first-child{border-color:rgba(245,158,11,.28);background:rgba(120,53,15,.16)}.beast-squad-formation{position:absolute;right:20px;top:62px;width:120px;height:76px;border:1px solid rgba(34,211,238,.13);border-radius:14px;background:linear-gradient(rgba(34,211,238,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.035) 1px,transparent 1px);background-size:20px 20px;opacity:.65;pointer-events:none}.beast-squad-formation:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid rgba(34,211,238,.12)}.beast-squad-formation span{position:absolute;width:8px;height:8px;border-radius:50%;background:#22d3ee;box-shadow:0 0 11px rgba(34,211,238,.55)}.beast-squad-formation span:nth-child(1){left:10px;top:34px}.beast-squad-formation span:nth-child(2){left:36px;top:13px}.beast-squad-formation span:nth-child(3){left:36px;bottom:13px}.beast-squad-formation span:nth-child(4){right:38px;top:13px}.beast-squad-formation span:nth-child(5){right:38px;bottom:13px}.beast-squad-formation span:nth-child(6){right:10px;top:34px}.beast-theme-squad .preview-row:first-child{border-color:rgba(34,211,238,.28);background:rgba(8,47,73,.24)}.board-command-score{position:relative;overflow:hidden;padding-top:76px}.beast-board-seal{position:absolute;right:14px;top:13px;width:58px;height:58px;display:grid;place-items:center;border:1px solid rgba(244,114,182,.25);border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.15),rgba(88,28,135,.07));box-shadow:0 0 24px rgba(244,114,182,.10)}.beast-board-seal:before,.beast-board-seal:after{content:"";position:absolute;border-radius:50%;inset:6px;border:1px dashed rgba(244,114,182,.28)}.beast-board-seal:after{inset:13px;border-style:solid;opacity:.55}.beast-board-seal span{font-size:8px;font-weight:1000;letter-spacing:.08em;color:#fbcfe8}.beast-board-meter{height:7px;margin-top:13px;border-radius:999px;background:rgba(148,163,184,.13);overflow:hidden}.beast-board-meter i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#a78bfa,#f472b6,#fbbf24);box-shadow:0 0 14px rgba(244,114,182,.35);transition:width .65s cubic-bezier(.2,.8,.2,1)}.beast-theme-board .board-command-list div{border-color:rgba(244,114,182,.13)}.beast-schedule-track{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:13px 39px 0;position:relative}.beast-schedule-track:before{content:"";position:absolute;left:12.5%;right:12.5%;top:7px;height:2px;background:linear-gradient(90deg,#a78bfa,#60a5fa,#34d399,#fbbf24);opacity:.55}.beast-schedule-track span{position:relative;z-index:1;justify-self:center;width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:#11162f;box-shadow:0 0 0 5px rgba(167,139,250,.07)}.beast-theme-schedule .schedule-row{position:relative;overflow:hidden;border-color:rgba(167,139,250,.14)}.beast-theme-schedule .schedule-row:first-child{border-color:rgba(251,191,36,.28);background:linear-gradient(90deg,rgba(120,53,15,.18),rgba(2,6,23,.28))}.beast-theme-schedule .schedule-row:after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(167,139,250,.5)}.beast-theme-schedule .schedule-row:first-child:after{background:#fbbf24}html[data-aurora-motion="full"] .beast-broadcast-panel:after{animation:beastPanelSweep 8s ease-in-out infinite}html[data-aurora-motion="full"] .beast-theme-media .beast-signal-dot{animation:beastNewsPulse 2.4s ease-in-out infinite}html[data-aurora-motion="full"] .beast-theme-media .media-feature-icon i{animation:beastNewsOrbit 7s linear infinite}html[data-aurora-motion="full"] .beast-theme-transfer .beast-route-wire i{animation:beastRouteNode 2.6s ease-in-out infinite}html[data-aurora-motion="full"] .beast-theme-transfer .beast-route-wire i:nth-child(2){animation-delay:.35s}html[data-aurora-motion="full"] .beast-theme-transfer .beast-route-wire i:nth-child(3){animation-delay:.7s}html[data-aurora-motion="full"] .beast-theme-squad .beast-squad-formation span{animation:beastSquadSignal 3s ease-in-out infinite}html[data-aurora-motion="full"] .beast-theme-squad .beast-squad-formation span:nth-child(2n){animation-delay:.45s}html[data-aurora-motion="full"] .beast-theme-board .beast-board-seal{animation:beastBoardSeal 7.5s linear infinite}html[data-aurora-motion="full"] .beast-theme-board .board-command-score strong{animation:beastBoardScore 3.8s ease-in-out infinite}html[data-aurora-motion="full"] .beast-theme-schedule .beast-schedule-track span{animation:beastScheduleNode 3.2s ease-in-out infinite}html[data-aurora-motion="full"] .beast-theme-schedule .beast-schedule-track span:nth-child(2){animation-delay:.25s}html[data-aurora-motion="full"] .beast-theme-schedule .beast-schedule-track span:nth-child(3){animation-delay:.5s}html[data-aurora-motion="full"] .beast-theme-schedule .beast-schedule-track span:nth-child(4){animation-delay:.75s}html[data-aurora-motion="subtle"] .beast-broadcast-panel:after{animation:beastPanelSweep 14s ease-in-out infinite;opacity:.5}html[data-aurora-motion="subtle"] .beast-theme-board .beast-board-seal{animation:beastBoardSeal 14s linear infinite}@keyframes beastPanelSweep{0%,72%,100%{left:-35%;opacity:0}78%{opacity:.7}90%{left:115%;opacity:0}}@keyframes beastNewsPulse{0%,100%{box-shadow:0 0 0 5px rgba(250,204,21,.08)}50%{box-shadow:0 0 0 10px rgba(250,204,21,0),0 0 16px rgba(250,204,21,.45)}}@keyframes beastNewsOrbit{to{transform:rotate(360deg)}}@keyframes beastRouteNode{0%,100%{transform:scale(.9);box-shadow:0 0 0 5px rgba(245,158,11,.06)}50%{transform:scale(1.08);box-shadow:0 0 0 9px rgba(245,158,11,0),0 0 14px rgba(245,158,11,.35)}}@keyframes beastSquadSignal{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}}@keyframes beastBoardSeal{to{transform:rotate(360deg)}}@keyframes beastBoardScore{0%,100%{text-shadow:0 0 0 rgba(244,114,182,0)}50%{text-shadow:0 0 24px rgba(244,114,182,.36)}}@keyframes beastScheduleNode{0%,100%{transform:translateY(0);box-shadow:0 0 0 5px rgba(167,139,250,.07)}50%{transform:translateY(-2px);box-shadow:0 0 0 9px rgba(167,139,250,0),0 0 14px rgba(167,139,250,.3)}}@media(max-width:760px){.beast-broadcast-strip span:last-child{display:none}.beast-squad-formation{display:none}.board-command-score{padding-top:64px}.beast-route-wire{margin-left:20px;margin-right:20px}.beast-schedule-track{margin-left:24px;margin-right:24px}}
 </style>
-<style id="auroraNoSidebarNoDockLayout">
-html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}body{padding-left:0!important;padding-right:0!important;padding-bottom:0!important}.fm-shell{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:100vh!important}.fm-workspace{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;transform:none!important}.fm-workspace .topbar-inner,.fm-workspace .app{width:100%!important;max-width:1600px!important;margin-left:auto!important;margin-right:auto!important}.fm-workspace .app{padding-left:18px!important;padding-right:18px!important;padding-bottom:28px!important}.fm-sidebar,.fm-sidebar-edge-zone,.fm-side-toggle,.fm-edge-toggle,.aufc-sidebar,.aufc-mobile-button,.aufc-mobile-shade,#auroraUniversalSidebar,.universal-sidebar,.aurora-system-dock,.aurora-smart-dock,.aurora-dock-launcher,.aurora-hq-dock,.smart-wealth-dock,[data-aurora-system-dock],[id*="auroraDock"],[class*="aurora-bottom-dock"]{
-  display:none!important;visibility:hidden!important;pointer-events:none!important
-}@media(max-width:760px){.fm-workspace .app{padding:12px 10px 24px!important}.beast-top-actions{position:static!important;right:auto!important;bottom:auto!important;margin-top:10px!important;width:auto!important}.manager-command-header{margin-top:10px!important}}
-</style>
+
 <!-- Aurora universal workflow navigation -->
-<link href="aurora-navigation.css?v=20260803-no-edge-v3" rel="stylesheet"/>
-<script defer="" src="aurora-navigation.js?v=20260803-no-edge-v3"></script>
+<link href="aurora-navigation.css?v=20260803-manager-clean-v4" rel="stylesheet"/>
+<script defer="" src="aurora-navigation.js?v=20260803-manager-clean-v4"></script>
 <style id="auroraManagerActionFixStyles">
 .aurora-manager-notice{
   position:fixed;
@@ -1121,96 +1210,103 @@ html,body{width:100%;min-width:0;margin:0!important;overflow-x:hidden!important}
 
 <link rel="stylesheet" href="aurora-hero.css?v=20260802-manager-step3-fix1">
 
-<style id="auroraManagerPageOwnedHeaderStylesV2">
-/* Manager Dashboard owns the large black crest header. */
-html[data-aurora-header="page"] body{
-  padding-top:0!important;
-}
-html[data-aurora-header="page"] body #auroraUniversalHeader,
-html[data-aurora-header="page"] body #auroraBrowserFallbackHeader,
-html[data-aurora-header="page"] body .aurora-universal-header{
-  display:none!important;
-  visibility:hidden!important;
-  height:0!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  overflow:hidden!important;
-  pointer-events:none!important;
-}
-html[data-aurora-header="page"] body .fm-shell,
-html[data-aurora-header="page"] body .fm-workspace{
-  margin-top:0!important;
-  padding-top:0!important;
-}
-html[data-aurora-header="page"] body .fm-workspace > .topbar{
-  display:block!important;
-  position:sticky!important;
-  top:0!important;
-  margin-top:0!important;
-  z-index:2147482000!important;
-}
-html[data-aurora-header="page"] body .fm-page-path{
-  display:none!important;
-}
-html[data-aurora-header="page"] body .fm-top-context{
-  justify-content:flex-end!important;
-  flex-wrap:nowrap!important;
-}
-html[data-aurora-header="page"] body .aurora-page-header-logout{
-  min-height:38px;
-  padding:0 14px;
-  border:1px solid rgba(251,113,133,.34);
-  border-radius:12px;
-  color:#fecdd3;
-  background:linear-gradient(145deg,rgba(76,5,25,.76),rgba(44,7,20,.90));
-  font-size:10px;
-  font-weight:950;
-  letter-spacing:.13em;
-  text-transform:uppercase;
-  white-space:nowrap;
-  cursor:pointer;
-}
-html[data-aurora-header="page"] body .aurora-page-header-logout:hover,
-html[data-aurora-header="page"] body .aurora-page-header-logout:focus-visible{
-  border-color:rgba(251,113,133,.58);
-  outline:none;
-}
-html[data-aurora-header="page"] body #auroraPageHeaderMenuButton{
+
+
+
+
+
+
+<style id="auroraManagerCleanHeaderAndSideFixV4">
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraPageHeaderMenuButton{
   position:static!important;
   inset:auto!important;
   transform:none!important;
   width:42px!important;
   height:42px!important;
   min-width:42px!important;
+  min-height:42px!important;
+  flex:0 0 42px!important;
   display:grid!important;
   place-items:center!important;
-  flex:0 0 auto!important;
-  margin:0 10px 0 0!important;
-  border:1px solid rgba(125,211,252,.22)!important;
+  margin:0!important;
+  padding:0!important;
+  border:1px solid rgba(125,211,252,.24)!important;
   border-radius:13px!important;
   color:#dff7ff!important;
-  background:linear-gradient(145deg,rgba(8,47,73,.72),rgba(15,23,42,.92))!important;
+  background:linear-gradient(
+    145deg,
+    rgba(8,47,73,.90),
+    rgba(15,23,42,.98)
+  )!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 8px 18px rgba(0,0,0,.20)!important;
+  font:900 20px/1 system-ui,sans-serif!important;
   cursor:pointer!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  z-index:auto!important;
 }
-@media(max-width:760px){
-  html[data-aurora-header="page"] body .fm-top-context{
-    width:100%;
-    justify-content:flex-start!important;
-    flex-wrap:wrap!important;
-  }
+
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraPageHeaderMenuButton:hover,
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body #auroraPageHeaderMenuButton:focus-visible{
+  border-color:rgba(34,211,238,.54)!important;
+  outline:none!important;
 }
-</style>
 
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body .aurora-page-header-logout{
+  min-height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin:0;
+  padding:0 13px;
+  border:1px solid rgba(251,113,133,.34);
+  border-radius:12px;
+  color:#fecdd3;
+  background:linear-gradient(
+    145deg,
+    rgba(76,5,25,.76),
+    rgba(44,7,20,.90)
+  );
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  cursor:pointer;
+}
 
-<style id="auroraManagerNoFloatingNavigationV3">
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body .aurora-page-header-logout:hover,
+html[data-aurora-page="manager"][data-aurora-header="page"]
+body .aurora-page-header-logout:focus-visible{
+  border-color:rgba(251,113,133,.60);
+  outline:none;
+}
+
 /*
-  Manager Dashboard: the real Aurora navigation controller must remain
-  available to JavaScript, but it must never appear as an edge/floating
-  button. The visible controller belongs inside the retained dark header.
+  Retire every old physical side launcher on the Manager page.
+  Swipe-to-open remains in aurora-navigation.js and needs no DOM zone.
 */
-html[data-aurora-page="manager"] body #auroraNavToggle{
+html[data-aurora-page="manager"] body #auroraNavToggle,
+html[data-aurora-page="manager"] body #auroraLeftEdgeGestureZone,
+html[data-aurora-page="manager"] body #auroraRightEdgeGestureZone,
+html[data-aurora-page="manager"] body .fm-sidebar-edge-zone,
+html[data-aurora-page="manager"] body .fm-side-toggle,
+html[data-aurora-page="manager"] body .fm-edge-toggle,
+html[data-aurora-page="manager"] body .aufc-mobile-button,
+html[data-aurora-page="manager"] body .aurora-nav-edge-toggle,
+html[data-aurora-page="manager"] body .aurora-nav-edge-button,
+html[data-aurora-page="manager"] body .aurora-floating-nav,
+html[data-aurora-page="manager"] body .aurora-floating-menu,
+html[data-aurora-page="manager"] body [data-aurora-edge-toggle],
+html[data-aurora-page="manager"] body [data-aurora-floating-nav]{
   display:none!important;
   visibility:hidden!important;
   opacity:0!important;
@@ -1218,41 +1314,42 @@ html[data-aurora-page="manager"] body #auroraNavToggle{
   position:fixed!important;
   left:-10000px!important;
   top:-10000px!important;
-  right:auto!important;
-  bottom:auto!important;
   width:0!important;
   height:0!important;
   min-width:0!important;
   min-height:0!important;
-  max-width:0!important;
-  max-height:0!important;
-  padding:0!important;
   margin:0!important;
+  padding:0!important;
   border:0!important;
-  outline:0!important;
   box-shadow:none!important;
   overflow:hidden!important;
-  transform:none!important;
   z-index:-1!important;
 }
 
-/* Only the proper header menu button is allowed to be visible. */
-html[data-aurora-page="manager"]
-body .fm-workspace > .topbar
-#auroraPageHeaderMenuButton{
-  display:grid!important;
-  visibility:visible!important;
-  opacity:1!important;
-  pointer-events:auto!important;
-  position:static!important;
-  left:auto!important;
-  top:auto!important;
-  width:42px!important;
-  height:42px!important;
-  min-width:42px!important;
-  min-height:42px!important;
-  margin:0!important;
-  z-index:auto!important;
+@media(max-width:760px){
+  html[data-aurora-page="manager"][data-aurora-header="page"]
+  body .fm-workspace>.topbar .topbar-inner{
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+  }
+
+  html[data-aurora-page="manager"][data-aurora-header="page"]
+  body .fm-workspace>.topbar .brand{
+    min-width:0!important;
+    flex:1 1 auto!important;
+  }
+
+  html[data-aurora-page="manager"][data-aurora-header="page"]
+  body .fm-top-context{
+    width:auto!important;
+    flex:0 0 auto!important;
+    flex-wrap:nowrap!important;
+  }
+
+  html[data-aurora-page="manager"][data-aurora-header="page"]
+  body .fm-page-path{
+    display:none!important;
+  }
 }
 </style>
 
@@ -1263,7 +1360,14 @@ body .fm-workspace > .topbar
 <div class="topbar">
 <div class="topbar-inner">
 <div class="brand">
-<div class="crest"><img alt="Aurora City FC crest" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/098E0ECA-EF84-4317-86E5-6592469C7534.png"/></div>
+<button
+  aria-label="Open Aurora mission navigation"
+  aria-expanded="false"
+  id="auroraPageHeaderMenuButton"
+  title="Open mission navigation"
+  type="button"
+>☰</button>
+<div class="crest"><img alt="Aurora City FC crest" src="assets/aurora-city-fc/icons/icon-192.png"/></div>
 <div>
 <h1>Aurora City FC</h1>
 <p>Manager Dashboard • Club HQ</p>
@@ -1278,7 +1382,14 @@ body .fm-workspace > .topbar
 <button aria-label="Open dashboard controls" class="beast-icon-button" id="beastLayoutButton" title="Dashboard controls" type="button">⚙</button>
 <button aria-label="Toggle presentation mode" class="beast-icon-button" id="beastPresentationButton" title="Presentation mode" type="button">▣</button>
 </div>
-<span class="fm-top-pill"><span class="fm-top-dot"></span>Live Manager Session</span>
+<span class="fm-top-pill">
+<span class="fm-top-dot"></span>Live
+</span>
+<button
+  class="aurora-page-header-logout"
+  id="auroraManagerLogoutButton"
+  type="button"
+>Log Out</button>
 </div>
 </div>
 </div>
@@ -3235,22 +3346,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
-<script id="auroraNoSidebarNoDockGuard">
-(function(){
-  'use strict';
-  const selectors=[
-    '.fm-sidebar','.fm-sidebar-edge-zone','.fm-side-toggle','.fm-edge-toggle',
-    '.aufc-sidebar','.aufc-mobile-button','.aufc-mobile-shade',
-    '#auroraUniversalSidebar','.universal-sidebar',
-    '.aurora-system-dock','.aurora-smart-dock','.aurora-dock-launcher',
-    '.aurora-hq-dock','.bottom-ticker','.smart-wealth-dock',
-    '[data-aurora-system-dock]','[id*="auroraDock"]','[class*="aurora-bottom-dock"]'
-  ];
-  function clean(){document.querySelectorAll(selectors.join(',')).forEach(node=>node.remove());}
-  clean();
-  addEventListener('pageshow',clean);
-})();
-</script><script id="auroraManagerNativeControlsScript">
+<script id="auroraManagerNativeControlsScript">
 (function(){
   "use strict";
 
@@ -3653,309 +3749,220 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </script>
 
 
-<script id="auroraManagerPageOwnedHeaderGuardV2">
+
+
+
+
+
+
+<script id="auroraManagerCleanSideRuntimeV4">
 (function(){
   "use strict";
 
-  document.documentElement.dataset.auroraHeader = "page";
-  let queued = false;
+  const knownSelectors = [
+    "#auroraNavToggle",
+    "#auroraLeftEdgeGestureZone",
+    "#auroraRightEdgeGestureZone",
+    ".fm-sidebar-edge-zone",
+    ".fm-side-toggle",
+    ".fm-edge-toggle",
+    ".aufc-mobile-button",
+    ".aurora-nav-edge-toggle",
+    ".aurora-nav-edge-button",
+    ".aurora-floating-nav",
+    ".aurora-floating-menu",
+    "[data-aurora-edge-toggle]",
+    "[data-aurora-floating-nav]"
+  ];
 
   function normalise(value){
-    return String(value || "").replace(/\s+/g," ").trim().toLowerCase();
+    return String(value || "")
+      .replace(/\s+/g," ")
+      .trim()
+      .toLowerCase();
   }
 
-  function getShell(){
-    try{
-      if(!window.parent || window.parent === window) return null;
-      const doc = window.parent.document;
-      if(!doc || !doc.body) return null;
+  function isApprovedHeaderMenu(node){
+    return Boolean(
+      node
+      && node.id === "auroraPageHeaderMenuButton"
+      && node.closest(".fm-workspace > .topbar")
+    );
+  }
 
-      const header = Array.from(doc.querySelectorAll(
-        ".session-bar,header,.topbar,.app-header,.global-header,[role='banner']"
-      )).find(function(node){
-        const value = normalise(node.textContent);
-        return value.includes("manager session")
-          && value.includes("webby")
-          && (value.includes("log out") || value.includes("logout"));
+  function looksLikeFloatingMenu(node,doc){
+    if(!node || !doc || isApprovedHeaderMenu(node)){
+      return false;
+    }
+
+    const label = normalise(
+      node.getAttribute("aria-label")
+      || node.getAttribute("title")
+      || node.textContent
+    );
+
+    const looksLikeMenu =
+      label === "☰"
+      || label === "≡"
+      || label === "menu"
+      || label.includes("open navigation")
+      || label.includes("mission navigation")
+      || label.includes("aurora navigation")
+      || label.includes("open menu");
+
+    if(!looksLikeMenu) return false;
+
+    try{
+      const style = doc.defaultView.getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+
+      return (
+        (
+          style.position === "fixed"
+          || style.position === "absolute"
+          || style.position === "sticky"
+        )
+        && rect.left < 90
+        && rect.width > 0
+        && rect.width <= 100
+        && rect.height > 0
+        && rect.height <= 100
+        && !node.closest(".topbar")
+        && !node.closest("#auroraNavPanel")
+      );
+    }catch(_){
+      return false;
+    }
+  }
+
+  function cleanDocument(doc,isParent){
+    if(!doc || !doc.documentElement) return;
+
+    const selectors = knownSelectors.slice();
+
+    if(isParent){
+      selectors.push("#auroraTopHeaderMenuButton");
+    }
+
+    doc.querySelectorAll(selectors.join(","))
+      .forEach(function(node){
+        if(!isApprovedHeaderMenu(node)){
+          node.remove();
+        }
       });
 
-      return header ? {doc:doc,header:header} : null;
-    }catch(_){
-      return null;
-    }
+    doc.querySelectorAll("button,[role='button']")
+      .forEach(function(node){
+        if(looksLikeFloatingMenu(node,doc)){
+          node.remove();
+        }
+      });
   }
 
-  function releaseInstalledAppSpace(shell){
-    if(!shell) return;
-    const doc = shell.doc;
-    const root = doc.documentElement;
+  function clean(){
+    cleanDocument(document,false);
 
-    let style = doc.getElementById("auroraManagerPageOwnedShellStyleV2");
-    if(!style){
-      style = doc.createElement("style");
-      style.id = "auroraManagerPageOwnedShellStyleV2";
-      style.textContent = `
-        html.aurora-manager-page-owned-shell{--shell-height:0px!important}
-        html.aurora-manager-page-owned-shell .session-bar{
-          display:none!important;height:0!important;min-height:0!important;
-          padding:0!important;margin:0!important;border:0!important;
-          overflow:hidden!important;visibility:hidden!important;
-          pointer-events:none!important
-        }
-        html.aurora-manager-page-owned-shell .club-frame{
-          top:var(--safe-top,0px)!important;
-          height:calc(100% - var(--safe-top,0px))!important
-        }
-        html.aurora-manager-page-owned-shell .frame-fallback{
-          inset:var(--safe-top,0px) 0 0!important
-        }
-      `;
-      doc.head.appendChild(style);
+    try{
+      if(window.parent && window.parent !== window){
+        cleanDocument(window.parent.document,true);
+      }
+    }catch(_){}
+  }
+
+  function wireLogout(){
+    const button = document.getElementById(
+      "auroraManagerLogoutButton"
+    );
+
+    if(!button || button.dataset.auroraCleanLogout === "true"){
+      return;
     }
 
-    root.classList.add("aurora-manager-page-owned-shell");
-    shell.header.style.setProperty("display","none","important");
-    shell.header.style.setProperty("height","0","important");
-    shell.header.style.setProperty("min-height","0","important");
-    shell.header.setAttribute("aria-hidden","true");
-  }
+    button.dataset.auroraCleanLogout = "true";
 
-  function removeLocalDuplicate(){
-    document.querySelectorAll(
-      "#auroraUniversalHeader,#auroraBrowserFallbackHeader,.aurora-universal-header"
-    ).forEach(function(node){
-      node.remove();
-    });
-    document.body.classList.add("aurora-page-owned-header");
-    document.body.classList.remove("aurora-browser-header-active");
-    document.body.style.setProperty("padding-top","0px","important");
-  }
+    button.addEventListener("click",function(event){
+      event.preventDefault();
+      event.stopPropagation();
 
-  function findExistingLogout(exclude){
-    return Array.from(document.querySelectorAll("button,a")).find(function(node){
-      if(node === exclude) return false;
-      const value = normalise(node.textContent);
-      return value === "log out" || value === "logout";
-    });
-  }
-
-  function wireLogout(button,shell){
-    if(!button || button.dataset.auroraLogoutWiredV2 === "true") return;
-    button.dataset.auroraLogoutWiredV2 = "true";
-    button.addEventListener("click",function(){
       try{
-        const parentLogout = shell && shell.header.querySelector(".logout-button");
-        if(parentLogout && typeof parentLogout.click === "function"){
-          parentLogout.click();
-          return;
+        if(window.parent && window.parent !== window){
+          const parentButton =
+            window.parent.document.querySelector(
+              ".logout-button,#logoutButton,"
+              + "[data-aurora-logout]"
+            );
+
+          if(
+            parentButton
+            && typeof parentButton.click === "function"
+          ){
+            parentButton.click();
+            return;
+          }
         }
       }catch(_){}
 
-      const oldLogout = findExistingLogout(button);
-      if(oldLogout && typeof oldLogout.click === "function"){
-        oldLogout.click();
-        return;
-      }
-
       try{
-        localStorage.removeItem("aurora_session");
-        localStorage.removeItem("aurora_manager_session");
+        [
+          "aurora_hq_unlocked",
+          "aurora_session",
+          "aurora_manager_session"
+        ].forEach(function(key){
+          localStorage.removeItem(key);
+        });
+
         sessionStorage.clear();
       }catch(_){}
+
       location.href = "index.html";
     });
   }
 
-  function ensureHeaderControls(shell){
-    const inner = document.querySelector(".fm-workspace > .topbar .topbar-inner");
-    const brand = inner && inner.querySelector(".brand");
-    const context = inner && inner.querySelector(".fm-top-context");
-    if(!inner || !brand || !context) return;
-
-    const path = context.querySelector(".fm-page-path");
-    if(path) path.hidden = true;
-
-    let menu = brand.querySelector("#auroraPageHeaderMenuButton");
-    const realToggle = document.getElementById("auroraNavToggle");
-    if(!menu && realToggle){
-      menu = document.createElement("button");
-      menu.id = "auroraPageHeaderMenuButton";
-      menu.type = "button";
-      menu.textContent = "☰";
-      menu.setAttribute("aria-label","Open Aurora mission navigation");
-      menu.title = "Open mission navigation";
-      brand.insertBefore(menu,brand.firstChild);
-      menu.addEventListener("click",function(event){
-        event.preventDefault();
-        event.stopPropagation();
-        realToggle.click();
-      });
-    }
-
-    if(realToggle){
-      realToggle.style.setProperty("display","none","important");
-    }
-
-    let logout = context.querySelector(".aurora-page-header-logout");
-    if(!logout){
-      logout = document.createElement("button");
-      logout.type = "button";
-      logout.className = "aurora-page-header-logout";
-      logout.textContent = "Log out";
-      context.appendChild(logout);
-    }
-
-    const live = context.querySelector(".fm-top-pill");
-    if(live){
-      live.innerHTML = '<span class="fm-top-dot"></span>Live';
-      context.insertBefore(live,logout);
-    }
-
-    wireLogout(logout,shell);
-  }
-
-  function shortenHeroSession(){
-    const label = document.querySelector(
-      "#auroraHero .manager-hero-session > span"
-    );
-    if(label && normalise(label.textContent) !== "live"){
-      label.innerHTML = "<i></i>Live";
-    }
-  }
-
-  function apply(){
-    queued = false;
-    const shell = getShell();
-    releaseInstalledAppSpace(shell);
-    removeLocalDuplicate();
-    ensureHeaderControls(shell);
-    shortenHeroSession();
-  }
-
-  function schedule(){
-    if(queued) return;
-    queued = true;
-    requestAnimationFrame(apply);
-  }
-
   function start(){
-    apply();
-    const observer = new MutationObserver(schedule);
-    observer.observe(document.documentElement,{childList:true,subtree:true});
-    window.setTimeout(apply,250);
-    window.setTimeout(apply,1000);
-    window.setTimeout(apply,3000);
+    clean();
+    wireLogout();
+
+    const localObserver = new MutationObserver(function(){
+      clean();
+    });
+
+    localObserver.observe(document.documentElement,{
+      childList:true,
+      subtree:true
+    });
+
+    try{
+      if(window.parent && window.parent !== window){
+        const parentDoc = window.parent.document;
+
+        const parentObserver = new MutationObserver(function(){
+          clean();
+        });
+
+        parentObserver.observe(parentDoc.documentElement,{
+          childList:true,
+          subtree:true
+        });
+      }
+    }catch(_){}
   }
 
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded",start,{once:true});
+    document.addEventListener(
+      "DOMContentLoaded",
+      start,
+      {once:true}
+    );
   }else{
     start();
   }
 
-  window.addEventListener("load",schedule);
-  window.addEventListener("pageshow",schedule);
-  window.addEventListener("focus",schedule);
-})();
-</script>
+  window.addEventListener("load",clean);
+  window.addEventListener("pageshow",clean);
+  window.addEventListener("focus",clean);
 
-
-<script id="auroraManagerNoFloatingNavigationScriptV3">
-(function(){
-  "use strict";
-
-  function lockRealToggle(){
-    document.querySelectorAll("#auroraNavToggle").forEach(function(toggle){
-      toggle.setAttribute("aria-hidden","true");
-      toggle.tabIndex = -1;
-
-      [
-        ["display","none"],
-        ["visibility","hidden"],
-        ["opacity","0"],
-        ["pointer-events","none"],
-        ["position","fixed"],
-        ["left","-10000px"],
-        ["top","-10000px"],
-        ["right","auto"],
-        ["bottom","auto"],
-        ["width","0"],
-        ["height","0"],
-        ["min-width","0"],
-        ["min-height","0"],
-        ["max-width","0"],
-        ["max-height","0"],
-        ["padding","0"],
-        ["margin","0"],
-        ["border","0"],
-        ["box-shadow","none"],
-        ["overflow","hidden"],
-        ["transform","none"],
-        ["z-index","-1"]
-      ].forEach(function(rule){
-        toggle.style.setProperty(rule[0],rule[1],"important");
-      });
-    });
-  }
-
-  function keepHeaderButtonConnected(){
-    const headerButton = document.getElementById(
-      "auroraPageHeaderMenuButton"
-    );
-    const realToggle = document.getElementById("auroraNavToggle");
-
-    if(
-      headerButton &&
-      realToggle &&
-      headerButton.dataset.auroraPermanentProxyV3 !== "true"
-    ){
-      headerButton.dataset.auroraPermanentProxyV3 = "true";
-      headerButton.addEventListener("click",function(event){
-        event.preventDefault();
-        event.stopPropagation();
-        realToggle.click();
-      });
-    }
-  }
-
-  function apply(){
-    lockRealToggle();
-    keepHeaderButtonConnected();
-  }
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded",apply,{once:true});
-  }else{
-    apply();
-  }
-
-  window.addEventListener("load",apply);
-  window.addEventListener("pageshow",apply);
-  window.addEventListener("focus",apply);
-
-  /*
-    The navigation script may rewrite the controller after startup.
-    Watch both inserted nodes and style/class changes, then reapply the lock.
-  */
-  let applying = false;
-  const observer = new MutationObserver(function(){
-    if(applying) return;
-    applying = true;
-    requestAnimationFrame(function(){
-      apply();
-      applying = false;
-    });
-  });
-
-  observer.observe(document.documentElement,{
-    childList:true,
-    subtree:true,
-    attributes:true,
-    attributeFilter:["style","class"]
-  });
-
-  [100,300,750,1500,3000,6000].forEach(function(delay){
-    window.setTimeout(apply,delay);
+  [50,150,350,700,1200,2500,5000].forEach(function(delay){
+    window.setTimeout(clean,delay);
   });
 })();
 </script>
