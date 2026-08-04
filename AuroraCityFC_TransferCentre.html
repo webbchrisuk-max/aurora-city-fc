@@ -5316,7 +5316,28 @@ function renderSmartExitDesk(){
 }
 function paydayExecutionStore(){const saved=safeJsonRead(PAYDAY_EXECUTION_KEY,{open:false,availableCash:0,checks:{},trades:{},completedAt:''});saved.checks=saved.checks||{};saved.trades=saved.trades||{};return saved;}
 function savePaydayExecution(saved){saved.updatedAt=new Date().toISOString();safeJsonWrite(PAYDAY_EXECUTION_KEY,saved);}
-function paydayTradeTotals(deal,saved){let invested=0,income=0,recorded=0;const details={};(deal?.rows||[]).forEach(item=>{const ticker=shortTicker(item.row.ticker);const trade=saved.trades[ticker]||{};const shares=parseNum(trade.shares)||0,price=parseNum(trade.price)||0,fees=parseNum(trade.fees)||0;const cost=shares>0&&price>0?shares*price+fees:0;const added=cost*incomeRate(item.row);if(cost>0)recorded++;invested+=cost;income+=Number.isFinite(added)?added:0;details[ticker]={shares,price,fees,cost,income:Number.isFinite(added)?added:0};});return {invested,income,recorded,details};}
+function paydayTradeTotals(deal,saved){
+  let invested=0,income=0,recorded=0;
+  const details={};
+  const routeRows={};
+  (deal?.rows||[]).forEach(item=>{routeRows[shortTicker(item.row.ticker)]=item.row;});
+  Object.keys(saved.trades||{}).forEach(rawTicker=>{
+    const ticker=shortTicker(rawTicker);
+    const trade=saved.trades[ticker]||saved.trades[rawTicker]||{};
+    const shares=parseNum(trade.shares)||0;
+    const price=parseNum(trade.price)||0;
+    const fees=parseNum(trade.fees)||0;
+    const cost=shares>0&&price>0?shares*price+fees:0;
+    const row=routeRows[ticker]||holdingByTicker(ticker)||null;
+    const rate=row?incomeRate(row):0;
+    const added=cost>0&&Number.isFinite(rate)?cost*rate:0;
+    if(cost>0)recorded++;
+    invested+=cost;
+    income+=Number.isFinite(added)?added:0;
+    details[ticker]={shares,price,fees,cost,income:Number.isFinite(added)?added:0};
+  });
+  return {invested,income,recorded,details};
+}
 function renderPaydayExecution(deal){
   const panel=$('paydayExecutionPanel'),checklist=$('paydayChecklist'),tradeGrid=$('paydayTradeGrid');if(!panel||!checklist||!tradeGrid)return;const saved=paydayExecutionStore();panel.classList.toggle('open',Boolean(saved.open));panel.classList.toggle('completed',Boolean(saved.completedAt));
   if($('openPaydayWindow'))$('openPaydayWindow').textContent=saved.open?'Close Payday Window':'Open Payday Window';if($('paydayAvailableCash')){const cashInput=$('paydayAvailableCash');if(document.activeElement!==cashInput)cashInput.value=(Math.max(0,parseNum(saved.availableCash)||0)).toFixed(2);cashInput.disabled=false;cashInput.readOnly=false;cashInput.title='Enter the corrected Transfer Centre cash balance, then press Save cash amount';}if($('restorePaydayFunding'))$('restorePaydayFunding').hidden=!(saved.lastFundingSnapshot&&parseNum(saved.lastFundingSnapshot.availableCash)>0);
@@ -5324,7 +5345,7 @@ function renderPaydayExecution(deal){
   const pricesFresh=refreshAge<=6;
   const routeReady=(deal?.rows||[]).length>0;
   const totals=paydayTradeTotals(deal,saved);
-  const purchasesRecorded=routeReady&&totals.recorded===(deal.rows||[]).length;
+  const purchasesRecorded=totals.recorded>0;
   const availableCash=Math.max(0,parseNum(saved.availableCash)||0);
   const plannedInvested=(deal?.rows||[]).reduce((sum,item)=>sum+(parseNum(item.amount)||0),0);
   const completionTolerance=1.00;
@@ -5337,11 +5358,7 @@ function renderPaydayExecution(deal){
    * fill is recorded, it passes when the actual total (including fees) fits
    * inside the available transfer cash, allowing £1 for broker rounding.
    */
-  const cashReady=availableCash>0&&(
-    purchasesRecorded
-      ? actualCashRemaining>=-completionTolerance
-      : availableCash+completionTolerance>=plannedInvested
-  );
+  const cashReady=availableCash>0&&purchasesRecorded&&actualCashRemaining>=-completionTolerance;
   const checks=[
     {key:'prices',label:'Refresh live prices',detail:pricesFresh?`Updated ${new Date(lastLiveRefreshAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`:'Use Refresh Data before execution.',done:pricesFresh,manual:false},
     {key:'etfReviewed',label:'Review ETF exits',detail:'Confirm IITU/VWRA funding decision.',done:Boolean(saved.checks.etfReviewed),manual:true},
@@ -5349,15 +5366,15 @@ function renderPaydayExecution(deal){
     {key:'exDivChecked',label:'Check ex-dividend dates',detail:'Use the fixture calendar before buying.',done:Boolean(saved.checks.exDivChecked),manual:true},
     {key:'route',label:'Choose route',detail:routeReady?`${deal.route} selected.`:'No approved route available.',done:routeReady,manual:false},
     {key:'allocationsConfirmed',label:'Confirm allocations',detail:'Approve the final amount for each signing.',done:Boolean(saved.checks.allocationsConfirmed),manual:true},
-    {key:'purchases',label:'Record completed fills',detail:purchasesRecorded?`${totals.recorded} of ${deal.rows.length} recorded.`:`${totals.recorded} of ${(deal?.rows||[]).length} recorded.`,done:purchasesRecorded,manual:false},
+    {key:'purchases',label:'Record completed fills',detail:purchasesRecorded?`${totals.recorded} actual broker purchase${totals.recorded===1?'':'s'} recorded.`:'No completed broker purchases entered yet.',done:purchasesRecorded,manual:false},
     {key:'registrationReviewed',label:'Review registration desk',detail:'Confirm new holdings/top-ups are ready to register.',done:Boolean(saved.checks.registrationReviewed),manual:true}
   ];
   checklist.innerHTML=checks.map(item=>`<label class="payday-check ${item.done?'done':''}">${item.manual?`<input type="checkbox" data-payday-check="${item.key}" ${item.done?'checked':''}>`:`<i></i>`}<div><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.detail)}</span></div></label>`).join('');
   tradeGrid.innerHTML=routeReady?deal.rows.map(item=>{const ticker=shortTicker(item.row.ticker),trade=saved.trades[ticker]||{},detail=totals.details[ticker]||{};return `<article class="payday-trade-card"><div class="payday-trade-top"><div><h5>${escapeHtml(displayTicker(item.row.ticker))} — ${escapeHtml(displayName(item.row))}</h5><span>${escapeHtml(platformFor(item.row.ticker))}</span></div><span>Planned ${money(item.amount)}</span></div><div class="payday-trade-inputs"><label><span>Shares bought</span><input type="number" min="0" step="any" value="${escapeHtml(trade.shares||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="shares"></label><label><span>Actual £/share</span><input type="number" min="0" step="any" value="${escapeHtml(trade.price||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="price"></label><label><span>Fees £</span><input type="number" min="0" step="any" value="${escapeHtml(trade.fees||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="fees"></label></div><div class="payday-trade-result"><span>Actual cost <b>${money(detail.cost||0)}</b></span><span>Income added <b>${money(detail.income||0)}/yr</b></span></div></article>`;}).join(''):'<div class="loading">Choose an approved route before recording completed purchases.</div>';
-  const allReady=checks.every(item=>item.done);if($('completePaydayWindow'))$('completePaydayWindow').disabled=!allReady;if($('paydayTradeCount'))$('paydayTradeCount').textContent=`${totals.recorded} recorded`;
+  const allReady=purchasesRecorded&&cashReady;if($('completePaydayWindow'))$('completePaydayWindow').disabled=!allReady;if($('paydayTradeCount'))$('paydayTradeCount').textContent=`${totals.recorded} recorded`;
   const plannedIncome=deal?.totalIncome||0,starting=incomeSimulatorSettings().startingIncome;
   if($('paydayPlannedInvested'))$('paydayPlannedInvested').textContent=money(plannedInvested);if($('paydayPlannedIncome'))$('paydayPlannedIncome').textContent=`${money(plannedIncome)}/yr annual income`;if($('paydayActualInvested'))$('paydayActualInvested').textContent=money(totals.invested);if($('paydayActualIncome'))$('paydayActualIncome').textContent=`${money(totals.income)}/yr annual income`;if($('paydayInvestmentVariance'))$('paydayInvestmentVariance').textContent=`${totals.invested-plannedInvested>=0?'+':''}${money(totals.invested-plannedInvested)}`;if($('paydayNewClubIncome'))$('paydayNewClubIncome').textContent=`${money(starting+totals.income)}/yr`;
-  const status=saved.completedAt?'Transfer window complete':saved.open?(allReady?'Ready to complete':'Execution checks active'):'Window closed';if($('paydayWindowStatus'))$('paydayWindowStatus').textContent=status;if($('paydayWindowStatusNote'))$('paydayWindowStatusNote').textContent=saved.completedAt?`Completed ${new Date(saved.completedAt).toLocaleString('en-GB')}.`:saved.open?`${checks.filter(x=>x.done).length} of ${checks.length} controls complete.`:'Open the window when payday arrives.';if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent=saved.completedAt?`${money(totals.invested)} invested • ${money(totals.income)}/yr added • ${money(Math.max(0,actualCashRemaining))} cash left.`:allReady?`Every control has passed. Actual fills are within available cash; the planned variance is informational only.`:'Complete every control before closing the window.';
+  const status=saved.completedAt?'Transfer window complete':saved.open?(allReady?'Ready to complete':'Execution checks active'):'Window closed';if($('paydayWindowStatus'))$('paydayWindowStatus').textContent=status;if($('paydayWindowStatusNote'))$('paydayWindowStatusNote').textContent=saved.completedAt?`Completed ${new Date(saved.completedAt).toLocaleString('en-GB')}.`:saved.open?`${checks.filter(x=>x.done).length} of ${checks.length} controls complete.`:'Open the window when payday arrives.';if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent=saved.completedAt?`${money(totals.invested)} invested • ${money(totals.income)}/yr added • ${money(Math.max(0,actualCashRemaining))} cash left.`:allReady?`Actual broker fills are within available cash. The planned route and optional checklist items are informational only.`:'Complete every control before closing the window.';
 }
 
 
@@ -6692,7 +6709,7 @@ $('completePaydayWindow')?.addEventListener('click',()=>{
   const totals=paydayTradeTotals(deal,saved);
   const availableCash=Math.max(0,parseNum(saved.availableCash)||0);
   const tolerance=1.00;
-  if(!deal.rows.length||totals.recorded!==deal.rows.length)return;
+  if(!(totals.recorded>0)){if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent='Cannot complete: no actual broker purchases have been entered.';return;}
   if(!(availableCash>0)||totals.invested>availableCash+tolerance){
     if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent=`Cannot complete: actual fills ${money(totals.invested)} exceed available cash ${money(availableCash)}. Check the entered prices and fees.`;
     return;
