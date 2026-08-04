@@ -6057,53 +6057,62 @@ function dedupeIncomingOffers(list){
   }
   return [...byTicker.values()];
 }
-function normaliseQuarterOfferToFullHolding(offer){
+const AURORA_OWNED_SHARE_OVERRIDES=Object.freeze({
+  // Authoritative broker quantity confirmed by the manager.
+  'UKW|IG ISA':7021
+});
+
+function incomingOfferOwnedShares(offer){
+  const ticker=registrationShortTicker(offer?.ticker);
+  const account=normalizeRegistrationAccount(offer?.account||offer?.platform||offer?.broker);
+  const overrideKey=`${ticker}|${account}`;
+  const override=parseNum(AURORA_OWNED_SHARE_OVERRIDES[overrideKey]);
+  if(override>0) return override;
+
+  const active=(state.holdings||[]).filter(row=>
+    registrationShortTicker(row?.ticker)===ticker &&
+    !['SOLD','EXITED'].includes(String(row?.status||'').toUpperCase())
+  );
+  const exact=active.find(row=>
+    normalizeRegistrationAccount(row?.account||row?.platform||row?.broker)===account
+  );
+  const fallback=exact||active[0]||null;
+  const shares=parseNum(
+    fallback?.shares ?? fallback?.Shares ?? fallback?.quantity ?? fallback?.Quantity
+  );
+  return shares>0?shares:NaN;
+}
+
+function normaliseIncomingOfferToOwnedShares(offer){
   if(!offer || typeof offer!=='object') return offer;
 
-  // Idempotency guard: an offer already corrected in this browser session must
-  // never be multiplied again when the offer room rerenders or live prices refresh.
-  if(offer.fullHoldingCorrection===true) return offer;
-
   const offeredShares=parseNum(offer.requestedShares);
-  if(!(offeredShares>0)) return offer;
+  const ownedShares=incomingOfferOwnedShares(offer);
+  if(!(offeredShares>0) || !(ownedShares>0)) return offer;
 
-  const authenticity=String(offer.authenticity||'').toUpperCase();
-  const source=String(offer.source||'').toUpperCase();
-  const quantitySource=String(offer.quantitySource||'').toUpperCase();
-  const isLegacyScenario=
-    authenticity.includes('AURORA SCENARIO') ||
-    source.includes('AURORA INCOMING OFFERS') ||
-    quantitySource.includes('LEGACY AURORA 25%');
-
-  if(!isLegacyScenario) return offer;
-
-  // Legacy Aurora Scenario bids were generated for exactly 25% of a holding.
-  // The original offered quantity is therefore the stable source of truth.
-  // Do not use state.holdings here: duplicated/aggregated portfolio rows can
-  // inflate the holding and cause repeated x4 corrections.
-  const originalQuarter=parseNum(offer.originalRequestedShares)>0
-    ? parseNum(offer.originalRequestedShares)
-    : offeredShares;
-  const fullShares=originalQuarter*4;
-  const ratio=fullShares/offeredShares;
-
-  // If the currently displayed quantity is already the full amount, leave it.
-  if(Math.abs(ratio-1)<0.000001) return {...offer,fullHoldingCorrection:true};
+  // No percentage, quarter-position or multiplier logic. The broker holding is
+  // the sole quantity used by the offer room.
+  if(Math.abs(offeredShares-ownedShares)<0.0000001){
+    return {...offer,requestedShares:ownedShares,ownedHoldingSynced:true};
+  }
 
   const corrected={...offer};
-  corrected.originalRequestedShares=originalQuarter;
-  corrected.requestedShares=fullShares;
+  const ratio=ownedShares/offeredShares;
+  corrected.sourceRequestedShares=parseNum(offer.sourceRequestedShares)>0
+    ? parseNum(offer.sourceRequestedShares)
+    : offeredShares;
+  corrected.requestedShares=ownedShares;
   ['offerValueGbp','estimatedGainLossGbp','annualIncomeLostGbp'].forEach(key=>{
     const value=Number(offer[key]);
     if(Number.isFinite(value)) corrected[key]=value*ratio;
   });
-  corrected.fullHoldingCorrection=true;
-  corrected.quantitySource='Full holding — legacy Aurora 25% offer corrected once';
+  corrected.ownedHoldingSynced=true;
+  corrected.quantitySource='Actual owned shares from broker holding';
   return corrected;
 }
 
 function normaliseIncomingOfferQuantities(list){
-  return (Array.isArray(list)?list:[]).map(normaliseQuarterOfferToFullHolding);
+  return (Array.isArray(list)?list:[]).map(normaliseIncomingOfferToOwnedShares);
 }
 
 function renderIncomingOffers(){
@@ -6156,7 +6165,7 @@ function renderIncomingOffers(){
         <div class="offer-metric"><small>Gain / loss at target</small><strong class="${gain>=0?'good':'warn'}">${gain>=0?'+':''}${money(gain)}</strong></div>
         <div class="offer-metric"><small>Income surrendered</small><strong class="warn">${money(Number(offer.annualIncomeLostGbp||0))}/yr</strong></div>
       </div>
-      ${offer.fullHoldingCorrection?`<div class="offer-room-note" style="margin:0 16px 10px"><span>✅</span><div><b>Full holding corrected:</b> Aurora replaced the legacy 25% quantity (${Number(offer.originalRequestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})}) with your live holding of ${Number(offer.requestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})} shares.</div></div>`:''}
+      ${offer.ownedHoldingSynced?`<div class="offer-room-note" style="margin:0 16px 10px"><span>✅</span><div><b>Owned holding synced:</b> This offer uses the ${Number(offer.requestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})} shares recorded as actually owned in ${escapeHtml(offer.account||'the selected account')}. No percentage or partial-position calculation is applied.</div></div>`:''}
       ${incomingOfferClauseHtml(offer,clause)}
       <div class="offer-reason">${escapeHtml(offer.reason||'No offer explanation recorded.')}</div>
       <div class="offer-verdict"><b>Director of Football verdict</b>${escapeHtml(offer.directorVerdict||'Review the fee, income impact and replacement options.')}</div>
@@ -6223,7 +6232,7 @@ async function respondToIncomingOffer(offerId,response,button,extra={}){
   if(response==='REJECT'&&!window.confirm(`Reject the offer for ${offer.ticker}?`))return;
   incomingOfferBusy=true;if(button){button.disabled=true;button.textContent='Updating…';}
   try{
-    const result=await postRegistration({action:'respondIncomingOffer',offerId,response,requestedShares:Number(offer.requestedShares||0),offerValueGbp:Number(offer.offerValueGbp||0),estimatedGainLossGbp:Number(offer.estimatedGainLossGbp||0),annualIncomeLostGbp:Number(offer.annualIncomeLostGbp||0),fullHoldingCorrection:Boolean(offer.fullHoldingCorrection),...extra,source:'Aurora City FC Incoming Offers',userAgent:navigator.userAgent});
+    const result=await postRegistration({action:'respondIncomingOffer',offerId,response,requestedShares:Number(offer.requestedShares||0),offerValueGbp:Number(offer.offerValueGbp||0),estimatedGainLossGbp:Number(offer.estimatedGainLossGbp||0),annualIncomeLostGbp:Number(offer.annualIncomeLostGbp||0),ownedHoldingSynced:Boolean(offer.ownedHoldingSynced),...extra,source:'Aurora City FC Incoming Offers',userAgent:navigator.userAgent});
     if(msg){msg.textContent=result.message||'Offer updated.';msg.className=`registration-message ${result.queued?'pending':'success'}`;}
     if(!result.queued){await loadIncomingOffers(false);if(response==='ACCEPT')await loadSellTickets();}
   }catch(err){if(msg){msg.textContent=err.message||'Offer response failed.';msg.className='registration-message error';}if(button)button.disabled=false;}
