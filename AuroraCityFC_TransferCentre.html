@@ -2841,7 +2841,26 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v5-20260804-platform-rules-get-fix" name="aurora-build"/></head>
+<meta content="transfer-gameshell-content-v5-20260804-platform-rules-get-fix" name="aurora-build"/><script>
+(function(){
+  try{
+    const key='aurora-transfer-cache-reset-20260804-1055';
+    if(!sessionStorage.getItem(key)){
+      sessionStorage.setItem(key,'1');
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.getRegistrations().then(function(regs){
+          return Promise.all(regs.map(function(reg){return reg.unregister();}));
+        }).catch(function(){});
+      }
+      if(window.caches){
+        caches.keys().then(function(keys){
+          return Promise.all(keys.map(function(name){return caches.delete(name);}));
+        }).catch(function(){});
+      }
+    }
+  }catch(_){ }
+})();
+</script></head>
 <body>
 
 
@@ -3845,9 +3864,19 @@ async function loadPlatformRules(){
     if(state.holdings?.length||state.watchlist?.length||state.scout?.length) renderAll();
     return true;
   }catch(err){
+    const ruleError=String(err?.message||err||'Unknown PlatformRules error');
     console.warn('PlatformRules could not be loaded; using embedded emergency rules.',err);
-    if(rulesChip){rulesChip.textContent='Rules: unavailable';rulesChip.className='status-chip block';rulesChip.title='AuroraData PlatformRules could not be loaded; emergency embedded rules are active';}
-    if($('deskNote')) $('deskNote').textContent='PlatformRules unavailable — embedded emergency rules are active.';
+    if(rulesChip){
+      rulesChip.textContent='Rules: error';
+      rulesChip.className='status-chip block';
+      rulesChip.title=ruleError;
+    }
+    if($('deskNote')) $('deskNote').textContent='PlatformRules error: '+ruleError;
+    const connectionMessage=$('registrationConnectionMessage');
+    if(connectionMessage){
+      connectionMessage.textContent='PlatformRules error: '+ruleError;
+      connectionMessage.className='registration-message error';
+    }
     return false;
   }
 }
