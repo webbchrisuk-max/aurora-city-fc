@@ -3,7 +3,7 @@
 <html data-aurora-manager-values="pending" data-aurora-page="manager" data-aurora-shell-content="true" lang="en">
 <head>
 
-<!-- Build: Aurora Manager Dashboard • Smart Notification Intelligence v14 • 3 Aug 2026 -->
+<!-- Build: Aurora Manager Dashboard • Complete Notification Upgrade v15 • 3 Aug 2026 -->
 <script id="auroraCrossBrowserCacheCleanup">
 (function(){
   "use strict";
@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-smart-notification-intelligence-v14-20260803" name="aurora-build"/>
+</style><meta content="manager-complete-notification-upgrade-v15-20260803" name="aurora-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -1512,6 +1512,18 @@ html[data-aurora-manager-values="ready"]
 }
 
 #beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="intelligence"],
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="decision"]{
+  --card-accent:167,139,250;
+}
+
+#beastNotificationPanel
+.aurora-manager-notification-card[data-rich-type="update"]{
+  --card-accent:34,211,238;
+}
+
+#beastNotificationPanel
 .aurora-manager-notification-card[data-featured="true"]{
   border-color:rgba(var(--card-accent),.44)!important;
   box-shadow:
@@ -1737,6 +1749,112 @@ html[data-aurora-manager-values="ready"]
     order:3!important;
     width:100%!important;
     justify-content:center!important;
+  }
+}
+</style>
+
+
+<style id="auroraNotificationPreferencesStyles">
+.aurora-notification-preferences-card{
+  margin-top:14px;
+  padding:14px;
+  border:1px solid rgba(167,139,250,.22);
+  border-radius:17px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(167,139,250,.10),transparent 42%),
+    rgba(2,6,23,.34);
+}
+.aurora-notification-preferences-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.aurora-notification-preferences-head small{
+  display:block;
+  color:#c4b5fd;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.aurora-notification-preferences-head strong{
+  display:block;
+  margin-top:4px;
+  color:#ede9fe;
+  font-size:14px;
+}
+.aurora-notification-preferences-head span:not(.aurora-notification-preferences-status){
+  display:block;
+  margin-top:4px;
+  color:#8294aa;
+  font-size:9px;
+  line-height:1.4;
+}
+.aurora-notification-preferences-status{
+  flex:0 0 auto;
+  padding:6px 8px;
+  border:1px solid rgba(52,211,153,.22);
+  border-radius:999px;
+  color:#bbf7d0;
+  background:rgba(20,83,45,.18);
+  font-size:7px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.aurora-notification-preferences-grid{
+  display:grid;
+  gap:8px;
+  margin-top:12px;
+}
+.aurora-notification-preferences-grid label{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 118px;
+  gap:12px;
+  align-items:center;
+  padding:10px;
+  border:1px solid rgba(148,163,184,.12);
+  border-radius:12px;
+  background:rgba(2,8,22,.30);
+}
+.aurora-notification-preferences-grid label>span{
+  min-width:0;
+}
+.aurora-notification-preferences-grid label strong{
+  display:block;
+  color:#dbeafe;
+  font-size:9px;
+}
+.aurora-notification-preferences-grid label small{
+  display:block;
+  margin-top:3px;
+  color:#8294aa;
+  font-size:8px;
+  line-height:1.35;
+}
+.aurora-notification-preferences-grid select{
+  width:100%;
+  min-height:34px;
+  border:1px solid rgba(167,139,250,.24);
+  border-radius:10px;
+  color:#ede9fe;
+  background:#111a31;
+  padding:0 8px;
+  font-size:8px;
+  font-weight:900;
+  outline:none;
+}
+.aurora-notification-preferences-grid select:focus{
+  border-color:rgba(196,181,253,.56);
+  box-shadow:0 0 0 3px rgba(167,139,250,.08);
+}
+@media(max-width:560px){
+  .aurora-notification-preferences-head{
+    flex-direction:column;
+  }
+  .aurora-notification-preferences-grid label{
+    grid-template-columns:1fr;
   }
 }
 </style>
@@ -2609,8 +2727,666 @@ function renderAuroraIntelligence(){
   }).join('');
 }
 
+
+const AURORA_INTELLIGENCE_SNAPSHOT_KEY =
+  "aurora_manager_intelligence_snapshot_v2";
+
+const AURORA_DIVIDEND_RECEIPT_SNAPSHOT_KEY =
+  "aurora_manager_dividend_receipts_v1";
+
+function managerNotificationApi(){
+  try{
+    if(
+      window.parent!==window
+      && window.parent.AuroraNotifications
+    ){
+      return window.parent.AuroraNotifications;
+    }
+  }catch(_){}
+
+  return window.AuroraNotifications || null;
+}
+
+function readLocalSnapshot(key,fallback){
+  try{
+    const value=JSON.parse(
+      localStorage.getItem(key) || "null"
+    );
+
+    return value===null
+      ? fallback
+      : value;
+  }catch(_){
+    return fallback;
+  }
+}
+
+function writeLocalSnapshot(key,value){
+  try{
+    localStorage.setItem(
+      key,
+      JSON.stringify(value)
+    );
+    return true;
+  }catch(_){
+    return false;
+  }
+}
+
+function intelligencePermission(row){
+  return String(
+    row?.buy_permission
+    ?? row?.Buy_Permission
+    ?? row?.permission
+    ?? ""
+  ).trim();
+}
+
+function intelligenceRisk(row){
+  return String(
+    row?.risk_level
+    ?? row?.Risk_Level
+    ?? row?.risk
+    ?? ""
+  ).trim();
+}
+
+function intelligenceRegime(){
+  const row=intelligenceRows()[0] || {};
+  const briefing=managerBriefingMap();
+
+  return String(
+    row?.market_regime
+    ?? row?.Market_Regime
+    ?? briefing["market regime"]
+    ?? ""
+  ).trim();
+}
+
+function intelligenceSnapshot(){
+  const holdings={};
+
+  intelligenceRows().forEach(row=>{
+    const ticker=displayTicker(
+      row?.ticker
+      ?? row?.Ticker
+    );
+
+    if(!ticker) return;
+
+    holdings[ticker]={
+      score:intelligenceScore(row),
+      permission:intelligencePermission(row),
+      action:intelligenceAction(row),
+      risk:intelligenceRisk(row)
+    };
+  });
+
+  return {
+    regime:intelligenceRegime(),
+    holdings
+  };
+}
+
+function syncAuroraIntelligenceNotifications(){
+  const api=managerNotificationApi();
+
+  if(!api?.add){
+    window.setTimeout(
+      syncAuroraIntelligenceNotifications,
+      1200
+    );
+    return;
+  }
+
+  const current=intelligenceSnapshot();
+  const previous=readLocalSnapshot(
+    AURORA_INTELLIGENCE_SNAPSHOT_KEY,
+    null
+  );
+
+  if(
+    !previous
+    || !previous.holdings
+  ){
+    writeLocalSnapshot(
+      AURORA_INTELLIGENCE_SNAPSHOT_KEY,
+      current
+    );
+    return;
+  }
+
+  if(
+    current.regime
+    && previous.regime
+    && current.regime!==previous.regime
+  ){
+    api.add({
+      department:"Analysis Room",
+      page:"AuroraCityFC_AnalysisRoom.html",
+      title:"Market regime changed",
+      message:
+        `${previous.regime} → ${current.regime}. `
+        + "Review sector preference and transfer permissions before deploying new money.",
+      icon:"🌦️",
+      priority:"high",
+      dedupeKey:"intelligence:market-regime",
+      fingerprint:
+        `${previous.regime}|${current.regime}`,
+      source:"manager-intelligence",
+      actionLabel:"Review market regime",
+      metadata:{
+        category:"action",
+        notificationGroup:"intelligence",
+        replaceExisting:true,
+        rich:{
+          type:"intelligence",
+          kicker:"MARKET REGIME",
+          badge:"REGIME CHANGED",
+          value:current.regime,
+          valueLabel:"CURRENT",
+          secondary:`Previous: ${previous.regime}`,
+          featured:true,
+          actionText:"Open Analysis Room"
+        }
+      }
+    });
+  }
+
+  const confidenceChanges=[];
+  const permissionChanges=[];
+  const restrictions=[];
+  const riskChanges=[];
+
+  Object.entries(current.holdings).forEach(
+    ([ticker,currentRow])=>{
+      const previousRow=
+        previous.holdings[ticker];
+
+      if(!previousRow) return;
+
+      if(
+        Number.isFinite(currentRow.score)
+        && Number.isFinite(previousRow.score)
+      ){
+        const delta=
+          currentRow.score
+          - previousRow.score;
+
+        if(Math.abs(delta)>=5){
+          confidenceChanges.push({
+            ticker,
+            before:previousRow.score,
+            after:currentRow.score,
+            delta
+          });
+        }
+      }
+
+      if(
+        currentRow.permission
+          !== previousRow.permission
+        && (
+          currentRow.permission
+          || previousRow.permission
+        )
+      ){
+        permissionChanges.push({
+          ticker,
+          before:previousRow.permission,
+          after:currentRow.permission
+        });
+      }
+
+      const restricted=value=>
+        /no new money|monitor only|watch|locked legacy|do not buy|blocked/i.test(
+          String(value || "")
+        );
+
+      if(
+        restricted(currentRow.action)
+        && !restricted(previousRow.action)
+      ){
+        restrictions.push({
+          ticker,
+          before:previousRow.action || "No restriction",
+          after:currentRow.action
+        });
+      }
+
+      if(
+        currentRow.risk
+          !== previousRow.risk
+        && (
+          currentRow.risk
+          || previousRow.risk
+        )
+      ){
+        riskChanges.push({
+          ticker,
+          before:previousRow.risk,
+          after:currentRow.risk
+        });
+      }
+    }
+  );
+
+  if(confidenceChanges.length){
+    confidenceChanges.sort(
+      (a,b)=>Math.abs(b.delta)-Math.abs(a.delta)
+    );
+
+    const lead=confidenceChanges[0];
+
+    api.add({
+      department:"Analysis Room",
+      page:"AuroraCityFC_AnalysisRoom.html",
+      title:
+        confidenceChanges.length===1
+          ? `${lead.ticker} confidence moved ${lead.delta>=0?"+":""}${lead.delta.toFixed(0)} points`
+          : `${confidenceChanges.length} confidence scores moved materially`,
+      message:
+        confidenceChanges.slice(0,4).map(
+          item=>
+            `${item.ticker} ${item.before.toFixed(0)} → ${item.after.toFixed(0)}`
+        ).join(" • "),
+      icon:lead.delta>=0 ? "📈" : "📉",
+      priority:
+        lead.delta<0 ? "high" : "normal",
+      dedupeKey:"intelligence:confidence-change",
+      fingerprint:JSON.stringify(confidenceChanges),
+      source:"manager-intelligence",
+      actionLabel:"Review confidence changes",
+      metadata:{
+        category:
+          lead.delta<0
+            ? "action"
+            : "information",
+        notificationGroup:"intelligence",
+        replaceExisting:true,
+        rich:{
+          type:"intelligence",
+          kicker:"CONFIDENCE MOVEMENT",
+          badge:
+            lead.delta>=0
+              ? "FORM IMPROVED"
+              : "REVIEW REQUIRED",
+          value:
+            `${lead.delta>=0?"+":""}${lead.delta.toFixed(0)}`,
+          valueLabel:"POINTS",
+          secondary:
+            `${lead.ticker} ${lead.before.toFixed(0)} → ${lead.after.toFixed(0)}`,
+          actionText:"Open Intelligence"
+        }
+      }
+    });
+  }
+
+  if(permissionChanges.length){
+    api.add({
+      department:"Analysis Room",
+      page:"AuroraCityFC_AnalysisRoom.html",
+      title:
+        permissionChanges.length===1
+          ? `${permissionChanges[0].ticker} buy permission changed`
+          : `${permissionChanges.length} buy permissions changed`,
+      message:
+        permissionChanges.slice(0,4).map(
+          item=>
+            `${item.ticker} ${item.before} → ${item.after}`
+        ).join(" • "),
+      icon:"🚦",
+      priority:"high",
+      dedupeKey:"intelligence:permission-change",
+      fingerprint:JSON.stringify(permissionChanges),
+      source:"manager-intelligence",
+      actionLabel:"Review buy permissions",
+      metadata:{
+        category:"action",
+        notificationGroup:"intelligence",
+        replaceExisting:true,
+        rich:{
+          type:"decision",
+          kicker:"BUY PERMISSION",
+          badge:"INSTRUCTION CHANGED",
+          value:String(permissionChanges.length),
+          valueLabel:
+            permissionChanges.length===1
+              ? "HOLDING"
+              : "HOLDINGS",
+          secondary:
+            `${permissionChanges[0].ticker}: `
+            + `${permissionChanges[0].before} → ${permissionChanges[0].after}`,
+          featured:true,
+          actionText:"Open Intelligence"
+        }
+      }
+    });
+  }
+
+  if(restrictions.length){
+    api.add({
+      department:"Analysis Room",
+      page:"AuroraCityFC_AnalysisRoom.html",
+      title:
+        restrictions.length===1
+          ? `New restriction applied to ${restrictions[0].ticker}`
+          : `${restrictions.length} new buying restrictions applied`,
+      message:
+        restrictions.slice(0,4).map(
+          item=>
+            `${item.ticker}: ${item.after}`
+        ).join(" • "),
+      icon:"⛔",
+      priority:"critical",
+      dedupeKey:"intelligence:new-restrictions",
+      fingerprint:JSON.stringify(restrictions),
+      source:"manager-intelligence",
+      actionLabel:"Review restrictions",
+      metadata:{
+        category:"critical",
+        notificationGroup:"intelligence",
+        replaceExisting:true,
+        rich:{
+          type:"risk",
+          kicker:"NEW RESTRICTION",
+          badge:"NO AUTOMATIC BUY",
+          value:String(restrictions.length),
+          valueLabel:
+            restrictions.length===1
+              ? "HOLDING"
+              : "HOLDINGS",
+          secondary:
+            `${restrictions[0].ticker}: ${restrictions[0].after}`,
+          featured:true,
+          actionText:"Open Analysis Room"
+        }
+      }
+    });
+  }
+
+  if(riskChanges.length){
+    api.add({
+      department:"Analysis Room",
+      page:"AuroraCityFC_AnalysisRoom.html",
+      title:
+        riskChanges.length===1
+          ? `${riskChanges[0].ticker} risk level changed`
+          : `${riskChanges.length} risk levels changed`,
+      message:
+        riskChanges.slice(0,4).map(
+          item=>
+            `${item.ticker} ${item.before} → ${item.after}`
+        ).join(" • "),
+      icon:"⚠️",
+      priority:
+        riskChanges.some(
+          item=>/high|critical/i.test(item.after)
+        )
+          ? "critical"
+          : "high",
+      dedupeKey:"intelligence:risk-change",
+      fingerprint:JSON.stringify(riskChanges),
+      source:"manager-intelligence",
+      actionLabel:"Review risk changes",
+      metadata:{
+        category:
+          riskChanges.some(
+            item=>/high|critical/i.test(item.after)
+          )
+            ? "critical"
+            : "action",
+        notificationGroup:"intelligence",
+        replaceExisting:true,
+        rich:{
+          type:"risk",
+          kicker:"RISK LEVEL",
+          badge:"RISK CHANGED",
+          value:String(riskChanges.length),
+          valueLabel:
+            riskChanges.length===1
+              ? "HOLDING"
+              : "HOLDINGS",
+          secondary:
+            `${riskChanges[0].ticker}: `
+            + `${riskChanges[0].before} → ${riskChanges[0].after}`,
+          actionText:"Review risk"
+        }
+      }
+    });
+  }
+
+  writeLocalSnapshot(
+    AURORA_INTELLIGENCE_SNAPSHOT_KEY,
+    current
+  );
+}
+
+function paidDividendEvents(){
+  const events=new Map();
+
+  (state.dividends||[]).forEach(row=>{
+    const status=String(
+      row?.status
+      ?? row?.Status
+      ?? row?.payment_stage
+      ?? row?.PaymentStage
+      ?? ""
+    ).toLowerCase();
+
+    if(!/paid|received|settled/.test(status)){
+      return;
+    }
+
+    const ticker=displayTicker(
+      row?.ticker
+      ?? row?.Ticker
+      ?? row?.symbol
+      ?? row?.Symbol
+    );
+
+    const date=dividendDateValue(
+      row?.pay_date
+      ?? row?.payment_date
+      ?? row?.paid_date
+      ?? row?.date
+    );
+
+    const amount=dividendAmount(row);
+
+    const key=[
+      ticker,
+      date?.toISOString().slice(0,10) || "",
+      Number.isFinite(amount)
+        ? amount.toFixed(2)
+        : ""
+    ].join("|");
+
+    if(!ticker) return;
+
+    events.set(key,{
+      ticker,
+      date,
+      amount
+    });
+  });
+
+  (state.incomeLog||[]).forEach(row=>{
+    const text=Object.values(row||{})
+      .join(" ")
+      .toLowerCase();
+
+    if(
+      !/dividend|distribution|income payment/.test(text)
+    ){
+      return;
+    }
+
+    const ticker=displayTicker(
+      row?.ticker
+      ?? row?.Ticker
+      ?? row?.symbol
+      ?? row?.Symbol
+    );
+
+    const date=rowDate(row);
+
+    const amount=firstFinite(
+      row,
+      [
+        "amount",
+        "payment_amount",
+        "dividend_amount",
+        "cash_received",
+        "income_received",
+        "income_change"
+      ]
+    );
+
+    if(
+      !ticker
+      || !Number.isFinite(amount)
+      || amount<=0
+    ){
+      return;
+    }
+
+    const key=[
+      ticker,
+      date?.toISOString().slice(0,10) || "",
+      amount.toFixed(2)
+    ].join("|");
+
+    events.set(key,{
+      ticker,
+      date,
+      amount
+    });
+  });
+
+  return [...events.entries()].map(
+    ([key,value])=>({
+      key,
+      ...value
+    })
+  );
+}
+
+function syncDividendReceivedNotifications(){
+  const api=managerNotificationApi();
+
+  if(!api?.add){
+    window.setTimeout(
+      syncDividendReceivedNotifications,
+      1400
+    );
+    return;
+  }
+
+  const current=paidDividendEvents();
+  const previous=readLocalSnapshot(
+    AURORA_DIVIDEND_RECEIPT_SNAPSHOT_KEY,
+    null
+  );
+
+  const currentKeys=current.map(
+    event=>event.key
+  );
+
+  if(!Array.isArray(previous)){
+    writeLocalSnapshot(
+      AURORA_DIVIDEND_RECEIPT_SNAPSHOT_KEY,
+      currentKeys
+    );
+    return;
+  }
+
+  const previousSet=new Set(previous);
+  const fresh=current.filter(
+    event=>!previousSet.has(event.key)
+  );
+
+  if(fresh.length){
+    const total=fresh.reduce(
+      (sum,event)=>
+        sum+(
+          Number.isFinite(event.amount)
+            ? event.amount
+            : 0
+        ),
+      0
+    );
+
+    const tickers=[
+      ...new Set(
+        fresh.map(event=>event.ticker)
+      )
+    ];
+
+    api.add({
+      department:"Finance Department",
+      page:"AuroraCityFC_FinanceDepartment.html",
+      title:
+        fresh.length===1
+          ? `${fresh[0].ticker} dividend received`
+          : `${fresh.length} dividend payments received`,
+      message:
+        `${tickers.join(" / ")}`
+        + `${
+            total>0
+              ? ` • ${money(total)} received`
+              : ""
+          }. Income records have been updated.`,
+      icon:"💰",
+      priority:"normal",
+      dedupeKey:"income:dividend-received",
+      fingerprint:JSON.stringify(
+        fresh.map(event=>event.key)
+      ),
+      source:"manager-dividends",
+      actionLabel:"Open Finance",
+      metadata:{
+        category:"achievement",
+        notificationGroup:"income",
+        replaceExisting:true,
+        rich:{
+          type:"income",
+          kicker:"DIVIDEND RECEIVED",
+          badge:"PAID",
+          value:
+            total>0
+              ? money(total)
+              : String(fresh.length),
+          valueLabel:
+            total>0
+              ? "RECEIVED"
+              : "PAYMENTS",
+          secondary:tickers.join(" / "),
+          featured:true,
+          actionText:"Open Finance"
+        }
+      }
+    });
+  }
+
+  writeLocalSnapshot(
+    AURORA_DIVIDEND_RECEIPT_SNAPSHOT_KEY,
+    currentKeys
+  );
+}
+
 function renderAll(){
   renderAuroraIntelligence();
+
+  window.setTimeout(
+    syncAuroraIntelligenceNotifications,
+    450
+  );
+
+  window.setTimeout(
+    syncDividendReceivedNotifications,
+    700
+  );
   const income = portfolioAnnualIncome();
   const monthly = income / 12;
   const value = portfolioValue();
@@ -3211,6 +3987,25 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 <label class="beast-setting"><span><strong>Media story</strong><span>Keep the latest Aurora Times panel.</span></span><span class="beast-switch"><input checked="" id="beastMediaToggle" type="checkbox"/><i></i></span></label>
 <label class="beast-setting"><span><strong>Upcoming schedule</strong><span>Show dividends, transfers and data status.</span></span><span class="beast-switch"><input checked="" id="beastScheduleToggle" type="checkbox"/><i></i></span></label>
 </div>
+<div class="aurora-notification-preferences-card" id="auroraNotificationPreferences">
+<div class="aurora-notification-preferences-head">
+<div>
+<small>Notification Delivery</small>
+<strong>Command Feed Preferences</strong>
+<span>Choose immediate cards, a single daily digest, or switch a category off.</span>
+</div>
+<span class="aurora-notification-preferences-status" id="auroraNotificationPreferencesStatus">Loading…</span>
+</div>
+<div class="aurora-notification-preferences-grid">
+<label><span><strong>Performance</strong><small>Portfolio move, top performer and biggest drag.</small></span><select data-notification-preference="performance" id="auroraPrefPerformance"><option value="immediate">Immediate</option><option value="digest">Daily digest</option><option value="off">Off</option></select></label>
+<label><span><strong>Targets</strong><small>Target-zone entries and grouped opportunity reports.</small></span><select data-notification-preference="targets" id="auroraPrefTargets"><option value="immediate">Immediate</option><option value="digest">Daily digest</option><option value="off">Off</option></select></label>
+<label><span><strong>Transfers</strong><small>Route, approval, cash, purchase and registration stages.</small></span><select data-notification-preference="transfers" id="auroraPrefTransfers"><option value="immediate">Immediate</option><option value="digest">Daily digest</option><option value="off">Off</option></select></label>
+<label><span><strong>Finance &amp; bills</strong><small>Holding Pot, completed bills and budget-position changes.</small></span><select data-notification-preference="finance" id="auroraPrefFinance"><option value="immediate">Immediate</option><option value="digest">Daily digest</option><option value="off">Off</option></select></label>
+<label><span><strong>Dividends &amp; income</strong><small>Payments received, next income and milestones.</small></span><select data-notification-preference="income" id="auroraPrefIncome"><option value="immediate">Immediate</option><option value="digest">Daily digest</option><option value="off">Off</option></select></label>
+<label><span><strong>Intelligence</strong><small>Confidence, permission, regime and risk changes.</small></span><select data-notification-preference="intelligence" id="auroraPrefIntelligence"><option value="immediate">Immediate</option><option value="digest">Daily digest</option><option value="off">Off</option></select></label>
+<label><span><strong>System &amp; data</strong><small>Export freshness, connection and technical warnings.</small></span><select data-notification-preference="system" id="auroraPrefSystem"><option value="immediate">Immediate</option><option value="digest">Daily digest</option><option value="off">Off</option></select></label>
+</div>
+</div>
 <div class="beast-about-card" id="beastAboutAurora">
 <div class="beast-about-head">
 <div><small>System Information</small><strong>About Aurora</strong></div>
@@ -3218,8 +4013,8 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 </div>
 <div class="beast-about-grid">
 <div class="beast-about-row"><span>Page</span><strong>Manager Dashboard</strong></div>
-<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v14</strong></div>
-<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Smart Notification Intelligence</strong></div>
+<div class="beast-about-row"><span>Version</span><strong id="beastAboutVersion">v15</strong></div>
+<div class="beast-about-row"><span>Build</span><strong id="beastAboutBuild">Complete Notification Upgrade</strong></div>
 <div class="beast-about-row"><span>Build date</span><strong>3 August 2026</strong></div>
 <div class="beast-about-row"><span>Shell</span><strong id="beastAboutShell">Checking connection…</strong></div>
 </div>
@@ -3281,10 +4076,244 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   function account(row){return String(row?.account??row?.platform??row?.broker??row?.Account??'Account unconfirmed')}
   function shares(row){return num(row?.shares??row?.quantity??row?.units??row?.Shares)}
   function price(row){return num(row?.live_price_gbp??row?.live_price??row?.current_price??row?.price_gbp??row?.price)}
+  function managerDateKey(date){
+    if(
+      !(date instanceof Date)
+      || Number.isNaN(date.getTime())
+    ){
+      return "";
+    }
+
+    return [
+      date.getFullYear(),
+      String(date.getMonth()+1).padStart(2,"0"),
+      String(date.getDate()).padStart(2,"0")
+    ].join("-");
+  }
+
+  function previousMarketCloseSnapshot(){
+    const rows=(state?.dailyPriceSummary||[])
+      .map(row=>{
+        const date=
+          typeof rowDate==="function"
+            ? rowDate(row)
+            : new Date(
+                row?.date
+                ?? row?.Date
+                ?? 0
+              );
+
+        const tickerValue=
+          String(
+            row?.ticker
+            ?? row?.Ticker
+            ?? row?.symbol
+            ?? row?.Symbol
+            ?? ""
+          )
+            .replace(/^LON:/i,"")
+            .replace(/\.L$/i,"")
+            .toUpperCase();
+
+        const close=num(
+          row?.close_price
+          ?? row?.Close_Price
+          ?? row?.["Close Price"]
+          ?? row?.close
+          ?? row?.Close
+        );
+
+        return {
+          date,
+          key:managerDateKey(date),
+          ticker:tickerValue,
+          close
+        };
+      })
+      .filter(item=>
+        item.date
+        && item.key
+        && item.ticker
+        && Number.isFinite(item.close)
+      );
+
+    if(!rows.length) return null;
+
+    const todayKey=managerDateKey(
+      new Date()
+    );
+
+    const keys=[
+      ...new Set(
+        rows.map(item=>item.key)
+      )
+    ].sort();
+
+    const referenceKey=[
+      ...keys
+    ].reverse().find(
+      key=>key<todayKey
+    ) || keys.at(-1);
+
+    const referenceRows=rows.filter(
+      item=>item.key===referenceKey
+    );
+
+    const prices=new Map();
+
+    referenceRows.forEach(item=>{
+      prices.set(
+        item.ticker,
+        item.close
+      );
+    });
+
+    return {
+      key:referenceKey,
+      date:referenceRows[0]?.date||null,
+      prices
+    };
+  }
+
+  function livePriceForTicker(tickerValue){
+    const target=String(tickerValue||"")
+      .replace(/^LON:/i,"")
+      .replace(/\.L$/i,"")
+      .toUpperCase();
+
+    const candidates=[
+      ...(state?.livePrices||[]),
+      ...activeRows()
+    ];
+
+    for(const row of candidates){
+      const candidate=String(
+        row?.ticker
+        ?? row?.Ticker
+        ?? row?.symbol
+        ?? row?.Symbol
+        ?? ""
+      )
+        .replace(/^LON:/i,"")
+        .replace(/\.L$/i,"")
+        .toUpperCase();
+
+      if(candidate!==target) continue;
+
+      const live=num(
+        row?.price
+        ?? row?.Price
+        ?? row?.live_price_gbp
+        ?? row?.live_price
+        ?? row?.current_price
+        ?? row?.price_gbp
+      );
+
+      if(Number.isFinite(live)){
+        return live;
+      }
+    }
+
+    return NaN;
+  }
+
   function dayMove(row){
-    let n=num(row?.day_change_pct??row?.daily_change_pct??row?.change_pct??row?.price_change_pct??row?.day_move_pct);
-    if(Number.isFinite(n)&&Math.abs(n)<1&&String(row?.day_change_pct??'').includes('.')===false)n*=100;
+    const snapshot=
+      previousMarketCloseSnapshot();
+
+    const tickerValue=ticker(row);
+    const reference=
+      snapshot?.prices?.get(tickerValue);
+    const live=
+      livePriceForTicker(tickerValue);
+
+    if(
+      Number.isFinite(reference)
+      && reference>0
+      && Number.isFinite(live)
+    ){
+      return (
+        (live-reference)
+        / reference
+        * 100
+      );
+    }
+
+    let n=num(
+      row?.day_change_pct
+      ?? row?.daily_change_pct
+      ?? row?.change_pct
+      ?? row?.price_change_pct
+      ?? row?.day_move_pct
+    );
+
+    if(
+      Number.isFinite(n)
+      && Math.abs(n)<1
+      && String(
+        row?.day_change_pct??""
+      ).includes(".")===false
+    ){
+      n*=100;
+    }
+
     return n;
+  }
+
+  function portfolioSessionMove(){
+    const snapshot=
+      previousMarketCloseSnapshot();
+
+    if(!snapshot) return null;
+
+    let movement=0;
+    let referenceValue=0;
+    let covered=0;
+    const rows=activeRows();
+
+    rows.forEach(row=>{
+      const quantity=shares(row);
+      const tickerValue=ticker(row);
+      const reference=
+        snapshot.prices.get(tickerValue);
+      const live=
+        livePriceForTicker(tickerValue);
+
+      if(
+        !Number.isFinite(quantity)
+        || quantity<=0
+        || !Number.isFinite(reference)
+        || reference<=0
+        || !Number.isFinite(live)
+      ){
+        return;
+      }
+
+      movement+=(live-reference)*quantity;
+      referenceValue+=reference*quantity;
+      covered+=1;
+    });
+
+    if(
+      covered<
+      Math.max(
+        3,
+        Math.ceil(rows.length*.5)
+      )
+    ){
+      return null;
+    }
+
+    return {
+      movement,
+      percentage:
+        referenceValue>0
+          ? movement/referenceValue*100
+          : NaN,
+      date:snapshot.date,
+      covered,
+      total:rows.length
+    };
   }
   function strength(row){try{return buyStrength(row)}catch(_){return NaN}}
   function valuation(row){
@@ -3579,6 +4608,97 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     const m = journeyMetrics();
     const alerts = [];
     const rows = activeRows();
+
+    const sessionMove=
+      portfolioSessionMove();
+
+    if(
+      sessionMove
+      && Number.isFinite(
+        sessionMove.movement
+      )
+    ){
+      const positive=
+        sessionMove.movement>=0;
+
+      const referenceDate=
+        sessionMove.date
+          ? sessionMove.date.toLocaleDateString(
+              "en-GB",
+              {
+                day:"numeric",
+                month:"short"
+              }
+            )
+          : "previous close";
+
+      alerts.push({
+        level:positive ? "ok" : "warn",
+        icon:positive ? "📈" : "📉",
+        title:
+          `Portfolio is ${
+            positive ? "up" : "down"
+          } since the previous close`,
+        text:
+          `${cash(
+            Math.abs(sessionMove.movement)
+          )} ${
+            positive ? "gain" : "fall"
+          } since ${referenceDate}. `
+          + `${
+              Number.isFinite(
+                sessionMove.percentage
+              )
+                ? `${positive ? "+" : ""}${
+                    sessionMove.percentage.toFixed(2)
+                  }%. `
+                : ""
+            }`
+          + `${sessionMove.covered}/${
+              sessionMove.total
+            } holding rows covered.`,
+        time:"Portfolio",
+        metadata:{
+          category:
+            positive
+              ? "achievement"
+              : "information",
+          notificationGroup:"performance",
+          rich:{
+            type:
+              positive
+                ? "performer"
+                : "risk",
+            kicker:"PORTFOLIO FORM",
+            badge:
+              positive
+                ? "GREEN SESSION"
+                : "RED SESSION",
+            value:
+              `${positive ? "▲" : "▼"} ${
+                cash(
+                  Math.abs(
+                    sessionMove.movement
+                  )
+                )
+              }`,
+            valueLabel:"SINCE CLOSE",
+            secondary:
+              `${
+                Number.isFinite(
+                  sessionMove.percentage
+                )
+                  ? `${positive ? "+" : ""}${
+                      sessionMove.percentage.toFixed(2)
+                    }% • `
+                  : ""
+              }Reference ${referenceDate}`,
+            featured:true,
+            actionText:"Open Analysis Room"
+          }
+        }
+      });
+    }
 
     const rankedMovers = rows
       .map(row => ({
@@ -4798,10 +5918,10 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
   const BUILD = Object.freeze({
     page:"Manager Dashboard",
-    version:"v7",
-    build:"Unified Notifications",
+    version:"v15",
+    build:"Complete Notification Upgrade",
     date:"3 August 2026",
-    buildId:"manager-unified-notifications-v7-20260803"
+    buildId:"manager-complete-notification-upgrade-v15-20260803"
   });
 
   function shellConnected(){
@@ -5587,6 +6707,163 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
   window.setTimeout(updateConnection,300);
   window.setTimeout(updateConnection,1200);
+})();
+</script>
+
+
+<script id="auroraNotificationPreferencesScript">
+(function(){
+  "use strict";
+
+  const KEY="aurora_notification_preferences_v1";
+
+  const defaults={
+    performance:"immediate",
+    targets:"immediate",
+    transfers:"immediate",
+    finance:"immediate",
+    income:"immediate",
+    intelligence:"immediate",
+    system:"immediate"
+  };
+
+  function api(){
+    try{
+      if(
+        window.parent!==window
+        && window.parent.AuroraNotifications
+      ){
+        return window.parent.AuroraNotifications;
+      }
+    }catch(_){}
+
+    return window.AuroraNotifications || null;
+  }
+
+  function readFallback(){
+    try{
+      return {
+        ...defaults,
+        ...JSON.parse(
+          localStorage.getItem(KEY) || "{}"
+        )
+      };
+    }catch(_){
+      return {...defaults};
+    }
+  }
+
+  function preferences(){
+    const notificationApi=api();
+
+    try{
+      return notificationApi?.getPreferences
+        ? notificationApi.getPreferences()
+        : readFallback();
+    }catch(_){
+      return readFallback();
+    }
+  }
+
+  function setStatus(text,state="saved"){
+    const element=document.getElementById(
+      "auroraNotificationPreferencesStatus"
+    );
+
+    if(!element) return;
+
+    element.textContent=text;
+    element.dataset.state=state;
+  }
+
+  function hydrate(){
+    const values=preferences();
+
+    document.querySelectorAll(
+      "[data-notification-preference]"
+    ).forEach(select=>{
+      const group=
+        select.dataset.notificationPreference;
+
+      select.value=
+        values[group]
+        || defaults[group]
+        || "immediate";
+    });
+
+    setStatus("Preferences active");
+  }
+
+  function save(group,mode){
+    const notificationApi=api();
+    let saved=false;
+
+    try{
+      if(notificationApi?.setPreference){
+        saved=notificationApi.setPreference(
+          group,
+          mode
+        );
+      }else{
+        const values=readFallback();
+        values[group]=mode;
+        localStorage.setItem(
+          KEY,
+          JSON.stringify(values)
+        );
+        saved=true;
+      }
+    }catch(_){
+      saved=false;
+    }
+
+    setStatus(
+      saved ? "Saved" : "Save failed",
+      saved ? "saved" : "error"
+    );
+
+    window.setTimeout(
+      () => setStatus(
+        saved
+          ? "Preferences active"
+          : "Check storage",
+        saved ? "saved" : "error"
+      ),
+      1500
+    );
+  }
+
+  document.querySelectorAll(
+    "[data-notification-preference]"
+  ).forEach(select=>{
+    select.addEventListener(
+      "change",
+      () => save(
+        select.dataset.notificationPreference,
+        select.value
+      )
+    );
+  });
+
+  window.addEventListener(
+    "pageshow",
+    hydrate
+  );
+
+  window.addEventListener(
+    "aurora:notification-preferences-changed",
+    hydrate
+  );
+
+  if(document.readyState==="loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      hydrate,
+      {once:true}
+    );
+  }else{
+    hydrate();
+  }
 })();
 </script>
 

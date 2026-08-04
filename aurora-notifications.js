@@ -20,12 +20,14 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '3.2.0';
+  const VERSION = '3.3.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
   const WATCH_KEY = 'aurora_notifications_watch_state_v3';
   const SNAPSHOT_KEY = 'aurora_notification_snapshots_v1';
+  const PREFERENCES_KEY = 'aurora_notification_preferences_v1';
+  const DIGEST_KEY = 'aurora_notification_digest_v1';
   const DISMISS_KEY = 'aurora_notifications_dismissed_v2';
   const EVENT_NAME = 'aurora:notifications-changed';
   const CHANNEL_NAME = 'aurora-notifications';
@@ -210,6 +212,403 @@
     } catch (_) {
       return fallback;
     }
+  }
+
+  const DEFAULT_NOTIFICATION_PREFERENCES = Object.freeze({
+    performance:'immediate',
+    targets:'immediate',
+    transfers:'immediate',
+    finance:'immediate',
+    income:'immediate',
+    intelligence:'immediate',
+    system:'immediate'
+  });
+
+  const NOTIFICATION_GROUP_LABELS = Object.freeze({
+    performance:'Performance',
+    targets:'Targets',
+    transfers:'Transfers',
+    finance:'Finance & bills',
+    income:'Dividends & income',
+    intelligence:'Intelligence',
+    system:'System & data'
+  });
+
+  function normalisePreferenceMode(value) {
+    const mode = String(value || '').toLowerCase();
+
+    return ['immediate','digest','off'].includes(mode)
+      ? mode
+      : 'immediate';
+  }
+
+  function readPreferences() {
+    try {
+      const saved = safeJsonParse(
+        localStorage.getItem(PREFERENCES_KEY) || '{}',
+        {}
+      );
+
+      return {
+        ...DEFAULT_NOTIFICATION_PREFERENCES,
+        ...(saved && typeof saved === 'object'
+          ? Object.fromEntries(
+              Object.entries(saved).map(
+                ([key, value]) => [
+                  key,
+                  normalisePreferenceMode(value)
+                ]
+              )
+            )
+          : {})
+      };
+    } catch (_) {
+      return {
+        ...DEFAULT_NOTIFICATION_PREFERENCES
+      };
+    }
+  }
+
+  function notificationGroupFor(item = {}) {
+    const explicit = String(
+      item?.metadata?.notificationGroup || ''
+    ).toLowerCase();
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        DEFAULT_NOTIFICATION_PREFERENCES,
+        explicit
+      )
+    ) {
+      return explicit;
+    }
+
+    const type = String(
+      item?.metadata?.rich?.type || ''
+    ).toLowerCase();
+
+    const department = String(
+      item?.department || ''
+    ).toLowerCase();
+
+    const title = String(
+      item?.title || ''
+    ).toLowerCase();
+
+    const message = String(
+      item?.message || ''
+    ).toLowerCase();
+
+    const text = `${department} ${title} ${message}`;
+
+    if (
+      /performer|biggest drag|portfolio move|market close/.test(text)
+      || ['performer','risk','performance'].includes(type)
+    ) {
+      return 'performance';
+    }
+
+    if (
+      /target zone|target hit|target report|below target/.test(text)
+      || type === 'target'
+    ) {
+      return 'targets';
+    }
+
+    if (
+      /transfer|broker funding|registration|purchase executed|signing|handoff/.test(text)
+      || ['transfer','signing'].includes(type)
+    ) {
+      return 'transfers';
+    }
+
+    if (
+      /finance|bill|holding pot|budget position/.test(text)
+      || type === 'finance'
+    ) {
+      return 'finance';
+    }
+
+    if (
+      /dividend|income|milestone/.test(text)
+      || ['income','milestone'].includes(type)
+    ) {
+      return 'income';
+    }
+
+    if (
+      /intelligence|confidence|buy permission|market regime|restriction|risk level/.test(text)
+      || ['intelligence','decision'].includes(type)
+    ) {
+      return 'intelligence';
+    }
+
+    return 'system';
+  }
+
+  function getPreference(group) {
+    const key = String(group || 'system').toLowerCase();
+    const preferences = readPreferences();
+
+    return normalisePreferenceMode(
+      preferences[key]
+      || DEFAULT_NOTIFICATION_PREFERENCES[key]
+      || 'immediate'
+    );
+  }
+
+  function applyPreferencesToStore() {
+    const rows = cleanStore(readStore());
+
+    const filtered = rows.filter(row => {
+      const group = notificationGroupFor(row);
+      const mode = getPreference(group);
+
+      if (mode === 'off') return false;
+
+      if (mode === 'digest') {
+        return Boolean(
+          row?.metadata?.digestCard
+        );
+      }
+
+      if (
+        mode === 'immediate'
+        && row?.metadata?.digestCard
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+    return writeStore(
+      filtered,
+      'preferences-applied'
+    );
+  }
+
+  function setPreference(group, mode) {
+    const key = String(group || '').toLowerCase();
+
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        DEFAULT_NOTIFICATION_PREFERENCES,
+        key
+      )
+    ) {
+      return false;
+    }
+
+    const preferences = readPreferences();
+    preferences[key] = normalisePreferenceMode(mode);
+
+    try {
+      localStorage.setItem(
+        PREFERENCES_KEY,
+        JSON.stringify(preferences)
+      );
+
+      if (
+        preferences[key] !== 'digest'
+      ) {
+        const digestState =
+          readDigestState();
+
+        Object.keys(digestState).forEach(
+          digestId => {
+            if (
+              digestState[digestId]?.group
+              === key
+            ) {
+              delete digestState[digestId];
+            }
+          }
+        );
+
+        writeDigestState(digestState);
+      }
+    } catch (_) {
+      return false;
+    }
+
+    applyPreferencesToStore();
+
+    try {
+      window.dispatchEvent(
+        new CustomEvent(
+          'aurora:notification-preferences-changed',
+          {
+            detail:{
+              group:key,
+              mode:preferences[key],
+              preferences
+            }
+          }
+        )
+      );
+    } catch (_) {}
+
+    return true;
+  }
+
+  function readDigestState() {
+    try {
+      const value = safeJsonParse(
+        localStorage.getItem(DIGEST_KEY) || '{}',
+        {}
+      );
+
+      return value && typeof value === 'object'
+        ? value
+        : {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function writeDigestState(value) {
+    try {
+      localStorage.setItem(
+        DIGEST_KEY,
+        JSON.stringify(value || {})
+      );
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function digestDateKey(timestamp = now()) {
+    const date = new Date(timestamp);
+
+    return [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0')
+    ].join('-');
+  }
+
+  function upsertDigestRow(rows, item) {
+    const group = notificationGroupFor(item);
+    const dateKey = digestDateKey(item.createdAt);
+    const digestId = `${dateKey}:${group}`;
+    const digestState = readDigestState();
+    const current = digestState[digestId] || {
+      dateKey,
+      group,
+      count:0,
+      latestTitles:[],
+      fingerprints:[],
+      lastAt:0
+    };
+
+    current.fingerprints =
+      Array.isArray(current.fingerprints)
+        ? current.fingerprints
+        : [];
+
+    const fingerprint = String(
+      item.fingerprint || ''
+    );
+
+    const alreadyIncluded =
+      fingerprint
+      && current.fingerprints.includes(
+        fingerprint
+      );
+
+    if (!alreadyIncluded) {
+      current.count += 1;
+      current.lastAt =
+        Number(item.createdAt) || now();
+
+      current.latestTitles = [
+        item.title,
+        ...(Array.isArray(current.latestTitles)
+          ? current.latestTitles
+          : [])
+      ]
+        .filter(Boolean)
+        .filter(
+          (value, index, array) =>
+            array.indexOf(value) === index
+        )
+        .slice(0, 4);
+
+      if (fingerprint) {
+        current.fingerprints.unshift(
+          fingerprint
+        );
+
+        current.fingerprints =
+          current.fingerprints.slice(0, 80);
+      }
+    }
+
+    digestState[digestId] = current;
+    writeDigestState(digestState);
+
+    const title =
+      `${NOTIFICATION_GROUP_LABELS[group] || 'Aurora'} daily digest`;
+
+    const message =
+      `${current.count} update${current.count === 1 ? '' : 's'} today`
+      + (
+        current.latestTitles.length
+          ? ` • Latest: ${current.latestTitles.join(' • ')}`
+          : ''
+      );
+
+    const digestItem = normaliseNotification({
+      department:'Aurora HQ',
+      page:'AuroraCityFC_ManagerDashboard.html',
+      title,
+      message,
+      icon:'📋',
+      priority:'low',
+      dedupeKey:`digest:${digestId}`,
+      fingerprint:hashString(
+        `${digestId}|${current.count}|${current.latestTitles.join('|')}`
+      ),
+      source:'notification-digest',
+      actionLabel:'Open notification digest',
+      metadata:{
+        digestCard:true,
+        preferenceBypass:true,
+        notificationGroup:group,
+        category:'information',
+        replaceExisting:true,
+        rich:{
+          type:'update',
+          kicker:'DAILY DIGEST',
+          badge:(NOTIFICATION_GROUP_LABELS[group] || group).toUpperCase(),
+          value:String(current.count),
+          valueLabel:'UPDATES',
+          secondary:current.latestTitles[0] || '',
+          actionText:'Review digest'
+        }
+      }
+    });
+
+    const next = rows.filter(
+      row =>
+        String(row?.dedupeKey || '')
+        !== digestItem.dedupeKey
+    );
+
+    next.unshift(digestItem);
+    return next;
+  }
+
+  function deliveryModeFor(item) {
+    if (item?.metadata?.preferenceBypass) {
+      return 'immediate';
+    }
+
+    return getPreference(
+      notificationGroupFor(item)
+    );
   }
 
   function readStore() {
@@ -493,7 +892,34 @@
     const item = normaliseNotification(input);
     if (!item.title) return null;
 
-    const rows = cleanStore();
+    item.metadata = {
+      ...(item.metadata || {}),
+      notificationGroup:
+        notificationGroupFor(item)
+    };
+
+    const deliveryMode =
+      deliveryModeFor(item);
+
+    if (deliveryMode === 'off') {
+      return null;
+    }
+
+    let rows = cleanStore();
+
+    if (deliveryMode === 'digest') {
+      rows = upsertDigestRow(rows, item);
+      if (!writeStore(rows, 'digest-add')) {
+        return null;
+      }
+
+      return rows.find(
+        row =>
+          row?.metadata?.digestCard
+          && row?.metadata?.notificationGroup
+            === item.metadata.notificationGroup
+      ) || null;
+    }
 
     const duplicate = rows.find(row => {
       if (
@@ -657,6 +1083,7 @@
 
       localStorage.removeItem(STORE_KEY);
       localStorage.removeItem(READ_KEY);
+      localStorage.removeItem(DIGEST_KEY);
 
       if(dashboardBridge?.list){
         dashboardBridge.list.innerHTML =
@@ -691,7 +1118,7 @@
         .map(row => [String(row.fingerprint || ''), row])
     );
 
-    const nextRows = currentRows.filter(
+    let nextRows = currentRows.filter(
       row =>
         String(row?.metadata?.liveSource || '')
         !== liveSource
@@ -710,6 +1137,27 @@
           liveSource
         }
       });
+
+      provisional.metadata = {
+        ...(provisional.metadata || {}),
+        notificationGroup:
+          notificationGroupFor(provisional)
+      };
+
+      const deliveryMode =
+        deliveryModeFor(provisional);
+
+      if (deliveryMode === 'off') {
+        return;
+      }
+
+      if (deliveryMode === 'digest') {
+        nextRows = upsertDigestRow(
+          nextRows,
+          provisional
+        );
+        return;
+      }
 
       if (
         isDismissed(
@@ -2182,12 +2630,358 @@
     return `${formatCash(previous)} → ${formatCash(current)}`;
   }
 
+
+  const TRANSFER_LIFECYCLE_KEYS = new Set([
+    'aurora_transfer_plan_v2',
+    'aurora_m7_manager_approval',
+    'aurora_investment_handoff_completion_v1',
+    'aurora_account_transfer_instruction_v1',
+    'aurora_payday_execution_v1',
+    'aurora_transfer_centre_receipt_v1',
+    'aurora_m3_last_transfer_receipt_v1',
+    'aurora_registration_last_v1',
+    'aurora_pending_registrations_v1',
+    'aurora_m4_signing_lifecycle_v1'
+  ]);
+
+  function objectText(value) {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    try {
+      return JSON.stringify(value);
+    } catch (_) {
+      return String(value);
+    }
+  }
+
+  function positiveState(value, pattern) {
+    if (!value) return false;
+
+    if (
+      value === true
+      || value?.completed === true
+      || value?.approved === true
+      || value?.registered === true
+      || value?.executed === true
+      || value?.transferred === true
+      || value?.completedAt
+      || value?.approvedAt
+      || value?.registeredAt
+      || value?.executedAt
+      || value?.transferredAt
+    ) {
+      return true;
+    }
+
+    const text =
+      typeof value === 'string'
+        ? value
+        : [
+            value?.status,
+            value?.state,
+            value?.stage,
+            value?.action,
+            value?.result,
+            value?.label,
+            value?.message,
+            value?.notes
+          ].filter(Boolean).join(' ');
+
+    return pattern.test(
+      String(text || '').toLowerCase()
+    );
+  }
+
+  function registrationCount(value) {
+    if (Array.isArray(value)) return value.length;
+
+    const rows = Array.isArray(value?.rows)
+      ? value.rows
+      : Array.isArray(value?.items)
+        ? value.items
+        : Array.isArray(value?.registrations)
+          ? value.registrations
+          : [];
+
+    return rows.length;
+  }
+
+  function transferLifecycleSnapshot() {
+    const stored = key => {
+      try {
+        return parseStored(
+          localStorage.getItem(key)
+        );
+      } catch (_) {
+        return null;
+      }
+    };
+
+    const plan = stored(
+      'aurora_transfer_plan_v2'
+    );
+
+    const planSummary =
+      transferPlanSummary(plan);
+
+    const approval = stored(
+      'aurora_m7_manager_approval'
+    );
+
+    const handoff = stored(
+      'aurora_investment_handoff_completion_v1'
+    );
+
+    const funding = stored(
+      'aurora_account_transfer_instruction_v1'
+    );
+
+    const payday = stored(
+      'aurora_payday_execution_v1'
+    );
+
+    const receipt = stored(
+      'aurora_transfer_centre_receipt_v1'
+    );
+
+    const latestReceipt = stored(
+      'aurora_m3_last_transfer_receipt_v1'
+    );
+
+    const registration = stored(
+      'aurora_registration_last_v1'
+    );
+
+    const pending = stored(
+      'aurora_pending_registrations_v1'
+    );
+
+    const lifecycle = stored(
+      'aurora_m4_signing_lifecycle_v1'
+    );
+
+    const lifecycleStage =
+      Number(lifecycle?.stage || 0);
+
+    const routePrepared = Boolean(
+      planSummary?.count
+      || lifecycleStage >= 1
+    );
+
+    const managerApproved = Boolean(
+      positiveState(
+        approval,
+        /approved|accepted|confirmed|authorised|authorized|yes/
+      )
+    );
+
+    const cashTransferred = Boolean(
+      positiveState(
+        handoff,
+        /handoff complete|completed|cash moved|funds ready|transferred/
+      )
+      || positiveState(
+        funding,
+        /cash moved|funds transferred|transfer complete|completed/
+      )
+      || lifecycleStage >= 3
+    );
+
+    const purchaseExecuted = Boolean(
+      positiveState(
+        payday,
+        /purchase complete|purchased|executed|broker fill|completed/
+      )
+      || positiveState(
+        receipt,
+        /purchase complete|purchased|executed|broker fill|completed/
+      )
+      || positiveState(
+        latestReceipt,
+        /purchase complete|purchased|executed|broker fill|completed/
+      )
+      || lifecycleStage >= 3
+    );
+
+    const registered = Boolean(
+      positiveState(
+        registration,
+        /registered|registration complete|confirmed|completed/
+      )
+      || (
+        registration
+        && (
+          registration.at
+          || registration.registeredAt
+          || registration.completedAt
+          || registration.ticker
+        )
+      )
+      || lifecycleStage >= 4
+    );
+
+    const pendingCount =
+      registrationCount(pending);
+
+    const stage =
+      registered
+        ? 5
+        : purchaseExecuted
+          ? 4
+          : cashTransferred
+            ? 3
+            : managerApproved
+              ? 2
+              : routePrepared
+                ? 1
+                : 0;
+
+    const tickers =
+      planSummary?.tickers || [];
+
+    const labels = [
+      'Route prepared',
+      'Manager approved',
+      'Cash transferred',
+      'Purchase executed',
+      'Registration complete'
+    ];
+
+    const nextActions = [
+      'Prepare the Transfer Centre route',
+      'Approve the transfer route',
+      'Move the authorised broker cash',
+      'Execute the broker purchases',
+      'Register the completed purchases',
+      'Transfer lifecycle complete'
+    ];
+
+    return {
+      stage,
+      labels,
+      nextAction:nextActions[stage],
+      tickers,
+      count:planSummary?.count || 0,
+      total:planSummary?.total,
+      income:planSummary?.income,
+      pendingCount,
+      routePrepared,
+      managerApproved,
+      cashTransferred,
+      purchaseExecuted,
+      registered
+    };
+  }
+
+  function syncTransferLifecycleNotification() {
+    const lifecycle =
+      transferLifecycleSnapshot();
+
+    if (!lifecycle.stage) {
+      return null;
+    }
+
+    const completedLabel =
+      lifecycle.labels[
+        Math.max(0, lifecycle.stage - 1)
+      ];
+
+    const isComplete =
+      lifecycle.stage >= 5;
+
+    const route =
+      lifecycle.tickers.length
+        ? lifecycle.tickers.join(' / ')
+        : `${lifecycle.count || 0} signing${lifecycle.count === 1 ? '' : 's'}`;
+
+    const detail = [
+      `${completedLabel}.`,
+      route ? `Route: ${route}.` : '',
+      !isComplete
+        ? `Next: ${lifecycle.nextAction}.`
+        : 'All five transfer stages are complete.',
+      lifecycle.pendingCount
+        ? `${lifecycle.pendingCount} registration${lifecycle.pendingCount === 1 ? '' : 's'} remain queued.`
+        : ''
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    const title =
+      isComplete
+        ? 'Transfer lifecycle completed'
+        : `Transfer lifecycle advanced to stage ${lifecycle.stage} of 5`;
+
+    return add({
+      department:'Transfer Centre',
+      page:'AuroraCityFC_TransferCentre.html',
+      title,
+      message:detail,
+      icon:isComplete ? '🏁' : '🔄',
+      priority:isComplete ? 'normal' : 'high',
+      dedupeKey:'transfer-lifecycle',
+      fingerprint:hashString(
+        JSON.stringify(lifecycle)
+      ),
+      source:'transfer-lifecycle',
+      actionLabel:
+        isComplete
+          ? 'Open completed transfer'
+          : 'Continue transfer lifecycle',
+      metadata:{
+        category:
+          isComplete
+            ? 'achievement'
+            : 'action',
+        notificationGroup:'transfers',
+        replaceExisting:true,
+        rich:{
+          type:'transfer',
+          kicker:
+            isComplete
+              ? 'TRANSFER COMPLETE'
+              : 'TRANSFER LIFECYCLE',
+          badge:
+            isComplete
+              ? 'ALL STAGES COMPLETE'
+              : `STAGE ${lifecycle.stage} OF 5`,
+          value:`${lifecycle.stage}/5`,
+          valueLabel:'STAGES',
+          secondary:
+            isComplete
+              ? 'Signing fully registered'
+              : lifecycle.nextAction,
+          progress:lifecycle.stage * 20,
+          featured:true,
+          actionText:
+            isComplete
+              ? 'Open Transfer Centre'
+              : 'Continue transfer'
+        }
+      }
+    });
+  }
+
   function buildSmartStorageNotification(
     rule,
     previous,
     current,
     rawValue
   ) {
+    if (
+      TRANSFER_LIFECYCLE_KEYS.has(rule.key)
+      && rule.key !== 'aurora_transfer_plan_v2'
+      && rule.key !== 'aurora_account_transfer_instruction_v1'
+    ) {
+      return null;
+    }
+
     if (rule.key === 'aurora_wealth_centre') {
       if (!current) return null;
 
@@ -2537,7 +3331,26 @@
             : rule.priority === 'high'
               ? 'action'
               : 'information',
-        replaceExisting:true
+        notificationGroup:
+          notificationGroupFor({
+            department:rule.department,
+            title:rule.title,
+            message:
+              typeof rule.message === 'function'
+                ? rule.message(rawValue)
+                : String(rule.message || ''),
+            metadata:{}
+          }),
+        replaceExisting:true,
+        rich:{
+          type:'update',
+          kicker:String(
+            rule.department || 'AURORA HQ'
+          ).toUpperCase(),
+          badge:'STATE CHANGED',
+          secondary:'Open the department to review the impact.',
+          actionText:`Open ${rule.department}`
+        }
       }
     };
   }
@@ -2843,55 +3656,61 @@
     previousSnapshot,
     currentSnapshot
   ) {
-    if (
-      !shouldNotifyStorageRule(
+    const shouldNotify =
+      shouldNotifyStorageRule(
         rule,
         rawValue,
         previousSnapshot,
         currentSnapshot
-      )
-    ) {
-      return;
+      );
+
+    if (shouldNotify) {
+      const smart =
+        buildSmartStorageNotification(
+          rule,
+          previousSnapshot,
+          currentSnapshot,
+          rawValue
+        );
+
+      if (smart) {
+        const message = String(
+          smart.message || ''
+        ).trim();
+
+        if (message) {
+          const fingerprint = hashString(
+            `${rule.key}|${smart.title}|${message}`
+          );
+
+          add({
+            department:rule.department,
+            page:rule.page,
+            title:smart.title || rule.title,
+            message,
+            icon:smart.icon || rule.icon,
+            priority:
+              smart.priority || rule.priority,
+            dedupeKey:`storage:${rule.key}`,
+            fingerprint,
+            source:rule.key,
+            actionLabel:
+              smart.metadata?.rich?.actionText
+              || `Open ${rule.department}`,
+            metadata:{
+              ...(smart.metadata || {}),
+              storageRule:rule.key
+            }
+          });
+        }
+      }
     }
 
-    const smart = buildSmartStorageNotification(
-      rule,
-      previousSnapshot,
-      currentSnapshot,
-      rawValue
-    );
-
-    if (!smart) return;
-
-    const message = String(
-      smart.message || ''
-    ).trim();
-
-    if (!message) return;
-
-    const fingerprint = hashString(
-      `${rule.key}|${smart.title}|${message}`
-    );
-
-    add({
-      department: rule.department,
-      page: rule.page,
-      title: smart.title || rule.title,
-      message,
-      icon: smart.icon || rule.icon,
-      priority:
-        smart.priority || rule.priority,
-      dedupeKey:`storage:${rule.key}`,
-      fingerprint,
-      source:rule.key,
-      actionLabel:
-        smart.metadata?.rich?.actionText
-        || `Open ${rule.department}`,
-      metadata:{
-        ...(smart.metadata || {}),
-        storageRule:rule.key
-      }
-    });
+    if (
+      TRANSFER_LIFECYCLE_KEYS.has(rule.key)
+    ) {
+      syncTransferLifecycleNotification();
+    }
   }
 
   function initialiseStorageWatchers() {
@@ -3061,6 +3880,41 @@
     });
   }
 
+  function migrateSmartNotificationStore() {
+    const rows = cleanStore(readStore());
+
+    const filtered = rows.filter(row => {
+      const title = String(
+        row?.title || ''
+      ).toLowerCase();
+
+      const message = String(
+        row?.message || ''
+      ).toLowerCase();
+
+      if (title === 'finance history updated') {
+        return false;
+      }
+
+      if (
+        /broker funding/.test(title)
+        && (
+          /£0(?:\.00)?\b/.test(message)
+          || /value\s*£0/.test(message)
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+    return writeStore(
+      filtered,
+      'smart-notification-migration'
+    );
+  }
+
   function seedInstallNotice() {
     try {
       if (localStorage.getItem(INSTALL_KEY)) return;
@@ -3122,8 +3976,14 @@
 
   function start() {
     clearExpired();
+    migrateSmartNotificationStore();
+    applyPreferencesToStore();
     seedInstallNotice();
     initialiseStorageWatchers();
+    window.setTimeout(
+      syncTransferLifecycleNotification,
+      350
+    );
     attachDocument(document);
 
     const frame =
@@ -3166,7 +4026,13 @@
     subscribe,
     test,
     attachDocument,
-    currentPage:detectPage
+    currentPage:detectPage,
+    getPreferences:readPreferences,
+    getPreference,
+    setPreference,
+    notificationGroupFor,
+    syncTransferLifecycle:
+      syncTransferLifecycleNotification
   });
 
   document.addEventListener('aurora:notify', event => {
