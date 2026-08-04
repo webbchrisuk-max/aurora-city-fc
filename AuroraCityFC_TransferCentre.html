@@ -2,7 +2,7 @@
 
 <html data-aurora-page="transfer" data-aurora-shell-content="true" lang="en">
 <head>
-<!-- Build: Transfer Centre GameShell Content • 03 Aug 2026 -->
+<!-- Build: Transfer Centre GameShell Content • 04 Aug 2026 • Full Chairman Offers -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <link href="manifest.json" rel="manifest"/>
@@ -2841,7 +2841,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v1-20260803" name="aurora-build"/></head>
+<meta content="transfer-gameshell-content-v2-20260804-full-offers" name="aurora-build"/></head>
 <body>
 
 
@@ -6057,9 +6057,60 @@ function dedupeIncomingOffers(list){
   }
   return [...byTicker.values()];
 }
+function normaliseQuarterOfferToFullHolding(offer){
+  if(!offer || typeof offer!=='object') return offer;
+  const ticker=registrationShortTicker(offer.ticker);
+  const offeredShares=parseNum(offer.requestedShares);
+  if(!(offeredShares>0)) return offer;
+
+  // Prefer the live holding, matching by ticker first. Account labels can differ
+  // between AuroraData (for example IG, IG ISA or IG Stocks & Shares ISA).
+  const holding=incomingOfferHolding(offer);
+  let fullShares=parseNum(
+    holding?.shares ?? holding?.quantity ?? holding?.units ?? holding?.Shares ??
+    holding?.sharesHeld ?? holding?.currentShares ?? holding?.totalShares
+  );
+
+  let ratio=0;
+  if(fullShares>0){
+    const expectedQuarter=fullShares*.25;
+    const tolerance=Math.max(.000001,Math.abs(expectedQuarter)*.00001);
+    if(Math.abs(offeredShares-expectedQuarter)<=tolerance) ratio=fullShares/offeredShares;
+  }
+
+  // Legacy Aurora Scenario offers were generated at exactly 25% of the holding.
+  // If the live holding has not loaded yet, restore the full position directly.
+  if(!(ratio>0)){
+    const authenticity=String(offer.authenticity||'').toUpperCase();
+    const source=String(offer.source||'').toUpperCase();
+    const isLegacyScenario=authenticity.includes('AURORA SCENARIO') || source.includes('AURORA INCOMING OFFERS');
+    if(isLegacyScenario){
+      ratio=4;
+      fullShares=offeredShares*ratio;
+    }
+  }
+
+  if(!(ratio>0) || Math.abs(ratio-4)>.02) return offer;
+
+  const corrected={...offer};
+  corrected.originalRequestedShares=offeredShares;
+  corrected.requestedShares=fullShares;
+  ['offerValueGbp','estimatedGainLossGbp','annualIncomeLostGbp'].forEach(key=>{
+    const value=Number(offer[key]);
+    if(Number.isFinite(value)) corrected[key]=value*ratio;
+  });
+  corrected.fullHoldingCorrection=true;
+  corrected.quantitySource='Full holding — legacy Aurora 25% offer corrected';
+  return corrected;
+}
+
+function normaliseIncomingOfferQuantities(list){
+  return (Array.isArray(list)?list:[]).map(normaliseQuarterOfferToFullHolding);
+}
+
 function renderIncomingOffers(){
   const grid=$('incomingOfferGrid');if(!grid)return;
-  incomingOffers=dedupeIncomingOffers(incomingOffers);
+  incomingOffers=dedupeIncomingOffers(normaliseIncomingOfferQuantities(incomingOffers));
   const ordered=[...incomingOffers].sort((a,b)=>offerStatusRank(a.status)-offerStatusRank(b.status)||new Date(b.createdAt||0)-new Date(a.createdAt||0));
   const storedOpen=ordered.filter(o=>['OPEN','COUNTERED'].includes(String(o.status||'').toUpperCase()));
   const activeOffers=storedOpen.filter(o=>incomingOfferClauseData(o).met);
@@ -6107,6 +6158,7 @@ function renderIncomingOffers(){
         <div class="offer-metric"><small>Gain / loss at target</small><strong class="${gain>=0?'good':'warn'}">${gain>=0?'+':''}${money(gain)}</strong></div>
         <div class="offer-metric"><small>Income surrendered</small><strong class="warn">${money(Number(offer.annualIncomeLostGbp||0))}/yr</strong></div>
       </div>
+      ${offer.fullHoldingCorrection?`<div class="offer-room-note" style="margin:0 16px 10px"><span>✅</span><div><b>Full holding corrected:</b> Aurora replaced the legacy 25% quantity (${Number(offer.originalRequestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})}) with your live holding of ${Number(offer.requestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})} shares.</div></div>`:''}
       ${incomingOfferClauseHtml(offer,clause)}
       <div class="offer-reason">${escapeHtml(offer.reason||'No offer explanation recorded.')}</div>
       <div class="offer-verdict"><b>Director of Football verdict</b>${escapeHtml(offer.directorVerdict||'Review the fee, income impact and replacement options.')}</div>
@@ -6140,7 +6192,7 @@ async function loadIncomingOffers(autoGenerate=false){
   try{
     const result=await postRegistration({action:'listIncomingOffers',limit:30,includeClosed:true,source:'Aurora City FC Incoming Offers'});
     if(result.queued){grid.innerHTML='<div class="offer-empty">The offer request was sent, but this browser could not read the response. Deploy the updated Apps Script and refresh.</div>';return;}
-    incomingOffers=dedupeIncomingOffers(Array.isArray(result.offers)?result.offers:[]);
+    incomingOffers=dedupeIncomingOffers(normaliseIncomingOfferQuantities(Array.isArray(result.offers)?result.offers:[]));
     renderIncomingOffers();
     renderExitFundingRoom();
     renderSmartExitDesk();
@@ -6173,7 +6225,7 @@ async function respondToIncomingOffer(offerId,response,button,extra={}){
   if(response==='REJECT'&&!window.confirm(`Reject the offer for ${offer.ticker}?`))return;
   incomingOfferBusy=true;if(button){button.disabled=true;button.textContent='Updating…';}
   try{
-    const result=await postRegistration({action:'respondIncomingOffer',offerId,response,...extra,source:'Aurora City FC Incoming Offers',userAgent:navigator.userAgent});
+    const result=await postRegistration({action:'respondIncomingOffer',offerId,response,requestedShares:Number(offer.requestedShares||0),offerValueGbp:Number(offer.offerValueGbp||0),estimatedGainLossGbp:Number(offer.estimatedGainLossGbp||0),annualIncomeLostGbp:Number(offer.annualIncomeLostGbp||0),fullHoldingCorrection:Boolean(offer.fullHoldingCorrection),...extra,source:'Aurora City FC Incoming Offers',userAgent:navigator.userAgent});
     if(msg){msg.textContent=result.message||'Offer updated.';msg.className=`registration-message ${result.queued?'pending':'success'}`;}
     if(!result.queued){await loadIncomingOffers(false);if(response==='ACCEPT')await loadSellTickets();}
   }catch(err){if(msg){msg.textContent=err.message||'Offer response failed.';msg.className='registration-message error';}if(button)button.disabled=false;}
@@ -6188,7 +6240,7 @@ function startIncomingOfferLiveChecks(){
     if(incomingOffers.length){
       loadData(true);
     }
-  },300000);
+  },60000);
 }
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&incomingOffers.length){
@@ -6197,7 +6249,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 startIncomingOfferLiveChecks();
 
-$('refreshIncomingOffers')?.addEventListener('click',()=>loadIncomingOffers(false));
+$('refreshIncomingOffers')?.addEventListener('click',async()=>{await loadData(true);await loadIncomingOffers(false);});
 $('generateIncomingOffers')?.addEventListener('click',()=>generateOfferRound(true));
 document.addEventListener('click',event=>{
   const responseButton=event.target.closest?.('[data-offer-response]');
