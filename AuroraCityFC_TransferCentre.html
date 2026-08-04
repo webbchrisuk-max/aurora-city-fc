@@ -3308,7 +3308,10 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <div class="broadcast-title"><span class="broadcast-live">Budget</span><h3>This Month’s Allocation</h3></div>
 <p>The budget comes directly from the current Finance Department mission. Adjust only the individual purchases; the authorised total cannot be changed here.</p>
 </div>
+<div class="deal-budget-actions" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+<button class="transfer-reset-btn" id="addTransferHolding" type="button" style="display:inline-flex!important">+ Add holding</button>
 <button class="transfer-reset-btn" id="resetTransferPlan" type="button">Reset allocations</button>
+</div>
 </div>
 <div class="deal-budget-grid">
 <label class="payday-input-line deal-budget-input">
@@ -8131,6 +8134,71 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
     }
   }
   window.addEventListener('load',function(){setTimeout(recoverPaydayPanel,800);setTimeout(recoverPaydayPanel,2500);});
+})();
+</script>
+
+<script>
+/* Aurora Payday Execution — manual Add Holding patch */
+(function(){
+  const KEY='aurora_manual_added_payday_holdings_v1';
+  function readAdded(){
+    try{const value=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(value)?value:[];}catch(_){return [];}
+  }
+  function saveAdded(rows){localStorage.setItem(KEY,JSON.stringify(rows));}
+  function normalTicker(value){return String(value||'').trim().toUpperCase().replace(/^LON:/,'').replace(/\.L$/,'').replace(/\.GB$/,'');}
+  function rowFor(ticker){
+    try{
+      const found=typeof findSecurity==='function'?findSecurity(ticker):null;
+      if(found)return found;
+    }catch(_){ }
+    return {ticker:ticker,name:ticker,account:'IG ISA',annual_dps:0,annual_dps_total:0};
+  }
+  const originalBuild=window.buildDealSheet;
+  if(typeof originalBuild==='function'){
+    window.buildDealSheet=function(){
+      const deal=originalBuild.apply(this,arguments);
+      const added=readAdded();
+      if(!deal||!added.length)return deal;
+      deal.rows=Array.isArray(deal.rows)?deal.rows:[];
+      const existing=new Set(deal.rows.map(item=>normalTicker(item?.row?.ticker)));
+      added.forEach(saved=>{
+        const ticker=normalTicker(saved.ticker);
+        const amount=Math.max(0,Number(saved.amount)||0);
+        if(!ticker||amount<=0||existing.has(ticker))return;
+        const row=rowFor(ticker);
+        const income=(typeof annualIncomeForAmount==='function')?annualIncomeForAmount(row,amount):0;
+        deal.rows.push({row,amount,income,gate:{status:'pass',reasons:['Manually added to completed Payday Execution record'],data:{status:'verified',score:100}}});
+        existing.add(ticker);
+      });
+      deal.chosen=deal.rows;
+      deal.totalIncome=deal.rows.reduce((sum,item)=>sum+(Number(item.income)||0),0);
+      const spent=deal.rows.reduce((sum,item)=>sum+(Number(item.amount)||0),0);
+      deal.holdback=Math.max(0,(Number(deal.budget)||0)-spent);
+      deal.requestedSpent=spent;
+      if(added.length){deal.route=String(deal.route||'Payday Execution')+' • manual additions';}
+      return deal;
+    };
+    try{buildDealSheet=window.buildDealSheet;}catch(_){ }
+  }
+  document.addEventListener('click',function(event){
+    const button=event.target.closest?.('#addTransferHolding');
+    if(!button)return;
+    const tickerRaw=window.prompt('Enter the ticker for the missing purchase (for example LAND, AV, BATS, HICL, LMP, SBRY or FGEN).');
+    if(!tickerRaw)return;
+    const ticker=normalTicker(tickerRaw);
+    const current=readAdded();
+    const existing=current.find(item=>normalTicker(item.ticker)===ticker);
+    const amountRaw=window.prompt('Enter the planned/actual cash allocation for '+ticker+' in pounds.',existing?String(existing.amount):'0');
+    if(amountRaw===null)return;
+    const amount=Number(String(amountRaw).replace(/[£,\s]/g,''));
+    if(!(amount>0)){window.alert('Enter an amount above £0.');return;}
+    const next=current.filter(item=>normalTicker(item.ticker)!==ticker);
+    next.push({ticker,amount:Number(amount.toFixed(2)),addedAt:new Date().toISOString()});
+    saveAdded(next);
+    try{excludedTickers?.delete?.(ticker);}catch(_){ }
+    try{manualAmounts?.set?.(ticker,amount);}catch(_){ }
+    try{renderAll();}catch(error){console.error(error);location.reload();}
+  });
 })();
 </script>
 </body>
