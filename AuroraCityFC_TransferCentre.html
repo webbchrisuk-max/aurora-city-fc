@@ -3385,7 +3385,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <div class="payday-window-body" id="paydayWindowBody">
 <div class="payday-status-strip">
 <div><small>Window status</small><strong id="paydayWindowStatus">Closed</strong><span id="paydayWindowStatusNote">Open the window when payday arrives.</span></div>
-<label class="payday-cash-field"><span>Available transfer cash</span><b>£</b><input id="paydayAvailableCash" min="0" step="25" type="number" value="0"/></label>
+<div class="payday-cash-field"><span>Available transfer cash</span><b>£</b><input id="paydayAvailableCash" inputmode="decimal" autocomplete="off" type="text" value="0.00" aria-label="Available transfer cash"/><button class="payday-reset-button" id="savePaydayCash" type="button">Save cash amount</button></div>
 </div>
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter the actual fills from the broker to compare them with the deal sheet.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div>
@@ -5319,7 +5319,7 @@ function savePaydayExecution(saved){saved.updatedAt=new Date().toISOString();saf
 function paydayTradeTotals(deal,saved){let invested=0,income=0,recorded=0;const details={};(deal?.rows||[]).forEach(item=>{const ticker=shortTicker(item.row.ticker);const trade=saved.trades[ticker]||{};const shares=parseNum(trade.shares)||0,price=parseNum(trade.price)||0,fees=parseNum(trade.fees)||0;const cost=shares>0&&price>0?shares*price+fees:0;const added=cost*incomeRate(item.row);if(cost>0)recorded++;invested+=cost;income+=Number.isFinite(added)?added:0;details[ticker]={shares,price,fees,cost,income:Number.isFinite(added)?added:0};});return {invested,income,recorded,details};}
 function renderPaydayExecution(deal){
   const panel=$('paydayExecutionPanel'),checklist=$('paydayChecklist'),tradeGrid=$('paydayTradeGrid');if(!panel||!checklist||!tradeGrid)return;const saved=paydayExecutionStore();panel.classList.toggle('open',Boolean(saved.open));panel.classList.toggle('completed',Boolean(saved.completedAt));
-  if($('openPaydayWindow'))$('openPaydayWindow').textContent=saved.open?'Close Payday Window':'Open Payday Window';if($('paydayAvailableCash')){const cashInput=$('paydayAvailableCash');cashInput.value=saved.availableCash||0;cashInput.disabled=false;cashInput.readOnly=false;cashInput.title='Editable Transfer Centre cash balance';}if($('restorePaydayFunding'))$('restorePaydayFunding').hidden=!(saved.lastFundingSnapshot&&parseNum(saved.lastFundingSnapshot.availableCash)>0);
+  if($('openPaydayWindow'))$('openPaydayWindow').textContent=saved.open?'Close Payday Window':'Open Payday Window';if($('paydayAvailableCash')){const cashInput=$('paydayAvailableCash');if(document.activeElement!==cashInput)cashInput.value=(Math.max(0,parseNum(saved.availableCash)||0)).toFixed(2);cashInput.disabled=false;cashInput.readOnly=false;cashInput.title='Enter the corrected Transfer Centre cash balance, then press Save cash amount';}if($('restorePaydayFunding'))$('restorePaydayFunding').hidden=!(saved.lastFundingSnapshot&&parseNum(saved.lastFundingSnapshot.availableCash)>0);
   const refreshAge=lastLiveRefreshAt?(Date.now()-new Date(lastLiveRefreshAt).getTime())/3600000:Infinity;
   const pricesFresh=refreshAge<=6;
   const routeReady=(deal?.rows||[]).length>0;
@@ -6648,7 +6648,10 @@ document.addEventListener('change',event=>{
 document.addEventListener('change',event=>{
   const trade=event.target.closest?.('[data-payday-trade-field]');if(trade){const saved=paydayExecutionStore();const ticker=shortTicker(trade.dataset.paydayTradeTicker);saved.trades[ticker]=saved.trades[ticker]||{};saved.trades[ticker][trade.dataset.paydayTradeField]=trade.value;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());return;}
 });
-$('paydayAvailableCash')?.addEventListener('change',event=>{const saved=paydayExecutionStore();saved.availableCash=Math.max(0,parseNum(event.target.value)||0);saved.manualCashOverride=true;saved.completedAt='';savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());});
+const savePaydayCashAmount=()=>{const input=$('paydayAvailableCash');if(!input)return;const entered=String(input.value||'').replace(/,/g,'').replace(/[^0-9.]/g,'');const next=Math.max(0,parseNum(entered)||0);const saved=paydayExecutionStore();const current=Math.max(0,parseNum(saved.availableCash)||0);saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';savePaydayExecution(saved);input.value=next.toFixed(2);renderPaydayExecution(buildDealSheet());};
+$('savePaydayCash')?.addEventListener('click',savePaydayCashAmount);
+$('paydayAvailableCash')?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();savePaydayCashAmount();event.target.blur();}});
+$('paydayAvailableCash')?.addEventListener('focus',event=>{event.target.select();});
 $('editPaydayCash')?.addEventListener('click',()=>{
   const input=$('paydayAvailableCash');if(!input)return;
   const saved=paydayExecutionStore();
