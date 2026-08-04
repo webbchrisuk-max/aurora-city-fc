@@ -2841,7 +2841,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v4-20260804-jsonp-read-fix" name="aurora-build"/></head>
+<meta content="transfer-gameshell-content-v5-20260804-platform-rules-get-fix" name="aurora-build"/></head>
 <body>
 
 
@@ -3751,7 +3751,15 @@ function registrationJsonp(payload,timeoutMs=20000){
     };
     const url=new URL(registrationConnection.endpoint);
     url.searchParams.set('token',registrationConnection.token);
-    url.searchParams.set('payload',JSON.stringify(payload));
+
+    // Apps Script doGet reads GET parameters directly. Send the action and
+    // simple read options as normal query parameters, while retaining the
+    // payload for backwards compatibility with older deployments.
+    Object.entries(payload||{}).forEach(([key,value])=>{
+      if(value===undefined||value===null||typeof value==='object') return;
+      url.searchParams.set(key,String(value));
+    });
+    url.searchParams.set('payload',JSON.stringify(payload||{}));
     url.searchParams.set('callback',callbackName);
     url.searchParams.set('_',String(Date.now()));
     script.src=url.toString();
