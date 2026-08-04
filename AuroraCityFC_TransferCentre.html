@@ -2,7 +2,7 @@
 
 <html data-aurora-page="transfer" data-aurora-shell-content="true" lang="en">
 <head>
-<!-- Build: Transfer Centre GameShell Content • 04 Aug 2026 • Full Chairman Offers -->
+<!-- Build: Transfer Centre GameShell Content • 04 Aug 2026 • Automatic Finance Split -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <link href="manifest.json" rel="manifest"/>
@@ -7082,6 +7082,16 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     const fallback = authorisedPlan();
     const preferred = String(current?.preferredPlatform || current?.preferredAccount || "split").toLowerCase();
 
+    // The Finance Department budget is authoritative. Load it into the live deal builder
+    // before asking Aurora to size the route, so the split is generated automatically on entry.
+    const authorisedBudget = round(Math.max(0,Number(current?.budget || fallback.budget || 0)));
+    ["transferBudgetInput","paydayAvailableCash","m3ReleasedCash","m5BuilderBudget"].forEach(id => {
+      const node = byId(id);
+      if(node && authorisedBudget > 0 && Math.abs(number(node.value) - authorisedBudget) > .009){
+        node.value = authorisedBudget.toFixed(2);
+      }
+    });
+
     let deal = null;
     try {
       if(typeof buildDealSheet === "function") deal = buildDealSheet();
@@ -7141,7 +7151,8 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     const allocated = round(purchases.reduce((sum,item) => sum + Number(item.amount || 0),0));
     if(!(allocated > 0)) return fallback;
 
-    const budget = round(Math.max(allocated,Number(current?.budget || fallback.budget || deal.budget || 0)));
+    const budget = round(Math.max(0,Number(current?.budget || fallback.budget || deal.budget || allocated)));
+    if(allocated > budget + .03) return fallback;
     totals.unassigned = round(totals.unassigned + Math.max(0,budget - allocated));
 
     return {
