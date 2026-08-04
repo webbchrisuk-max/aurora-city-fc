@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 
-<html data-aurora-page="scouting" lang="en">
+<html data-aurora-page="scouting" data-aurora-shell-content="true" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<link href="manifest.json" rel="manifest"/>
+
 <meta content="#030712" name="theme-color"/>
 <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
 <meta content="no-cache" http-equiv="Pragma"/>
@@ -13,9 +14,7 @@
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
-<title>Aurora City FC — Scouting Centre</title>
-
-
+<title>Aurora City FC — Scouting Centre</title><meta content="scouting-gameshell-content-v1-20260804" name="aurora-build"/>
 <style>
 :root{
   --bg:#030906;
@@ -882,8 +881,8 @@ body.detail-open .detail-drawer{transform:translateX(0)}
 }
 @media(max-width:650px){
   .app{padding-left:10px;padding-right:10px}
-  .topbar{margin-left:-10px;margin-right:-10px}
-  .top-link{display:none}
+  
+  
   .hero{padding:17px}
   .hero h2{font-size:44px}
   .kpi-grid{grid-template-columns:1fr 1fr}
@@ -1222,8 +1221,8 @@ body{
     radial-gradient(circle at top right,rgba(96,165,250,.18),transparent 36%),
     linear-gradient(180deg,#020617 0%,#030712 48%,#020617 100%);
 }
-.topbar{background:rgba(3,7,18,.86)!important;border-bottom:1px solid var(--line)!important}
-.brand img{box-shadow:0 0 28px rgba(96,165,250,.16)!important}
+
+
 .hero,
 .director-card,.network-card,.bestxi-card,.former-card,
 .panel,.assign-card,.stage,.meeting-card,
@@ -1316,8 +1315,6 @@ body{
 @media(max-width:560px){.pitch{min-height:390px!important}.xi-player{width:78px}.xi-label{font-size:9px}.xi-name{font-size:7px}.xi-score{font-size:7px}}
 
 </style>
-
-
 <style id="aurora-motion-system-styles">
 /* Scouting Centre attention system */
 :root{
@@ -1359,85 +1356,16 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 @media(prefers-reduced-motion:reduce){html:not([data-aurora-motion="full"]) *,html:not([data-aurora-motion="full"]) *:before,html:not([data-aurora-motion="full"]) *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
 
+<!-- Build: Aurora Scouting Centre • GameShell Content Page v1 • 04 Aug 2026 -->
 
-<style id="auroraPlainPageBaseline">
-/* Aurora plain-page baseline: no sidebar and no bottom dock */
-html,body{
-  width:100%!important;
-  min-width:0!important;
-  margin-left:0!important;
-  margin-right:0!important;
-}
-body{
-  padding-bottom:0!important;
-}
-.fm-shell,
-.m13-app{
-  display:block!important;
-  width:100%!important;
-  max-width:none!important;
-  min-width:0!important;
-  grid-template-columns:1fr!important;
-  margin:0!important;
-}
-.fm-workspace,
-.m13-content{
-  width:100%!important;
-  max-width:none!important;
-  min-width:0!important;
-  margin-left:0!important;
-  margin-right:0!important;
-}
-.fm-workspace[style],
-.m13-content[style]{
-  margin-left:0!important;
-  transform:none!important;
-}
-.fm-sidebar-edge-zone,
-.fm-sidebar,
-.fm-sidebar-backdrop,
-.fm-sidebar-overlay,
-.fm-sidebar-toggle,
-.m13-sidebar,
-.m13-sidebar-toggle,
-.aufc-sidebar,
-.aufc-mobile-button,
-.aufc-mobile-shade,
-#auroraUniversalSidebar,
-.universal-sidebar,
-.aurora-system-dock,
-.aurora-smart-dock,
-.aurora-dock-launcher,
-.aurora-hq-dock,
-.bottom-ticker,
-.smart-wealth-dock,
-[data-aurora-system-dock],
-[id*="auroraDock"],
-[class*="aurora-bottom-dock"]{
-  display:none!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-}
-@media(max-width:900px){
-  .fm-workspace,
-  .m13-content{
-    width:100%!important;
-    margin:0!important;
-  }
-}
-</style>
-<!-- Aurora Scouting Centre clean build • 2 Aug 2026 -->
-<!-- Aurora universal workflow navigation -->
-<link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
-<script src="aurora-navigation.js?v=20260729-3" defer></script>
+
+
 <script src="AuroraFCData.js"></script>
 </head>
 <body>
 
-<div class="fm-shell">
 
-<div class="fm-workspace">
-<div class="app">
+<div class="app" data-aurora-content-root="scouting">
 <section class="hero aurora-section-anchor" id="scouting-overview">
 <div class="hero-copy">
 <span class="kicker"><i class="kicker-dot"></i>National Scouting Network</span>
@@ -2346,9 +2274,6 @@ if(window.AuroraFC?.onDataChanged){
 
 init(false);
 </script>
-</div>
-</div>
-
 
 
 <script id="aurora-motion-system">
@@ -2363,36 +2288,10 @@ init(false);
     try{const value=localStorage.getItem(MOTION_KEY);if(levels.includes(value))return value}catch(_){ }
     return window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches?"off":"full";
   }
-  function label(level){return level==="full"?"Full":level==="subtle"?"Subtle":"Off"}
-  function applyLevel(level,announce=false){
+  function applyLevel(level){
     const next=levels.includes(level)?level:"full";
     root.dataset.auroraMotion=next;
     try{localStorage.setItem(MOTION_KEY,next)}catch(_){ }
-    const btn=document.getElementById("auroraMotionToggle");
-    if(btn){
-      const value=btn.querySelector("[data-motion-value]");
-      if(value)value.textContent=label(next);
-      btn.title=`Aurora animations: ${label(next)}`;
-      btn.setAttribute("aria-label",`Aurora animations ${label(next)}. Tap to change.`);
-    }
-    if(announce)flashValue(btn);
-  }
-  function installToggle(){
-    if(document.getElementById("auroraMotionToggle"))return;
-    const footer=document.querySelector(".fm-side-footer");
-    if(!footer)return;
-    const btn=document.createElement("button");
-    btn.type="button";
-    btn.id="auroraMotionToggle";
-    btn.className="fm-side-action aurora-motion-toggle";
-    btn.innerHTML='<span class="fm-side-icon">✦</span><span>Motion: <b data-motion-value>Full</b></span>';
-    const clock=footer.querySelector(".fm-side-clock");
-    footer.insertBefore(btn,clock||null);
-    btn.addEventListener("click",()=>{
-      const current=root.dataset.auroraMotion||"full";
-      applyLevel(levels[(levels.indexOf(current)+1)%levels.length],true);
-    });
-    applyLevel(root.dataset.auroraMotion||savedLevel());
   }
   function flashValue(el){
     if(!el)return;
@@ -2451,7 +2350,6 @@ init(false);
   }
   function start(){
     applyLevel(savedLevel());
-    installToggle();
     document.addEventListener("click",event=>{
       if(event.target.closest?.("#refreshBtn,.refresh-btn,[data-refresh]"))refreshWave();
     },true);
@@ -2459,69 +2357,6 @@ init(false);
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});
   else start();
-})();
-</script>
-
-
-<script id="auroraPlainPageGuard">
-(function(){
-  "use strict";
-
-  const selectors = [
-    ".fm-sidebar-edge-zone",
-    ".fm-sidebar",
-    ".fm-sidebar-backdrop",
-    ".fm-sidebar-overlay",
-    ".fm-sidebar-toggle",
-    ".m13-sidebar",
-    ".m13-sidebar-toggle",
-    ".aufc-sidebar",
-    ".aufc-mobile-button",
-    ".aufc-mobile-shade",
-    "#auroraUniversalSidebar",
-    ".universal-sidebar",
-    ".aurora-system-dock",
-    ".aurora-smart-dock",
-    ".aurora-dock-launcher",
-    ".aurora-hq-dock",
-    ".bottom-ticker",
-    ".smart-wealth-dock",
-    "[data-aurora-system-dock]",
-    "[id*='auroraDock']",
-    "[class*='aurora-bottom-dock']"
-  ];
-
-  function clean(){
-    document.querySelectorAll(selectors.join(",")).forEach(node => node.remove());
-
-    document.documentElement.classList.remove(
-      "fm-sidebar-open",
-      "fm-sidebar-collapsed",
-      "m13-sidebar-collapsed",
-      "aufc-mobile-open",
-      "sidebar-open",
-      "sidebar-collapsed"
-    );
-
-    document.body?.classList.remove(
-      "fm-sidebar-open",
-      "fm-sidebar-collapsed",
-      "m13-sidebar-collapsed",
-      "aufc-mobile-open",
-      "sidebar-open",
-      "sidebar-collapsed"
-    );
-  }
-
-  clean();
-
-  const observer = new MutationObserver(clean);
-  observer.observe(document.documentElement, {
-    childList:true,
-    subtree:true
-  });
-
-  window.addEventListener("pageshow", clean);
 })();
 </script>
 
@@ -2767,5 +2602,56 @@ init(false);
   setTimeout(renormaliseAndRender,1800);
 })();
 </script>
-</body>
+<script id="auroraScoutingGameShellBridge">
+(function(){
+  "use strict";
+
+  const pageDetail = Object.freeze({
+    page:"scouting",
+    title:"Scouting Centre",
+    build:"scouting-gameshell-content-v1-20260804"
+  });
+
+  function notifyShell(){
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.postMessage(
+          {
+            type:"aurora:department-ready",
+            detail:pageDetail
+          },
+          location.origin
+        );
+      }
+    }catch(_){}
+  }
+
+  window.AuroraScoutingCentre = Object.freeze({
+    getPageDetail(){
+      return pageDetail;
+    },
+    refresh(){
+      if(typeof window.init === "function"){
+        window.init(true);
+        return true;
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("aurora:scouting-refresh-request")
+      );
+
+      return false;
+    }
+  });
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      notifyShell,
+      {once:true}
+    );
+  }else{
+    notifyShell();
+  }
+})();</script></body>
 </html>
