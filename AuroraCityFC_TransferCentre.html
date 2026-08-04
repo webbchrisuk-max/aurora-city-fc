@@ -2841,7 +2841,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v6-20260804-exact-offer-sync-fix" name="aurora-build"/><script>
+<meta content="transfer-gameshell-content-v7-20260804-cash-override-fix" name="aurora-build"/><script>
 (function(){
   try{
     const key='aurora-transfer-cache-reset-20260804-1155';
@@ -6705,7 +6705,7 @@ document.addEventListener('change',event=>{
 document.addEventListener('change',event=>{
   const trade=event.target.closest?.('[data-payday-trade-field]');if(trade){const saved=paydayExecutionStore();const ticker=shortTicker(trade.dataset.paydayTradeTicker);saved.trades[ticker]=saved.trades[ticker]||{};saved.trades[ticker][trade.dataset.paydayTradeField]=trade.value;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());return;}
 });
-const savePaydayCashAmount=()=>{const input=$('paydayAvailableCash');if(!input)return;const entered=String(input.value||'').replace(/,/g,'').replace(/[^0-9.]/g,'');const next=Math.max(0,parseNum(entered)||0);const saved=paydayExecutionStore();const current=Math.max(0,parseNum(saved.availableCash)||0);saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';savePaydayExecution(saved);input.value=next.toFixed(2);renderPaydayExecution(buildDealSheet());};
+const savePaydayCashAmount=()=>{const input=$('paydayAvailableCash');if(!input)return;const entered=String(input.value||'').replace(/,/g,'').replace(/[^0-9.]/g,'');const next=Math.max(0,parseNum(entered)||0);const saved=paydayExecutionStore();const current=Math.max(0,parseNum(saved.availableCash)||0);saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';saved.open=true;saved.cashSource='MANUAL_OVERRIDE';savePaydayExecution(saved);input.value=next.toFixed(2);renderPaydayExecution(buildDealSheet());const message=$('paydayCompletionMessage');if(message)message.textContent=`Manual cash override saved: ${money(next)}. Finance Department will not overwrite this figure until you reset the payday record.`;};
 $('savePaydayCash')?.addEventListener('click',savePaydayCashAmount);
 $('paydayAvailableCash')?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();savePaydayCashAmount();event.target.blur();}});
 $('paydayAvailableCash')?.addEventListener('focus',event=>{event.target.select();});
@@ -6717,8 +6717,8 @@ $('editPaydayCash')?.addEventListener('click',()=>{
   if(entered===null)return;
   const next=Math.max(0,parseNum(entered)||0);
   saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};
-  saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';
-  savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());
+  saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';saved.open=true;saved.cashSource='MANUAL_OVERRIDE';
+  savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());const message=$('paydayCompletionMessage');if(message)message.textContent=`Manual cash override saved: ${money(next)}. Finance Department will not overwrite this figure until you reset the payday record.`;
 });
 $('undoPaydayFunding')?.addEventListener('click',()=>{
   const saved=paydayExecutionStore();
@@ -6730,13 +6730,13 @@ $('undoPaydayFunding')?.addEventListener('click',()=>{
     : 'Undo the funding transfer and return the available cash to £0?';
   if(!window.confirm(warning))return;
   saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};
-  saved.availableCash=0;saved.manualCashOverride=true;saved.completedAt='';saved.open=true;
+  saved.availableCash=0;saved.manualCashOverride=true;saved.completedAt='';saved.open=true;saved.cashSource='UNDONE_FINANCE_TRANSFER';
   savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());
 });
 $('restorePaydayFunding')?.addEventListener('click',()=>{
   const saved=paydayExecutionStore();const snap=saved.lastFundingSnapshot;
   if(!snap||!(parseNum(snap.availableCash)>0))return;
-  saved.availableCash=Math.max(0,parseNum(snap.availableCash)||0);saved.manualCashOverride=true;saved.completedAt='';saved.open=true;
+  saved.availableCash=Math.max(0,parseNum(snap.availableCash)||0);saved.manualCashOverride=true;saved.completedAt='';saved.open=true;saved.cashSource='RESTORED_SNAPSHOT';
   delete saved.lastFundingSnapshot;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());
 });
 document.addEventListener('click',event=>{
@@ -7238,7 +7238,9 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     const availableCash=$id('paydayAvailableCash');
     if(budgetInput) budgetInput.value=budget.toFixed(2);
     if(releasedCash) releasedCash.value=budget.toFixed(2);
-    if(availableCash) availableCash.value=budget.toFixed(2);
+    const existingExecution=read('aurora_payday_execution_v1')||{};
+    const preserveManualCash=Boolean(existingExecution.manualCashOverride);
+    if(availableCash && !preserveManualCash) availableCash.value=budget.toFixed(2);
     try{
       routeMode=mission.tradingMode==='income'?'maximum':'balanced';
       excludedTickers.clear();
@@ -7258,7 +7260,9 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     }catch(error){console.warn('Aurora mission rebase',error);} 
     try{
       const execution=read('aurora_payday_execution_v1')||{};
-      execution.availableCash=budget;
+      if(!execution.manualCashOverride){
+        execution.availableCash=budget;
+      }
       execution.wealthMissionId=mission.id;
       execution.updatedAt=new Date().toISOString();
       localStorage.setItem('aurora_payday_execution_v1',JSON.stringify(execution));
@@ -7337,7 +7341,12 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function forceAuthorisedBudget(){
     const mission=liveMission(); if(!mission) return;
     const value=Math.max(0,Number(mission.budget)||0);
-    ['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{const el=$(id);if(el)el.value=value.toFixed(2)});
+    const paydaySaved=read('aurora_payday_execution_v1')||{};
+    ['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{
+      const el=$(id);
+      const preserveManualCash=id==='paydayAvailableCash'&&Boolean(paydaySaved.manualCashOverride);
+      if(el&&!preserveManualCash)el.value=value.toFixed(2);
+    });
     ['heroTransferBudget','m5Budget'].forEach(id=>{const el=$(id);if(el)el.textContent=money(value)});
   }
   function renderMission(){
@@ -7440,7 +7449,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
  const money=v=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(v||0));
  function mission(){return read(FINANCE)||read(LEGACY)}
  function mirror(){const m=mission();if(m){const n={...m,source:'Finance Department',department:'Finance Department'};write(FINANCE,n);write(LEGACY,n);return n}return null}
- function forceBudget(){const m=mirror();if(!m||!(Number(m.budget)>0))return false;const b=Number(m.budget);['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=b.toFixed(2)});['heroTransferBudget','m5Budget','m7Budget'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=money(b)});try{if(typeof routeMode!=='undefined'&&m.tradingMode==='income')routeMode='maximum';if(typeof manualAmounts!=='undefined')manualAmounts.clear();if(typeof excludedTickers!=='undefined')excludedTickers.clear();}catch(_){}try{window.AuroraLoadWealthMission?.({scroll:false})}catch(_){}try{if(typeof renderAll==='function')renderAll()}catch(_){}setTimeout(()=>{['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=b.toFixed(2)});['heroTransferBudget','m5Budget','m7Budget','m11MissionBudget'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=money(b)});const note=document.getElementById('allocationBudgetNote');if(note)note.textContent=`Current Finance Department mission: ${money(b)} authorised.`},120);return true}
+ function forceBudget(){const m=mirror();if(!m||!(Number(m.budget)>0))return false;const b=Number(m.budget);const paydaySaved=read('aurora_payday_execution_v1')||{};['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{const el=document.getElementById(id);const preserveManualCash=id==='paydayAvailableCash'&&Boolean(paydaySaved.manualCashOverride);if(el&&!preserveManualCash)el.value=b.toFixed(2)});['heroTransferBudget','m5Budget','m7Budget'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=money(b)});try{if(typeof routeMode!=='undefined'&&m.tradingMode==='income')routeMode='maximum';if(typeof manualAmounts!=='undefined')manualAmounts.clear();if(typeof excludedTickers!=='undefined')excludedTickers.clear();}catch(_){}try{window.AuroraLoadWealthMission?.({scroll:false})}catch(_){}try{if(typeof renderAll==='function')renderAll()}catch(_){}setTimeout(()=>{const latestPayday=read('aurora_payday_execution_v1')||{};['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{const el=document.getElementById(id);const preserveManualCash=id==='paydayAvailableCash'&&Boolean(latestPayday.manualCashOverride);if(el&&!preserveManualCash)el.value=b.toFixed(2)});['heroTransferBudget','m5Budget','m7Budget','m11MissionBudget'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=money(b)});const note=document.getElementById('allocationBudgetNote');if(note)note.textContent=`Current Finance Department mission: ${money(b)} authorised.`},120);return true}
  function captureFields(){const out={};document.querySelectorAll('input,select,textarea').forEach((el,i)=>{const key=el.id||el.name||`field-${i}`;out[key]={value:el.value,checked:!!el.checked,type:el.type||el.tagName}});return out}
  function restoreFieldsOnce(){const fields=read(RESTORE);if(!fields)return;Object.entries(fields).forEach(([key,state])=>{const el=document.getElementById(key)||document.querySelector(`[name="${CSS.escape(key)}"]`);if(!el)return;if('value'in state)el.value=state.value;if('checked'in state)el.checked=state.checked;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});localStorage.removeItem(RESTORE)}
  function snapshotStorage(){const store={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&![SNAP,TEST].includes(k))store[k]=localStorage.getItem(k)}return store}
