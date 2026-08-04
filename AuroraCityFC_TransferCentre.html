@@ -2841,10 +2841,10 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v88-20260805-all-upgrades" name="aurora-build"/><script>
+<meta content="transfer-gameshell-content-v90-payday-auroradata-commit" name="aurora-build"/><script>
 (function(){
   try{
-    const key='aurora-transfer-cache-reset-20260805-v88';
+    const key='aurora-transfer-cache-reset-20260804-1155';
     if(!sessionStorage.getItem(key)){
       sessionStorage.setItem(key,'1');
       if('serviceWorker' in navigator){
@@ -3408,7 +3408,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <div class="upgrade-stat"><small>New club income</small><strong id="paydayNewClubIncome">—</strong><span>Starting income plus actual additions</span></div>
 </div>
 <div class="payday-actions">
-<button class="payday-complete-button" disabled="" id="completePaydayWindow" type="button">Complete transfer window</button>
+<button class="payday-complete-button" disabled="" id="completePaydayWindow" type="button">Complete &amp; register transfer window</button>
 <button class="payday-reset-button" id="editPaydayCash" type="button">Edit transfer cash</button>
 <button class="payday-reset-button" id="undoPaydayFunding" type="button">Undo funding transfer</button>
 <button class="payday-reset-button" id="restorePaydayFunding" type="button" hidden>Restore last transfer</button>
@@ -6800,24 +6800,126 @@ document.addEventListener('click',event=>{
   const exitDecision=event.target.closest?.('[data-exit-decision]');if(exitDecision){setSmartExitDecision(exitDecision.dataset.exitDecisionTicker,exitDecision.dataset.exitDecision);renderSmartExitDesk();return;}
 });
 $('openPaydayWindow')?.addEventListener('click',()=>{const saved=paydayExecutionStore();saved.open=!saved.open;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());});
-$('completePaydayWindow')?.addEventListener('click',()=>{
+async function verifyPaydayRegistration_(transactionId){
+  try{
+    const result=await postRegistration({action:'listRecentRegistrations',limit:50,source:'Aurora City FC Transfer Centre'});
+    return Array.isArray(result?.registrations)&&result.registrations.some(item=>String(item.transactionId||'')===String(transactionId||''));
+  }catch(_){return false;}
+}
+function paydayRegistrationId_(ticker,account,saved){
+  saved.registrationTransactions=saved.registrationTransactions||{};
+  const key=`${shortTicker(ticker)}|${normalizeRegistrationAccount(account)}`;
+  if(saved.registrationTransactions[key])return saved.registrationTransactions[key];
+  const stamp=new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const id=`PAYDAY-${stamp}-${shortTicker(ticker)}-${normalizeRegistrationAccount(account).replace(/[^A-Z0-9]/g,'')}-${Date.now().toString(36).toUpperCase()}`;
+  saved.registrationTransactions[key]=id;
+  return id;
+}
+async function registerCompletedPaydayPurchases_(deal,saved,totals){
+  if(!registrationConnection.endpoint||!registrationConnection.token){
+    throw new Error('AuroraData is not connected. Open Manual / One-Off Registration Desk, save the Apps Script URL and private token, then try again.');
+  }
+  if(!Object.keys(PLATFORM_RULE_DETAILS||{}).length){
+    try{await loadPlatformRules();}catch(_){ }
+  }
+  saved.registrationResults=saved.registrationResults||{};
+  const rows=(deal?.rows||[]).filter(item=>{
+    const ticker=shortTicker(item.row?.ticker);
+    return (totals.details?.[ticker]?.cost||0)>0;
+  });
+  if(!rows.length)throw new Error('No completed purchases are available to register.');
+  const message=$('paydayCompletionMessage');
+  const button=$('completePaydayWindow');
+  let confirmed=0;
+  for(let index=0;index<rows.length;index++){
+    const item=rows[index];
+    const row=item.row||{};
+    const ticker=shortTicker(row.ticker);
+    const trade=totals.details[ticker];
+    const account=normalizeRegistrationAccount(row.account||row.platform||row.broker||platformFor(row.ticker)||'IG ISA');
+    const resultKey=`${ticker}|${account}`;
+    if(saved.registrationResults[resultKey]?.confirmed){confirmed++;continue;}
+    const currency=registrationCurrency(row);
+    const priceUnit=registrationUnitFor(row);
+    const priceInput=priceUnit==='PENCE'?trade.price*100:trade.price;
+    const transactionId=paydayRegistrationId_(ticker,account,saved);
+    savePaydayExecution(saved);
+    if(message)message.textContent=`Registering ${index+1} of ${rows.length}: ${displayTicker(row.ticker)} into AuroraData…`;
+    if(button){button.disabled=true;button.textContent=`Registering ${index+1}/${rows.length}…`;}
+    const payload={
+      action:'registerPurchase',transactionId,createIfMissing:true,
+      ticker:row.ticker||ticker,name:displayName(row)||ticker,account,
+      shares:trade.shares,priceInput,priceUnit,currency,fees:trade.fees||0,
+      tradeDate:saved.tradeDate||registrationDateValue(),
+      note:'Completed automatically from Payday Execution & Purchase Record.',
+      annualDps:parseNum(row.annual_dps),sector:row.sector||'',role:row.role||'',
+      buyStrength:parseNum(row.buy_strength),low52w:parseNum(row.low_52w),high52w:parseNum(row.high_52w),
+      payoutRatio:row.payout_ratio||'',payoutRisk:row.payout_risk||'',dividendGrowth5y:row.dividend_growth_5y||'',
+      squadRole:row.squad_role||'',promotionImpactScore:parseNum(row.promotion_impact_score),
+      trialStatus:row.trial_status||'',trialRank:parseNum(row.trial_rank),trialVerdict:row.trial_verdict||'',
+      managerNote:row.manager_note||'',chemistryRole:row.chemistry_role||'',chemistryRisk:row.chemistry_risk||'',
+      squadBalanceNote:row.squad_balance_note||'',dealAllocationGbp:item.amount||trade.cost,
+      referencePriceGbp:trade.price,source:'Aurora City FC Payday Execution',userAgent:navigator.userAgent
+    };
+    try{
+      const result=await postRegistration(payload);
+      let isConfirmed=!result.queued;
+      if(result.queued){
+        await new Promise(resolve=>setTimeout(resolve,1800));
+        isConfirmed=await verifyPaydayRegistration_(transactionId);
+      }
+      saved.registrationResults[resultKey]={confirmed:isConfirmed,queued:Boolean(result.queued),transactionId,at:new Date().toISOString(),message:result.message||''};
+      savePaydayExecution(saved);
+      if(!isConfirmed)throw new Error(`${displayTicker(row.ticker)} was submitted but AuroraData did not confirm it. Do not press complete again until the connection is readable.`);
+      confirmed++;
+      try{applyRegistrationResult(result,payload);}catch(_){ }
+    }catch(error){
+      saved.registrationResults[resultKey]={confirmed:false,transactionId,at:new Date().toISOString(),error:String(error?.message||error)};
+      savePaydayExecution(saved);
+      throw error;
+    }
+  }
+  return {confirmed,total:rows.length};
+}
+$('completePaydayWindow')?.addEventListener('click',async()=>{
   const deal=buildDealSheet();
   const saved=paydayExecutionStore();
   const totals=paydayTradeTotals(deal,saved);
   const availableCash=Math.max(0,parseNum(saved.availableCash)||0);
   const tolerance=1.00;
-  if(!(totals.recorded>0)){if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent='Cannot complete: no actual broker purchases have been entered.';return;}
+  const button=$('completePaydayWindow');
+  const message=$('paydayCompletionMessage');
+  if(!(totals.recorded>0)){if(message)message.textContent='Cannot complete: no actual broker purchases have been entered.';return;}
   if(!(availableCash>0)||totals.invested>availableCash+tolerance){
-    if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent=`Cannot complete: actual fills ${money(totals.invested)} exceed available cash ${money(availableCash)}. Check the entered prices and fees.`;
+    if(message)message.textContent=`Cannot complete: actual fills ${money(totals.invested)} exceed available cash ${money(availableCash)}. Check the entered prices and fees.`;
     return;
   }
-  saved.completedAt=new Date().toISOString();
-  saved.open=true;
-  saved.completedActualInvestment=totals.invested;
-  saved.completedAvailableCash=availableCash;
-  saved.completedCashRemaining=Math.max(0,availableCash-totals.invested);
-  savePaydayExecution(saved);
-  renderPaydayExecution(deal);
+  if(!window.confirm(`Register ${totals.recorded} completed purchase${totals.recorded===1?'':'s'} into AuroraData and close this transfer window? Holdings and PurchaseLog will be updated. Broker orders will not be placed.`))return;
+  try{
+    if(button){button.disabled=true;button.textContent='Connecting to AuroraData…';}
+    const sync=await registerCompletedPaydayPurchases_(deal,saved,totals);
+    saved.completedAt=new Date().toISOString();
+    saved.open=true;
+    saved.completedActualInvestment=totals.invested;
+    saved.completedAvailableCash=availableCash;
+    saved.completedCashRemaining=Math.max(0,availableCash-totals.invested);
+    saved.auroraDataRegisteredAt=new Date().toISOString();
+    saved.auroraDataRegisteredCount=sync.confirmed;
+    savePaydayExecution(saved);
+    try{await loadData(true);}catch(_){ }
+    try{await loadRegistrationHistory();}catch(_){ }
+    renderPaydayExecution(buildDealSheet());
+    if(message)message.textContent=`Transfer window complete • ${sync.confirmed} purchase${sync.confirmed===1?'':'s'} registered in AuroraData • Holdings and PurchaseLog updated • ${money(Math.max(0,availableCash-totals.invested))} cash left.`;
+  }catch(error){
+    console.error('Payday AuroraData registration failed:',error);
+    saved.completedAt='';
+    savePaydayExecution(saved);
+    renderPaydayExecution(deal);
+    if(message)message.textContent=`Not completed: ${String(error?.message||error)} Any purchases already confirmed remain safely registered; retry will skip those confirmed transaction IDs.`;
+  }finally{
+    if(button){button.textContent='Complete & register transfer window';}
+    renderPaydayExecution(buildDealSheet());
+  }
 });
 $('resetPaydayWindow')?.addEventListener('click',()=>{if(!window.confirm('Reset the current payday execution record?'))return;safeJsonWrite(PAYDAY_EXECUTION_KEY,{open:true,availableCash:0,checks:{},trades:{},completedAt:'',updatedAt:new Date().toISOString()});renderPaydayExecution(buildDealSheet());});
 
@@ -8201,142 +8303,5 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
   });
 })();
 </script>
-
-<style id="aurora-transfer-v88-upgrades">
-.aurora-v88-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0;padding:12px;border:1px solid rgba(34,211,238,.28);border-radius:17px;background:linear-gradient(135deg,rgba(8,47,73,.35),rgba(2,6,23,.48))}
-.aurora-v88-toolbar-main{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.aurora-v88-toolbar label{display:grid;gap:4px;color:#93a4bd;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.aurora-v88-toolbar select{min-width:170px;border:1px solid rgba(96,165,250,.30);background:#020817;color:#f8fafc;border-radius:11px;padding:9px 10px;font-weight:900}.aurora-v88-btn{border:1px solid rgba(34,211,238,.34);background:rgba(8,47,73,.70);color:#cffafe;border-radius:11px;padding:9px 12px;font-weight:950;cursor:pointer}.aurora-v88-btn.green{border-color:rgba(52,211,153,.36);background:rgba(6,78,59,.42);color:#bbf7d0}.aurora-v88-btn.amber{border-color:rgba(251,191,36,.34);background:rgba(120,53,15,.32);color:#fde68a}.aurora-v88-btn.red{border-color:rgba(251,113,133,.30);background:rgba(127,29,29,.24);color:#fecdd3}.aurora-v88-note{color:#9fb0c8;font-size:10px;line-height:1.4;max-width:520px}.aurora-v88-remove{margin-left:8px;border:1px solid rgba(251,113,133,.30);background:rgba(127,29,29,.20);color:#fecdd3;border-radius:9px;padding:5px 7px;font-size:8px;font-weight:900;cursor:pointer}
-#deal-sheet .aurora-v88-toolbar{display:flex!important}#payday-execution .aurora-v88-toolbar{display:flex!important}
-@media(max-width:650px){.aurora-v88-toolbar{align-items:flex-start;flex-direction:column}.aurora-v88-toolbar-main{width:100%}.aurora-v88-toolbar label,.aurora-v88-toolbar select,.aurora-v88-btn{width:100%}}
-</style>
-<script id="aurora-transfer-v88-upgrades-script">
-(function(){
-  'use strict';
-  const MANUAL_KEY='aurora_manual_added_payday_holdings_v2';
-  const LEGACY_KEY='aurora_manual_added_payday_holdings_v1';
-  const ROUTE_KEY='aurora_payday_route_snapshot_v1';
-  const BROKER_KEY='aurora_transfer_broker_route_v1';
-  const TODAY_PRESET=[
-    {ticker:'FGEN',amount:1618.68,account:'IG ISA'},{ticker:'SBRY',amount:1621.04,account:'IG ISA'},
-    {ticker:'LMP',amount:1621.96,account:'IG ISA'},{ticker:'HICL',amount:1396.48,account:'IG ISA'},
-    {ticker:'BATS',amount:992.29,account:'IG ISA'},{ticker:'AV',amount:273.54,account:'IG ISA'},
-    {ticker:'LAND',amount:631.75,account:'IG ISA'}
-  ];
-  const normalTicker=v=>String(v||'').trim().toUpperCase().replace(/^LON:/,'').replace(/\.L$|\.GB$/,'');
-  const readJson=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key)||'null');return v??fallback}catch(_){return fallback}};
-  const writeJson=(key,v)=>localStorage.setItem(key,JSON.stringify(v));
-  function readManual(){
-    let rows=readJson(MANUAL_KEY,null);
-    if(!Array.isArray(rows)) rows=readJson(LEGACY_KEY,[]);
-    return Array.isArray(rows)?rows:[];
-  }
-  function saveManual(rows){writeJson(MANUAL_KEY,rows);writeJson(LEGACY_KEY,rows);}
-  function securityFor(ticker,account){
-    let row=null;
-    try{if(typeof findSecurity==='function')row=findSecurity(ticker)}catch(_){}
-    row=row?{...row}:{ticker,name:ticker,annual_dps:0,annual_dps_total:0};
-    row.ticker=row.ticker||ticker; row.name=row.name||ticker; row.account=account||row.account||'IG ISA';
-    return row;
-  }
-  function rerender(){
-    try{if(typeof renderAll==='function')renderAll()}catch(e){console.error('v88 renderAll',e)}
-    try{if(typeof renderPaydayExecution==='function'&&typeof buildDealSheet==='function')renderPaydayExecution(buildDealSheet())}catch(e){console.error('v88 payday render',e)}
-    setTimeout(enhanceTradeCards,60);
-  }
-  function addHolding(prefill){
-    const ticker=normalTicker(prefill?.ticker||prompt('Enter the missing ticker (for example LAND, AV, BATS, HICL, LMP, SBRY or FGEN).')||'');
-    if(!ticker)return;
-    const current=readManual(); const found=current.find(x=>normalTicker(x.ticker)===ticker);
-    const amountRaw=prefill?.amount ?? prompt('Enter the cash allocation for '+ticker+' in pounds.',String(found?.amount||0));
-    if(amountRaw===null||amountRaw===undefined)return;
-    const amount=Number(String(amountRaw).replace(/[£,\s]/g,''));
-    if(!(amount>0)){alert('Enter a cash amount above £0.');return;}
-    const account=String(prefill?.account||prompt('Broker account: IG ISA or TRADE 212',found?.account||'IG ISA')||'IG ISA').trim().toUpperCase();
-    const cleanAccount=account.includes('212')?'TRADE 212':'IG ISA';
-    const next=current.filter(x=>normalTicker(x.ticker)!==ticker);
-    next.push({ticker,amount:Number(amount.toFixed(2)),account:cleanAccount,addedAt:new Date().toISOString()});
-    saveManual(next);
-    try{excludedTickers?.delete?.(ticker);manualAmounts?.set?.(ticker,amount)}catch(_){}
-    rerender();
-  }
-  function removeHolding(ticker){
-    ticker=normalTicker(ticker);saveManual(readManual().filter(x=>normalTicker(x.ticker)!==ticker));
-    try{manualAmounts?.delete?.(ticker);excludedTickers?.add?.(ticker)}catch(_){}
-    rerender();
-  }
-  function loadTodayPreset(){
-    if(!confirm('Load the seven completed IG ISA purchases from 4 August into Payday Execution? Existing entered fills are preserved.'))return;
-    saveManual(TODAY_PRESET.map(x=>({...x,addedAt:new Date().toISOString(),preset:'4 Aug 2026 completed buys'})));
-    try{TODAY_PRESET.forEach(x=>{excludedTickers?.delete?.(x.ticker);manualAmounts?.set?.(x.ticker,x.amount)})}catch(_){}
-    const execution=readJson('aurora_payday_execution_v1',{});execution.open=true;execution.availableCash=8162.83;execution.manualCashOverride=true;execution.completedAt='';execution.cashSource='4_AUG_COMPLETED_BUYS_RECOVERY';execution.trades=execution.trades||{};writeJson('aurora_payday_execution_v1',execution);
-    rerender();
-  }
-  function recoverRoute(){
-    const execution=readJson('aurora_payday_execution_v1',{}); const snap=execution.routeSnapshot||readJson(ROUTE_KEY,null);
-    if(!snap||!Array.isArray(snap.rows)||!snap.rows.length){alert('No saved route snapshot was found. Use Add purchase or Load 4 Aug completed buys.');return;}
-    saveManual(snap.rows.map(x=>({ticker:normalTicker(x.ticker||x.row?.ticker),amount:Number(x.amount)||0,account:x.account||x.row?.account||'IG ISA',addedAt:new Date().toISOString(),recovered:true})).filter(x=>x.ticker&&x.amount>0));
-    execution.open=true;execution.completedAt='';writeJson('aurora_payday_execution_v1',execution);rerender();
-  }
-  function setBroker(value){
-    value=String(value||'BOTH').toUpperCase(); if(!['BOTH','IG ISA','TRADE 212'].includes(value))value='BOTH';
-    localStorage.setItem(BROKER_KEY,value);
-    try{brokerRouteFilter=value}catch(_){}
-    const hidden=document.getElementById('brokerRouteFilter');if(hidden){hidden.value=value;hidden.dispatchEvent(new Event('change',{bubbles:true}))}
-    document.querySelectorAll('[data-v88-broker]').forEach(s=>s.value=value);rerender();
-  }
-  function toolbar(kind){
-    const wrap=document.createElement('div');wrap.className='aurora-v88-toolbar';wrap.dataset.v88Toolbar=kind;
-    if(kind==='deal'){
-      wrap.innerHTML=`<div class="aurora-v88-toolbar-main"><label>Broker route<select data-v88-broker><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label><button class="aurora-v88-btn green" data-v88-add type="button">+ Add holding</button><button class="aurora-v88-btn amber" data-v88-recover type="button">Recover saved route</button></div><span class="aurora-v88-note">The broker filter is saved after refresh. Add and Exclude now work in both directions.</span>`;
-    }else{
-      wrap.innerHTML=`<div class="aurora-v88-toolbar-main"><button class="aurora-v88-btn green" data-v88-add type="button">+ Add purchase</button><button class="aurora-v88-btn amber" data-v88-recover type="button">Recover last route</button><button class="aurora-v88-btn" data-v88-today type="button">Load 4 Aug completed buys</button><button class="aurora-v88-btn red" data-v88-clear type="button">Clear added purchases</button></div><span class="aurora-v88-note">Use this execution record after the market closes. It does not place a broker order.</span>`;
-    }
-    return wrap;
-  }
-  function installToolbars(){
-    const deal=document.getElementById('finalDealSheet');if(deal&&!document.querySelector('[data-v88-toolbar="deal"]'))deal.before(toolbar('deal'));
-    const trade=document.getElementById('paydayTradeGrid');if(trade&&!document.querySelector('[data-v88-toolbar="payday"]'))trade.before(toolbar('payday'));
-    const current=localStorage.getItem(BROKER_KEY)||'BOTH';document.querySelectorAll('[data-v88-broker]').forEach(s=>s.value=current);
-  }
-  function enhanceTradeCards(){
-    document.querySelectorAll('.payday-trade-card').forEach(card=>{
-      if(card.querySelector('.aurora-v88-remove'))return;
-      const title=card.querySelector('.payday-trade-top h5')?.textContent||'';const ticker=normalTicker(title.split('—')[0]);
-      if(!ticker)return;
-      const btn=document.createElement('button');btn.type='button';btn.className='aurora-v88-remove';btn.textContent='Remove';btn.dataset.v88Remove=ticker;
-      card.querySelector('.payday-trade-top')?.appendChild(btn);
-    });
-  }
-  // Merge manually added holdings into every generated route, including recovered execution-only routes.
-  const originalBuild=window.buildDealSheet;
-  if(typeof originalBuild==='function'){
-    window.buildDealSheet=function(){
-      let deal=originalBuild.apply(this,arguments)||{};deal.rows=Array.isArray(deal.rows)?deal.rows:[];
-      const existing=new Set(deal.rows.map(x=>normalTicker(x?.row?.ticker)));
-      readManual().forEach(saved=>{
-        const ticker=normalTicker(saved.ticker),amount=Math.max(0,Number(saved.amount)||0);if(!ticker||amount<=0||existing.has(ticker))return;
-        const row=securityFor(ticker,saved.account);let income=0;try{income=typeof annualIncomeForAmount==='function'?annualIncomeForAmount(row,amount):0}catch(_){}
-        deal.rows.push({row,amount,income:Number(income)||0,gate:{status:'pass',reasons:['Manually added to Payday Execution'],data:{status:'verified',score:100}},manualAdded:true});existing.add(ticker);
-      });
-      deal.chosen=deal.rows;deal.budget=Math.max(Number(deal.budget)||0,Number(readJson('aurora_payday_execution_v1',{}).availableCash)||0);
-      deal.requestedSpent=deal.rows.reduce((s,x)=>s+(Number(x.amount)||0),0);deal.totalIncome=deal.rows.reduce((s,x)=>s+(Number(x.income)||0),0);deal.holdback=Math.max(0,deal.budget-deal.requestedSpent);
-      return deal;
-    };
-    try{buildDealSheet=window.buildDealSheet}catch(_){}
-  }
-  document.addEventListener('click',e=>{
-    if(e.target.closest('[data-v88-add]'))addHolding();
-    else if(e.target.closest('[data-v88-recover]'))recoverRoute();
-    else if(e.target.closest('[data-v88-today]'))loadTodayPreset();
-    else if(e.target.closest('[data-v88-clear]')){if(confirm('Clear only manually added purchases? Actual AuroraData registrations are not deleted.')){saveManual([]);rerender()}}
-    else{const b=e.target.closest('[data-v88-remove]');if(b&&confirm('Remove '+b.dataset.v88Remove+' from this local execution record?'))removeHolding(b.dataset.v88Remove)}
-  });
-  document.addEventListener('change',e=>{if(e.target.matches('[data-v88-broker]'))setBroker(e.target.value)});
-  function boot(){installToolbars();rerender();enhanceTradeCards();}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,150));else setTimeout(boot,150);
-  window.addEventListener('load',()=>{setTimeout(boot,600);setTimeout(boot,1800)});
-  window.AuroraTransferUpgradeV88={addHolding,removeHolding,recoverRoute,loadTodayPreset,setBroker,version:'v88-all-upgrades'};
-})();
-</script>
-
 </body>
 </html>
