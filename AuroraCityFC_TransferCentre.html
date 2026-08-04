@@ -3393,7 +3393,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <div class="upgrade-stat-grid four payday-final-stats">
 <div class="upgrade-stat"><small>Planned investment</small><strong id="paydayPlannedInvested">—</strong><span id="paydayPlannedIncome">— annual income</span></div>
 <div class="upgrade-stat featured"><small>Actual investment</small><strong id="paydayActualInvested">—</strong><span id="paydayActualIncome">— annual income</span></div>
-<div class="upgrade-stat"><small>Investment variance</small><strong id="paydayInvestmentVariance">—</strong><span>Actual versus planned</span></div>
+<div class="upgrade-stat"><small>Investment variance</small><strong id="paydayInvestmentVariance">—</strong><span>Actual versus planned • informational only</span></div>
 <div class="upgrade-stat"><small>New club income</small><strong id="paydayNewClubIncome">—</strong><span>Starting income plus actual additions</span></div>
 </div>
 <div class="payday-actions">
@@ -5317,11 +5317,32 @@ function paydayTradeTotals(deal,saved){let invested=0,income=0,recorded=0;const 
 function renderPaydayExecution(deal){
   const panel=$('paydayExecutionPanel'),checklist=$('paydayChecklist'),tradeGrid=$('paydayTradeGrid');if(!panel||!checklist||!tradeGrid)return;const saved=paydayExecutionStore();panel.classList.toggle('open',Boolean(saved.open));panel.classList.toggle('completed',Boolean(saved.completedAt));
   if($('openPaydayWindow'))$('openPaydayWindow').textContent=saved.open?'Close Payday Window':'Open Payday Window';if($('paydayAvailableCash'))$('paydayAvailableCash').value=saved.availableCash||0;
-  const refreshAge=lastLiveRefreshAt?(Date.now()-new Date(lastLiveRefreshAt).getTime())/3600000:Infinity;const pricesFresh=refreshAge<=6;const cashReady=(saved.availableCash||0)>=(deal?.budget||0)&&deal?.budget>0;const routeReady=(deal?.rows||[]).length>0;const totals=paydayTradeTotals(deal,saved);const purchasesRecorded=routeReady&&totals.recorded===(deal.rows||[]).length;
+  const refreshAge=lastLiveRefreshAt?(Date.now()-new Date(lastLiveRefreshAt).getTime())/3600000:Infinity;
+  const pricesFresh=refreshAge<=6;
+  const routeReady=(deal?.rows||[]).length>0;
+  const totals=paydayTradeTotals(deal,saved);
+  const purchasesRecorded=routeReady&&totals.recorded===(deal.rows||[]).length;
+  const availableCash=Math.max(0,parseNum(saved.availableCash)||0);
+  const plannedInvested=(deal?.rows||[]).reduce((sum,item)=>sum+(parseNum(item.amount)||0),0);
+  const completionTolerance=1.00;
+  const actualCashRemaining=availableCash-totals.invested;
+
+  /*
+   * Completion is controlled by the real broker fills, not by a route that
+   * may have been recalculated after exclusions. Before fills are entered,
+   * the cash check still compares available cash with the plan. Once every
+   * fill is recorded, it passes when the actual total (including fees) fits
+   * inside the available transfer cash, allowing £1 for broker rounding.
+   */
+  const cashReady=availableCash>0&&(
+    purchasesRecorded
+      ? actualCashRemaining>=-completionTolerance
+      : availableCash+completionTolerance>=plannedInvested
+  );
   const checks=[
     {key:'prices',label:'Refresh live prices',detail:pricesFresh?`Updated ${new Date(lastLiveRefreshAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`:'Use Refresh Data before execution.',done:pricesFresh,manual:false},
     {key:'etfReviewed',label:'Review ETF exits',detail:'Confirm IITU/VWRA funding decision.',done:Boolean(saved.checks.etfReviewed),manual:true},
-    {key:'cash',label:'Confirm available cash',detail:cashReady?`${money(saved.availableCash)} covers the route.`:`Need at least ${money(deal?.budget||0)}.`,done:cashReady,manual:false},
+    {key:'cash',label:'Confirm available cash',detail:cashReady?(purchasesRecorded?`${money(totals.invested)} actual cost fits inside ${money(availableCash)} available • ${money(Math.max(0,actualCashRemaining))} left.`:`${money(availableCash)} covers the planned route.`):(purchasesRecorded?`Actual fills exceed available cash by ${money(Math.abs(actualCashRemaining))}. Check a price or fee entry.`:`Available cash is ${money(availableCash)} against a ${money(plannedInvested)} plan.`),done:cashReady,manual:false},
     {key:'exDivChecked',label:'Check ex-dividend dates',detail:'Use the fixture calendar before buying.',done:Boolean(saved.checks.exDivChecked),manual:true},
     {key:'route',label:'Choose route',detail:routeReady?`${deal.route} selected.`:'No approved route available.',done:routeReady,manual:false},
     {key:'allocationsConfirmed',label:'Confirm allocations',detail:'Approve the final amount for each signing.',done:Boolean(saved.checks.allocationsConfirmed),manual:true},
@@ -5331,9 +5352,9 @@ function renderPaydayExecution(deal){
   checklist.innerHTML=checks.map(item=>`<label class="payday-check ${item.done?'done':''}">${item.manual?`<input type="checkbox" data-payday-check="${item.key}" ${item.done?'checked':''}>`:`<i></i>`}<div><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.detail)}</span></div></label>`).join('');
   tradeGrid.innerHTML=routeReady?deal.rows.map(item=>{const ticker=shortTicker(item.row.ticker),trade=saved.trades[ticker]||{},detail=totals.details[ticker]||{};return `<article class="payday-trade-card"><div class="payday-trade-top"><div><h5>${escapeHtml(displayTicker(item.row.ticker))} — ${escapeHtml(displayName(item.row))}</h5><span>${escapeHtml(platformFor(item.row.ticker))}</span></div><span>Planned ${money(item.amount)}</span></div><div class="payday-trade-inputs"><label><span>Shares bought</span><input type="number" min="0" step="any" value="${escapeHtml(trade.shares||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="shares"></label><label><span>Actual £/share</span><input type="number" min="0" step="any" value="${escapeHtml(trade.price||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="price"></label><label><span>Fees £</span><input type="number" min="0" step="any" value="${escapeHtml(trade.fees||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="fees"></label></div><div class="payday-trade-result"><span>Actual cost <b>${money(detail.cost||0)}</b></span><span>Income added <b>${money(detail.income||0)}/yr</b></span></div></article>`;}).join(''):'<div class="loading">Choose an approved route before recording completed purchases.</div>';
   const allReady=checks.every(item=>item.done);if($('completePaydayWindow'))$('completePaydayWindow').disabled=!allReady;if($('paydayTradeCount'))$('paydayTradeCount').textContent=`${totals.recorded} recorded`;
-  const plannedInvested=(deal?.rows||[]).reduce((s,x)=>s+x.amount,0),plannedIncome=deal?.totalIncome||0,starting=incomeSimulatorSettings().startingIncome;
+  const plannedIncome=deal?.totalIncome||0,starting=incomeSimulatorSettings().startingIncome;
   if($('paydayPlannedInvested'))$('paydayPlannedInvested').textContent=money(plannedInvested);if($('paydayPlannedIncome'))$('paydayPlannedIncome').textContent=`${money(plannedIncome)}/yr annual income`;if($('paydayActualInvested'))$('paydayActualInvested').textContent=money(totals.invested);if($('paydayActualIncome'))$('paydayActualIncome').textContent=`${money(totals.income)}/yr annual income`;if($('paydayInvestmentVariance'))$('paydayInvestmentVariance').textContent=`${totals.invested-plannedInvested>=0?'+':''}${money(totals.invested-plannedInvested)}`;if($('paydayNewClubIncome'))$('paydayNewClubIncome').textContent=`${money(starting+totals.income)}/yr`;
-  const status=saved.completedAt?'Transfer window complete':saved.open?(allReady?'Ready to complete':'Execution checks active'):'Window closed';if($('paydayWindowStatus'))$('paydayWindowStatus').textContent=status;if($('paydayWindowStatusNote'))$('paydayWindowStatusNote').textContent=saved.completedAt?`Completed ${new Date(saved.completedAt).toLocaleString('en-GB')}.`:saved.open?`${checks.filter(x=>x.done).length} of ${checks.length} controls complete.`:'Open the window when payday arrives.';if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent=saved.completedAt?`${money(totals.invested)} invested • ${money(totals.income)}/yr added.`:allReady?'Every control has passed. The window can now be completed.':'Complete every control before closing the window.';
+  const status=saved.completedAt?'Transfer window complete':saved.open?(allReady?'Ready to complete':'Execution checks active'):'Window closed';if($('paydayWindowStatus'))$('paydayWindowStatus').textContent=status;if($('paydayWindowStatusNote'))$('paydayWindowStatusNote').textContent=saved.completedAt?`Completed ${new Date(saved.completedAt).toLocaleString('en-GB')}.`:saved.open?`${checks.filter(x=>x.done).length} of ${checks.length} controls complete.`:'Open the window when payday arrives.';if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent=saved.completedAt?`${money(totals.invested)} invested • ${money(totals.income)}/yr added • ${money(Math.max(0,actualCashRemaining))} cash left.`:allReady?`Every control has passed. Actual fills are within available cash; the planned variance is informational only.`:'Complete every control before closing the window.';
 }
 
 
@@ -6427,13 +6448,70 @@ async function generateOfferRound(force=true){
   finally{incomingOfferBusy=false;if(button){button.disabled=false;button.textContent='Open new market round';}}
 }
 
+async function cancelCompetingSellTicketsForOffer(offer){
+  try{
+    const result=await postRegistration({
+      action:'listSellTickets',
+      limit:100,
+      includeClosed:true,
+      source:'Aurora City FC Incoming Offers • pre-accept cleanup'
+    });
+    const tickets=Array.isArray(result?.tickets)?result.tickets:[];
+    const ticker=registrationShortTicker(offer?.ticker);
+    const account=normalizeRegistrationAccount(offer?.account);
+    const active=tickets.filter(ticket=>
+      registrationShortTicker(ticket?.ticker)===ticker &&
+      normalizeRegistrationAccount(ticket?.account)===account &&
+      ['PROPOSED','APPROVED'].includes(String(ticket?.approvalStatus||'').toUpperCase()) &&
+      String(ticket?.triggerType||'').toUpperCase()==='INCOMING OFFER'
+    );
+    for(const ticket of active){
+      await postRegistration({
+        action:'updateSellTicket',
+        ticketId:ticket.ticketId,
+        status:'CANCELLED',
+        note:'Cancelled automatically before creating a fresh ticket from the exact selected Chairman\'s Offer.',
+        source:'Aurora City FC Incoming Offers • replace incorrect ticket',
+        userAgent:navigator.userAgent
+      });
+    }
+  }catch(error){
+    console.warn('Unable to cancel competing Sell Desk tickets before acceptance.',error);
+  }
+}
+
+async function verifyExactStoredOffer(offerId,expectedShares,expectedPrice,expectedValue){
+  for(let attempt=0;attempt<4;attempt++){
+    if(attempt) await new Promise(resolve=>setTimeout(resolve,900*(attempt+1)));
+    const result=await postRegistration({
+      action:'listIncomingOffers',
+      limit:100,
+      includeClosed:true,
+      source:'Aurora City FC Incoming Offers • exact offer verification'
+    });
+    const rows=Array.isArray(result?.offers)?result.offers:[];
+    const stored=rows.find(row=>String(row?.offerId||'')===String(offerId||''));
+    if(!stored) continue;
+    const shares=Number(stored.requestedShares||0);
+    const price=Number(stored.offerPrice||0);
+    const value=Number(stored.offerValueGbp||0);
+    const sharesMatch=Math.abs(shares-expectedShares)<0.000001;
+    const priceMatch=Math.abs(price-expectedPrice)<0.005;
+    const valueMatch=Math.abs(value-expectedValue)<0.02;
+    if(sharesMatch&&priceMatch&&valueMatch) return stored;
+  }
+  throw new Error('AuroraData did not save the exact displayed offer. No approval ticket was created.');
+}
+
 async function respondToIncomingOffer(offerId,response,button,extra={}){
   if(incomingOfferBusy)return;
-  const offer=incomingOffers.find(o=>o.offerId===offerId);if(!offer)return;
+  const offer=incomingOffers.find(o=>String(o.offerId)===String(offerId));
+  if(!offer)return;
   const msg=$('incomingOfferMessage');
-  if(response==='ACCEPT'&&!window.confirm(`Accept ${offer.bidderName}'s offer for ${offer.ticker} in principle?\n\nThis only creates a Sell Desk review ticket. It does not place a broker order.`))return;
+  if(response==='ACCEPT'&&!window.confirm(`Cancel any older ${offer.ticker} approval ticket and create a new ticket from this exact offer?\n\n${Number(offer.requestedShares||0).toLocaleString('en-GB')} shares at ${offerPriceLabel(Number(offer.offerPrice||0),offer.priceUnit,offer.currency)}.`))return;
   if(response==='REJECT'&&!window.confirm(`Reject the offer for ${offer.ticker}?`))return;
-  incomingOfferBusy=true;if(button){button.disabled=true;button.textContent='Updating…';}
+  incomingOfferBusy=true;
+  if(button){button.disabled=true;button.textContent=response==='ACCEPT'?'Replacing old ticket…':'Updating…';}
   try{
     const displayedShares=Number(offer.requestedShares||0);
     const displayedPrice=Number(offer.offerPrice||0);
@@ -6441,18 +6519,21 @@ async function respondToIncomingOffer(offerId,response,button,extra={}){
     const displayedGain=Number(offer.estimatedGainLossGbp||0);
     const displayedIncome=Number(offer.annualIncomeLostGbp||0);
 
-    /*
-     * IMPORTANT: the offer card can correct an older server offer to the
-     * actual owned holding and the fixed book-cost +6% target. Before an
-     * acceptance is submitted, write those exact displayed figures back to
-     * the same IncomingOffers row as a counter update. The following ACCEPT
-     * therefore creates its Sell Desk ticket from the exact card the manager
-     * selected, not from stale historical figures held by Apps Script.
-     */
-    if(response==='ACCEPT'&&offer.ownedHoldingSynced&&displayedShares>0&&displayedPrice>0){
+    if(response==='ACCEPT'){
+      if(!(displayedShares>0&&displayedPrice>0&&displayedValue>0)){
+        throw new Error('The selected offer does not contain valid displayed figures.');
+      }
+
+      if(msg){
+        msg.textContent='Cancelling the incorrect approval ticket and locking this exact offer…';
+        msg.className='registration-message pending';
+      }
+
+      await cancelCompetingSellTicketsForOffer(offer);
+
       const syncResult=await postRegistration({
         action:'respondIncomingOffer',
-        offerId,
+        offerId:String(offer.offerId),
         response:'COUNTER',
         counterPrice:displayedPrice,
         counterShares:displayedShares,
@@ -6462,15 +6543,27 @@ async function respondToIncomingOffer(offerId,response,button,extra={}){
         estimatedGainLossGbp:displayedGain,
         annualIncomeLostGbp:displayedIncome,
         ownedHoldingSynced:true,
-        source:'Aurora City FC Incoming Offers • exact displayed offer sync',
+        exactDisplayedOffer:true,
+        source:'Aurora City FC Incoming Offers • lock exact displayed offer',
         userAgent:navigator.userAgent
       });
-      if(syncResult&&syncResult.ok===false) throw new Error(syncResult.message||'The displayed offer could not be synchronised.');
+      if(syncResult&&syncResult.ok===false){
+        throw new Error(syncResult.message||'The selected offer could not be locked.');
+      }
+
+      await verifyExactStoredOffer(
+        String(offer.offerId),
+        displayedShares,
+        displayedPrice,
+        displayedValue
+      );
+
+      if(button)button.textContent='Creating correct ticket…';
     }
 
     const result=await postRegistration({
       action:'respondIncomingOffer',
-      offerId,
+      offerId:String(offer.offerId),
       response,
       requestedShares:displayedShares,
       offerPrice:displayedPrice,
@@ -6484,14 +6577,26 @@ async function respondToIncomingOffer(offerId,response,button,extra={}){
       ownedHoldingSynced:Boolean(offer.ownedHoldingSynced),
       exactDisplayedOffer:true,
       ...extra,
-      source:'Aurora City FC Incoming Offers • exact displayed offer',
+      source:'Aurora City FC Incoming Offers • exact selected offer only',
       userAgent:navigator.userAgent
     });
-    if(msg){msg.textContent=result.message||'Offer updated.';msg.className=`registration-message ${result.queued?'pending':'success'}`;}
-    if(result.queued){await new Promise(resolve=>setTimeout(resolve,1600));}
-    await loadIncomingOffers(false);if(response==='ACCEPT')await loadSellTickets();
-  }catch(err){if(msg){msg.textContent=err.message||'Offer response failed.';msg.className='registration-message error';}if(button)button.disabled=false;}
-  finally{incomingOfferBusy=false;}
+    if(result&&result.ok===false) throw new Error(result.message||'Offer response failed.');
+    if(msg){
+      msg.textContent=result.message||'Offer updated.';
+      msg.className=`registration-message ${result.queued?'pending':'success'}`;
+    }
+    if(result.queued) await new Promise(resolve=>setTimeout(resolve,1800));
+    await loadIncomingOffers(false);
+    if(response==='ACCEPT') await loadSellTickets();
+  }catch(err){
+    if(msg){
+      msg.textContent=err.message||'Offer response failed.';
+      msg.className='registration-message error';
+    }
+    if(button){button.disabled=false;button.textContent=response==='ACCEPT'?'Accept in principle':response==='REJECT'?'Reject':'Submit counter';}
+  }finally{
+    incomingOfferBusy=false;
+  }
 }
 
 
@@ -6545,7 +6650,25 @@ document.addEventListener('click',event=>{
   const exitDecision=event.target.closest?.('[data-exit-decision]');if(exitDecision){setSmartExitDecision(exitDecision.dataset.exitDecisionTicker,exitDecision.dataset.exitDecision);renderSmartExitDesk();return;}
 });
 $('openPaydayWindow')?.addEventListener('click',()=>{const saved=paydayExecutionStore();saved.open=!saved.open;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());});
-$('completePaydayWindow')?.addEventListener('click',()=>{const deal=buildDealSheet();const saved=paydayExecutionStore();const totals=paydayTradeTotals(deal,saved);if(!deal.rows.length||totals.recorded!==deal.rows.length)return;saved.completedAt=new Date().toISOString();saved.open=true;savePaydayExecution(saved);renderPaydayExecution(deal);});
+$('completePaydayWindow')?.addEventListener('click',()=>{
+  const deal=buildDealSheet();
+  const saved=paydayExecutionStore();
+  const totals=paydayTradeTotals(deal,saved);
+  const availableCash=Math.max(0,parseNum(saved.availableCash)||0);
+  const tolerance=1.00;
+  if(!deal.rows.length||totals.recorded!==deal.rows.length)return;
+  if(!(availableCash>0)||totals.invested>availableCash+tolerance){
+    if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent=`Cannot complete: actual fills ${money(totals.invested)} exceed available cash ${money(availableCash)}. Check the entered prices and fees.`;
+    return;
+  }
+  saved.completedAt=new Date().toISOString();
+  saved.open=true;
+  saved.completedActualInvestment=totals.invested;
+  saved.completedAvailableCash=availableCash;
+  saved.completedCashRemaining=Math.max(0,availableCash-totals.invested);
+  savePaydayExecution(saved);
+  renderPaydayExecution(deal);
+});
 $('resetPaydayWindow')?.addEventListener('click',()=>{if(!window.confirm('Reset the current payday execution record?'))return;safeJsonWrite(PAYDAY_EXECUTION_KEY,{open:true,availableCash:0,checks:{},trades:{},completedAt:'',updatedAt:new Date().toISOString()});renderPaydayExecution(buildDealSheet());});
 
 function forcePostTransferImpactPlacement(){
