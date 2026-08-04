@@ -5873,17 +5873,17 @@ function currentOfferLivePrice(offer){
 }
 
 function incomingOfferClauseData(offer){
-  const premiumRate=Number(offer?.premiumPct);
-  const offerPrice=Number(offer?.offerPrice);
-  const offerValue=Number(offer?.offerValueGbp);
+  const premiumRate=0.06;
   const requestedShares=Number(offer?.requestedShares);
   const currentLivePrice=currentOfferLivePrice(offer);
+  const holding=incomingOfferHolding(offer);
+  const bookCost=parseNum(
+    holding?.book_cost ?? holding?.cost_basis ?? holding?.bookValue ?? holding?.['Book Cost']
+  );
 
   if(
-    !Number.isFinite(premiumRate) ||
-    premiumRate<=-1 ||
-    !Number.isFinite(offerPrice) ||
-    offerPrice<=0
+    !Number.isFinite(requestedShares) || requestedShares<=0 ||
+    !Number.isFinite(bookCost) || bookCost<=0
   ){
     return {
       known:false,
@@ -5896,21 +5896,25 @@ function incomingOfferClauseData(offer){
       differencePrice:NaN,
       differenceGbp:NaN,
       progressPct:NaN,
-      premiumRate:Number.isFinite(premiumRate)?premiumRate:NaN
+      premiumRate,
+      bookCost:NaN
     };
   }
 
-  // The snapshot and its +6% target stay fixed for the life of this bid.
-  // The target does not move when the current live price changes.
-  const referencePrice=offerPrice/(1+premiumRate);
+  // Authoritative target: actual broker book cost / owned shares, plus 6%.
+  // It is never rebased from the live market price or a newly generated round.
+  const averageBookPriceGbp=bookCost/requestedShares;
+  const unit=String(offer?.priceUnit||'').toUpperCase();
+  const currency=String(offer?.currency||'GBP').toUpperCase();
+  let referencePrice=averageBookPriceGbp;
+  if(unit==='PENCE') referencePrice=averageBookPriceGbp*100;
+  else if(currency!=='GBP'){
+    const rate=fxRateToGbp(currency);
+    referencePrice=Number.isFinite(rate)&&rate>0?averageBookPriceGbp/rate:NaN;
+  }
   const releasePrice=referencePrice*1.06;
-
-  const referenceValue=Number.isFinite(offerValue)&&offerValue>0
-    ? offerValue/(1+premiumRate)
-    : NaN;
-  const releaseValue=Number.isFinite(referenceValue)
-    ? referenceValue*1.06
-    : NaN;
+  const referenceValue=bookCost;
+  const releaseValue=bookCost*1.06;
 
   const currentLiveValue=(
     Number.isFinite(currentLivePrice) &&
@@ -5964,7 +5968,8 @@ function incomingOfferClauseData(offer){
     differencePrice,
     differenceGbp,
     progressPct,
-    premiumRate
+    premiumRate,
+    bookCost
   };
 }
 
@@ -5975,7 +5980,7 @@ function incomingOfferClauseHtml(offer,clause){
         <div>
           <small>Live 6% target check</small>
           <strong>Waiting for live market data</strong>
-          <p>The fixed target is stored, but Aurora has not yet loaded a current price for this holding.</p>
+          <p>Aurora needs the holding book cost and owned shares before it can calculate the fixed 6% exit target.</p>
         </div>
         <span class="offer-live-target-pill">Checking</span>
       </div>
@@ -6019,7 +6024,7 @@ function incomingOfferClauseHtml(offer,clause){
       <div>
         <small>Live 6% target check</small>
         <strong>${clause.met?'Offer activated':'Offer waiting — target not reached'}</strong>
-        <p>${detail} This target remains tied to the original market snapshot.</p>
+        <p>${detail} This target is fixed from your actual average purchase price and never moves with the live market.</p>
       </div>
       <span class="offer-live-target-pill">${clause.met?'Live target met':'Offer locked'}</span>
     </div>
@@ -6092,22 +6097,38 @@ function normaliseIncomingOfferToOwnedShares(offer){
 
   // No percentage, quarter-position or multiplier logic. The broker holding is
   // the sole quantity used by the offer room.
-  if(Math.abs(offeredShares-ownedShares)<0.0000001){
-    return {...offer,requestedShares:ownedShares,ownedHoldingSynced:true};
-  }
-
   const corrected={...offer};
-  const ratio=ownedShares/offeredShares;
   corrected.sourceRequestedShares=parseNum(offer.sourceRequestedShares)>0
     ? parseNum(offer.sourceRequestedShares)
     : offeredShares;
   corrected.requestedShares=ownedShares;
-  ['offerValueGbp','estimatedGainLossGbp','annualIncomeLostGbp'].forEach(key=>{
-    const value=Number(offer[key]);
-    if(Number.isFinite(value)) corrected[key]=value*ratio;
-  });
   corrected.ownedHoldingSynced=true;
   corrected.quantitySource='Actual owned shares from broker holding';
+
+  const holding=incomingOfferHolding(corrected);
+  const bookCost=parseNum(
+    holding?.book_cost ?? holding?.cost_basis ?? holding?.bookValue ?? holding?.['Book Cost']
+  );
+  if(Number.isFinite(bookCost)&&bookCost>0){
+    const averageBookPriceGbp=bookCost/ownedShares;
+    const unit=String(corrected.priceUnit||'').toUpperCase();
+    const currency=String(corrected.currency||'GBP').toUpperCase();
+    let bookPrice=averageBookPriceGbp;
+    if(unit==='PENCE') bookPrice=averageBookPriceGbp*100;
+    else if(currency!=='GBP'){
+      const rate=fxRateToGbp(currency);
+      bookPrice=Number.isFinite(rate)&&rate>0?averageBookPriceGbp/rate:NaN;
+    }
+    corrected.bookCostGbp=bookCost;
+    corrected.averageBookPrice=bookPrice;
+    corrected.premiumPct=0.06;
+    corrected.offerPrice=bookPrice*1.06;
+    corrected.offerValueGbp=bookCost*1.06;
+    corrected.estimatedGainLossGbp=bookCost*0.06;
+    corrected.targetBasis='Actual average purchase price / book cost';
+  }
+  const annualIncome=currentHoldingAnnualIncome(holding);
+  if(Number.isFinite(annualIncome)&&annualIncome>=0) corrected.annualIncomeLostGbp=annualIncome;
   return corrected;
 }
 
@@ -6157,15 +6178,15 @@ function renderIncomingOffers(){
       </div>
       <div class="offer-metrics">
         <div class="offer-metric"><small>Shares requested</small><strong>${Number(offer.requestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})}</strong></div>
-        <div class="offer-metric"><small>Offer activation price</small><strong class="good">${offerPriceLabel(offer.offerPrice,offer.priceUnit,offer.currency)}</strong></div>
-        <div class="offer-metric"><small>Fixed target uplift</small><strong class="${premium>=6?'good':'warn'}">${premium>=0?'+':''}${premium.toFixed(1)}%</strong></div>
-        <div class="offer-metric clause-target"><small>Fixed 6% live target</small><strong class="${clause.met?'good':'warn'}">${clause.known?offerPriceLabel(clause.releasePrice,offer.priceUnit,offer.currency):'—'}</strong></div>
+        <div class="offer-metric"><small>Fixed 6% exit target</small><strong class="good">${offerPriceLabel(offer.offerPrice,offer.priceUnit,offer.currency)}</strong></div>
+        <div class="offer-metric"><small>Target basis</small><strong class="${premium>=6?'good':'warn'}">Book cost +${premium.toFixed(1)}%</strong></div>
+        <div class="offer-metric clause-target"><small>Average purchase price</small><strong class="${clause.met?'good':'warn'}">${clause.known?offerPriceLabel(clause.referencePrice,offer.priceUnit,offer.currency):'—'}</strong></div>
         <div class="offer-metric"><small>Current live price</small><strong class="${clause.met?'good':'warn'}">${Number.isFinite(clause.currentLivePrice)?offerPriceLabel(clause.currentLivePrice,offer.priceUnit,offer.currency):'—'}</strong></div>
-        <div class="offer-metric"><small>Value when activated</small><strong>${money(Number(offer.offerValueGbp||0))}</strong></div>
-        <div class="offer-metric"><small>Gain / loss at target</small><strong class="${gain>=0?'good':'warn'}">${gain>=0?'+':''}${money(gain)}</strong></div>
+        <div class="offer-metric"><small>Value at exit target</small><strong>${money(Number(offer.offerValueGbp||0))}</strong></div>
+        <div class="offer-metric"><small>Profit above book cost</small><strong class="${gain>=0?'good':'warn'}">${gain>=0?'+':''}${money(gain)}</strong></div>
         <div class="offer-metric"><small>Income surrendered</small><strong class="warn">${money(Number(offer.annualIncomeLostGbp||0))}/yr</strong></div>
       </div>
-      ${offer.ownedHoldingSynced?`<div class="offer-room-note" style="margin:0 16px 10px"><span>✅</span><div><b>Owned holding synced:</b> This offer uses the ${Number(offer.requestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})} shares recorded as actually owned in ${escapeHtml(offer.account||'the selected account')}. No percentage or partial-position calculation is applied.</div></div>`:''}
+      ${offer.ownedHoldingSynced?`<div class="offer-room-note" style="margin:0 16px 10px"><span>✅</span><div><b>Owned holding synced:</b> This offer uses the ${Number(offer.requestedShares||0).toLocaleString('en-GB',{maximumFractionDigits:8})} shares recorded as actually owned in ${escapeHtml(offer.account||'the selected account')}. No partial-position calculation is applied, and the exit target is based on actual book cost.</div></div>`:''}
       ${incomingOfferClauseHtml(offer,clause)}
       <div class="offer-reason">${escapeHtml(offer.reason||'No offer explanation recorded.')}</div>
       <div class="offer-verdict"><b>Director of Football verdict</b>${escapeHtml(offer.directorVerdict||'Review the fee, income impact and replacement options.')}</div>
@@ -6181,7 +6202,7 @@ function renderIncomingOffers(){
         <button class="offer-action counter" type="submit">Submit counter</button>
       </form>`:waiting?`
         <div class="offer-action-lock">
-          🔒 Offer actions unlock only when the actual live price reaches the fixed 6% target.
+          🔒 Offer actions unlock only when the actual live price reaches the fixed book-cost +6% target.
         </div>
       `:`<div class="offer-status-line">Offer status: ${escapeHtml(status)}${offer.linkedSellTicket?` • Sell Desk ticket ${escapeHtml(offer.linkedSellTicket)}`:''}</div>`}
     </article>`;
