@@ -2841,10 +2841,10 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v5-20260804-platform-rules-get-fix" name="aurora-build"/><script>
+<meta content="transfer-gameshell-content-v6-20260804-exact-offer-sync-fix" name="aurora-build"/><script>
 (function(){
   try{
-    const key='aurora-transfer-cache-reset-20260804-1055';
+    const key='aurora-transfer-cache-reset-20260804-1155';
     if(!sessionStorage.getItem(key)){
       sessionStorage.setItem(key,'1');
       if('serviceWorker' in navigator){
@@ -3740,51 +3740,104 @@ const REGISTRATION_JSONP_ACTIONS=new Set([
   'listRecentRegistrations'
 ]);
 
-function registrationJsonp(payload,timeoutMs=20000){
+function registrationJsonpAttempt(payload,timeoutMs=30000,includePayload=true){
   if(!registrationConnection.endpoint||!registrationConnection.token){
     return Promise.reject(new Error('Connect the Registration Desk to the Apps Script web app first.'));
   }
+
   return new Promise((resolve,reject)=>{
-    const callbackName='__auroraRegistrationJsonp_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const callbackName='auroraJsonp'+Date.now()+Math.random().toString(36).slice(2);
     const script=document.createElement('script');
-    let finished=false;
-    const cleanup=()=>{
-      if(finished)return;
-      finished=true;
+    let settled=false;
+
+    const finish=(error,result)=>{
+      if(settled)return;
+      settled=true;
       clearTimeout(timer);
+      script.onload=null;
+      script.onerror=null;
       try{delete window[callbackName];}catch(_){window[callbackName]=undefined;}
-      script.remove();
+      try{script.remove();}catch(_){}
+      if(error)reject(error);else resolve(result||{});
     };
+
     const timer=setTimeout(()=>{
-      cleanup();
-      reject(new Error('AuroraData did not return a readable response. Deploy the Apps Script JSONP update, then test the connection again.'));
+      finish(new Error('AuroraData response timed out. Chrome kept the existing data on screen.'));
     },timeoutMs);
+
     window[callbackName]=result=>{
-      cleanup();
-      if(result&&result.ok===false){reject(new Error(result.message||'AuroraData request failed.'));return;}
-      resolve(result||{});
+      if(result&&result.ok===false){
+        finish(new Error(result.message||'AuroraData request failed.'));
+        return;
+      }
+      finish(null,result||{});
     };
+
     script.onerror=()=>{
-      cleanup();
-      reject(new Error('AuroraData read connection failed. Check the deployed /exec URL and deploy the Apps Script JSONP update.'));
+      finish(new Error('AuroraData read connection was interrupted. Chrome kept the existing data on screen.'));
     };
+
     const url=new URL(registrationConnection.endpoint);
     url.searchParams.set('token',registrationConnection.token);
-
-    // Apps Script doGet reads GET parameters directly. Send the action and
-    // simple read options as normal query parameters, while retaining the
-    // payload for backwards compatibility with older deployments.
     Object.entries(payload||{}).forEach(([key,value])=>{
-      if(value===undefined||value===null||typeof value==='object') return;
+      if(value===undefined||value===null||typeof value==='object')return;
       url.searchParams.set(key,String(value));
     });
-    url.searchParams.set('payload',JSON.stringify(payload||{}));
+    if(includePayload)url.searchParams.set('payload',JSON.stringify(payload||{}));
     url.searchParams.set('callback',callbackName);
     url.searchParams.set('_',String(Date.now()));
+
     script.src=url.toString();
     script.async=true;
+    script.referrerPolicy='no-referrer';
     document.head.appendChild(script);
   });
+}
+
+async function registrationFetchRead(payload,timeoutMs=25000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  try{
+    const url=new URL(registrationConnection.endpoint);
+    url.searchParams.set('token',registrationConnection.token);
+    Object.entries(payload||{}).forEach(([key,value])=>{
+      if(value===undefined||value===null||typeof value==='object')return;
+      url.searchParams.set(key,String(value));
+    });
+    url.searchParams.set('_',String(Date.now()));
+    const response=await fetch(url.toString(),{
+      method:'GET',
+      redirect:'follow',
+      cache:'no-store',
+      credentials:'omit',
+      signal:controller.signal
+    });
+    const raw=await response.text();
+    const result=JSON.parse(raw);
+    if(result&&result.ok===false)throw new Error(result.message||'AuroraData request failed.');
+    return result||{};
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
+async function registrationJsonp(payload,timeoutMs=30000){
+  let firstError=null;
+  try{
+    return await registrationJsonpAttempt(payload,timeoutMs,true);
+  }catch(err){
+    firstError=err;
+  }
+
+  try{
+    return await registrationJsonpAttempt(payload,timeoutMs,false);
+  }catch(_){
+    try{
+      return await registrationFetchRead(payload,timeoutMs);
+    }catch(__){
+      throw firstError||new Error('AuroraData could not be read. Existing offers were kept on screen.');
+    }
+  }
 }
 
 async function postRegistration(payload){
@@ -3867,15 +3920,15 @@ async function loadPlatformRules(){
     const ruleError=String(err?.message||err||'Unknown PlatformRules error');
     console.warn('PlatformRules could not be loaded; using embedded emergency rules.',err);
     if(rulesChip){
-      rulesChip.textContent='Rules: error';
-      rulesChip.className='status-chip block';
+      rulesChip.textContent='Rules: cached';
+      rulesChip.className='status-chip caution';
       rulesChip.title=ruleError;
     }
-    if($('deskNote')) $('deskNote').textContent='PlatformRules error: '+ruleError;
+    if($('deskNote')) $('deskNote').textContent='Live rules refresh was interrupted. Aurora is keeping the already loaded or embedded rules.';
     const connectionMessage=$('registrationConnectionMessage');
     if(connectionMessage){
-      connectionMessage.textContent='PlatformRules error: '+ruleError;
-      connectionMessage.className='registration-message error';
+      connectionMessage.textContent='Connection reply was delayed. Existing Aurora data has been kept on screen.';
+      connectionMessage.className='registration-message pending';
     }
     return false;
   }
@@ -5869,7 +5922,15 @@ async function loadSellTickets(){
     const result=await postRegistration({action:'listSellTickets',limit:50,includeClosed:true,source:'Aurora City FC Sell Desk'});
     if(result.queued){$('sellTicketList').innerHTML='<div class="sell-desk-empty">The request was sent, but this browser could not read the response. Refresh after the Apps Script deployment is updated.</div>';return;}
     sellTickets=Array.isArray(result.tickets)?result.tickets:[];renderSellTicketList();
-  }catch(err){$('sellTicketList').innerHTML=`<div class="sell-desk-empty">${escapeHtml(err.message||'Unable to load Sell Desk. Deploy the updated Apps Script first.')}</div>`;}
+  }catch(err){
+    console.warn('Sell Desk refresh failed; keeping existing tickets.',err);
+    if(sellTickets.length){
+      renderSellTicketList();
+      registrationMessage('Sell Desk refresh was interrupted. Existing tickets were kept on screen.','pending');
+    }else{
+      $('sellTicketList').innerHTML=`<div class="sell-desk-empty">${escapeHtml(err.message||'Unable to refresh Sell Desk.')}</div>`;
+    }
+  }
 }
 async function updateSellTicketStatus(ticketId,status,button){
   if(sellDeskBusy)return;
@@ -6336,7 +6397,18 @@ async function loadIncomingOffers(autoGenerate=false){
     const open=incomingOffers.filter(o=>['OPEN','COUNTERED'].includes(String(o.status||'').toUpperCase()));
     if(autoGenerate&&!open.length) await generateOfferRound(false);
   }catch(err){
-    grid.innerHTML=`<div class="offer-empty">${escapeHtml(err.message||'Unable to load Incoming Offers. Deploy the updated Apps Script first.')}</div>`;
+    console.warn('Incoming Offers refresh failed; keeping existing offers.',err);
+    if(incomingOffers.length){
+      renderIncomingOffers();
+      renderExitFundingRoom();
+      renderSmartExitDesk();
+      if($('incomingOfferMessage')){
+        $('incomingOfferMessage').textContent='Offer refresh was interrupted. Existing offers were kept on screen — you can still use the loaded offer.';
+        $('incomingOfferMessage').className='registration-message pending';
+      }
+    }else{
+      grid.innerHTML=`<div class="offer-empty">${escapeHtml(err.message||'Unable to refresh Incoming Offers.')}</div>`;
+    }
   }
 }
 
@@ -6363,7 +6435,58 @@ async function respondToIncomingOffer(offerId,response,button,extra={}){
   if(response==='REJECT'&&!window.confirm(`Reject the offer for ${offer.ticker}?`))return;
   incomingOfferBusy=true;if(button){button.disabled=true;button.textContent='Updating…';}
   try{
-    const result=await postRegistration({action:'respondIncomingOffer',offerId,response,requestedShares:Number(offer.requestedShares||0),offerValueGbp:Number(offer.offerValueGbp||0),estimatedGainLossGbp:Number(offer.estimatedGainLossGbp||0),annualIncomeLostGbp:Number(offer.annualIncomeLostGbp||0),ownedHoldingSynced:Boolean(offer.ownedHoldingSynced),...extra,source:'Aurora City FC Incoming Offers',userAgent:navigator.userAgent});
+    const displayedShares=Number(offer.requestedShares||0);
+    const displayedPrice=Number(offer.offerPrice||0);
+    const displayedValue=Number(offer.offerValueGbp||0);
+    const displayedGain=Number(offer.estimatedGainLossGbp||0);
+    const displayedIncome=Number(offer.annualIncomeLostGbp||0);
+
+    /*
+     * IMPORTANT: the offer card can correct an older server offer to the
+     * actual owned holding and the fixed book-cost +6% target. Before an
+     * acceptance is submitted, write those exact displayed figures back to
+     * the same IncomingOffers row as a counter update. The following ACCEPT
+     * therefore creates its Sell Desk ticket from the exact card the manager
+     * selected, not from stale historical figures held by Apps Script.
+     */
+    if(response==='ACCEPT'&&offer.ownedHoldingSynced&&displayedShares>0&&displayedPrice>0){
+      const syncResult=await postRegistration({
+        action:'respondIncomingOffer',
+        offerId,
+        response:'COUNTER',
+        counterPrice:displayedPrice,
+        counterShares:displayedShares,
+        requestedShares:displayedShares,
+        offerPrice:displayedPrice,
+        offerValueGbp:displayedValue,
+        estimatedGainLossGbp:displayedGain,
+        annualIncomeLostGbp:displayedIncome,
+        ownedHoldingSynced:true,
+        source:'Aurora City FC Incoming Offers • exact displayed offer sync',
+        userAgent:navigator.userAgent
+      });
+      if(syncResult&&syncResult.ok===false) throw new Error(syncResult.message||'The displayed offer could not be synchronised.');
+    }
+
+    const result=await postRegistration({
+      action:'respondIncomingOffer',
+      offerId,
+      response,
+      requestedShares:displayedShares,
+      offerPrice:displayedPrice,
+      currentPrice:Number(offer.currentPrice||0),
+      priceUnit:String(offer.priceUnit||''),
+      currency:String(offer.currency||''),
+      offerValueGbp:displayedValue,
+      estimatedProceedsGbp:displayedValue,
+      estimatedGainLossGbp:displayedGain,
+      annualIncomeLostGbp:displayedIncome,
+      ownedHoldingSynced:Boolean(offer.ownedHoldingSynced),
+      exactDisplayedOffer:true,
+      ...extra,
+      source:'Aurora City FC Incoming Offers • exact displayed offer',
+      userAgent:navigator.userAgent
+    });
     if(msg){msg.textContent=result.message||'Offer updated.';msg.className=`registration-message ${result.queued?'pending':'success'}`;}
     if(result.queued){await new Promise(resolve=>setTimeout(resolve,1600));}
     await loadIncomingOffers(false);if(response==='ACCEPT')await loadSellTickets();
