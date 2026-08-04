@@ -2841,7 +2841,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v2-20260804-full-offers" name="aurora-build"/></head>
+<meta content="transfer-gameshell-content-v3-20260804-endpoint-repair" name="aurora-build"/></head>
 <body>
 
 
@@ -3536,6 +3536,14 @@ const REGISTRATION_CONNECTION_KEY = 'aurora_registration_connection_v1';
 const REGISTRATION_LAST_KEY = 'aurora_registration_last_v1';
 let registrationConnection = {endpoint:'', token:''};
 let registrationOpenKey = '';
+
+function normaliseAppsScriptEndpoint(value){
+  let endpoint=String(value||'').trim();
+  if(!endpoint) return '';
+  endpoint=endpoint.replace(/\/dev(?:[?#].*)?$/i,'/exec');
+  endpoint=endpoint.replace(/\/exec\/(?:[?#].*)?$/i,'/exec');
+  return endpoint;
+}
 let registrationBusy = false;
 
 
@@ -3558,7 +3566,7 @@ function normalizeRegistrationAccount(account){
 function restoreRegistrationConnection(){
   try{
     const saved=JSON.parse(localStorage.getItem(REGISTRATION_CONNECTION_KEY)||'{}');
-    registrationConnection={endpoint:String(saved.endpoint||'').trim(),token:String(saved.token||'').trim()};
+    registrationConnection={endpoint:normaliseAppsScriptEndpoint(saved.endpoint),token:String(saved.token||'').trim()};
   }catch(_){registrationConnection={endpoint:'',token:''};}
   if($('registrationEndpoint')) $('registrationEndpoint').value=registrationConnection.endpoint;
   if($('registrationToken')) $('registrationToken').value=registrationConnection.token;
@@ -3566,7 +3574,7 @@ function restoreRegistrationConnection(){
 }
 function persistRegistrationConnection(){
   registrationConnection={
-    endpoint:String($('registrationEndpoint')?.value||'').trim(),
+    endpoint:normaliseAppsScriptEndpoint($('registrationEndpoint')?.value),
     token:String($('registrationToken')?.value||'').trim()
   };
   localStorage.setItem(REGISTRATION_CONNECTION_KEY,JSON.stringify(registrationConnection));
@@ -3712,7 +3720,17 @@ async function postRegistration(payload){
     const response=await fetch(registrationConnection.endpoint,{method:'POST',body,redirect:'follow'});
     const raw=await response.text();
     let json=null; try{json=JSON.parse(raw);}catch(_){json=null;}
-    if(!response.ok) throw new Error(json?.message||`Registration service returned ${response.status}`);
+    if(!response.ok){
+      if(response.status===404){
+        localStorage.removeItem(REGISTRATION_CONNECTION_KEY);
+        registrationConnection={endpoint:'',token:''};
+        if($('registrationEndpoint')) $('registrationEndpoint').value='';
+        updateRegistrationConnectionStatus();
+        $('registrationConnection')?.setAttribute('open','');
+        throw new Error('AuroraData web-app URL is no longer valid (404). Open Secure AuroraData connection and paste the latest Apps Script deployment URL ending in /exec, then save it again.');
+      }
+      throw new Error(json?.message||`Registration service returned ${response.status}`);
+    }
     if(!json) throw new Error('The registration service returned an unreadable response.');
     if(json.ok===false) throw new Error(json.message||'Registration failed.');
     return json;
