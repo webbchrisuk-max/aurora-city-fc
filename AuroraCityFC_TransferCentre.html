@@ -3315,6 +3315,14 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <span>Authorised Finance Department budget £</span>
 <input aria-label="Transfer budget" id="transferBudgetInput" inputmode="decimal" min="0" step="25" type="number" value="3500"/>
 </label>
+<label class="payday-input-line deal-budget-input">
+<span>Broker route</span>
+<select aria-label="Broker route" id="brokerRouteFilter">
+<option value="BOTH">Both brokers</option>
+<option value="IG ISA">IG ISA only</option>
+<option value="TRADE 212">Trade 212 only</option>
+</select>
+</label>
 <div aria-live="polite" class="allocation-budget-summary">
 <div class="allocation-budget-stat"><small>Allocated</small><strong id="allocatedTransferBudget">£0.00</strong></div>
 <div class="allocation-budget-stat remaining" id="remainingTransferBudgetCard"><small>Still Available</small><strong id="remainingTransferBudget">£3,500.00</strong></div>
@@ -3483,6 +3491,9 @@ const AURORA_MASTER_URL = 'https://webbchrisuk-max.github.io/aurora-city-fc/Auro
 let AURORA_MASTER_CACHE = null;
 
 let PLATFORM_RULES = {...(window.AURORA_PLATFORM_RULES || {TRIG:'IG ISA',FSFL:'Trade 212',UKW:'IG ISA',ARCC:'IG ISA',RGL:'Trade 212',GCP:'Trade 212',PHP:'IG ISA / Trade 212',FGEN:'IG ISA',SEQI:'Trade 212',TW:'IG ISA',OSB:'IG ISA'})};
+const BROKER_ROUTE_FILTER_KEY='aurora_transfer_broker_route_v1';
+let brokerRouteFilter=String(localStorage.getItem(BROKER_ROUTE_FILTER_KEY)||'BOTH').toUpperCase();
+if(!['BOTH','IG ISA','TRADE 212'].includes(brokerRouteFilter)) brokerRouteFilter='BOTH';
 let PLATFORM_RULE_DETAILS = {};
 let PLATFORM_RULES_LOADED_AT = '';
 
@@ -4289,9 +4300,29 @@ function valuationBonus(row){
   if(v.includes('overvalued')) return -12;
   return 0;
 }
+function allowedAccountsForTicker(ticker){
+  const key=shortTicker(ticker);
+  const detail=PLATFORM_RULE_DETAILS[key]||{};
+  let accounts=Array.isArray(detail.allowedAccounts)?detail.allowedAccounts.map(normalizeRegistrationAccount).filter(Boolean):[];
+  if(!accounts.length){
+    const raw=String(detail.preferredAccount||PLATFORM_RULES[key]||'');
+    accounts=raw.split(/\s*\/\s*|,|;/).map(normalizeRegistrationAccount).filter(Boolean);
+  }
+  if(!accounts.length) accounts=['IG ISA','TRADE 212'];
+  return [...new Set(accounts)];
+}
+function tickerAllowedForBrokerRoute(ticker){
+  if(brokerRouteFilter==='BOTH') return true;
+  return allowedAccountsForTicker(ticker).includes(brokerRouteFilter);
+}
 function platformFor(ticker){
-  const detail=PLATFORM_RULE_DETAILS[shortTicker(ticker)];
-  return detail?.preferredAccount || PLATFORM_RULES[shortTicker(ticker)] || 'Check platform';
+  const key=shortTicker(ticker);
+  const detail=PLATFORM_RULE_DETAILS[key]||{};
+  const allowed=allowedAccountsForTicker(key);
+  if(brokerRouteFilter!=='BOTH'&&allowed.includes(brokerRouteFilter)) return brokerRouteFilter;
+  const preferred=normalizeRegistrationAccount(detail.preferredAccount||PLATFORM_RULES[key]||'');
+  if(preferred&&allowed.includes(preferred)) return preferred;
+  return allowed[0]||'Check platform';
 }
 function portraitFor(ticker){
   const s = shortTicker(ticker);
@@ -4574,6 +4605,7 @@ function analyseTransferCandidates(budget){
   const minimumIncomeRate=budget>=1000?0.035:0.03;
   const available=gated
     .filter(item=>item.gate.status!=='block')
+    .filter(item=>tickerAllowedForBrokerRoute(item.row.ticker))
     .filter(item=>!excludedTickers.has(cleanTicker(item.row.ticker)))
     .filter(item=>Number.isFinite(incomeRate(item.row))&&incomeRate(item.row)>=minimumIncomeRate)
     .filter(item=>item.gate.data?.score>=60);
@@ -4713,7 +4745,8 @@ function buildDealSheet(){
   const cautionCount=plan.rows.filter(item=>item.gate.status==='caution').length;
   const status=cautionCount?`${mode==='maximum'?'Maximum income':'Balanced'} route controlled`:`${mode==='maximum'?'Maximum income':'Balanced'} route ready`;
   const statusClass=cautionCount?'warn':'good';
-  const route=mode==='maximum'?'Maximum Income Route':'Balanced Monthly Route';
+  const brokerLabel=brokerRouteFilter==='BOTH'?'Both brokers':brokerRouteFilter;
+  const route=(mode==='maximum'?'Maximum Income Route':'Balanced Monthly Route')+' • '+brokerLabel;
   const reason=mode==='maximum'
     ?'Maximum-income route selected. Aurora is maximising verified recurring income while still enforcing hard post-purchase sector, high-yield and single-holding limits.'
     :'Balanced route selected. Aurora weights income 30%, valuation 25%, dividend safety 20%, diversification 15% and business quality 10%, with cash holdback allowed.';
@@ -5770,6 +5803,16 @@ async function loadData(force=false){
   }
 }
 $('refreshBtn')?.addEventListener('click', () => loadData(true));
+const brokerFilterEl=$('brokerRouteFilter');
+if(brokerFilterEl){
+  brokerFilterEl.value=brokerRouteFilter;
+  brokerFilterEl.addEventListener('change',()=>{
+    brokerRouteFilter=String(brokerFilterEl.value||'BOTH').toUpperCase();
+    localStorage.setItem(BROKER_ROUTE_FILTER_KEY,brokerRouteFilter);
+    manualAmounts.clear();
+    renderAll();
+  });
+}
 $('transferBudgetInput')?.addEventListener('input',()=>{manualAmounts.clear();renderAll();});
 ['corePotInput','coreMonthlyInput','etfPotInput','etfMonthlyInput','deploymentMonthInput'].forEach(id=>$(id)?.addEventListener('input',renderDeploymentPlan));
 $('nextPaydayInput')?.addEventListener('change',()=>{persistExitFundingSettings();renderExitFundingRoom();});
