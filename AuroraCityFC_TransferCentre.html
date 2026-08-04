@@ -4731,12 +4731,62 @@ function allocateRoute(mode,budget,available,snapshot,options={}){
   const balanceScore=rows.length?rows.reduce((sum,item)=>sum+balancedPriorityScore(item.row,exposureSnapshot(rows.filter(x=>x!==item).map(x=>({row:x.row,amount:x.amount}))),item.amount),0)/rows.length:0;
   return {selected:rows.map(({row,gate,score,incomeScore})=>({row,gate,score,incomeScore})),rows,spent,holdback:Math.max(0,budget-spent),totalIncome:rows.reduce((sum,item)=>sum+item.income,0),minimumEach:minimum,balanceScore};
 }
+const AURORA_PAYDAY_ROUTE_SNAPSHOT_KEY='aurora_payday_route_snapshot_v2';
+function savePaydayRouteSnapshot_(deal){
+  if(!deal||!Array.isArray(deal.rows)||!deal.rows.length)return;
+  const snapshot={
+    savedAt:new Date().toISOString(),
+    budget:Number(deal.budget)||0,
+    route:String(deal.route||'Recovered payday route'),
+    mode:String(deal.mode||'balanced'),
+    rows:deal.rows.map(item=>({ticker:shortTicker(item.row?.ticker),amount:Number(item.amount)||0,income:Number(item.income)||0}))
+  };
+  safeJsonWrite(AURORA_PAYDAY_ROUTE_SNAPSHOT_KEY,snapshot);
+  const execution=paydayExecutionStore();
+  execution.routeSnapshot=snapshot;
+  savePaydayExecution(execution);
+}
+function recoveredPaydayDeal_(budget){
+  const execution=paydayExecutionStore();
+  let snapshot=execution.routeSnapshot||safeJsonRead(AURORA_PAYDAY_ROUTE_SNAPSHOT_KEY,null);
+
+  /* One-time recovery for the 4 Aug 2026 IG ISA deployment. This is only used
+     when the optimiser route has vanished and no saved route snapshot exists. */
+  if((!snapshot||!Array.isArray(snapshot.rows)||!snapshot.rows.length)&&Math.abs((Number(execution.availableCash)||0)-8162.83)<1){
+    snapshot={
+      savedAt:new Date().toISOString(),budget:8162.83,route:'Recovered IG ISA dividend deployment',mode:'maximum',
+      rows:[
+        {ticker:'FGEN',amount:1618.68},{ticker:'SBRY',amount:1621.04},{ticker:'LMP',amount:1621.96},
+        {ticker:'HICL',amount:1396.48},{ticker:'BATS',amount:992.29},{ticker:'AV',amount:273.54},{ticker:'LAND',amount:631.75}
+      ]
+    };
+    execution.routeSnapshot=snapshot;
+    savePaydayExecution(execution);
+    safeJsonWrite(AURORA_PAYDAY_ROUTE_SNAPSHOT_KEY,snapshot);
+  }
+  if(!snapshot||!Array.isArray(snapshot.rows)||!snapshot.rows.length)return null;
+  const rows=snapshot.rows.map(saved=>{
+    const row=holdingByTicker(saved.ticker)||{ticker:saved.ticker,name:saved.ticker,account:'IG ISA',annual_dps:0,annual_dps_total:0};
+    const amount=Math.max(0,Number(saved.amount)||0);
+    return {row,amount,income:Number(saved.income)||annualIncomeForAmount(row,amount),gate:{status:'safe',reasons:['Recovered saved payday route']}};
+  }).filter(item=>item.amount>0);
+  if(!rows.length)return null;
+  const recoveredBudget=Math.max(Number(snapshot.budget)||0,Number(budget)||0,Number(execution.availableCash)||0);
+  return {
+    budget:recoveredBudget,chosen:rows,rows,holdback:Math.max(0,recoveredBudget-rows.reduce((s,x)=>s+x.amount,0)),
+    requestedSpent:rows.reduce((s,x)=>s+x.amount,0),autoReduced:0,status:'Recovered route ready',statusClass:'good',
+    route:String(snapshot.route||'Recovered payday route'),reason:'Recovered from the saved Payday Purchase Record so broker fills can still be entered after a refresh or route reset.',
+    totalIncome:rows.reduce((s,x)=>s+(Number(x.income)||0),0),bench:[],watch:[],eligibleCandidates:rows.map(x=>x.row),mode:snapshot.mode||'balanced',balanceScore:0,minimumEach:0,recovered:true
+  };
+}
 function buildDealSheet(){
   const budget=Math.max(0,parseNum($('transferBudgetInput')?.value)||0);
   const analysis=analyseTransferCandidates(budget);
   const mode=routeMode==='maximum'?'maximum':'balanced';
   const plan=allocateRoute(mode,budget,analysis.available,analysis.snapshot);
   if(!plan.rows.length){
+    const recovered=recoveredPaydayDeal_(budget);
+    if(recovered)return recovered;
     return {budget,chosen:[],rows:[],holdback:budget,requestedSpent:0,autoReduced:0,status:'No buy',statusClass:'bad',route:'Hold cash',reason:'No verified candidate clears the post-purchase portfolio gates today.',bench:analysis.gated.filter(x=>x.gate.status!=='block').slice(0,5),watch:analysis.gated.filter(x=>x.gate.status==='block').slice(0,5),eligibleCandidates:analysis.available,mode,totalIncome:0,balanceScore:0};
   }
   const cautionCount=plan.rows.filter(item=>item.gate.status==='caution').length;
@@ -4750,7 +4800,9 @@ function buildDealSheet(){
   const selected=new Set(plan.rows.map(item=>cleanTicker(item.row.ticker)));
   const bench=analysis.gated.filter(item=>!selected.has(cleanTicker(item.row.ticker))&&item.gate.status!=='block').sort((a,b)=>b.score-a.score).slice(0,5);
   const watch=analysis.gated.filter(item=>item.gate.status==='block'||(!selected.has(cleanTicker(item.row.ticker))&&item.gate.status==='caution')).slice(0,5);
-  return {budget,chosen:plan.selected,rows:plan.rows,holdback:plan.holdback,requestedSpent:plan.spent,autoReduced:0,status,statusClass,route,reason,totalIncome:plan.totalIncome,bench,watch,eligibleCandidates:analysis.available,mode,balanceScore:plan.balanceScore,minimumEach:plan.minimumEach};
+  const deal={budget,chosen:plan.selected,rows:plan.rows,holdback:plan.holdback,requestedSpent:plan.spent,autoReduced:0,status,statusClass,route,reason,totalIncome:plan.totalIncome,bench,watch,eligibleCandidates:analysis.available,mode,balanceScore:plan.balanceScore,minimumEach:plan.minimumEach};
+  savePaydayRouteSnapshot_(deal);
+  return deal;
 }
 function buildBestReturnAllocation(deal){
   const budget=roundTo25(Math.max(0,deal.budget||0));
@@ -5400,7 +5452,7 @@ function renderPaydayExecution(deal){
     {key:'registrationReviewed',label:'Review registration desk',detail:'Confirm new holdings/top-ups are ready to register.',done:Boolean(saved.checks.registrationReviewed),manual:true}
   ];
   checklist.innerHTML=checks.map(item=>`<label class="payday-check ${item.done?'done':''}">${item.manual?`<input type="checkbox" data-payday-check="${item.key}" ${item.done?'checked':''}>`:`<i></i>`}<div><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.detail)}</span></div></label>`).join('');
-  tradeGrid.innerHTML=routeReady?deal.rows.map(item=>{const ticker=shortTicker(item.row.ticker),trade=saved.trades[ticker]||{},detail=totals.details[ticker]||{};return `<article class="payday-trade-card"><div class="payday-trade-top"><div><h5>${escapeHtml(displayTicker(item.row.ticker))} — ${escapeHtml(displayName(item.row))}</h5><span>${escapeHtml(platformFor(item.row.ticker))}</span></div><span>Planned ${money(item.amount)}</span></div><div class="payday-trade-inputs"><label><span>Shares bought</span><input type="number" min="0" step="any" value="${escapeHtml(trade.shares||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="shares"></label><label><span>Actual £/share</span><input type="number" min="0" step="any" value="${escapeHtml(trade.price||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="price"></label><label><span>Fees £</span><input type="number" min="0" step="any" value="${escapeHtml(trade.fees||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="fees"></label></div><div class="payday-trade-result"><span>Actual cost <b>${money(detail.cost||0)}</b></span><span>Income added <b>${money(detail.income||0)}/yr</b></span></div></article>`;}).join(''):'<div class="loading">Choose an approved route before recording completed purchases.</div>';
+  tradeGrid.innerHTML=routeReady?deal.rows.map(item=>{const ticker=shortTicker(item.row.ticker),trade=saved.trades[ticker]||{},detail=totals.details[ticker]||{};return `<article class="payday-trade-card"><div class="payday-trade-top"><div><h5>${escapeHtml(displayTicker(item.row.ticker))} — ${escapeHtml(displayName(item.row))}</h5><span>${escapeHtml(platformFor(item.row.ticker))}</span></div><span>Planned ${money(item.amount)}</span></div><div class="payday-trade-inputs"><label><span>Shares bought</span><input type="number" min="0" step="any" value="${escapeHtml(trade.shares||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="shares"></label><label><span>Actual £/share</span><input type="number" min="0" step="any" value="${escapeHtml(trade.price||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="price"></label><label><span>Fees £</span><input type="number" min="0" step="any" value="${escapeHtml(trade.fees||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="fees"></label></div><div class="payday-trade-result"><span>Actual cost <b>${money(detail.cost||0)}</b></span><span>Income added <b>${money(detail.income||0)}/yr</b></span></div></article>`;}).join(''):'<div class="loading">No saved route is available. Enter transfer cash and press Save cash amount to rebuild or recover the Purchase Record.</div>';
   const allReady=purchasesRecorded&&cashReady;if($('completePaydayWindow'))$('completePaydayWindow').disabled=!allReady;if($('paydayTradeCount'))$('paydayTradeCount').textContent=`${totals.recorded} recorded`;
   const plannedIncome=deal?.totalIncome||0,starting=incomeSimulatorSettings().startingIncome;
   if($('paydayPlannedInvested'))$('paydayPlannedInvested').textContent=money(plannedInvested);if($('paydayPlannedIncome'))$('paydayPlannedIncome').textContent=`${money(plannedIncome)}/yr annual income`;if($('paydayActualInvested'))$('paydayActualInvested').textContent=money(totals.invested);if($('paydayActualIncome'))$('paydayActualIncome').textContent=`${money(totals.income)}/yr annual income`;if($('paydayInvestmentVariance'))$('paydayInvestmentVariance').textContent=`${totals.invested-plannedInvested>=0?'+':''}${money(totals.invested-plannedInvested)}`;if($('paydayNewClubIncome'))$('paydayNewClubIncome').textContent=`${money(starting+totals.income)}/yr`;
@@ -6705,7 +6757,7 @@ document.addEventListener('change',event=>{
 document.addEventListener('change',event=>{
   const trade=event.target.closest?.('[data-payday-trade-field]');if(trade){const saved=paydayExecutionStore();const ticker=shortTicker(trade.dataset.paydayTradeTicker);saved.trades[ticker]=saved.trades[ticker]||{};saved.trades[ticker][trade.dataset.paydayTradeField]=trade.value;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());return;}
 });
-const savePaydayCashAmount=()=>{const input=$('paydayAvailableCash');if(!input)return;const entered=String(input.value||'').replace(/,/g,'').replace(/[^0-9.]/g,'');const next=Math.max(0,parseNum(entered)||0);const saved=paydayExecutionStore();const current=Math.max(0,parseNum(saved.availableCash)||0);saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';saved.open=true;saved.cashSource='MANUAL_OVERRIDE';savePaydayExecution(saved);input.value=next.toFixed(2);renderPaydayExecution(buildDealSheet());const message=$('paydayCompletionMessage');if(message)message.textContent=`Manual cash override saved: ${money(next)}. Finance Department will not overwrite this figure until you reset the payday record.`;};
+const savePaydayCashAmount=()=>{const input=$('paydayAvailableCash');if(!input)return;const entered=String(input.value||'').replace(/,/g,'').replace(/[^0-9.]/g,'');const next=Math.max(0,parseNum(entered)||0);const saved=paydayExecutionStore();const current=Math.max(0,parseNum(saved.availableCash)||0);saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';saved.open=true;saved.cashSource='MANUAL_OVERRIDE';savePaydayExecution(saved);input.value=next.toFixed(2);const budgetInput=$('transferBudgetInput');if(budgetInput)budgetInput.value=next.toFixed(2);renderAll();renderPaydayExecution(buildDealSheet());const message=$('paydayCompletionMessage');if(message)message.textContent=`Manual cash override saved: ${money(next)}. Finance Department will not overwrite this figure until you reset the payday record.`;};
 $('savePaydayCash')?.addEventListener('click',savePaydayCashAmount);
 $('paydayAvailableCash')?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();savePaydayCashAmount();event.target.blur();}});
 $('paydayAvailableCash')?.addEventListener('focus',event=>{event.target.select();});
