@@ -4317,12 +4317,9 @@ function tickerAllowedForBrokerRoute(ticker){
 }
 function platformFor(ticker){
   const key=shortTicker(ticker);
-  const detail=PLATFORM_RULE_DETAILS[key]||{};
-  const allowed=allowedAccountsForTicker(key);
-  if(brokerRouteFilter!=='BOTH'&&allowed.includes(brokerRouteFilter)) return brokerRouteFilter;
-  const preferred=normalizeRegistrationAccount(detail.preferredAccount||PLATFORM_RULES[key]||'');
-  if(preferred&&allowed.includes(preferred)) return preferred;
-  return allowed[0]||'Check platform';
+  if(brokerRouteFilter!=='BOTH' && tickerAllowedForBrokerRoute(key)) return brokerRouteFilter;
+  const detail=PLATFORM_RULE_DETAILS[key];
+  return detail?.preferredAccount || PLATFORM_RULES[key] || 'Check platform';
 }
 function portraitFor(ticker){
   const s = shortTicker(ticker);
@@ -8050,5 +8047,28 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
       ? "connected"
       : "standalone";
 })();
-</script></body>
+</script>
+<script>
+/* Aurora broker-filter recovery guard */
+(function(){
+  function recoverPaydayPanel(){
+    try{
+      var saved=typeof paydayExecutionStore==='function'?paydayExecutionStore():null;
+      if(saved && !saved.completedAt && Number(saved.availableCash||0)>0 && !saved.open){
+        saved.open=true;
+        if(typeof savePaydayExecution==='function') savePaydayExecution(saved);
+      }
+      if(typeof buildDealSheet==='function' && typeof renderPaydayExecution==='function'){
+        renderPaydayExecution(buildDealSheet());
+      }
+    }catch(error){
+      console.error('Aurora payday recovery:',error);
+      var c=document.getElementById('paydayChecklist');
+      if(c) c.innerHTML='<div class="loading">Transfer Centre loaded. Press Refresh once to rebuild the route.</div>';
+    }
+  }
+  window.addEventListener('load',function(){setTimeout(recoverPaydayPanel,800);setTimeout(recoverPaydayPanel,2500);});
+})();
+</script>
+</body>
 </html>
