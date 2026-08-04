@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" data-aurora-page="media">
+<!DOCTYPE html>
+
+<html data-aurora-page="media" data-aurora-shell-content="true" lang="en">
 <head>
-  <!-- Clean build: Media Centre refactor • 02 Aug 2026 -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#030712">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Aurora City FC">
-  <title>Aurora City FC — Media Centre</title>
-  <style>
+<!-- Build: Aurora Media Centre • GameShell Content Page v1 • 04 Aug 2026 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+
+<meta content="#030712" name="theme-color"/>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
+<title>Aurora City FC — Media Centre</title><meta content="media-gameshell-content-v1-20260804" name="aurora-build"/>
+<style>
 /* Aurora City FC — Media Centre clean build */
 :root{
   --bg:#030712;
@@ -180,12 +182,12 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
   html:not([data-aurora-motion="full"]) *,html:not([data-aurora-motion="full"]) *:before,html:not([data-aurora-motion="full"]) *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
 }
   </style>
-  <!-- Aurora universal workflow navigation -->
-  <link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
-  <script src="aurora-navigation.js?v=20260729-3" defer></script>
+
+
+
 </head>
 <body>
-<main class="app">
+<main class="app" data-aurora-content-root="media">
 <section class="hero aurora-section-anchor" id="media-overview"><div class="hero-content"><div class="kicker"><span class="kicker-dot"></span> Press department</div><h2>Media<span>Centre</span></h2><p>Dividend announcements, income received, market rumours, squad headlines and the manager's latest press conference.</p><div class="hero-actions"><span class="pill" id="lastUpdated">Last updated: loading…</span><span class="pill">News feed: AuroraMaster</span><span class="pill">Manager mode: Active</span></div></div></section>
 <section class="section intelligence-desk aurora-section-anchor" id="aurora-intelligence-desk">
 <div class="intelligence-desk-grid">
@@ -228,8 +230,8 @@ html[data-aurora-motion="off"] *,html[data-aurora-motion="off"] *:before,html[da
 <section class="section"><div class="grid"><div class="card w6 aurora-section-anchor" id="transfer-rumours"><img alt="Transfer rumours" class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_transfer_rumours.PNG"/><div class="card-title"><h3>Transfer rumours</h3><span class="badge amber">Scout wires</span></div><div class="list" data-loading-target="" id="rumourMill"><div class="loading">Loading rumour mill…</div></div></div><div class="card w6 aurora-section-anchor" id="dividend-match-report"><img alt="Dividend match report" class="media-banner" src="https://raw.githubusercontent.com/webbchrisuk-max/aurora-city-fc/main/assets/aurora-city-fc/media/media_dividend_match_report.PNG"/><div class="card-title"><h3>Dividend match report</h3><span class="badge purple">Monthly review</span></div><div class="list" data-loading-target="" id="matchReport"><div class="loading">Loading match report…</div></div></div></div></section>
 <footer class="footer">Aurora City FC • Media Centre • Sheet engine: AuroraData</footer>
 </main>
-  <script src="AuroraFCData.js"></script>
-  <script>
+<script src="AuroraFCData.js"></script>
+<script>
 const AURORA_MASTER_URL = "https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 let AURORA_MASTER_CACHE=null,state={holdings:[],watchlist:[],scout:[],dividends:[],income:[],news:[],intelligence:[],briefing:[]};
 const $=id=>document.getElementById(id);const money=n=>Number.isFinite(n)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:2}).format(n):'—';
@@ -371,9 +373,9 @@ if(window.AuroraFC?.onDataChanged){
 }
 
 loadAuroraData(false);
-if(window.AuroraFC)AuroraFC.registerServiceWorker()
+
   </script>
-  <script>
+<script>
 (function(){
   'use strict';
   const LIFE_KEY='aurora_m4_signing_lifecycle_v1';
@@ -446,7 +448,7 @@ if(window.AuroraFC)AuroraFC.registerServiceWorker()
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
   </script>
-  <script>
+<script>
 (function(){
   'use strict';
   const root=document.documentElement;
@@ -492,5 +494,56 @@ if(window.AuroraFC)AuroraFC.registerServiceWorker()
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
   </script>
-</body>
+<script id="auroraMediaGameShellBridge">
+(function(){
+  "use strict";
+
+  const pageDetail = Object.freeze({
+    page:"media",
+    title:"Media Centre",
+    build:"media-gameshell-content-v1-20260804"
+  });
+
+  function notifyShell(){
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.postMessage(
+          {
+            type:"aurora:department-ready",
+            detail:pageDetail
+          },
+          location.origin
+        );
+      }
+    }catch(_){}
+  }
+
+  window.AuroraMediaCentre = Object.freeze({
+    getPageDetail(){
+      return pageDetail;
+    },
+    refresh(){
+      if(typeof window.loadAuroraData === "function"){
+        window.loadAuroraData(true);
+        return true;
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("aurora:media-refresh-request")
+      );
+
+      return false;
+    }
+  });
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      notifyShell,
+      {once:true}
+    );
+  }else{
+    notifyShell();
+  }
+})();</script></body>
 </html>
