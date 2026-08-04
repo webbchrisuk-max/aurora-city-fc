@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="en" data-aurora-page="learning">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#06111f">
-<title>Aurora City FC — Learning Centre | Review Engine</title>
+<!DOCTYPE html>
+
+<html data-aurora-page="learning" data-aurora-shell-content="true" lang="en">
+<head><!-- Build: Aurora Learning Centre • GameShell Content Page v1 • 04 Aug 2026 -->
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="#06111f" name="theme-color"/>
+<title>Aurora City FC — Learning Centre | Review Engine</title><meta content="learning-gameshell-content-v1-20260804" name="aurora-build"/>
 <style>
 :root{
   --bg:#04101d;--panel:#081929;--panel2:#0b2135;--line:rgba(125,211,252,.16);
@@ -119,18 +121,11 @@ tbody tr:hover{background:rgba(83,217,245,.035)}
 .footer{text-align:center;color:#617b8d;font-size:8px;padding:20px}
 .empty{padding:22px;text-align:center;color:#7891a3;font-size:10px}
 @media(max-width:1150px){.kpis{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:1fr}.hero-inner{grid-template-columns:1fr}.brain-orb{width:250px}.evolution{grid-template-columns:1fr}}
-@media(max-width:700px){.kpis{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr}.accuracy-panel{grid-template-columns:1fr}.metric-list{grid-template-columns:1fr}.shell{padding:8px}.hero{padding:18px}.topbar{position:relative}}
+@media(max-width:700px){.kpis{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr}.accuracy-panel{grid-template-columns:1fr}.metric-list{grid-template-columns:1fr}.shell{padding:8px}.hero{padding:18px}}
 </style>
-
 <script src="AuroraFCData.js"></script>
 
-<script>
-window.AURORA_PAGE_ID = "learning";
-window.AURORA_PAGE_TITLE = "Learning Centre";
-window.AURORA_NAV_ACTIVE = "AuroraCityFC_LearningCentre.html";
-</script>
-<link href="aurora-navigation.css?v=20260801-learning-centre-fix" rel="stylesheet">
-<script src="aurora-navigation.js?v=20260801-learning-centre-fix" defer></script>
+
 
 <style id="aurora-learning-page-layout-fix">
 html,body{
@@ -150,8 +145,6 @@ body{
   .shell{padding:8px}
 }
 </style>
-
-
 <style id="aurora-learning-review-engine-styles">
 .review-engine-grid{
   grid-template-columns:1fr 1fr;
@@ -368,185 +361,164 @@ body{
   .proposal-evidence{grid-template-columns:1fr}
 }
 </style>
-
 </head>
 <body>
-<div class="shell">
+<div class="shell learning-app" data-aurora-content-root="learning">
 <section class="hero">
-    <div class="hero-inner">
-      <div>
-        <div class="kicker">AURORA HQ • BRAIN PERFORMANCE DEPARTMENT</div>
-        <h1>Learning<br>Centre</h1>
-        <p>Aurora’s permanent memory. Every recommendation is logged, reviewed after 7, 30 and 90 days, and converted into a transparent record of what the Brain gets right, where it misses and what it should learn next.</p>
-        <div class="hero-status">
-          <span class="pill live" id="liveStatus">CONNECTING TO AURORA MASTER</span>
-          <span class="pill" id="brainVersion">Brain version —</span>
-          <span class="pill" id="latestReview">Latest review —</span>
-        </div>
-      </div>
-      <div class="brain-orb">
-        <div class="ring-content">
-          <div class="orb-value" id="heroAccuracy">—</div>
-          <div class="orb-label">Matured Decision Accuracy</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="grid kpis">
-    <article class="card kpi"><small>Total Decisions</small><strong id="totalDecisions">0</strong><span>Aurora memory entries</span></article>
-    <article class="card kpi"><small>Matured Reviews</small><strong id="maturedReviews">0</strong><span>With measured outcomes</span></article>
-    <article class="card kpi"><small>Successful Calls</small><strong id="successfulCalls">0</strong><span>Success + strong success</span></article>
-    <article class="card kpi"><small>Average Return</small><strong id="averageReturn">—</strong><span>Latest available horizon</span></article>
-    <article class="card kpi"><small>Best Decision</small><strong id="bestDecision">—</strong><span id="bestDecisionMeta">Waiting for reviews</span></article>
-    <article class="card kpi"><small>Learning Status</small><strong id="learningStatus">Collecting</strong><span id="learningMeta">First review due after 7 days</span></article>
-  </section>
-
-  <section class="grid two">
-    <article class="card">
-      <div class="section-head"><div><div class="kicker">BRAIN ACCURACY</div><h2>Performance Scoreboard</h2><p>Measured only from decisions with a completed review.</p></div><span class="badge info" id="accuracyBadge">NO MATURED DATA</span></div>
-      <div class="accuracy-panel">
-        <div class="ring" id="accuracyRing" style="--pct:0"><div class="ring-content"><strong id="accuracyValue">—</strong><span>Success rate</span></div></div>
-        <div class="metric-list">
-          <div class="metric"><small class="label">Strong Success</small><strong id="strongSuccess">0</strong></div>
-          <div class="metric"><small class="label">Success</small><strong id="successCount">0</strong></div>
-          <div class="metric"><small class="label">Mixed</small><strong id="mixedCount">0</strong></div>
-          <div class="metric"><small class="label">Miss</small><strong id="missCount">0</strong></div>
-          <div class="metric"><small class="label">7-Day Reviews</small><strong id="review7">0</strong></div>
-          <div class="metric"><small class="label">90-Day Complete</small><strong id="review90">0</strong></div>
-        </div>
-      </div>
-    </article>
-
-    <article class="card">
-      <div class="section-head"><div><div class="kicker">MANAGER BRIEFING</div><h2>What Aurora Has Learned</h2><p>Evidence-led observations from the Decision Log.</p></div></div>
-      <div class="lessons" id="lessons"><div class="empty">Aurora is collecting its first history. Lessons will appear when decisions mature.</div></div>
-    </article>
-  </section>
-
-  <section class="card" style="margin-top:14px">
-    <div class="section-head">
-      <div><div class="kicker">DECISION JOURNAL</div><h2>Aurora Memory</h2><p>Every logged recommendation and its measured outcomes.</p></div>
-      <div class="journal-tools">
-        <input id="searchBox" placeholder="Search ticker or company">
-        <select id="actionFilter"><option value="">All actions</option></select>
-        <select id="resultFilter"><option value="">All results</option></select>
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Date</th><th>Ticker</th><th>Company</th><th>Action</th><th>Score</th><th>Decision Price</th><th>7D</th><th>30D</th><th>90D</th><th>Result</th><th>Status</th><th>Reason</th></tr></thead>
-        <tbody id="journalBody"><tr><td colspan="12" class="empty">Loading AuroraDecisionLog…</td></tr></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="grid three">
-    <article class="card">
-      <div class="section-head"><div><div class="kicker">TOP CALL</div><h2>Best Recommendation</h2></div></div>
-      <div id="bestCall"><div class="empty">Waiting for a matured review.</div></div>
-    </article>
-    <article class="card">
-      <div class="section-head"><div><div class="kicker">COACHING REVIEW</div><h2>Biggest Miss</h2></div></div>
-      <div id="worstCall"><div class="empty">Waiting for a matured review.</div></div>
-    </article>
-    <article class="card">
-      <div class="section-head"><div><div class="kicker">CURRENT FORM</div><h2>Decision Mix</h2></div></div>
-      <div id="decisionMix" class="lessons"><div class="empty">Loading current decision profile…</div></div>
-    </article>
-  </section>
-
-
-  <section class="grid review-engine-grid">
-    <article class="card">
-      <div class="section-head">
-        <div>
-          <div class="kicker">AUTOMATED REVIEW ENGINE</div>
-          <h2>Decision Review Scan</h2>
-          <p>Checks every live recommendation against its 7, 30 and 90-day evidence. SOLD holdings remain archived.</p>
-        </div>
-        <span class="badge info" id="reviewEngineStatus">WAITING</span>
-      </div>
-
-      <div class="engine-metrics">
-        <div class="engine-metric"><small>Live decisions</small><strong id="engineLiveDecisions">0</strong></div>
-        <div class="engine-metric"><small>Matured evidence</small><strong id="engineMatured">0</strong></div>
-        <div class="engine-metric"><small>Reviews due</small><strong id="engineDue">0</strong></div>
-        <div class="engine-metric"><small>Sold archived</small><strong id="engineSoldArchived">0</strong></div>
-      </div>
-
-      <div class="engine-queue" id="engineReviewQueue">
-        <div class="empty">The review engine is waiting for AuroraDecisionLog.</div>
-      </div>
-    </article>
-
-    <article class="card">
-      <div class="section-head">
-        <div>
-          <div class="kicker">MANAGER CONTROL</div>
-          <h2>Approval Centre</h2>
-          <p>Aurora may propose improvements, but no rule becomes approved without the manager.</p>
-        </div>
-        <div class="approval-toolbar">
-          <button class="engine-btn" id="runReviewEngine" type="button">Run review scan</button>
-          <span class="badge watch" id="proposalCountBadge">0 PROPOSALS</span>
-        </div>
-      </div>
-
-      <div class="approval-list" id="approvalList">
-        <div class="empty">No evidence-backed proposals yet.</div>
-      </div>
-    </article>
-  </section>
-
-  <section class="card" style="margin-top:14px">
-    <div class="section-head">
-      <div>
-        <div class="kicker">SAFE TESTING</div>
-        <h2>Decision Replay Simulator</h2>
-        <p>Replays a proposed change against matured historical decisions before anything is approved.</p>
-      </div>
-      <span class="badge info" id="replayProposalName">NO PROPOSAL SELECTED</span>
-    </div>
-
-    <div class="replay-summary">
-      <div class="replay-stat"><small>Current sample</small><strong id="replayCurrentSample">—</strong></div>
-      <div class="replay-stat"><small>Trial sample</small><strong id="replayTrialSample">—</strong></div>
-      <div class="replay-stat"><small>Current success</small><strong id="replayCurrentRate">—</strong></div>
-      <div class="replay-stat"><small>Trial success</small><strong id="replayTrialRate">—</strong></div>
-    </div>
-
-    <div class="lessons" id="replayExplanation" style="margin-top:12px">
-      <div class="empty">Choose Replay on a proposal to compare it with the existing evidence.</div>
-    </div>
-
-    <div class="section-head" style="margin-top:17px">
-      <div>
-        <div class="kicker">APPROVED MEMORY</div>
-        <h2>Manager-Approved Rule Register</h2>
-        <p>Approved changes are recorded for Aurora’s shared scoring systems to consume.</p>
-      </div>
-      <span class="badge good" id="approvedRuleCount">0 APPROVED</span>
-    </div>
-
-    <div class="rule-register" id="approvedRuleRegister">
-      <div class="empty">No learning changes have been approved.</div>
-    </div>
-  </section>
-
-
-  <section class="card" style="margin-top:14px">
-    <div class="section-head"><div><div class="kicker">BRAIN EVOLUTION</div><h2>Controlled Improvement Path</h2><p>Aurora proposes improvements only after enough evidence exists. No rule changes are automatic.</p></div><span class="badge watch">MANAGER APPROVAL REQUIRED</span></div>
-    <div class="evolution">
-      <div class="evo-step"><small class="label">Stage 1 • Live</small><strong>Decision Memory</strong><p>Record every recommendation and review it at 7, 30 and 90 days.</p></div>
-      <div class="evo-step"><small class="label">Stage 2 • Live</small><strong>Accuracy & Lessons</strong><p>Identify which actions, scores and asset types produce the strongest outcomes.</p></div>
-      <div class="evo-step"><small class="label">Stage 3 • Manager Controlled</small><strong>Rule Suggestions</strong><p>Propose scoring-weight changes for the manager to approve or reject.</p></div>
-    </div>
-  </section>
-
-  <footer class="footer">Aurora City FC Learning Centre • Brain performance is evidence, not a guarantee of future investment results.</footer>
+<div class="hero-inner">
+<div>
+<div class="kicker">AURORA HQ • BRAIN PERFORMANCE DEPARTMENT</div>
+<h1>Learning<br/>Centre</h1>
+<p>Aurora’s permanent memory. Every recommendation is logged, reviewed after 7, 30 and 90 days, and converted into a transparent record of what the Brain gets right, where it misses and what it should learn next.</p>
+<div class="hero-status">
+<span class="pill live" id="liveStatus">CONNECTING TO AURORA MASTER</span>
+<span class="pill" id="brainVersion">Brain version —</span>
+<span class="pill" id="latestReview">Latest review —</span>
 </div>
-
+</div>
+<div class="brain-orb">
+<div class="ring-content">
+<div class="orb-value" id="heroAccuracy">—</div>
+<div class="orb-label">Matured Decision Accuracy</div>
+</div>
+</div>
+</div>
+</section>
+<section class="grid kpis">
+<article class="card kpi"><small>Total Decisions</small><strong id="totalDecisions">0</strong><span>Aurora memory entries</span></article>
+<article class="card kpi"><small>Matured Reviews</small><strong id="maturedReviews">0</strong><span>With measured outcomes</span></article>
+<article class="card kpi"><small>Successful Calls</small><strong id="successfulCalls">0</strong><span>Success + strong success</span></article>
+<article class="card kpi"><small>Average Return</small><strong id="averageReturn">—</strong><span>Latest available horizon</span></article>
+<article class="card kpi"><small>Best Decision</small><strong id="bestDecision">—</strong><span id="bestDecisionMeta">Waiting for reviews</span></article>
+<article class="card kpi"><small>Learning Status</small><strong id="learningStatus">Collecting</strong><span id="learningMeta">First review due after 7 days</span></article>
+</section>
+<section class="grid two">
+<article class="card">
+<div class="section-head"><div><div class="kicker">BRAIN ACCURACY</div><h2>Performance Scoreboard</h2><p>Measured only from decisions with a completed review.</p></div><span class="badge info" id="accuracyBadge">NO MATURED DATA</span></div>
+<div class="accuracy-panel">
+<div class="ring" id="accuracyRing" style="--pct:0"><div class="ring-content"><strong id="accuracyValue">—</strong><span>Success rate</span></div></div>
+<div class="metric-list">
+<div class="metric"><small class="label">Strong Success</small><strong id="strongSuccess">0</strong></div>
+<div class="metric"><small class="label">Success</small><strong id="successCount">0</strong></div>
+<div class="metric"><small class="label">Mixed</small><strong id="mixedCount">0</strong></div>
+<div class="metric"><small class="label">Miss</small><strong id="missCount">0</strong></div>
+<div class="metric"><small class="label">7-Day Reviews</small><strong id="review7">0</strong></div>
+<div class="metric"><small class="label">90-Day Complete</small><strong id="review90">0</strong></div>
+</div>
+</div>
+</article>
+<article class="card">
+<div class="section-head"><div><div class="kicker">MANAGER BRIEFING</div><h2>What Aurora Has Learned</h2><p>Evidence-led observations from the Decision Log.</p></div></div>
+<div class="lessons" id="lessons"><div class="empty">Aurora is collecting its first history. Lessons will appear when decisions mature.</div></div>
+</article>
+</section>
+<section class="card" style="margin-top:14px">
+<div class="section-head">
+<div><div class="kicker">DECISION JOURNAL</div><h2>Aurora Memory</h2><p>Every logged recommendation and its measured outcomes.</p></div>
+<div class="journal-tools">
+<input id="searchBox" placeholder="Search ticker or company"/>
+<select id="actionFilter"><option value="">All actions</option></select>
+<select id="resultFilter"><option value="">All results</option></select>
+</div>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Date</th><th>Ticker</th><th>Company</th><th>Action</th><th>Score</th><th>Decision Price</th><th>7D</th><th>30D</th><th>90D</th><th>Result</th><th>Status</th><th>Reason</th></tr></thead>
+<tbody id="journalBody"><tr><td class="empty" colspan="12">Loading AuroraDecisionLog…</td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="grid three">
+<article class="card">
+<div class="section-head"><div><div class="kicker">TOP CALL</div><h2>Best Recommendation</h2></div></div>
+<div id="bestCall"><div class="empty">Waiting for a matured review.</div></div>
+</article>
+<article class="card">
+<div class="section-head"><div><div class="kicker">COACHING REVIEW</div><h2>Biggest Miss</h2></div></div>
+<div id="worstCall"><div class="empty">Waiting for a matured review.</div></div>
+</article>
+<article class="card">
+<div class="section-head"><div><div class="kicker">CURRENT FORM</div><h2>Decision Mix</h2></div></div>
+<div class="lessons" id="decisionMix"><div class="empty">Loading current decision profile…</div></div>
+</article>
+</section>
+<section class="grid review-engine-grid">
+<article class="card">
+<div class="section-head">
+<div>
+<div class="kicker">AUTOMATED REVIEW ENGINE</div>
+<h2>Decision Review Scan</h2>
+<p>Checks every live recommendation against its 7, 30 and 90-day evidence. SOLD holdings remain archived.</p>
+</div>
+<span class="badge info" id="reviewEngineStatus">WAITING</span>
+</div>
+<div class="engine-metrics">
+<div class="engine-metric"><small>Live decisions</small><strong id="engineLiveDecisions">0</strong></div>
+<div class="engine-metric"><small>Matured evidence</small><strong id="engineMatured">0</strong></div>
+<div class="engine-metric"><small>Reviews due</small><strong id="engineDue">0</strong></div>
+<div class="engine-metric"><small>Sold archived</small><strong id="engineSoldArchived">0</strong></div>
+</div>
+<div class="engine-queue" id="engineReviewQueue">
+<div class="empty">The review engine is waiting for AuroraDecisionLog.</div>
+</div>
+</article>
+<article class="card">
+<div class="section-head">
+<div>
+<div class="kicker">MANAGER CONTROL</div>
+<h2>Approval Centre</h2>
+<p>Aurora may propose improvements, but no rule becomes approved without the manager.</p>
+</div>
+<div class="approval-toolbar">
+<button class="engine-btn" id="runReviewEngine" type="button">Run review scan</button>
+<span class="badge watch" id="proposalCountBadge">0 PROPOSALS</span>
+</div>
+</div>
+<div class="approval-list" id="approvalList">
+<div class="empty">No evidence-backed proposals yet.</div>
+</div>
+</article>
+</section>
+<section class="card" style="margin-top:14px">
+<div class="section-head">
+<div>
+<div class="kicker">SAFE TESTING</div>
+<h2>Decision Replay Simulator</h2>
+<p>Replays a proposed change against matured historical decisions before anything is approved.</p>
+</div>
+<span class="badge info" id="replayProposalName">NO PROPOSAL SELECTED</span>
+</div>
+<div class="replay-summary">
+<div class="replay-stat"><small>Current sample</small><strong id="replayCurrentSample">—</strong></div>
+<div class="replay-stat"><small>Trial sample</small><strong id="replayTrialSample">—</strong></div>
+<div class="replay-stat"><small>Current success</small><strong id="replayCurrentRate">—</strong></div>
+<div class="replay-stat"><small>Trial success</small><strong id="replayTrialRate">—</strong></div>
+</div>
+<div class="lessons" id="replayExplanation" style="margin-top:12px">
+<div class="empty">Choose Replay on a proposal to compare it with the existing evidence.</div>
+</div>
+<div class="section-head" style="margin-top:17px">
+<div>
+<div class="kicker">APPROVED MEMORY</div>
+<h2>Manager-Approved Rule Register</h2>
+<p>Approved changes are recorded for Aurora’s shared scoring systems to consume.</p>
+</div>
+<span class="badge good" id="approvedRuleCount">0 APPROVED</span>
+</div>
+<div class="rule-register" id="approvedRuleRegister">
+<div class="empty">No learning changes have been approved.</div>
+</div>
+</section>
+<section class="card" style="margin-top:14px">
+<div class="section-head"><div><div class="kicker">BRAIN EVOLUTION</div><h2>Controlled Improvement Path</h2><p>Aurora proposes improvements only after enough evidence exists. No rule changes are automatic.</p></div><span class="badge watch">MANAGER APPROVAL REQUIRED</span></div>
+<div class="evolution">
+<div class="evo-step"><small class="label">Stage 1 • Live</small><strong>Decision Memory</strong><p>Record every recommendation and review it at 7, 30 and 90 days.</p></div>
+<div class="evo-step"><small class="label">Stage 2 • Live</small><strong>Accuracy &amp; Lessons</strong><p>Identify which actions, scores and asset types produce the strongest outcomes.</p></div>
+<div class="evo-step"><small class="label">Stage 3 • Manager Controlled</small><strong>Rule Suggestions</strong><p>Propose scoring-weight changes for the manager to approve or reject.</p></div>
+</div>
+</section>
+<footer class="footer">Aurora City FC Learning Centre • Brain performance is evidence, not a guarantee of future investment results.</footer>
+</div>
 <script>
 const AURORA_MASTER_URL="https://webbchrisuk-max.github.io/aurora-city-fc/AuroraMaster.json";
 const MASTER_URLS=["AuroraMaster.json",AURORA_MASTER_URL];
@@ -751,7 +723,6 @@ if(window.AuroraFC?.onDataChanged){
 }
 ["searchBox","actionFilter","resultFilter"].forEach(id=>document.getElementById(id).addEventListener("input",renderJournal));
 </script>
-
 <script id="aurora-learning-review-engine">
 const AURORA_LEARNING_DECISIONS_KEY="aurora_learning_proposal_decisions_v1";
 const AURORA_APPROVED_RULES_KEY="aurora_learning_approved_rules_v1";
@@ -1209,6 +1180,82 @@ if(document.readyState==="loading"){
   window.setTimeout(runLearningReview,800);
 }
 </script>
+<script id="auroraLearningGameShellBridge">
+(function(){
+  "use strict";
 
-</body>
+  const pageDetail = Object.freeze({
+    page:"learning",
+    title:"Learning Centre",
+    build:"learning-gameshell-content-v1-20260804"
+  });
+
+  function notifyShell(){
+    try{
+      if(
+        window.parent
+        && window.parent !== window
+      ){
+        window.parent.postMessage(
+          {
+            type:"aurora:department-ready",
+            detail:pageDetail
+          },
+          location.origin
+        );
+      }
+    }catch(_){}
+  }
+
+  window.AuroraLearningCentre =
+    Object.freeze({
+      getPageDetail(){
+        return pageDetail;
+      },
+      refresh(){
+        if(
+          typeof window.loadMaster
+          === "function"
+          && typeof window.applyLearningMaster
+          === "function"
+        ){
+          Promise.resolve(
+            window.loadMaster(true)
+          )
+            .then(
+              window.applyLearningMaster
+            )
+            .catch(
+              error => console.error(
+                "Learning Centre refresh failed",
+                error
+              )
+            );
+
+          return true;
+        }
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "aurora:learning-refresh-request"
+          )
+        );
+
+        return false;
+      }
+    });
+
+  if(
+    document.readyState
+    === "loading"
+  ){
+    document.addEventListener(
+      "DOMContentLoaded",
+      notifyShell,
+      {once:true}
+    );
+  }else{
+    notifyShell();
+  }
+})();</script></body>
 </html>
