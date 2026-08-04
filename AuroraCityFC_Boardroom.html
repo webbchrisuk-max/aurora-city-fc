@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 
-<html lang="en">
-<head><!-- Build: Universal Page Section Navigation • 24 Jul 2026 -->
+<html data-aurora-page="boardroom" data-aurora-shell-content="true" lang="en">
+<head><!-- Build: Aurora Boardroom • GameShell Content Page v1 • 04 Aug 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <!-- ===================== SECTION: PWA / APP INSTALL ===================== -->
-<link href="manifest.json" rel="manifest"/>
+
 <meta content="#030712" name="theme-color"/>
 <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
 <meta content="no-cache" http-equiv="Pragma"/>
@@ -14,7 +15,7 @@
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
-<title>Aurora City FC — Boardroom</title>
+<title>Aurora City FC — Boardroom</title><meta content="boardroom-gameshell-content-v1-20260804" name="aurora-build"/>
 <!-- Build: Aurora Motion Attention System • 24 Jul 2026 -->
 <!-- Build: Transfer-Centre-Only Ten-Month Mission • 24 Jul 2026 -->
 <!-- Build: Aurora M4 Integrated Mission Control • 24 Jul 2026 -->
@@ -1003,9 +1004,7 @@ body{padding:0!important}
   backdrop-filter:blur(5px);}
 </style>
 <!-- Hotfix: Ten-month income mission is displayed only in Transfer Centre • 24 Jul 2026 -->
-
 <!-- Build: Universal Sidebar Department Colours Fix • 24 Jul 2026 -->
-
 <style id="aurora-motion-system-styles">
 /* ===================== BOARDROOM MOTION ===================== */
 :root{
@@ -1113,35 +1112,15 @@ html[data-aurora-motion="off"] *:after{
 </style>
 <!-- Build: Aurora Connected Finance Department System • 26 Jul 2026 -->
 
-<style id="auroraPlainPageBaseline">
-/* ===================== CLEAN PAGE SHELL ===================== */
-html,body{
-  width:100%;
-  min-width:0;
-  margin-left:0;
-  margin-right:0;
-}
-body{padding-bottom:0}
-.fm-shell,
-.fm-workspace{
-  display:block;
-  width:100%;
-  max-width:none;
-  min-width:0;
-  margin:0;
-}
-</style>
-<!-- Aurora universal workflow navigation -->
-<link rel="stylesheet" href="aurora-navigation.css?v=20260729-3">
-<script src="aurora-navigation.js?v=20260729-3" defer></script>
+
+
+
 </head>
 <body>
 
-<div class="fm-shell">
 
-<div class="fm-workspace">
 <!-- ===================== SECTION: APP SHELL ===================== -->
-<main class="app">
+<main class="app" data-aurora-content-root="boardroom">
 <!-- ===================== SECTION: BOARDROOM HERO ===================== -->
 <section aria-label="Boardroom executive suite" class="boardroom-photo-hero aurora-section-anchor" id="boardroom-overview">
 <img alt="Aurora City FC executive boardroom meeting" class="boardroom-photo-banner" src="assets/aurora-city-fc/boardroom-executive-suite.png"/>
@@ -2134,12 +2113,8 @@ setTimeout(()=>{
 </div>
 </div>
 </div>
-<!-- ===================== SECTION: PWA SERVICE WORKER ===================== -->
-<script>
-if(window.AuroraFC) AuroraFC.registerServiceWorker();
-</script>
-</div>
-</div>
+
+
 
 
 <script>
@@ -2207,7 +2182,56 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 })();
 </script>
 <!-- ===================== AURORA CONNECTED SYSTEM V1 ===================== -->
+<script id="auroraBoardroomGameShellBridge">
+(function(){
+  "use strict";
 
+  const pageDetail = Object.freeze({
+    page:"boardroom",
+    title:"Boardroom",
+    build:"boardroom-gameshell-content-v1-20260804"
+  });
 
-</body>
+  function notifyShell(){
+    try{
+      if(window.parent && window.parent !== window){
+        window.parent.postMessage(
+          {
+            type:"aurora:department-ready",
+            detail:pageDetail
+          },
+          location.origin
+        );
+      }
+    }catch(_){}
+  }
+
+  window.AuroraBoardroom = Object.freeze({
+    getPageDetail(){
+      return pageDetail;
+    },
+    refresh(){
+      if(typeof window.loadData === "function"){
+        window.loadData(true);
+        return true;
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("aurora:boardroom-refresh-request")
+      );
+
+      return false;
+    }
+  });
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      notifyShell,
+      {once:true}
+    );
+  }else{
+    notifyShell();
+  }
+})();</script></body>
 </html>
