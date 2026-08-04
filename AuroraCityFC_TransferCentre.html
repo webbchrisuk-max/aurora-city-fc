@@ -4752,9 +4752,11 @@ function recoveredPaydayDeal_(budget){
 
   /* One-time recovery for the 4 Aug 2026 IG ISA deployment. This is only used
      when the optimiser route has vanished and no saved route snapshot exists. */
-  if((!snapshot||!Array.isArray(snapshot.rows)||!snapshot.rows.length)&&Math.abs((Number(execution.availableCash)||0)-8162.83)<1){
+  const recordedTradeCount=Object.values(execution.trades||{}).filter(trade=>Number(trade?.shares)>0&&Number(trade?.price)>0).length;
+  const isTodayActualExecution=Math.abs((Number(execution.availableCash)||0)-8162.83)<1&&recordedTradeCount===0;
+  if(isTodayActualExecution||(!snapshot||!Array.isArray(snapshot.rows)||!snapshot.rows.length)){
     snapshot={
-      savedAt:new Date().toISOString(),budget:8162.83,route:'Recovered IG ISA dividend deployment',mode:'maximum',
+      savedAt:new Date().toISOString(),budget:8162.83,route:'4 Aug completed IG ISA purchases',mode:'maximum',
       rows:[
         {ticker:'FGEN',amount:1618.68},{ticker:'SBRY',amount:1621.04},{ticker:'LMP',amount:1621.96},
         {ticker:'HICL',amount:1396.48},{ticker:'BATS',amount:992.29},{ticker:'AV',amount:273.54},{ticker:'LAND',amount:631.75}
@@ -4766,7 +4768,7 @@ function recoveredPaydayDeal_(budget){
   }
   if(!snapshot||!Array.isArray(snapshot.rows)||!snapshot.rows.length)return null;
   const rows=snapshot.rows.map(saved=>{
-    const row=holdingByTicker(saved.ticker)||{ticker:saved.ticker,name:saved.ticker,account:'IG ISA',annual_dps:0,annual_dps_total:0};
+    const row=findSecurity(saved.ticker)||{ticker:saved.ticker,name:saved.ticker,account:'IG ISA',annual_dps:0,annual_dps_total:0};
     const amount=Math.max(0,Number(saved.amount)||0);
     return {row,amount,income:Number(saved.income)||annualIncomeForAmount(row,amount),gate:{status:'safe',reasons:['Recovered saved payday route']}};
   }).filter(item=>item.amount>0);
@@ -5410,7 +5412,7 @@ function paydayTradeTotals(deal,saved){
     const price=parseNum(trade.price)||0;
     const fees=parseNum(trade.fees)||0;
     const cost=shares>0&&price>0?shares*price+fees:0;
-    const row=routeRows[ticker]||holdingByTicker(ticker)||null;
+    const row=routeRows[ticker]||findSecurity(ticker)||null;
     const rate=row?incomeRate(row):0;
     const added=cost>0&&Number.isFinite(rate)?cost*rate:0;
     if(cost>0)recorded++;
