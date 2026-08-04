@@ -3398,6 +3398,9 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </div>
 <div class="payday-actions">
 <button class="payday-complete-button" disabled="" id="completePaydayWindow" type="button">Complete transfer window</button>
+<button class="payday-reset-button" id="editPaydayCash" type="button">Edit transfer cash</button>
+<button class="payday-reset-button" id="undoPaydayFunding" type="button">Undo funding transfer</button>
+<button class="payday-reset-button" id="restorePaydayFunding" type="button" hidden>Restore last transfer</button>
 <button class="payday-reset-button" id="resetPaydayWindow" type="button">Reset payday record</button>
 <span id="paydayCompletionMessage">Complete every control before closing the window.</span>
 </div>
@@ -5316,7 +5319,7 @@ function savePaydayExecution(saved){saved.updatedAt=new Date().toISOString();saf
 function paydayTradeTotals(deal,saved){let invested=0,income=0,recorded=0;const details={};(deal?.rows||[]).forEach(item=>{const ticker=shortTicker(item.row.ticker);const trade=saved.trades[ticker]||{};const shares=parseNum(trade.shares)||0,price=parseNum(trade.price)||0,fees=parseNum(trade.fees)||0;const cost=shares>0&&price>0?shares*price+fees:0;const added=cost*incomeRate(item.row);if(cost>0)recorded++;invested+=cost;income+=Number.isFinite(added)?added:0;details[ticker]={shares,price,fees,cost,income:Number.isFinite(added)?added:0};});return {invested,income,recorded,details};}
 function renderPaydayExecution(deal){
   const panel=$('paydayExecutionPanel'),checklist=$('paydayChecklist'),tradeGrid=$('paydayTradeGrid');if(!panel||!checklist||!tradeGrid)return;const saved=paydayExecutionStore();panel.classList.toggle('open',Boolean(saved.open));panel.classList.toggle('completed',Boolean(saved.completedAt));
-  if($('openPaydayWindow'))$('openPaydayWindow').textContent=saved.open?'Close Payday Window':'Open Payday Window';if($('paydayAvailableCash'))$('paydayAvailableCash').value=saved.availableCash||0;
+  if($('openPaydayWindow'))$('openPaydayWindow').textContent=saved.open?'Close Payday Window':'Open Payday Window';if($('paydayAvailableCash')){const cashInput=$('paydayAvailableCash');cashInput.value=saved.availableCash||0;cashInput.disabled=false;cashInput.readOnly=false;cashInput.title='Editable Transfer Centre cash balance';}if($('restorePaydayFunding'))$('restorePaydayFunding').hidden=!(saved.lastFundingSnapshot&&parseNum(saved.lastFundingSnapshot.availableCash)>0);
   const refreshAge=lastLiveRefreshAt?(Date.now()-new Date(lastLiveRefreshAt).getTime())/3600000:Infinity;
   const pricesFresh=refreshAge<=6;
   const routeReady=(deal?.rows||[]).length>0;
@@ -6645,7 +6648,37 @@ document.addEventListener('change',event=>{
 document.addEventListener('change',event=>{
   const trade=event.target.closest?.('[data-payday-trade-field]');if(trade){const saved=paydayExecutionStore();const ticker=shortTicker(trade.dataset.paydayTradeTicker);saved.trades[ticker]=saved.trades[ticker]||{};saved.trades[ticker][trade.dataset.paydayTradeField]=trade.value;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());return;}
 });
-$('paydayAvailableCash')?.addEventListener('change',event=>{const saved=paydayExecutionStore();saved.availableCash=Math.max(0,parseNum(event.target.value)||0);savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());});
+$('paydayAvailableCash')?.addEventListener('change',event=>{const saved=paydayExecutionStore();saved.availableCash=Math.max(0,parseNum(event.target.value)||0);saved.manualCashOverride=true;saved.completedAt='';savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());});
+$('editPaydayCash')?.addEventListener('click',()=>{
+  const input=$('paydayAvailableCash');if(!input)return;
+  const saved=paydayExecutionStore();
+  const current=Math.max(0,parseNum(saved.availableCash)||0);
+  const entered=window.prompt('Enter the corrected available transfer cash. This changes the Transfer Centre budget only and does not alter broker trades or AuroraData purchase records.',current.toFixed(2));
+  if(entered===null)return;
+  const next=Math.max(0,parseNum(entered)||0);
+  saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};
+  saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';
+  savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());
+});
+$('undoPaydayFunding')?.addEventListener('click',()=>{
+  const saved=paydayExecutionStore();
+  const current=Math.max(0,parseNum(saved.availableCash)||0);
+  if(!(current>0)){if($('paydayCompletionMessage'))$('paydayCompletionMessage').textContent='There is no transferred funding to undo.';return;}
+  const hasTrades=Object.values(saved.trades||{}).some(t=>(parseNum(t?.shares)||0)>0||(parseNum(t?.price)||0)>0||(parseNum(t?.fees)||0)>0);
+  const warning=hasTrades
+    ? 'Undo the funding transfer? The available cash will return to £0 and the route will reopen. Existing broker fills and AuroraData purchase records will NOT be deleted.'
+    : 'Undo the funding transfer and return the available cash to £0?';
+  if(!window.confirm(warning))return;
+  saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};
+  saved.availableCash=0;saved.manualCashOverride=true;saved.completedAt='';saved.open=true;
+  savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());
+});
+$('restorePaydayFunding')?.addEventListener('click',()=>{
+  const saved=paydayExecutionStore();const snap=saved.lastFundingSnapshot;
+  if(!snap||!(parseNum(snap.availableCash)>0))return;
+  saved.availableCash=Math.max(0,parseNum(snap.availableCash)||0);saved.manualCashOverride=true;saved.completedAt='';saved.open=true;
+  delete saved.lastFundingSnapshot;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());
+});
 document.addEventListener('click',event=>{
   const exitDecision=event.target.closest?.('[data-exit-decision]');if(exitDecision){setSmartExitDecision(exitDecision.dataset.exitDecisionTicker,exitDecision.dataset.exitDecision);renderSmartExitDesk();return;}
 });
@@ -7442,9 +7475,11 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     // The Finance Department budget is authoritative. Load it into the live deal builder
     // before asking Aurora to size the route, so the split is generated automatically on entry.
     const authorisedBudget = round(Math.max(0,Number(current?.budget || fallback.budget || 0)));
+    const paydaySaved = typeof paydayExecutionStore === 'function' ? paydayExecutionStore() : {};
     ["transferBudgetInput","paydayAvailableCash","m3ReleasedCash","m5BuilderBudget"].forEach(id => {
       const node = byId(id);
-      if(node && authorisedBudget > 0 && Math.abs(number(node.value) - authorisedBudget) > .009){
+      const preserveManualCash = id === 'paydayAvailableCash' && paydaySaved.manualCashOverride;
+      if(node && !preserveManualCash && authorisedBudget > 0 && Math.abs(number(node.value) - authorisedBudget) > .009){
         node.value = authorisedBudget.toFixed(2);
       }
     });
