@@ -2841,7 +2841,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v3-20260804-endpoint-repair" name="aurora-build"/></head>
+<meta content="transfer-gameshell-content-v4-20260804-jsonp-read-fix" name="aurora-build"/></head>
 <body>
 
 
@@ -3713,9 +3713,64 @@ function updateRegistrationPreview(form){
   const submit=form.querySelector('button[type="submit"]');
   if(submit&&!registrationBusy){submit.textContent=p.holding?'Confirm top-up':'Confirm new signing';submit.disabled=safety.blocking.length>0;}
 }
+const REGISTRATION_JSONP_ACTIONS=new Set([
+  'test',
+  'getPlatformRules',
+  'listIncomingOffers',
+  'listSellTickets',
+  'listRecentRegistrations'
+]);
+
+function registrationJsonp(payload,timeoutMs=20000){
+  if(!registrationConnection.endpoint||!registrationConnection.token){
+    return Promise.reject(new Error('Connect the Registration Desk to the Apps Script web app first.'));
+  }
+  return new Promise((resolve,reject)=>{
+    const callbackName='__auroraRegistrationJsonp_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    let finished=false;
+    const cleanup=()=>{
+      if(finished)return;
+      finished=true;
+      clearTimeout(timer);
+      try{delete window[callbackName];}catch(_){window[callbackName]=undefined;}
+      script.remove();
+    };
+    const timer=setTimeout(()=>{
+      cleanup();
+      reject(new Error('AuroraData did not return a readable response. Deploy the Apps Script JSONP update, then test the connection again.'));
+    },timeoutMs);
+    window[callbackName]=result=>{
+      cleanup();
+      if(result&&result.ok===false){reject(new Error(result.message||'AuroraData request failed.'));return;}
+      resolve(result||{});
+    };
+    script.onerror=()=>{
+      cleanup();
+      reject(new Error('AuroraData read connection failed. Check the deployed /exec URL and deploy the Apps Script JSONP update.'));
+    };
+    const url=new URL(registrationConnection.endpoint);
+    url.searchParams.set('token',registrationConnection.token);
+    url.searchParams.set('payload',JSON.stringify(payload));
+    url.searchParams.set('callback',callbackName);
+    url.searchParams.set('_',String(Date.now()));
+    script.src=url.toString();
+    script.async=true;
+    document.head.appendChild(script);
+  });
+}
+
 async function postRegistration(payload){
   if(!registrationConnection.endpoint||!registrationConnection.token) throw new Error('Connect the Registration Desk to the Apps Script web app first.');
-  const body=new URLSearchParams(); body.set('token',registrationConnection.token); body.set('payload',JSON.stringify(payload));
+
+  const action=String(payload?.action||'');
+  if(REGISTRATION_JSONP_ACTIONS.has(action)){
+    return registrationJsonp(payload);
+  }
+
+  const body=new URLSearchParams();
+  body.set('token',registrationConnection.token);
+  body.set('payload',JSON.stringify(payload));
   try{
     const response=await fetch(registrationConnection.endpoint,{method:'POST',body,redirect:'follow'});
     const raw=await response.text();
@@ -3737,12 +3792,11 @@ async function postRegistration(payload){
   }catch(err){
     if(String(err?.message||'').toLowerCase().includes('failed to fetch')||err instanceof TypeError){
       await fetch(registrationConnection.endpoint,{method:'POST',mode:'no-cors',body,redirect:'follow'});
-      return {ok:true,queued:true,transactionId:payload.transactionId,message:'Request submitted. Browser security prevented the confirmation response; check AuroraData or refresh after the export runs.'};
+      return {ok:true,queued:true,transactionId:payload.transactionId,message:'Request securely submitted to AuroraData. The page will now reload the confirmed result through the read connection.'};
     }
     throw err;
   }
 }
-
 function applyPlatformRules(result){
   const rows=Array.isArray(result?.platformRules)?result.platformRules:[];
   const details={};
@@ -6258,7 +6312,8 @@ async function generateOfferRound(force=true){
   try{
     const result=await postRegistration({action:'generateIncomingOffers',force,maxOffers:3,source:'Aurora City FC Incoming Offers',userAgent:navigator.userAgent});
     if(msg){msg.textContent=result.message||'Offer round completed.';msg.className=`registration-message ${result.queued?'pending':'success'}`;}
-    if(!result.queued) await loadIncomingOffers(false);
+    if(result.queued){await new Promise(resolve=>setTimeout(resolve,1600));}
+    await loadIncomingOffers(false);
   }catch(err){if(msg){msg.textContent=err.message||'The market round failed.';msg.className='registration-message error';}}
   finally{incomingOfferBusy=false;if(button){button.disabled=false;button.textContent='Open new market round';}}
 }
@@ -6273,7 +6328,8 @@ async function respondToIncomingOffer(offerId,response,button,extra={}){
   try{
     const result=await postRegistration({action:'respondIncomingOffer',offerId,response,requestedShares:Number(offer.requestedShares||0),offerValueGbp:Number(offer.offerValueGbp||0),estimatedGainLossGbp:Number(offer.estimatedGainLossGbp||0),annualIncomeLostGbp:Number(offer.annualIncomeLostGbp||0),ownedHoldingSynced:Boolean(offer.ownedHoldingSynced),...extra,source:'Aurora City FC Incoming Offers',userAgent:navigator.userAgent});
     if(msg){msg.textContent=result.message||'Offer updated.';msg.className=`registration-message ${result.queued?'pending':'success'}`;}
-    if(!result.queued){await loadIncomingOffers(false);if(response==='ACCEPT')await loadSellTickets();}
+    if(result.queued){await new Promise(resolve=>setTimeout(resolve,1600));}
+    await loadIncomingOffers(false);if(response==='ACCEPT')await loadSellTickets();
   }catch(err){if(msg){msg.textContent=err.message||'Offer response failed.';msg.className='registration-message error';}if(button)button.disabled=false;}
   finally{incomingOfferBusy=false;}
 }
