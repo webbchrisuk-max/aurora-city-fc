@@ -1279,6 +1279,10 @@ body:before{
 @media(max-width:760px){.manager-command-header{min-height:0!important;}}
 </style>
 
+
+<style id="auroraManagerRichNotificationReconnectStyles">
+#beastAlertList{display:grid;gap:10px}.aurora-rich-card{--rich-accent:34,211,238;--rich-solid:#22d3ee;display:flex!important;flex-direction:column;gap:10px;padding:14px!important;border-color:rgba(var(--rich-accent),.28)!important;background:radial-gradient(circle at 100% 0%,rgba(var(--rich-accent),.18),transparent 42%),linear-gradient(145deg,rgba(8,18,38,.98),rgba(4,10,24,.99))!important;box-shadow:inset 3px 0 0 rgba(var(--rich-accent),.76),0 14px 30px rgba(0,0,0,.22)}.aurora-rich-featured{min-height:150px;border-color:rgba(var(--rich-accent),.45)!important;box-shadow:inset 4px 0 0 var(--rich-solid),0 20px 44px rgba(0,0,0,.30),0 0 28px rgba(var(--rich-accent),.10)}.aurora-rich-data{--rich-accent:251,113,133;--rich-solid:#fb7185}.aurora-rich-transfer{--rich-accent:245,158,11;--rich-solid:#f59e0b}.aurora-rich-income{--rich-accent:96,165,250;--rich-solid:#60a5fa}.aurora-rich-squad{--rich-accent:34,211,238;--rich-solid:#22d3ee}.aurora-rich-target,.aurora-rich-milestone{--rich-accent:250,204,21;--rich-solid:#facc15}.aurora-rich-topline,.aurora-rich-main,.aurora-rich-footer{display:flex;align-items:center;gap:10px;width:100%}.aurora-rich-topline{justify-content:space-between}.aurora-rich-topline>small{color:rgb(var(--rich-accent));font-size:8px;font-weight:1000;letter-spacing:.14em;text-transform:uppercase}.aurora-rich-badge{padding:5px 8px;border:1px solid rgba(var(--rich-accent),.30);border-radius:999px;color:rgb(var(--rich-accent));background:rgba(var(--rich-accent),.10);font-size:7px;font-weight:1000;letter-spacing:.09em;text-transform:uppercase}.aurora-rich-main{align-items:flex-start}.aurora-rich-icon{width:44px!important;height:44px!important;flex:0 0 44px;background:rgba(var(--rich-accent),.12)!important;border:1px solid rgba(var(--rich-accent),.25)!important;font-size:20px!important}.aurora-rich-copy{flex:1 1 auto;min-width:0}.aurora-rich-copy>strong{font-size:13px!important;line-height:1.25}.aurora-rich-copy>p{margin-top:4px!important;font-size:9px!important;line-height:1.45!important}.aurora-rich-value{flex:0 0 auto;min-width:82px;text-align:right}.aurora-rich-value strong{display:block;color:rgb(var(--rich-accent));font-size:18px;line-height:1;white-space:nowrap}.aurora-rich-value small{display:block;margin-top:5px;color:#8193aa;font-size:7px;font-weight:950;letter-spacing:.1em;text-transform:uppercase}.aurora-rich-progress{width:100%;height:5px;overflow:hidden;border-radius:999px;background:rgba(148,163,184,.13)}.aurora-rich-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,rgba(var(--rich-accent),.70),var(--rich-solid))}.aurora-rich-footer{justify-content:space-between;color:#8294aa;font-size:8px}.aurora-rich-footer>span:first-child{min-width:0}.aurora-rich-footer small{display:block;color:rgb(var(--rich-accent));font-size:8px;font-weight:900;text-transform:uppercase}.aurora-rich-footer b{display:block;margin-top:3px;overflow:hidden;color:#93a4bb;font-size:8px;font-weight:700;text-overflow:ellipsis;white-space:nowrap}.aurora-rich-action{display:inline-flex;align-items:center;gap:6px;margin-left:auto;padding:6px 8px;border:1px solid rgba(var(--rich-accent),.20);border-radius:9px;color:#dcecff;background:rgba(var(--rich-accent),.07);font-weight:900;white-space:nowrap}.aurora-rich-action b{display:inline;margin:0;color:rgb(var(--rich-accent))}@media(max-width:560px){.aurora-rich-main{flex-wrap:wrap}.aurora-rich-value{width:100%;padding-left:54px;text-align:left}.aurora-rich-footer{align-items:flex-start;flex-direction:column}.aurora-rich-action{margin-left:0}}
+</style>
 </head>
 <body>
 <script id="auroraImmersionCleanup">
@@ -2996,18 +3000,71 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
     q('beastManagerRating').textContent=m.rating.toFixed(1);const title=m.rating>=9.2?'Elite Income Architect':m.rating>=8.5?'Outstanding Rebuild':m.rating>=7.7?'Strong Manager Performance':m.rating>=6.8?'Steady Progress':'Rebuild in Development';q('beastManagerTitle').textContent=title;q('beastManagerNote').textContent=`Board ${m.board}/100 • ${Number.isFinite(m.yieldRate)?percent(m.yieldRate*100):'Yield building'} • ${m.plan?.rows?.length?'Deal sheet synced':'Route awaiting sync'}`;q('beastRatingStars').textContent='★'.repeat(Math.round(m.rating/2))+'☆'.repeat(5-Math.round(m.rating/2));
   }
   function alertData(){
-    const m=journeyMetrics(),alerts=[];const now='Now';
-    if(m.latest){const age=(Date.now()-m.latest.getTime())/36e5;if(age>8)alerts.push({level:age>26?'bad':'warn',icon:'↻',title:'Aurora data needs a refresh',text:`The newest dated row is ${age.toFixed(1)} hours old.`,time:'Data'});}
-    if(m.plan?.rows?.length)alerts.push({level:'ok',icon:'⇄',title:'Payday route is synced',text:`${m.plan.rows.map(r=>r.displayTicker||r.ticker).join(' / ')} • ${cash(num(m.plan.totalIncome))}/year estimated income.`,time:'Transfer'});else alerts.push({level:'warn',icon:'⇄',title:'Transfer deal sheet not synced',text:'Open the Transfer Centre before payday so the dashboard can read the final allocation.',time:'Transfer'});
-    try{const d=nextDividendPayment();if(d)alerts.push({level:'ok',icon:'💷',title:`${d.ticker} dividend is next`,text:`Due ${d.date.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}${d.amountKnown?` • ${cash(d.amount)}`:''}.`,time:'Income'})}catch(_){}
-    const weak=activeRows().filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60}).sort((a,b)=>strength(a)-strength(b)).slice(0,2);weak.forEach(r=>alerts.push({level:'warn',icon:'⚠',title:`${ticker(r)} is under review`,text:`Buy-strength score ${Math.round(strength(r))}. Open the player profile before adding more.`,time:'Squad'}));
-    activeRows().forEach(r=>{const live=price(r),target=num(r?.target_price??r?.buy_price??r?.fair_value);if(Number.isFinite(live)&&Number.isFinite(target)&&live<=target)alerts.push({level:'ok',icon:'🎯',title:`${ticker(r)} has reached its target zone`,text:`Live ${live.toFixed(2)} versus target ${target.toFixed(2)}.`,time:'Price'})});
-    const gap=Math.max(0,625-m.monthly);alerts.push({level:gap<=0?'ok':'info',icon:'🏆',title:gap<=0?'£625 monthly objective achieved':`${cash(gap)} per month to the target`,text:gap<=0?'Aurora has reached the primary income objective.':'The target journey updates automatically after registered purchases.',time:'Objective'});
+    const m=journeyMetrics(),alerts=[];
+    const targetProgress=clamp((m.monthly/625)*100,0,100);
+    if(m.latest){
+      const age=(Date.now()-m.latest.getTime())/36e5;
+      if(age>8)alerts.push({
+        level:age>26?'bad':'warn',icon:'↻',title:'Aurora data needs a refresh',
+        text:`The newest dated row is ${age.toFixed(1)} hours old.`,time:'Data',
+        rich:{type:'data',kicker:'Data Command',badge:age>26?'Overdue':'Refresh',value:`${age.toFixed(1)}h`,valueLabel:'source age',secondary:'Refresh AuroraMaster',progress:Math.max(0,100-Math.min(100,age/48*100)),featured:age>26,actionText:'Refresh data'}
+      });
+    }
+    if(m.plan?.rows?.length)alerts.push({
+      level:'ok',icon:'⇄',title:'Payday route is synced',
+      text:`${m.plan.rows.map(r=>r.displayTicker||r.ticker).join(' / ')} • ${cash(num(m.plan.totalIncome))}/year estimated income.`,time:'Transfer',
+      rich:{type:'transfer',kicker:'Transfer Centre',badge:`${m.plan.rows.length} targets`,value:cash(num(m.plan.totalIncome)),valueLabel:'annual income',secondary:m.plan.rows.map(r=>r.displayTicker||r.ticker).join(' / '),progress:100,featured:true,actionText:'Open Transfer Centre'}
+    });else alerts.push({
+      level:'warn',icon:'⇄',title:'Transfer deal sheet not synced',
+      text:'Open the Transfer Centre before payday so the dashboard can read the final allocation.',time:'Transfer',
+      rich:{type:'transfer',kicker:'Transfer Centre',badge:'Action needed',value:'Not synced',valueLabel:'deal sheet',secondary:'Final allocation required',progress:15,featured:true,actionText:'Open Transfer Centre'}
+    });
+    try{
+      const d=nextDividendPayment();
+      if(d)alerts.push({
+        level:'ok',icon:'💷',title:`${d.ticker} dividend is next`,
+        text:`Due ${d.date.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}${d.amountKnown?` • ${cash(d.amount)}`:''}.`,time:'Income',
+        rich:{type:'income',kicker:'Income Calendar',badge:'Next payment',value:d.amountKnown?cash(d.amount):d.ticker,valueLabel:d.amountKnown?'due':'ticker',secondary:d.date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),progress:null,featured:false,actionText:'View dividend'}
+      });
+    }catch(_){}
+    const weak=activeRows().filter(r=>{const s=strength(r);return Number.isFinite(s)&&s<60}).sort((a,b)=>strength(a)-strength(b)).slice(0,2);
+    weak.forEach(r=>alerts.push({
+      level:'warn',icon:'⚠',title:`${ticker(r)} is under review`,
+      text:`Buy-strength score ${Math.round(strength(r))}. Open the player profile before adding more.`,time:'Squad',
+      rich:{type:'squad',kicker:'Squad Review',badge:'Monitor',value:String(Math.round(strength(r))),valueLabel:'buy score',secondary:name(r),progress:clamp(strength(r),0,100),featured:false,actionText:'Open player profile'}
+    }));
+    activeRows().forEach(r=>{
+      const live=price(r),target=num(r?.target_price??r?.buy_price??r?.fair_value);
+      if(Number.isFinite(live)&&Number.isFinite(target)&&live<=target)alerts.push({
+        level:'ok',icon:'🎯',title:`${ticker(r)} has reached its target zone`,
+        text:`Live ${live.toFixed(2)} versus target ${target.toFixed(2)}.`,time:'Price',
+        rich:{type:'target',kicker:'Price Target',badge:'Target reached',value:live.toFixed(2),valueLabel:'live price',secondary:`Target ${target.toFixed(2)}`,progress:100,featured:false,actionText:'Review holding'}
+      });
+    });
+    const gap=Math.max(0,625-m.monthly);
+    alerts.push({
+      level:gap<=0?'ok':'info',icon:'🏆',
+      title:gap<=0?'£625 monthly objective achieved':`${cash(gap)} per month to the target`,
+      text:gap<=0?'Aurora has reached the primary income objective.':'The target journey updates automatically after registered purchases.',time:'Objective',
+      rich:{type:'milestone',kicker:'Income Objective',badge:gap<=0?'Achieved':'In progress',value:cash(m.monthly),valueLabel:'per month',secondary:gap<=0?'Main objective complete':`${cash(gap)} remaining`,progress:targetProgress,featured:gap<=0,actionText:'View income journey'}
+    });
     return alerts.slice(0,9);
   }
   function renderAlerts(){
-    latestAlerts=alertData();const box=q('beastAlertList');if(box)box.innerHTML=latestAlerts.length?latestAlerts.map(a=>`<div class="beast-alert ${a.level==='info'?'':a.level}"><span class="beast-alert-icon">${a.icon}</span><span><strong>${a.title}</strong><p>${a.text}</p></span><span class="beast-alert-time">${a.time}</span></div>`).join(''):'<div class="beast-empty">No manager alerts right now.</div>';
-    const signature=JSON.stringify(latestAlerts.map(a=>[a.title,a.text]));latestAlertSignature=signature;const read=localStorage.getItem(READ_KEY);const count=read===signature?0:latestAlerts.length;const badge=q('beastNotificationCount');if(badge){badge.hidden=count===0;badge.textContent=String(count)}
+    latestAlerts=alertData();
+    const box=q('beastAlertList');
+    if(box)box.innerHTML=latestAlerts.length?latestAlerts.map(a=>{
+      const r=a.rich||{};
+      const progress=Number.isFinite(r.progress)?`<div class="aurora-rich-progress"><i style="width:${clamp(r.progress,0,100)}%"></i></div>`:'';
+      const value=r.value?`<span class="aurora-rich-value"><strong>${r.value}</strong><small>${r.valueLabel||''}</small></span>`:'';
+      return `<article class="beast-alert aurora-rich-card aurora-rich-${r.type||'update'} ${r.featured?'aurora-rich-featured':''} ${a.level==='info'?'':a.level}">
+        <div class="aurora-rich-topline"><small>${r.kicker||a.time}</small>${r.badge?`<span class="aurora-rich-badge">${r.badge}</span>`:''}</div>
+        <div class="aurora-rich-main"><span class="beast-alert-icon aurora-rich-icon">${a.icon}</span><span class="aurora-rich-copy"><strong>${a.title}</strong><p>${a.text}</p></span>${value}</div>
+        ${progress}
+        <div class="aurora-rich-footer"><span><small>${a.time}</small>${r.secondary?`<b>${r.secondary}</b>`:''}</span><span class="aurora-rich-action">${r.actionText||'Open'} <b>→</b></span></div>
+      </article>`;
+    }).join(''):'<div class="beast-empty">No manager alerts right now.</div>';
+    const signature=JSON.stringify(latestAlerts.map(a=>[a.title,a.text,a.rich?.value,a.rich?.progress]));latestAlertSignature=signature;const read=localStorage.getItem(READ_KEY);const count=read===signature?0:latestAlerts.length;const badge=q('beastNotificationCount');if(badge){badge.hidden=count===0;badge.textContent=String(count)}
   }
   function tickerMessages(){
     const m=journeyMetrics(),items=[];items.push(`Manager Rating ${m.rating.toFixed(1)} • ${cash(m.monthly)}/month • ${cash(Math.max(0,625-m.monthly))} to the main objective`);
