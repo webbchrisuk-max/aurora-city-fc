@@ -2562,7 +2562,123 @@
 @keyframes auroraShellNotificationDrop{from{opacity:0;transform:translateY(-8px) scale(.985)}to{opacity:1;transform:none}}
 @media(max-width:720px){#auroraShellNotificationPanel{right:10px;top:auto;bottom:calc(64px + var(--safe-bottom));width:calc(100vw - 20px);max-height:70dvh;border-radius:22px}}
 </style>
-<meta name="aurora-build" content="gameshell-global-notification-owner-v5-20260805">
+<meta name="aurora-build" content="gameshell-global-controls-v6-20260805">
+
+<style id="auroraShellGlobalToolStyles">
+body.shell-tool-open{overflow:hidden!important}
+#auroraShellToolLayer{
+  position:fixed;
+  z-index:955;
+  inset:0;
+  display:none;
+  place-items:center;
+  padding:
+    calc(var(--shell-header-height) + var(--safe-top) + 14px)
+    calc(16px + var(--safe-right))
+    calc(16px + var(--safe-bottom))
+    calc(16px + var(--safe-left));
+  background:rgba(1,5,15,.76);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px)
+}
+#auroraShellToolLayer.open{display:grid;animation:auroraShellToolFade .18s ease-out}
+.aurora-shell-tool-card{
+  width:min(980px,100%);
+  height:min(790px,calc(100dvh - var(--shell-header-height) - var(--safe-top) - 30px));
+  min-height:420px;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  overflow:hidden;
+  border:1px solid rgba(125,211,252,.28);
+  border-radius:25px;
+  background:
+    radial-gradient(circle at 96% 0%,rgba(34,211,238,.12),transparent 34%),
+    linear-gradient(180deg,rgba(7,20,40,.995),rgba(2,7,18,.998));
+  box-shadow:0 34px 110px rgba(0,0,0,.72)
+}
+.aurora-shell-tool-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:14px 16px;
+  border-bottom:1px solid rgba(125,211,252,.14);
+  background:linear-gradient(180deg,rgba(8,27,50,.99),rgba(5,16,34,.98))
+}
+.aurora-shell-tool-head-copy{min-width:0}
+.aurora-shell-tool-head small{
+  display:block;
+  color:#67e8f9;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.13em;
+  text-transform:uppercase
+}
+.aurora-shell-tool-head h2{
+  margin:5px 0 0;
+  color:#f2f8ff;
+  font-size:20px;
+  letter-spacing:-.04em
+}
+.aurora-shell-tool-head p{
+  margin:4px 0 0;
+  color:#8ea0b7;
+  font-size:10px;
+  line-height:1.4
+}
+#auroraShellToolClose{
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(251,113,133,.30);
+  border-radius:13px;
+  color:#fecdd3;
+  background:rgba(127,29,29,.22);
+  font-size:24px;
+  cursor:pointer
+}
+#auroraShellToolFrame{
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  border:0;
+  background:#020612
+}
+.aurora-shell-tool-loading{
+  position:absolute;
+  inset:50% auto auto 50%;
+  transform:translate(-50%,-50%);
+  color:#93c5fd;
+  font-size:11px;
+  font-weight:900;
+  pointer-events:none
+}
+#auroraShellToolLayer[data-ready="true"] .aurora-shell-tool-loading{display:none}
+@keyframes auroraShellToolFade{
+  from{opacity:0}
+  to{opacity:1}
+}
+@media(max-width:760px){
+  #auroraShellToolLayer{
+    padding:
+      calc(var(--shell-header-height) + var(--safe-top) + 6px)
+      6px
+      calc(6px + var(--safe-bottom))
+  }
+  .aurora-shell-tool-card{
+    width:100%;
+    height:calc(100dvh - var(--shell-header-height) - var(--safe-top) - 12px);
+    min-height:0;
+    border-radius:20px
+  }
+  .aurora-shell-tool-head{padding:12px}
+  .aurora-shell-tool-head h2{font-size:18px}
+}
+</style>
+
 </head>
 
 <body>
@@ -2743,6 +2859,42 @@
     </div>
   </div>
   <div class="aurora-shell-notification-list" id="auroraShellNotificationList"></div>
+</section>
+
+<section
+  id="auroraShellToolLayer"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby="auroraShellToolTitle"
+  data-ready="false"
+>
+  <div class="aurora-shell-tool-card">
+    <div class="aurora-shell-tool-head">
+      <div class="aurora-shell-tool-head-copy">
+        <small>Aurora Global Command</small>
+        <h2 id="auroraShellToolTitle">Manager Tool</h2>
+        <p id="auroraShellToolDescription">
+          Opens above the current department without changing page.
+        </p>
+      </div>
+      <button
+        id="auroraShellToolClose"
+        type="button"
+        aria-label="Close manager tool"
+      >×</button>
+    </div>
+    <div style="position:relative;min-height:0">
+      <span class="aurora-shell-tool-loading">
+        Loading manager command tool…
+      </span>
+      <iframe
+        id="auroraShellToolFrame"
+        src="about:blank"
+        title="Aurora manager command tool"
+      ></iframe>
+    </div>
+  </div>
 </section>
 
   <section
@@ -3052,6 +3204,26 @@
         "auroraShellLayoutButton"
       );
 
+      const toolLayer = document.getElementById(
+        "auroraShellToolLayer"
+      );
+
+      const toolFrame = document.getElementById(
+        "auroraShellToolFrame"
+      );
+
+      const toolTitle = document.getElementById(
+        "auroraShellToolTitle"
+      );
+
+      const toolDescription = document.getElementById(
+        "auroraShellToolDescription"
+      );
+
+      const toolClose = document.getElementById(
+        "auroraShellToolClose"
+      );
+
       const allowedFiles = new Set(
         ROUTES.map(route => route.file)
       );
@@ -3067,6 +3239,9 @@
       let childCountTimer = 0;
       let pendingManagerAction = "";
       let childPointerCleanup = null;
+      let activeShellTool = "";
+      let toolActivationTimer = 0;
+      let toolFrameLoaded = false;
 
       function escapeHtml(value){
         return String(value).replace(
@@ -3688,6 +3863,7 @@
         }
 
         closeNavigation();
+        closeShellManagerTool();
 
         if(
           file === currentFile
@@ -3965,29 +4141,252 @@
         return true;
       }
 
+
+      const SHELL_TOOL_COPY = Object.freeze({
+        decision:{
+          title:"Decision Queue",
+          description:"Review manager actions without leaving the current Aurora department."
+        },
+        log:{
+          title:"Manager Action Log",
+          description:"Open the saved club history while keeping the current page underneath."
+        },
+        layout:{
+          title:"Dashboard Controls",
+          description:"Change Manager Dashboard display controls without navigating away."
+        }
+      });
+
+      function closeShellManagerTool(){
+        window.clearTimeout(toolActivationTimer);
+        activeShellTool = "";
+
+        try{
+          const api =
+            toolFrame?.contentWindow
+              ?.AuroraManagerPanels;
+
+          api?.closeDecisionQueue?.();
+          api?.closeLayout?.();
+        }catch(_){}
+
+        toolLayer?.classList.remove("open");
+        toolLayer?.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+        toolLayer?.setAttribute(
+          "data-ready",
+          "false"
+        );
+
+        document.body.classList.remove(
+          "shell-tool-open"
+        );
+
+        [decisionButton,logButton,layoutButton]
+          .forEach(button =>
+            button?.classList.remove("is-active")
+          );
+      }
+
+      function styleShellToolDocument(
+        documentObject,
+        action
+      ){
+        if(!documentObject?.head) return;
+
+        let style = documentObject.getElementById(
+          "auroraShellEmbeddedManagerToolStyles"
+        );
+
+        if(!style){
+          style = documentObject.createElement("style");
+          style.id =
+            "auroraShellEmbeddedManagerToolStyles";
+          documentObject.head.appendChild(style);
+        }
+
+        style.textContent = `
+          html,body{
+            background:#020612!important;
+            background-attachment:scroll!important
+          }
+          body:before,body:after{
+            display:none!important
+          }
+          [data-aurora-hero],
+          #auroraHero{
+            display:none!important
+          }
+          main.app{
+            max-width:none!important;
+            width:100%!important;
+            padding:12px!important
+          }
+          ${action === "log" ? `
+            main.app > *{
+              display:none!important
+            }
+            main.app > .manager-command-grid{
+              display:grid!important
+            }
+            .manager-command-grid > *{
+              display:none!important
+            }
+            #beastActionLog{
+              display:flex!important;
+              grid-column:1/-1!important;
+              min-height:calc(100dvh - 24px)!important
+            }
+          ` : ""}
+        `;
+
+        documentObject.body?.setAttribute(
+          "data-aurora-shell-tool",
+          action
+        );
+      }
+
+      function activateShellManagerTool(
+        action,
+        attempt = 0
+      ){
+        if(
+          !activeShellTool
+          || activeShellTool !== action
+        ){
+          return;
+        }
+
+        try{
+          const childWindow =
+            toolFrame?.contentWindow;
+
+          const documentObject =
+            toolFrame?.contentDocument;
+
+          if(documentObject){
+            styleShellToolDocument(
+              documentObject,
+              action
+            );
+          }
+
+          const api =
+            childWindow?.AuroraManagerPanels;
+
+          if(api){
+            if(action === "decision"){
+              api.openDecisionQueue?.();
+            }else if(action === "log"){
+              api.openLog?.();
+            }else if(action === "layout"){
+              api.openLayout?.();
+            }
+
+            toolLayer?.setAttribute(
+              "data-ready",
+              "true"
+            );
+            return;
+          }
+        }catch(_){}
+
+        if(attempt < 60){
+          toolActivationTimer =
+            window.setTimeout(
+              () => activateShellManagerTool(
+                action,
+                attempt + 1
+              ),
+              100
+            );
+        }else{
+          toolLayer?.setAttribute(
+            "data-ready",
+            "true"
+          );
+        }
+      }
+
+      function openShellManagerTool(action){
+        const copy =
+          SHELL_TOOL_COPY[action]
+          || SHELL_TOOL_COPY.decision;
+
+        activeShellTool = action;
+
+        closeNavigation();
+        closeLogout();
+        window.AuroraShellNotifications
+          ?.close?.();
+
+        toolTitle.textContent = copy.title;
+        toolDescription.textContent =
+          copy.description;
+
+        toolLayer.classList.add("open");
+        toolLayer.setAttribute(
+          "aria-hidden",
+          "false"
+        );
+        toolLayer.setAttribute(
+          "data-ready",
+          "false"
+        );
+
+        document.body.classList.add(
+          "shell-tool-open"
+        );
+
+        [decisionButton,logButton,layoutButton]
+          .forEach(button =>
+            button?.classList.remove("is-active")
+          );
+
+        const activeButton =
+          action === "decision"
+            ? decisionButton
+            : action === "log"
+              ? logButton
+              : layoutButton;
+
+        activeButton?.classList.add(
+          "is-active"
+        );
+
+        if(!toolFrameLoaded){
+          toolFrame.src =
+            "AuroraCityFC_ManagerDashboard.html"
+            + "?shellTool=1";
+
+          return;
+        }
+
+        activateShellManagerTool(action);
+      }
+
       function routeManagerAction(action){
-        /*
-         * Notifications belong to the GameShell, not the Manager Dashboard.
-         * Handle this before any page-routing logic so every department keeps
-         * its current iframe page when the shell bell is pressed.
-         */
         if(action === "notifications"){
           toggleShellNotifications();
           return;
         }
 
+        /*
+         * Manager tools remain available globally. On the Manager Dashboard
+         * they use the live page directly; on every other department they open
+         * in a GameShell overlay so the current iframe page is preserved.
+         */
         if(
           currentFile
-          !== "AuroraCityFC_ManagerDashboard.html"
+          === "AuroraCityFC_ManagerDashboard.html"
         ){
-          pendingManagerAction = action;
-          loadPage(
-            "AuroraCityFC_ManagerDashboard.html"
-          );
+          runManagerAction(action);
           return;
         }
 
-        runManagerAction(action);
+        openShellManagerTool(action);
       }
 
       function runManagerAction(action){
@@ -4371,6 +4770,33 @@
         }
       );
 
+      toolFrame.addEventListener(
+        "load",
+        () => {
+          toolFrameLoaded = true;
+
+          if(activeShellTool){
+            activateShellManagerTool(
+              activeShellTool
+            );
+          }
+        }
+      );
+
+      toolClose.addEventListener(
+        "click",
+        closeShellManagerTool
+      );
+
+      toolLayer.addEventListener(
+        "click",
+        event => {
+          if(event.target === toolLayer){
+            closeShellManagerTool();
+          }
+        }
+      );
+
       decisionButton.addEventListener(
         "click",
         () => routeManagerAction("decision")
@@ -4404,6 +4830,13 @@
         "keydown",
         event => {
           if(event.key !== "Escape") return;
+
+          if(
+            toolLayer.classList.contains("open")
+          ){
+            closeShellManagerTool();
+            return;
+          }
 
           if(
             document.body.classList.contains(
