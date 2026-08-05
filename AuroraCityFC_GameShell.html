@@ -2733,6 +2733,17 @@
   </aside>
 
 
+
+<style id="auroraShellUtilityPanelStyles">
+#auroraShellUtilityPanel{position:fixed;z-index:965;right:18px;top:calc(var(--shell-header-height) + var(--safe-top) + 10px);width:min(430px,calc(100vw - 36px));display:none;overflow:hidden;border:1px solid rgba(96,165,250,.30);border-radius:22px;background:radial-gradient(circle at 96% 0%,rgba(96,165,250,.13),transparent 36%),linear-gradient(180deg,rgba(7,20,40,.995),rgba(2,7,18,.998));box-shadow:0 30px 90px rgba(0,0,0,.68);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+#auroraShellUtilityPanel.open{display:block;animation:auroraShellNotificationDrop .2s ease-out}
+.aurora-shell-utility-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px;border-bottom:1px solid rgba(148,163,184,.11)}
+.aurora-shell-utility-head h2{margin:0;color:#f4f9ff;font-size:19px;letter-spacing:-.04em}.aurora-shell-utility-head p{margin:4px 0 0;color:#8495ad;font-size:10px;line-height:1.45}
+.aurora-shell-utility-close{width:34px;height:34px;display:grid;place-items:center;flex:0 0 34px;border:1px solid rgba(251,113,133,.25);border-radius:11px;color:#fecdd3;background:rgba(127,29,29,.18);font-size:19px;cursor:pointer}
+.aurora-shell-utility-body{padding:16px}.aurora-shell-utility-message{padding:14px;border:1px solid rgba(96,165,250,.18);border-radius:15px;background:rgba(30,64,175,.08);color:#c9d9ea;font-size:11px;line-height:1.55}.aurora-shell-utility-message strong{display:block;margin-bottom:5px;color:#eef7ff;font-size:13px}
+.aurora-shell-utility-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:12px}.aurora-shell-utility-actions button{min-height:38px;padding:0 12px;border-radius:11px;font-size:9px;font-weight:950;cursor:pointer}.aurora-shell-utility-stay{border:1px solid rgba(148,163,184,.18);color:#cbd5e1;background:rgba(255,255,255,.035)}.aurora-shell-utility-open-manager{border:1px solid rgba(34,211,238,.34);color:#c9fbff;background:rgba(8,145,178,.13)}
+@media(max-width:720px){#auroraShellUtilityPanel{right:10px;top:auto;bottom:calc(64px + var(--safe-bottom));width:calc(100vw - 20px)}}
+</style>
 <section id="auroraShellNotificationPanel" aria-label="Aurora notifications" aria-hidden="true">
   <div class="aurora-shell-notification-head">
     <div><h2>Command Notifications</h2><p>Rich alerts shared across every Aurora department.</p></div>
@@ -2743,6 +2754,24 @@
     </div>
   </div>
   <div class="aurora-shell-notification-list" id="auroraShellNotificationList"></div>
+</section>
+
+
+<section id="auroraShellUtilityPanel" aria-label="Aurora shell tool" aria-hidden="true">
+  <div class="aurora-shell-utility-head">
+    <div>
+      <h2 id="auroraShellUtilityTitle">Aurora control</h2>
+      <p id="auroraShellUtilitySubtitle">The current department remains open.</p>
+    </div>
+    <button class="aurora-shell-utility-close" id="auroraShellUtilityClose" type="button" aria-label="Close control">×</button>
+  </div>
+  <div class="aurora-shell-utility-body">
+    <div class="aurora-shell-utility-message" id="auroraShellUtilityMessage"></div>
+    <div class="aurora-shell-utility-actions">
+      <button class="aurora-shell-utility-stay" id="auroraShellUtilityStay" type="button">Stay on this page</button>
+      <button class="aurora-shell-utility-open-manager" id="auroraShellUtilityOpenManager" type="button">Open Manager Dashboard</button>
+    </div>
+  </div>
 </section>
 
   <section
@@ -2791,7 +2820,7 @@
       </div>
     </div>
   </section>
-  <script src="aurora-notifications.js?v=20260805-dismissal-fix-v5-1" data-aurora-notifications-global-owner="5.1.0"></script>
+  <script src="aurora-notifications.js?v=20260805-global-controls-no-redirect-v5-2" data-aurora-notifications-global-owner="5.2.0"></script>
 
   <script>
     (() => {
@@ -3050,6 +3079,27 @@
 
       const layoutButton = document.getElementById(
         "auroraShellLayoutButton"
+      );
+      const utilityPanel = document.getElementById(
+        "auroraShellUtilityPanel"
+      );
+      const utilityTitle = document.getElementById(
+        "auroraShellUtilityTitle"
+      );
+      const utilitySubtitle = document.getElementById(
+        "auroraShellUtilitySubtitle"
+      );
+      const utilityMessage = document.getElementById(
+        "auroraShellUtilityMessage"
+      );
+      const utilityClose = document.getElementById(
+        "auroraShellUtilityClose"
+      );
+      const utilityStay = document.getElementById(
+        "auroraShellUtilityStay"
+      );
+      const utilityOpenManager = document.getElementById(
+        "auroraShellUtilityOpenManager"
       );
 
       const allowedFiles = new Set(
@@ -3965,6 +4015,43 @@
         return true;
       }
 
+      function closeShellUtility(){
+        if(!utilityPanel) return;
+        utilityPanel.classList.remove("open");
+        utilityPanel.setAttribute("aria-hidden","true");
+        decisionButton?.classList.remove("is-active");
+        logButton?.classList.remove("is-active");
+        layoutButton?.classList.remove("is-active");
+      }
+
+      function openShellUtility(action){
+        const labels={
+          decision:{
+            title:"Decision Queue",
+            copy:"The Decision Queue is a Manager Dashboard workspace. Aurora will no longer move you there automatically from another department."
+          },
+          log:{
+            title:"Manager Action Log",
+            copy:"The Manager Action Log is stored on the Manager Dashboard. Your current department will remain open unless you explicitly choose to leave it."
+          },
+          layout:{
+            title:"Dashboard Controls",
+            copy:"These controls change the Manager Dashboard layout only. They no longer redirect you away from the department you are currently using."
+          }
+        };
+        const item=labels[action]||labels.layout;
+        document.getElementById("auroraShellNotificationPanel")?.classList.remove("open");
+        utilityTitle.textContent=item.title;
+        utilitySubtitle.textContent="Current page: "+(routeFor(currentFile)?.title||"Aurora department");
+        utilityMessage.innerHTML="<strong>Current page kept open</strong>"+item.copy;
+        utilityPanel.dataset.action=action;
+        utilityPanel.classList.add("open");
+        utilityPanel.setAttribute("aria-hidden","false");
+        decisionButton?.classList.toggle("is-active",action==="decision");
+        logButton?.classList.toggle("is-active",action==="log");
+        layoutButton?.classList.toggle("is-active",action==="layout");
+      }
+
       function routeManagerAction(action){
         /*
          * Notifications belong to the GameShell, not the Manager Dashboard.
@@ -3980,13 +4067,15 @@
           currentFile
           !== "AuroraCityFC_ManagerDashboard.html"
         ){
-          pendingManagerAction = action;
-          loadPage(
-            "AuroraCityFC_ManagerDashboard.html"
-          );
+          /*
+           * Never force a department change for shell tools. The user may
+           * explicitly choose to open Manager Dashboard from the shell panel.
+           */
+          openShellUtility(action);
           return;
         }
 
+        closeShellUtility();
         runManagerAction(action);
       }
 
@@ -4400,6 +4489,15 @@
         () => routeManagerAction("layout")
       );
 
+      utilityClose?.addEventListener("click",closeShellUtility);
+      utilityStay?.addEventListener("click",closeShellUtility);
+      utilityOpenManager?.addEventListener("click",()=>{
+        const action=utilityPanel?.dataset?.action||"layout";
+        closeShellUtility();
+        pendingManagerAction=action;
+        loadPage("AuroraCityFC_ManagerDashboard.html");
+      });
+
       document.addEventListener(
         "keydown",
         event => {
@@ -4411,6 +4509,11 @@
             )
           ){
             closeLogout();
+            return;
+          }
+
+          if(utilityPanel?.classList.contains("open")){
+            closeShellUtility();
             return;
           }
 
