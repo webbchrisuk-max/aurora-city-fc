@@ -2900,7 +2900,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </style>
 
 <style id="aurora-crimson-record-v94">
-/* Aurora Transfer Centre — Redline Route Desk v96
+/* Aurora Transfer Centre — Editable Route Desk v97
    A deep oxblood / stadium-red execution desk, aligned with Aurora's dark shell. */
 
 #payday-execution{
@@ -3415,6 +3415,173 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 })();
 </script>
 
+
+<style id="aurora-editable-route-desk-v97">
+.redline-route-desk{
+  --route-disabled-opacity:.62;
+}
+.redline-route-desk:not(.is-editing) .m11-strategy-buttons button,
+.redline-route-desk:not(.is-editing) #brokerRouteFilter,
+.redline-route-desk:not(.is-editing) #transferBudgetInput{
+  pointer-events:none!important;
+}
+.redline-route-desk:not(.is-editing) .redline-route-controls,
+.redline-route-desk:not(.is-editing) .m11-strategy-buttons{
+  opacity:var(--route-disabled-opacity);
+}
+.redline-route-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:11px;
+}
+.redline-route-actions button{
+  min-height:40px;
+  padding:9px 13px;
+  border-radius:10px!important;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.03em;
+}
+.redline-edit-route{
+  border:1px solid rgba(251,113,133,.38)!important;
+  background:linear-gradient(135deg,rgba(190,18,60,.76),rgba(127,29,29,.76))!important;
+  color:#fff!important;
+}
+.redline-save-route{
+  display:none;
+  border:1px solid rgba(251,113,133,.52)!important;
+  background:linear-gradient(135deg,#e11d48,#881337)!important;
+  color:#fff!important;
+  box-shadow:0 9px 24px rgba(190,18,60,.18)!important;
+}
+.redline-cancel-route{
+  display:none;
+  border:1px solid rgba(148,163,184,.24)!important;
+  background:rgba(15,23,42,.68)!important;
+  color:#dbe4f0!important;
+}
+.redline-route-desk.is-editing .redline-edit-route{display:none}
+.redline-route-desk.is-editing .redline-save-route,
+.redline-route-desk.is-editing .redline-cancel-route{display:inline-flex;align-items:center;justify-content:center}
+.redline-route-desk.is-editing{
+  border-color:rgba(251,113,133,.62)!important;
+  box-shadow:0 0 0 4px rgba(244,63,94,.08),0 18px 44px rgba(0,0,0,.32)!important;
+}
+.redline-route-desk.is-editing .redline-route-controls,
+.redline-route-desk.is-editing .m11-strategy-buttons{
+  opacity:1;
+}
+.redline-route-message{
+  margin-top:8px;
+  min-height:30px;
+  display:flex;
+  align-items:center;
+  border:1px solid rgba(244,63,94,.13);
+  background:rgba(20,9,15,.54);
+  color:#b8a2aa;
+  border-radius:10px;
+  padding:7px 9px;
+  font-size:9px;
+}
+.redline-route-message.saved{
+  border-color:rgba(251,113,133,.30);
+  color:#fecdd3;
+}
+.redline-route-field:first-child{
+  min-width:0;
+}
+#brokerRouteFilter{
+  width:100%!important;
+  min-width:0!important;
+  text-overflow:ellipsis;
+}
+@media(max-width:760px){
+  .redline-route-actions button{width:100%}
+}
+</style>
+
+
+<script id="aurora-editable-route-desk-v97-js">
+(function(){
+  const desk=()=>document.querySelector('.redline-route-desk');
+  const strategy=()=>document.getElementById('m11MaximumRoute')?.classList.contains('active')?'maximum':'balanced';
+  const broker=()=>document.getElementById('brokerRouteFilter')?.value||'BOTH';
+  const budget=()=>document.getElementById('transferBudgetInput')?.value||'0';
+  let snapshot=null;
+
+  function message(text,saved){
+    const el=document.getElementById('redlineRouteMessage');
+    if(!el)return;
+    el.textContent=text;
+    el.classList.toggle('saved',!!saved);
+  }
+
+  function beginEdit(){
+    snapshot={strategy:strategy(),broker:broker(),budget:budget()};
+    desk()?.classList.add('is-editing');
+    message('Edit the strategy, broker and budget, then save to rebuild the allocation.',false);
+    setTimeout(()=>document.getElementById('transferBudgetInput')?.focus(),50);
+  }
+
+  function cancelEdit(){
+    if(snapshot){
+      document.getElementById(snapshot.strategy==='maximum'?'m11MaximumRoute':'m11BalancedRoute')?.click();
+      const brokerEl=document.getElementById('brokerRouteFilter');
+      const budgetEl=document.getElementById('transferBudgetInput');
+      if(brokerEl){brokerEl.value=snapshot.broker;brokerEl.dispatchEvent(new Event('change',{bubbles:true}));}
+      if(budgetEl){budgetEl.value=snapshot.budget;budgetEl.dispatchEvent(new Event('input',{bubbles:true}));}
+    }
+    desk()?.classList.remove('is-editing');
+    message('Changes cancelled. The previous route is still active.',false);
+  }
+
+  function saveRoute(){
+    const budgetValue=Number(budget());
+    if(!Number.isFinite(budgetValue)||budgetValue<=0){
+      message('Enter a valid transfer budget above £0 before saving.',false);
+      document.getElementById('transferBudgetInput')?.focus();
+      return;
+    }
+
+    // Trigger the page's existing allocation rebuild/update listeners.
+    const budgetEl=document.getElementById('transferBudgetInput');
+    const brokerEl=document.getElementById('brokerRouteFilter');
+    budgetEl?.dispatchEvent(new Event('input',{bubbles:true}));
+    budgetEl?.dispatchEvent(new Event('change',{bubbles:true}));
+    brokerEl?.dispatchEvent(new Event('change',{bubbles:true}));
+
+    const activeStrategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')
+      ? 'Maximum Income' : 'Sustainable Income';
+    const brokerText=brokerEl?.selectedOptions?.[0]?.textContent||'Both brokers';
+
+    // Correct any old "Balanced Portfolio" label left by legacy code.
+    document.querySelectorAll('.m11-strategy-stat strong,.allocation-budget-summary strong').forEach(el=>{
+      if((el.textContent||'').trim()==='Balanced Portfolio') el.textContent='Sustainable Income';
+    });
+
+    desk()?.classList.remove('is-editing');
+    snapshot=null;
+    message(`${activeStrategy} • ${brokerText} • £${budgetValue.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})} saved. Allocation rebuilt.`,true);
+  }
+
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#redlineEditRoute')) beginEdit();
+    if(e.target.closest('#redlineCancelRoute')) cancelEdit();
+    if(e.target.closest('#redlineSaveRoute')) saveRoute();
+  });
+
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{
+      desk()?.classList.remove('is-editing');
+      document.querySelectorAll('.m11-strategy-stat strong,.allocation-budget-summary strong').forEach(el=>{
+        if((el.textContent||'').trim()==='Balanced Portfolio') el.textContent='Sustainable Income';
+      });
+    },300);
+  });
+})();
+</script>
+
 </head>
 <body>
 
@@ -3824,6 +3991,12 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
   <div><small>Current broker</small><strong id="redlineRouteBroker">Both brokers</strong></div>
   <div><small>Route budget</small><strong id="redlineRouteBudget">£3,500.00</strong></div>
 </div>
+<div class="redline-route-actions">
+  <button class="redline-edit-route" id="redlineEditRoute" type="button">✎ Edit route</button>
+  <button class="redline-save-route" id="redlineSaveRoute" type="button">Save &amp; rebuild allocation</button>
+  <button class="redline-cancel-route" id="redlineCancelRoute" type="button">Cancel</button>
+</div>
+<div aria-live="polite" class="redline-route-message" id="redlineRouteMessage">Route controls are ready to edit.</div>
 <small class="redline-route-note">Trading Brain chooses the shortlist. Your strategy, broker route and budget above control the final Deal Sheet immediately.</small>
 </div>
 <div class="m7-decision-meta">
@@ -3979,7 +4152,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter each broker fill using the larger fields below. Values save automatically as you type.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div><div class="payday-record-guide"><strong>Easy entry:</strong> enter the <b>number of shares</b>, the broker’s <b>price in pounds per share</b>, and any <b>fees</b>. Example: a broker price of <b>84.97p</b> is entered as <b>0.8497</b>.</div>
 <div class="payday-stability-toolbar" id="paydayStabilityToolbar">
-  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Redline Route Desk v96</strong><span>Large-entry layout • AuroraData registration</span></div>
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Editable Route Desk v97</strong><span>Large-entry layout • AuroraData registration</span></div>
   <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
   <label class="payday-broker-control"><span>Broker route</span><select id="paydayBrokerRouteFilter"><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label>
   <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
