@@ -6023,6 +6023,19 @@ function gateCandidate(row, amount = 0, snapshot = exposureSnapshot()) {
   else if(data.status==='review') caution(data.reasons[0]||'Data needs review.');
   else reasons.push(`Verified data ${data.score}% confidence.`);
 
+  /* Aurora Intelligence is now an enforced transfer gate, not display-only. */
+  const intel=intelligenceForTicker(ticker);
+  if(intel){
+    const instruction=resolveIntelligenceInstruction(intel);
+    if(instruction.gate==='block'){
+      block(`Aurora Intelligence: ${instruction.label}.`);
+    }else if(instruction.gate==='caution'){
+      caution(`Aurora Intelligence: ${instruction.label}.`);
+    }else if(instruction.gate==='pass'){
+      reasons.push(`Aurora Intelligence: ${instruction.label}.`);
+    }
+  }
+
   if(payoutRisk.includes('very high')) block('Payout risk flagged very high.');
   else if(payoutRisk.includes('high')) caution('Payout risk is high.');
   else if(payoutRisk.includes('check')||payoutRisk.includes('review')) caution('Payout/cashflow needs a check.');
@@ -7141,11 +7154,44 @@ $('m7EditPlan')?.addEventListener('click',()=>document.getElementById('deal-shee
 $('m7HoldCash')?.addEventListener('click',()=>{if($('m7DecisionText'))$('m7DecisionText').textContent='Manager decision: hold cash and make no purchase until the next live review.';if($('m7FlowApproval')){$('m7FlowApproval').classList.remove('active');$('m7FlowApproval').textContent='2 • Cash hold selected';}});
 
 
+function resolveIntelligenceInstruction(input){
+  const intel=input&&typeof input==='object'?input:{action:input};
+  const raw=String(intel.action||intel.Action||'HOLD').trim();
+  const restriction=String(
+    intel.buying_restriction||intel.restriction||intel.buy_restriction||
+    intel.manager_instruction||intel.instruction||''
+  ).trim();
+  const combined=`${raw} ${restriction}`.toLowerCase().replace(/[_-]+/g,' ');
+
+  /* Hard restrictions always outrank positive or neutral wording. */
+  if(/locked legacy|do not buy|no new money|avoid|blocked|exit only/.test(combined)){
+    return {label:'HOLD — NO NEW MONEY',className:'block',gate:'block',reason:restriction||raw};
+  }
+  if(/monitor only|review only/.test(combined)){
+    return {label:'MONITOR ONLY',className:'block',gate:'block',reason:restriction||raw};
+  }
+  if(/small buy only|controlled buy|limited buy|starter position|small position/.test(combined)){
+    return {label:'MONITOR — SMALL BUY ONLY',className:'watch',gate:'caution',reason:restriction||raw};
+  }
+
+  /* For mixed labels such as HOLD / ACCUMULATE, the actionable verb wins
+     unless a restriction above has already blocked it. */
+  if(/priority buy/.test(combined)){
+    return {label:'PRIORITY BUY',className:'buy',gate:'pass',reason:restriction||raw};
+  }
+  if(/selective buy|accumulate/.test(combined)){
+    return {label:'ACCUMULATE SELECTIVELY',className:'buy',gate:'pass',reason:restriction||raw};
+  }
+  if(/hold/.test(combined)){
+    return {label:'HOLD',className:'watch',gate:'neutral',reason:restriction||raw};
+  }
+  if(/review|watch|monitor/.test(combined)){
+    return {label:'MONITOR',className:'watch',gate:'neutral',reason:restriction||raw};
+  }
+  return {label:raw||'HOLD',className:'watch',gate:'neutral',reason:restriction||raw};
+}
 function intelligenceActionClass(action){
-  const text=String(action||'').toLowerCase();
-  if(/priority buy|selective buy|accumulate/.test(text)) return 'buy';
-  if(/no new money|avoid|review|locked legacy|monitor only/.test(text)) return 'block';
-  return 'watch';
+  return resolveIntelligenceInstruction(action).className;
 }
 function intelligenceByTicker(){
   const map=new Map();
@@ -7162,12 +7208,11 @@ function transferIntelligenceMeta(ticker){
   const intel=intelligenceForTicker(ticker);
   if(!intel) return '';
   const score=parseNum(intel.confidence_score);
-  const action=String(intel.action||'HOLD / WATCH');
+  const resolved=resolveIntelligenceInstruction(intel);
   const risk=String(intel.risk_level||'Risk not stated');
-  const cls=intelligenceActionClass(action);
   return `<div class="deal-intelligence-meta">
-    <span class="deal-intelligence-chip ${cls}">🧠 ${Number.isFinite(score)?score.toFixed(0)+'/100':'NO SCORE'}</span>
-    <span class="deal-intelligence-chip ${cls}">${escapeHtml(action)}</span>
+    <span class="deal-intelligence-chip ${resolved.className}">🧠 ${Number.isFinite(score)?score.toFixed(0)+'/100':'NO SCORE'}</span>
+    <span class="deal-intelligence-chip ${resolved.className}">${escapeHtml(resolved.label)}</span>
     <span class="deal-intelligence-chip">${escapeHtml(risk)}</span>
   </div>`;
 }
@@ -7186,11 +7231,13 @@ function renderTransferIntelligence(){
   const scores=rows.map(r=>parseNum(r.confidence_score)).filter(Number.isFinite);
   const average=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:NaN;
   const top=rows[0]||{};
-  const eligible=rows.filter(r=>/priority buy|selective buy|accumulate/i.test(String(r.action||''))).length;
-  const blocked=rows.filter(r=>/no new money|avoid|review|locked legacy|monitor only/i.test(String(r.action||''))).length;
+  const resolvedRows=rows.map(row=>({row,resolved:resolveIntelligenceInstruction(row)}));
+  const eligible=resolvedRows.filter(item=>item.resolved.gate==='pass').length;
+  const blocked=resolvedRows.filter(item=>item.resolved.gate==='block').length;
 
   $('transferIntelTop').textContent=top.ticker||'—';
-  $('transferIntelTopNote').textContent=`${parseNum(top.confidence_score)||'—'}/100 • ${top.action||'No action'}`;
+  const topResolved=resolveIntelligenceInstruction(top);
+  $('transferIntelTopNote').textContent=`${parseNum(top.confidence_score)||'—'}/100 • ${topResolved.label}`;
   $('transferIntelEligible').textContent=String(eligible);
   $('transferIntelBlocked').textContent=String(blocked);
   $('transferIntelAverage').textContent=Number.isFinite(average)?`${average.toFixed(1)}/100`:'—';
@@ -7217,14 +7264,14 @@ function renderTransferIntelligence(){
 
   $('transferIntelList').innerHTML=rows.slice(0,6).map((row,index)=>{
     const score=parseNum(row.confidence_score);
-    const action=String(row.action||'HOLD / WATCH');
+    const resolved=resolveIntelligenceInstruction(row);
     return `<div class="transfer-intelligence-row">
       <div class="transfer-intelligence-rank">${index+1}</div>
       <div>
         <strong>${escapeHtml(row.ticker||'—')} • ${escapeHtml(row.company||'')}</strong>
         <span>${Number.isFinite(score)?score.toFixed(0)+'/100':'No score'} • ${escapeHtml(row.risk_level||'Risk not stated')} • ${escapeHtml(row.data_quality||'')}</span>
       </div>
-      <div class="transfer-intelligence-action ${intelligenceActionClass(action)}">${escapeHtml(action)}</div>
+      <div class="transfer-intelligence-action ${resolved.className}">${escapeHtml(resolved.label)}</div>
     </div>`;
   }).join('');
 }
