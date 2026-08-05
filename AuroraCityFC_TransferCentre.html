@@ -2900,7 +2900,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </style>
 
 <style id="aurora-crimson-record-v94">
-/* Aurora Transfer Centre — Always Editable Route v98
+/* Aurora Transfer Centre — Budget Unlocked v99
    A deep oxblood / stadium-red execution desk, aligned with Aurora's dark shell. */
 
 #payday-execution{
@@ -3745,6 +3745,150 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 })();
 </script>
 
+
+<style id="aurora-budget-unlocked-v99">
+#transferBudgetInput{
+  -webkit-appearance:none!important;
+  appearance:textfield!important;
+  pointer-events:auto!important;
+  user-select:text!important;
+  -webkit-user-select:text!important;
+  touch-action:manipulation!important;
+  cursor:text!important;
+  opacity:1!important;
+}
+#transferBudgetInput[readonly],
+#transferBudgetInput[disabled]{
+  pointer-events:auto!important;
+  opacity:1!important;
+}
+.redline-route-field.budget{
+  position:relative;
+  z-index:3;
+}
+.redline-budget-input{
+  position:relative;
+  z-index:4;
+}
+</style>
+
+
+<script id="aurora-budget-unlocked-v99-js">
+(function(){
+  const KEY='aurora_transfer_manual_route_budget_v99';
+  let manualEditing=false;
+  let manualValue='';
+
+  function input(){
+    return document.getElementById('transferBudgetInput');
+  }
+
+  function unlock(){
+    const el=input();
+    if(!el)return;
+    el.disabled=false;
+    el.readOnly=false;
+    el.removeAttribute('disabled');
+    el.removeAttribute('readonly');
+    el.removeAttribute('aria-readonly');
+    el.tabIndex=0;
+    el.style.pointerEvents='auto';
+    el.style.opacity='1';
+
+    const stored=localStorage.getItem(KEY);
+    if(stored!==null && stored!=='' && document.activeElement!==el){
+      el.value=stored;
+    }
+  }
+
+  function markManual(){
+    const el=input();
+    if(!el)return;
+    manualEditing=true;
+    manualValue=el.value;
+    localStorage.setItem(KEY,manualValue);
+    unlock();
+  }
+
+  function restoreManual(){
+    const el=input();
+    if(!el)return;
+    const stored=localStorage.getItem(KEY);
+    if(manualEditing && stored!==null){
+      if(document.activeElement!==el || el.value!==stored){
+        el.value=stored;
+      }
+    }
+    unlock();
+  }
+
+  document.addEventListener('focusin',e=>{
+    if(e.target?.id==='transferBudgetInput'){
+      manualEditing=true;
+      manualValue=e.target.value;
+      unlock();
+    }
+  },true);
+
+  document.addEventListener('input',e=>{
+    if(e.target?.id==='transferBudgetInput'){
+      markManual();
+    }
+  },true);
+
+  document.addEventListener('change',e=>{
+    if(e.target?.id==='transferBudgetInput'){
+      markManual();
+      e.target.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+  },true);
+
+  document.addEventListener('click',e=>{
+    if(e.target.closest?.('#redlineSaveRoute')){
+      const el=input();
+      if(el){
+        manualEditing=true;
+        manualValue=el.value;
+        localStorage.setItem(KEY,manualValue);
+        setTimeout(restoreManual,0);
+        setTimeout(restoreManual,150);
+        setTimeout(restoreManual,500);
+      }
+    }
+  },true);
+
+  const observer=new MutationObserver(()=>{
+    const el=input();
+    if(!el)return;
+    if(el.readOnly || el.disabled || el.hasAttribute('readonly') || el.hasAttribute('disabled')){
+      unlock();
+    }
+    if(manualEditing){
+      const stored=localStorage.getItem(KEY);
+      if(stored!==null && document.activeElement!==el && el.value!==stored){
+        el.value=stored;
+      }
+    }
+  });
+
+  function start(){
+    unlock();
+    const el=input();
+    if(el){
+      observer.observe(el,{attributes:true,attributeFilter:['readonly','disabled','aria-readonly','value']});
+    }
+    setInterval(restoreManual,300);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else{
+    start();
+  }
+  window.addEventListener('load',()=>setTimeout(start,200),{once:true});
+})();
+</script>
+
 </head>
 <body>
 
@@ -4315,7 +4459,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter each broker fill using the larger fields below. Values save automatically as you type.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div><div class="payday-record-guide"><strong>Easy entry:</strong> enter the <b>number of shares</b>, the broker’s <b>price in pounds per share</b>, and any <b>fees</b>. Example: a broker price of <b>84.97p</b> is entered as <b>0.8497</b>.</div>
 <div class="payday-stability-toolbar" id="paydayStabilityToolbar">
-  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Always Editable Route v98</strong><span>Large-entry layout • AuroraData registration</span></div>
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Budget Unlocked v99</strong><span>Large-entry layout • AuroraData registration</span></div>
   <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
   <label class="payday-broker-control"><span>Broker route</span><select id="paydayBrokerRouteFilter"><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label>
   <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
@@ -8495,7 +8639,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     }
   }
   function lockDuplicateBudgetInput(){
-    const input=$('transferBudgetInput');if(input){input.readOnly=true;input.setAttribute('aria-readonly','true');}
+    const input=$('transferBudgetInput');if(input){input.readOnly=false;input.removeAttribute('readonly');input.removeAttribute('aria-readonly');}
     const reset=$('resetTransferPlan');if(reset){reset.setAttribute('aria-hidden','true');}
   }
   function reloadMission(){
