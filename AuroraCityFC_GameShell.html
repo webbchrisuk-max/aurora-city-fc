@@ -6034,6 +6034,16 @@
       }
 
       function routeManagerAction(action){
+        /*
+         * Notifications belong to the GameShell, not the Manager Dashboard.
+         * Handle this before any page-routing logic so every department keeps
+         * its current iframe page when the shell bell is pressed.
+         */
+        if(action === "notifications"){
+          window.AuroraShellNotifications?.toggle?.();
+          return;
+        }
+
         if(
           currentFile
           !== "AuroraCityFC_ManagerDashboard.html"
