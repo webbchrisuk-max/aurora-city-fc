@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html data-aurora-finance-view="m13Dashboard" data-aurora-page="finance" data-aurora-shell-content="true" lang="en">
-<head><!-- Build: Aurora Finance Department • Automatic Transfer Split Return • 04 Aug 2026 -->
+<head><!-- Build: Aurora Finance Department • Stable Broker Route State • 05 Aug 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Aurora Finance Department — Payday &amp; Capital Control</title>
@@ -9877,16 +9877,59 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
     }
   }
 
+  function finalRouteReconciles(existing,mission){
+    if(!existing || !mission) return false;
+    if(String(existing.status || "").toUpperCase() !== "FINAL_ROUTE") return false;
+
+    const budget = round(Number(mission.budget || existing.budget || existing.total || 0));
+    const ig = round(Number(existing.ig || 0));
+    const t212 = round(Number(existing.t212 || 0));
+    const unassigned = round(Number(existing.unassigned || 0));
+    const routedTotal = round(ig + t212 + unassigned);
+    const declaredTotal = round(Number(existing.total || existing.budget || routedTotal));
+
+    return budget > 0
+      && Math.abs(routedTotal - declaredTotal) <= .03
+      && Math.abs(declaredTotal - budget) <= .03;
+  }
+
   function markAwaitingRoute(event){
     const mission = event?.detail || read(WEALTH_KEY);
     if(!mission || !(Number(mission.budget) > 0)) return;
 
     const existing = read(ACCOUNT_KEY);
-    if(
-      existing
-      && String(existing.status || "").toUpperCase() === "FINAL_ROUTE"
-      && (!existing.missionId || existing.missionId === mission.id)
-    ){
+
+    /*
+     * A generic refresh/re-publish event must never destroy a valid final
+     * Transfer Centre route. Reconcile by money first, then repair the
+     * mission link if an older producer supplied a different mission id.
+     */
+    if(finalRouteReconciles(existing,mission)){
+      const now = new Date().toISOString();
+      const repaired = {
+        ...existing,
+        missionId:mission.id || existing.missionId || null,
+        updatedAt:now
+      };
+
+      mission.status = "FINAL_ROUTE_READY";
+      mission.accountTransferStatus = "FINAL_ROUTE";
+      mission.accountTransfers = [
+        {account:"IG ISA",amount:round(Number(repaired.ig || 0)),status:"READY"},
+        {account:"Trading 212 ISA",amount:round(Number(repaired.t212 || 0)),status:"READY"}
+      ];
+      mission.accountTransferPurchases = Array.isArray(repaired.purchases)
+        ? repaired.purchases
+        : [];
+      mission.finalPurchaseRoute = Array.isArray(repaired.purchases)
+        ? repaired.purchases
+        : [];
+      mission.accountTransferHoldback = round(Number(repaired.unassigned || 0));
+      mission.accountTransferGeneratedAt = repaired.generatedAt || now;
+      mission.updatedAt = now;
+
+      write(WEALTH_KEY,mission);
+      write(ACCOUNT_KEY,repaired);
       render();
       return;
     }
@@ -11455,31 +11498,43 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
     feedback.className = "m37-feedback " + (tone || "");
   }
 
-  function rebaseReleasedMission(reason){
-    const mission = read(WEALTH_KEY);
-    if(!missionCanBeUpdated(mission)) return false;
+  function finalRouteForFunding(accountPlan,funding){
+    if(!accountPlan || String(accountPlan.status || "").toUpperCase() !== "FINAL_ROUTE"){
+      return null;
+    }
 
-    const funding = fundingSnapshot();
-    const changed =
-      Math.abs(Number(mission.budget || 0) - funding.total) > .009
-      || Math.abs(Number(mission.paydayContribution || 0) - funding.payday) > .009;
+    const ig = round(Number(accountPlan.ig || 0));
+    const t212 = round(Number(accountPlan.t212 || 0));
+    const unassigned = round(Number(accountPlan.unassigned || 0));
+    const routedTotal = round(ig + t212 + unassigned);
+    const declaredTotal = round(Number(
+      accountPlan.total
+      || accountPlan.budget
+      || routedTotal
+    ));
 
-    // Preserve the Transfer Centre broker split whenever the authorised funding is unchanged.
-    // The previous logic only skipped rebasing for input events, so pageshow/load cleared a
-    // perfectly valid FINAL_ROUTE back to £0/£0 every time the user returned to Finance.
-    if(!changed) return false;
+    if(
+      funding.total <= 0
+      || Math.abs(routedTotal - declaredTotal) > .03
+      || Math.abs(declaredTotal - funding.total) > .03
+    ){
+      return null;
+    }
 
-    const now = new Date().toISOString();
+    return {
+      ...accountPlan,
+      ig,
+      t212,
+      unassigned,
+      total:declaredTotal,
+      budget:declaredTotal
+    };
+  }
+
+  function applyFundingSources(mission,funding,now){
     mission.budget = funding.total;
     mission.paydayContribution = funding.payday;
     mission.updatedAt = now;
-    mission.status = "AWAITING_TRANSFER_CENTRE_ROUTE";
-    mission.accountTransfers = [];
-    mission.accountTransferPurchases = [];
-    mission.finalPurchaseRoute = [];
-    mission.accountTransferHoldback = funding.total;
-    mission.accountTransferStatus = "AWAITING_TRANSFER_CENTRE_ROUTE";
-    mission.accountTransferGeneratedAt = now;
     mission.fundingSources = [
       {
         id:"payday",
@@ -11503,6 +11558,81 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
         type:"sale-proceeds"
       }
     ].filter(source => source.release > 0);
+  }
+
+  function rebaseReleasedMission(reason){
+    const mission = read(WEALTH_KEY);
+    if(!missionCanBeUpdated(mission)) return false;
+
+    const funding = fundingSnapshot();
+    const changed =
+      Math.abs(Number(mission.budget || 0) - funding.total) > .009
+      || Math.abs(Number(mission.paydayContribution || 0) - funding.payday) > .009;
+
+    if(!changed) return false;
+
+    const now = new Date().toISOString();
+    const accountPlan = read(ACCOUNT_KEY);
+    const validFinalRoute = finalRouteForFunding(accountPlan,funding);
+
+    /*
+     * A matching final route is authoritative. Automatic planner refreshes
+     * may update the mission metadata, but they must not zero the broker
+     * split or send the hero back to "Investment mission ready".
+     */
+    if(validFinalRoute){
+      applyFundingSources(mission,funding,now);
+      mission.status = "FINAL_ROUTE_READY";
+      mission.accountTransferStatus = "FINAL_ROUTE";
+      mission.accountTransfers = [
+        {account:"IG ISA",amount:validFinalRoute.ig,status:"READY"},
+        {account:"Trading 212 ISA",amount:validFinalRoute.t212,status:"READY"}
+      ];
+      mission.accountTransferPurchases = Array.isArray(validFinalRoute.purchases)
+        ? validFinalRoute.purchases
+        : [];
+      mission.finalPurchaseRoute = Array.isArray(validFinalRoute.purchases)
+        ? validFinalRoute.purchases
+        : [];
+      mission.accountTransferHoldback = validFinalRoute.unassigned;
+      mission.accountTransferGeneratedAt = validFinalRoute.generatedAt || now;
+
+      write(FUNDING_KEY,{
+        capitalBalance:funding.capitalBalance,
+        capitalRelease:funding.capitalTarget,
+        etfBalance:funding.etfBalance,
+        etfRelease:funding.etfTarget,
+        updatedAt:now
+      });
+      write(WEALTH_KEY,mission);
+      write(ACCOUNT_KEY,{
+        ...validFinalRoute,
+        missionId:mission.id,
+        updatedAt:now
+      });
+
+      window.setTimeout(refreshFinanceDisplays,30);
+      window.setTimeout(refreshFinanceDisplays,180);
+      return false;
+    }
+
+    /*
+     * Loading, returning to the page, or a background refresh is read-only.
+     * Only a real user edit/save/refresh/release may invalidate a route.
+     */
+    if(["pageshow","load","ready"].includes(String(reason || ""))){
+      window.setTimeout(refreshFinanceDisplays,30);
+      return false;
+    }
+
+    applyFundingSources(mission,funding,now);
+    mission.status = "AWAITING_TRANSFER_CENTRE_ROUTE";
+    mission.accountTransfers = [];
+    mission.accountTransferPurchases = [];
+    mission.finalPurchaseRoute = [];
+    mission.accountTransferHoldback = funding.total;
+    mission.accountTransferStatus = "AWAITING_TRANSFER_CENTRE_ROUTE";
+    mission.accountTransferGeneratedAt = now;
 
     write(FUNDING_KEY,{
       capitalBalance:funding.capitalBalance,
@@ -11529,7 +11659,7 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 
     setFeedback(
       `${money(funding.total)} is now the authoritative investment mission. ` +
-      `The previous broker route was cleared so the Transfer Centre can rebuild the exact shares and IG / Trading 212 totals.`,
+      `The previous broker route was cleared because the funding inputs were deliberately changed.`,
       "good"
     );
 
@@ -11595,17 +11725,17 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 
   window.addEventListener("pageshow",() => {
     scheduleFundingRefresh();
-    window.setTimeout(() => rebaseReleasedMission("pageshow"),180);
+    window.setTimeout(refreshFinanceDisplays,180);
   });
 
   window.addEventListener("load",() => {
     scheduleFundingRefresh();
-    window.setTimeout(() => rebaseReleasedMission("load"),420);
+    window.setTimeout(refreshFinanceDisplays,420);
   });
 
   if(document.readyState !== "loading"){
     scheduleFundingRefresh();
-    window.setTimeout(() => rebaseReleasedMission("ready"),260);
+    window.setTimeout(refreshFinanceDisplays,260);
   }
 })();
 </script>
@@ -11784,109 +11914,218 @@ body.finance-test-mode:before{content:"TEST MODE ACTIVE — transfer planning on
 </script>
 <script id="m60FinanceHeroScript">
 (function(){
+  "use strict";
+
+  const ACCOUNT_KEY="aurora_account_transfer_instruction_v1";
+  const WEALTH_KEY="aurora_wealth_investment_mission_v1";
   const idsToWatch=[
-    'm22MissionBadge','m33PlannedTotal','finalAmountToAdd','m50CombinedMission','m22WalletBuffered','m32TopSafe',
-    'm35PaydayHuman','nextPaydayMeta','m51PreviewStatus','m51IgTransfer','m51IgTransferNote','m51T212Transfer','m51T212TransferNote'
+    "m22MissionBadge","m33PlannedTotal","finalAmountToAdd","m50CombinedMission","m22WalletBuffered","m32TopSafe",
+    "m35PaydayHuman","nextPaydayMeta","m51PreviewStatus","m51IgTransfer","m51IgTransferNote","m51T212Transfer","m51T212TransferNote"
   ];
   const byId=id=>document.getElementById(id);
-  const text=id=>byId(id)?.textContent?.trim()||'';
+  const text=id=>byId(id)?.textContent?.trim()||"";
+  const read=key=>{
+    try{return JSON.parse(localStorage.getItem(key)||"null");}
+    catch(_){return null;}
+  };
+  const round=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
   const num=id=>{
-    const raw=text(id).replace(/,/g,'').replace(/[^0-9.\-]/g,'');
+    const raw=text(id).replace(/,/g,"").replace(/[^0-9.\-]/g,"");
     const n=Number(raw);
     return Number.isFinite(n)?n:0;
   };
-  const gbp=v=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.max(0,Number(v)||0));
+  const gbp=v=>new Intl.NumberFormat("en-GB",{
+    style:"currency",
+    currency:"GBP",
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  }).format(Math.max(0,Number(v)||0));
   const set=(id,value)=>{const el=byId(id);if(el)el.textContent=value;};
-  function setSelectedView(viewId){
-    document.querySelectorAll('[data-m60-view]').forEach(control=>{
-      const selected=control.dataset.m60View===viewId;
-      control.classList.toggle('is-selected',selected);
-      control.setAttribute('aria-pressed',selected?'true':'false');
-    });
-  }
-  function update(){
-    const mission=num('m50CombinedMission');
-    const allocation=num('m33PlannedTotal');
-    const holdingMove=num('finalAmountToAdd');
-    const buffered=num('m22WalletBuffered');
-    const safe=num('m32TopSafe');
-    const ig=num('m51IgTransfer');
-    const t212=num('m51T212Transfer');
-    const routeTotal=ig+t212;
-    const status=(text('m22MissionBadge')||'LIVE PLAN').toUpperCase();
-    const routeStatus=(text('m51PreviewStatus')||'WAITING').toUpperCase();
-    const nextPayday=text('m35PaydayHuman')||'—';
-    const nextMeta=text('nextPaydayMeta')||'Upcoming pay cycle';
 
-    set('m60HeroPaydayStatus',status);
-    set('m60HeroRouteStatus',routeStatus);
-    set('m60NextPayday',nextPayday);
-    set('m60NextPaydayNote',nextMeta);
-    set('m60HoldingMove',gbp(holdingMove));
-    set('m60MissionTotal',gbp(mission));
-    set('m60IgRoute',gbp(ig));
-    set('m60T212Route',gbp(t212));
-    set('m60IgRouteNote',text('m51IgTransferNote')||'Awaiting final share route');
-    set('m60T212RouteNote',text('m51T212TransferNote')||'Awaiting final share route');
-    set('m60StatAllocation',gbp(allocation));
-    set('m60StatHolding',gbp(holdingMove));
-    set('m60StatMission',gbp(mission));
-    set('m60StatBuffered',gbp(buffered));
-    set('m60StatSafe',gbp(safe));
-    set('m60StatRoute',gbp(routeTotal));
-    set('m60StatRouteNote',routeTotal>0?`IG ISA ${gbp(ig)} • Trading 212 ${gbp(t212)}`:'Waiting for final share route');
+  let lastStableRoute=null;
 
-    let focusTag='PROTECT';
-    let sideTitle='Preparing your next move';
-    let sideCopy='The right action will appear here once Aurora has refreshed the live Finance plan.';
-    let priorityCopy='Aurora is reading the live money position and deciding the next move.';
-    let badge='CHECKING';
+  function routeFromStorage(missionTotal){
+    const plan=read(ACCOUNT_KEY);
+    if(!plan || String(plan.status||"").toUpperCase()!=="FINAL_ROUTE") return null;
 
-    if(routeTotal>0 || routeStatus.includes('READY')){
-      focusTag='MOVE CASH';
-      sideTitle='Broker route is ready';
-      sideCopy=`Move ${gbp(ig)} to IG ISA and ${gbp(t212)} to Trading 212, then complete the combined investment mission.`;
-      priorityCopy=`Final broker route returned. Move the broker cash only after Aurora has sized the final share purchases: IG ISA ${gbp(ig)} • Trading 212 ${gbp(t212)}.`;
-      badge='ROUTE READY';
-    }else if(mission>0){
-      focusTag='RELEASE';
-      sideTitle='Investment mission ready';
-      sideCopy=`${gbp(mission)} is ready for the Transfer Centre. Release the mission, then return here for the final broker route.`;
-      priorityCopy=`Current priority: release the ${gbp(mission)} investment mission to the Transfer Centre, let Aurora build the final share route, then come back here before moving broker cash.`;
-      badge='READY TO SEND';
-    }else if(holdingMove>0){
-      focusTag='PROTECT';
-      sideTitle='Protect the Holding Pot';
-      sideCopy=`Transfer ${gbp(holdingMove)} to the Holding Pot so bills, buffers and due-date commitments stay fully protected.`;
-      priorityCopy=`Current priority: protect the Holding Pot first. Aurora currently expects a Holding Pot move of ${gbp(holdingMove)} before any surplus decisions are made.`;
-      badge='FUND NEXT';
-    }else if(buffered>0 || safe>0){
-      focusTag='BUFFERED';
-      sideTitle='Money position controlled';
-      sideCopy=`${gbp(buffered)} is currently kept buffered and ${gbp(safe)} remains safe after full protection.`;
-      priorityCopy='Your money position is controlled. Aurora is holding cash back until the next mission or bill-driven move becomes due.';
-      badge='CONTROLLED';
+    const ig=round(Number(plan.ig||0));
+    const t212=round(Number(plan.t212||0));
+    const unassigned=round(Number(plan.unassigned||0));
+    const routedTotal=round(ig+t212+unassigned);
+    const declaredTotal=round(Number(plan.total||plan.budget||routedTotal));
+
+    if(
+      declaredTotal<=0
+      || Math.abs(routedTotal-declaredTotal)>.03
+      || (missionTotal>0 && Math.abs(declaredTotal-missionTotal)>.03)
+    ){
+      return null;
     }
 
-    set('m60HeroFocusTag',focusTag);
-    set('m60HeroPriorityCopy',priorityCopy);
-    set('m60SideTitle',sideTitle);
-    set('m60SideCopy',sideCopy);
-    set('m60SideBadge',badge);
+    return {
+      ig,
+      t212,
+      unassigned,
+      total:declaredTotal,
+      missionId:plan.missionId||null,
+      purchases:Array.isArray(plan.purchases)?plan.purchases:[]
+    };
   }
 
-  const observer=new MutationObserver(()=>update());
+  function stableRoute(missionTotal){
+    const current=routeFromStorage(missionTotal);
+    if(current){
+      lastStableRoute=current;
+      return current;
+    }
+
+    /*
+     * Keep the last reconciled route through short-lived DOM/storage churn.
+     * It is discarded automatically when the mission total genuinely changes.
+     */
+    if(
+      lastStableRoute
+      && missionTotal>0
+      && Math.abs(lastStableRoute.total-missionTotal)<=.03
+    ){
+      return lastStableRoute;
+    }
+
+    lastStableRoute=null;
+    return null;
+  }
+
+  function setSelectedView(viewId){
+    document.querySelectorAll("[data-m60-view]").forEach(control=>{
+      const selected=control.dataset.m60View===viewId;
+      control.classList.toggle("is-selected",selected);
+      control.setAttribute("aria-pressed",selected?"true":"false");
+    });
+  }
+
+  function update(){
+    const mission=num("m50CombinedMission");
+    const allocation=num("m33PlannedTotal");
+    const holdingMove=num("finalAmountToAdd");
+    const buffered=num("m22WalletBuffered");
+    const safe=num("m32TopSafe");
+    const route=stableRoute(mission);
+    const ig=route?route.ig:num("m51IgTransfer");
+    const t212=route?route.t212:num("m51T212Transfer");
+    const routeTotal=route?route.total:round(ig+t212);
+    const status=(text("m22MissionBadge")||"LIVE PLAN").toUpperCase();
+    const routeStatus=route
+      ?"TRANSFER NOW"
+      :(text("m51PreviewStatus")||"WAITING").toUpperCase();
+    const nextPayday=text("m35PaydayHuman")||"—";
+    const nextMeta=text("nextPaydayMeta")||"Upcoming pay cycle";
+
+    set("m60HeroPaydayStatus",status);
+    set("m60HeroRouteStatus",routeStatus);
+    set("m60NextPayday",nextPayday);
+    set("m60NextPaydayNote",nextMeta);
+    set("m60HoldingMove",gbp(holdingMove));
+    set("m60MissionTotal",gbp(mission));
+    set("m60IgRoute",gbp(ig));
+    set("m60T212Route",gbp(t212));
+    set("m60IgRouteNote",route
+      ?`${route.purchases.filter(item=>String(item.account||"")==="IG ISA").length} planned purchase${route.purchases.filter(item=>String(item.account||"")==="IG ISA").length===1?"":"s"}`
+      :(text("m51IgTransferNote")||"Awaiting final share route"));
+    set("m60T212RouteNote",route
+      ?`${route.purchases.filter(item=>String(item.account||"")==="Trading 212 ISA").length} planned purchase${route.purchases.filter(item=>String(item.account||"")==="Trading 212 ISA").length===1?"":"s"}`
+      :(text("m51T212TransferNote")||"Awaiting final share route"));
+    set("m60StatAllocation",gbp(allocation));
+    set("m60StatHolding",gbp(holdingMove));
+    set("m60StatMission",gbp(mission));
+    set("m60StatBuffered",gbp(buffered));
+    set("m60StatSafe",gbp(safe));
+    set("m60StatRoute",gbp(routeTotal));
+    set("m60StatRouteNote",routeTotal>0
+      ?`IG ISA ${gbp(ig)} • Trading 212 ${gbp(t212)}`
+      :"Waiting for final share route");
+
+    let focusTag="PROTECT";
+    let sideTitle="Preparing your next move";
+    let sideCopy="The right action will appear here once Aurora has refreshed the live Finance plan.";
+    let priorityCopy="Aurora is reading the live money position and deciding the next move.";
+    let badge="CHECKING";
+
+    if(route || routeTotal>0){
+      focusTag="MOVE CASH";
+      sideTitle="Broker route is ready";
+      sideCopy=`Move ${gbp(ig)} to IG ISA and ${gbp(t212)} to Trading 212, then complete the combined investment mission.`;
+      priorityCopy=`Final broker route returned. Move the broker cash only after Aurora has sized the final share purchases: IG ISA ${gbp(ig)} • Trading 212 ${gbp(t212)}.`;
+      badge="ROUTE READY";
+    }else if(mission>0){
+      focusTag="RELEASE";
+      sideTitle="Investment mission ready";
+      sideCopy=`${gbp(mission)} is ready for the Transfer Centre. Release the mission, then return here for the final broker route.`;
+      priorityCopy=`Current priority: release the ${gbp(mission)} investment mission to the Transfer Centre, let Aurora build the final share route, then come back here before moving broker cash.`;
+      badge="READY TO SEND";
+    }else if(holdingMove>0){
+      focusTag="PROTECT";
+      sideTitle="Protect the Holding Pot";
+      sideCopy=`Transfer ${gbp(holdingMove)} to the Holding Pot so bills, buffers and due-date commitments stay fully protected.`;
+      priorityCopy=`Current priority: protect the Holding Pot first. Aurora currently expects a Holding Pot move of ${gbp(holdingMove)} before any surplus decisions are made.`;
+      badge="FUND NEXT";
+    }else if(buffered>0||safe>0){
+      focusTag="BUFFERED";
+      sideTitle="Money position controlled";
+      sideCopy=`${gbp(buffered)} is currently kept buffered and ${gbp(safe)} remains safe after full protection.`;
+      priorityCopy="Your money position is controlled. Aurora is holding cash back until the next mission or bill-driven move becomes due.";
+      badge="CONTROLLED";
+    }
+
+    set("m60HeroFocusTag",focusTag);
+    set("m60HeroPriorityCopy",priorityCopy);
+    set("m60SideTitle",sideTitle);
+    set("m60SideCopy",sideCopy);
+    set("m60SideBadge",badge);
+  }
+
+  const observer=new MutationObserver(()=>{
+    clearTimeout(window.__auroraM60UpdateTimer);
+    window.__auroraM60UpdateTimer=setTimeout(update,20);
+  });
+
   function bind(){
-    idsToWatch.forEach(id=>{const el=byId(id); if(el) observer.observe(el,{childList:true,subtree:true,characterData:true});});
-    document.addEventListener('click',event=>{
-      const control=event.target.closest('[data-m60-view]');
+    idsToWatch.forEach(id=>{
+      const el=byId(id);
+      if(el) observer.observe(el,{childList:true,subtree:true,characterData:true});
+    });
+
+    document.addEventListener("click",event=>{
+      const control=event.target.closest("[data-m60-view]");
       if(control) setSelectedView(control.dataset.m60View);
     },true);
+
+    ["m22CoreInvestment","m50CapitalBalance","m50CapitalRelease","m50EtfBalance","m50EtfRelease"]
+      .forEach(id=>{
+        byId(id)?.addEventListener("input",()=>{
+          lastStableRoute=null;
+          setTimeout(update,30);
+        });
+        byId(id)?.addEventListener("change",()=>{
+          lastStableRoute=null;
+          setTimeout(update,30);
+        });
+      });
+
     update();
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind); else bind();
-  window.addEventListener('load', ()=>setTimeout(update, 250));
-  window.addEventListener('pageshow', ()=>setTimeout(update, 250));
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",bind,{once:true});
+  }else{
+    bind();
+  }
+
+  window.addEventListener("storage",event=>{
+    if([ACCOUNT_KEY,WEALTH_KEY].includes(event.key)) setTimeout(update,30);
+  });
+  window.addEventListener("aurora:finance-mission-refresh",()=>setTimeout(update,30));
+  window.addEventListener("load",()=>setTimeout(update,250));
+  window.addEventListener("pageshow",()=>setTimeout(update,250));
 })();
 </script>
 <script id="m61ExactPaydayReconciliation">
