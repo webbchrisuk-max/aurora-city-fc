@@ -21,7 +21,7 @@
   const OWNER_SCRIPT_ATTRIBUTE =
     'data-aurora-notifications-global-owner';
 
-  const OWNER_SCRIPT_VERSION = '5.0.0';
+  const OWNER_SCRIPT_VERSION = '5.1.0';
 
   const currentScriptUrl = (() => {
     try {
@@ -886,7 +886,7 @@
     return;
   }
 
-  const VERSION = '5.0.0';
+  const VERSION = '5.1.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
@@ -1764,6 +1764,21 @@
         notificationGroupFor(item)
     };
 
+    /*
+     * Honour a user's Clear or × dismissal for every generated notification,
+     * not only replaceLive rows. The exact current fingerprint stays hidden;
+     * a materially changed state can still create a fresh notification.
+     */
+    if (
+      !item.metadata?.dismissalBypass
+      && isDismissed(
+        String(item.source || ''),
+        item.fingerprint
+      )
+    ) {
+      return null;
+    }
+
     const deliveryMode =
       deliveryModeFor(item);
 
@@ -1893,10 +1908,27 @@
       item => String(item.id || '') === value
     );
 
-    if (row?.metadata?.liveSource) {
+    /*
+     * Removing a generated notification must dismiss its current
+     * fingerprint as well as deleting the visible card. Otherwise the
+     * storage watcher or transfer lifecycle synchroniser can recreate the
+     * same card moments later.
+     */
+    const dismissalSource = row
+      ? (
+          liveSourceForRow(row)
+          || String(row.source || '').trim()
+        )
+      : '';
+
+    if (
+      dismissalSource
+      && row?.fingerprint
+    ) {
       dismissFingerprint(
-        row.metadata.liveSource,
-        row.fingerprint
+        dismissalSource,
+        row.fingerprint,
+        30
       );
     }
 
@@ -1936,13 +1968,24 @@
   function clear() {
     try {
       cleanStore(readStore()).forEach(row => {
-        const liveSource =
-          liveSourceForRow(row);
+        /*
+         * Clear means dismiss the current generated state, not merely empty
+         * the visible list. Store the exact source + fingerprint so the same
+         * transfer lifecycle or intelligence state cannot immediately return.
+         * A genuinely changed state receives a new fingerprint and may notify.
+         */
+        const dismissalSource =
+          liveSourceForRow(row)
+          || String(row?.source || '').trim();
 
-        if(liveSource && row?.fingerprint){
+        if (
+          dismissalSource
+          && row?.fingerprint
+        ) {
           dismissFingerprint(
-            liveSource,
-            row.fingerprint
+            dismissalSource,
+            row.fingerprint,
+            30
           );
         }
       });
