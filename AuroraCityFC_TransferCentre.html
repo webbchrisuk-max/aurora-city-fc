@@ -2900,7 +2900,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </style>
 
 <style id="aurora-crimson-record-v94">
-/* Aurora Transfer Centre — Budget Stable v100
+/* Aurora Transfer Centre — Manual Budget Editor v101
    A deep oxblood / stadium-red execution desk, aligned with Aurora's dark shell. */
 
 #payday-execution{
@@ -3842,6 +3842,155 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 })();
 </script>
 
+
+<style id="aurora-manual-budget-editor-v101">
+#routeBudgetEditor{
+  width:100%!important;
+  min-width:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  color:#fff!important;
+  padding:9px 7px!important;
+  font-size:20px!important;
+  font-weight:1000!important;
+  pointer-events:auto!important;
+  user-select:text!important;
+  -webkit-user-select:text!important;
+  touch-action:manipulation!important;
+  cursor:text!important;
+  opacity:1!important;
+  caret-color:#fb7185!important;
+  -webkit-appearance:none!important;
+  appearance:textfield!important;
+}
+#routeBudgetEditor:focus{
+  outline:none!important;
+  box-shadow:none!important;
+}
+#transferBudgetInput{
+  display:none!important;
+}
+</style>
+
+
+<script id="aurora-manual-budget-editor-v101-js">
+(function(){
+  const KEY='aurora_transfer_manual_route_budget_v101';
+  const editor=()=>document.getElementById('routeBudgetEditor');
+  const canonical=()=>document.getElementById('transferBudgetInput');
+  const money=v=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(v)||0);
+
+  function parse(v){
+    const n=Number(String(v??'').replace(/,/g,'').trim());
+    return Number.isFinite(n)?n:0;
+  }
+
+  function currentInitialBudget(){
+    const saved=parse(localStorage.getItem(KEY));
+    if(saved>0)return saved;
+    const canon=parse(canonical()?.value);
+    if(canon>0)return canon;
+    try{
+      const finance=JSON.parse(localStorage.getItem('aurora_finance_department_mission_v1')||'null')
+        || JSON.parse(localStorage.getItem('aurora_wealth_investment_mission_v1')||'null');
+      if(parse(finance?.budget)>0)return parse(finance.budget);
+    }catch(_){}
+    return 3500;
+  }
+
+  function updatePreview(){
+    const value=parse(editor()?.value);
+    const budgetText=money(value);
+    const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
+    set('redlineRouteBudget',budgetText);
+    const strategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')
+      ? 'Maximum Income':'Sustainable Income';
+    const broker=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+    set('dealRouteControlSummary',`${strategy} • ${broker} • ${budgetText}`);
+    const msg=document.getElementById('redlineRouteMessage');
+    if(msg)msg.textContent='Budget edited. Press Save & rebuild allocation to apply it.';
+  }
+
+  function saveAndRebuild(event){
+    event?.preventDefault?.();
+    event?.stopImmediatePropagation?.();
+
+    const value=parse(editor()?.value);
+    const msg=document.getElementById('redlineRouteMessage');
+    if(!(value>0)){
+      if(msg)msg.textContent='Enter a valid working transfer budget above £0.';
+      editor()?.focus();
+      return;
+    }
+
+    localStorage.setItem(KEY,String(value));
+    const input=canonical();
+    if(input){
+      input.value=value.toFixed(2);
+      input.dispatchEvent(new Event('input',{bubbles:true}));
+      input.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+
+    // Keep related readouts aligned, without allowing them to control the editor.
+    ['m5BuilderBudget','m3ReleasedCash'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.value=value.toFixed(2);
+    });
+    ['heroTransferBudget','m5Budget','m7Budget','m11MissionBudget'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.textContent=money(value);
+    });
+
+    try{
+      if(typeof manualAmounts!=='undefined')manualAmounts.clear();
+      if(typeof excludedTickers!=='undefined')excludedTickers.clear();
+      if(typeof renderAll==='function')renderAll();
+    }catch(err){console.warn('Manual route rebuild',err)}
+
+    setTimeout(()=>{
+      // Legacy renderers may alter hidden canonical values; restore the saved manual value.
+      if(canonical())canonical().value=value.toFixed(2);
+      if(editor())editor().value=value.toFixed(2);
+      updatePreview();
+      if(msg){
+        const strategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')
+          ? 'Maximum Income':'Sustainable Income';
+        const broker=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+        msg.textContent=`${strategy} • ${broker} • ${money(value)} saved and rebuilt.`;
+        msg.classList.add('saved');
+      }
+    },100);
+  }
+
+  function start(){
+    const value=currentInitialBudget();
+    if(editor())editor().value=value.toFixed(2);
+    if(canonical())canonical().value=value.toFixed(2);
+    updatePreview();
+
+    editor()?.addEventListener('input',updatePreview);
+    editor()?.addEventListener('focus',()=>editor()?.select());
+
+    const save=document.getElementById('redlineSaveRoute');
+    if(save){
+      const clone=save.cloneNode(true);
+      save.replaceWith(clone);
+      clone.addEventListener('click',saveAndRebuild,true);
+    }
+
+    document.addEventListener('click',e=>{
+      if(e.target.closest?.('#m11BalancedRoute,#m11MaximumRoute'))setTimeout(updatePreview,0);
+    });
+    document.getElementById('brokerRouteFilter')?.addEventListener('change',updatePreview);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else start();
+})();
+</script>
+
 </head>
 <body>
 
@@ -4242,7 +4391,8 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
   </label>
   <label class="redline-route-field budget">
     <span>Working transfer budget</span>
-    <div class="redline-budget-input"><b>£</b><input aria-label="Transfer budget" id="transferBudgetInput" inputmode="decimal" min="0" step="25" type="number" value="3500"/></div>
+    <div class="redline-budget-input"><b>£</b><input aria-label="Working transfer budget editor" id="routeBudgetEditor" inputmode="decimal" min="0" step="25" type="number" value="3500"/></div>
+<input id="transferBudgetInput" type="hidden" value="3500"/>
     <small>Edit this before Aurora builds the allocation.</small>
   </label>
 </div>
@@ -4412,7 +4562,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter each broker fill using the larger fields below. Values save automatically as you type.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div><div class="payday-record-guide"><strong>Easy entry:</strong> enter the <b>number of shares</b>, the broker’s <b>price in pounds per share</b>, and any <b>fees</b>. Example: a broker price of <b>84.97p</b> is entered as <b>0.8497</b>.</div>
 <div class="payday-stability-toolbar" id="paydayStabilityToolbar">
-  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Budget Stable v100</strong><span>Large-entry layout • AuroraData registration</span></div>
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Manual Budget Editor v101</strong><span>Large-entry layout • AuroraData registration</span></div>
   <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
   <label class="payday-broker-control"><span>Broker route</span><select id="paydayBrokerRouteFilter"><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label>
   <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
