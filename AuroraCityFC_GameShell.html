@@ -6082,14 +6082,8 @@
         }
 
         if(action === "notifications"){
-          const panel = documentObject.getElementById(
-            "beastNotificationPanel"
-          );
-
-          if(panel){
-            panel.classList.toggle("open");
-          }
-
+          /* Notifications are owned globally by GameShell. */
+          window.AuroraShellNotifications?.toggle?.();
           return;
         }
 
@@ -6447,9 +6441,11 @@
 
       notificationButton.addEventListener(
         "click",
-        () => routeManagerAction(
-          "notifications"
-        )
+        event => {
+          event.preventDefault();
+          event.stopPropagation();
+          window.AuroraShellNotifications?.toggle?.();
+        }
       );
 
       window.addEventListener(
@@ -6659,7 +6655,13 @@
   function openPanel(){render();panel.classList.add("open");panel.setAttribute("aria-hidden","false");button.classList.add("is-active");}
   function closePanel(){panel.classList.remove("open");panel.setAttribute("aria-hidden","true");button.classList.remove("is-active");}
   function toggle(){panel.classList.contains("open")?closePanel():openPanel()}
-  button.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();toggle()},true);
+  button.onclick=null;
+  button.addEventListener("click",event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    toggle();
+  },true);
   close?.addEventListener("click",closePanel);
   mark?.addEventListener("click",()=>{window.AuroraNotifications?.markAllRead?.();render()});
   clear?.addEventListener("click",()=>{window.AuroraNotifications?.clear?.();render()});
