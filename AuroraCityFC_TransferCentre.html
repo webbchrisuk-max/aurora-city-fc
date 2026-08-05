@@ -9772,5 +9772,150 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
   });
 })();
 </script>
+
+
+<!-- Aurora Transfer Centre v103 — independent cash editor + restored target width -->
+<style id="aurora-transfer-cash-layout-v103">
+/* Prevent the three route fields from imposing an 800px minimum width on the left panel. */
+.m7-exec-grid{
+  grid-template-columns:minmax(0,1.12fr) minmax(520px,.88fr)!important;
+  align-items:start!important;
+  gap:16px!important;
+}
+.m7-decision-card,.m7-targets-panel{min-width:0!important;}
+.redline-route-controls{
+  grid-template-columns:minmax(0,.9fr) minmax(0,1fr) minmax(0,1fr)!important;
+  gap:10px!important;
+}
+.redline-route-field,.redline-budget-input{min-width:0!important;}
+.redline-budget-input input{min-width:0!important;width:100%!important;}
+.m7-target-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;}
+.m7-target{min-width:0!important;padding:12px!important;}
+.m7-target-top>div{min-width:0!important;}
+.m7-target h3,.m7-target-name{overflow-wrap:anywhere;}
+.m7-target-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+.m7-target-stat{min-width:0!important;padding:7px 6px!important;}
+.m7-target-stat strong{font-size:11px!important;white-space:nowrap!important;}
+@media(max-width:1180px){
+  .m7-exec-grid{grid-template-columns:1fr!important;}
+  .m7-targets-panel{min-width:0!important;}
+  .m7-target-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+}
+@media(max-width:720px){
+  .redline-route-controls,.redline-route-live,.m7-target-grid{grid-template-columns:1fr!important;}
+}
+</style>
+<script id="aurora-transfer-cash-layout-v103-js">
+(function(){
+  'use strict';
+  const BUDGET_KEY='aurora_transfer_manual_route_budget_v101';
+  const CASH_KEY='aurora_transfer_manual_cash_v102';
+  const $=id=>document.getElementById(id);
+  const parse=value=>{
+    const n=Number(String(value??'').replace(/,/g,'').trim());
+    return Number.isFinite(n)?n:0;
+  };
+  const money=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(parse(value));
+
+  function preview(){
+    const budget=parse($('routeBudgetEditor')?.value);
+    const cash=parse($('paydayAvailableCash')?.value);
+    const strategy=$('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
+    const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+    if($('redlineRouteBudget')) $('redlineRouteBudget').textContent=money(budget);
+    if($('redlineRouteCash')) $('redlineRouteCash').textContent=money(cash);
+    if($('dealRouteControlSummary')) $('dealRouteControlSummary').textContent=`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)}`;
+    if($('paydayCashSummary')) $('paydayCashSummary').textContent=cash>0?`${money(cash)} available`:'Enter transfer cash above';
+  }
+
+  function persistCash(cash){
+    try{
+      if(typeof paydayExecutionStore==='function' && typeof savePaydayExecution==='function'){
+        const saved=paydayExecutionStore();
+        const current=Math.max(0,parse(saved.availableCash));
+        saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};
+        saved.availableCash=cash;
+        saved.manualCashOverride=true;
+        saved.completedAt='';
+        saved.open=true;
+        saved.cashSource='MANUAL_OVERRIDE';
+        savePaydayExecution(saved);
+      }
+    }catch(error){console.warn('Cash persistence',error);}
+  }
+
+  function saveRoute(event){
+    event?.preventDefault?.();
+    event?.stopImmediatePropagation?.();
+    const budgetInput=$('routeBudgetEditor');
+    const cashInput=$('paydayAvailableCash');
+    const budget=parse(budgetInput?.value);
+    const cash=parse(cashInput?.value);
+    const message=$('redlineRouteMessage');
+    if(!(budget>0)){
+      if(message) message.textContent='Enter a valid working transfer budget above £0.';
+      budgetInput?.focus(); return;
+    }
+    if(cash<0){
+      if(message) message.textContent='Enter a valid available transfer cash amount.';
+      cashInput?.focus(); return;
+    }
+    localStorage.setItem(BUDGET_KEY,String(budget));
+    localStorage.setItem(CASH_KEY,String(cash));
+    persistCash(cash);
+    if($('transferBudgetInput')) $('transferBudgetInput').value=budget.toFixed(2);
+    ['m5BuilderBudget','m3ReleasedCash'].forEach(id=>{if($(id)) $(id).value=budget.toFixed(2);});
+    try{
+      if(typeof manualAmounts!=='undefined') manualAmounts.clear();
+      if(typeof excludedTickers!=='undefined') excludedTickers.clear();
+      if(typeof renderAll==='function') renderAll();
+      if(typeof renderPaydayExecution==='function' && typeof buildDealSheet==='function') renderPaydayExecution(buildDealSheet());
+    }catch(error){console.warn('Route rebuild',error);}
+    // Renderers may refresh fields, so restore the two independent values afterwards.
+    requestAnimationFrame(()=>{
+      if($('routeBudgetEditor')) $('routeBudgetEditor').value=budget.toFixed(2);
+      if($('transferBudgetInput')) $('transferBudgetInput').value=budget.toFixed(2);
+      if($('paydayAvailableCash')) $('paydayAvailableCash').value=cash.toFixed(2);
+      preview();
+      const strategy=$('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
+      const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+      if(message){message.textContent=`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)} saved and rebuilt.`;message.classList.add('saved');}
+    });
+  }
+
+  function initialise(){
+    const oldCash=$('paydayAvailableCash');
+    if(oldCash){
+      const savedCash=localStorage.getItem(CASH_KEY);
+      const initial=savedCash!==null?parse(savedCash):parse(oldCash.value);
+      const clean=oldCash.cloneNode(true); // removes legacy Enter/save handlers that coupled cash to budget
+      oldCash.replaceWith(clean);
+      clean.disabled=false; clean.readOnly=false;
+      clean.value=initial.toFixed(2);
+      clean.addEventListener('input',preview);
+      clean.addEventListener('focus',event=>event.target.select());
+      clean.addEventListener('keydown',event=>{
+        if(event.key==='Enter'){event.preventDefault();saveRoute(event);clean.blur();}
+      });
+    }
+    const oldSave=$('redlineSaveRoute');
+    if(oldSave){
+      const cleanSave=oldSave.cloneNode(true);
+      oldSave.replaceWith(cleanSave);
+      cleanSave.textContent='Save & rebuild allocation';
+      cleanSave.addEventListener('click',saveRoute,true);
+    }
+    $('routeBudgetEditor')?.addEventListener('input',preview);
+    $('brokerRouteFilter')?.addEventListener('change',preview);
+    document.addEventListener('click',event=>{
+      if(event.target.closest?.('#m11BalancedRoute,#m11MaximumRoute')) setTimeout(preview,0);
+    });
+    preview();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initialise,{once:true});
+  else initialise();
+})();
+</script>
+
 </body>
 </html>
