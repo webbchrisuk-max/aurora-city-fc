@@ -2900,7 +2900,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </style>
 
 <style id="aurora-crimson-record-v94">
-/* Aurora Transfer Centre — Route & Cash Desk v102
+/* Aurora Transfer Centre — Cash Stable v103
    A deep oxblood / stadium-red execution desk, aligned with Aurora's dark shell. */
 
 #payday-execution{
@@ -4006,7 +4006,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
   border-color:#38bdf8!important;
   box-shadow:0 0 0 4px rgba(56,189,248,.10),0 0 24px rgba(56,189,248,.08)!important;
 }
-#paydayAvailableCash{
+#routeCashEditor{
   width:100%!important;
   min-width:0!important;
   border:0!important;
@@ -4026,7 +4026,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
   -webkit-appearance:none!important;
   appearance:textfield!important;
 }
-#paydayAvailableCash:focus{
+#routeCashEditor:focus{
   outline:none!important;
   box-shadow:none!important;
 }
@@ -4093,124 +4093,102 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 </style>
 
 
-<script id="aurora-route-and-cash-v102-js">
+<script id="aurora-cash-stable-v103-js">
 (function(){
-  const BUDGET_KEY='aurora_transfer_manual_route_budget_v101';
-  const CASH_KEY='aurora_transfer_manual_cash_v102';
-  const money=v=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(v)||0);
-  const parse=v=>{
-    const n=Number(String(v??'').replace(/,/g,'').trim());
-    return Number.isFinite(n)?n:0;
-  };
+  const BK='aurora_transfer_manual_route_budget_v101';
+  const CK='aurora_transfer_manual_cash_v103';
+  const gbp=v=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(v)||0);
+  const num=v=>{const n=Number(String(v??'').replace(/,/g,'').trim());return Number.isFinite(n)?n:0};
+  const budget=()=>document.getElementById('routeBudgetEditor');
+  const cash=()=>document.getElementById('routeCashEditor');
+  const hiddenBudget=()=>document.getElementById('transferBudgetInput');
+  const hiddenCash=()=>document.getElementById('paydayAvailableCash');
 
-  function budgetEditor(){return document.getElementById('routeBudgetEditor')}
-  function cashEditor(){return document.getElementById('paydayAvailableCash')}
-  function canonicalBudget(){return document.getElementById('transferBudgetInput')}
-
-  function updateTopPreview(){
-    const budget=parse(budgetEditor()?.value);
-    const cash=parse(cashEditor()?.value);
-    const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
-    set('redlineRouteBudget',money(budget));
-    set('redlineRouteCash',money(cash));
-    set('paydayCashSummary',cash>0?`${money(cash)} available`:'Enter transfer cash above');
-    const strategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')
-      ?'Maximum Income':'Sustainable Income';
-    const broker=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
-    set('dealRouteControlSummary',`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)}`);
+  function preview(){
+    const b=num(budget()?.value), c=num(cash()?.value);
+    const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+    set('redlineRouteBudget',gbp(b));
+    set('redlineRouteCash',gbp(c));
+    set('paydayCashSummary',c>0?gbp(c)+' available':'Enter transfer cash above');
+    const s=document.getElementById('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
+    const br=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+    set('dealRouteControlSummary',`${s} • ${br} • Budget ${gbp(b)} • Cash ${gbp(c)}`);
   }
 
-  function restoreCash(){
-    const input=cashEditor();
-    if(!input)return;
-    const saved=localStorage.getItem(CASH_KEY);
-    if(saved!==null&&saved!==''&&parse(saved)>=0){
-      input.value=parse(saved).toFixed(2);
-    }
-    input.disabled=false;
-    input.readOnly=false;
-    input.removeAttribute('disabled');
-    input.removeAttribute('readonly');
-    updateTopPreview();
+  function initialCash(){
+    const saved=num(localStorage.getItem(CK));
+    if(saved>0)return saved;
+    try{
+      const p=JSON.parse(localStorage.getItem('aurora_payday_execution_v1')||'null');
+      const v=num(p?.availableCash);
+      if(v>0)return v;
+    }catch(_){}
+    return 0;
   }
 
-  function saveBoth(event){
-    event?.preventDefault?.();
-    event?.stopImmediatePropagation?.();
-
-    const budget=parse(budgetEditor()?.value);
-    const cash=parse(cashEditor()?.value);
+  function saveAll(e){
+    e?.preventDefault?.();
+    e?.stopImmediatePropagation?.();
+    const b=num(budget()?.value), c=num(cash()?.value);
     const msg=document.getElementById('redlineRouteMessage');
+    if(!(b>0)){if(msg)msg.textContent='Enter a valid transfer budget.';budget()?.focus();return}
+    if(c<0){if(msg)msg.textContent='Enter a valid transfer cash amount.';cash()?.focus();return}
 
-    if(!(budget>0)){
-      if(msg)msg.textContent='Enter a valid transfer budget above £0.';
-      budgetEditor()?.focus();
-      return;
+    localStorage.setItem(BK,String(b));
+    localStorage.setItem(CK,String(c));
+    if(hiddenBudget()){
+      hiddenBudget().value=b.toFixed(2);
+      hiddenBudget().dispatchEvent(new Event('input',{bubbles:true}));
+      hiddenBudget().dispatchEvent(new Event('change',{bubbles:true}));
     }
-    if(cash<0){
-      if(msg)msg.textContent='Enter a valid available transfer cash amount.';
-      cashEditor()?.focus();
-      return;
+    if(hiddenCash()){
+      hiddenCash().value=c.toFixed(2);
+      hiddenCash().dispatchEvent(new Event('input',{bubbles:true}));
+      hiddenCash().dispatchEvent(new Event('change',{bubbles:true}));
     }
-
-    localStorage.setItem(BUDGET_KEY,String(budget));
-    localStorage.setItem(CASH_KEY,String(cash));
-
-    if(canonicalBudget()){
-      canonicalBudget().value=budget.toFixed(2);
-      canonicalBudget().dispatchEvent(new Event('input',{bubbles:true}));
-      canonicalBudget().dispatchEvent(new Event('change',{bubbles:true}));
-    }
-
-    // Use the existing payday cash save engine, but only after both values are final.
-    const cashSave=document.getElementById('savePaydayCash');
-    if(cashSave)cashSave.click();
-
+    document.getElementById('savePaydayCash')?.click();
     try{
       if(typeof manualAmounts!=='undefined')manualAmounts.clear();
       if(typeof excludedTickers!=='undefined')excludedTickers.clear();
       if(typeof renderAll==='function')renderAll();
-    }catch(err){console.warn('Route and cash rebuild',err)}
-
+    }catch(_){}
     setTimeout(()=>{
-      if(budgetEditor())budgetEditor().value=budget.toFixed(2);
-      if(cashEditor())cashEditor().value=cash.toFixed(2);
-      if(canonicalBudget())canonicalBudget().value=budget.toFixed(2);
-      updateTopPreview();
-      if(msg){
-        const strategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')
-          ?'Maximum Income':'Sustainable Income';
-        const broker=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
-        msg.textContent=`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)} saved and rebuilt.`;
-        msg.classList.add('saved');
-      }
+      if(budget())budget().value=b.toFixed(2);
+      if(cash())cash().value=c.toFixed(2);
+      if(hiddenBudget())hiddenBudget().value=b.toFixed(2);
+      if(hiddenCash())hiddenCash().value=c.toFixed(2);
+      preview();
+      if(msg)msg.textContent=`Budget ${gbp(b)} • Cash ${gbp(c)} saved and rebuilt.`;
     },120);
   }
 
   function start(){
-    restoreCash();
-    cashEditor()?.addEventListener('input',updateTopPreview);
-    budgetEditor()?.addEventListener('input',updateTopPreview);
-    document.getElementById('brokerRouteFilter')?.addEventListener('change',updateTopPreview);
-    document.addEventListener('click',e=>{
-      if(e.target.closest?.('#m11BalancedRoute,#m11MaximumRoute'))setTimeout(updateTopPreview,0);
-    });
-
+    if(cash())cash().value=initialCash().toFixed(2);
+    const sb=num(localStorage.getItem(BK)); if(sb>0&&budget())budget().value=sb.toFixed(2);
+    preview();
+    cash()?.addEventListener('input',preview);
+    budget()?.addEventListener('input',preview);
+    document.getElementById('brokerRouteFilter')?.addEventListener('change',preview);
     const save=document.getElementById('redlineSaveRoute');
     if(save){
       const clone=save.cloneNode(true);
       save.replaceWith(clone);
       clone.textContent='Save & rebuild allocation';
-      clone.addEventListener('click',saveBoth,true);
+      clone.addEventListener('click',saveAll,true);
     }
   }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',start,{once:true});
-  }else start();
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',start,{once:true}):start();
 })();
 </script>
 
+
+<style id="aurora-cash-stable-v103">
+#paydayAvailableCash{display:none!important}
+#routeCashEditor{
+  pointer-events:auto!important;user-select:text!important;-webkit-user-select:text!important;
+  touch-action:manipulation!important;cursor:text!important;opacity:1!important
+}
+</style>
 </head>
 <body>
 
@@ -4617,7 +4595,8 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
   </label>
   <label class="redline-route-field cash">
     <span>Available transfer cash</span>
-    <div class="redline-budget-input"><b>£</b><input aria-label="Available transfer cash" autocomplete="off" id="paydayAvailableCash" inputmode="decimal" min="0" step="0.01" type="number" value="0.00"/></div>
+    <div class="redline-budget-input"><b>£</b><input aria-label="Available transfer cash editor" autocomplete="off" id="routeCashEditor" inputmode="decimal" min="0" step="0.01" type="number" value="0.00"/></div>
+    <input id="paydayAvailableCash" type="hidden" value="0.00"/>
     <button id="savePaydayCash" type="button" hidden>Save cash amount</button>
     <small>The real cash currently available at the broker.</small>
   </label>
@@ -4789,7 +4768,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter each broker fill using the larger fields below. Values save automatically as you type.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div><div class="payday-record-guide"><strong>Easy entry:</strong> enter the <b>number of shares</b>, the broker’s <b>price in pounds per share</b>, and any <b>fees</b>. Example: a broker price of <b>84.97p</b> is entered as <b>0.8497</b>.</div>
 <div class="payday-stability-toolbar" id="paydayStabilityToolbar">
-  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Route & Cash Desk v102</strong><span>Large-entry layout • AuroraData registration</span></div>
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Cash Stable v103</strong><span>Large-entry layout • AuroraData registration</span></div>
   <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
   <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
 </div>
@@ -9770,298 +9749,6 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
       else location.reload();
     });
   });
-})();
-</script>
-
-
-<!-- Aurora Transfer Centre v103 — independent cash editor + restored target width -->
-<style id="aurora-transfer-cash-layout-v103">
-/* Prevent the three route fields from imposing an 800px minimum width on the left panel. */
-.m7-exec-grid{
-  grid-template-columns:minmax(0,1.12fr) minmax(520px,.88fr)!important;
-  align-items:start!important;
-  gap:16px!important;
-}
-.m7-decision-card,.m7-targets-panel{min-width:0!important;}
-.redline-route-controls{
-  grid-template-columns:minmax(0,.9fr) minmax(0,1fr) minmax(0,1fr)!important;
-  gap:10px!important;
-}
-.redline-route-field,.redline-budget-input{min-width:0!important;}
-.redline-budget-input input{min-width:0!important;width:100%!important;}
-.m7-target-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;}
-.m7-target{min-width:0!important;padding:12px!important;}
-.m7-target-top>div{min-width:0!important;}
-.m7-target h3,.m7-target-name{overflow-wrap:anywhere;}
-.m7-target-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-.m7-target-stat{min-width:0!important;padding:7px 6px!important;}
-.m7-target-stat strong{font-size:11px!important;white-space:nowrap!important;}
-@media(max-width:1180px){
-  .m7-exec-grid{grid-template-columns:1fr!important;}
-  .m7-targets-panel{min-width:0!important;}
-  .m7-target-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
-}
-@media(max-width:720px){
-  .redline-route-controls,.redline-route-live,.m7-target-grid{grid-template-columns:1fr!important;}
-}
-</style>
-<script id="aurora-transfer-cash-layout-v103-js">
-(function(){
-  'use strict';
-  const BUDGET_KEY='aurora_transfer_manual_route_budget_v101';
-  const CASH_KEY='aurora_transfer_manual_cash_v102';
-  const $=id=>document.getElementById(id);
-  const parse=value=>{
-    const n=Number(String(value??'').replace(/,/g,'').trim());
-    return Number.isFinite(n)?n:0;
-  };
-  const money=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(parse(value));
-
-  function preview(){
-    const budget=parse($('routeBudgetEditor')?.value);
-    const cash=parse($('paydayAvailableCash')?.value);
-    const strategy=$('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
-    const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
-    if($('redlineRouteBudget')) $('redlineRouteBudget').textContent=money(budget);
-    if($('redlineRouteCash')) $('redlineRouteCash').textContent=money(cash);
-    if($('dealRouteControlSummary')) $('dealRouteControlSummary').textContent=`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)}`;
-    if($('paydayCashSummary')) $('paydayCashSummary').textContent=cash>0?`${money(cash)} available`:'Enter transfer cash above';
-  }
-
-  function persistCash(cash){
-    try{
-      if(typeof paydayExecutionStore==='function' && typeof savePaydayExecution==='function'){
-        const saved=paydayExecutionStore();
-        const current=Math.max(0,parse(saved.availableCash));
-        saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};
-        saved.availableCash=cash;
-        saved.manualCashOverride=true;
-        saved.completedAt='';
-        saved.open=true;
-        saved.cashSource='MANUAL_OVERRIDE';
-        savePaydayExecution(saved);
-      }
-    }catch(error){console.warn('Cash persistence',error);}
-  }
-
-  function saveRoute(event){
-    event?.preventDefault?.();
-    event?.stopImmediatePropagation?.();
-    const budgetInput=$('routeBudgetEditor');
-    const cashInput=$('paydayAvailableCash');
-    const budget=parse(budgetInput?.value);
-    const cash=parse(cashInput?.value);
-    const message=$('redlineRouteMessage');
-    if(!(budget>0)){
-      if(message) message.textContent='Enter a valid working transfer budget above £0.';
-      budgetInput?.focus(); return;
-    }
-    if(cash<0){
-      if(message) message.textContent='Enter a valid available transfer cash amount.';
-      cashInput?.focus(); return;
-    }
-    localStorage.setItem(BUDGET_KEY,String(budget));
-    localStorage.setItem(CASH_KEY,String(cash));
-    persistCash(cash);
-    if($('transferBudgetInput')) $('transferBudgetInput').value=budget.toFixed(2);
-    ['m5BuilderBudget','m3ReleasedCash'].forEach(id=>{if($(id)) $(id).value=budget.toFixed(2);});
-    try{
-      if(typeof manualAmounts!=='undefined') manualAmounts.clear();
-      if(typeof excludedTickers!=='undefined') excludedTickers.clear();
-      if(typeof renderAll==='function') renderAll();
-      if(typeof renderPaydayExecution==='function' && typeof buildDealSheet==='function') renderPaydayExecution(buildDealSheet());
-    }catch(error){console.warn('Route rebuild',error);}
-    // Renderers may refresh fields, so restore the two independent values afterwards.
-    requestAnimationFrame(()=>{
-      if($('routeBudgetEditor')) $('routeBudgetEditor').value=budget.toFixed(2);
-      if($('transferBudgetInput')) $('transferBudgetInput').value=budget.toFixed(2);
-      if($('paydayAvailableCash')) $('paydayAvailableCash').value=cash.toFixed(2);
-      preview();
-      const strategy=$('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
-      const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
-      if(message){message.textContent=`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)} saved and rebuilt.`;message.classList.add('saved');}
-    });
-  }
-
-  function initialise(){
-    const oldCash=$('paydayAvailableCash');
-    if(oldCash){
-      const savedCash=localStorage.getItem(CASH_KEY);
-      const initial=savedCash!==null?parse(savedCash):parse(oldCash.value);
-      const clean=oldCash.cloneNode(true); // removes legacy Enter/save handlers that coupled cash to budget
-      oldCash.replaceWith(clean);
-      clean.disabled=false; clean.readOnly=false;
-      clean.value=initial.toFixed(2);
-      clean.addEventListener('input',preview);
-      clean.addEventListener('focus',event=>event.target.select());
-      clean.addEventListener('keydown',event=>{
-        if(event.key==='Enter'){event.preventDefault();saveRoute(event);clean.blur();}
-      });
-    }
-    const oldSave=$('redlineSaveRoute');
-    if(oldSave){
-      const cleanSave=oldSave.cloneNode(true);
-      oldSave.replaceWith(cleanSave);
-      cleanSave.textContent='Save & rebuild allocation';
-      cleanSave.addEventListener('click',saveRoute,true);
-    }
-    $('routeBudgetEditor')?.addEventListener('input',preview);
-    $('brokerRouteFilter')?.addEventListener('change',preview);
-    document.addEventListener('click',event=>{
-      if(event.target.closest?.('#m11BalancedRoute,#m11MaximumRoute')) setTimeout(preview,0);
-    });
-    preview();
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initialise,{once:true});
-  else initialise();
-})();
-</script>
-
-
-
-<!-- Aurora Transfer Centre v104 — single authoritative transfer-cash value -->
-<script id="aurora-transfer-cash-authority-v104-js">
-(function(){
-  'use strict';
-  const CASH_KEY='aurora_transfer_manual_cash_v102';
-  const BUDGET_KEY='aurora_transfer_manual_route_budget_v101';
-  const EXECUTION_KEY='aurora_payday_execution_v1';
-  const $=id=>document.getElementById(id);
-  const parse=value=>{
-    const n=Number(String(value??'').replace(/[£,\s]/g,'').trim());
-    return Number.isFinite(n)?Math.max(0,n):0;
-  };
-  const money=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(parse(value));
-  const readExecution=()=>{try{return JSON.parse(localStorage.getItem(EXECUTION_KEY)||'{}')||{};}catch(_){return {};}};
-  const writeExecution=value=>{try{localStorage.setItem(EXECUTION_KEY,JSON.stringify(value));}catch(_){}};
-
-  function persistCash(cash,source='MANUAL_OVERRIDE'){
-    cash=parse(cash);
-    localStorage.setItem(CASH_KEY,String(cash));
-    const saved=readExecution();
-    const previous=parse(saved.availableCash);
-    if(previous!==cash){
-      saved.lastFundingSnapshot={
-        availableCash:previous,
-        manualCashOverride:Boolean(saved.manualCashOverride),
-        savedAt:new Date().toISOString()
-      };
-    }
-    saved.availableCash=cash;
-    saved.manualCashOverride=true;
-    saved.cashSource=source;
-    saved.completedAt='';
-    saved.open=true;
-    saved.updatedAt=new Date().toISOString();
-    writeExecution(saved);
-    return cash;
-  }
-
-  function paintCash(cash){
-    cash=parse(cash);
-    const input=$('paydayAvailableCash');
-    if(input && document.activeElement!==input) input.value=cash.toFixed(2);
-    if($('redlineRouteCash')) $('redlineRouteCash').textContent=money(cash);
-    if($('paydayCashSummary')) $('paydayCashSummary').textContent=cash>0?`${money(cash)} available`:'Enter transfer cash above';
-  }
-
-  function repaintRoute(budget,cash,messageText){
-    budget=parse(budget); cash=parse(cash);
-    if($('routeBudgetEditor')) $('routeBudgetEditor').value=budget.toFixed(2);
-    if($('transferBudgetInput')) $('transferBudgetInput').value=budget.toFixed(2);
-    paintCash(cash);
-    if($('redlineRouteBudget')) $('redlineRouteBudget').textContent=money(budget);
-    const strategy=$('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
-    const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
-    if($('dealRouteControlSummary')) $('dealRouteControlSummary').textContent=`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)}`;
-    if(messageText && $('redlineRouteMessage')){
-      $('redlineRouteMessage').textContent=messageText;
-      $('redlineRouteMessage').classList.add('saved');
-    }
-  }
-
-  function saveRoute(event){
-    event?.preventDefault?.();
-    event?.stopImmediatePropagation?.();
-    const budget=parse($('routeBudgetEditor')?.value);
-    const cash=parse($('paydayAvailableCash')?.value);
-    if(!(budget>0)){
-      if($('redlineRouteMessage')) $('redlineRouteMessage').textContent='Enter a valid working transfer budget above £0.';
-      $('routeBudgetEditor')?.focus();
-      return;
-    }
-    localStorage.setItem(BUDGET_KEY,String(budget));
-    persistCash(cash,'ROUTE_DESK_SAVE');
-    if($('transferBudgetInput')) $('transferBudgetInput').value=budget.toFixed(2);
-    ['m5BuilderBudget','m3ReleasedCash'].forEach(id=>{if($(id)) $(id).value=budget.toFixed(2);});
-    try{
-      if(typeof manualAmounts!=='undefined') manualAmounts.clear();
-      if(typeof excludedTickers!=='undefined') excludedTickers.clear();
-      if(typeof renderAll==='function') renderAll();
-      if(typeof renderPaydayExecution==='function' && typeof buildDealSheet==='function') renderPaydayExecution(buildDealSheet());
-    }catch(error){console.warn('Route rebuild',error);}
-
-    const strategy=$('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
-    const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
-    const confirmation=`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)} saved and rebuilt.`;
-    // Some legacy renderers run after the click. Re-assert both storage and screen values.
-    [0,80,250,700].forEach(delay=>setTimeout(()=>{
-      localStorage.setItem(BUDGET_KEY,String(budget));
-      persistCash(cash,'ROUTE_DESK_SAVE');
-      repaintRoute(budget,cash,confirmation);
-    },delay));
-  }
-
-  function editCash(){
-    const stored=readExecution();
-    const current=parse(stored.availableCash ?? localStorage.getItem(CASH_KEY) ?? $('paydayAvailableCash')?.value);
-    const entered=window.prompt('Enter the corrected available transfer cash. This keeps the transfer cash separate from the working transfer budget.',current.toFixed(2));
-    if(entered===null)return;
-    const cash=persistCash(parse(entered),'EDIT_TRANSFER_CASH');
-    paintCash(cash);
-    try{
-      if(typeof renderPaydayExecution==='function' && typeof buildDealSheet==='function') renderPaydayExecution(buildDealSheet());
-    }catch(_){ }
-    [0,100,350].forEach(delay=>setTimeout(()=>{
-      persistCash(cash,'EDIT_TRANSFER_CASH');
-      paintCash(cash);
-    },delay));
-    if($('paydayCompletionMessage')) $('paydayCompletionMessage').textContent=`Manual transfer cash saved: ${money(cash)}. It will stay saved when the allocation is rebuilt.`;
-  }
-
-  function initialise(){
-    const savedCash=parse(readExecution().availableCash ?? localStorage.getItem(CASH_KEY) ?? 0);
-    persistCash(savedCash,'RESTORED_MANUAL_CASH');
-    paintCash(savedCash);
-
-    const save=$('redlineSaveRoute');
-    if(save){
-      const clean=save.cloneNode(true);
-      save.replaceWith(clean);
-      clean.textContent='Save & rebuild allocation';
-      clean.addEventListener('click',saveRoute,true);
-    }
-    const edit=$('editPaydayCash');
-    if(edit){
-      const clean=edit.cloneNode(true);
-      edit.replaceWith(clean);
-      clean.addEventListener('click',editCash,true);
-    }
-    const cashInput=$('paydayAvailableCash');
-    if(cashInput){
-      const clean=cashInput.cloneNode(true);
-      cashInput.replaceWith(clean);
-      clean.disabled=false; clean.readOnly=false;
-      clean.value=savedCash.toFixed(2);
-      clean.addEventListener('input',()=>paintCash(parse(clean.value)));
-      clean.addEventListener('keydown',event=>{
-        if(event.key==='Enter'){event.preventDefault();saveRoute(event);clean.blur();}
-      });
-    }
-  }
-
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initialise,{once:true});
-  else initialise();
 })();
 </script>
 </body>
