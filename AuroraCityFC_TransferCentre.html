@@ -2900,7 +2900,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </style>
 
 <style id="aurora-crimson-record-v94">
-/* Aurora Transfer Centre — Budget Unlocked v99
+/* Aurora Transfer Centre — Budget Stable v100
    A deep oxblood / stadium-red execution desk, aligned with Aurora's dark shell. */
 
 #payday-execution{
@@ -3773,119 +3773,72 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 </style>
 
 
-<script id="aurora-budget-unlocked-v99-js">
+<script id="aurora-budget-stable-v100-js">
 (function(){
-  const KEY='aurora_transfer_manual_route_budget_v99';
-  let manualEditing=false;
-  let manualValue='';
+  const KEY='aurora_transfer_manual_route_budget_v100';
 
-  function input(){
-    return document.getElementById('transferBudgetInput');
-  }
+  function el(){return document.getElementById('transferBudgetInput')}
 
   function unlock(){
-    const el=input();
-    if(!el)return;
-    el.disabled=false;
-    el.readOnly=false;
-    el.removeAttribute('disabled');
-    el.removeAttribute('readonly');
-    el.removeAttribute('aria-readonly');
-    el.tabIndex=0;
-    el.style.pointerEvents='auto';
-    el.style.opacity='1';
-
-    const stored=localStorage.getItem(KEY);
-    if(stored!==null && stored!=='' && document.activeElement!==el){
-      el.value=stored;
-    }
+    const input=el();
+    if(!input)return;
+    input.disabled=false;
+    input.readOnly=false;
+    input.removeAttribute('disabled');
+    input.removeAttribute('readonly');
+    input.removeAttribute('aria-readonly');
+    input.style.pointerEvents='auto';
+    input.style.opacity='1';
   }
 
-  function markManual(){
-    const el=input();
-    if(!el)return;
-    manualEditing=true;
-    manualValue=el.value;
-    localStorage.setItem(KEY,manualValue);
-    unlock();
+  function saveManual(){
+    const input=el();
+    if(!input)return;
+    const value=String(input.value||'').replace(/,/g,'').trim();
+    const number=Number(value);
+    if(!Number.isFinite(number)||number<=0)return;
+    localStorage.setItem(KEY,String(number));
   }
 
-  function restoreManual(){
-    const el=input();
-    if(!el)return;
-    const stored=localStorage.getItem(KEY);
-    if(manualEditing && stored!==null){
-      if(document.activeElement!==el || el.value!==stored){
-        el.value=stored;
-      }
-    }
+  function restoreOnce(){
     unlock();
+    const input=el();
+    const stored=localStorage.getItem(KEY);
+    if(input&&stored!==null&&stored!==''&&Number(stored)>0){
+      input.value=Number(stored).toFixed(2);
+      input.dispatchEvent(new Event('input',{bubbles:true}));
+    }
   }
 
   document.addEventListener('focusin',e=>{
-    if(e.target?.id==='transferBudgetInput'){
-      manualEditing=true;
-      manualValue=e.target.value;
-      unlock();
-    }
+    if(e.target?.id==='transferBudgetInput')unlock();
   },true);
 
   document.addEventListener('input',e=>{
     if(e.target?.id==='transferBudgetInput'){
-      markManual();
-    }
-  },true);
-
-  document.addEventListener('change',e=>{
-    if(e.target?.id==='transferBudgetInput'){
-      markManual();
-      e.target.dispatchEvent(new Event('input',{bubbles:true}));
+      unlock();
     }
   },true);
 
   document.addEventListener('click',e=>{
     if(e.target.closest?.('#redlineSaveRoute')){
-      const el=input();
-      if(el){
-        manualEditing=true;
-        manualValue=el.value;
-        localStorage.setItem(KEY,manualValue);
-        setTimeout(restoreManual,0);
-        setTimeout(restoreManual,150);
-        setTimeout(restoreManual,500);
+      saveManual();
+      const input=el();
+      if(input){
+        input.dispatchEvent(new Event('change',{bubbles:true}));
+        input.dispatchEvent(new Event('input',{bubbles:true}));
       }
+      const msg=document.getElementById('redlineRouteMessage');
+      if(msg)msg.textContent='Manual budget saved. Aurora will now rebuild from this amount.';
     }
   },true);
 
-  const observer=new MutationObserver(()=>{
-    const el=input();
-    if(!el)return;
-    if(el.readOnly || el.disabled || el.hasAttribute('readonly') || el.hasAttribute('disabled')){
-      unlock();
-    }
-    if(manualEditing){
-      const stored=localStorage.getItem(KEY);
-      if(stored!==null && document.activeElement!==el && el.value!==stored){
-        el.value=stored;
-      }
-    }
-  });
-
-  function start(){
-    unlock();
-    const el=input();
-    if(el){
-      observer.observe(el,{attributes:true,attributeFilter:['readonly','disabled','aria-readonly','value']});
-    }
-    setInterval(restoreManual,300);
-  }
-
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',start,{once:true});
+    document.addEventListener('DOMContentLoaded',restoreOnce,{once:true});
   }else{
-    start();
+    restoreOnce();
   }
-  window.addEventListener('load',()=>setTimeout(start,200),{once:true});
+  window.addEventListener('load',()=>setTimeout(restoreOnce,250),{once:true});
 })();
 </script>
 
@@ -4459,7 +4412,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter each broker fill using the larger fields below. Values save automatically as you type.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div><div class="payday-record-guide"><strong>Easy entry:</strong> enter the <b>number of shares</b>, the broker’s <b>price in pounds per share</b>, and any <b>fees</b>. Example: a broker price of <b>84.97p</b> is entered as <b>0.8497</b>.</div>
 <div class="payday-stability-toolbar" id="paydayStabilityToolbar">
-  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Budget Unlocked v99</strong><span>Large-entry layout • AuroraData registration</span></div>
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Budget Stable v100</strong><span>Large-entry layout • AuroraData registration</span></div>
   <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
   <label class="payday-broker-control"><span>Broker route</span><select id="paydayBrokerRouteFilter"><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label>
   <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
@@ -8673,7 +8626,52 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
  const money=v=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(v||0));
  function mission(){return read(FINANCE)||read(LEGACY)}
  function mirror(){const m=mission();if(m){const n={...m,source:'Finance Department',department:'Finance Department'};write(FINANCE,n);write(LEGACY,n);return n}return null}
- function forceBudget(){const m=mirror();if(!m||!(Number(m.budget)>0))return false;const b=Number(m.budget);const paydaySaved=read('aurora_payday_execution_v1')||{};['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{const el=document.getElementById(id);const preserveManualCash=id==='paydayAvailableCash'&&Boolean(paydaySaved.manualCashOverride);if(el&&!preserveManualCash)el.value=b.toFixed(2)});['heroTransferBudget','m5Budget','m7Budget'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=money(b)});try{if(typeof routeMode!=='undefined'&&m.tradingMode==='income')routeMode='maximum';if(typeof manualAmounts!=='undefined')manualAmounts.clear();if(typeof excludedTickers!=='undefined')excludedTickers.clear();}catch(_){}try{window.AuroraLoadWealthMission?.({scroll:false})}catch(_){}try{if(typeof renderAll==='function')renderAll()}catch(_){}setTimeout(()=>{const latestPayday=read('aurora_payday_execution_v1')||{};['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{const el=document.getElementById(id);const preserveManualCash=id==='paydayAvailableCash'&&Boolean(latestPayday.manualCashOverride);if(el&&!preserveManualCash)el.value=b.toFixed(2)});['heroTransferBudget','m5Budget','m7Budget','m11MissionBudget'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=money(b)});const note=document.getElementById('allocationBudgetNote');if(note)note.textContent=`Current Finance Department mission: ${money(b)} authorised.`},120);return true}
+ function forceBudget(){
+  const m=mirror();
+  if(!m||!(Number(m.budget)>0))return false;
+  const b=Number(m.budget);
+  const paydaySaved=read('aurora_payday_execution_v1')||{};
+  const manualBudget=localStorage.getItem('aurora_transfer_manual_route_budget_v100');
+  const hasManualBudget=manualBudget!==null&&manualBudget!==''&&Number(manualBudget)>0;
+  ['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{
+    const el=document.getElementById(id);
+    const preserveManualCash=id==='paydayAvailableCash'&&Boolean(paydaySaved.manualCashOverride);
+    const preserveRouteBudget=id==='transferBudgetInput'&&hasManualBudget;
+    if(el&&!preserveManualCash&&!preserveRouteBudget)el.value=b.toFixed(2);
+  });
+  ['heroTransferBudget','m5Budget','m7Budget'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=money(hasManualBudget?Number(manualBudget):b);
+  });
+  try{
+    if(typeof routeMode!=='undefined'&&m.tradingMode==='income')routeMode='maximum';
+    if(typeof manualAmounts!=='undefined')manualAmounts.clear();
+    if(typeof excludedTickers!=='undefined')excludedTickers.clear();
+  }catch(_){}
+  try{window.AuroraLoadWealthMission?.({scroll:false})}catch(_){}
+  try{if(typeof renderAll==='function')renderAll()}catch(_){}
+  setTimeout(()=>{
+    const latestPayday=read('aurora_payday_execution_v1')||{};
+    const latestManual=localStorage.getItem('aurora_transfer_manual_route_budget_v100');
+    const keepManual=latestManual!==null&&latestManual!==''&&Number(latestManual)>0;
+    ['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{
+      const el=document.getElementById(id);
+      const preserveManualCash=id==='paydayAvailableCash'&&Boolean(latestPayday.manualCashOverride);
+      const preserveRouteBudget=id==='transferBudgetInput'&&keepManual;
+      if(el&&!preserveManualCash&&!preserveRouteBudget)el.value=b.toFixed(2);
+    });
+    const shownBudget=keepManual?Number(latestManual):b;
+    ['heroTransferBudget','m5Budget','m7Budget','m11MissionBudget'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el)el.textContent=money(shownBudget);
+    });
+    const note=document.getElementById('allocationBudgetNote');
+    if(note)note.textContent=keepManual
+      ?`Manual Transfer Centre budget: ${money(shownBudget)}.`
+      :`Current Finance Department mission: ${money(b)} authorised.`;
+  },120);
+  return true
+}
  function captureFields(){const out={};document.querySelectorAll('input,select,textarea').forEach((el,i)=>{const key=el.id||el.name||`field-${i}`;out[key]={value:el.value,checked:!!el.checked,type:el.type||el.tagName}});return out}
  function restoreFieldsOnce(){const fields=read(RESTORE);if(!fields)return;Object.entries(fields).forEach(([key,state])=>{const el=document.getElementById(key)||document.querySelector(`[name="${CSS.escape(key)}"]`);if(!el)return;if('value'in state)el.value=state.value;if('checked'in state)el.checked=state.checked;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))});localStorage.removeItem(RESTORE)}
  function snapshotStorage(){const store={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&![SNAP,TEST].includes(k))store[k]=localStorage.getItem(k)}return store}
