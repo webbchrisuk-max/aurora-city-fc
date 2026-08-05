@@ -2864,7 +2864,41 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
     }
   }catch(_){ }
 })();
-</script></head>
+</script>
+<style id="aurora-payday-easy-record-v93">
+/* V93 — larger, clearer completed-purchase entry cards */
+.payday-record-guide{
+  margin:12px 0 14px;padding:13px 14px;border:1px solid rgba(34,211,238,.24);
+  border-radius:16px;background:linear-gradient(135deg,rgba(8,47,73,.30),rgba(2,8,20,.48));
+  color:#cbd5e1;font-size:12px;line-height:1.5
+}
+.payday-record-guide strong{color:#a5f3fc}.payday-record-guide b{color:#fff}
+.payday-trade-grid{grid-template-columns:1fr!important;gap:14px!important}
+.payday-trade-card{padding:16px!important;border-radius:21px!important;background:linear-gradient(180deg,rgba(13,27,52,.82),rgba(2,8,20,.62))!important}
+.payday-trade-card.is-recorded{border-color:rgba(52,211,153,.36)!important;box-shadow:inset 4px 0 0 rgba(52,211,153,.72)}
+.payday-trade-top{align-items:flex-start!important;padding-bottom:12px;border-bottom:1px solid rgba(148,163,184,.12)}
+.payday-trade-top h5{font-size:17px!important;line-height:1.25!important}.payday-trade-top span{font-size:11px!important;line-height:1.4!important}
+.payday-plan-pill{display:inline-flex!important;padding:7px 10px!important;border-radius:999px!important;border:1px solid rgba(96,165,250,.24)!important;background:rgba(30,64,175,.16)!important;color:#bfdbfe!important;font-weight:900!important;white-space:nowrap}
+.payday-trade-inputs{grid-template-columns:1.15fr 1.35fr .9fr!important;gap:12px!important;margin-top:14px!important}
+.payday-entry-field{display:block;min-width:0}
+.payday-entry-label{display:flex!important;justify-content:space-between;gap:8px;align-items:center;margin-bottom:7px!important;color:#dbeafe!important;font-size:11px!important;font-weight:900!important;letter-spacing:.04em!important}
+.payday-entry-label em{font-style:normal;color:#7dd3fc;font-size:9px;font-weight:800;text-transform:none;letter-spacing:0}
+.payday-entry-box{display:flex;align-items:center;min-height:58px;border:1px solid rgba(96,165,250,.28);border-radius:14px;background:rgba(2,6,23,.76);overflow:hidden}
+.payday-entry-box:focus-within{border-color:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.09)}
+.payday-entry-prefix,.payday-entry-suffix{display:grid;place-items:center;align-self:stretch;padding:0 12px;background:rgba(15,23,42,.78);color:#93c5fd;font-size:15px;font-weight:1000}
+.payday-entry-box input{min-width:0!important;height:58px!important;border:0!important;border-radius:0!important;background:transparent!important;padding:10px 12px!important;color:#fff!important;font-size:20px!important;font-weight:1000!important;text-align:right!important;outline:0!important;font-variant-numeric:tabular-nums}
+.payday-entry-box input::placeholder{color:#64748b;font-weight:700}
+.payday-price-help{display:block;margin-top:6px;color:#93a4bd;font-size:10px;line-height:1.35}.payday-price-help b{color:#fde68a}
+.payday-trade-result{display:grid!important;grid-template-columns:1fr 1fr auto;gap:9px!important;margin-top:14px!important;padding-top:12px!important;font-size:11px!important}
+.payday-result-stat{border:1px solid rgba(148,163,184,.14);border-radius:13px;background:rgba(15,23,42,.46);padding:10px 11px}
+.payday-result-stat small{display:block;color:#93a4bd;font-size:9px;text-transform:uppercase;letter-spacing:.07em}.payday-result-stat b{display:block;margin-top:4px;font-size:16px!important;color:#86efac!important}
+.payday-clear-trade{align-self:stretch;border:1px solid rgba(251,113,133,.25);border-radius:13px;background:rgba(127,29,29,.14);color:#fecdd3;padding:9px 12px;font-size:10px;font-weight:900;cursor:pointer}
+.payday-clear-trade:hover{border-color:rgba(251,113,133,.48);background:rgba(127,29,29,.26)}
+@media(max-width:760px){
+ .payday-actual-head{align-items:flex-start!important}.payday-trade-inputs{grid-template-columns:1fr!important}.payday-trade-result{grid-template-columns:1fr 1fr!important}.payday-clear-trade{grid-column:1/-1;min-height:42px}.payday-trade-top{display:grid!important}.payday-plan-pill{justify-self:start}.payday-entry-box input{font-size:22px!important}
+}
+</style>
+</head>
 <body>
 
 
@@ -3403,9 +3437,9 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <div class="payday-cash-field"><span>Available transfer cash</span><b>£</b><input id="paydayAvailableCash" inputmode="decimal" autocomplete="off" type="text" value="0.00" aria-label="Available transfer cash"/><button class="payday-reset-button" id="savePaydayCash" type="button">Save cash amount</button></div>
 </div>
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
-<div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter the actual fills from the broker to compare them with the deal sheet.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div>
+<div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter each broker fill using the larger fields below. Values save automatically as you type.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div><div class="payday-record-guide"><strong>Easy entry:</strong> enter the <b>number of shares</b>, the broker’s <b>price in pounds per share</b>, and any <b>fees</b>. Example: a broker price of <b>84.97p</b> is entered as <b>0.8497</b>.</div>
 <div class="payday-stability-toolbar" id="paydayStabilityToolbar">
-  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Stable v92</strong><span>Visible controls • AuroraData registration</span></div>
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Easy Record v93</strong><span>Visible controls • AuroraData registration</span></div>
   <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
   <label class="payday-broker-control"><span>Broker route</span><select id="paydayBrokerRouteFilter"><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label>
   <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
@@ -5467,7 +5501,7 @@ function renderPaydayExecution(deal){
     {key:'registrationReviewed',label:'Review registration desk',detail:'Confirm new holdings/top-ups are ready to register.',done:Boolean(saved.checks.registrationReviewed),manual:true}
   ];
   checklist.innerHTML=checks.map(item=>`<label class="payday-check ${item.done?'done':''}">${item.manual?`<input type="checkbox" data-payday-check="${item.key}" ${item.done?'checked':''}>`:`<i></i>`}<div><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.detail)}</span></div></label>`).join('');
-  tradeGrid.innerHTML=routeReady?deal.rows.map(item=>{const ticker=shortTicker(item.row.ticker),trade=saved.trades[ticker]||{},detail=totals.details[ticker]||{};return `<article class="payday-trade-card"><div class="payday-trade-top"><div><h5>${escapeHtml(displayTicker(item.row.ticker))} — ${escapeHtml(displayName(item.row))}</h5><span>${escapeHtml(platformFor(item.row.ticker))}</span></div><span>Planned ${money(item.amount)}</span></div><div class="payday-trade-inputs"><label><span>Shares bought</span><input type="number" min="0" step="any" value="${escapeHtml(trade.shares||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="shares"></label><label><span>Actual £/share</span><input type="number" min="0" step="any" value="${escapeHtml(trade.price||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="price"></label><label><span>Fees £</span><input type="number" min="0" step="any" value="${escapeHtml(trade.fees||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="fees"></label></div><div class="payday-trade-result"><span>Actual cost <b>${money(detail.cost||0)}</b></span><span>Income added <b>${money(detail.income||0)}/yr</b></span></div></article>`;}).join(''):'<div class="loading">No saved route is available. Enter transfer cash and press Save cash amount to rebuild or recover the Purchase Record.</div>';
+  tradeGrid.innerHTML=routeReady?deal.rows.map(item=>{const ticker=shortTicker(item.row.ticker),trade=saved.trades[ticker]||{},detail=totals.details[ticker]||{},recorded=(parseNum(trade.shares)>0&&parseNum(trade.price)>0),pence=parseNum(trade.price)>0?(parseNum(trade.price)*100).toFixed(4).replace(/0+$/,'').replace(/\.$/,''):'';return `<article class="payday-trade-card ${recorded?'is-recorded':''}"><div class="payday-trade-top"><div><h5>${escapeHtml(displayTicker(item.row.ticker))} — ${escapeHtml(displayName(item.row))}</h5><span>${escapeHtml(platformFor(item.row.ticker))}${recorded?' • ✓ Fill recorded':''}</span></div><span class="payday-plan-pill">Planned ${money(item.amount)}</span></div><div class="payday-trade-inputs"><label class="payday-entry-field"><span class="payday-entry-label">Shares bought <em>exact quantity</em></span><span class="payday-entry-box"><input inputmode="decimal" autocomplete="off" placeholder="0" type="number" min="0" step="any" value="${escapeHtml(trade.shares||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="shares"><span class="payday-entry-suffix">shares</span></span></label><label class="payday-entry-field"><span class="payday-entry-label">Actual price per share <em>enter in pounds</em></span><span class="payday-entry-box"><span class="payday-entry-prefix">£</span><input inputmode="decimal" autocomplete="off" placeholder="0.0000" type="number" min="0" step="any" value="${escapeHtml(trade.price||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="price"></span><span class="payday-price-help">${pence?`Equivalent broker display: <b>${pence}p</b>`:'Example: 84.97p = £0.8497'}</span></label><label class="payday-entry-field"><span class="payday-entry-label">Fees and charges <em>use 0 if none</em></span><span class="payday-entry-box"><span class="payday-entry-prefix">£</span><input inputmode="decimal" autocomplete="off" placeholder="0.00" type="number" min="0" step="any" value="${escapeHtml(trade.fees||'')}" data-payday-trade-ticker="${ticker}" data-payday-trade-field="fees"></span></label></div><div class="payday-trade-result"><span class="payday-result-stat"><small>Actual total cost</small><b>${money(detail.cost||0)}</b></span><span class="payday-result-stat"><small>Annual income added</small><b>${money(detail.income||0)}/yr</b></span><button class="payday-clear-trade" type="button" data-payday-clear-trade="${ticker}">Clear this entry</button></div></article>`;}).join(''):'<div class="loading">No saved route is available. Enter transfer cash and press Save cash amount to rebuild or recover the Purchase Record.</div>';
   const allReady=purchasesRecorded&&cashReady;if($('completePaydayWindow'))$('completePaydayWindow').disabled=!allReady;if($('paydayTradeCount'))$('paydayTradeCount').textContent=`${totals.recorded} recorded`;
   const plannedIncome=deal?.totalIncome||0,starting=incomeSimulatorSettings().startingIncome;
   if($('paydayPlannedInvested'))$('paydayPlannedInvested').textContent=money(plannedInvested);if($('paydayPlannedIncome'))$('paydayPlannedIncome').textContent=`${money(plannedIncome)}/yr annual income`;if($('paydayActualInvested'))$('paydayActualInvested').textContent=money(totals.invested);if($('paydayActualIncome'))$('paydayActualIncome').textContent=`${money(totals.income)}/yr annual income`;if($('paydayInvestmentVariance'))$('paydayInvestmentVariance').textContent=`${totals.invested-plannedInvested>=0?'+':''}${money(totals.invested-plannedInvested)}`;if($('paydayNewClubIncome'))$('paydayNewClubIncome').textContent=`${money(starting+totals.income)}/yr`;
@@ -6770,6 +6804,7 @@ document.addEventListener('change',event=>{
   const paydayCheck=event.target.closest?.('[data-payday-check]');if(paydayCheck){const saved=paydayExecutionStore();saved.checks[paydayCheck.dataset.paydayCheck]=Boolean(paydayCheck.checked);savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());}
 });
 document.addEventListener('change',event=>{
+  const clearTrade=event.target.closest?.('[data-payday-clear-trade]');if(clearTrade){const saved=paydayExecutionStore();const ticker=shortTicker(clearTrade.dataset.paydayClearTrade);if(saved.trades&&saved.trades[ticker]) delete saved.trades[ticker];savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());return;}
   const trade=event.target.closest?.('[data-payday-trade-field]');if(trade){const saved=paydayExecutionStore();const ticker=shortTicker(trade.dataset.paydayTradeTicker);saved.trades[ticker]=saved.trades[ticker]||{};saved.trades[ticker][trade.dataset.paydayTradeField]=trade.value;savePaydayExecution(saved);renderPaydayExecution(buildDealSheet());return;}
 });
 const savePaydayCashAmount=()=>{const input=$('paydayAvailableCash');if(!input)return;const entered=String(input.value||'').replace(/,/g,'').replace(/[^0-9.]/g,'');const next=Math.max(0,parseNum(entered)||0);const saved=paydayExecutionStore();const current=Math.max(0,parseNum(saved.availableCash)||0);saved.lastFundingSnapshot={availableCash:current,manualCashOverride:Boolean(saved.manualCashOverride),savedAt:new Date().toISOString()};saved.availableCash=next;saved.manualCashOverride=true;saved.completedAt='';saved.open=true;saved.cashSource='MANUAL_OVERRIDE';savePaydayExecution(saved);input.value=next.toFixed(2);const budgetInput=$('transferBudgetInput');if(budgetInput)budgetInput.value=next.toFixed(2);renderAll();renderPaydayExecution(buildDealSheet());const message=$('paydayCompletionMessage');if(message)message.textContent=`Manual cash override saved: ${money(next)}. Finance Department will not overwrite this figure until you reset the payday record.`;};
