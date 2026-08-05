@@ -2841,7 +2841,11 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v91-definitive-visible-tools" name="aurora-build"/><script>
+
+<style id="aurora-v92-stability-styles">
+.payday-stability-toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(170px,220px) auto;gap:9px;align-items:center;margin:11px 0 2px;padding:11px;border:1px solid rgba(34,211,238,.26);background:linear-gradient(135deg,rgba(8,47,73,.32),rgba(2,6,23,.44));border-radius:16px}.payday-build-stamp small,.payday-broker-control span{display:block;color:#93a4bd;font-size:8px;font-weight:1000;letter-spacing:.09em;text-transform:uppercase}.payday-build-stamp strong{display:block;color:#a5f3fc;font-size:15px;margin-top:3px}.payday-build-stamp span{display:block;color:#94a3b8;font-size:9px;margin-top:2px}.payday-broker-control select{width:100%;margin-top:5px;border:1px solid rgba(96,165,250,.28);background:rgba(2,6,23,.72);color:#f8fafc;border-radius:10px;padding:8px;font-weight:900}.payday-stability-toolbar .payday-reset-button{white-space:nowrap}.payday-sync-warning{margin-top:8px;color:#fde68a;font-size:9px;line-height:1.4}@media(max-width:820px){.payday-stability-toolbar{grid-template-columns:1fr}.payday-stability-toolbar .payday-reset-button{width:100%}}
+</style>
+<meta content="transfer-gameshell-content-v92-stable-controls" name="aurora-build"/><script>
 (function(){
   try{
     const key='aurora-transfer-cache-reset-20260804-1155';
@@ -2860,17 +2864,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
     }
   }catch(_){ }
 })();
-</script>
-<style id="aurora-v91-visible-payday-tools">
-.aurora-v91-build{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(52,211,153,.35);background:rgba(6,78,59,.25);color:#bbf7d0;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:1000;letter-spacing:.08em;text-transform:uppercase}
-.payday-visible-tools{display:flex!important;align-items:flex-end;gap:8px;flex-wrap:wrap;margin:10px 0 2px;padding:11px;border:1px solid rgba(34,211,238,.24);background:rgba(8,47,73,.18);border-radius:15px}
-.payday-visible-tools label{display:grid;gap:5px;min-width:180px;color:#93a4bd;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}
-.payday-visible-tools select{min-height:39px;border:1px solid rgba(96,165,250,.28);background:rgba(2,6,23,.78);color:#f8fafc;border-radius:11px;padding:8px 10px;font-weight:900}
-.payday-visible-tools button{display:inline-flex!important;visibility:visible!important;opacity:1!important;min-height:39px}
-#deal-sheet label.deal-budget-input:has(#brokerRouteFilter){display:flex!important}
-@media(max-width:620px){.payday-visible-tools{display:grid!important;grid-template-columns:1fr}.payday-visible-tools label,.payday-visible-tools button{width:100%}}
-</style>
-</head>
+</script></head>
 <body>
 
 
@@ -3410,16 +3404,11 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </div>
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter the actual fills from the broker to compare them with the deal sheet.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div>
-<div class="payday-visible-tools" id="paydayVisibleTools">
-  <button class="payday-reset-button" id="paydayAddHolding" type="button">+ Add holding</button>
-  <label>Broker route
-    <select id="paydayBrokerRoute">
-      <option value="BOTH">Both brokers</option>
-      <option value="IG ISA">IG ISA only</option>
-      <option value="TRADE 212">Trade 212 only</option>
-    </select>
-  </label>
-  <span class="aurora-v91-build">Definitive build v91</span>
+<div class="payday-stability-toolbar" id="paydayStabilityToolbar">
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Stable v92</strong><span>Visible controls • AuroraData registration</span></div>
+  <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
+  <label class="payday-broker-control"><span>Broker route</span><select id="paydayBrokerRouteFilter"><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label>
+  <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
 </div>
 <div class="payday-trade-grid" id="paydayTradeGrid"><div class="loading">Waiting for an approved route…</div></div>
 <div class="upgrade-stat-grid four payday-final-stats">
@@ -8325,32 +8314,33 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
 })();
 </script>
 
-<script id="aurora-v91-visible-tools-script">
+<script id="aurora-v92-stability-script">
 (function(){
-  function wireV91Tools(){
-    var add=document.getElementById('paydayAddHolding');
-    var originalAdd=document.getElementById('addTransferHolding');
-    if(add && !add.dataset.wired){
-      add.dataset.wired='1';
-      add.addEventListener('click',function(){
-        if(originalAdd){ originalAdd.click(); }
-        else { alert('Add holding control is unavailable in this build.'); }
-      });
-    }
-    var proxy=document.getElementById('paydayBrokerRoute');
-    var original=document.getElementById('brokerRouteFilter');
-    if(proxy && original && !proxy.dataset.wired){
-      proxy.dataset.wired='1';
-      proxy.value=original.value || 'BOTH';
-      proxy.addEventListener('change',function(){
-        original.value=proxy.value;
-        original.dispatchEvent(new Event('change',{bubbles:true}));
-      });
-      original.addEventListener('change',function(){ proxy.value=original.value || 'BOTH'; });
-    }
+  function byId(id){return document.getElementById(id);}
+  function syncBrokerSelectors(source){
+    var value=(source&&source.value)||'BOTH';
+    var main=byId('brokerRouteFilter');
+    var payday=byId('paydayBrokerRouteFilter');
+    if(main&&main.value!==value){main.value=value;main.dispatchEvent(new Event('change',{bubbles:true}));}
+    if(payday&&payday.value!==value) payday.value=value;
   }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',wireV91Tools);}else{wireV91Tools();}
-  window.addEventListener('load',wireV91Tools);
+  document.addEventListener('DOMContentLoaded',function(){
+    var main=byId('brokerRouteFilter');
+    var payday=byId('paydayBrokerRouteFilter');
+    if(main&&payday){payday.value=main.value||'BOTH';main.addEventListener('change',function(){if(payday.value!==main.value)payday.value=main.value;});payday.addEventListener('change',function(){syncBrokerSelectors(payday);});}
+    byId('paydayAddHolding')?.addEventListener('click',function(){
+      var original=byId('addTransferHolding');
+      if(original){original.click();setTimeout(function(){byId('payday-execution')?.scrollIntoView({behavior:'smooth',block:'start'});},80);}
+      else alert('The Add holding engine is unavailable in this build.');
+    });
+    byId('paydayRecoverRecord')?.addEventListener('click',function(){
+      var restore=byId('restorePaydayFunding');
+      if(restore&&!restore.hidden){restore.click();return;}
+      try{window.dispatchEvent(new Event('storage'));}catch(e){}
+      if(typeof window.renderPaydayExecution==='function') window.renderPaydayExecution();
+      else location.reload();
+    });
+  });
 })();
 </script>
 </body>
