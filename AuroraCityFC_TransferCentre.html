@@ -2845,7 +2845,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <style id="aurora-v92-stability-styles">
 .payday-stability-toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(170px,220px) auto;gap:9px;align-items:center;margin:11px 0 2px;padding:11px;border:1px solid rgba(34,211,238,.26);background:linear-gradient(135deg,rgba(8,47,73,.32),rgba(2,6,23,.44));border-radius:16px}.payday-build-stamp small,.payday-broker-control span{display:block;color:#93a4bd;font-size:8px;font-weight:1000;letter-spacing:.09em;text-transform:uppercase}.payday-build-stamp strong{display:block;color:#a5f3fc;font-size:15px;margin-top:3px}.payday-build-stamp span{display:block;color:#94a3b8;font-size:9px;margin-top:2px}.payday-broker-control select{width:100%;margin-top:5px;border:1px solid rgba(96,165,250,.28);background:rgba(2,6,23,.72);color:#f8fafc;border-radius:10px;padding:8px;font-weight:900}.payday-stability-toolbar .payday-reset-button{white-space:nowrap}.payday-sync-warning{margin-top:8px;color:#fde68a;font-size:9px;line-height:1.4}@media(max-width:820px){.payday-stability-toolbar{grid-template-columns:1fr}.payday-stability-toolbar .payday-reset-button{width:100%}}
 </style>
-<meta content="transfer-gameshell-content-v92-stable-controls" name="aurora-build"/><script>
+<meta content="transfer-budget-authority-v104" name="aurora-build"/><script>
 (function(){
   try{
     const key='aurora-transfer-cache-reset-20260804-1155';
@@ -3776,6 +3776,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 <script id="aurora-budget-stable-v100-js">
 (function(){
   const KEY='aurora_transfer_manual_route_budget_v100';
+  const CURRENT_KEY='aurora_transfer_manual_route_budget_v101';
 
   function el(){return document.getElementById('transferBudgetInput')}
 
@@ -3797,14 +3798,15 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
     const value=String(input.value||'').replace(/,/g,'').trim();
     const number=Number(value);
     if(!Number.isFinite(number)||number<=0)return;
-    localStorage.setItem(KEY,String(number));
+    auroraSaveManualRouteBudget(number);
   }
 
   function restoreOnce(){
     unlock();
     const input=el();
-    const stored=localStorage.getItem(KEY);
+    const stored=localStorage.getItem(CURRENT_KEY)||localStorage.getItem(KEY);
     if(input&&stored!==null&&stored!==''&&Number(stored)>0){
+      auroraSaveManualRouteBudget(Number(stored));
       input.value=Number(stored).toFixed(2);
       input.dispatchEvent(new Event('input',{bubbles:true}));
     }
@@ -3889,6 +3891,8 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
   function currentInitialBudget(){
     const saved=parse(localStorage.getItem(KEY));
     if(saved>0)return saved;
+    const legacy=parse(localStorage.getItem('aurora_transfer_manual_route_budget_v100'));
+    if(legacy>0){auroraSaveManualRouteBudget(legacy);return legacy;}
     const canon=parse(canonical()?.value);
     if(canon>0)return canon;
     try{
@@ -3924,7 +3928,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
       return;
     }
 
-    localStorage.setItem(KEY,String(value));
+    auroraSaveManualRouteBudget(value);
     const input=canonical();
     if(input){
       input.value=value.toFixed(2);
@@ -4134,7 +4138,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
     if(!(b>0)){if(msg)msg.textContent='Enter a valid transfer budget.';budget()?.focus();return}
     if(c<0){if(msg)msg.textContent='Enter a valid transfer cash amount.';cash()?.focus();return}
 
-    localStorage.setItem(BK,String(b));
+    auroraSaveManualRouteBudget(b);
     localStorage.setItem(CK,String(c));
     if(hiddenBudget()){
       hiddenBudget().value=b.toFixed(2);
@@ -5054,6 +5058,35 @@ const REGISTRATION_LAST_KEY = 'aurora_registration_last_v1';
 let registrationConnection = {endpoint:'', token:''};
 let registrationOpenKey = '';
 
+const AURORA_MANUAL_ROUTE_BUDGET_KEY='aurora_transfer_manual_route_budget_v101';
+const AURORA_MANUAL_ROUTE_BUDGET_LEGACY_KEY='aurora_transfer_manual_route_budget_v100';
+function auroraManualRouteBudget(){
+  const parse=value=>{
+    const number=Number(String(value??'').replace(/,/g,'').trim());
+    return Number.isFinite(number)&&number>0?number:0;
+  };
+  const current=parse(localStorage.getItem(AURORA_MANUAL_ROUTE_BUDGET_KEY));
+  if(current>0) return current;
+  const legacy=parse(localStorage.getItem(AURORA_MANUAL_ROUTE_BUDGET_LEGACY_KEY));
+  if(legacy>0){
+    try{localStorage.setItem(AURORA_MANUAL_ROUTE_BUDGET_KEY,String(legacy));}catch(_){}
+    return legacy;
+  }
+  return 0;
+}
+function auroraSaveManualRouteBudget(value){
+  const number=Number(String(value??'').replace(/,/g,'').trim());
+  if(!Number.isFinite(number)||number<=0) return 0;
+  try{
+    localStorage.setItem(AURORA_MANUAL_ROUTE_BUDGET_KEY,String(number));
+    localStorage.setItem(AURORA_MANUAL_ROUTE_BUDGET_LEGACY_KEY,String(number));
+  }catch(_){}
+  return number;
+}
+function auroraEffectiveRouteBudget(fallback=0){
+  return auroraManualRouteBudget()||Math.max(0,Number(fallback)||0);
+}
+
 function normaliseAppsScriptEndpoint(value){
   let endpoint=String(value||'').trim();
   if(!endpoint) return '';
@@ -5526,8 +5559,11 @@ function restoreTransferSettings(){
     routeMode=saved.routeMode==='maximum'?'maximum':'balanced';
     const release=deploymentReleaseForMonth(deploymentPlan.currentMonth);
     const budget = parseNum(saved.budget);
+    const manualBudget=auroraManualRouteBudget();
     const budgetInput = $('transferBudgetInput');
-    if(budgetInput) budgetInput.value = Number.isFinite(budget) && budget >= 0 ? budget : release.total;
+    if(budgetInput) budgetInput.value = manualBudget>0
+      ? manualBudget
+      : (Number.isFinite(budget) && budget >= 0 ? budget : release.total);
     excludedTickers.clear();
     (Array.isArray(saved.excludedTickers) ? saved.excludedTickers : []).forEach(ticker => excludedTickers.add(cleanTicker(ticker)));
     manualAmounts.clear();
@@ -5540,7 +5576,8 @@ function restoreTransferSettings(){
 }
 function persistTransferSettings(){
   try{
-    const budget = Math.max(0,parseNum($('transferBudgetInput')?.value)||0);
+    const inputBudget = Math.max(0,parseNum($('transferBudgetInput')?.value)||0);
+    const budget = auroraEffectiveRouteBudget(inputBudget);
     localStorage.setItem(TRANSFER_SETTINGS_KEY,JSON.stringify({
       budget,routeMode,
       excludedTickers:[...excludedTickers],
@@ -6979,7 +7016,11 @@ function readTradingBrainDecision(){
 function activeWealthMission(){
   try{
     const mission=JSON.parse(localStorage.getItem('aurora_wealth_investment_mission_v1')||'null');
-    return mission&&Number(mission.budget)>0?mission:null;
+    if(!mission||!(Number(mission.budget)>0)) return null;
+    const manualBudget=auroraManualRouteBudget();
+    return manualBudget>0
+      ? {...mission,financeAuthorisedBudget:Number(mission.budget)||0,budget:manualBudget,manualRouteBudget:true}
+      : mission;
   }catch(_){return null;}
 }
 function normalisedTargetYield(target){
@@ -7098,7 +7139,8 @@ function dealFromTradingBrain(payload,fallbackDeal){
 
   const mission=activeWealthMission();
   const inputBudget=Math.max(0,parseNum($('transferBudgetInput')?.value)||0);
-  const budget=Math.max(0,Number(mission?.budget||inputBudget||fallbackDeal?.budget||payload.budget||0));
+  const manualBudget=auroraManualRouteBudget();
+  const budget=Math.max(0,Number(manualBudget||inputBudget||mission?.budget||fallbackDeal?.budget||payload.budget||0));
   const snapshot=exposureSnapshot();
   const seen=new Set();
   const approved=(payload.targets||[]).map((target,index)=>{
@@ -8920,21 +8962,23 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function applyWealthMission(options={}){
     const mission=read(WEALTH_KEY);
     if(!mission || !(Number(mission.budget)>0)) return false;
-    const budget=Math.max(0,Number(mission.budget)||0);
+    const financeBudget=Math.max(0,Number(mission.budget)||0);
+    const manualBudget=typeof auroraManualRouteBudget==='function'?auroraManualRouteBudget():0;
+    const budget=manualBudget>0?manualBudget:financeBudget;
     const budgetInput=$id('transferBudgetInput');
     const releasedCash=$id('m3ReleasedCash');
     const availableCash=$id('paydayAvailableCash');
     if(budgetInput) budgetInput.value=budget.toFixed(2);
     if(releasedCash) releasedCash.value=budget.toFixed(2);
     const existingExecution=read('aurora_payday_execution_v1')||{};
-    const preserveManualCash=Boolean(existingExecution.manualCashOverride);
+    const preserveManualCash=Boolean(existingExecution.manualCashOverride)||manualBudget>0;
     if(availableCash && !preserveManualCash) availableCash.value=budget.toFixed(2);
     try{
       routeMode=mission.tradingMode==='income'?'maximum':'balanced';
       excludedTickers.clear();
       manualAmounts.clear();
       const savedSettings=read('aurora_transfer_settings_v3')||{};
-      write('aurora_transfer_settings_v3',{...savedSettings,budget,routeMode,excludedTickers:[],manualAmounts:{},wealthMissionId:mission.id,updatedAt:new Date().toISOString()});
+      write('aurora_transfer_settings_v3',{...savedSettings,budget,routeMode,excludedTickers:[],manualAmounts:{},wealthMissionId:mission.id,financeAuthorisedBudget:financeBudget,manualRouteBudget:manualBudget>0,updatedAt:new Date().toISOString()});
       const decision=read('aurora_trading_brain_decision_v1');
       if(decision&&Array.isArray(decision.targets)){
         decision.previousBudget=Number(decision.budget||0);
@@ -8960,6 +9004,8 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
       wealthMissionId:mission.id,
       sourceMissionId:mission.sourceMissionId,
       budget,
+      financeAuthorisedBudget:financeBudget,
+      manualRouteBudget:manualBudget>0,
       paydayDate:mission.paydayDate||'',
       preferredAccount:mission.preferredAccount||'',
       loadedAt:new Date().toISOString(),
@@ -8977,8 +9023,10 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     const note=$id('dealBudgetContext');
     const sourceText=Array.isArray(mission.fundingSources)&&mission.fundingSources.length
       ? mission.fundingSources.map(source=>`${source.name||source.id} ${money(source.release||0)}`).join(' • ')
-      : `${money(budget)} authorised budget`;
-    if(note) note.textContent=`Loaded from Finance Department • ${sourceText} • Total ${money(budget)} • ${mission.preferredAccount||'Investment account'}`;
+      : `${money(financeBudget)} authorised budget`;
+    if(note) note.textContent=manualBudget>0
+      ? `Finance authorised ${money(financeBudget)} • Manual working route ${money(budget)} • ${mission.preferredAccount||'Investment account'}`
+      : `Loaded from Finance Department • ${sourceText} • Total ${money(budget)} • ${mission.preferredAccount||'Investment account'}`;
     const hero=$id('heroTransferBudget');
     if(hero) hero.textContent=money(budget);
     if(options.scroll!==false){
@@ -9023,16 +9071,20 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     return mission&&Number(mission.budget)>0?mission:null;
   }
   function authorisedBudget(){
+    const manualBudget=typeof auroraManualRouteBudget==='function'?auroraManualRouteBudget():0;
+    if(manualBudget>0)return manualBudget;
     const mission=liveMission();
     return mission?Math.max(0,Number(mission.budget)||0):Math.max(0,Number($('transferBudgetInput')?.value)||0);
   }
   function forceAuthorisedBudget(){
     const mission=liveMission(); if(!mission) return;
-    const value=Math.max(0,Number(mission.budget)||0);
+    const financeValue=Math.max(0,Number(mission.budget)||0);
+    const manualBudget=typeof auroraManualRouteBudget==='function'?auroraManualRouteBudget():0;
+    const value=manualBudget>0?manualBudget:financeValue;
     const paydaySaved=read('aurora_payday_execution_v1')||{};
     ['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{
       const el=$(id);
-      const preserveManualCash=id==='paydayAvailableCash'&&Boolean(paydaySaved.manualCashOverride);
+      const preserveManualCash=id==='paydayAvailableCash'&&(manualBudget>0||Boolean(paydaySaved.manualCashOverride));
       if(el&&!preserveManualCash)el.value=value.toFixed(2);
     });
     ['heroTransferBudget','m5Budget'].forEach(id=>{const el=$(id);if(el)el.textContent=money(value)});
@@ -9087,7 +9139,9 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
       const grid=host.querySelector('.deal-budget-grid');host.insertBefore(box,grid||host.firstChild);
     }
     if(box)box.innerHTML=`<div class="authorised"><small>Finance Department authorised</small><strong>${money(budget)}</strong></div><div><small>Allocated</small><strong>${allocatedText}</strong></div><div><small>Still available</small><strong>${remainingText}</strong></div>`;
-    const note=$('allocationBudgetNote');if(note)note.textContent=`${allocatedText} of ${money(budget)} allocated from the current Finance Department mission.`;
+    const note=$('allocationBudgetNote');if(note)note.textContent=(typeof auroraManualRouteBudget==='function'&&auroraManualRouteBudget()>0)
+      ? `${allocatedText} of ${money(budget)} allocated from the saved manual Transfer Centre budget.`
+      : `${allocatedText} of ${money(budget)} allocated from the current Finance Department mission.`;
   }
   function arrangeWorkflow(){
     const hero=$('transfer-overview'),mission=$('wealth-mission'),allocation=$('trading-brain-execution'),deal=$('deal-sheet'),execution=$('payday-execution');
@@ -9142,11 +9196,11 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   if(!m||!(Number(m.budget)>0))return false;
   const b=Number(m.budget);
   const paydaySaved=read('aurora_payday_execution_v1')||{};
-  const manualBudget=localStorage.getItem('aurora_transfer_manual_route_budget_v100');
-  const hasManualBudget=manualBudget!==null&&manualBudget!==''&&Number(manualBudget)>0;
+  const manualBudget=typeof auroraManualRouteBudget==='function'?auroraManualRouteBudget():0;
+  const hasManualBudget=manualBudget>0;
   ['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{
     const el=document.getElementById(id);
-    const preserveManualCash=id==='paydayAvailableCash'&&Boolean(paydaySaved.manualCashOverride);
+    const preserveManualCash=id==='paydayAvailableCash'&&(manualBudget>0||Boolean(paydaySaved.manualCashOverride));
     const preserveRouteBudget=id==='transferBudgetInput'&&hasManualBudget;
     if(el&&!preserveManualCash&&!preserveRouteBudget)el.value=b.toFixed(2);
   });
@@ -9163,11 +9217,11 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   try{if(typeof renderAll==='function')renderAll()}catch(_){}
   setTimeout(()=>{
     const latestPayday=read('aurora_payday_execution_v1')||{};
-    const latestManual=localStorage.getItem('aurora_transfer_manual_route_budget_v100');
-    const keepManual=latestManual!==null&&latestManual!==''&&Number(latestManual)>0;
+    const latestManual=typeof auroraManualRouteBudget==='function'?auroraManualRouteBudget():0;
+    const keepManual=latestManual>0;
     ['transferBudgetInput','paydayAvailableCash','m3ReleasedCash','m5BuilderBudget'].forEach(id=>{
       const el=document.getElementById(id);
-      const preserveManualCash=id==='paydayAvailableCash'&&Boolean(latestPayday.manualCashOverride);
+      const preserveManualCash=id==='paydayAvailableCash'&&(keepManual||Boolean(latestPayday.manualCashOverride));
       const preserveRouteBudget=id==='transferBudgetInput'&&keepManual;
       if(el&&!preserveManualCash&&!preserveRouteBudget)el.value=b.toFixed(2);
     });
@@ -9233,7 +9287,8 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   function authorisedPlan(){
     const current = mission();
     const stored = read(ACCOUNT_KEY);
-    const budget = round(Math.max(0,Number(current?.budget || stored?.budget || stored?.total || 0)));
+    const manualBudget=typeof auroraManualRouteBudget==='function'?auroraManualRouteBudget():0;
+    const budget = round(Math.max(0,Number(manualBudget || stored?.budget || stored?.total || current?.budget || 0)));
     return {
       ig:0,
       t212:0,
@@ -9276,14 +9331,17 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
 
     // The Finance Department budget is authoritative. Load it into the live deal builder
     // before asking Aurora to size the route, so the split is generated automatically on entry.
-    const authorisedBudget = round(Math.max(0,Number(current?.budget || fallback.budget || 0)));
+    const manualBudget=typeof auroraManualRouteBudget==='function'?auroraManualRouteBudget():0;
+    const authorisedBudget = round(Math.max(0,Number(manualBudget || fallback.budget || current?.budget || 0)));
     const paydaySaved = typeof paydayExecutionStore === 'function' ? paydayExecutionStore() : {};
     ["transferBudgetInput","paydayAvailableCash","m3ReleasedCash","m5BuilderBudget"].forEach(id => {
       const node = byId(id);
-      const preserveManualCash = id === 'paydayAvailableCash' && paydaySaved.manualCashOverride;
-      if(node && !preserveManualCash && authorisedBudget > 0 && Math.abs(number(node.value) - authorisedBudget) > .009){
+      const preserveManualCash = id === 'paydayAvailableCash' && (paydaySaved.manualCashOverride || manualBudget>0);
+      const preserveRouteBudget = id === 'transferBudgetInput' && manualBudget>0;
+      if(node && !preserveManualCash && !preserveRouteBudget && authorisedBudget > 0 && Math.abs(number(node.value) - authorisedBudget) > .009){
         node.value = authorisedBudget.toFixed(2);
       }
+      if(node && preserveRouteBudget) node.value=manualBudget.toFixed(2);
     });
 
     let deal = null;
@@ -9345,7 +9403,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     const allocated = round(purchases.reduce((sum,item) => sum + Number(item.amount || 0),0));
     if(!(allocated > 0)) return fallback;
 
-    const budget = round(Math.max(0,Number(current?.budget || fallback.budget || deal.budget || allocated)));
+    const budget = round(Math.max(0,Number(manualBudget || deal.budget || fallback.budget || current?.budget || allocated)));
     if(allocated > budget + .03) return fallback;
     totals.unassigned = round(totals.unassigned + Math.max(0,budget - allocated));
 
@@ -9907,5 +9965,106 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
   });
 })();
 </script>
+
+<script id="aurora-transfer-budget-authority-v104">
+(function(){
+  'use strict';
+  const KEY='aurora_transfer_manual_route_budget_v101';
+  const LEGACY='aurora_transfer_manual_route_budget_v100';
+  const SETTINGS='aurora_transfer_settings_v3';
+  const number=value=>{
+    const n=Number(String(value??'').replace(/,/g,'').trim());
+    return Number.isFinite(n)&&n>0?n:0;
+  };
+  const savedBudget=()=>number(localStorage.getItem(KEY))||number(localStorage.getItem(LEGACY));
+  const money=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(value)||0);
+  let applying=false;
+
+  function persistCompatibility(value){
+    if(!(value>0))return;
+    try{
+      localStorage.setItem(KEY,String(value));
+      localStorage.setItem(LEGACY,String(value));
+      const current=JSON.parse(localStorage.getItem(SETTINGS)||'{}')||{};
+      localStorage.setItem(SETTINGS,JSON.stringify({...current,budget:value,manualRouteBudget:true,updatedAt:new Date().toISOString()}));
+    }catch(_){}
+  }
+
+  function applyManualBudget(renderAfter=false){
+    if(applying)return false;
+    const value=savedBudget();
+    if(!(value>0))return false;
+    applying=true;
+    try{
+      persistCompatibility(value);
+      const editor=document.getElementById('routeBudgetEditor');
+      const hidden=document.getElementById('transferBudgetInput');
+      const active=document.activeElement;
+      if(editor&&active!==editor&&Math.abs(number(editor.value)-value)>.009)editor.value=value.toFixed(2);
+      [hidden,document.getElementById('m5BuilderBudget'),document.getElementById('m3ReleasedCash')].forEach(el=>{
+        if(el&&Math.abs(number(el.value)-value)>.009)el.value=value.toFixed(2);
+      });
+      ['heroTransferBudget','m5Budget','m7Budget','redlineRouteBudget'].forEach(id=>{
+        const el=document.getElementById(id);if(el)el.textContent=money(value);
+      });
+      const strategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
+      const broker=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+      const summary=document.getElementById('dealRouteControlSummary');
+      if(summary)summary.textContent=`${strategy} • ${broker} • ${money(value)}`;
+    }finally{
+      applying=false;
+    }
+    if(renderAfter&&typeof window.renderAll==='function'){
+      try{window.renderAll();}catch(error){console.warn('Manual route render recovery',error);}
+    }
+    return true;
+  }
+
+  const originalRender=typeof window.renderAll==='function'?window.renderAll:null;
+  if(originalRender&&!originalRender.__auroraBudgetAuthority){
+    const wrapped=function(){
+      applyManualBudget(false);
+      const result=originalRender.apply(this,arguments);
+      applyManualBudget(false);
+      return result;
+    };
+    wrapped.__auroraBudgetAuthority=true;
+    window.renderAll=wrapped;
+  }
+
+  const originalLoad=typeof window.AuroraLoadWealthMission==='function'?window.AuroraLoadWealthMission:null;
+  if(originalLoad&&!originalLoad.__auroraBudgetAuthority){
+    const wrappedLoad=function(){
+      const result=originalLoad.apply(this,arguments);
+      queueMicrotask(()=>applyManualBudget(true));
+      return result;
+    };
+    wrappedLoad.__auroraBudgetAuthority=true;
+    window.AuroraLoadWealthMission=wrappedLoad;
+  }
+
+  document.addEventListener('click',event=>{
+    if(!event.target.closest?.('#redlineSaveRoute'))return;
+    const value=number(document.getElementById('routeBudgetEditor')?.value||document.getElementById('transferBudgetInput')?.value);
+    if(value>0){
+      persistCompatibility(value);
+      [0,120,360].forEach(delay=>setTimeout(()=>applyManualBudget(delay===120),delay));
+    }
+  },true);
+
+  window.addEventListener('storage',event=>{
+    if([KEY,LEGACY,'aurora_finance_department_mission_v1','aurora_wealth_investment_mission_v1'].includes(event.key)){
+      setTimeout(()=>applyManualBudget(true),40);
+    }
+  });
+  window.addEventListener('pageshow',()=>setTimeout(()=>applyManualBudget(true),90));
+  window.addEventListener('aurora:finance-mission',()=>setTimeout(()=>applyManualBudget(true),80));
+  window.addEventListener('aurora:wealth-mission',()=>setTimeout(()=>applyManualBudget(true),80));
+
+  const start=()=>[0,160,420,920,1450,2250].forEach((delay,index)=>setTimeout(()=>applyManualBudget(index===2),delay));
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+
 </body>
 </html>
