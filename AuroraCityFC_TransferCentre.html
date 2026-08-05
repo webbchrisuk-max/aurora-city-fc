@@ -2841,7 +2841,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
   .m53-transfer-routebar a{width:100%;}
 }
 </style>
-<meta content="transfer-gameshell-content-v90-payday-auroradata-commit" name="aurora-build"/><script>
+<meta content="transfer-gameshell-content-v91-definitive-visible-tools" name="aurora-build"/><script>
 (function(){
   try{
     const key='aurora-transfer-cache-reset-20260804-1155';
@@ -2860,7 +2860,17 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
     }
   }catch(_){ }
 })();
-</script></head>
+</script>
+<style id="aurora-v91-visible-payday-tools">
+.aurora-v91-build{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(52,211,153,.35);background:rgba(6,78,59,.25);color:#bbf7d0;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:1000;letter-spacing:.08em;text-transform:uppercase}
+.payday-visible-tools{display:flex!important;align-items:flex-end;gap:8px;flex-wrap:wrap;margin:10px 0 2px;padding:11px;border:1px solid rgba(34,211,238,.24);background:rgba(8,47,73,.18);border-radius:15px}
+.payday-visible-tools label{display:grid;gap:5px;min-width:180px;color:#93a4bd;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}
+.payday-visible-tools select{min-height:39px;border:1px solid rgba(96,165,250,.28);background:rgba(2,6,23,.78);color:#f8fafc;border-radius:11px;padding:8px 10px;font-weight:900}
+.payday-visible-tools button{display:inline-flex!important;visibility:visible!important;opacity:1!important;min-height:39px}
+#deal-sheet label.deal-budget-input:has(#brokerRouteFilter){display:flex!important}
+@media(max-width:620px){.payday-visible-tools{display:grid!important;grid-template-columns:1fr}.payday-visible-tools label,.payday-visible-tools button{width:100%}}
+</style>
+</head>
 <body>
 
 
@@ -3400,6 +3410,17 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </div>
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter the actual fills from the broker to compare them with the deal sheet.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div>
+<div class="payday-visible-tools" id="paydayVisibleTools">
+  <button class="payday-reset-button" id="paydayAddHolding" type="button">+ Add holding</button>
+  <label>Broker route
+    <select id="paydayBrokerRoute">
+      <option value="BOTH">Both brokers</option>
+      <option value="IG ISA">IG ISA only</option>
+      <option value="TRADE 212">Trade 212 only</option>
+    </select>
+  </label>
+  <span class="aurora-v91-build">Definitive build v91</span>
+</div>
 <div class="payday-trade-grid" id="paydayTradeGrid"><div class="loading">Waiting for an approved route…</div></div>
 <div class="upgrade-stat-grid four payday-final-stats">
 <div class="upgrade-stat"><small>Planned investment</small><strong id="paydayPlannedInvested">—</strong><span id="paydayPlannedIncome">— annual income</span></div>
@@ -8301,6 +8322,35 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
     try{manualAmounts?.set?.(ticker,amount);}catch(_){ }
     try{renderAll();}catch(error){console.error(error);location.reload();}
   });
+})();
+</script>
+
+<script id="aurora-v91-visible-tools-script">
+(function(){
+  function wireV91Tools(){
+    var add=document.getElementById('paydayAddHolding');
+    var originalAdd=document.getElementById('addTransferHolding');
+    if(add && !add.dataset.wired){
+      add.dataset.wired='1';
+      add.addEventListener('click',function(){
+        if(originalAdd){ originalAdd.click(); }
+        else { alert('Add holding control is unavailable in this build.'); }
+      });
+    }
+    var proxy=document.getElementById('paydayBrokerRoute');
+    var original=document.getElementById('brokerRouteFilter');
+    if(proxy && original && !proxy.dataset.wired){
+      proxy.dataset.wired='1';
+      proxy.value=original.value || 'BOTH';
+      proxy.addEventListener('change',function(){
+        original.value=proxy.value;
+        original.dispatchEvent(new Event('change',{bubbles:true}));
+      });
+      original.addEventListener('change',function(){ proxy.value=original.value || 'BOTH'; });
+    }
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',wireV91Tools);}else{wireV91Tools();}
+  window.addEventListener('load',wireV91Tools);
 })();
 </script>
 </body>
