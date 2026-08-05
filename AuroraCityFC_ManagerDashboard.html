@@ -907,7 +907,7 @@
     transition:none!important;
   }}
 </style>
-<script defer="" src="aurora-notifications.js?v=20260802-2"></script>
+<!-- Rich Command Notifications are built into this dashboard. Legacy aurora-notifications.js intentionally removed. -->
 <link href="aurora-hero.css?v=20260802-manager-step3-fix1" rel="stylesheet"/>
 <style id="auroraManagerGameShellContentStyles">html,body{width:100%;min-width:0;margin:0;overflow-x:hidden}body{padding:0}main.app{width:min(1600px,100%);max-width:1600px;margin:0 auto;padding:14px 18px 32px}@media(max-width:760px){main.app{padding:10px 10px 24px}}</style>
 
@@ -3653,5 +3653,136 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
   window.addEventListener("focus",syncHero);
 })();
 </script>
+
+<script id="aurora-rich-notification-shell-bridge">
+(function(){
+  "use strict";
+
+  const PANEL_ID="beastNotificationPanel";
+  const READ_KEY="aurora_beast_alert_read_v1";
+  const BELL_SELECTOR=[
+    "#auroraNotificationButton",
+    "#notificationButton",
+    "#notificationsButton",
+    "#notificationBell",
+    "#auroraNotificationBell",
+    "[data-aurora-notifications]",
+    "[data-aurora-action='notifications']",
+    "[data-action='notifications']",
+    "button[aria-label*='notification' i]",
+    "button[title*='notification' i]"
+  ].join(",");
+
+  function panel(){
+    return document.getElementById(PANEL_ID);
+  }
+
+  function markRead(){
+    try{
+      const list=document.getElementById("beastAlertList");
+      if(!list)return;
+      const signature=JSON.stringify(
+        Array.from(list.querySelectorAll(".beast-alert")).map(item=>[
+          item.querySelector("strong")?.textContent||"",
+          item.querySelector("p")?.textContent||""
+        ])
+      );
+      if(signature&&signature!=="[]")localStorage.setItem(READ_KEY,signature);
+    }catch(_){}
+    const badge=document.getElementById("beastNotificationCount");
+    if(badge)badge.hidden=true;
+  }
+
+  function openRichNotifications(){
+    const rich=panel();
+    if(!rich)return false;
+    document.getElementById("beastLayoutPanel")?.classList.remove("open");
+    rich.classList.add("open");
+    rich.setAttribute("aria-hidden","false");
+    markRead();
+    requestAnimationFrame(()=>document.getElementById("beastNotificationClose")?.focus({preventScroll:true}));
+    return true;
+  }
+
+  function closeRichNotifications(){
+    const rich=panel();
+    if(!rich)return false;
+    rich.classList.remove("open");
+    rich.setAttribute("aria-hidden","true");
+    return true;
+  }
+
+  function toggleRichNotifications(){
+    return panel()?.classList.contains("open")
+      ? closeRichNotifications()
+      : openRichNotifications();
+  }
+
+  // Stable API names for the GameShell and any older header implementation.
+  window.openAuroraNotifications=openRichNotifications;
+  window.toggleAuroraNotifications=toggleRichNotifications;
+  window.AuroraRichNotifications=Object.freeze({
+    open:openRichNotifications,
+    close:closeRichNotifications,
+    toggle:toggleRichNotifications
+  });
+
+  function isNotificationMessage(data){
+    const type=String(data?.type||data?.action||data||"").toLowerCase();
+    return type==="aurora:open-notifications" ||
+           type==="aurora:toggle-notifications" ||
+           type==="open-notifications" ||
+           type==="toggle-notifications";
+  }
+
+  window.addEventListener("message",event=>{
+    if(!isNotificationMessage(event.data))return;
+    const type=String(event.data?.type||event.data?.action||event.data||"").toLowerCase();
+    if(type.includes("toggle"))toggleRichNotifications();
+    else openRichNotifications();
+  });
+
+  [
+    "aurora:open-notifications",
+    "aurora:notifications-open",
+    "aurora:toggle-notifications"
+  ].forEach(name=>document.addEventListener(name,event=>{
+    if(name.includes("toggle"))toggleRichNotifications();
+    else openRichNotifications();
+    event.stopImmediatePropagation?.();
+  },true));
+
+  function wireBellDocument(doc){
+    if(!doc||doc.documentElement?.dataset.richNotificationBellWired==="true")return;
+    doc.documentElement.dataset.richNotificationBellWired="true";
+    doc.addEventListener("click",event=>{
+      const bell=event.target?.closest?.(BELL_SELECTOR);
+      if(!bell)return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      toggleRichNotifications();
+    },true);
+  }
+
+  function connect(){
+    wireBellDocument(document);
+    try{
+      if(window.parent&&window.parent!==window)wireBellDocument(window.parent.document);
+    }catch(_){}
+    try{
+      window.parent?.postMessage({type:"aurora:rich-notifications-ready",page:"manager"},"*");
+    }catch(_){}
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",connect,{once:true});
+  }else{
+    connect();
+  }
+  window.addEventListener("pageshow",connect);
+})();
+</script>
+
 </body>
 </html>
