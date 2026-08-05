@@ -447,6 +447,7 @@
     margin:-16px -16px 12px!important;
   }}
 </style><meta content="manager-natural-gameshell-navigation-v5-20260803" name="aurora-build"/>
+<meta content="manager-intelligence-logic-aligned-20260805" name="aurora-intelligence-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
   -webkit-user-drag:none!important;
@@ -2000,17 +2001,37 @@ function auroraMediaStories(){
 
 
 function intelligenceRows(){
-  return Array.isArray(state.intelligence) ? state.intelligence : [];
+  return (Array.isArray(state.intelligence) ? state.intelligence : [])
+    .filter(row=>shortTicker(row?.ticker ?? row?.Ticker));
 }
 function managerBriefingMap(){
   const map={};
   (state.managerBriefing||[]).forEach(row=>{
-    const key=String(row?.["Aurora Intelligence Engine"] ?? row?.label ?? row?.Label ?? row?.metric ?? row?.Metric ?? Object.values(row||{})[0] ?? "").trim();
+    const key=String(
+      row?.["Aurora Intelligence Engine"] ??
+      row?.label ?? row?.Label ??
+      row?.metric ?? row?.Metric ??
+      Object.values(row||{})[0] ?? ""
+    ).trim();
     const values=Object.values(row||{});
-    const value=row?.["Manager Briefing v1.1"] ?? row?.value ?? row?.Value ?? values[1] ?? "";
-    if(key) map[key.toLowerCase()]=value;
+    const value=
+      row?.["Manager Briefing v1.1"] ??
+      row?.value ?? row?.Value ??
+      values[1] ?? "";
+    if(key){
+      const normalised=key.toLowerCase().replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
+      map[normalised]=value;
+    }
   });
   return map;
+}
+function briefingValue(map,...keys){
+  for(const key of keys){
+    const normalised=String(key||'').toLowerCase().replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
+    const value=map?.[normalised];
+    if(value !== undefined && value !== null && String(value).trim() !== '') return value;
+  }
+  return '';
 }
 function intelligenceByTicker(){
   const map=new Map();
@@ -2024,40 +2045,141 @@ function intelligenceScore(row){
   const n=parseNum(row?.confidence_score ?? row?.Confidence_Score ?? row?.score);
   return Number.isFinite(n)?n:NaN;
 }
+function intelligenceRawAction(row){
+  return String(
+    row?.action ?? row?.Action ??
+    row?.decision_action ?? row?.Decision_Action ??
+    ''
+  ).trim();
+}
+function resolveIntelligenceInstruction(input){
+  const row=input&&typeof input==='object'?input:{action:input};
+  const raw=intelligenceRawAction(row)||'HOLD';
+  const decision=String(row?.decision_action ?? row?.Decision_Action ?? '').trim();
+  const permission=String(row?.buy_permission ?? row?.Buy_Permission ?? '').trim();
+  const restriction=String(
+    row?.buying_restriction ?? row?.restriction ?? row?.buy_restriction ??
+    row?.manager_instruction ?? row?.instruction ?? ''
+  ).trim();
+  const combined=`${raw} ${decision} ${permission} ${restriction}`
+    .toLowerCase().replace(/[_-]+/g,' ');
+
+  if(/locked legacy|legacy \/ 2029/.test(combined)){
+    return {label:'LOCKED LEGACY — MONITOR ONLY',className:'block',gate:'legacy',reason:decision||restriction||raw};
+  }
+  if(/do not buy|no new money|avoid|blocked|exit only/.test(combined) || /\bno\b/.test(permission.toLowerCase())){
+    return {label:'HOLD — NO NEW MONEY',className:'block',gate:'block',reason:decision||restriction||raw};
+  }
+  if(/monitor only|review only/.test(combined)){
+    return {label:'MONITOR ONLY',className:'block',gate:'block',reason:decision||restriction||raw};
+  }
+  if(/small buy only|controlled buy|limited buy|starter position|small position/.test(combined) || /caution/.test(permission.toLowerCase())){
+    return {label:'MONITOR — SMALL BUY ONLY',className:'watch',gate:'caution',reason:decision||restriction||raw};
+  }
+  if(/priority buy/.test(combined)){
+    return {label:'PRIORITY BUY',className:'buy',gate:'pass',reason:decision||restriction||raw};
+  }
+  if(/selective buy|accumulate|buy candidate|buy if budget/.test(combined)){
+    return {label:'ACCUMULATE SELECTIVELY',className:'buy',gate:'pass',reason:decision||restriction||raw};
+  }
+  if(/hold/.test(combined)){
+    return {label:'HOLD',className:'watch',gate:'neutral',reason:decision||restriction||raw};
+  }
+  if(/review|watch|monitor/.test(combined)){
+    return {label:'MONITOR',className:'watch',gate:'neutral',reason:decision||restriction||raw};
+  }
+  return {label:raw||'HOLD',className:'watch',gate:'neutral',reason:decision||restriction||raw};
+}
 function intelligenceAction(row){
-  return String(row?.action ?? row?.Action ?? row?.decision_action ?? "").trim();
+  return resolveIntelligenceInstruction(row).label;
+}
+function intelligenceGeneratedDate(briefing,rows){
+  const raw=
+    briefingValue(briefing,'Generated','generated at') ||
+    rows?.[0]?.generated_at || rows?.[0]?.Generated_At || '';
+  return dividendDateValue(raw);
+}
+function safeIntelHtml(value){
+  return String(value??'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
 }
 function renderAuroraIntelligence(){
-  const rows=intelligenceRows().slice().sort((a,b)=>(intelligenceScore(b)||0)-(intelligenceScore(a)||0));
+  const rows=intelligenceRows().slice().sort((a,b)=>{
+    const aScore=intelligenceScore(a), bScore=intelligenceScore(b);
+    return (Number.isFinite(bScore)?bScore:-Infinity)-(Number.isFinite(aScore)?aScore:-Infinity);
+  });
   const status=$("aicStatus");
   if(!rows.length){
     if(status) status.innerHTML='<i></i>No intelligence data';
     if($("aicTopList")) $("aicTopList").innerHTML='<div class="loading">AuroraIntelligence is not present in AuroraMaster.json yet.</div>';
     return;
   }
+
   const briefing=managerBriefingMap();
   const scores=rows.map(intelligenceScore).filter(Number.isFinite);
-  const avg=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:NaN;
-  const top=rows[0]||{};
-  const low=rows[rows.length-1]||{};
-  const restrictions=rows.filter(row=>/no new money|monitor only|locked legacy|watch/i.test(intelligenceAction(row))).length;
-  const positive=rows.reduce((s,row)=>s+(parseNum(row.positive_news)||0),0);
-  const negative=rows.reduce((s,row)=>s+(parseNum(row.negative_news)||0),0);
-  if(status) status.innerHTML='<i></i>Intelligence live';
+  const computedAverage=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:NaN;
+  const briefingAverage=parseNum(briefingValue(briefing,'Average confidence'));
+  const avg=Number.isFinite(briefingAverage)?briefingAverage:computedAverage;
+  const top=rows.find(row=>Number.isFinite(intelligenceScore(row)))||{};
+  const low=[...rows].reverse().find(row=>Number.isFinite(intelligenceScore(row)))||{};
+  const resolvedRows=rows.map(row=>({row,resolved:resolveIntelligenceInstruction(row)}));
+  const computedRestrictions=resolvedRows.filter(item=>item.resolved.gate==='block').length;
+  const legacyCount=resolvedRows.filter(item=>item.resolved.gate==='legacy').length;
+  const briefingRestrictions=parseNum(briefingValue(briefing,'Buying restrictions'));
+  const restrictions=Number.isFinite(briefingRestrictions)?briefingRestrictions:computedRestrictions;
+
+  const rowPositive=rows.reduce((sum,row)=>sum+(parseNum(row.positive_news)||0),0);
+  const rowNegative=rows.reduce((sum,row)=>sum+(parseNum(row.negative_news)||0),0);
+  const briefingPositive=parseNum(briefingValue(briefing,'Positive news'));
+  const briefingNegative=parseNum(briefingValue(briefing,'Negative news'));
+  const positive=Number.isFinite(briefingPositive)?briefingPositive:rowPositive;
+  const negative=Number.isFinite(briefingNegative)?briefingNegative:rowNegative;
+  const regime=String(
+    briefingValue(briefing,'Market regime') ||
+    top.market_regime || top.Market_Regime ||
+    'Not stated'
+  );
+  const generated=intelligenceGeneratedDate(briefing,rows);
+  const ageHours=generated?(Date.now()-generated.getTime())/36e5:NaN;
+
+  if(status){
+    const stale=Number.isFinite(ageHours)&&ageHours>8;
+    status.innerHTML=`<i></i>${stale?'Intelligence needs refresh':'Intelligence live'}${generated?` • ${generated.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`:''}`;
+    status.style.color=stale?'#fde68a':'';
+    status.style.borderColor=stale?'rgba(251,191,36,.34)':'';
+    status.style.background=stale?'rgba(120,53,15,.24)':'';
+  }
+
   if($("aicAverage")) $("aicAverage").textContent=Number.isFinite(avg)?`${avg.toFixed(1)}/100`:'—';
-  if($("aicTop")) $("aicTop").textContent=top.ticker?`${displayTicker(top.ticker)} ${Math.round(intelligenceScore(top))}`:'—';
-  if($("aicLowest")) $("aicLowest").textContent=low.ticker?`${displayTicker(low.ticker)} ${Math.round(intelligenceScore(low))}`:'—';
+  if($("aicTop")) $("aicTop").textContent=top.ticker&&Number.isFinite(intelligenceScore(top))?`${displayTicker(top.ticker)} ${Math.round(intelligenceScore(top))}`:'—';
+  if($("aicLowest")) $("aicLowest").textContent=low.ticker&&Number.isFinite(intelligenceScore(low))?`${displayTicker(low.ticker)} ${Math.round(intelligenceScore(low))}`:'—';
   if($("aicRestrictions")) $("aicRestrictions").textContent=String(restrictions);
   if($("aicPositiveNews")) $("aicPositiveNews").textContent=String(positive);
   if($("aicNegativeNews")) $("aicNegativeNews").textContent=String(negative);
-  const verdict=briefing['manager verdict'] || (avg>=72?'Squad in strong form':avg>=60?'Selective accumulation remains appropriate':'Caution and review required');
+
+  const verdict=String(
+    briefingValue(briefing,'Manager verdict') ||
+    (avg>=72?'Squad in strong form':avg>=60?'Selective accumulation remains appropriate':'Caution and review required')
+  );
   if($("aicVerdict")) $("aicVerdict").textContent=verdict;
-  if($("aicVerdictNote")) $("aicVerdictNote").textContent=`${rows.length} aggregated holdings assessed. ${restrictions} currently carry a restriction or monitoring instruction. Market regime: ${top.market_regime || 'loading'}.`;
-  const topRows=rows.slice(0,3);
+  if($("aicVerdictNote")){
+    const assessed=parseNum(briefingValue(briefing,'Aggregated holdings'));
+    const assessedCount=Number.isFinite(assessed)?assessed:rows.length;
+    const legacyNote=legacyCount?` ${legacyCount} locked legacy holding is monitored separately.`:'';
+    const freshness=generated?` Updated ${generated.toLocaleString('en-GB')}.`:'';
+    $("aicVerdictNote").textContent=`${assessedCount} aggregated holdings assessed. ${restrictions} carry a hard buying restriction.${legacyNote} Market regime: ${regime}.${freshness}`;
+  }
+
+  const topRows=rows.filter(row=>Number.isFinite(intelligenceScore(row))).slice(0,3);
   if($("aicTopList")) $("aicTopList").innerHTML=topRows.map((row,index)=>{
     const score=Math.round(intelligenceScore(row));
-    const cls=score<50?'concern':score<65?'watch':'';
-    return `<div class="aic-row"><div class="aic-rank">${index+1}</div><div><strong>${displayTicker(row.ticker)} • ${row.company||''}</strong><span>${intelligenceAction(row)||row.confidence_band||'Assessment ready'}</span></div><div class="aic-score ${cls}">${score}/100</div></div>`;
+    const resolved=resolveIntelligenceInstruction(row);
+    const cls=resolved.gate==='block'||resolved.gate==='legacy'?'concern':resolved.gate==='caution'||score<65?'watch':'';
+    return `<div class="aic-row"><div class="aic-rank">${index+1}</div><div><strong>${safeIntelHtml(displayTicker(row.ticker))} • ${safeIntelHtml(row.company||'')}</strong><span>${safeIntelHtml(resolved.label)}</span></div><div class="aic-score ${cls}">${score}/100</div></div>`;
   }).join('');
 }
 
