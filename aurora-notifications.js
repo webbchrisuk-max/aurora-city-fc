@@ -18,9 +18,875 @@
 (() => {
   'use strict';
 
-  if (window.AuroraNotifications?.version) return;
+  const OWNER_SCRIPT_ATTRIBUTE =
+    'data-aurora-notifications-global-owner';
 
-  const VERSION = '3.3.0';
+  const OWNER_SCRIPT_VERSION = '5.0.0';
+
+  const currentScriptUrl = (() => {
+    try {
+      return document.currentScript?.src
+        || 'aurora-notifications.js';
+    } catch (_) {
+      return 'aurora-notifications.js';
+    }
+  })();
+
+  function sameOriginTopWindow() {
+    try {
+      if (
+        window.top
+        && window.top !== window
+        && window.top.document
+      ) {
+        return window.top;
+      }
+    } catch (_) {}
+
+    return null;
+  }
+
+  function connectChildToOwner(ownerWindow) {
+    if (!ownerWindow?.AuroraNotifications) {
+      return false;
+    }
+
+    try {
+      window.AuroraNotifications =
+        ownerWindow.AuroraNotifications;
+    } catch (_) {}
+
+    try {
+      ownerWindow.AuroraNotifications
+        .attachDocument?.(document);
+    } catch (_) {}
+
+    return true;
+  }
+
+  /*
+   * Every iframe page delegates to the same top-level GameShell owner.
+   * This prevents each HTML from creating a competing notification
+   * instance that disappears when the iframe navigates.
+   */
+  const ownerWindow = sameOriginTopWindow();
+
+  if (ownerWindow) {
+    const ownerDocument = ownerWindow.document;
+
+    if (
+      !ownerDocument.querySelector(
+        `script[${OWNER_SCRIPT_ATTRIBUTE}]`
+      )
+    ) {
+      const script = ownerDocument.createElement('script');
+
+      script.src = currentScriptUrl;
+      script.async = false;
+      script.setAttribute(
+        OWNER_SCRIPT_ATTRIBUTE,
+        OWNER_SCRIPT_VERSION
+      );
+
+      ownerDocument.head?.appendChild(script);
+    }
+
+    if (!connectChildToOwner(ownerWindow)) {
+      let attempts = 0;
+
+      const timer = window.setInterval(() => {
+        attempts += 1;
+
+        if (
+          connectChildToOwner(ownerWindow)
+          || attempts >= 80
+        ) {
+          window.clearInterval(timer);
+        }
+      }, 100);
+    }
+
+    return;
+  }
+
+  function installUniversalShellUI(api) {
+    if (!api) return null;
+
+    const existing =
+      window.AuroraNotificationsShellUI;
+
+    if (
+      existing
+      && existing.version === OWNER_SCRIPT_VERSION
+    ) {
+      existing.setApi?.(api);
+      existing.refresh?.();
+      return existing;
+    }
+
+    const documentObject = document;
+    let currentApi = api;
+    let frame = null;
+    let frameLoadHandler = null;
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(
+        /[&<>"']/g,
+        character => ({
+          '&':'&amp;',
+          '<':'&lt;',
+          '>':'&gt;',
+          '"':'&quot;',
+          "'":'&#39;'
+        })[character]
+      );
+    }
+
+    function formatTime(timestamp) {
+      const date = new Date(
+        Number(timestamp) || Date.now()
+      );
+
+      const today = new Date();
+
+      return date.toDateString()
+        === today.toDateString()
+          ? date.toLocaleTimeString(
+              'en-GB',
+              {hour:'2-digit',minute:'2-digit'}
+            )
+          : date.toLocaleDateString(
+              'en-GB',
+              {day:'2-digit',month:'short'}
+            );
+    }
+
+    function inferRich(row = {}) {
+      const supplied =
+        row?.metadata?.rich
+        && typeof row.metadata.rich === 'object'
+          ? row.metadata.rich
+          : null;
+
+      if (supplied) return supplied;
+
+      const text = `${row.department || ''} ${row.title || ''} ${row.message || ''}`
+        .toLowerCase();
+
+      const type =
+        /transfer|purchase|registration|broker/.test(text)
+          ? 'transfer'
+          : /income|finance|dividend|budget/.test(text)
+            ? 'income'
+            : /warning|refresh|review|stale/.test(text)
+              ? 'warning'
+              : /success|complete|ready|signed/.test(text)
+                ? 'success'
+                : 'update';
+
+      return {
+        type,
+        kicker:row.department || 'Aurora HQ',
+        badge:
+          row.priority === 'critical'
+            ? 'Urgent'
+            : row.priority === 'high'
+              ? 'Priority'
+              : 'Live',
+        value:'',
+        valueLabel:'',
+        secondary:row.department || '',
+        progress:null,
+        featured:false,
+        actionText:
+          row.actionLabel
+          || `Open ${row.department || 'Aurora'}`
+      };
+    }
+
+    function injectStyles() {
+      let style = documentObject.getElementById(
+        'auroraGlobalNotificationOwnerStyles'
+      );
+
+      if (style) return;
+
+      style = documentObject.createElement('style');
+      style.id = 'auroraGlobalNotificationOwnerStyles';
+      style.textContent = `
+        #auroraShellNotificationPanel{
+          position:fixed;
+          z-index:2147483000;
+          right:18px;
+          top:78px;
+          width:min(500px,calc(100vw - 36px));
+          max-height:calc(100dvh - 96px);
+          display:none;
+          overflow:auto;
+          padding:16px;
+          border:1px solid rgba(34,211,238,.30);
+          border-radius:24px;
+          background:
+            radial-gradient(circle at 96% 0%,rgba(34,211,238,.13),transparent 34%),
+            linear-gradient(180deg,rgba(7,20,40,.995),rgba(2,7,18,.998));
+          box-shadow:0 30px 90px rgba(0,0,0,.68);
+          color:#eaf4ff;
+          backdrop-filter:blur(22px);
+          -webkit-backdrop-filter:blur(22px)
+        }
+        #auroraShellNotificationPanel.open{display:block}
+        .aurora-shell-notification-head{
+          position:sticky;
+          top:-16px;
+          z-index:8;
+          display:flex;
+          justify-content:space-between;
+          align-items:flex-start;
+          gap:12px;
+          margin:-16px -16px 12px;
+          padding:16px;
+          border-bottom:1px solid rgba(148,163,184,.12);
+          background:rgba(5,17,35,.98)
+        }
+        .aurora-shell-notification-head h2{
+          margin:0;
+          font-size:20px
+        }
+        .aurora-shell-notification-head p{
+          margin:4px 0 0;
+          color:#8495ad;
+          font-size:10px
+        }
+        .aurora-shell-notification-head-actions{
+          display:flex;
+          gap:6px;
+          align-items:center
+        }
+        .aurora-shell-notification-tool,
+        .aurora-shell-notification-close{
+          min-height:34px;
+          border:1px solid rgba(96,165,250,.22);
+          border-radius:10px;
+          background:rgba(30,64,175,.14);
+          color:#bfdbfe;
+          padding:7px 9px;
+          font:900 9px/1 system-ui,sans-serif;
+          cursor:pointer
+        }
+        .aurora-shell-notification-close{
+          width:34px;
+          padding:0;
+          color:#fecaca;
+          border-color:rgba(248,113,113,.28);
+          background:rgba(127,29,29,.22);
+          font-size:20px
+        }
+        .aurora-shell-notification-list{
+          display:grid;
+          gap:10px
+        }
+        .aurora-shell-notification-empty{
+          padding:28px 14px;
+          text-align:center;
+          color:#8192aa;
+          font-size:12px
+        }
+        .aurora-shell-rich-alert{
+          --rich-accent:34,211,238;
+          --rich-solid:#22d3ee;
+          position:relative;
+          overflow:hidden;
+          border:1px solid rgba(var(--rich-accent),.28);
+          border-radius:18px;
+          background:
+            radial-gradient(circle at 100% 0%,rgba(var(--rich-accent),.16),transparent 42%),
+            linear-gradient(145deg,rgba(8,18,38,.98),rgba(4,10,24,.99));
+          box-shadow:inset 3px 0 0 rgba(var(--rich-accent),.76)
+        }
+        .aurora-shell-rich-alert[data-type="transfer"]{
+          --rich-accent:245,158,11;
+          --rich-solid:#f59e0b
+        }
+        .aurora-shell-rich-alert[data-type="income"]{
+          --rich-accent:96,165,250;
+          --rich-solid:#60a5fa
+        }
+        .aurora-shell-rich-alert[data-type="warning"]{
+          --rich-accent:251,191,36;
+          --rich-solid:#fbbf24
+        }
+        .aurora-shell-rich-alert[data-type="success"],
+        .aurora-shell-rich-alert[data-type="performer"]{
+          --rich-accent:52,211,153;
+          --rich-solid:#34d399
+        }
+        .aurora-shell-rich-alert.is-unread{
+          box-shadow:
+            inset 4px 0 0 var(--rich-solid),
+            0 12px 28px rgba(0,0,0,.24)
+        }
+        .aurora-shell-rich-open{
+          display:flex;
+          flex-direction:column;
+          gap:10px;
+          padding:14px 42px 14px 14px;
+          color:inherit;
+          text-decoration:none
+        }
+        .aurora-shell-rich-top,
+        .aurora-shell-rich-main,
+        .aurora-shell-rich-foot{
+          display:flex;
+          align-items:center;
+          gap:10px
+        }
+        .aurora-shell-rich-top,
+        .aurora-shell-rich-foot{
+          justify-content:space-between
+        }
+        .aurora-shell-rich-top small{
+          color:rgb(var(--rich-accent));
+          font-size:8px;
+          font-weight:1000;
+          letter-spacing:.12em;
+          text-transform:uppercase
+        }
+        .aurora-shell-rich-badge{
+          padding:5px 8px;
+          border:1px solid rgba(var(--rich-accent),.28);
+          border-radius:999px;
+          color:rgb(var(--rich-accent));
+          background:rgba(var(--rich-accent),.09);
+          font-size:7px;
+          font-weight:1000;
+          text-transform:uppercase
+        }
+        .aurora-shell-rich-main{
+          align-items:flex-start
+        }
+        .aurora-shell-rich-icon{
+          width:44px;
+          height:44px;
+          flex:0 0 44px;
+          display:grid;
+          place-items:center;
+          border:1px solid rgba(var(--rich-accent),.24);
+          border-radius:13px;
+          background:rgba(var(--rich-accent),.11);
+          font-size:20px
+        }
+        .aurora-shell-rich-copy{
+          min-width:0;
+          flex:1 1 auto
+        }
+        .aurora-shell-rich-copy strong{
+          display:block;
+          color:#f8fbff;
+          font-size:13px
+        }
+        .aurora-shell-rich-copy p{
+          margin:4px 0 0;
+          color:#98a9bf;
+          font-size:9px;
+          line-height:1.45
+        }
+        .aurora-shell-rich-value{
+          flex:0 0 auto;
+          text-align:right
+        }
+        .aurora-shell-rich-value strong{
+          display:block;
+          color:rgb(var(--rich-accent));
+          font-size:18px
+        }
+        .aurora-shell-rich-value small{
+          display:block;
+          margin-top:4px;
+          color:#8193aa;
+          font-size:7px;
+          font-weight:900
+        }
+        .aurora-shell-rich-progress{
+          height:5px;
+          overflow:hidden;
+          border-radius:999px;
+          background:rgba(148,163,184,.13)
+        }
+        .aurora-shell-rich-progress i{
+          display:block;
+          height:100%;
+          border-radius:inherit;
+          background:linear-gradient(90deg,rgba(var(--rich-accent),.70),var(--rich-solid))
+        }
+        .aurora-shell-rich-foot{
+          color:#8294aa;
+          font-size:8px
+        }
+        .aurora-shell-rich-action{
+          margin-left:auto;
+          color:#dcecff;
+          font-weight:900
+        }
+        .aurora-shell-rich-remove{
+          position:absolute;
+          z-index:4;
+          top:8px;
+          right:8px;
+          width:25px;
+          height:25px;
+          display:grid;
+          place-items:center;
+          padding:0;
+          border:1px solid rgba(248,113,113,.28);
+          border-radius:50%;
+          color:#fecaca;
+          background:rgba(127,29,29,.22);
+          cursor:pointer
+        }
+        #auroraShellNotificationButton.is-active{
+          border-color:rgba(34,211,238,.52)!important;
+          box-shadow:0 0 0 4px rgba(34,211,238,.10)!important
+        }
+        @media(max-width:720px){
+          #auroraShellNotificationPanel{
+            right:10px;
+            top:auto;
+            bottom:calc(70px + env(safe-area-inset-bottom,0px));
+            width:calc(100vw - 20px);
+            max-height:70dvh
+          }
+        }
+      `;
+
+      documentObject.head?.appendChild(style);
+    }
+
+    function ensurePanel() {
+      injectStyles();
+
+      let panel = documentObject.getElementById(
+        'auroraShellNotificationPanel'
+      );
+
+      if (!panel) {
+        panel = documentObject.createElement('section');
+        panel.id = 'auroraShellNotificationPanel';
+        panel.setAttribute(
+          'aria-label',
+          'Aurora notifications'
+        );
+        panel.setAttribute('aria-hidden','true');
+        panel.innerHTML = `
+          <div class="aurora-shell-notification-head">
+            <div>
+              <h2>Command Notifications</h2>
+              <p>One live panel across every Aurora department.</p>
+            </div>
+            <div class="aurora-shell-notification-head-actions">
+              <button class="aurora-shell-notification-tool" id="auroraShellMarkNotificationsRead" type="button">Mark read</button>
+              <button class="aurora-shell-notification-tool" id="auroraShellClearNotifications" type="button">Clear</button>
+              <button class="aurora-shell-notification-close" id="auroraShellNotificationClose" type="button" aria-label="Close notifications">×</button>
+            </div>
+          </div>
+          <div class="aurora-shell-notification-list" id="auroraShellNotificationList"></div>`;
+
+        documentObject.body?.appendChild(panel);
+      }
+
+      return panel;
+    }
+
+    function elements() {
+      const panel = ensurePanel();
+
+      return {
+        button:
+          documentObject.getElementById(
+            'auroraShellNotificationButton'
+          )
+          || documentObject.getElementById(
+            'beastNotificationButton'
+          ),
+        count:
+          documentObject.getElementById(
+            'auroraShellNotificationCount'
+          )
+          || documentObject.getElementById(
+            'beastNotificationCount'
+          ),
+        panel,
+        list:
+          documentObject.getElementById(
+            'auroraShellNotificationList'
+          ),
+        close:
+          documentObject.getElementById(
+            'auroraShellNotificationClose'
+          ),
+        mark:
+          documentObject.getElementById(
+            'auroraShellMarkNotificationsRead'
+          ),
+        clear:
+          documentObject.getElementById(
+            'auroraShellClearNotifications'
+          )
+      };
+    }
+
+    function markup(rows) {
+      if (!rows.length) {
+        return '<div class="aurora-shell-notification-empty">No notifications right now.</div>';
+      }
+
+      return rows.map(row => {
+        const rich = inferRich(row);
+        const progressValue = Number(rich.progress);
+
+        const progress = Number.isFinite(progressValue)
+          ? `<div class="aurora-shell-rich-progress"><i style="width:${Math.max(0,Math.min(100,progressValue))}%"></i></div>`
+          : '';
+
+        const value = rich.value
+          ? `<span class="aurora-shell-rich-value"><strong>${escapeHtml(rich.value)}</strong><small>${escapeHtml(rich.valueLabel || '')}</small></span>`
+          : '';
+
+        return `
+          <article
+            class="aurora-shell-rich-alert${row.read ? '' : ' is-unread'}"
+            data-type="${escapeHtml(rich.type || 'update')}"
+            data-id="${escapeHtml(row.id)}"
+          >
+            <a
+              class="aurora-shell-rich-open"
+              href="#"
+              data-aurora-shell-open="${escapeHtml(row.id)}"
+              data-open-page="${escapeHtml(row.page || '')}"
+            >
+              <span class="aurora-shell-rich-top">
+                <small>${escapeHtml(rich.kicker || row.department || 'Aurora Update')}</small>
+                <span class="aurora-shell-rich-badge">${escapeHtml(rich.badge || 'Live')}</span>
+              </span>
+              <span class="aurora-shell-rich-main">
+                <span class="aurora-shell-rich-icon">${escapeHtml(row.icon || '🔔')}</span>
+                <span class="aurora-shell-rich-copy">
+                  <strong>${escapeHtml(row.title || 'Aurora update')}</strong>
+                  <p>${escapeHtml(row.message || row.department || '')}</p>
+                </span>
+                ${value}
+              </span>
+              ${progress}
+              <span class="aurora-shell-rich-foot">
+                <span>${escapeHtml(rich.secondary || row.department || '')}</span>
+                <span class="aurora-shell-rich-action">${escapeHtml(rich.actionText || row.actionLabel || 'Open')} →</span>
+                <time>${escapeHtml(formatTime(row.createdAt))}</time>
+              </span>
+            </a>
+            <button
+              class="aurora-shell-rich-remove"
+              type="button"
+              data-aurora-shell-remove="${escapeHtml(row.id)}"
+              aria-label="Remove notification"
+            >×</button>
+          </article>`;
+      }).join('');
+    }
+
+    function render() {
+      const ui = elements();
+      const rows = currentApi?.list?.({limit:30}) || [];
+      const unread = Number(
+        currentApi?.unreadCount?.()
+      ) || 0;
+
+      if (ui.list) {
+        ui.list.innerHTML = markup(rows);
+      }
+
+      if (ui.count) {
+        ui.count.textContent = String(unread);
+        ui.count.hidden = unread <= 0;
+      }
+    }
+
+    function openPanel() {
+      const ui = elements();
+      render();
+      ui.panel.hidden = false;
+      ui.panel.classList.add('open');
+      ui.panel.style.setProperty('display','block','important');
+      ui.panel.setAttribute('aria-hidden','false');
+      ui.panel.scrollTop = 0;
+      ui.button?.classList.add('is-active');
+      ui.button?.setAttribute('aria-expanded','true');
+    }
+
+    function closePanel() {
+      const ui = elements();
+      ui.panel.classList.remove('open');
+      ui.panel.style.removeProperty('display');
+      ui.panel.setAttribute('aria-hidden','true');
+      ui.button?.classList.remove('is-active');
+      ui.button?.setAttribute('aria-expanded','false');
+    }
+
+    function togglePanel() {
+      const ui = elements();
+
+      if (ui.panel.classList.contains('open')) {
+        closePanel();
+      } else {
+        openPanel();
+      }
+    }
+
+    function attachChild() {
+      const childFrame = documentObject.getElementById(
+        'clubFrame'
+      );
+
+      if (!childFrame) return false;
+
+      try {
+        const childWindow = childFrame.contentWindow;
+        const childDocument = childFrame.contentDocument;
+
+        if (childWindow) {
+          childWindow.AuroraNotifications = currentApi;
+        }
+
+        currentApi?.attachDocument?.(childDocument);
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function bindFrame() {
+      const nextFrame = documentObject.getElementById(
+        'clubFrame'
+      );
+
+      if (nextFrame === frame) return;
+
+      if (frame && frameLoadHandler) {
+        frame.removeEventListener(
+          'load',
+          frameLoadHandler
+        );
+      }
+
+      frame = nextFrame;
+
+      if (!frame) return;
+
+      frameLoadHandler = () => {
+        /*
+         * Navigation never destroys the notification owner. We only
+         * reconnect the newly loaded child document and reset the panel
+         * to a known closed state ready for the next bell press.
+         */
+        closePanel();
+        window.setTimeout(attachChild,0);
+        window.setTimeout(attachChild,250);
+      };
+
+      frame.addEventListener(
+        'load',
+        frameLoadHandler
+      );
+
+      attachChild();
+    }
+
+    function bindEvents() {
+      const root = documentObject.documentElement;
+
+      if (
+        root.dataset
+          .auroraGlobalNotificationsBound === OWNER_SCRIPT_VERSION
+      ) {
+        return;
+      }
+
+      root.dataset.auroraGlobalNotificationsBound =
+        OWNER_SCRIPT_VERSION;
+
+      /*
+       * Capture phase deliberately wins over the old GameShell handler
+       * that used to redirect notification clicks to Manager Dashboard.
+       */
+      documentObject.addEventListener(
+        'click',
+        event => {
+          const button = event.target?.closest?.(
+            '#auroraShellNotificationButton,#beastNotificationButton'
+          );
+
+          if (button) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            togglePanel();
+            return;
+          }
+
+          const close = event.target?.closest?.(
+            '#auroraShellNotificationClose'
+          );
+
+          if (close) {
+            event.preventDefault();
+            closePanel();
+            return;
+          }
+
+          const mark = event.target?.closest?.(
+            '#auroraShellMarkNotificationsRead'
+          );
+
+          if (mark) {
+            event.preventDefault();
+            currentApi?.markAllRead?.();
+            render();
+            return;
+          }
+
+          const clear = event.target?.closest?.(
+            '#auroraShellClearNotifications'
+          );
+
+          if (clear) {
+            event.preventDefault();
+            currentApi?.clear?.();
+            render();
+            return;
+          }
+
+          const remove = event.target?.closest?.(
+            '[data-aurora-shell-remove]'
+          );
+
+          if (remove) {
+            event.preventDefault();
+            currentApi?.remove?.(
+              remove.dataset.auroraShellRemove
+            );
+            render();
+            return;
+          }
+
+          const open = event.target?.closest?.(
+            '[data-aurora-shell-open]'
+          );
+
+          if (open) {
+            event.preventDefault();
+
+            currentApi?.markRead?.(
+              open.dataset.auroraShellOpen
+            );
+
+            const page = open.dataset.openPage;
+
+            if (page) {
+              closePanel();
+
+              if (
+                window.AuroraGameShell?.loadPage
+              ) {
+                window.AuroraGameShell.loadPage(page);
+              } else {
+                window.location.href = page;
+              }
+            } else {
+              render();
+            }
+
+            return;
+          }
+
+          const ui = elements();
+
+          if (
+            ui.panel.classList.contains('open')
+            && !ui.panel.contains(event.target)
+          ) {
+            closePanel();
+          }
+        },
+        true
+      );
+
+      documentObject.addEventListener(
+        'keydown',
+        event => {
+          if (event.key === 'Escape') {
+            closePanel();
+          }
+        }
+      );
+
+      window.addEventListener(
+        'aurora:notifications-changed',
+        render
+      );
+
+      /*
+       * Do not observe the whole shell subtree here. render() replaces the
+       * notification list markup, so a subtree MutationObserver would trigger
+       * itself forever and starve later clicks after the first page load.
+       * The GameShell iframe is permanent and its own load event is sufficient
+       * to reconnect every department page.
+       */
+      window.addEventListener(
+        'pageshow',
+        () => {
+          bindFrame();
+          render();
+        }
+      );
+    }
+
+    const shellUi = Object.freeze({
+      version:OWNER_SCRIPT_VERSION,
+      open:openPanel,
+      close:closePanel,
+      toggle:togglePanel,
+      render,
+      refresh(){
+        bindFrame();
+        render();
+      },
+      setApi(nextApi){
+        if (nextApi) currentApi = nextApi;
+      }
+    });
+
+    window.AuroraNotificationsShellUI = shellUi;
+    window.AuroraShellNotifications = shellUi;
+
+    ensurePanel();
+    bindEvents();
+    bindFrame();
+    render();
+
+    return shellUi;
+  }
+
+  /*
+   * A legacy embedded core may already exist in an older GameShell.
+   * Instead of silently returning, install the permanent shell UI on
+   * top of that API so the bell remains usable during migration.
+   */
+  if (window.AuroraNotifications?.version) {
+    installUniversalShellUI(
+      window.AuroraNotifications
+    );
+    return;
+  }
+
+  const VERSION = '5.0.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
@@ -1208,6 +2074,8 @@
       try { callback(detail); } catch (_) {}
     });
     renderDashboardBridge();
+    window.AuroraNotificationsShellUI
+      ?.render?.();
   }
 
   function escapeHtml(value) {
@@ -2188,6 +3056,16 @@
 
   function renderDashboardBridge() {
     if (!dashboardBridge) return;
+
+    if (
+      !dashboardBridge.documentObject
+      || !dashboardBridge.documentObject.defaultView
+      || !dashboardBridge.panel?.isConnected
+      || !dashboardBridge.list?.isConnected
+    ) {
+      dashboardBridge = null;
+      return;
+    }
     const rows = list({ limit: 24 });
     if (dashboardBridge.list) dashboardBridge.list.innerHTML = dashboardMarkup(rows);
 
@@ -3945,10 +4823,7 @@
       const childDocument =
         frame.contentDocument;
 
-      if (
-        childWindow
-        && !childWindow.AuroraNotifications
-      ) {
+      if (childWindow) {
         childWindow.AuroraNotifications =
           window.AuroraNotifications;
       }
@@ -3963,8 +4838,21 @@
 
 
   function attachDocument(documentObject = document) {
+    if (!documentObject) return false;
+
+    const isOwnerDocument =
+      documentObject.defaultView === window;
+
+    const hasShellOwner = Boolean(
+      document.getElementById(
+        'auroraShellNotificationButton'
+      )
+    );
+
     const managerAttached =
-      attachManagerDashboard(documentObject);
+      isOwnerDocument && !hasShellOwner
+        ? attachManagerDashboard(documentObject)
+        : false;
 
     const bridgeAttached =
       installDepartmentBridge(documentObject);
@@ -3975,6 +4863,10 @@
   }
 
   function start() {
+    installUniversalShellUI(
+      window.AuroraNotifications
+    );
+
     clearExpired();
     migrateSmartNotificationStore();
     applyPreferencesToStore();
@@ -4032,7 +4924,16 @@
     setPreference,
     notificationGroupFor,
     syncTransferLifecycle:
-      syncTransferLifecycleNotification
+      syncTransferLifecycleNotification,
+    openPanel:() =>
+      window.AuroraNotificationsShellUI
+        ?.open?.(),
+    closePanel:() =>
+      window.AuroraNotificationsShellUI
+        ?.close?.(),
+    togglePanel:() =>
+      window.AuroraNotificationsShellUI
+        ?.toggle?.()
   });
 
   document.addEventListener('aurora:notify', event => {

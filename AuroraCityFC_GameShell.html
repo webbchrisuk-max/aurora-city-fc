@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Build: Aurora Shared GameShell • Rich Command Notifications v13 • 03 Aug 2026 -->
+  <!-- Build: Aurora Shared GameShell • Global Notifications Owner v5 • 05 Aug 2026 -->
   <meta charset="UTF-8">
   <meta
     name="viewport"
@@ -2562,7 +2562,7 @@
 @keyframes auroraShellNotificationDrop{from{opacity:0;transform:translateY(-8px) scale(.985)}to{opacity:1;transform:none}}
 @media(max-width:720px){#auroraShellNotificationPanel{right:10px;top:auto;bottom:calc(64px + var(--safe-bottom));width:calc(100vw - 20px);max-height:70dvh;border-radius:22px}}
 </style>
-<meta name="aurora-build" content="gameshell-global-notification-owner-v4-20260805">
+<meta name="aurora-build" content="gameshell-global-notification-owner-v5-20260805">
 </head>
 
 <body>
@@ -2791,7 +2791,7 @@
       </div>
     </div>
   </section>
-  <script src="aurora-notifications.js?v=20260805-global-owner-v4" data-aurora-notifications-global-owner="4.0.0"></script>
+  <script src="aurora-notifications.js?v=20260805-global-owner-v5" data-aurora-notifications-global-owner="5.0.0"></script>
 
   <script>
     (() => {
@@ -3913,6 +3913,58 @@
         }
       }
 
+      function toggleShellNotifications(){
+        /*
+         * Primary path: the shared notification owner controls rendering,
+         * read state and lifecycle. The native fallback guarantees the bell
+         * still opens the shell panel even if the external JS is delayed or
+         * an older cached copy fails to initialise.
+         */
+        const owner =
+          window.AuroraShellNotifications;
+
+        if(owner?.toggle){
+          owner.toggle();
+          return true;
+        }
+
+        if(window.AuroraNotifications?.togglePanel){
+          window.AuroraNotifications.togglePanel();
+          return true;
+        }
+
+        const panel = document.getElementById(
+          "auroraShellNotificationPanel"
+        );
+
+        if(!panel) return false;
+
+        const opening =
+          !panel.classList.contains("open");
+
+        panel.classList.toggle("open",opening);
+        panel.setAttribute(
+          "aria-hidden",
+          opening ? "false" : "true"
+        );
+
+        notificationButton.classList.toggle(
+          "is-active",
+          opening
+        );
+
+        notificationButton.setAttribute(
+          "aria-expanded",
+          opening ? "true" : "false"
+        );
+
+        if(opening){
+          panel.scrollTop = 0;
+        }
+
+        return true;
+      }
+
       function routeManagerAction(action){
         /*
          * Notifications belong to the GameShell, not the Manager Dashboard.
@@ -3920,7 +3972,7 @@
          * its current iframe page when the shell bell is pressed.
          */
         if(action === "notifications"){
-          window.AuroraShellNotifications?.toggle?.();
+          toggleShellNotifications();
           return;
         }
 
@@ -3973,7 +4025,7 @@
 
         if(action === "notifications"){
           /* Notifications are owned globally by GameShell. */
-          window.AuroraShellNotifications?.toggle?.();
+          toggleShellNotifications();
           return;
         }
 
@@ -4334,7 +4386,7 @@
         event => {
           event.preventDefault();
           event.stopPropagation();
-          window.AuroraShellNotifications?.toggle?.();
+          toggleShellNotifications();
         }
       );
 
