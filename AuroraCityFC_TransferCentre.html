@@ -2900,7 +2900,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </style>
 
 <style id="aurora-crimson-record-v94">
-/* Aurora Transfer Centre — Manual Budget Editor v101
+/* Aurora Transfer Centre — Route & Cash Desk v102
    A deep oxblood / stadium-red execution desk, aligned with Aurora's dark shell. */
 
 #payday-execution{
@@ -3991,6 +3991,226 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 })();
 </script>
 
+
+<style id="aurora-route-and-cash-v102">
+.redline-route-controls{
+  grid-template-columns:minmax(220px,.75fr) minmax(280px,1fr) minmax(280px,1fr)!important;
+}
+.redline-route-live{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+.redline-route-field.cash .redline-budget-input{
+  border-color:rgba(56,189,248,.34)!important;
+}
+.redline-route-field.cash .redline-budget-input:focus-within{
+  border-color:#38bdf8!important;
+  box-shadow:0 0 0 4px rgba(56,189,248,.10),0 0 24px rgba(56,189,248,.08)!important;
+}
+#paydayAvailableCash{
+  width:100%!important;
+  min-width:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  color:#fff!important;
+  padding:9px 7px!important;
+  font-size:20px!important;
+  font-weight:1000!important;
+  pointer-events:auto!important;
+  user-select:text!important;
+  -webkit-user-select:text!important;
+  touch-action:manipulation!important;
+  cursor:text!important;
+  opacity:1!important;
+  caret-color:#38bdf8!important;
+  -webkit-appearance:none!important;
+  appearance:textfield!important;
+}
+#paydayAvailableCash:focus{
+  outline:none!important;
+  box-shadow:none!important;
+}
+.payday-status-simple{
+  grid-template-columns:1fr 1fr!important;
+}
+.payday-cash-summary{
+  border:1px solid rgba(56,189,248,.18);
+  background:rgba(8,20,30,.40);
+  border-radius:14px;
+  padding:11px 13px;
+}
+.payday-cash-summary small{
+  display:block;color:#7dd3fc;font-size:8px;font-weight:1000;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.payday-cash-summary strong{
+  display:block;color:#e0f2fe;font-size:13px;margin-top:4px;
+}
+.payday-cash-summary span{
+  display:block;color:#8da3b4;font-size:8px;margin-top:4px;
+}
+.payday-stability-toolbar{
+  grid-template-columns:auto auto 1fr!important;
+}
+.payday-stability-toolbar .payday-build-stamp{
+  grid-column:auto!important;
+}
+#payday-execution .payday-trade-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+  align-items:start;
+}
+#payday-execution .payday-trade-card{
+  min-width:0;
+  height:100%;
+}
+#payday-execution .payday-entry-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+@media(max-width:1100px){
+  .redline-route-controls{
+    grid-template-columns:1fr 1fr!important;
+  }
+  .redline-route-field:first-child{
+    grid-column:1/-1;
+  }
+}
+@media(max-width:820px){
+  .redline-route-controls,
+  .redline-route-live,
+  .payday-status-simple,
+  #payday-execution .payday-trade-grid{
+    grid-template-columns:1fr!important;
+  }
+  .redline-route-field:first-child{grid-column:auto}
+  .payday-stability-toolbar{
+    grid-template-columns:1fr 1fr!important;
+  }
+  .payday-stability-toolbar .payday-build-stamp{
+    grid-column:1/-1!important;
+  }
+}
+</style>
+
+
+<script id="aurora-route-and-cash-v102-js">
+(function(){
+  const BUDGET_KEY='aurora_transfer_manual_route_budget_v101';
+  const CASH_KEY='aurora_transfer_manual_cash_v102';
+  const money=v=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(v)||0);
+  const parse=v=>{
+    const n=Number(String(v??'').replace(/,/g,'').trim());
+    return Number.isFinite(n)?n:0;
+  };
+
+  function budgetEditor(){return document.getElementById('routeBudgetEditor')}
+  function cashEditor(){return document.getElementById('paydayAvailableCash')}
+  function canonicalBudget(){return document.getElementById('transferBudgetInput')}
+
+  function updateTopPreview(){
+    const budget=parse(budgetEditor()?.value);
+    const cash=parse(cashEditor()?.value);
+    const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
+    set('redlineRouteBudget',money(budget));
+    set('redlineRouteCash',money(cash));
+    set('paydayCashSummary',cash>0?`${money(cash)} available`:'Enter transfer cash above');
+    const strategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')
+      ?'Maximum Income':'Sustainable Income';
+    const broker=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+    set('dealRouteControlSummary',`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)}`);
+  }
+
+  function restoreCash(){
+    const input=cashEditor();
+    if(!input)return;
+    const saved=localStorage.getItem(CASH_KEY);
+    if(saved!==null&&saved!==''&&parse(saved)>=0){
+      input.value=parse(saved).toFixed(2);
+    }
+    input.disabled=false;
+    input.readOnly=false;
+    input.removeAttribute('disabled');
+    input.removeAttribute('readonly');
+    updateTopPreview();
+  }
+
+  function saveBoth(event){
+    event?.preventDefault?.();
+    event?.stopImmediatePropagation?.();
+
+    const budget=parse(budgetEditor()?.value);
+    const cash=parse(cashEditor()?.value);
+    const msg=document.getElementById('redlineRouteMessage');
+
+    if(!(budget>0)){
+      if(msg)msg.textContent='Enter a valid transfer budget above £0.';
+      budgetEditor()?.focus();
+      return;
+    }
+    if(cash<0){
+      if(msg)msg.textContent='Enter a valid available transfer cash amount.';
+      cashEditor()?.focus();
+      return;
+    }
+
+    localStorage.setItem(BUDGET_KEY,String(budget));
+    localStorage.setItem(CASH_KEY,String(cash));
+
+    if(canonicalBudget()){
+      canonicalBudget().value=budget.toFixed(2);
+      canonicalBudget().dispatchEvent(new Event('input',{bubbles:true}));
+      canonicalBudget().dispatchEvent(new Event('change',{bubbles:true}));
+    }
+
+    // Use the existing payday cash save engine, but only after both values are final.
+    const cashSave=document.getElementById('savePaydayCash');
+    if(cashSave)cashSave.click();
+
+    try{
+      if(typeof manualAmounts!=='undefined')manualAmounts.clear();
+      if(typeof excludedTickers!=='undefined')excludedTickers.clear();
+      if(typeof renderAll==='function')renderAll();
+    }catch(err){console.warn('Route and cash rebuild',err)}
+
+    setTimeout(()=>{
+      if(budgetEditor())budgetEditor().value=budget.toFixed(2);
+      if(cashEditor())cashEditor().value=cash.toFixed(2);
+      if(canonicalBudget())canonicalBudget().value=budget.toFixed(2);
+      updateTopPreview();
+      if(msg){
+        const strategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')
+          ?'Maximum Income':'Sustainable Income';
+        const broker=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+        msg.textContent=`${strategy} • ${broker} • Budget ${money(budget)} • Cash ${money(cash)} saved and rebuilt.`;
+        msg.classList.add('saved');
+      }
+    },120);
+  }
+
+  function start(){
+    restoreCash();
+    cashEditor()?.addEventListener('input',updateTopPreview);
+    budgetEditor()?.addEventListener('input',updateTopPreview);
+    document.getElementById('brokerRouteFilter')?.addEventListener('change',updateTopPreview);
+    document.addEventListener('click',e=>{
+      if(e.target.closest?.('#m11BalancedRoute,#m11MaximumRoute'))setTimeout(updateTopPreview,0);
+    });
+
+    const save=document.getElementById('redlineSaveRoute');
+    if(save){
+      const clone=save.cloneNode(true);
+      save.replaceWith(clone);
+      clone.textContent='Save & rebuild allocation';
+      clone.addEventListener('click',saveBoth,true);
+    }
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else start();
+})();
+</script>
+
 </head>
 <body>
 
@@ -4392,14 +4612,21 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
   <label class="redline-route-field budget">
     <span>Working transfer budget</span>
     <div class="redline-budget-input"><b>£</b><input aria-label="Working transfer budget editor" id="routeBudgetEditor" inputmode="decimal" min="0" step="25" type="number" value="3500"/></div>
-<input id="transferBudgetInput" type="hidden" value="3500"/>
-    <small>Edit this before Aurora builds the allocation.</small>
+    <input id="transferBudgetInput" type="hidden" value="3500"/>
+    <small>The planned amount Aurora should allocate.</small>
+  </label>
+  <label class="redline-route-field cash">
+    <span>Available transfer cash</span>
+    <div class="redline-budget-input"><b>£</b><input aria-label="Available transfer cash" autocomplete="off" id="paydayAvailableCash" inputmode="decimal" min="0" step="0.01" type="number" value="0.00"/></div>
+    <button id="savePaydayCash" type="button" hidden>Save cash amount</button>
+    <small>The real cash currently available at the broker.</small>
   </label>
 </div>
 <div class="redline-route-live">
   <div><small>Current strategy</small><strong id="redlineRouteStrategy">Sustainable Income</strong></div>
   <div><small>Current broker</small><strong id="redlineRouteBroker">Both brokers</strong></div>
   <div><small>Route budget</small><strong id="redlineRouteBudget">£3,500.00</strong></div>
+  <div><small>Transfer cash</small><strong id="redlineRouteCash">£0.00</strong></div>
 </div>
 <div class="redline-route-actions">
   <button class="redline-edit-route" id="redlineEditRoute" type="button">✎ Edit route</button>
@@ -4555,16 +4782,15 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 <button class="payday-open-button" id="openPaydayWindow" type="button">Open Payday Window</button>
 </div>
 <div class="payday-window-body" id="paydayWindowBody">
-<div class="payday-status-strip">
+<div class="payday-status-strip payday-status-simple">
 <div><small>Window status</small><strong id="paydayWindowStatus">Closed</strong><span id="paydayWindowStatusNote">Open the window when payday arrives.</span></div>
-<div class="payday-cash-field"><span>Available transfer cash</span><b>£</b><input id="paydayAvailableCash" inputmode="decimal" autocomplete="off" type="text" value="0.00" aria-label="Available transfer cash"/><button class="payday-reset-button" id="savePaydayCash" type="button">Save cash amount</button></div>
+<div class="payday-cash-summary"><small>Transfer cash source</small><strong id="paydayCashSummary">Set in the Route Desk above</strong><span>Budget and cash can be different amounts.</span></div>
 </div>
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter each broker fill using the larger fields below. Values save automatically as you type.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div><div class="payday-record-guide"><strong>Easy entry:</strong> enter the <b>number of shares</b>, the broker’s <b>price in pounds per share</b>, and any <b>fees</b>. Example: a broker price of <b>84.97p</b> is entered as <b>0.8497</b>.</div>
 <div class="payday-stability-toolbar" id="paydayStabilityToolbar">
-  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Manual Budget Editor v101</strong><span>Large-entry layout • AuroraData registration</span></div>
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Route & Cash Desk v102</strong><span>Large-entry layout • AuroraData registration</span></div>
   <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
-  <label class="payday-broker-control"><span>Broker route</span><select id="paydayBrokerRouteFilter"><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label>
   <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
 </div>
 <div class="payday-trade-grid" id="paydayTradeGrid"><div class="loading">Waiting for an approved route…</div></div>
