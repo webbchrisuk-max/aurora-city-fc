@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Build: Aurora Shared GameShell • Loader Scope Repair v18 • 04 Aug 2026 -->
+  <!-- Build: Aurora Shared GameShell • Rich Command Notifications v13 • 03 Aug 2026 -->
   <meta charset="UTF-8">
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
   <meta name="theme-color" content="#020612">
-  <meta
-    http-equiv="Cache-Control"
-    content="no-cache, no-store, must-revalidate"
-  >
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta
@@ -2559,6 +2553,15 @@
     }
 
   </style>
+
+<style id="auroraShellUniversalNotificationStyles">
+#auroraShellNotificationPanel{position:fixed;z-index:960;right:18px;top:calc(var(--shell-header-height) + var(--safe-top) + 10px);width:min(470px,calc(100vw - 36px));max-height:calc(100dvh - var(--shell-header-height) - var(--safe-top) - 28px);display:none;overflow:auto;padding:16px;border:1px solid rgba(34,211,238,.30);border-radius:24px;background:radial-gradient(circle at 96% 0%,rgba(34,211,238,.13),transparent 34%),linear-gradient(180deg,rgba(7,20,40,.995),rgba(2,7,18,.998));box-shadow:0 30px 90px rgba(0,0,0,.68);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+#auroraShellNotificationPanel.open{display:block;animation:auroraShellNotificationDrop .2s ease-out}
+.aurora-shell-notification-head{position:sticky;z-index:5;top:-16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:-16px -16px 12px;padding:16px;border-bottom:1px solid rgba(125,211,252,.13);background:linear-gradient(180deg,rgba(7,20,40,1),rgba(7,20,40,.97))}
+.aurora-shell-notification-head h2{margin:0;color:#f4f9ff;font-size:20px;letter-spacing:-.04em}.aurora-shell-notification-head p{margin:4px 0 0;color:#8495ad;font-size:10px}.aurora-shell-notification-head-actions{display:flex;gap:6px;align-items:center}.aurora-shell-notification-tool,.aurora-shell-notification-close{min-height:32px;padding:0 9px;border:1px solid rgba(96,165,250,.22);border-radius:10px;color:#bfdbfe;background:rgba(30,64,175,.14);font-size:8px;font-weight:950;cursor:pointer}.aurora-shell-notification-close{width:34px;padding:0;color:#fecdd3;border-color:rgba(251,113,133,.26);background:rgba(127,29,29,.18);font-size:19px}.aurora-shell-notification-list{display:grid;gap:9px}.aurora-shell-notification-empty{padding:28px 16px;color:#8192aa;text-align:center;font-size:12px}.aurora-shell-rich-alert{--alert-rgb:34,211,238;position:relative;overflow:hidden;border:1px solid rgba(var(--alert-rgb),.28);border-radius:18px;background:radial-gradient(circle at 100% 0%,rgba(var(--alert-rgb),.14),transparent 42%),linear-gradient(145deg,rgba(8,18,38,.98),rgba(4,10,24,.99));box-shadow:inset 3px 0 0 rgba(var(--alert-rgb),.72),0 12px 28px rgba(0,0,0,.22)}.aurora-shell-rich-alert[data-type="income"],.aurora-shell-rich-alert[data-type="finance"]{--alert-rgb:96,165,250}.aurora-shell-rich-alert[data-type="transfer"]{--alert-rgb:245,158,11}.aurora-shell-rich-alert[data-type="performer"],.aurora-shell-rich-alert[data-type="success"]{--alert-rgb:52,211,153}.aurora-shell-rich-alert[data-type="warning"],.aurora-shell-rich-alert[data-type="target"]{--alert-rgb:251,191,36}.aurora-shell-rich-alert[data-type="danger"]{--alert-rgb:251,113,133}.aurora-shell-rich-open{display:flex;flex-direction:column;gap:9px;padding:13px 40px 13px 13px;color:inherit;text-decoration:none;cursor:pointer}.aurora-shell-rich-top,.aurora-shell-rich-main,.aurora-shell-rich-foot{display:flex;align-items:center;gap:10px}.aurora-shell-rich-top{justify-content:space-between}.aurora-shell-rich-top small{color:rgb(var(--alert-rgb));font-size:8px;font-weight:1000;letter-spacing:.12em;text-transform:uppercase}.aurora-shell-rich-badge{padding:4px 7px;border:1px solid rgba(var(--alert-rgb),.28);border-radius:999px;color:rgb(var(--alert-rgb));background:rgba(var(--alert-rgb),.09);font-size:7px;font-weight:1000;text-transform:uppercase}.aurora-shell-rich-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border:1px solid rgba(var(--alert-rgb),.24);border-radius:13px;background:rgba(var(--alert-rgb),.11);font-size:19px}.aurora-shell-rich-copy{min-width:0;flex:1}.aurora-shell-rich-copy strong{display:block;color:#f5f9ff;font-size:12px;line-height:1.3}.aurora-shell-rich-copy p{margin:4px 0 0;color:#91a2b8;font-size:9px;line-height:1.45}.aurora-shell-rich-value{text-align:right;flex:0 0 auto}.aurora-shell-rich-value strong{display:block;color:rgb(var(--alert-rgb));font-size:18px}.aurora-shell-rich-value small{display:block;margin-top:4px;color:#8193aa;font-size:7px;text-transform:uppercase}.aurora-shell-rich-progress{height:5px;overflow:hidden;border-radius:999px;background:rgba(148,163,184,.13)}.aurora-shell-rich-progress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,rgba(var(--alert-rgb),.65),rgb(var(--alert-rgb)))}.aurora-shell-rich-foot{justify-content:space-between;color:#8294aa;font-size:8px}.aurora-shell-rich-action{margin-left:auto;color:#dcecff;font-weight:900}.aurora-shell-rich-remove{position:absolute;right:8px;top:8px;width:24px;height:24px;display:grid;place-items:center;border:1px solid rgba(251,113,133,.22);border-radius:50%;color:#fecaca;background:rgba(127,29,29,.17);cursor:pointer}.aurora-shell-rich-alert.is-unread{border-color:rgba(var(--alert-rgb),.48);box-shadow:inset 4px 0 0 rgb(var(--alert-rgb)),0 14px 32px rgba(0,0,0,.25)}
+@keyframes auroraShellNotificationDrop{from{opacity:0;transform:translateY(-8px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:720px){#auroraShellNotificationPanel{right:10px;top:auto;bottom:calc(64px + var(--safe-bottom));width:calc(100vw - 20px);max-height:70dvh;border-radius:22px}}
+</style>
 </head>
 
 <body>
@@ -2728,6 +2731,19 @@
     </div>
   </aside>
 
+
+<section id="auroraShellNotificationPanel" aria-label="Aurora notifications" aria-hidden="true">
+  <div class="aurora-shell-notification-head">
+    <div><h2>Command Notifications</h2><p>Rich alerts shared across every Aurora department.</p></div>
+    <div class="aurora-shell-notification-head-actions">
+      <button class="aurora-shell-notification-tool" id="auroraShellMarkNotificationsRead" type="button">Mark read</button>
+      <button class="aurora-shell-notification-tool" id="auroraShellClearNotifications" type="button">Clear</button>
+      <button class="aurora-shell-notification-close" id="auroraShellNotificationClose" type="button" aria-label="Close notifications">×</button>
+    </div>
+  </div>
+  <div class="aurora-shell-notification-list" id="auroraShellNotificationList"></div>
+</section>
+
   <section
     id="auroraShellLogoutLayer"
     role="dialog"
@@ -2798,52 +2814,16 @@
 
   if (window.AuroraNotifications?.version) return;
 
-  const VERSION = '3.3.0';
+  const VERSION = '3.1.0';
   const STORE_KEY = 'aurora_notifications_v1';
   const READ_KEY = 'aurora_notifications_read_v1';
   const INSTALL_KEY = 'aurora_notifications_installed_v1';
-  const WATCH_KEY = 'aurora_notifications_watch_state_v3';
-  const SNAPSHOT_KEY = 'aurora_notification_snapshots_v1';
-  const PREFERENCES_KEY = 'aurora_notification_preferences_v1';
-  const DIGEST_KEY = 'aurora_notification_digest_v1';
+  const WATCH_KEY = 'aurora_notifications_watch_state_v2';
   const DISMISS_KEY = 'aurora_notifications_dismissed_v2';
   const EVENT_NAME = 'aurora:notifications-changed';
   const CHANNEL_NAME = 'aurora-notifications';
   const MAX_ITEMS = 120;
   const DEFAULT_TTL_DAYS = 45;
-
-  const CHILD_DEPLOYMENT_VERSION =
-    "20260804-cloud-authoritative-v12";
-
-  function versionedChildUrl(
-    file,
-    hash = ""
-  ){
-    const base =
-      String(file || "").trim();
-
-    const cleanHash =
-      hash
-        ? (
-            String(hash).startsWith("#")
-              ? String(hash)
-              : `#${hash}`
-          )
-        : "";
-
-    const separator =
-      base.includes("?")
-        ? "&"
-        : "?";
-
-    return (
-      `${base}${separator}`
-      + `auroraBuild=${encodeURIComponent(
-          CHILD_DEPLOYMENT_VERSION
-        )}`
-      + cleanHash
-    );
-  }
 
   const PAGE_MAP = [
     ['ManagerDashboard', 'Manager Dashboard', 'AuroraCityFC_ManagerDashboard.html', '🧭'],
@@ -2935,9 +2915,9 @@
     },
     {
       key: 'aurora_account_transfer_instruction_v1',
-      department: 'Transfer Centre',
-      page: 'AuroraCityFC_TransferCentre.html',
-      title: 'Broker funding route changed',
+      department: 'Finance Department',
+      page: 'AuroraCityFC_FinanceDepartment.html',
+      title: 'Broker funding instructions updated',
       icon: '🏦',
       priority: 'high',
       message: value => describeMoneyEvent(value, 'The broker funding route has changed.')
@@ -2964,10 +2944,19 @@
       key: 'aurora_wealth_centre',
       department: 'Finance Department',
       page: 'AuroraCityFC_FinanceDepartment.html',
-      title: 'Finance position updated',
+      title: 'Finance planner updated',
       icon: '💷',
       priority: 'normal',
       message: describeFinancePlanner
+    },
+    {
+      key: 'aurora_wealth_centre_history_v1',
+      department: 'Finance Department',
+      page: 'AuroraCityFC_FinanceDepartment.html',
+      title: 'Finance history updated',
+      icon: '📚',
+      priority: 'low',
+      message: value => describeCollection(value, 'Finance history')
     },
     {
       key: 'aurora_pending_registrations_v1',
@@ -3003,7 +2992,6 @@
 
   const subscribers = new Set();
   const watchedValues = new Map();
-  const watchedSnapshots = new Map();
   let channel = null;
   let dashboardBridge = null;
 
@@ -3023,403 +3011,6 @@
     } catch (_) {
       return fallback;
     }
-  }
-
-  const DEFAULT_NOTIFICATION_PREFERENCES = Object.freeze({
-    performance:'immediate',
-    targets:'immediate',
-    transfers:'immediate',
-    finance:'immediate',
-    income:'immediate',
-    intelligence:'immediate',
-    system:'immediate'
-  });
-
-  const NOTIFICATION_GROUP_LABELS = Object.freeze({
-    performance:'Performance',
-    targets:'Targets',
-    transfers:'Transfers',
-    finance:'Finance & bills',
-    income:'Dividends & income',
-    intelligence:'Intelligence',
-    system:'System & data'
-  });
-
-  function normalisePreferenceMode(value) {
-    const mode = String(value || '').toLowerCase();
-
-    return ['immediate','digest','off'].includes(mode)
-      ? mode
-      : 'immediate';
-  }
-
-  function readPreferences() {
-    try {
-      const saved = safeJsonParse(
-        localStorage.getItem(PREFERENCES_KEY) || '{}',
-        {}
-      );
-
-      return {
-        ...DEFAULT_NOTIFICATION_PREFERENCES,
-        ...(saved && typeof saved === 'object'
-          ? Object.fromEntries(
-              Object.entries(saved).map(
-                ([key, value]) => [
-                  key,
-                  normalisePreferenceMode(value)
-                ]
-              )
-            )
-          : {})
-      };
-    } catch (_) {
-      return {
-        ...DEFAULT_NOTIFICATION_PREFERENCES
-      };
-    }
-  }
-
-  function notificationGroupFor(item = {}) {
-    const explicit = String(
-      item?.metadata?.notificationGroup || ''
-    ).toLowerCase();
-
-    if (
-      Object.prototype.hasOwnProperty.call(
-        DEFAULT_NOTIFICATION_PREFERENCES,
-        explicit
-      )
-    ) {
-      return explicit;
-    }
-
-    const type = String(
-      item?.metadata?.rich?.type || ''
-    ).toLowerCase();
-
-    const department = String(
-      item?.department || ''
-    ).toLowerCase();
-
-    const title = String(
-      item?.title || ''
-    ).toLowerCase();
-
-    const message = String(
-      item?.message || ''
-    ).toLowerCase();
-
-    const text = `${department} ${title} ${message}`;
-
-    if (
-      /performer|biggest drag|portfolio move|market close/.test(text)
-      || ['performer','risk','performance'].includes(type)
-    ) {
-      return 'performance';
-    }
-
-    if (
-      /target zone|target hit|target report|below target/.test(text)
-      || type === 'target'
-    ) {
-      return 'targets';
-    }
-
-    if (
-      /transfer|broker funding|registration|purchase executed|signing|handoff/.test(text)
-      || ['transfer','signing'].includes(type)
-    ) {
-      return 'transfers';
-    }
-
-    if (
-      /finance|bill|holding pot|budget position/.test(text)
-      || type === 'finance'
-    ) {
-      return 'finance';
-    }
-
-    if (
-      /dividend|income|milestone/.test(text)
-      || ['income','milestone'].includes(type)
-    ) {
-      return 'income';
-    }
-
-    if (
-      /intelligence|confidence|buy permission|market regime|restriction|risk level/.test(text)
-      || ['intelligence','decision'].includes(type)
-    ) {
-      return 'intelligence';
-    }
-
-    return 'system';
-  }
-
-  function getPreference(group) {
-    const key = String(group || 'system').toLowerCase();
-    const preferences = readPreferences();
-
-    return normalisePreferenceMode(
-      preferences[key]
-      || DEFAULT_NOTIFICATION_PREFERENCES[key]
-      || 'immediate'
-    );
-  }
-
-  function applyPreferencesToStore() {
-    const rows = cleanStore(readStore());
-
-    const filtered = rows.filter(row => {
-      const group = notificationGroupFor(row);
-      const mode = getPreference(group);
-
-      if (mode === 'off') return false;
-
-      if (mode === 'digest') {
-        return Boolean(
-          row?.metadata?.digestCard
-        );
-      }
-
-      if (
-        mode === 'immediate'
-        && row?.metadata?.digestCard
-      ) {
-        return false;
-      }
-
-      return true;
-    });
-
-    return writeStore(
-      filtered,
-      'preferences-applied'
-    );
-  }
-
-  function setPreference(group, mode) {
-    const key = String(group || '').toLowerCase();
-
-    if (
-      !Object.prototype.hasOwnProperty.call(
-        DEFAULT_NOTIFICATION_PREFERENCES,
-        key
-      )
-    ) {
-      return false;
-    }
-
-    const preferences = readPreferences();
-    preferences[key] = normalisePreferenceMode(mode);
-
-    try {
-      localStorage.setItem(
-        PREFERENCES_KEY,
-        JSON.stringify(preferences)
-      );
-
-      if (
-        preferences[key] !== 'digest'
-      ) {
-        const digestState =
-          readDigestState();
-
-        Object.keys(digestState).forEach(
-          digestId => {
-            if (
-              digestState[digestId]?.group
-              === key
-            ) {
-              delete digestState[digestId];
-            }
-          }
-        );
-
-        writeDigestState(digestState);
-      }
-    } catch (_) {
-      return false;
-    }
-
-    applyPreferencesToStore();
-
-    try {
-      window.dispatchEvent(
-        new CustomEvent(
-          'aurora:notification-preferences-changed',
-          {
-            detail:{
-              group:key,
-              mode:preferences[key],
-              preferences
-            }
-          }
-        )
-      );
-    } catch (_) {}
-
-    return true;
-  }
-
-  function readDigestState() {
-    try {
-      const value = safeJsonParse(
-        localStorage.getItem(DIGEST_KEY) || '{}',
-        {}
-      );
-
-      return value && typeof value === 'object'
-        ? value
-        : {};
-    } catch (_) {
-      return {};
-    }
-  }
-
-  function writeDigestState(value) {
-    try {
-      localStorage.setItem(
-        DIGEST_KEY,
-        JSON.stringify(value || {})
-      );
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  function digestDateKey(timestamp = now()) {
-    const date = new Date(timestamp);
-
-    return [
-      date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, '0'),
-      String(date.getDate()).padStart(2, '0')
-    ].join('-');
-  }
-
-  function upsertDigestRow(rows, item) {
-    const group = notificationGroupFor(item);
-    const dateKey = digestDateKey(item.createdAt);
-    const digestId = `${dateKey}:${group}`;
-    const digestState = readDigestState();
-    const current = digestState[digestId] || {
-      dateKey,
-      group,
-      count:0,
-      latestTitles:[],
-      fingerprints:[],
-      lastAt:0
-    };
-
-    current.fingerprints =
-      Array.isArray(current.fingerprints)
-        ? current.fingerprints
-        : [];
-
-    const fingerprint = String(
-      item.fingerprint || ''
-    );
-
-    const alreadyIncluded =
-      fingerprint
-      && current.fingerprints.includes(
-        fingerprint
-      );
-
-    if (!alreadyIncluded) {
-      current.count += 1;
-      current.lastAt =
-        Number(item.createdAt) || now();
-
-      current.latestTitles = [
-        item.title,
-        ...(Array.isArray(current.latestTitles)
-          ? current.latestTitles
-          : [])
-      ]
-        .filter(Boolean)
-        .filter(
-          (value, index, array) =>
-            array.indexOf(value) === index
-        )
-        .slice(0, 4);
-
-      if (fingerprint) {
-        current.fingerprints.unshift(
-          fingerprint
-        );
-
-        current.fingerprints =
-          current.fingerprints.slice(0, 80);
-      }
-    }
-
-    digestState[digestId] = current;
-    writeDigestState(digestState);
-
-    const title =
-      `${NOTIFICATION_GROUP_LABELS[group] || 'Aurora'} daily digest`;
-
-    const message =
-      `${current.count} update${current.count === 1 ? '' : 's'} today`
-      + (
-        current.latestTitles.length
-          ? ` • Latest: ${current.latestTitles.join(' • ')}`
-          : ''
-      );
-
-    const digestItem = normaliseNotification({
-      department:'Aurora HQ',
-      page:'AuroraCityFC_ManagerDashboard.html',
-      title,
-      message,
-      icon:'📋',
-      priority:'low',
-      dedupeKey:`digest:${digestId}`,
-      fingerprint:hashString(
-        `${digestId}|${current.count}|${current.latestTitles.join('|')}`
-      ),
-      source:'notification-digest',
-      actionLabel:'Open notification digest',
-      metadata:{
-        digestCard:true,
-        preferenceBypass:true,
-        notificationGroup:group,
-        category:'information',
-        replaceExisting:true,
-        rich:{
-          type:'update',
-          kicker:'DAILY DIGEST',
-          badge:(NOTIFICATION_GROUP_LABELS[group] || group).toUpperCase(),
-          value:String(current.count),
-          valueLabel:'UPDATES',
-          secondary:current.latestTitles[0] || '',
-          actionText:'Review digest'
-        }
-      }
-    });
-
-    const next = rows.filter(
-      row =>
-        String(row?.dedupeKey || '')
-        !== digestItem.dedupeKey
-    );
-
-    next.unshift(digestItem);
-    return next;
-  }
-
-  function deliveryModeFor(item) {
-    if (item?.metadata?.preferenceBypass) {
-      return 'immediate';
-    }
-
-    return getPreference(
-      notificationGroupFor(item)
-    );
   }
 
   function readStore() {
@@ -3459,33 +3050,6 @@
   function writeWatchState(value) {
     try {
       localStorage.setItem(WATCH_KEY, JSON.stringify(value || {}));
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  function readSnapshotState() {
-    try {
-      const value = safeJsonParse(
-        localStorage.getItem(SNAPSHOT_KEY) || '{}',
-        {}
-      );
-
-      return value && typeof value === 'object'
-        ? value
-        : {};
-    } catch (_) {
-      return {};
-    }
-  }
-
-  function writeSnapshotState(value) {
-    try {
-      localStorage.setItem(
-        SNAPSHOT_KEY,
-        JSON.stringify(value || {})
-      );
       return true;
     } catch (_) {
       return false;
@@ -3703,86 +3267,17 @@
     const item = normaliseNotification(input);
     if (!item.title) return null;
 
-    item.metadata = {
-      ...(item.metadata || {}),
-      notificationGroup:
-        notificationGroupFor(item)
-    };
-
-    const deliveryMode =
-      deliveryModeFor(item);
-
-    if (deliveryMode === 'off') {
-      return null;
-    }
-
-    let rows = cleanStore();
-
-    if (deliveryMode === 'digest') {
-      rows = upsertDigestRow(rows, item);
-      if (!writeStore(rows, 'digest-add')) {
-        return null;
-      }
-
-      return rows.find(
-        row =>
-          row?.metadata?.digestCard
-          && row?.metadata?.notificationGroup
-            === item.metadata.notificationGroup
-      ) || null;
-    }
-
+    const rows = cleanStore();
     const duplicate = rows.find(row => {
-      if (
-        item.dedupeKey
-        && row.dedupeKey === item.dedupeKey
-        && row.fingerprint === item.fingerprint
-      ) {
-        return true;
-      }
-
-      if (
-        STORAGE_SOURCE_KEYS.has(
-          String(item.source || '')
-        )
-        && String(row.source || '')
-          === String(item.source || '')
-        && String(row.title || '')
-          === item.title
-        && String(row.message || '')
-          === item.message
-        && String(row.page || '')
-          === item.page
-      ) {
-        return true;
-      }
-
-      return !item.dedupeKey
-        && row.fingerprint === item.fingerprint
-        && now() - Number(
-          row.createdAt || 0
-        ) < 60000;
+      if (item.dedupeKey && row.dedupeKey === item.dedupeKey && row.fingerprint === item.fingerprint) return true;
+      if (STORAGE_SOURCE_KEYS.has(String(item.source || '')) &&
+          String(row.source || '') === String(item.source || '') &&
+          String(row.title || '') === item.title &&
+          String(row.message || '') === item.message &&
+          String(row.page || '') === item.page) return true;
+      return !item.dedupeKey && row.fingerprint === item.fingerprint && now() - Number(row.createdAt || 0) < 60000;
     });
-
     if (duplicate) return duplicate;
-
-    const replaceExisting = Boolean(
-      item.metadata?.replaceExisting
-      || STORAGE_SOURCE_KEYS.has(
-        String(item.source || '')
-      )
-    );
-
-    if (replaceExisting && item.dedupeKey) {
-      for (let index = rows.length - 1; index >= 0; index -= 1) {
-        if (
-          String(rows[index]?.dedupeKey || '')
-          === item.dedupeKey
-        ) {
-          rows.splice(index, 1);
-        }
-      }
-    }
 
     rows.unshift(item);
     if (!writeStore(rows, 'add')) return null;
@@ -3894,7 +3389,6 @@
 
       localStorage.removeItem(STORE_KEY);
       localStorage.removeItem(READ_KEY);
-      localStorage.removeItem(DIGEST_KEY);
 
       if(dashboardBridge?.list){
         dashboardBridge.list.innerHTML =
@@ -3929,7 +3423,7 @@
         .map(row => [String(row.fingerprint || ''), row])
     );
 
-    let nextRows = currentRows.filter(
+    const nextRows = currentRows.filter(
       row =>
         String(row?.metadata?.liveSource || '')
         !== liveSource
@@ -3948,27 +3442,6 @@
           liveSource
         }
       });
-
-      provisional.metadata = {
-        ...(provisional.metadata || {}),
-        notificationGroup:
-          notificationGroupFor(provisional)
-      };
-
-      const deliveryMode =
-        deliveryModeFor(provisional);
-
-      if (deliveryMode === 'off') {
-        return;
-      }
-
-      if (deliveryMode === 'digest') {
-        nextRows = upsertDigestRow(
-          nextRows,
-          provisional
-        );
-        return;
-      }
 
       if (
         isDismissed(
@@ -4037,82 +3510,11 @@
   }
 
   function richNotificationData(row) {
-    let rich =
+    const rich =
       row?.metadata?.rich
       && typeof row.metadata.rich === "object"
         ? row.metadata.rich
         : null;
-
-    /*
-     * Upgrade older stored notifications that were created before
-     * rich metadata existed.
-     */
-    if (!rich) {
-      const title =
-        String(row?.title || "").toLowerCase();
-
-      const message =
-        String(row?.message || "");
-
-      const percentMatch =
-        message.match(/[-+]?\d+(?:\.\d+)?%/);
-
-      const cashMatch =
-        message.match(/£[\d,]+(?:\.\d+)?/);
-
-      if (/top performer|best performer/.test(title)) {
-        rich = {
-          type:"performer",
-          kicker:"TODAY'S TOP PERFORMER",
-          badge:"TOP FORM",
-          value:percentMatch?.[0] || "",
-          valueLabel:percentMatch ? "TODAY" : "",
-          featured:true,
-          actionText:"Open Analysis Room"
-        };
-      } else if (
-        /transfer|deal sheet|broker funding|mission handoff/.test(title)
-      ) {
-        rich = {
-          type:"transfer",
-          kicker:"TRANSFER CENTRE",
-          badge:"ACTION UPDATE",
-          value:cashMatch?.[0] || "",
-          valueLabel:cashMatch ? "VALUE" : "",
-          actionText:"Open Transfer Centre"
-        };
-      } else if (
-        /hit its target|target zone|target reached/.test(title)
-      ) {
-        rich = {
-          type:"target",
-          kicker:"TARGET HIT",
-          badge:"IN THE ZONE",
-          value:percentMatch?.[0] || "",
-          valueLabel:percentMatch ? "MOVE" : "",
-          progress:100,
-          actionText:"Review Holding"
-        };
-      } else if (/dividend|income is next/.test(title)) {
-        rich = {
-          type:"income",
-          kicker:"NEXT INCOME",
-          badge:"UPCOMING",
-          value:cashMatch?.[0] || "",
-          valueLabel:cashMatch ? "DIVIDEND" : "",
-          actionText:"Open Finance"
-        };
-      } else if (/milestone|objective achieved/.test(title)) {
-        rich = {
-          type:"milestone",
-          kicker:"MILESTONE ACHIEVED",
-          badge:"PROMOTED",
-          value:cashMatch?.[0] || "",
-          valueLabel:cashMatch ? "INCOME" : "",
-          actionText:"Open Finance"
-        };
-      }
-    }
 
     if (!rich) return null;
 
@@ -4146,50 +3548,16 @@
       return '<div class="beast-empty">No notifications right now.</div>';
     }
 
-    const categoryRank = row => {
-      const category = String(
-        row?.metadata?.category || ''
-      ).toLowerCase();
-
-      if (
-        category === 'critical'
-        || row?.priority === 'critical'
-      ) {
-        return 4;
-      }
-
-      if (
-        category === 'action'
-        || row?.priority === 'high'
-      ) {
-        return 3;
-      }
-
-      if (category === 'achievement') {
-        return 2;
-      }
-
-      if (category === 'information') {
-        return 1;
-      }
-
-      return 0;
-    };
-
     const ordered = rows.slice().sort((a, b) => {
       const ar = richNotificationData(a);
       const br = richNotificationData(b);
-
-      return (
+      const featured =
         Number(Boolean(br?.featured))
-        - Number(Boolean(ar?.featured))
-      ) || (
-        categoryRank(b)
-        - categoryRank(a)
-      ) || (
-        Number(b.createdAt || 0)
-        - Number(a.createdAt || 0)
-      );
+        - Number(Boolean(ar?.featured));
+
+      return featured
+        || Number(b.createdAt || 0)
+        - Number(a.createdAt || 0);
     });
 
     return ordered.map(row => {
@@ -4308,31 +3676,19 @@
   }
 
   function injectDashboardStyles(documentObject = document) {
-    if (!documentObject) {
-      return;
-    }
-
-    const existingStyle =
-      documentObject.getElementById(
-        'auroraSharedNotificationStyles'
-      );
-
     if (
-      existingStyle
-      && existingStyle.dataset.version === VERSION
+      !documentObject
+      || documentObject.getElementById(
+        'auroraSharedNotificationStyles'
+      )
     ) {
       return;
-    }
-
-    if (existingStyle) {
-      existingStyle.remove();
     }
 
     const style =
       documentObject.createElement('style');
 
     style.id = 'auroraSharedNotificationStyles';
-    style.dataset.version = VERSION;
     style.textContent = `
       #beastNotificationPanel>.beast-panel-head{
         position:sticky;
@@ -4419,28 +3775,19 @@
         gap:8px
       }
 
-      #beastNotificationPanel{
-        width:min(520px,calc(100vw - 36px))!important;
-      }
-
       .aurora-shared-alert{
-        position:relative!important;
+        position:relative;
         display:block!important;
-        grid-template-columns:none!important;
-        width:100%!important;
-        min-width:0!important;
         padding:0!important;
-        overflow:hidden!important
+        overflow:hidden
       }
 
       .aurora-shared-alert-open{
-        box-sizing:border-box!important;
         display:grid;
         grid-template-columns:auto minmax(0,1fr) auto;
         align-items:start;
         gap:10px;
-        width:100%!important;
-        min-width:0!important;
+        width:100%;
         padding:12px 38px 12px 12px;
         color:inherit;
         text-decoration:none;
@@ -4451,48 +3798,28 @@
         min-width:0
       }
 
-      #beastNotificationPanel
       .aurora-shared-remove{
-        -webkit-appearance:none!important;
-        appearance:none!important;
-        box-sizing:border-box!important;
-        position:absolute!important;
-        z-index:6!important;
-        top:8px!important;
-        right:8px!important;
-        left:auto!important;
-        bottom:auto!important;
-        width:24px!important;
-        min-width:24px!important;
-        max-width:24px!important;
-        height:24px!important;
-        min-height:24px!important;
-        max-height:24px!important;
-        margin:0!important;
-        padding:0!important;
-        display:grid!important;
-        place-items:center!important;
-        border:1px solid rgba(248,113,113,.25)!important;
-        border-radius:50%!important;
-        background:rgba(127,29,29,.24)!important;
-        color:#fecaca!important;
-        box-shadow:none!important;
-        font-size:15px!important;
-        font-weight:800!important;
-        line-height:1!important;
-        letter-spacing:0!important;
-        text-transform:none!important;
-        cursor:pointer!important;
-        flex:0 0 24px!important
+        position:absolute;
+        top:8px;
+        right:8px;
+        width:24px;
+        height:24px;
+        display:grid;
+        place-items:center;
+        border:1px solid rgba(248,113,113,.20);
+        border-radius:50%;
+        background:rgba(127,29,29,.16);
+        color:#fecaca;
+        font-size:15px;
+        line-height:1;
+        cursor:pointer
       }
 
-      #beastNotificationPanel
       .aurora-shared-remove:hover,
-      #beastNotificationPanel
       .aurora-shared-remove:focus-visible{
-        border-color:rgba(248,113,113,.55)!important;
-        background:rgba(127,29,29,.42)!important;
-        outline:none!important
+        border-color:rgba(248,113,113,.48);
+        background:rgba(127,29,29,.32);
+        outline:none
       }
 
       .aurora-shared-alert-list .aurora-shared-unread{
@@ -4562,39 +3889,10 @@
       }
 
       .aurora-rich-open{
-        box-sizing:border-box!important;
         display:flex!important;
-        flex-direction:column!important;
-        align-items:stretch!important;
-        gap:10px!important;
-        width:100%!important;
-        min-width:0!important;
+        flex-direction:column;
+        gap:10px;
         padding:14px 42px 14px 14px!important;
-      }
-
-      .aurora-rich-card>*{
-        min-width:0
-      }
-
-      .aurora-rich-card
-      .aurora-rich-main{
-        display:grid!important;
-        grid-template-columns:44px minmax(0,1fr) auto!important;
-        align-items:start!important
-      }
-
-      .aurora-rich-card
-      .aurora-rich-copy{
-        width:auto!important;
-        min-width:0!important
-      }
-
-      .aurora-rich-card
-      .aurora-rich-copy>strong,
-      .aurora-rich-card
-      .aurora-rich-copy>p{
-        overflow-wrap:anywhere;
-        word-break:normal
       }
 
       .aurora-rich-topline,
@@ -4744,36 +4042,6 @@
       .aurora-rich-footer time{
         min-width:36px;
         text-align:right;
-      }
-
-      @media(max-width:760px){
-        #beastNotificationPanel{
-          width:calc(100vw - 20px)!important;
-        }
-      }
-
-      @media(max-width:560px){
-        .aurora-rich-card
-        .aurora-rich-main{
-          grid-template-columns:40px minmax(0,1fr)!important;
-        }
-
-        .aurora-rich-card
-        .aurora-rich-value{
-          grid-column:2;
-          margin-top:2px;
-          text-align:left;
-        }
-
-        .aurora-rich-footer{
-          flex-wrap:wrap;
-        }
-
-        .aurora-rich-action{
-          order:3;
-          width:100%;
-          justify-content:center;
-        }
       }
     `;
 
@@ -5148,1024 +4416,6 @@
     return `${label} has been updated.`;
   }
 
-  function finiteOrNull(value) {
-    const number = firstFinite(value);
-    return Number.isFinite(number)
-      ? Number(number)
-      : null;
-  }
-
-  function normalStatus(value) {
-    return String(value || '')
-      .trim()
-      .replace(/[_-]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .toUpperCase();
-  }
-
-  function billIsComplete(item) {
-    const status = String(
-      item?.status || ''
-    ).toLowerCase();
-
-    return Boolean(
-      item?.archived
-      || item?.completed
-      || item?.paid
-      || /paid|complete|archived/.test(status)
-    );
-  }
-
-  function billAmount(item) {
-    return firstFinite(
-      item?.amount,
-      item?.cost,
-      item?.value,
-      item?.billAmount,
-      item?.bill_amount,
-      item?.expectedAmount,
-      item?.expected_amount
-    );
-  }
-
-  function financePlannerSummary(data) {
-    if (!data || typeof data !== 'object') {
-      return null;
-    }
-
-    const bills = Array.isArray(data.scheduledBills)
-      ? data.scheduledBills
-      : [];
-
-    let completed = 0;
-    let due = 0;
-    let completedValue = 0;
-    let dueValue = 0;
-
-    bills.forEach(item => {
-      const amount = billAmount(item);
-
-      if (billIsComplete(item)) {
-        completed += 1;
-        if (Number.isFinite(amount)) {
-          completedValue += amount;
-        }
-      } else {
-        due += 1;
-        if (Number.isFinite(amount)) {
-          dueValue += amount;
-        }
-      }
-    });
-
-    const holdingBalance = finiteOrNull(
-      firstFinite(
-        data.holdingBalance,
-        data.currentHoldingPot,
-        data.balance,
-        data.availableBalance
-      )
-    );
-
-    return {
-      completed,
-      due,
-      completedValue:
-        Number(completedValue.toFixed(2)),
-      dueValue:
-        Number(dueValue.toFixed(2)),
-      holdingBalance,
-      billCount:bills.length
-    };
-  }
-
-  function transferPlanSummary(data) {
-    if (!data || typeof data !== 'object') {
-      return null;
-    }
-
-    const rows = Array.isArray(data.rows)
-      ? data.rows
-      : Array.isArray(data.allocations)
-        ? data.allocations
-        : [];
-
-    const tickers = rows
-      .map(row =>
-        row?.displayTicker
-        || row?.ticker
-        || row?.symbol
-      )
-      .filter(Boolean)
-      .map(value => String(value).toUpperCase());
-
-    const total = finiteOrNull(
-      firstFinite(
-        data.total,
-        data.totalBudget,
-        data.budget,
-        data.totalInvestment,
-        data.investmentTotal
-      )
-    );
-
-    const income = finiteOrNull(
-      firstFinite(
-        data.totalIncome,
-        data.annualIncome,
-        data.estimatedIncome,
-        data.projectedIncome
-      )
-    );
-
-    return {
-      count:rows.length,
-      tickers,
-      total,
-      income,
-      status:normalStatus(
-        data.status
-        || data.stage
-        || data.state
-      )
-    };
-  }
-
-  function fundingRouteSummary(data) {
-    if (!data || typeof data !== 'object') {
-      return null;
-    }
-
-    const ig = finiteOrNull(
-      firstFinite(
-        data.ig,
-        data.igIsa,
-        data.igISA,
-        data.igAmount,
-        data.ig_amount,
-        data.igTotal,
-        data.ig_total,
-        data?.brokers?.ig,
-        data?.route?.ig
-      )
-    );
-
-    const trading212 = finiteOrNull(
-      firstFinite(
-        data.trading212,
-        data.trade212,
-        data.t212,
-        data.trading212Amount,
-        data.trading_212_amount,
-        data.t212Amount,
-        data.t212_amount,
-        data?.brokers?.trading212,
-        data?.brokers?.t212,
-        data?.route?.trading212,
-        data?.route?.t212
-      )
-    );
-
-    let total = finiteOrNull(
-      firstFinite(
-        data.total,
-        data.amount,
-        data.value,
-        data.totalFunding,
-        data.total_funding,
-        data.invested
-      )
-    );
-
-    if (
-      (!Number.isFinite(total) || total <= 0)
-      && (
-        Number.isFinite(ig)
-        || Number.isFinite(trading212)
-      )
-    ) {
-      total =
-        (Number.isFinite(ig) ? ig : 0)
-        + (Number.isFinite(trading212) ? trading212 : 0);
-    }
-
-    return {
-      status:normalStatus(
-        data.status
-        || data.stage
-        || data.state
-        || data.routeStatus
-      ),
-      total,
-      ig,
-      trading212
-    };
-  }
-
-  function semanticObject(value) {
-    if (Array.isArray(value)) {
-      return value.map(semanticObject);
-    }
-
-    if (!value || typeof value !== 'object') {
-      return value;
-    }
-
-    const output = {};
-
-    Object.keys(value)
-      .sort()
-      .forEach(key => {
-        if (
-          /^(saved|updated|generated|created|modified|last).*?(at|time|date)?$/i.test(key)
-          || /^(revision|timestamp|savedIso|savedAt)$/i.test(key)
-          || key === '_persistence'
-        ) {
-          return;
-        }
-
-        output[key] = semanticObject(value[key]);
-      });
-
-    return output;
-  }
-
-  function snapshotForRule(rule, rawValue) {
-    const data = parseStored(rawValue);
-
-    if (rule.key === 'aurora_wealth_centre') {
-      return financePlannerSummary(data);
-    }
-
-    if (rule.key === 'aurora_transfer_plan_v2') {
-      return transferPlanSummary(data);
-    }
-
-    if (
-      rule.key
-      === 'aurora_account_transfer_instruction_v1'
-    ) {
-      return fundingRouteSummary(data);
-    }
-
-    return semanticObject(data);
-  }
-
-  function numbersDiffer(a, b, tolerance = 0.005) {
-    if (
-      !Number.isFinite(Number(a))
-      && !Number.isFinite(Number(b))
-    ) {
-      return false;
-    }
-
-    if (
-      !Number.isFinite(Number(a))
-      || !Number.isFinite(Number(b))
-    ) {
-      return true;
-    }
-
-    return Math.abs(Number(a) - Number(b))
-      > tolerance;
-  }
-
-  function moneyArrow(previous, current) {
-    if (
-      !Number.isFinite(Number(previous))
-      || !Number.isFinite(Number(current))
-    ) {
-      return '';
-    }
-
-    return `${formatCash(previous)} → ${formatCash(current)}`;
-  }
-
-
-  const TRANSFER_LIFECYCLE_KEYS = new Set([
-    'aurora_transfer_plan_v2',
-    'aurora_m7_manager_approval',
-    'aurora_investment_handoff_completion_v1',
-    'aurora_account_transfer_instruction_v1',
-    'aurora_payday_execution_v1',
-    'aurora_transfer_centre_receipt_v1',
-    'aurora_m3_last_transfer_receipt_v1',
-    'aurora_registration_last_v1',
-    'aurora_pending_registrations_v1',
-    'aurora_m4_signing_lifecycle_v1'
-  ]);
-
-  function objectText(value) {
-    if (value === null || value === undefined) {
-      return '';
-    }
-
-    if (typeof value === 'string') {
-      return value;
-    }
-
-    try {
-      return JSON.stringify(value);
-    } catch (_) {
-      return String(value);
-    }
-  }
-
-  function positiveState(value, pattern) {
-    if (!value) return false;
-
-    if (
-      value === true
-      || value?.completed === true
-      || value?.approved === true
-      || value?.registered === true
-      || value?.executed === true
-      || value?.transferred === true
-      || value?.completedAt
-      || value?.approvedAt
-      || value?.registeredAt
-      || value?.executedAt
-      || value?.transferredAt
-    ) {
-      return true;
-    }
-
-    const text =
-      typeof value === 'string'
-        ? value
-        : [
-            value?.status,
-            value?.state,
-            value?.stage,
-            value?.action,
-            value?.result,
-            value?.label,
-            value?.message,
-            value?.notes
-          ].filter(Boolean).join(' ');
-
-    return pattern.test(
-      String(text || '').toLowerCase()
-    );
-  }
-
-  function registrationCount(value) {
-    if (Array.isArray(value)) return value.length;
-
-    const rows = Array.isArray(value?.rows)
-      ? value.rows
-      : Array.isArray(value?.items)
-        ? value.items
-        : Array.isArray(value?.registrations)
-          ? value.registrations
-          : [];
-
-    return rows.length;
-  }
-
-  function transferLifecycleSnapshot() {
-    const stored = key => {
-      try {
-        return parseStored(
-          localStorage.getItem(key)
-        );
-      } catch (_) {
-        return null;
-      }
-    };
-
-    const plan = stored(
-      'aurora_transfer_plan_v2'
-    );
-
-    const planSummary =
-      transferPlanSummary(plan);
-
-    const approval = stored(
-      'aurora_m7_manager_approval'
-    );
-
-    const handoff = stored(
-      'aurora_investment_handoff_completion_v1'
-    );
-
-    const funding = stored(
-      'aurora_account_transfer_instruction_v1'
-    );
-
-    const payday = stored(
-      'aurora_payday_execution_v1'
-    );
-
-    const receipt = stored(
-      'aurora_transfer_centre_receipt_v1'
-    );
-
-    const latestReceipt = stored(
-      'aurora_m3_last_transfer_receipt_v1'
-    );
-
-    const registration = stored(
-      'aurora_registration_last_v1'
-    );
-
-    const pending = stored(
-      'aurora_pending_registrations_v1'
-    );
-
-    const lifecycle = stored(
-      'aurora_m4_signing_lifecycle_v1'
-    );
-
-    const lifecycleStage =
-      Number(lifecycle?.stage || 0);
-
-    const routePrepared = Boolean(
-      planSummary?.count
-      || lifecycleStage >= 1
-    );
-
-    const managerApproved = Boolean(
-      positiveState(
-        approval,
-        /approved|accepted|confirmed|authorised|authorized|yes/
-      )
-    );
-
-    const cashTransferred = Boolean(
-      positiveState(
-        handoff,
-        /handoff complete|completed|cash moved|funds ready|transferred/
-      )
-      || positiveState(
-        funding,
-        /cash moved|funds transferred|transfer complete|completed/
-      )
-      || lifecycleStage >= 3
-    );
-
-    const purchaseExecuted = Boolean(
-      positiveState(
-        payday,
-        /purchase complete|purchased|executed|broker fill|completed/
-      )
-      || positiveState(
-        receipt,
-        /purchase complete|purchased|executed|broker fill|completed/
-      )
-      || positiveState(
-        latestReceipt,
-        /purchase complete|purchased|executed|broker fill|completed/
-      )
-      || lifecycleStage >= 3
-    );
-
-    const registered = Boolean(
-      positiveState(
-        registration,
-        /registered|registration complete|confirmed|completed/
-      )
-      || (
-        registration
-        && (
-          registration.at
-          || registration.registeredAt
-          || registration.completedAt
-          || registration.ticker
-        )
-      )
-      || lifecycleStage >= 4
-    );
-
-    const pendingCount =
-      registrationCount(pending);
-
-    const stage =
-      registered
-        ? 5
-        : purchaseExecuted
-          ? 4
-          : cashTransferred
-            ? 3
-            : managerApproved
-              ? 2
-              : routePrepared
-                ? 1
-                : 0;
-
-    const tickers =
-      planSummary?.tickers || [];
-
-    const labels = [
-      'Route prepared',
-      'Manager approved',
-      'Cash transferred',
-      'Purchase executed',
-      'Registration complete'
-    ];
-
-    const nextActions = [
-      'Prepare the Transfer Centre route',
-      'Approve the transfer route',
-      'Move the authorised broker cash',
-      'Execute the broker purchases',
-      'Register the completed purchases',
-      'Transfer lifecycle complete'
-    ];
-
-    return {
-      stage,
-      labels,
-      nextAction:nextActions[stage],
-      tickers,
-      count:planSummary?.count || 0,
-      total:planSummary?.total,
-      income:planSummary?.income,
-      pendingCount,
-      routePrepared,
-      managerApproved,
-      cashTransferred,
-      purchaseExecuted,
-      registered
-    };
-  }
-
-  function syncTransferLifecycleNotification() {
-    const lifecycle =
-      transferLifecycleSnapshot();
-
-    if (!lifecycle.stage) {
-      return null;
-    }
-
-    const completedLabel =
-      lifecycle.labels[
-        Math.max(0, lifecycle.stage - 1)
-      ];
-
-    const isComplete =
-      lifecycle.stage >= 5;
-
-    const route =
-      lifecycle.tickers.length
-        ? lifecycle.tickers.join(' / ')
-        : `${lifecycle.count || 0} signing${lifecycle.count === 1 ? '' : 's'}`;
-
-    const detail = [
-      `${completedLabel}.`,
-      route ? `Route: ${route}.` : '',
-      !isComplete
-        ? `Next: ${lifecycle.nextAction}.`
-        : 'All five transfer stages are complete.',
-      lifecycle.pendingCount
-        ? `${lifecycle.pendingCount} registration${lifecycle.pendingCount === 1 ? '' : 's'} remain queued.`
-        : ''
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    const title =
-      isComplete
-        ? 'Transfer lifecycle completed'
-        : `Transfer lifecycle advanced to stage ${lifecycle.stage} of 5`;
-
-    return add({
-      department:'Transfer Centre',
-      page:'AuroraCityFC_TransferCentre.html',
-      title,
-      message:detail,
-      icon:isComplete ? '🏁' : '🔄',
-      priority:isComplete ? 'normal' : 'high',
-      dedupeKey:'transfer-lifecycle',
-      fingerprint:hashString(
-        JSON.stringify(lifecycle)
-      ),
-      source:'transfer-lifecycle',
-      actionLabel:
-        isComplete
-          ? 'Open completed transfer'
-          : 'Continue transfer lifecycle',
-      metadata:{
-        category:
-          isComplete
-            ? 'achievement'
-            : 'action',
-        notificationGroup:'transfers',
-        replaceExisting:true,
-        rich:{
-          type:'transfer',
-          kicker:
-            isComplete
-              ? 'TRANSFER COMPLETE'
-              : 'TRANSFER LIFECYCLE',
-          badge:
-            isComplete
-              ? 'ALL STAGES COMPLETE'
-              : `STAGE ${lifecycle.stage} OF 5`,
-          value:`${lifecycle.stage}/5`,
-          valueLabel:'STAGES',
-          secondary:
-            isComplete
-              ? 'Signing fully registered'
-              : lifecycle.nextAction,
-          progress:lifecycle.stage * 20,
-          featured:true,
-          actionText:
-            isComplete
-              ? 'Open Transfer Centre'
-              : 'Continue transfer'
-        }
-      }
-    });
-  }
-
-  function buildSmartStorageNotification(
-    rule,
-    previous,
-    current,
-    rawValue
-  ) {
-    if (
-      TRANSFER_LIFECYCLE_KEYS.has(rule.key)
-      && rule.key !== 'aurora_transfer_plan_v2'
-      && rule.key !== 'aurora_account_transfer_instruction_v1'
-    ) {
-      return null;
-    }
-
-    if (rule.key === 'aurora_wealth_centre') {
-      if (!current) return null;
-
-      const previousValue =
-        previous && typeof previous === 'object'
-          ? previous
-          : null;
-
-      const completedDelta =
-        previousValue
-          ? current.completed - previousValue.completed
-          : 0;
-
-      const dueDelta =
-        previousValue
-          ? current.due - previousValue.due
-          : 0;
-
-      const balanceChanged =
-        previousValue
-        && numbersDiffer(
-          previousValue.holdingBalance,
-          current.holdingBalance
-        );
-
-      const dueValueChanged =
-        previousValue
-        && numbersDiffer(
-          previousValue.dueValue,
-          current.dueValue
-        );
-
-      /*
-       * A save timestamp or revision alone is not a notification.
-       */
-      if (
-        previousValue
-        && completedDelta === 0
-        && dueDelta === 0
-        && !balanceChanged
-        && !dueValueChanged
-      ) {
-        return null;
-      }
-
-      let title = 'Finance position updated';
-      let badge = 'POSITION CHANGED';
-      let category = 'information';
-      let priority = 'normal';
-
-      if (completedDelta > 0) {
-        title =
-          completedDelta === 1
-            ? 'Bill completed — finance position updated'
-            : `${completedDelta} bills completed — finance position updated`;
-        badge = 'BILL COMPLETED';
-        category = 'achievement';
-      } else if (balanceChanged) {
-        title = 'Holding Pot balance changed';
-        badge = 'BALANCE CHANGED';
-      }
-
-      const parts = [];
-
-      if (completedDelta > 0) {
-        parts.push(
-          `${completedDelta} newly completed.`
-        );
-      }
-
-      parts.push(
-        `${current.completed} completed • ${current.due} still due.`
-      );
-
-      if (balanceChanged) {
-        parts.push(
-          `Holding Pot ${moneyArrow(
-            previousValue.holdingBalance,
-            current.holdingBalance
-          )}.`
-        );
-      } else if (
-        Number.isFinite(current.holdingBalance)
-      ) {
-        parts.push(
-          `Holding Pot ${formatCash(
-            current.holdingBalance
-          )}.`
-        );
-      }
-
-      if (
-        dueValueChanged
-        && Number.isFinite(current.dueValue)
-      ) {
-        parts.push(
-          `Outstanding bills ${moneyArrow(
-            previousValue.dueValue,
-            current.dueValue
-          )}.`
-        );
-      }
-
-      return {
-        title,
-        message:parts.join(' '),
-        priority,
-        metadata:{
-          category,
-          replaceExisting:true,
-          rich:{
-            type:'finance',
-            kicker:'FINANCE POSITION',
-            badge,
-            value:Number.isFinite(current.holdingBalance)
-              ? formatCash(current.holdingBalance)
-              : String(current.due),
-            valueLabel:Number.isFinite(current.holdingBalance)
-              ? 'HOLDING POT'
-              : 'BILLS DUE',
-            secondary:
-              `${current.completed} completed • ${current.due} due`,
-            actionText:'Open Finance'
-          }
-        }
-      };
-    }
-
-    if (rule.key === 'aurora_transfer_plan_v2') {
-      if (!current) return null;
-
-      const previousValue =
-        previous && typeof previous === 'object'
-          ? previous
-          : null;
-
-      const tickersChanged =
-        JSON.stringify(previousValue?.tickers || [])
-        !== JSON.stringify(current.tickers || []);
-
-      const totalChanged =
-        previousValue
-        && numbersDiffer(
-          previousValue.total,
-          current.total
-        );
-
-      const incomeChanged =
-        previousValue
-        && numbersDiffer(
-          previousValue.income,
-          current.income
-        );
-
-      const statusChanged =
-        previousValue
-        && previousValue.status !== current.status;
-
-      if (
-        previousValue
-        && !tickersChanged
-        && !totalChanged
-        && !incomeChanged
-        && !statusChanged
-      ) {
-        return null;
-      }
-
-      if (
-        !current.count
-        && !(Number.isFinite(current.total)
-          && current.total > 0)
-      ) {
-        return null;
-      }
-
-      const parts = [];
-
-      if (tickersChanged && current.tickers.length) {
-        parts.push(
-          `Route: ${current.tickers.join(' / ')}.`
-        );
-      }
-
-      if (totalChanged) {
-        parts.push(
-          `Budget ${moneyArrow(
-            previousValue.total,
-            current.total
-          )}.`
-        );
-      } else if (Number.isFinite(current.total)) {
-        parts.push(`Budget ${formatCash(current.total)}.`);
-      }
-
-      if (incomeChanged) {
-        parts.push(
-          `Projected income ${moneyArrow(
-            previousValue.income,
-            current.income
-          )}/year.`
-        );
-      } else if (Number.isFinite(current.income)) {
-        parts.push(
-          `Projected income ${formatCash(
-            current.income
-          )}/year.`
-        );
-      }
-
-      return {
-        title:
-          current.status
-            ? `Transfer route — ${current.status}`
-            : 'Transfer route changed',
-        message:parts.join(' '),
-        priority:'high',
-        metadata:{
-          category:'action',
-          replaceExisting:true,
-          rich:{
-            type:'transfer',
-            kicker:'TRANSFER WINDOW',
-            badge:current.status || 'ACTION READY',
-            value:String(current.count),
-            valueLabel:'SIGNINGS',
-            secondary:Number.isFinite(current.income)
-              ? `${formatCash(current.income)}/year`
-              : Number.isFinite(current.total)
-                ? `${formatCash(current.total)} budget`
-                : '',
-            actionText:'Open Transfer Centre'
-          }
-        }
-      };
-    }
-
-    if (
-      rule.key
-      === 'aurora_account_transfer_instruction_v1'
-    ) {
-      if (!current) return null;
-
-      /*
-       * Zero-value routes are incomplete data, not useful alerts.
-       */
-      if (
-        !Number.isFinite(current.total)
-        || current.total <= 0
-      ) {
-        return null;
-      }
-
-      const previousValue =
-        previous && typeof previous === 'object'
-          ? previous
-          : null;
-
-      const changed =
-        !previousValue
-        || previousValue.status !== current.status
-        || numbersDiffer(
-          previousValue.total,
-          current.total
-        )
-        || numbersDiffer(
-          previousValue.ig,
-          current.ig
-        )
-        || numbersDiffer(
-          previousValue.trading212,
-          current.trading212
-        );
-
-      if (!changed) return null;
-
-      const parts = [];
-
-      if (
-        previousValue
-        && previousValue.status !== current.status
-      ) {
-        parts.push(
-          `Status ${previousValue.status || 'NOT SET'} → ${current.status || 'READY'}.`
-        );
-      } else if (current.status) {
-        parts.push(`Status ${current.status}.`);
-      }
-
-      if (Number.isFinite(current.ig)) {
-        parts.push(`IG ISA ${formatCash(current.ig)}.`);
-      }
-
-      if (Number.isFinite(current.trading212)) {
-        parts.push(
-          `Trading 212 ${formatCash(
-            current.trading212
-          )}.`
-        );
-      }
-
-      parts.push(
-        `Total funding ${formatCash(current.total)}.`
-      );
-
-      return {
-        title:'Broker funding route ready',
-        message:parts.join(' '),
-        priority:'high',
-        metadata:{
-          category:'action',
-          replaceExisting:true,
-          rich:{
-            type:'transfer',
-            kicker:'BROKER FUNDING',
-            badge:current.status || 'ACTION REQUIRED',
-            value:formatCash(current.total),
-            valueLabel:'TOTAL FUNDING',
-            secondary:[
-              Number.isFinite(current.ig)
-                ? `IG ${formatCash(current.ig)}`
-                : '',
-              Number.isFinite(current.trading212)
-                ? `T212 ${formatCash(current.trading212)}`
-                : ''
-            ].filter(Boolean).join(' • '),
-            actionText:'Open Transfer Centre'
-          }
-        }
-      };
-    }
-
-    return {
-      title:rule.title,
-      message:
-        typeof rule.message === 'function'
-          ? rule.message(rawValue)
-          : String(
-              rule.message
-              || 'Aurora data updated.'
-            ),
-      priority:rule.priority,
-      metadata:{
-        category:
-          rule.priority === 'critical'
-            ? 'critical'
-            : rule.priority === 'high'
-              ? 'action'
-              : 'information',
-        notificationGroup:
-          notificationGroupFor({
-            department:rule.department,
-            title:rule.title,
-            message:
-              typeof rule.message === 'function'
-                ? rule.message(rawValue)
-                : String(rule.message || ''),
-            metadata:{}
-          }),
-        replaceExisting:true,
-        rich:{
-          type:'update',
-          kicker:String(
-            rule.department || 'AURORA HQ'
-          ).toUpperCase(),
-          badge:'STATE CHANGED',
-          secondary:'Open the department to review the impact.',
-          actionText:`Open ${rule.department}`
-        }
-      }
-    };
-  }
-
   function actionLabel_(control) {
     if (!control) return '';
 
@@ -6191,17 +4441,7 @@
       return false;
     }
 
-    /*
-     * Routine saves, refreshes and recalculations are observed through
-     * semantic storage changes. A click alone is not a notification.
-     */
-    if (
-      /save|refresh|sync|recalculate|run planner|update/.test(text)
-    ) {
-      return false;
-    }
-
-    return /complete|approve|confirm|register|execute|submit|archive|mark paid|paid|generate|record purchase|finish mission|apply transfer/.test(text);
+    return /save|complete|approve|confirm|register|execute|submit|archive|mark paid|paid|recalculate|refresh|sync|generate|record|finish|apply|update|run planner/.test(text);
   }
 
   function describeDepartmentAction_(page, label) {
@@ -6331,13 +4571,6 @@
 
         if (!meaningfulAction_(label)) return;
 
-        if (
-          page.page.includes('FinanceDepartment')
-          || page.page.includes('TransferCentre')
-        ) {
-          return;
-        }
-
         const detail = describeDepartmentAction_(
           page,
           label
@@ -6401,181 +4634,69 @@
     };
   }
 
-  function shouldNotifyStorageRule(
-    rule,
-    rawValue,
-    previousSnapshot,
-    currentSnapshot
-  ) {
-    if (
-      rawValue === null
-      || rawValue === undefined
-      || rawValue === ''
-      || currentSnapshot === null
-      || currentSnapshot === undefined
-    ) {
-      return false;
-    }
+  function shouldNotifyStorageRule(rule, rawValue) {
+    if (rawValue === null || rawValue === undefined || rawValue === '') return false;
 
-    if (
-      rule.key === 'aurora_finance_department_mission_v1'
-      || rule.key === 'aurora_wealth_investment_mission_v1'
-    ) {
+    if (rule.key === 'aurora_finance_department_mission_v1' ||
+        rule.key === 'aurora_wealth_investment_mission_v1') {
       const data = parseStored(rawValue);
-
-      if (!data || typeof data !== 'object') {
-        return false;
-      }
-
-      const total = firstFinite(
-        data.total,
-        data.budget,
-        data.investmentTotal,
-        data.totalInvestment,
-        data.requiredTotal
-      );
-
+      if (!data || typeof data !== 'object') return false;
+      const total = firstFinite(data.total, data.budget, data.investmentTotal, data.totalInvestment, data.requiredTotal);
       return Number.isFinite(total) && total > 0;
     }
 
     if (rule.key === 'aurora_transfer_plan_v2') {
-      return Boolean(
-        currentSnapshot?.count
-        || (
-          Number.isFinite(currentSnapshot?.total)
-          && currentSnapshot.total > 0
-        )
-      );
-    }
-
-    if (
-      rule.key
-      === 'aurora_account_transfer_instruction_v1'
-    ) {
-      return Boolean(
-        Number.isFinite(currentSnapshot?.total)
-        && currentSnapshot.total > 0
-      );
+      const data = parseStored(rawValue);
+      if (!data || typeof data !== 'object') return false;
+      const total = firstFinite(data.total, data.totalBudget, data.budget, data.totalInvestment);
+      return Number.isFinite(total) && total > 0;
     }
 
     return true;
   }
 
-  function handleStorageRule(
-    rule,
-    rawValue,
-    previousSnapshot,
-    currentSnapshot
-  ) {
-    const shouldNotify =
-      shouldNotifyStorageRule(
-        rule,
-        rawValue,
-        previousSnapshot,
-        currentSnapshot
-      );
-
-    if (shouldNotify) {
-      const smart =
-        buildSmartStorageNotification(
-          rule,
-          previousSnapshot,
-          currentSnapshot,
-          rawValue
-        );
-
-      if (smart) {
-        const message = String(
-          smart.message || ''
-        ).trim();
-
-        if (message) {
-          const fingerprint = hashString(
-            `${rule.key}|${smart.title}|${message}`
-          );
-
-          add({
-            department:rule.department,
-            page:rule.page,
-            title:smart.title || rule.title,
-            message,
-            icon:smart.icon || rule.icon,
-            priority:
-              smart.priority || rule.priority,
-            dedupeKey:`storage:${rule.key}`,
-            fingerprint,
-            source:rule.key,
-            actionLabel:
-              smart.metadata?.rich?.actionText
-              || `Open ${rule.department}`,
-            metadata:{
-              ...(smart.metadata || {}),
-              storageRule:rule.key
-            }
-          });
-        }
-      }
-    }
-
-    if (
-      TRANSFER_LIFECYCLE_KEYS.has(rule.key)
-    ) {
-      syncTransferLifecycleNotification();
-    }
+  function handleStorageRule(rule, rawValue) {
+    if (!shouldNotifyStorageRule(rule, rawValue)) return;
+    const message = typeof rule.message === 'function' ? rule.message(rawValue) : String(rule.message || 'Aurora data updated.');
+    const fingerprint = hashString(`${rule.key}|${message}`);
+    const dedupeKey = `storage:${rule.key}`;
+    add({
+      department: rule.department,
+      page: rule.page,
+      title: rule.title,
+      message,
+      icon: rule.icon,
+      priority: rule.priority,
+      dedupeKey,
+      fingerprint,
+      source: rule.key,
+      actionLabel: `Open ${rule.department}`
+    });
   }
 
   function initialiseStorageWatchers() {
     const saved = readWatchState();
-    const snapshots = readSnapshotState();
 
-    const remember = (
-      rule,
-      rawValue,
-      notify
-    ) => {
-      const currentSnapshot =
-        snapshotForRule(rule, rawValue);
+    const remember = (rule, rawValue, notify) => {
+      const fingerprint =
+        hashString(
+          rawValue === null
+            ? '__null__'
+            : String(rawValue)
+        );
 
-      const fingerprint = hashString(
-        JSON.stringify(
-          currentSnapshot === undefined
-            ? null
-            : currentSnapshot
-        )
-      );
-
-      const previousFingerprint =
+      const previous =
         watchedValues.get(rule.key);
 
-      const previousSnapshot =
-        watchedSnapshots.has(rule.key)
-          ? watchedSnapshots.get(rule.key)
-          : snapshots[rule.key];
-
-      watchedValues.set(
-        rule.key,
-        fingerprint
-      );
-
-      watchedSnapshots.set(
-        rule.key,
-        currentSnapshot
-      );
-
+      watchedValues.set(rule.key, fingerprint);
       saved[rule.key] = fingerprint;
-      snapshots[rule.key] = currentSnapshot;
 
       if (
         notify
-        && previousFingerprint !== undefined
-        && previousFingerprint !== fingerprint
+        && previous !== undefined
+        && previous !== fingerprint
       ) {
-        handleStorageRule(
-          rule,
-          rawValue,
-          previousSnapshot,
-          currentSnapshot
-        );
+        handleStorageRule(rule, rawValue);
       }
     };
 
@@ -6583,20 +4704,14 @@
       let current = null;
 
       try {
-        current =
-          localStorage.getItem(rule.key);
+        current = localStorage.getItem(rule.key);
       } catch (_) {}
-
-      const currentSnapshot =
-        snapshotForRule(rule, current);
 
       const currentFingerprint =
         hashString(
-          JSON.stringify(
-            currentSnapshot === undefined
-              ? null
-              : currentSnapshot
-          )
+          current === null
+            ? '__null__'
+            : String(current)
         );
 
       const persistentPrevious =
@@ -6614,16 +4729,6 @@
           : persistentPrevious
       );
 
-      watchedSnapshots.set(
-        rule.key,
-        Object.prototype.hasOwnProperty.call(
-          snapshots,
-          rule.key
-        )
-          ? snapshots[rule.key]
-          : currentSnapshot
-      );
-
       remember(
         rule,
         current,
@@ -6632,26 +4737,19 @@
     });
 
     writeWatchState(saved);
-    writeSnapshotState(snapshots);
 
     const check = () => {
       STORAGE_RULES.forEach(rule => {
         let current = null;
 
         try {
-          current =
-            localStorage.getItem(rule.key);
+          current = localStorage.getItem(rule.key);
         } catch (_) {}
 
-        remember(
-          rule,
-          current,
-          true
-        );
+        remember(rule, current, true);
       });
 
       writeWatchState(saved);
-      writeSnapshotState(snapshots);
     };
 
     window.setInterval(check, 1600);
@@ -6659,21 +4757,14 @@
     window.addEventListener(
       'storage',
       event => {
-        const rule =
-          STORAGE_RULES.find(
-            item => item.key === event.key
-          );
+        const rule = STORAGE_RULES.find(
+          item => item.key === event.key
+        );
 
         if (!rule) return;
 
-        remember(
-          rule,
-          event.newValue,
-          true
-        );
-
+        remember(rule, event.newValue, true);
         writeWatchState(saved);
-        writeSnapshotState(snapshots);
       }
     );
   }
@@ -6689,41 +4780,6 @@
       dedupeKey: `manual-test:${Math.floor(now() / 60000)}`,
       ttlDays: 1
     });
-  }
-
-  function migrateSmartNotificationStore() {
-    const rows = cleanStore(readStore());
-
-    const filtered = rows.filter(row => {
-      const title = String(
-        row?.title || ''
-      ).toLowerCase();
-
-      const message = String(
-        row?.message || ''
-      ).toLowerCase();
-
-      if (title === 'finance history updated') {
-        return false;
-      }
-
-      if (
-        /broker funding/.test(title)
-        && (
-          /£0(?:\.00)?\b/.test(message)
-          || /value\s*£0/.test(message)
-        )
-      ) {
-        return false;
-      }
-
-      return true;
-    });
-
-    return writeStore(
-      filtered,
-      'smart-notification-migration'
-    );
   }
 
   function seedInstallNotice() {
@@ -6787,14 +4843,8 @@
 
   function start() {
     clearExpired();
-    migrateSmartNotificationStore();
-    applyPreferencesToStore();
     seedInstallNotice();
     initialiseStorageWatchers();
-    window.setTimeout(
-      syncTransferLifecycleNotification,
-      350
-    );
     attachDocument(document);
 
     const frame =
@@ -6837,13 +4887,7 @@
     subscribe,
     test,
     attachDocument,
-    currentPage:detectPage,
-    getPreferences:readPreferences,
-    getPreference,
-    setPreference,
-    notificationGroupFor,
-    syncTransferLifecycle:
-      syncTransferLifecycleNotification
+    currentPage:detectPage
   });
 
   document.addEventListener('aurora:notify', event => {
@@ -7133,39 +5177,6 @@
       );
 
       allowedFiles.add("AuroraCloudSync.html");
-
-      const CHILD_PAGE_DEPLOYMENT_VERSION =
-        "20260804-cloud-authoritative-v12";
-
-      function buildFreshChildUrl(
-        file,
-        hash = ""
-      ){
-        const base =
-          String(file || "").trim();
-
-        const cleanHash =
-          hash
-            ? (
-                String(hash).startsWith("#")
-                  ? String(hash)
-                  : `#${hash}`
-              )
-            : "";
-
-        const separator =
-          base.includes("?")
-            ? "&"
-            : "?";
-
-        return (
-          `${base}${separator}`
-          + `auroraBuild=${encodeURIComponent(
-              CHILD_PAGE_DEPLOYMENT_VERSION
-            )}`
-          + cleanHash
-        );
-      }
 
       let currentFile =
         "AuroraCityFC_ManagerDashboard.html";
@@ -7819,11 +5830,7 @@
         updateShellIdentity();
         updateBrowserUrl();
 
-        frame.src =
-          buildFreshChildUrl(
-            file,
-            hash
-          );
+        frame.src = file + hash;
       }
 
       function interceptChildNavigation(
@@ -8621,5 +6628,52 @@
       });
     })();
   </script>
-</body>
+\n<script id="auroraShellUniversalRichNotifications">
+(() => {
+  "use strict";
+  const button=document.getElementById("auroraShellNotificationButton");
+  const panel=document.getElementById("auroraShellNotificationPanel");
+  const list=document.getElementById("auroraShellNotificationList");
+  const close=document.getElementById("auroraShellNotificationClose");
+  const mark=document.getElementById("auroraShellMarkNotificationsRead");
+  const clear=document.getElementById("auroraShellClearNotifications");
+  if(!button||!panel||!list)return;
+  const esc=v=>String(v??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[c]));
+  const time=v=>{const d=new Date(Number(v)||Date.now());return d.toDateString()===new Date().toDateString()?d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):d.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})};
+  function inferredRich(row){
+    const department=String(row.department||"Aurora HQ");
+    const text=`${department} ${row.title||""}`.toLowerCase();
+    const type=/transfer|purchase|registration/.test(text)?"transfer":/income|finance|dividend|budget/.test(text)?"income":/warning|refresh|review/.test(text)?"warning":/success|complete|ready|signed/.test(text)?"success":"update";
+    return {type,kicker:department,badge:row.priority==="high"?"Priority":row.priority==="critical"?"Urgent":"Live",value:"",valueLabel:"",secondary:"",progress:null,featured:false,actionText:row.actionLabel||`Open ${department}`};
+  }
+  function render(){
+    const api=window.AuroraNotifications;
+    const rows=api?.list?.({limit:30})||[];
+    list.innerHTML=rows.length?rows.map(row=>{
+      const r=(row.metadata&&row.metadata.rich)||inferredRich(row);
+      const progress=Number.isFinite(Number(r.progress))?`<div class="aurora-shell-rich-progress"><i style="width:${Math.max(0,Math.min(100,Number(r.progress)))}%"></i></div>`:"";
+      const value=r.value?`<span class="aurora-shell-rich-value"><strong>${esc(r.value)}</strong><small>${esc(r.valueLabel||"")}</small></span>`:"";
+      return `<article class="aurora-shell-rich-alert${row.read?"":" is-unread"}" data-type="${esc(r.type||"update")}" data-id="${esc(row.id)}"><a class="aurora-shell-rich-open" href="#" data-open-page="${esc(row.page||"")}" data-read-id="${esc(row.id)}"><span class="aurora-shell-rich-top"><small>${esc(r.kicker||row.department||"Aurora Update")}</small><span class="aurora-shell-rich-badge">${esc(r.badge||"Live")}</span></span><span class="aurora-shell-rich-main"><span class="aurora-shell-rich-icon">${esc(row.icon||"🔔")}</span><span class="aurora-shell-rich-copy"><strong>${esc(row.title||"Aurora update")}</strong><p>${esc(row.message||row.department||"")}</p></span>${value}</span>${progress}<span class="aurora-shell-rich-foot"><span>${esc(r.secondary||row.department||"")}</span><span class="aurora-shell-rich-action">${esc(r.actionText||row.actionLabel||"Open")} →</span><time>${esc(time(row.createdAt))}</time></span></a><button class="aurora-shell-rich-remove" type="button" data-remove-id="${esc(row.id)}" aria-label="Remove notification">×</button></article>`;
+    }).join(""):'<div class="aurora-shell-notification-empty">No notifications right now.</div>';
+  }
+  function openPanel(){render();panel.classList.add("open");panel.setAttribute("aria-hidden","false");button.classList.add("is-active");}
+  function closePanel(){panel.classList.remove("open");panel.setAttribute("aria-hidden","true");button.classList.remove("is-active");}
+  function toggle(){panel.classList.contains("open")?closePanel():openPanel()}
+  button.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();toggle()},true);
+  close?.addEventListener("click",closePanel);
+  mark?.addEventListener("click",()=>{window.AuroraNotifications?.markAllRead?.();render()});
+  clear?.addEventListener("click",()=>{window.AuroraNotifications?.clear?.();render()});
+  list.addEventListener("click",event=>{
+    const remove=event.target.closest("[data-remove-id]");
+    if(remove){event.preventDefault();window.AuroraNotifications?.remove?.(remove.dataset.removeId);render();return}
+    const link=event.target.closest("[data-read-id]");
+    if(!link)return;event.preventDefault();window.AuroraNotifications?.markRead?.(link.dataset.readId);
+    const page=link.dataset.openPage;if(page){const nav=document.querySelector(`[data-shell-page="${CSS.escape(page)}"]`);if(nav){closePanel();nav.click();return}}
+    render();
+  });
+  document.addEventListener("click",event=>{if(panel.classList.contains("open")&&!panel.contains(event.target)&&!button.contains(event.target))closePanel()});
+  window.addEventListener("aurora:notifications-changed",render);
+  window.AuroraShellNotifications=Object.freeze({open:openPanel,close:closePanel,toggle,render});
+})();
+</script>\n</body>
 </html>
