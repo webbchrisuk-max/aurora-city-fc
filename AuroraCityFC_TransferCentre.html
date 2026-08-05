@@ -2900,7 +2900,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 </style>
 
 <style id="aurora-crimson-record-v94">
-/* Aurora Transfer Centre — Editable Route Desk v97
+/* Aurora Transfer Centre — Always Editable Route v98
    A deep oxblood / stadium-red execution desk, aligned with Aurora's dark shell. */
 
 #payday-execution{
@@ -3582,6 +3582,169 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 })();
 </script>
 
+
+<style id="aurora-always-editable-route-v98">
+/* Remove the edit-mode lock completely */
+.redline-route-desk .m11-strategy-buttons button,
+.redline-route-desk #brokerRouteFilter,
+.redline-route-desk #transferBudgetInput{
+  pointer-events:auto!important;
+  opacity:1!important;
+  cursor:pointer!important;
+}
+
+.redline-route-desk .redline-route-controls,
+.redline-route-desk .m11-strategy-buttons{
+  opacity:1!important;
+}
+
+/* Hide obsolete edit/cancel workflow */
+#redlineEditRoute,
+#redlineCancelRoute{
+  display:none!important;
+}
+
+#redlineSaveRoute{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:10px 16px;
+}
+
+/* Give broker route proper width */
+.redline-route-controls{
+  grid-template-columns:minmax(260px,.8fr) minmax(340px,1.2fr)!important;
+  align-items:stretch;
+}
+
+.redline-route-field:first-child{
+  min-width:260px!important;
+}
+
+#brokerRouteFilter{
+  width:100%!important;
+  min-width:240px!important;
+  font-size:14px!important;
+  padding:10px 36px 10px 12px!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+
+/* Budget field fully editable and visually active */
+#transferBudgetInput{
+  width:100%!important;
+  min-width:0!important;
+  pointer-events:auto!important;
+  user-select:text!important;
+  -webkit-user-select:text!important;
+  touch-action:manipulation!important;
+  cursor:text!important;
+  opacity:1!important;
+  color:#fff!important;
+  background:transparent!important;
+}
+
+.redline-budget-input{
+  min-height:52px!important;
+  border-color:rgba(251,113,133,.48)!important;
+  background:rgba(17,8,13,.92)!important;
+}
+
+.redline-budget-input:focus-within{
+  border-color:#fb7185!important;
+  box-shadow:0 0 0 4px rgba(244,63,94,.12),0 0 26px rgba(244,63,94,.10)!important;
+}
+
+.redline-route-message{
+  color:#fecdd3!important;
+}
+
+@media(max-width:760px){
+  .redline-route-controls{
+    grid-template-columns:1fr!important;
+  }
+  .redline-route-field:first-child,
+  #brokerRouteFilter{
+    min-width:0!important;
+    width:100%!important;
+  }
+}
+</style>
+
+
+<script id="aurora-always-editable-route-v98-js">
+(function(){
+  function unlockRouteControls(){
+    const desk=document.querySelector('.redline-route-desk');
+    desk?.classList.add('is-editing');
+
+    const broker=document.getElementById('brokerRouteFilter');
+    const budget=document.getElementById('transferBudgetInput');
+    const save=document.getElementById('redlineSaveRoute');
+    const message=document.getElementById('redlineRouteMessage');
+
+    [broker,budget].forEach(el=>{
+      if(!el) return;
+      el.disabled=false;
+      el.readOnly=false;
+      el.removeAttribute('disabled');
+      el.removeAttribute('readonly');
+      el.style.pointerEvents='auto';
+      el.style.opacity='1';
+    });
+
+    if(save) save.innerHTML='Save &amp; rebuild allocation';
+    if(message) message.textContent='Strategy, broker and budget are always editable. Change them, then save.';
+  }
+
+  function forceRebuild(){
+    const budget=document.getElementById('transferBudgetInput');
+    const broker=document.getElementById('brokerRouteFilter');
+
+    [budget,broker].forEach(el=>{
+      if(!el) return;
+      el.dispatchEvent(new Event('input',{bubbles:true}));
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
+
+    const approve=document.getElementById('approveAllocationButton')
+      || document.querySelector('[data-action="approve-allocation"]')
+      || Array.from(document.querySelectorAll('button')).find(b=>/approve allocation/i.test(b.textContent||''));
+
+    const message=document.getElementById('redlineRouteMessage');
+    if(message){
+      const amount=Number(budget?.value||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const brokerText=broker?.selectedOptions?.[0]?.textContent||'Both brokers';
+      const max=document.getElementById('m11MaximumRoute')?.classList.contains('active');
+      message.textContent=`${max?'Maximum Income':'Sustainable Income'} • ${brokerText} • £${amount} saved and rebuilt.`;
+      message.classList.add('saved');
+    }
+
+    if(approve && !approve.disabled){
+      // Do not auto-approve; just ensure existing calculation handlers have run.
+    }
+  }
+
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#redlineSaveRoute')){
+      e.preventDefault();
+      forceRebuild();
+    }
+  },true);
+
+  document.addEventListener('focusin',e=>{
+    if(e.target?.id==='transferBudgetInput' || e.target?.id==='brokerRouteFilter'){
+      unlockRouteControls();
+    }
+  });
+
+  window.addEventListener('load',()=>setTimeout(unlockRouteControls,250));
+  setTimeout(unlockRouteControls,0);
+})();
+</script>
+
 </head>
 <body>
 
@@ -4152,7 +4315,7 @@ tr:hover td{background:rgba(244,63,94,.055)!important}
 <div class="payday-checklist" id="paydayChecklist"><div class="loading">Building payday checks…</div></div>
 <div class="payday-actual-head"><div><h4>Completed purchase record</h4><p>Enter each broker fill using the larger fields below. Values save automatically as you type.</p></div><span class="upgrade-badge" id="paydayTradeCount">0 recorded</span></div><div class="payday-record-guide"><strong>Easy entry:</strong> enter the <b>number of shares</b>, the broker’s <b>price in pounds per share</b>, and any <b>fees</b>. Example: a broker price of <b>84.97p</b> is entered as <b>0.8497</b>.</div>
 <div class="payday-stability-toolbar" id="paydayStabilityToolbar">
-  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Editable Route Desk v97</strong><span>Large-entry layout • AuroraData registration</span></div>
+  <div class="payday-build-stamp"><small>ACTIVE BUILD</small><strong>Always Editable Route v98</strong><span>Large-entry layout • AuroraData registration</span></div>
   <button class="payday-reset-button" id="paydayAddHolding" type="button">＋ Add holding</button>
   <label class="payday-broker-control"><span>Broker route</span><select id="paydayBrokerRouteFilter"><option value="BOTH">Both brokers</option><option value="IG ISA">IG ISA only</option><option value="TRADE 212">Trade 212 only</option></select></label>
   <button class="payday-reset-button" id="paydayRecoverRecord" type="button">Recover saved record</button>
