@@ -2,7 +2,7 @@
 
 <html data-aurora-page="transfer" data-aurora-shell-content="true" lang="en">
 <head>
-<!-- Build: Transfer Centre Masterpiece • 05 Aug 2026 • Red Hero / Aurora Dark Body -->
+<!-- Build: Transfer Centre Masterpiece • 06 Aug 2026 • Sequential Holdings Rebuild v105 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <link href="manifest.json" rel="manifest"/>
@@ -2845,7 +2845,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <style id="aurora-v92-stability-styles">
 .payday-stability-toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(170px,220px) auto;gap:9px;align-items:center;margin:11px 0 2px;padding:11px;border:1px solid rgba(34,211,238,.26);background:linear-gradient(135deg,rgba(8,47,73,.32),rgba(2,6,23,.44));border-radius:16px}.payday-build-stamp small,.payday-broker-control span{display:block;color:#93a4bd;font-size:8px;font-weight:1000;letter-spacing:.09em;text-transform:uppercase}.payday-build-stamp strong{display:block;color:#a5f3fc;font-size:15px;margin-top:3px}.payday-build-stamp span{display:block;color:#94a3b8;font-size:9px;margin-top:2px}.payday-broker-control select{width:100%;margin-top:5px;border:1px solid rgba(96,165,250,.28);background:rgba(2,6,23,.72);color:#f8fafc;border-radius:10px;padding:8px;font-weight:900}.payday-stability-toolbar .payday-reset-button{white-space:nowrap}.payday-sync-warning{margin-top:8px;color:#fde68a;font-size:9px;line-height:1.4}@media(max-width:820px){.payday-stability-toolbar{grid-template-columns:1fr}.payday-stability-toolbar .payday-reset-button{width:100%}}
 </style>
-<meta content="transfer-budget-authority-v104" name="aurora-build"/><script>
+<meta content="transfer-sequential-holdings-rebuild-v105" name="aurora-build"/><script>
 (function(){
   try{
     const key='aurora-transfer-cache-reset-20260804-1155';
@@ -5465,29 +5465,79 @@ async function loadPlatformRules(){
   }
 }
 function applyRegistrationResult(result,payload){
-  if(!result||result.queued) return;
+  if(!result||result.queued) return null;
+  payload=payload||{};
+  const newShares=Math.max(0,parseNum(result.newShares)||0);
+  const newBookCost=Math.max(0,parseNum(result.newBookCostGbp)||0);
+  const newAverage=parseNum(result.newAverageGbp);
   let holding=currentHoldingForRegistration(payload.ticker,payload.account);
+  const existingLive=parseNum(holding?.live_price ?? holding?.price ?? holding?.Price);
+  const resultLive=parseNum(result.livePriceGbp ?? result.currentPriceGbp ?? result.livePrice);
+  const referenceLive=parseNum(payload.referencePriceGbp);
+  const livePrice=[resultLive,existingLive,referenceLive,newAverage].find(value=>Number.isFinite(value)&&value>0);
+  const annualDps=parseNum(result.annualDpsGbp ?? holding?.annual_dps ?? payload.annualDps)||0;
+
   if(!holding&&result.createdNewHolding){
     holding={
+      status:'BUY',
       ticker:result.tickerFull||payload.ticker,
       name:result.name||payload.name,
       account:payload.account,
       sector:payload.sector||'OTHER',
       role:payload.role||payload.squadRole||'NEW SIGNING',
-      shares:result.newShares,
-      book_cost:result.newBookCostGbp,
-      average_price:result.newAverageGbp,
-      annual_dps:result.annualDpsGbp||payload.annualDps||0,
-      annual_dps_total:(result.newShares||0)*(result.annualDpsGbp||payload.annualDps||0)
+      shares:newShares,
+      book_cost:newBookCost,
+      average_price:Number.isFinite(newAverage)?newAverage:0,
+      annual_dps:annualDps,
+      annual_dps_total:newShares*annualDps
     };
     state.holdings.push(holding);
   }else if(holding){
-    holding.shares=result.newShares;
-    holding.book_cost=result.newBookCostGbp;
-    holding.average_price=result.newAverageGbp;
-    const dps=parseNum(holding.annual_dps)||0;
-    holding.annual_dps_total=result.newShares*dps;
+    holding.shares=newShares;
+    holding.book_cost=newBookCost;
+    if(Number.isFinite(newAverage)) holding.average_price=newAverage;
+    if(annualDps>0) holding.annual_dps=annualDps;
+    holding.annual_dps_total=newShares*(parseNum(holding.annual_dps)||annualDps||0);
   }
+
+  if(holding&&Number.isFinite(livePrice)&&livePrice>0){
+    holding.live_price=livePrice;
+    holding.current_value=newShares*livePrice;
+    holding.profit_loss=holding.current_value-newBookCost;
+  }
+  if(holding){
+    holding._auroraRegistrationOverlay={
+      transactionId:String(payload.transactionId||''),
+      appliedAt:new Date().toISOString(),
+      source:'confirmed-registration'
+    };
+  }
+  return holding;
+}
+
+async function refreshTransferAfterRegistrations(records=[],options={}){
+  const confirmed=(Array.isArray(records)?records:[]).filter(record=>record?.result&&!record.result.queued);
+  confirmed.forEach(record=>applyRegistrationResult(record.result,record.payload));
+  let masterRefreshed=false;
+  try{
+    await loadData(true);
+    masterRefreshed=true;
+  }catch(error){
+    console.warn('AuroraData master refresh was delayed; confirmed registration values remain active locally.',error);
+  }
+
+  /* AuroraMaster.json can lag a confirmed Apps Script write. Re-apply the
+     confirmed server totals after the forced read so the next route always
+     uses the newest shares, value, book cost and weighted average. */
+  confirmed.forEach(record=>applyRegistrationResult(record.result,record.payload));
+  renderAll();
+  try{renderSellDeskHoldings();}catch(_){ }
+  try{if(Array.isArray(incomingOffers)&&incomingOffers.length)renderIncomingOffers();}catch(_){ }
+  if(options.history!==false){try{await loadRegistrationHistory();}catch(_){ }}
+  try{
+    window.dispatchEvent(new CustomEvent('aurora:transfer-holdings-refreshed',{detail:{count:confirmed.length,masterRefreshed,at:new Date().toISOString()}}));
+  }catch(_){ }
+  return {count:confirmed.length,masterRefreshed};
 }
 function lastRegistration(){try{return JSON.parse(localStorage.getItem(REGISTRATION_LAST_KEY)||'null');}catch(_){return null;}}
 
@@ -7501,11 +7551,16 @@ document.addEventListener('submit',async event=>{
   try{
     const result=await postRegistration(payload);
     applyRegistrationResult(result,payload);
-    const message=result.queued?result.message:`${result.createdNewHolding?'New signing created and registered':'Top-up registered'}. ${displayTicker(payload.ticker)} now has ${Number(result.newShares).toLocaleString('en-GB',{maximumFractionDigits:8})} shares at an estimated ${money(result.newAverageGbp)} weighted average. Annual income added: ${money(result.annualIncomeAddedGbp)}.`;
-    msg.textContent=message;msg.className=`registration-message ${result.queued?'pending':'success'}`;
+    const baseMessage=result.queued?result.message:`${result.createdNewHolding?'New signing created and registered':'Top-up registered'}. ${displayTicker(payload.ticker)} now has ${Number(result.newShares).toLocaleString('en-GB',{maximumFractionDigits:8})} shares at an estimated ${money(result.newAverageGbp)} weighted average. Annual income added: ${money(result.annualIncomeAddedGbp)}.`;
+    const message=result.queued?baseMessage:`${baseMessage} Holdings refreshed and the next route rebuilt from the updated portfolio.`;
+    msg.textContent=result.queued?message:`${baseMessage} Refreshing holdings and rebuilding the next route…`;msg.className=`registration-message ${result.queued?'pending':'success'}`;
     localStorage.setItem(REGISTRATION_LAST_KEY,JSON.stringify({transactionId:payload.transactionId,ticker:payload.ticker,account:payload.account,message,at:new Date().toISOString()}));
     window.dispatchEvent(new Event('aurora:m4-update'));
-    if(!result.queued){setTimeout(()=>{renderAll();loadRegistrationHistory();},900);}
+    if(!result.queued){
+      await refreshTransferAfterRegistrations([{result,payload}],{history:true});
+    }else{
+      setTimeout(()=>{loadData(true).catch(()=>{});loadRegistrationHistory().catch(()=>{});},2400);
+    }
   }catch(err){
     console.error(err);msg.textContent=err.message||'Registration failed. AuroraData was not changed.';msg.className='registration-message error';
   }finally{
@@ -8394,6 +8449,7 @@ async function registerCompletedPaydayPurchases_(deal,saved,totals){
     try{await loadPlatformRules();}catch(_){ }
   }
   saved.registrationResults=saved.registrationResults||{};
+  const confirmedRecords=[];
   const rows=(deal?.rows||[]).filter(item=>{
     const ticker=shortTicker(item.row?.ticker);
     return (totals.details?.[ticker]?.cost||0)>0;
@@ -8422,7 +8478,7 @@ async function registerCompletedPaydayPurchases_(deal,saved,totals){
       ticker:row.ticker||ticker,name:displayName(row)||ticker,account,
       shares:trade.shares,priceInput,priceUnit,currency,fees:trade.fees||0,
       tradeDate:saved.tradeDate||registrationDateValue(),
-      note:'Completed automatically from Payday Execution & Purchase Record.',
+      note:'Completed automatically from Payday Execution & Purchase Record (sequential holdings rebuild v105).',
       annualDps:parseNum(row.annual_dps),sector:row.sector||'',role:row.role||'',
       buyStrength:parseNum(row.buy_strength),low52w:parseNum(row.low_52w),high52w:parseNum(row.high_52w),
       payoutRatio:row.payout_ratio||'',payoutRisk:row.payout_risk||'',dividendGrowth5y:row.dividend_growth_5y||'',
@@ -8443,6 +8499,7 @@ async function registerCompletedPaydayPurchases_(deal,saved,totals){
       savePaydayExecution(saved);
       if(!isConfirmed)throw new Error(`${displayTicker(row.ticker)} was submitted but AuroraData did not confirm it. Do not press complete again until the connection is readable.`);
       confirmed++;
+      confirmedRecords.push({result,payload});
       try{applyRegistrationResult(result,payload);}catch(_){ }
     }catch(error){
       saved.registrationResults[resultKey]={confirmed:false,transactionId,at:new Date().toISOString(),error:String(error?.message||error)};
@@ -8450,7 +8507,7 @@ async function registerCompletedPaydayPurchases_(deal,saved,totals){
       throw error;
     }
   }
-  return {confirmed,total:rows.length};
+  return {confirmed,total:rows.length,records:confirmedRecords};
 }
 $('completePaydayWindow')?.addEventListener('click',async()=>{
   const deal=buildDealSheet();
@@ -8477,8 +8534,7 @@ $('completePaydayWindow')?.addEventListener('click',async()=>{
     saved.auroraDataRegisteredAt=new Date().toISOString();
     saved.auroraDataRegisteredCount=sync.confirmed;
     savePaydayExecution(saved);
-    try{await loadData(true);}catch(_){ }
-    try{await loadRegistrationHistory();}catch(_){ }
+    await refreshTransferAfterRegistrations(sync.records||[],{history:true});
     renderPaydayExecution(buildDealSheet());
     if(message)message.textContent=`Transfer window complete • ${sync.confirmed} purchase${sync.confirmed===1?'':'s'} registered in AuroraData • Holdings and PurchaseLog updated • ${money(Math.max(0,availableCash-totals.invested))} cash left.`;
   }catch(error){
