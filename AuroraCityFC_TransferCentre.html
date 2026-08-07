@@ -2,7 +2,7 @@
 
 <html data-aurora-page="transfer" data-aurora-shell-content="true" lang="en">
 <head>
-<!-- Build: Transfer Centre Masterpiece • 06 Aug 2026 • Sequential Holdings Rebuild v105 -->
+<!-- Build: Transfer Centre Masterpiece • 07 Aug 2026 • Finance Handoff v107 + Mission Budget Authority v106 + Sequential Holdings Rebuild -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <link href="manifest.json" rel="manifest"/>
@@ -2845,7 +2845,7 @@ html[data-aurora-motion="off"] *, html[data-aurora-motion="off"] *:before, html[
 <style id="aurora-v92-stability-styles">
 .payday-stability-toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(170px,220px) auto;gap:9px;align-items:center;margin:11px 0 2px;padding:11px;border:1px solid rgba(34,211,238,.26);background:linear-gradient(135deg,rgba(8,47,73,.32),rgba(2,6,23,.44));border-radius:16px}.payday-build-stamp small,.payday-broker-control span{display:block;color:#93a4bd;font-size:8px;font-weight:1000;letter-spacing:.09em;text-transform:uppercase}.payday-build-stamp strong{display:block;color:#a5f3fc;font-size:15px;margin-top:3px}.payday-build-stamp span{display:block;color:#94a3b8;font-size:9px;margin-top:2px}.payday-broker-control select{width:100%;margin-top:5px;border:1px solid rgba(96,165,250,.28);background:rgba(2,6,23,.72);color:#f8fafc;border-radius:10px;padding:8px;font-weight:900}.payday-stability-toolbar .payday-reset-button{white-space:nowrap}.payday-sync-warning{margin-top:8px;color:#fde68a;font-size:9px;line-height:1.4}@media(max-width:820px){.payday-stability-toolbar{grid-template-columns:1fr}.payday-stability-toolbar .payday-reset-button{width:100%}}
 </style>
-<meta content="transfer-sequential-holdings-rebuild-v105" name="aurora-build"/><script>
+<meta content="transfer-budget-mission-authority-v106" name="aurora-build"/><script>
 (function(){
   try{
     const key='aurora-transfer-cache-reset-20260804-1155';
@@ -10022,103 +10022,453 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
 })();
 </script>
 
-<script id="aurora-transfer-budget-authority-v104">
+<style id="aurora-transfer-budget-authority-v106-styles">
+#routeBudgetEditor,#routeCashEditor{
+  pointer-events:auto!important;
+  user-select:text!important;
+  -webkit-user-select:text!important;
+  touch-action:auto!important;
+  opacity:1!important;
+  cursor:text!important;
+}
+#routeUseFinanceMission{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:10px 14px;
+  border:1px solid rgba(34,211,238,.34);
+  border-radius:10px;
+  background:rgba(8,47,73,.48);
+  color:#cffafe;
+  font-size:10px;
+  font-weight:1000;
+  cursor:pointer;
+}
+#routeUseFinanceMission:hover{border-color:#22d3ee;background:rgba(8,47,73,.72)}
+#redlineRouteMessage[data-authority="finance"]{color:#bbf7d0!important;border-color:rgba(52,211,153,.28)!important}
+#redlineRouteMessage[data-authority="manual"]{color:#fde68a!important;border-color:rgba(251,191,36,.28)!important}
+@media(max-width:760px){#routeUseFinanceMission{width:100%}}
+</style>
+<script id="aurora-transfer-budget-authority-v106">
 (function(){
   'use strict';
-  const KEY='aurora_transfer_manual_route_budget_v101';
-  const LEGACY='aurora_transfer_manual_route_budget_v100';
-  const SETTINGS='aurora_transfer_settings_v3';
+
+  const VERSION='v106';
+  const OVERRIDE_KEY='aurora_transfer_route_budget_override_v106';
+  const LEGACY_KEYS=['aurora_transfer_manual_route_budget_v101','aurora_transfer_manual_route_budget_v100'];
+  const SETTINGS_KEY='aurora_transfer_settings_v3';
+  const FINANCE_KEY='aurora_finance_department_mission_v1';
+  const WEALTH_KEY='aurora_wealth_investment_mission_v1';
+  const CASH_KEY='aurora_transfer_manual_cash_v103';
+  const PAYDAY_KEY='aurora_payday_execution_v1';
+  const $=id=>document.getElementById(id);
+  const money=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(value)||0);
   const number=value=>{
     const n=Number(String(value??'').replace(/,/g,'').trim());
-    return Number.isFinite(n)&&n>0?n:0;
+    return Number.isFinite(n)?n:0;
   };
-  const savedBudget=()=>number(localStorage.getItem(KEY))||number(localStorage.getItem(LEGACY));
-  const money=value=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(Number(value)||0);
-  let applying=false;
+  const read=key=>{try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}};
+  const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}};
+  let syncing=false;
+  let rendering=false;
 
-  function persistCompatibility(value){
-    if(!(value>0))return;
-    try{
-      localStorage.setItem(KEY,String(value));
-      localStorage.setItem(LEGACY,String(value));
-      const current=JSON.parse(localStorage.getItem(SETTINGS)||'{}')||{};
-      localStorage.setItem(SETTINGS,JSON.stringify({...current,budget:value,manualRouteBudget:true,updatedAt:new Date().toISOString()}));
-    }catch(_){}
+  function currentMission(){
+    const finance=read(FINANCE_KEY);
+    if(finance&&number(finance.budget)>0)return finance;
+    const wealth=read(WEALTH_KEY);
+    if(wealth&&number(wealth.budget)>0)return wealth;
+    return null;
   }
 
-  function applyManualBudget(renderAfter=false){
-    if(applying)return false;
-    const value=savedBudget();
-    if(!(value>0))return false;
-    applying=true;
-    try{
-      persistCompatibility(value);
-      const editor=document.getElementById('routeBudgetEditor');
-      const hidden=document.getElementById('transferBudgetInput');
-      const active=document.activeElement;
-      if(editor&&active!==editor&&Math.abs(number(editor.value)-value)>.009)editor.value=value.toFixed(2);
-      [hidden,document.getElementById('m5BuilderBudget'),document.getElementById('m3ReleasedCash')].forEach(el=>{
-        if(el&&Math.abs(number(el.value)-value)>.009)el.value=value.toFixed(2);
-      });
-      ['heroTransferBudget','m5Budget','m7Budget','redlineRouteBudget'].forEach(id=>{
-        const el=document.getElementById(id);if(el)el.textContent=money(value);
-      });
-      const strategy=document.getElementById('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
-      const broker=document.getElementById('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
-      const summary=document.getElementById('dealRouteControlSummary');
-      if(summary)summary.textContent=`${strategy} • ${broker} • ${money(value)}`;
-    }finally{
-      applying=false;
+  function missionSignature(mission=currentMission()){
+    if(!mission)return 'STANDALONE';
+    const id=String(mission.id||mission.missionId||mission.paydayId||'MISSION');
+    const payday=String(mission.paydayDate||mission.payday_date||mission.date||'NO_DATE');
+    const budget=Math.max(0,number(mission.budget)).toFixed(2);
+    return `${id}|${payday}|${budget}`;
+  }
+
+  function validOverride(){
+    const record=read(OVERRIDE_KEY);
+    if(!record||!(number(record.value)>0))return null;
+    const mission=currentMission();
+    if(!mission)return record.missionSignature==='STANDALONE'?record:null;
+    return record.missionSignature===missionSignature(mission)?record:null;
+  }
+
+  function updateSettings(fields){
+    const current=read(SETTINGS_KEY)||{};
+    write(SETTINGS_KEY,{...current,...fields,updatedAt:new Date().toISOString()});
+  }
+
+  function clearLegacyBudget(mission=currentMission()){
+    LEGACY_KEYS.forEach(key=>{try{localStorage.removeItem(key)}catch(_){}});
+    const financeBudget=Math.max(0,number(mission?.budget));
+    updateSettings({
+      budget:financeBudget||number($('transferBudgetInput')?.value),
+      manualRouteBudget:false,
+      manualRouteMissionSignature:'',
+      financeAuthorisedBudget:financeBudget
+    });
+  }
+
+  function normaliseAuthority(){
+    const mission=currentMission();
+    const record=read(OVERRIDE_KEY);
+    if(mission&&record&&record.missionSignature!==missionSignature(mission)){
+      try{localStorage.removeItem(OVERRIDE_KEY)}catch(_){}
+      clearLegacyBudget(mission);
+      return;
     }
-    if(renderAfter&&typeof window.renderAll==='function'){
-      try{window.renderAll();}catch(error){console.warn('Manual route render recovery',error);}
+    if(mission&&!validOverride())clearLegacyBudget(mission);
+  }
+
+  function saveOverride(value){
+    const amount=Math.max(0,number(value));
+    if(!(amount>0))return 0;
+    const mission=currentMission();
+    const record={
+      version:VERSION,
+      value:amount,
+      missionSignature:missionSignature(mission),
+      missionId:String(mission?.id||mission?.missionId||''),
+      financeBudget:Math.max(0,number(mission?.budget)),
+      savedAt:new Date().toISOString()
+    };
+    write(OVERRIDE_KEY,record);
+    LEGACY_KEYS.forEach(key=>{try{localStorage.setItem(key,String(amount))}catch(_){}});
+    updateSettings({
+      budget:amount,
+      manualRouteBudget:true,
+      manualRouteMissionSignature:record.missionSignature,
+      financeAuthorisedBudget:record.financeBudget
+    });
+    return amount;
+  }
+
+  function clearOverride(){
+    try{localStorage.removeItem(OVERRIDE_KEY)}catch(_){}
+    clearLegacyBudget(currentMission());
+  }
+
+  function effectiveBudget(){
+    const override=validOverride();
+    if(override)return Math.max(0,number(override.value));
+    const mission=currentMission();
+    if(mission)return Math.max(0,number(mission.budget));
+    return Math.max(0,number($('routeBudgetEditor')?.value)||number($('transferBudgetInput')?.value)||3500);
+  }
+
+  function savedCash(){
+    const raw=localStorage.getItem(CASH_KEY);
+    if(raw!==null&&raw!=='')return Math.max(0,number(raw));
+    const payday=read(PAYDAY_KEY)||{};
+    return Math.max(0,number(payday.availableCash));
+  }
+
+  function persistCash(value){
+    const amount=Math.max(0,number(value));
+    try{localStorage.setItem(CASH_KEY,String(amount))}catch(_){}
+    const payday=read(PAYDAY_KEY)||{};
+    write(PAYDAY_KEY,{
+      ...payday,
+      availableCash:amount,
+      manualCashOverride:true,
+      cashSource:'TRANSFER_CENTRE_ACTUAL_CASH',
+      open:true,
+      completedAt:payday.completedAt||'',
+      updatedAt:new Date().toISOString()
+    });
+    return amount;
+  }
+
+  function setInput(id,value,respectFocus=false){
+    const el=$(id);
+    if(!el)return false;
+    if(respectFocus&&document.activeElement===el)return false;
+    const next=Number(value).toFixed(2);
+    if(String(el.value)!==next){el.value=next;return true;}
+    return false;
+  }
+
+  function setText(id,value){const el=$(id);if(el)el.textContent=value;}
+
+  function addFinanceResetButton(){
+    if($('routeUseFinanceMission'))return;
+    const save=$('redlineSaveRoute');
+    if(!save)return;
+    const button=document.createElement('button');
+    button.id='routeUseFinanceMission';
+    button.type='button';
+    button.textContent='Use Finance mission';
+    save.insertAdjacentElement('afterend',button);
+  }
+
+  function updateResetButton(){
+    const button=$('routeUseFinanceMission');
+    const mission=currentMission();
+    if(!button)return;
+    button.hidden=!mission;
+    if(mission)button.textContent=`Use Finance ${money(mission.budget)}`;
+  }
+
+  function updateReadouts(routeBudget,financeBudget,cash){
+    const routeMoney=money(routeBudget);
+    const financeMoney=money(financeBudget||routeBudget);
+    ['redlineRouteBudget','m7Budget','m5Budget'].forEach(id=>setText(id,routeMoney));
+    ['heroTransferBudget','m11MissionBudget'].forEach(id=>setText(id,financeMoney));
+    setText('redlineRouteCash',money(cash));
+    setText('paydayCashSummary',cash>0?`${money(cash)} available`:'No broker cash moved yet');
+    const strategy=$('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
+    const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+    setText('redlineRouteStrategy',strategy);
+    setText('redlineRouteBroker',broker);
+    setText('dealRouteControlSummary',`${strategy} • ${broker} • Budget ${routeMoney} • Cash ${money(cash)}`);
+  }
+
+  function sync(options={}){
+    if(syncing)return;
+    syncing=true;
+    try{
+      normaliseAuthority();
+      addFinanceResetButton();
+      updateResetButton();
+      const mission=currentMission();
+      const financeBudget=Math.max(0,number(mission?.budget));
+      const routeBudget=effectiveBudget();
+      const cash=savedCash();
+      const canonicalChanged=setInput('transferBudgetInput',routeBudget,false);
+      setInput('routeBudgetEditor',routeBudget,true);
+      setInput('m5BuilderBudget',routeBudget,false);
+      setInput('m3ReleasedCash',routeBudget,false);
+      setInput('paydayAvailableCash',cash,false);
+      setInput('routeCashEditor',cash,true);
+      updateReadouts(routeBudget,financeBudget,cash);
+
+      const override=validOverride();
+      const message=$('redlineRouteMessage');
+      if(message&&!options.keepMessage){
+        message.dataset.authority=override?'manual':'finance';
+        message.textContent=override
+          ? `Manual route budget ${money(routeBudget)} is active for this Finance mission. Change it and save, or reset to ${money(financeBudget)}.`
+          : mission
+            ? `Finance mission loaded correctly: ${money(financeBudget)}. You can enter your own route budget, then press Save & rebuild allocation.`
+            : `Enter a route budget and press Save & rebuild allocation.`;
+      }
+
+      if(options.render&&!rendering){
+        rendering=true;
+        try{
+          if(canonicalChanged){
+            const hidden=$('transferBudgetInput');
+            hidden?.dispatchEvent(new Event('input',{bubbles:true}));
+            hidden?.dispatchEvent(new Event('change',{bubbles:true}));
+          }
+          if(typeof window.renderAll==='function')window.renderAll();
+        }catch(error){console.warn('Aurora v106 budget rebuild',error)}
+        finally{rendering=false;}
+      }
+    }finally{syncing=false;}
+  }
+
+  function saveRoute(event){
+    event?.preventDefault?.();
+    event?.stopImmediatePropagation?.();
+    const editor=$('routeBudgetEditor');
+    const amount=Math.max(0,number(editor?.value||$('transferBudgetInput')?.value));
+    const message=$('redlineRouteMessage');
+    if(!(amount>0)){
+      if(message){message.dataset.authority='manual';message.textContent='Enter a valid working transfer budget above £0.';}
+      editor?.focus();
+      return;
+    }
+    saveOverride(amount);
+    const cash=Math.max(0,number($('routeCashEditor')?.value));
+    persistCash(cash);
+    setInput('transferBudgetInput',amount,false);
+    setInput('paydayAvailableCash',cash,false);
+    try{
+      if(typeof manualAmounts!=='undefined')manualAmounts.clear();
+      if(typeof excludedTickers!=='undefined')excludedTickers.clear();
+    }catch(_){}
+    sync({render:true,keepMessage:true});
+    if(message){
+      const strategy=$('m11MaximumRoute')?.classList.contains('active')?'Maximum Income':'Sustainable Income';
+      const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+      message.dataset.authority='manual';
+      message.classList.add('saved');
+      message.textContent=`${strategy} • ${broker} • ${money(amount)} saved. Available broker cash: ${money(cash)}.`;
+    }
+    [80,260,700].forEach(delay=>setTimeout(()=>sync({render:delay===260,keepMessage:true}),delay));
+  }
+
+  function resetToFinance(event){
+    event?.preventDefault?.();
+    event?.stopImmediatePropagation?.();
+    clearOverride();
+    sync({render:true,keepMessage:true});
+    const mission=currentMission();
+    const message=$('redlineRouteMessage');
+    if(message){
+      message.dataset.authority='finance';
+      message.classList.add('saved');
+      message.textContent=mission
+        ? `Finance mission restored: ${money(mission.budget)}. The old manual £5,500 route has been removed.`
+        : 'Manual route override cleared.';
+    }
+    [80,260,700].forEach(delay=>setTimeout(()=>sync({render:delay===260,keepMessage:true}),delay));
+  }
+
+  function bindControls(){
+    addFinanceResetButton();
+    const oldSave=$('redlineSaveRoute');
+    if(oldSave&&!oldSave.dataset.v106Bound){
+      const fresh=oldSave.cloneNode(true);
+      fresh.dataset.v106Bound='1';
+      oldSave.replaceWith(fresh);
+      fresh.addEventListener('click',saveRoute,true);
+    }
+    $('routeUseFinanceMission')?.addEventListener('click',resetToFinance,true);
+    $('routeBudgetEditor')?.addEventListener('focus',event=>event.target.select());
+    $('routeCashEditor')?.addEventListener('focus',event=>event.target.select());
+    $('routeBudgetEditor')?.addEventListener('input',event=>{
+      const value=Math.max(0,number(event.target.value));
+      const cash=Math.max(0,number($('routeCashEditor')?.value));
+      updateReadouts(value,number(currentMission()?.budget),cash);
+      const message=$('redlineRouteMessage');
+      if(message){message.dataset.authority='manual';message.textContent='New route budget entered. Press Save & rebuild allocation to apply it.';}
+    });
+    $('routeCashEditor')?.addEventListener('input',event=>{
+      const cash=Math.max(0,number(event.target.value));
+      updateReadouts(Math.max(0,number($('routeBudgetEditor')?.value)),number(currentMission()?.budget),cash);
+      const message=$('redlineRouteMessage');
+      if(message)message.textContent='Broker cash edited. Press Save & rebuild allocation to store it.';
+    });
+  }
+
+  // Remove stale global overrides immediately, before older DOMContentLoaded handlers run.
+  normaliseAuthority();
+  window.auroraManualRouteBudget=function(){const record=validOverride();return record?Math.max(0,number(record.value)):0;};
+  window.auroraSaveManualRouteBudget=function(value){return saveOverride(value);};
+  window.AuroraResetTransferBudgetToFinance=function(){clearOverride();sync({render:true});};
+
+  function start(){
+    bindControls();
+    persistCash(savedCash());
+    sync({render:true});
+    [100,380,900,1700,2800].forEach((delay,index)=>setTimeout(()=>sync({render:index===2}),delay));
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+  window.addEventListener('pageshow',()=>setTimeout(()=>sync({render:true}),100));
+  window.addEventListener('storage',event=>{
+    if([FINANCE_KEY,WEALTH_KEY,OVERRIDE_KEY,...LEGACY_KEYS].includes(event.key))setTimeout(()=>sync({render:true}),50);
+  });
+  window.addEventListener('aurora:finance-mission',()=>setTimeout(()=>sync({render:true}),60));
+  window.addEventListener('aurora:wealth-mission',()=>setTimeout(()=>sync({render:true}),60));
+})();
+</script>
+
+
+
+<script id="aurora-transfer-finance-handoff-v107">
+(function(){
+  "use strict";
+  const VERSION="v107";
+  const CANONICAL_KEY="aurora_finance_department_mission_v1";
+  const WEALTH_KEY="aurora_wealth_investment_mission_v1";
+  const HANDOFF_KEY="aurora_finance_transfer_handoff_v107";
+  const OVERRIDE_KEY="aurora_transfer_route_budget_override_v106";
+  const read=key=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch(_){return null}};
+  const write=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}};
+  const number=value=>{const n=Number(String(value??"").replace(/[^0-9.-]/g,""));return Number.isFinite(n)?n:0};
+  const money=value=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.max(0,Number(value)||0));
+  function validMission(m){return Boolean(m&&typeof m==="object"&&number(m.budget)>0)}
+  function missionTime(m){
+    if(!m)return 0;
+    for(const raw of [m.handoffAt,m.releasedAt,m.generatedAt,m.updatedAt]){
+      const value=Date.parse(raw||"");
+      if(Number.isFinite(value)&&value>0)return value;
+    }
+    return 0;
+  }
+  function chooseMission(){
+    const handoff=read(HANDOFF_KEY);
+    if(validMission(handoff))return handoff;
+    const wealth=read(WEALTH_KEY),canonical=read(CANONICAL_KEY);
+    if(validMission(wealth)&&validMission(canonical)){
+      if(String(wealth.id||"")!==String(canonical.id||""))return wealth;
+      return missionTime(wealth)>=missionTime(canonical)?wealth:canonical;
+    }
+    if(validMission(wealth))return wealth;
+    if(validMission(canonical))return canonical;
+    return null;
+  }
+  function signature(m){
+    if(!m)return "";
+    const id=String(m.id||m.missionId||m.paydayId||"MISSION");
+    const payday=String(m.paydayDate||m.payday_date||m.date||"NO_DATE");
+    return `${id}|${payday}|${number(m.budget).toFixed(2)}`;
+  }
+  function normaliseMission(){
+    const mission=chooseMission();
+    if(!validMission(mission))return null;
+    const payload={...mission,handoffVersion:mission.handoffVersion||VERSION,source:"Finance Department",department:"Finance Department",destination:"Aurora City FC Transfer Centre",status:mission.status||"READY_FOR_TRANSFER_CENTRE"};
+    write(CANONICAL_KEY,payload);
+    write(WEALTH_KEY,payload);
+    const override=read(OVERRIDE_KEY);
+    if(override&&override.missionSignature&&override.missionSignature!==signature(payload)){
+      try{localStorage.removeItem(OVERRIDE_KEY)}catch(_){}
+      try{localStorage.removeItem("aurora_transfer_manual_route_budget_v101")}catch(_){}
+      try{localStorage.removeItem("aurora_transfer_manual_route_budget_v100")}catch(_){}
+    }
+    window.AURORA_CURRENT_FINANCE_MISSION=payload;
+    return payload;
+  }
+  function refreshTransferUi(){
+    const mission=normaliseMission();
+    if(!mission)return false;
+    try{window.AuroraLoadWealthMission?.({scroll:false})}catch(_){}
+    try{if(typeof window.renderAll==="function")window.renderAll()}catch(_){}
+    const budget=number(mission.budget);
+    const setText=(id,value)=>{const node=document.getElementById(id);if(node)node.textContent=value};
+    const setValue=(id,value)=>{const node=document.getElementById(id);if(node&&document.activeElement!==node)node.value=Number(value).toFixed(2)};
+    setText("m11MissionBudget",money(budget));
+    setText("heroTransferBudget",money(budget));
+    const override=read(OVERRIDE_KEY);
+    const overrideMatches=override&&override.missionSignature===signature(mission)&&number(override.value)>0;
+    if(!overrideMatches){
+      setValue("transferBudgetInput",budget);
+      setValue("routeBudgetEditor",budget);
+      setValue("m5BuilderBudget",budget);
+      setValue("m3ReleasedCash",budget);
+      setText("redlineRouteBudget",money(budget));
+      setText("m7Budget",money(budget));
+      setText("m5Budget",money(budget));
+    }
+    const status=document.getElementById("m11MissionStatus");
+    if(status)status.textContent=`Finance handoff loaded • ${money(budget)} authorised • ${mission.paydayDate||"current payday"} • ${mission.handoffVersion||VERSION}.`;
+    const message=document.getElementById("redlineRouteMessage");
+    if(message&&!overrideMatches){
+      message.dataset.authority="finance";
+      message.textContent=`Finance mission loaded correctly: ${money(budget)}. Edit the route budget only if you deliberately want a different amount.`;
     }
     return true;
   }
-
-  const originalRender=typeof window.renderAll==='function'?window.renderAll:null;
-  if(originalRender&&!originalRender.__auroraBudgetAuthority){
-    const wrapped=function(){
-      applyManualBudget(false);
-      const result=originalRender.apply(this,arguments);
-      applyManualBudget(false);
-      return result;
-    };
-    wrapped.__auroraBudgetAuthority=true;
-    window.renderAll=wrapped;
+  normaliseMission();
+  function start(){
+    refreshTransferUi();
+    [80,260,700,1500].forEach(delay=>window.setTimeout(refreshTransferUi,delay));
   }
-
-  const originalLoad=typeof window.AuroraLoadWealthMission==='function'?window.AuroraLoadWealthMission:null;
-  if(originalLoad&&!originalLoad.__auroraBudgetAuthority){
-    const wrappedLoad=function(){
-      const result=originalLoad.apply(this,arguments);
-      queueMicrotask(()=>applyManualBudget(true));
-      return result;
-    };
-    wrappedLoad.__auroraBudgetAuthority=true;
-    window.AuroraLoadWealthMission=wrappedLoad;
-  }
-
-  document.addEventListener('click',event=>{
-    if(!event.target.closest?.('#redlineSaveRoute'))return;
-    const value=number(document.getElementById('routeBudgetEditor')?.value||document.getElementById('transferBudgetInput')?.value);
-    if(value>0){
-      persistCompatibility(value);
-      [0,120,360].forEach(delay=>setTimeout(()=>applyManualBudget(delay===120),delay));
-    }
-  },true);
-
-  window.addEventListener('storage',event=>{
-    if([KEY,LEGACY,'aurora_finance_department_mission_v1','aurora_wealth_investment_mission_v1'].includes(event.key)){
-      setTimeout(()=>applyManualBudget(true),40);
-    }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+  window.addEventListener("pageshow",()=>window.setTimeout(refreshTransferUi,70));
+  window.addEventListener("focus",()=>window.setTimeout(refreshTransferUi,70));
+  window.addEventListener("storage",event=>{
+    if([HANDOFF_KEY,CANONICAL_KEY,WEALTH_KEY].includes(event.key))window.setTimeout(refreshTransferUi,35);
   });
-  window.addEventListener('pageshow',()=>setTimeout(()=>applyManualBudget(true),90));
-  window.addEventListener('aurora:finance-mission',()=>setTimeout(()=>applyManualBudget(true),80));
-  window.addEventListener('aurora:wealth-mission',()=>setTimeout(()=>applyManualBudget(true),80));
-
-  const start=()=>[0,160,420,920,1450,2250].forEach((delay,index)=>setTimeout(()=>applyManualBudget(index===2),delay));
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+  window.addEventListener("aurora:finance-transfer-handoff",()=>window.setTimeout(refreshTransferUi,25));
+  window.AuroraFinanceTransferHandoffV107=Object.freeze({version:VERSION,refresh:refreshTransferUi,mission:chooseMission});
 })();
 </script>
 
