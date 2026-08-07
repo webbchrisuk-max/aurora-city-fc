@@ -10472,5 +10472,108 @@ ${plan.status === "FINAL_ROUTE" ? "Final deal route" : "Awaiting final route"}`;
 })();
 </script>
 
+
+<script id="aurora-transfer-route-switch-v108">
+(function(){
+  "use strict";
+  const VERSION="v108";
+  const ROUTE_KEY="aurora_transfer_route_mode_v108";
+  const SETTINGS_KEY="aurora_transfer_settings_v3";
+  const $=id=>document.getElementById(id);
+  const valid=mode=>mode==="maximum"?"maximum":"balanced";
+
+  function storedRoute(){
+    try{
+      const direct=localStorage.getItem(ROUTE_KEY);
+      if(direct==="maximum"||direct==="balanced") return direct;
+      const settings=JSON.parse(localStorage.getItem(SETTINGS_KEY)||"null");
+      if(settings?.routeMode==="maximum"||settings?.routeMode==="balanced") return settings.routeMode;
+    }catch(_){}
+    try{return typeof routeMode!=="undefined"&&routeMode==="maximum"?"maximum":"balanced"}catch(_){return "balanced"}
+  }
+
+  function persistRoute(mode){
+    mode=valid(mode);
+    try{localStorage.setItem(ROUTE_KEY,mode)}catch(_){}
+    try{
+      const settings=JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")||{};
+      localStorage.setItem(SETTINGS_KEY,JSON.stringify({...settings,routeMode:mode,updatedAt:new Date().toISOString()}));
+    }catch(_){}
+  }
+
+  function syncButtons(mode){
+    mode=valid(mode);
+    document.querySelectorAll('[data-m11-route]').forEach(btn=>{
+      const active=btn.dataset.m11Route===mode;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-pressed',active?'true':'false');
+    });
+    $('balancedRouteCard')?.classList.toggle('active',mode==='balanced');
+    $('maximumRouteCard')?.classList.toggle('active',mode==='maximum');
+    const strategy=mode==='maximum'?'Maximum Income':'Sustainable Income';
+    if($('redlineRouteStrategy'))$('redlineRouteStrategy').textContent=strategy;
+    if($('m7Strategy'))$('m7Strategy').textContent=strategy;
+    if($('routeModeBadge'))$('routeModeBadge').textContent=mode==='maximum'?'Maximum-income route active':'Sustainable route active';
+    const budget=$('redlineRouteBudget')?.textContent||'';
+    const broker=$('brokerRouteFilter')?.selectedOptions?.[0]?.textContent||'Both brokers';
+    if($('dealRouteControlSummary'))$('dealRouteControlSummary').textContent=`${strategy} • ${broker}${budget?` • ${budget}`:''}`;
+  }
+
+  function applyRoute(mode,{persist=true,render=true,message=true}={}){
+    mode=valid(mode);
+    try{routeMode=mode}catch(_){}
+    try{if(typeof manualAmounts!=="undefined")manualAmounts.clear()}catch(_){}
+    if(persist)persistRoute(mode);
+    syncButtons(mode);
+    if(render){
+      try{if(typeof renderAll==='function')renderAll()}catch(error){console.warn('Aurora route switch '+VERSION,error)}
+      // Older renderers can repaint the buttons; restore the chosen state after they finish.
+      [0,80,220].forEach(delay=>setTimeout(()=>syncButtons(mode),delay));
+    }
+    if(message){
+      const msg=$('redlineRouteMessage');
+      if(msg){
+        const label=mode==='maximum'?'Maximum Income':'Sustainable Income';
+        msg.classList.add('saved');
+        msg.textContent=`${label} selected. Save & rebuild allocation to keep any budget or cash edits.`;
+      }
+    }
+    try{window.dispatchEvent(new CustomEvent('aurora:transfer-route-changed',{detail:{mode,version:VERSION}}))}catch(_){}
+  }
+
+  function clickHandler(event){
+    const button=event.target.closest?.('[data-m11-route]');
+    if(!button)return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    applyRoute(button.dataset.m11Route,{persist:true,render:true,message:true});
+  }
+
+  function restore(){
+    const mode=storedRoute();
+    applyRoute(mode,{persist:false,render:false,message:false});
+    // Finance/mission refresh code may run just after this and reset routeMode.
+    [120,420,1100,1900].forEach(delay=>setTimeout(()=>{
+      try{routeMode=mode}catch(_){}
+      syncButtons(mode);
+      if(delay===420){try{if(typeof renderAll==='function')renderAll()}catch(_){}}
+    },delay));
+  }
+
+  function start(){
+    document.addEventListener('click',clickHandler,true);
+    restore();
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+  window.addEventListener('pageshow',restore);
+  window.addEventListener('focus',()=>setTimeout(restore,120));
+  window.addEventListener('aurora:finance-transfer-handoff',()=>setTimeout(restore,180));
+  window.addEventListener('aurora:finance-mission',()=>setTimeout(restore,180));
+  window.addEventListener('aurora:wealth-mission',()=>setTimeout(restore,180));
+  window.AuroraTransferRouteSwitchV108=Object.freeze({version:VERSION,set:mode=>applyRoute(mode),get:storedRoute});
+})();
+</script>
+
 </body>
 </html>
