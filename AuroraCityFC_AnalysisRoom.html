@@ -2,7 +2,7 @@
 
 <html lang="en">
 <head>
-<!-- Build: Analysis Room Live Price Bridge v2 • 5 Aug 2026 -->
+<!-- Build: Analysis Room Live Price Bridge v3 • Fixed-Cohort Momentum • 7 Aug 2026 -->
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <link href="manifest.json" rel="manifest"/>
@@ -733,10 +733,11 @@ html[data-aurora-page="analysis"] body{
 .analysis-pitch-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:11px;color:#91a3ba;font-size:10px}
 .analysis-pitch-footer button{border:0;background:transparent;color:#c4b5fd;font-size:10px;font-weight:900;cursor:pointer}
 
-.analysis-form-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.analysis-form-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
 .analysis-form-summary div{padding:11px;border:1px solid rgba(148,163,184,.12);border-radius:14px;background:rgba(2,6,23,.30)}
 .analysis-form-summary small{display:block;color:#71839c;font-size:8px;font-weight:1000;text-transform:uppercase;letter-spacing:.1em}
 .analysis-form-summary strong{display:block;margin-top:6px;color:#e0f2fe;font-size:15px}
+.analysis-form-method{margin-top:9px;padding:8px 10px;border:1px solid rgba(96,165,250,.13);border-radius:12px;background:rgba(2,6,23,.25);color:#8194ad;font-size:9px;line-height:1.45}
 .analysis-sparkline{min-height:150px;margin-top:12px;padding:10px;border:1px solid rgba(96,165,250,.14);border-radius:17px;background:linear-gradient(180deg,rgba(30,64,175,.08),rgba(2,6,23,.16))}
 .analysis-sparkline svg{display:block;width:100%;height:130px;overflow:visible}
 .analysis-sparkline .spark-area{fill:rgba(96,165,250,.10)}
@@ -1187,7 +1188,7 @@ body{
   .analysis-intelligence-action{grid-column:2;justify-self:start}
 }
 </style>
-<meta content="analysis-room-live-price-bridge-v2-20260805" name="aurora-build"/>
+<meta content="analysis-room-live-price-bridge-v3-fixed-cohort-momentum-20260807" name="aurora-build"/>
 </head>
 <body>
 
@@ -1350,7 +1351,7 @@ body{
 <div>
 <span class="analysis-kicker">Club form</span>
 <h3>Momentum Room</h3>
-<p>Price-log sessions translated into football form and trend.</p>
+<p>Price-log sessions translated into fixed-cohort market form, so new tracking coverage cannot masquerade as profit.</p>
 </div>
 <span class="badge blue" id="valueTrendBadge">Last 30 logs</span>
 </div>
@@ -1362,9 +1363,11 @@ body{
 </div>
 <div class="analysis-form-summary">
 <div><small>Record</small><strong id="clubFormRecord">—</strong></div>
-<div><small>Value change</small><strong id="clubFormChange">—</strong></div>
+<div><small>Market move</small><strong id="clubFormChange">—</strong></div>
 <div><small>Current run</small><strong id="clubFormRun">—</strong></div>
+<div><small>Coverage</small><strong id="clubFormCoverage">—</strong></div>
 </div>
+<div class="analysis-form-method" id="clubFormMethod">Fixed-cohort calculation loading…</div>
 <div aria-label="Club value form line" class="analysis-sparkline" id="clubFormSparkline"></div>
 <div class="analysis-session-list" id="clubFormSessions"></div>
 </article>
@@ -2533,14 +2536,110 @@ function incomeForecastChart(){
   return true;
 }
 
-function valueProgression(){
-  const combined=combinedHoldings();const shares=new Map(combined.map(x=>[x.ticker,x.shares]));
-  const rows=(state.priceLog||[]).map(r=>({date:toDate(rowDate(r)),ticker:rowTicker(r),price:parseNum(r?.price??r?.close_price??r?.Price??r?.Close_Price)})).filter(x=>x.date&&x.ticker&&Number.isFinite(x.price));
+function valueProgression(range=30){
+  /*
+   * Fixed-cohort market form.
+   *
+   * The old engine added a holding to the historical total as soon as its
+   * ticker first appeared in PriceLog. That made improved PriceLog coverage
+   * look like portfolio profit.
+   *
+   * This engine selects the requested session window first, then freezes the
+   * cohort to current holdings that already had a usable price at the START
+   * of that window. The same current share quantity is applied to every point.
+   * Result: the line measures price movement only; purchases and newly tracked
+   * tickers cannot create an artificial jump inside the window.
+   */
+  const combined=combinedHoldings().filter(row=>Number.isFinite(Number(row.shares))&&Number(row.shares)>0);
+  const shares=new Map(combined.map(row=>[row.ticker,Number(row.shares)]));
+  if(!shares.size)return[];
+
+  const rows=(state.priceLog||[])
+    .map(row=>{
+      const date=toDate(rowDate(row));
+      const ticker=rowTicker(row);
+      const price=parseNum(row?.price??row?.close_price??row?.Price??row?.Close_Price);
+      return {
+        date,
+        key:date?date.toISOString().slice(0,10):"",
+        ticker,
+        price
+      };
+    })
+    .filter(item=>item.date&&item.key&&item.ticker&&Number.isFinite(item.price)&&item.price>0)
+    .sort((a,b)=>a.date-b.date);
+
   if(!rows.length)return[];
-  const dates=[...new Set(rows.map(x=>x.date.toISOString().slice(0,10)))].sort();const byDate=new Map();rows.forEach(x=>{const k=x.date.toISOString().slice(0,10);if(!byDate.has(k))byDate.set(k,new Map());byDate.get(k).set(x.ticker,x.price);});
-  const lastPrice=new Map();const pts=[];
-  dates.forEach(k=>{for(const [t,p] of byDate.get(k))lastPrice.set(t,p);let total=0,covered=0;for(const [t,q] of shares){const p=lastPrice.get(t);if(Number.isFinite(p)){total+=p*q;covered++;}}if(covered>=Math.max(3,Math.ceil(shares.size*.5)))pts.push({date:new Date(`${k}T12:00:00`),value:total,coverage:covered});});
-  return pts.slice(-30);
+
+  const byDate=new Map();
+  rows.forEach(item=>{
+    if(!byDate.has(item.key))byDate.set(item.key,new Map());
+    // PriceLog can contain more than one reading on a day. Because rows are
+    // chronological, the last set for the day becomes that session's close.
+    byDate.get(item.key).set(item.ticker,item.price);
+  });
+
+  const allDates=[...byDate.keys()].sort();
+  const requested=Math.max(2,Math.min(30,Math.floor(Number(range)||30)));
+  const windowDates=allDates.slice(-requested);
+  if(!windowDates.length)return[];
+
+  const startKey=windowDates[0];
+  const windowSet=new Set(windowDates);
+
+  // Establish which current holdings were already price-covered when this
+  // selected window began. Anything first tracked later is excluded from the
+  // whole window instead of suddenly appearing halfway through.
+  const startPrices=new Map();
+  for(const key of allDates){
+    if(key>startKey)break;
+    for(const [ticker,price] of byDate.get(key)){
+      if(shares.has(ticker)&&Number.isFinite(price)&&price>0){
+        startPrices.set(ticker,price);
+      }
+    }
+  }
+
+  const cohortTickers=[...shares.keys()].filter(ticker=>startPrices.has(ticker));
+  if(!cohortTickers.length)return[];
+
+  const cohortShares=new Map(cohortTickers.map(ticker=>[ticker,shares.get(ticker)]));
+  const lastPrice=new Map();
+  const points=[];
+
+  for(const key of allDates){
+    for(const [ticker,price] of byDate.get(key)){
+      if(cohortShares.has(ticker)&&Number.isFinite(price)&&price>0){
+        lastPrice.set(ticker,price);
+      }
+    }
+
+    if(!windowSet.has(key))continue;
+
+    let total=0;
+    let covered=0;
+    for(const [ticker,quantity] of cohortShares){
+      const price=lastPrice.get(ticker);
+      if(!Number.isFinite(price)||price<=0)continue;
+      total+=price*quantity;
+      covered+=1;
+    }
+
+    // Every accepted point must contain the exact same cohort.
+    if(covered!==cohortShares.size)continue;
+
+    points.push({
+      date:new Date(`${key}T12:00:00`),
+      value:total,
+      coverage:cohortShares.size,
+      total:shares.size,
+      coveragePct:shares.size?cohortShares.size/shares.size:0,
+      tickers:[...cohortTickers],
+      method:"fixed-current-shares"
+    });
+  }
+
+  return points;
 }
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 function chartBase(){
@@ -2645,7 +2744,7 @@ function renderCharts(){
   showCanvas("targetChart","targetEmpty");targetChart(monthly);
   const incomeRows=combined.filter(x=>x.income>0).sort((a,b)=>b.income-a.income).slice(0,10);if(incomeRows.length){showCanvas("incomeContributionChart","incomeContributionEmpty");barChart("incomeContributionChart",incomeRows.map(x=>x.ticker),incomeRows.map(x=>x.income),"Annual income");$("topIncomeBadge").textContent=`Top scorer: ${incomeRows[0].ticker}`;}else showEmpty("incomeContributionChart","incomeContributionEmpty");
   const sectors=combinedSectorData();if(sectors.length){showCanvas("sectorChart","sectorEmpty");doughnutChart("sectorChart",sectors.map(x=>x.sector),sectors.map(x=>x.value));const total=sectors.reduce((s,x)=>s+x.value,0),top=sectors[0];$("sectorBadge").textContent=`${top.sector}: ${total?((top.value/total)*100).toFixed(1):0}%`;$("sectorBadge").className=`badge ${(top.value/total)>.35?"amber":"blue"}`;}else showEmpty("sectorChart","sectorEmpty");
-  const valPts=valueProgression();if(valPts.length>1){showCanvas("valueProgressChart","valueProgressEmpty");lineChart("valueProgressChart",valPts.map(x=>dateLabel(x.date)),valPts.map(x=>x.value),"Indicative club value",{borderColor:"#60a5fa",backgroundColor:"rgba(96,165,250,.12)"});const change=valPts.at(-1).value-valPts[0].value;$("valueTrendBadge").textContent=`${change>=0?"▲":"▼"} ${money(Math.abs(change))}`;$("valueTrendBadge").className=`badge ${change>=0?"green":"red"}`;}else showEmpty("valueProgressChart","valueProgressEmpty");
+  const valPts=valueProgression(30);if(valPts.length>1){showCanvas("valueProgressChart","valueProgressEmpty");lineChart("valueProgressChart",valPts.map(x=>dateLabel(x.date)),valPts.map(x=>x.value),"Fixed-cohort market value",{borderColor:"#60a5fa",backgroundColor:"rgba(96,165,250,.12)"});}else showEmpty("valueProgressChart","valueProgressEmpty");
   showCanvas("yieldStrengthChart","yieldStrengthEmpty");scatterChart(combined);
 }
 function renderKpis(){
@@ -3138,7 +3237,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
   }
   function recentForm(range=10){
     if(typeof valueProgression!=="function") return [];
-    const points=valueProgression().slice(-Math.max(2,range));
+    const points=valueProgression(Math.max(2,range));
     return points.map((point,index)=>{
       if(index===0) return {...point,change:0,result:"D"};
       const previous=points[index-1].value;
@@ -3221,21 +3320,48 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     const range=ui.formRange;
     const points=recentForm(range);
     const usable=points.slice(1);
-    const wins=usable.filter(x=>x.result==="W").length, losses=usable.filter(x=>x.result==="L").length, draws=usable.length-wins-losses;
+    const wins=usable.filter(x=>x.result==="W").length;
+    const losses=usable.filter(x=>x.result==="L").length;
+    const draws=usable.length-wins-losses;
     const change=points.length>1?points.at(-1).value-points[0].value:0;
     const lastResults=usable.slice(-5).map(x=>x.result).join(" · ")||"Building";
+    const coverage=points.at(-1)?.coverage||0;
+    const total=points.at(-1)?.total||combinedHoldings().filter(row=>Number(row.shares)>0).length;
+    const coveragePct=total?coverage/total:0;
+
     byId("clubFormRecord").textContent=`${wins}W ${draws}D ${losses}L`;
     byId("clubFormChange").textContent=`${change>=0?"+":""}${money(change)}`;
     byId("clubFormChange").className=change>=0?"positive":"negative";
     byId("clubFormRun").textContent=lastResults;
 
+    if(byId("clubFormCoverage")){
+      byId("clubFormCoverage").textContent=total?`${coverage}/${total}`:"—";
+      byId("clubFormCoverage").className=coveragePct>=.8?"positive":coveragePct>=.5?"neutral":"negative";
+    }
+
+    const badge=byId("valueTrendBadge");
+    if(badge){
+      badge.textContent=points.length
+        ? `${points.length} logs • ${coverage}/${total} fixed`
+        : `${range} logs • waiting`;
+      badge.className=`badge ${coveragePct>=.8?"green":coveragePct>=.5?"blue":"amber"}`;
+    }
+
+    if(byId("clubFormMethod")){
+      byId("clubFormMethod").textContent=points.length
+        ? `Price-only form using one fixed cohort across this ${points.length}-session window. ${coverage} of ${total} current holdings had PriceLog coverage at the start; later-added tracking is excluded until it exists for the whole selected window.`
+        : "No consistent PriceLog cohort is available for this window yet.";
+    }
+
     if(points.length<2){
-      byId("clubFormSparkline").innerHTML=`<div class="analysis-loading">Price history is still building.</div>`;
+      byId("clubFormSparkline").innerHTML=`<div class="analysis-loading">A consistent PriceLog history is still building for this range.</div>`;
       byId("clubFormSessions").innerHTML="";
       return;
     }
+
     const width=620,height=130,pad=12;
-    const values=points.map(x=>x.value),min=Math.min(...values),max=Math.max(...values),span=Math.max(1,max-min);
+    const values=points.map(x=>x.value);
+    const min=Math.min(...values),max=Math.max(...values),span=Math.max(1,max-min);
     const coords=points.map((point,index)=>{
       const x=pad+(width-pad*2)*(index/(points.length-1));
       const y=height-pad-(height-pad*2)*((point.value-min)/span);
@@ -3243,12 +3369,14 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     });
     const line=coords.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
     const area=`${pad},${height-pad} ${line} ${width-pad},${height-pad}`;
+
     byId("clubFormSparkline").innerHTML=
-      `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" role="img" aria-label="Club value trend">
+      `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" role="img" aria-label="Fixed-cohort market value trend">
         <polygon class="spark-area" points="${area}"></polygon>
         <polyline class="spark-line" points="${line}"></polyline>
-        ${coords.map((p,index)=>`<circle class="spark-dot" cx="${p.x}" cy="${p.y}" r="${index===coords.length-1?5:3}" data-form-point="${index}"><title>${dateLabel(p.point.date)} • ${money(p.point.value)}</title></circle>`).join("")}
+        ${coords.map((p,index)=>`<circle class="spark-dot" cx="${p.x}" cy="${p.y}" r="${index===coords.length-1?5:3}" data-form-point="${index}"><title>${dateLabel(p.point.date)} • ${money(p.point.value)} fixed-cohort value • ${p.point.coverage}/${p.point.total} holdings</title></circle>`).join("")}
       </svg>`;
+
     byId("clubFormSessions").innerHTML=usable.slice(-10).map(item=>
       `<div class="analysis-session-chip ${item.result==="W"?"win":item.result==="L"?"loss":"draw"}">
         <small>${escapeHtml(dateLabel(item.date))}</small><strong>${item.result} • ${item.change>=0?"+":""}${money(item.change)}</strong>
