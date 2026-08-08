@@ -1532,7 +1532,7 @@ body{
 </section>
 <section aria-label="Dividend intelligence suite" class="m82-suite" id="m82DividendIntelligence">
 <header class="m82-suite-head">
-<div><span class="analysis-kicker">Specialist income analysis</span><h3>💷 Dividend Intelligence Suite</h3><p>Next cash, 12-month coverage, reinvestment snowball and payout-quality signals — all powered by AuroraMaster.</p></div>
+<div><span class="analysis-kicker">Specialist income analysis</span><h3>💷 Dividend Intelligence Suite</h3><p>Next cash, remaining-year runway, reinvestment snowball and payout-quality signals — all powered by AuroraMaster.</p></div>
 <span class="m82-live-badge" id="m82SuiteStatus">Waiting for dividend feed</span>
 </header>
 <div class="m82-grid">
@@ -1557,13 +1557,13 @@ body{
 <div class="m82-recommend" id="m82SnowNote">Waiting for IncomeLog.</div>
 </article>
 <article class="m82-card full">
-<div class="m82-card-head"><div><h4>12-Month Dividend Coverage</h4><p>Cashflow gaps are highlighted without overriding Aurora’s maximum-income strategy.</p></div><span class="m82-tag" id="m82CalendarTag">Coverage —</span></div>
+<div class="m82-card-head"><div><h4>Remaining 2026 Dividend Runway</h4><p>Only dividend cash still due from today to 31 December 2026 is shown here.</p></div><span class="m82-tag" id="m82CalendarTag">Remaining —</span></div>
 <div class="m82-calendar" id="m82Calendar"></div>
 <div class="m82-calendar-intel">
-<div class="m82-mini"><small>Strongest month</small><strong id="m82StrongMonth">—</strong></div>
-<div class="m82-mini"><small>Weakest month</small><strong id="m82WeakMonth">—</strong></div>
-<div class="m82-mini"><small>Income coverage</small><strong id="m82Coverage">—</strong></div>
-<div class="m82-mini"><small>Income gaps</small><strong id="m82Gaps">—</strong></div>
+<div class="m82-mini"><small>Next payment</small><strong id="m82StrongMonth">—</strong></div>
+<div class="m82-mini"><small>Best remaining month</small><strong id="m82WeakMonth">—</strong></div>
+<div class="m82-mini"><small>Remaining 2026 income</small><strong id="m82Coverage">—</strong></div>
+<div class="m82-mini"><small>Months with income</small><strong id="m82Gaps">—</strong></div>
 </div>
 <div class="m82-recommend" id="m82CalendarAdvice">Aurora is analysing the payment calendar.</div>
 </article>
@@ -4016,34 +4016,80 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
     ];
   }
   function dividendEvents(){
-    const events=[],seen=new Set();
-    sourceRows().forEach(r=>{
+    const st=currentState();
+    const primary=Array.isArray(st.dividends)&&st.dividends.length
+      ? st.dividends
+      : [
+          ...(Array.isArray(st.incomeLog)?st.incomeLog:[]),
+          ...(Array.isArray(st.holdings)?st.holdings:[])
+        ];
+    const events=[];
+    primary.forEach(r=>{
       const ticker=String(field(r,["ticker","symbol","epic","code"])||"").replace("LON:","").replace(".L","").trim().toUpperCase();
       const name=String(field(r,["name","holding","company","stock","security"])||ticker||"Holding").trim();
+      const account=String(field(r,["account","platform","broker"])||"").trim();
+      const status=String(field(r,["status","payment status","payment_status","payment stage","payment_stage"])||"").trim();
       const ex=parseDate(field(r,["ex_date","ex date","ex-dividend date","ex dividend date","ex_div_date","next ex date","next_ex_date"]));
       const pay=parseDate(field(r,["pay_date","pay date","payment date","payment_date","next payment date","next_pay_date","dividend pay date"]));
       const due=num(field(r,["dividend_due","dividend due","total_dividend","amount","cash","expected_cash","expected cash","payment amount","dividend amount","net amount"]));
       const received=num(field(r,["dividend_received","dividend received","received amount","cash received"]));
-      const add=(type,date,cashValue)=>{if(!date)return;const key=[ticker||name,type,date.toISOString().slice(0,10)].join("|");if(seen.has(key))return;seen.add(key);events.push({ticker,name,type,date,cash:cashValue||0})};
-      add("Ex-Date",ex,0);add("Pay Date",pay,Number.isFinite(due)?due:Number.isFinite(received)?received:0);
+      if(ex) events.push({ticker,name,account,status,type:"Ex-Date",date:ex,cash:0});
+      if(pay) events.push({ticker,name,account,status,type:"Pay Date",date:pay,cash:Number.isFinite(due)?due:Number.isFinite(received)?received:0});
     });
     return events.sort((a,b)=>a.date-b.date);
   }
+  function remainingPaymentEvents(events){
+    const now=today();
+    const yearEnd=new Date(now.getFullYear(),11,31,23,59,59,999);
+    const grouped=new Map();
+    (events||[]).filter(e=>e.type==="Pay Date"&&e.date>=now&&e.date<=yearEnd).forEach(e=>{
+      if(/paid|received|missed|cancelled|canceled|not due/i.test(String(e.status||""))) return;
+      const key=`${e.ticker||e.name}|${e.date.toISOString().slice(0,10)}`;
+      const row=grouped.get(key)||{...e,cash:0,accounts:new Set()};
+      row.cash+=Math.max(0,Number(e.cash)||0);
+      if(e.account) row.accounts.add(e.account);
+      grouped.set(key,row);
+    });
+    return [...grouped.values()].sort((a,b)=>a.date-b.date||b.cash-a.cash);
+  }
   function renderTicket(events){
-    const next=events.find(e=>e.type==="Pay Date"&&e.date>=today());
-    if(!next){el("m82TicketName").textContent="No upcoming payment loaded";el("m82TicketDate").textContent="—";el("m82TicketCash").textContent="—";el("m82TicketDays").textContent="—";el("m82TicketTag").textContent="Waiting";el("m82TicketNote").textContent="No future payment date was found in Dividends, IncomeLog or Holdings.";el("m82TicketBar").style.width="0%";return}
-    const days=daysTo(next.date);el("m82TicketName").textContent=next.name;el("m82TicketDate").textContent=dateLabel(next.date);el("m82TicketCash").textContent=next.cash>0?cash(next.cash):"Amount pending";el("m82TicketDays").textContent=days===0?"Today":String(days);el("m82TicketTag").textContent=days<=7?"Imminent":"Scheduled";el("m82TicketNote").textContent=days===0?"Dividend cash is due today.":`${days} days until the next scheduled cash event.`;el("m82TicketBar").style.width=`${Math.max(8,Math.min(100,100-days*2.5))}%`;
+    const next=remainingPaymentEvents(events)[0];
+    if(!next){el("m82TicketName").textContent="No upcoming payment loaded";el("m82TicketDate").textContent="—";el("m82TicketCash").textContent="—";el("m82TicketDays").textContent="—";el("m82TicketTag").textContent="Waiting";el("m82TicketNote").textContent="No future payment date was found in the current-year dividend schedule.";el("m82TicketBar").style.width="0%";return}
+    const days=daysTo(next.date);el("m82TicketName").textContent=next.name;el("m82TicketDate").textContent=dateLabel(next.date);el("m82TicketCash").textContent=next.cash>0?cash(next.cash):"Amount pending";el("m82TicketDays").textContent=days===0?"Today":String(days);el("m82TicketTag").textContent=days<=7?"Imminent":"Scheduled";el("m82TicketNote").textContent=`${days===0?"Dividend cash is due today.":`${days} days until the next scheduled cash event.`}${next.accounts?.size>1?` • ${next.accounts.size} accounts combined`:""}`;el("m82TicketBar").style.width=`${Math.max(8,Math.min(100,100-days*2.5))}%`;
   }
   function renderCalendar(events){
-    const totals=Array(12).fill(0);events.filter(e=>e.type==="Pay Date").forEach(e=>totals[e.date.getMonth()]+=Math.max(0,e.cash||0));
-    const positive=totals.filter(v=>v>0),avg=positive.length?positive.reduce((a,b)=>a+b,0)/positive.length:0,best=Math.max(...totals),bestI=totals.indexOf(best),gaps=totals.filter(v=>v===0).length,coverage=12-gaps;
-    const paid=totals.map((v,i)=>({v,i})).filter(x=>x.v>0);const weakest=paid.length?paid.reduce((a,b)=>a.v<=b.v?a:b):null;
-    el("m82Calendar").innerHTML=MONTHS.map((m,i)=>{const v=totals[i];let cls="gap",note="Gap";if(v===best&&best>0){cls="best";note="Strongest"}else if(v>0&&v<avg){cls="watch";note="Light"}else if(v>0){cls="healthy";note="Healthy"}return `<div class="m82-month ${cls}"><small>${m}</small><strong>${cash0(v)}</strong><span>${note}</span></div>`}).join("");
-    el("m82StrongMonth").textContent=best>0?`${MONTHS[bestI]} ${cash0(best)}`:"—";el("m82WeakMonth").textContent=weakest?`${MONTHS[weakest.i]} ${cash0(weakest.v)}`:"—";el("m82Coverage").textContent=`${coverage}/12 months`;el("m82Gaps").textContent=String(gaps);el("m82CalendarTag").textContent=`Coverage ${coverage}/12`;
-    const missing=MONTHS.filter((_,i)=>totals[i]===0);el("m82CalendarAdvice").textContent=events.length?(missing.length?`Cashflow gaps appear in ${missing.join(", ")}. Treat payment timing as a secondary tie-breaker behind total income, valuation and dividend quality.`:"All 12 months have dividend coverage. Future transfers can remain focused on maximum sustainable income."):"No dated dividend payments were found in the current AuroraMaster feed.";
+    const remaining=remainingPaymentEvents(events);
+    const now=today();
+    const startMonth=now.getMonth();
+    const months=MONTHS.map((m,i)=>({m,i})).filter(x=>x.i>=startMonth);
+    const totals=Array(12).fill(0);
+    remaining.forEach(e=>totals[e.date.getMonth()]+=Math.max(0,e.cash||0));
+    const values=months.map(x=>totals[x.i]);
+    const positive=values.filter(v=>v>0);
+    const avg=positive.length?positive.reduce((a,b)=>a+b,0)/positive.length:0;
+    const best=Math.max(0,...values);
+    const bestEntry=months.find(x=>totals[x.i]===best&&best>0)||null;
+    const monthsWithIncome=positive.length;
+    const remainingIncome=values.reduce((a,b)=>a+b,0);
+    const next=remaining[0]||null;
+    el("m82Calendar").innerHTML=months.map(({m,i})=>{const v=totals[i];let cls="gap",note="No cash due";if(v===best&&best>0){cls="best";note="Best remaining"}else if(v>0&&v<avg){cls="watch";note="Light"}else if(v>0){cls="healthy";note="Income due"}return `<div class="m82-month ${cls}"><small>${m}</small><strong>${cash0(v)}</strong><span>${note}</span></div>`}).join("");
+    el("m82StrongMonth").textContent=next?`${next.name} ${cash0(next.cash)}`:"—";
+    el("m82WeakMonth").textContent=bestEntry?`${MONTHS[bestEntry.i]} ${cash0(best)}`:"—";
+    el("m82Coverage").textContent=cash0(remainingIncome);
+    el("m82Gaps").textContent=`${monthsWithIncome}/${months.length} months`;
+    el("m82CalendarTag").textContent=`${monthsWithIncome}/${months.length} WITH INCOME`;
+    const missing=months.filter(x=>totals[x.i]===0).map(x=>x.m);
+    el("m82CalendarAdvice").textContent=remaining.length
+      ? `${cash0(remainingIncome)} remains scheduled for ${now.getFullYear()}. ${monthsWithIncome} of the ${months.length} remaining calendar months currently contain dividend cash.${missing.length?` No cash is currently scheduled in ${missing.join(", ")}.`:""}`
+      : `No unpaid dividend cash is currently scheduled between today and 31 December ${now.getFullYear()}.`;
   }
   function renderTimeline(events){
-    const upcoming=events.filter(e=>e.date>=today()).slice(0,8);el("m82Timeline").innerHTML=upcoming.length?upcoming.map(e=>`<div class="m82-event"><span class="m82-event-icon">${e.type==="Pay Date"?"£":"📅"}</span><div><strong>${e.name} • ${e.type}</strong><span>${daysTo(e.date)} days away${e.cash>0?` • ${cash(e.cash)}`:""}</span></div><time>${dateLabel(e.date)}</time></div>`).join(""):`<div class="m82-event"><span class="m82-event-icon">…</span><div><strong>No upcoming events loaded</strong><span>Add future ex-dividend or payment dates to AuroraMaster.</span></div><time>—</time></div>`;
+    const now=today();
+    const pay=remainingPaymentEvents(events);
+    const payKeys=new Set(pay.map(e=>`${e.ticker||e.name}|${e.date.toISOString().slice(0,10)}`));
+    const ex=(events||[]).filter(e=>e.type==="Ex-Date"&&e.date>=now).filter(e=>!(/cancelled|canceled/i.test(String(e.status||""))));
+    const upcoming=[...pay,...ex].sort((a,b)=>a.date-b.date).slice(0,8);
+    el("m82Timeline").innerHTML=upcoming.length?upcoming.map(e=>`<div class="m82-event"><span class="m82-event-icon">${e.type==="Pay Date"?"£":"📅"}</span><div><strong>${e.name} • ${e.type}</strong><span>${daysTo(e.date)} days away${e.cash>0?` • ${cash(e.cash)}`:""}${e.type==="Pay Date"&&e.accounts?.size>1?` • ${e.accounts.size} accounts`:""}</span></div><time>${dateLabel(e.date)}</time></div>`).join(""):`<div class="m82-event"><span class="m82-event-icon">…</span><div><strong>No upcoming events loaded</strong><span>Add future ex-dividend or payment dates to AuroraMaster.</span></div><time>—</time></div>`;
   }
   function renderSnowball(){
     const rows=Array.isArray(currentState().incomeLog)?currentState().incomeLog:[];let received=0,recycled=0,created=0;
