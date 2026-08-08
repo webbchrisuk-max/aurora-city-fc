@@ -511,7 +511,7 @@
 
 
   /* ===================== SHARED AURORA DATA ENGINE ===================== */
-  const DATA_ENGINE_VERSION='1.1.0';
+  const DATA_ENGINE_VERSION='1.2.0-performance';
   const MASTER_CACHE_KEY='aurora:master-cache:v1';
   const MASTER_DATA_EVENT='aurora:data-changed';
   const MASTER_STATUS_EVENT='aurora:data-status';
@@ -701,7 +701,7 @@
     try{
       const response=await fetch(buildRequestUrl(url,Boolean(options.force)),{
         method:'GET',
-        cache:'no-store',
+        cache:options.force ? 'reload' : 'default',
         credentials:'same-origin',
         headers:{Accept:'application/json'},
         signal:controller?.signal

@@ -7,14 +7,12 @@
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#030712" name="theme-color"/>
-<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
-<meta content="no-cache" http-equiv="Pragma"/>
-<meta content="0" http-equiv="Expires"/>
 <meta content="yes" name="mobile-web-app-capable"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Transfer Centre Clean Payday Workflow</title>
+<meta name="aurora-performance-build" content="transfer-performance-v1-20260808">
 <style>
 
 
@@ -7431,7 +7429,7 @@ async function ensureTransferMaster(force=false){
 
   if(force) AURORA_MASTER_CACHE = null;
   if(!AURORA_MASTER_CACHE){
-    const res = await fetch(AURORA_MASTER_URL, {cache:'no-store'});
+    const res = await fetch(AURORA_MASTER_URL, {cache:force ? 'reload' : 'default'});
     if(!res.ok) throw new Error(`AuroraData failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
   }
@@ -8806,7 +8804,7 @@ if(window.AuroraFC) AuroraFC.registerServiceWorker();
       const el=q(id); if(el) observer.observe(el,{childList:true,subtree:true,characterData:true});
     });
     updateDeck();
-    window.setInterval(()=>{if(!document.hidden)updateDeck();},10000);
+    window.setInterval(()=>{if(!document.hidden)updateDeck();},30000);
   }
 
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init,{once:true});

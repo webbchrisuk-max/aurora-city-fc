@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Build: Aurora Shared GameShell • Context Controls All Departments v5.4 • 05 Aug 2026 -->
+  <!-- Build: Aurora Shared GameShell • Global Notifications Owner v5 • 05 Aug 2026 -->
   <meta charset="UTF-8">
   <meta
     name="viewport"
@@ -19,6 +19,11 @@
     content="Aurora City FC"
   >
   <title>Aurora City FC</title>
+  <!-- Aurora Performance: warm the shared department runtime before the iframe needs it. -->
+  <link rel="preload" href="AuroraFCData.js?v=20260808-performance-v1" as="script">
+  <link rel="preload" href="aurora-hero.css?v=20260808-performance-v1" as="style">
+  <link rel="preload" href="aurora-hero.js?v=20260808-performance-v1" as="script">
+  <meta name="aurora-performance-build" content="gameshell-performance-v1-20260808">
 
   <style>
     :root{
@@ -2615,7 +2620,6 @@
               class="aurora-shell-control"
               id="auroraShellDecisionButton"
               type="button"
-              data-shell-context-action="manager-decision"
               aria-label="Open decision queue"
               title="Decision Queue"
             >📋</button>
@@ -2624,7 +2628,6 @@
               class="aurora-shell-control"
               id="auroraShellLogButton"
               type="button"
-              data-shell-context-action="manager-log"
               aria-label="Open manager action log"
               title="Manager Action Log"
             >🕘</button>
@@ -2648,7 +2651,6 @@
               class="aurora-shell-control"
               id="auroraShellLayoutButton"
               type="button"
-              data-shell-context-action="manager-layout"
               aria-label="Open dashboard controls"
               title="Dashboard controls"
             >⚙</button>
@@ -2736,17 +2738,6 @@
   </aside>
 
 
-
-<style id="auroraShellUtilityPanelStyles">
-#auroraShellUtilityPanel{position:fixed;z-index:965;right:18px;top:calc(var(--shell-header-height) + var(--safe-top) + 10px);width:min(430px,calc(100vw - 36px));display:none;overflow:hidden;border:1px solid rgba(96,165,250,.30);border-radius:22px;background:radial-gradient(circle at 96% 0%,rgba(96,165,250,.13),transparent 36%),linear-gradient(180deg,rgba(7,20,40,.995),rgba(2,7,18,.998));box-shadow:0 30px 90px rgba(0,0,0,.68);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
-#auroraShellUtilityPanel.open{display:block;animation:auroraShellNotificationDrop .2s ease-out}
-.aurora-shell-utility-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px;border-bottom:1px solid rgba(148,163,184,.11)}
-.aurora-shell-utility-head h2{margin:0;color:#f4f9ff;font-size:19px;letter-spacing:-.04em}.aurora-shell-utility-head p{margin:4px 0 0;color:#8495ad;font-size:10px;line-height:1.45}
-.aurora-shell-utility-close{width:34px;height:34px;display:grid;place-items:center;flex:0 0 34px;border:1px solid rgba(251,113,133,.25);border-radius:11px;color:#fecdd3;background:rgba(127,29,29,.18);font-size:19px;cursor:pointer}
-.aurora-shell-utility-body{padding:16px}.aurora-shell-utility-message{padding:14px;border:1px solid rgba(96,165,250,.18);border-radius:15px;background:rgba(30,64,175,.08);color:#c9d9ea;font-size:11px;line-height:1.55}.aurora-shell-utility-message strong{display:block;margin-bottom:5px;color:#eef7ff;font-size:13px}
-.aurora-shell-utility-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:12px}.aurora-shell-utility-actions button{min-height:38px;padding:0 12px;border-radius:11px;font-size:9px;font-weight:950;cursor:pointer}.aurora-shell-utility-stay{border:1px solid rgba(148,163,184,.18);color:#cbd5e1;background:rgba(255,255,255,.035)}.aurora-shell-utility-open-manager{border:1px solid rgba(34,211,238,.34);color:#c9fbff;background:rgba(8,145,178,.13)}
-@media(max-width:720px){#auroraShellUtilityPanel{right:10px;top:auto;bottom:calc(64px + var(--safe-bottom));width:calc(100vw - 20px)}}
-</style>
 <section id="auroraShellNotificationPanel" aria-label="Aurora notifications" aria-hidden="true">
   <div class="aurora-shell-notification-head">
     <div><h2>Command Notifications</h2><p>Rich alerts shared across every Aurora department.</p></div>
@@ -2757,24 +2748,6 @@
     </div>
   </div>
   <div class="aurora-shell-notification-list" id="auroraShellNotificationList"></div>
-</section>
-
-
-<section id="auroraShellUtilityPanel" aria-label="Aurora shell tool" aria-hidden="true">
-  <div class="aurora-shell-utility-head">
-    <div>
-      <h2 id="auroraShellUtilityTitle">Aurora control</h2>
-      <p id="auroraShellUtilitySubtitle">The current department remains open.</p>
-    </div>
-    <button class="aurora-shell-utility-close" id="auroraShellUtilityClose" type="button" aria-label="Close control">×</button>
-  </div>
-  <div class="aurora-shell-utility-body">
-    <div class="aurora-shell-utility-message" id="auroraShellUtilityMessage"></div>
-    <div class="aurora-shell-utility-actions">
-      <button class="aurora-shell-utility-stay" id="auroraShellUtilityStay" type="button">Stay on this page</button>
-      <button class="aurora-shell-utility-open-manager" id="auroraShellUtilityOpenManager" type="button">Open Manager Dashboard</button>
-    </div>
-  </div>
 </section>
 
   <section
@@ -2823,7 +2796,7 @@
       </div>
     </div>
   </section>
-  <script src="aurora-notifications.js?v=20260805-dismissal-fix-v5-1" data-aurora-notifications-global-owner="5.1.0"></script>
+  <script src="aurora-notifications.js?v=20260805-global-owner-v5" data-aurora-notifications-global-owner="5.0.0"></script>
 
   <script>
     (() => {
@@ -3082,27 +3055,6 @@
 
       const layoutButton = document.getElementById(
         "auroraShellLayoutButton"
-      );
-      const utilityPanel = document.getElementById(
-        "auroraShellUtilityPanel"
-      );
-      const utilityTitle = document.getElementById(
-        "auroraShellUtilityTitle"
-      );
-      const utilitySubtitle = document.getElementById(
-        "auroraShellUtilitySubtitle"
-      );
-      const utilityMessage = document.getElementById(
-        "auroraShellUtilityMessage"
-      );
-      const utilityClose = document.getElementById(
-        "auroraShellUtilityClose"
-      );
-      const utilityStay = document.getElementById(
-        "auroraShellUtilityStay"
-      );
-      const utilityOpenManager = document.getElementById(
-        "auroraShellUtilityOpenManager"
       );
 
       const allowedFiles = new Set(
@@ -3401,354 +3353,6 @@
           ).format(now);
       }
 
-      function setContextButton(button, config){
-        if(!button) return;
-
-        if(!config){
-          button.hidden = true;
-          button.dataset.shellContextAction = "";
-          button.classList.remove("is-active");
-          return;
-        }
-
-        button.hidden = false;
-        button.textContent = config.icon;
-        button.dataset.shellContextAction = config.action;
-        button.setAttribute("aria-label", config.label);
-        button.setAttribute("title", config.title || config.label);
-      }
-
-      const DEPARTMENT_CONTEXT_CONTROLS = Object.freeze({
-        "AuroraCityFC_NexusMaster.html":[
-          {icon:"▦",action:"nexus-manager",label:"Open Manager Dashboard",title:"Manager HQ"},
-          {icon:"£",action:"nexus-finance",label:"Open Finance Department",title:"Finance"},
-          {icon:"⇄",action:"nexus-transfer",label:"Open Transfer Centre",title:"Transfers"}
-        ],
-        "AuroraCityFC_ManagerDashboard.html":[
-          {icon:"📋",action:"manager-decision",label:"Open decision queue",title:"Decision Queue"},
-          {icon:"🕘",action:"manager-log",label:"Open manager action log",title:"Manager Action Log"},
-          {icon:"⚙",action:"manager-layout",label:"Open dashboard controls",title:"Dashboard Controls"}
-        ],
-        "AuroraCityFC_FinanceDepartment.html":[
-          {icon:"£",action:"finance-payday",label:"Open Payday Allocation",title:"Payday Allocation"},
-          {icon:"↗",action:"finance-funding",label:"Open Save Surplus",title:"Save Surplus"},
-          {icon:"⇄",action:"finance-transfer",label:"Open Transfer Centre",title:"Transfer Centre"}
-        ],
-        "AuroraCityFC_TransferCentre.html":[
-          {icon:"★",action:"transfer-board",label:"Open Top Transfer Board",title:"Top Transfer Board"},
-          {icon:"✓",action:"transfer-execute",label:"Open purchase execution",title:"Execute Purchases"},
-          {icon:"🧾",action:"transfer-register",label:"Open Registration Desk",title:"Registration Desk"}
-        ],
-        "AuroraCityFC_MatchdayCentre.html":[
-          {icon:"⚽",action:"matchday-report",label:"Open today's match report",title:"Match Report"},
-          {icon:"🏆",action:"matchday-awards",label:"Open matchday awards",title:"Awards"},
-          {icon:"↻",action:"matchday-refresh",label:"Refresh matchday report",title:"Refresh Report"}
-        ],
-        "AuroraCityFC_SquadHub.html":[
-          {icon:"♟",action:"squad-overview",label:"Open squad overview",title:"Squad Overview"},
-          {icon:"▲",action:"squad-training",label:"Open training report",title:"Training Report"},
-          {icon:"↻",action:"squad-refresh",label:"Refresh squad data",title:"Refresh Squad"}
-        ],
-        "AuroraCityFC_AnalysisRoom.html":[
-          {icon:"↗",action:"analysis-match",label:"Open match analysis",title:"Match Analysis"},
-          {icon:"◫",action:"analysis-quadrants",label:"Open recruitment quadrants",title:"Yield & Buy Strength"},
-          {icon:"🧠",action:"analysis-decision",label:"Open manager decision room",title:"Decision Room"}
-        ],
-        "AuroraCityFC_ScoutingCentre.html":[
-          {icon:"⌕",action:"scouting-pipeline",label:"Open scouting shortlist",title:"Shortlist"},
-          {icon:"⚖",action:"scouting-compare",label:"Open target comparison",title:"Compare Targets"},
-          {icon:"⇄",action:"scouting-transfer",label:"Send route to Transfer Centre",title:"Transfer Centre"}
-        ],
-        "AuroraCityFC_TrainingGround.html":[
-          {icon:"▲",action:"training-focus",label:"Open training focus",title:"Training Focus"},
-          {icon:"〽",action:"training-form",label:"Open player form report",title:"Form Report"},
-          {icon:"↻",action:"training-refresh",label:"Refresh training data",title:"Refresh Training"}
-        ],
-        "AuroraCityFC_LearningCentre.html":[
-          {icon:"🧠",action:"learning-path",label:"Open learning path",title:"Learning Path"},
-          {icon:"✓",action:"learning-progress",label:"Open learning progress",title:"Progress"},
-          {icon:"↗",action:"learning-analysis",label:"Open Analysis Room",title:"Analysis Room"}
-        ],
-        "AuroraCityFC_Boardroom.html":[
-          {icon:"◎",action:"board-objectives",label:"Open board objectives",title:"Objectives"},
-          {icon:"📋",action:"board-decision",label:"Open board decision pack",title:"Decision Pack"},
-          {icon:"⚠",action:"board-risk",label:"Open risk register",title:"Risk Register"}
-        ],
-        "AuroraCityFC_MediaCentre.html":[
-          {icon:"●",action:"media-press",label:"Open press conference",title:"Press Conference"},
-          {icon:"⚽",action:"media-report",label:"Open match report",title:"Match Report"},
-          {icon:"↻",action:"media-refresh",label:"Refresh newsroom",title:"Refresh Newsroom"}
-        ]
-      });
-
-      function updateContextControls(){
-        const controls =
-          DEPARTMENT_CONTEXT_CONTROLS[currentFile] || [];
-
-        setContextButton(decisionButton,controls[0] || null);
-        setContextButton(logButton,controls[1] || null);
-        setContextButton(layoutButton,controls[2] || null);
-      }
-
-      function openFinanceView(viewId){
-        const childWindow = frame?.contentWindow;
-        const documentObject = childDocument();
-
-        try{
-          if(typeof childWindow?.m14ShowView === "function"){
-            childWindow.m14ShowView(viewId);
-            return true;
-          }
-        }catch(_){}
-
-        const target = documentObject?.querySelector(
-          `[data-m60-view="${viewId}"], [data-shell-finance-view="${viewId}"]`
-        );
-
-        if(target){
-          target.click();
-          return true;
-        }
-
-        return false;
-      }
-
-      function elementIsVisible(element){
-        if(!element) return false;
-
-        const view = element.ownerDocument?.defaultView;
-        const style = view?.getComputedStyle?.(element);
-
-        return !style
-          || (
-            style.display !== "none"
-            && style.visibility !== "hidden"
-          );
-      }
-
-      function findChildByText(needles,selectors = "section,article,[id],button,a,h1,h2,h3,h4"){
-        const documentObject = childDocument();
-        if(!documentObject) return null;
-
-        const wanted = (Array.isArray(needles) ? needles : [needles])
-          .map(value => String(value || "").toLowerCase())
-          .filter(Boolean);
-
-        if(!wanted.length) return null;
-
-        return Array.from(documentObject.querySelectorAll(selectors))
-          .find(element => {
-            if(!elementIsVisible(element)) return false;
-            const text = String(
-              element.getAttribute?.("aria-label")
-              || element.getAttribute?.("title")
-              || element.textContent
-              || ""
-            ).replace(/\s+/g," ").trim().toLowerCase();
-
-            return wanted.some(needle => text.includes(needle));
-          }) || null;
-      }
-
-      function childTarget(selectors = [],textNeedles = []){
-        const documentObject = childDocument();
-        if(!documentObject) return null;
-
-        for(const selector of selectors){
-          try{
-            const element = documentObject.querySelector(selector);
-            if(element && elementIsVisible(element)) return element;
-          }catch(_){}
-        }
-
-        return findChildByText(textNeedles);
-      }
-
-      function scrollChildTarget(selectors,textNeedles = []){
-        const target = childTarget(selectors,textNeedles);
-        if(!target) return false;
-
-        try{
-          target.scrollIntoView({behavior:"smooth",block:"start"});
-          return true;
-        }catch(_){
-          return false;
-        }
-      }
-
-      function clickChildTarget(selectors,textNeedles = []){
-        const target = childTarget(
-          selectors,
-          textNeedles
-        );
-
-        if(!target) return false;
-
-        const clickable = target.matches?.(
-          "button,a,[role='button'],input[type='button'],input[type='submit']"
-        )
-          ? target
-          : target.querySelector?.(
-              "button,a,[role='button'],input[type='button'],input[type='submit']"
-            );
-
-        if(clickable && !clickable.disabled){
-          try{
-            clickable.click();
-            return true;
-          }catch(_){}
-        }
-
-        return scrollChildTarget(selectors,textNeedles);
-      }
-
-      function topOfCurrentDepartment(){
-        try{
-          frame.contentWindow.scrollTo({top:0,behavior:"smooth"});
-          return true;
-        }catch(_){
-          return false;
-        }
-      }
-
-      function runContextAction(button){
-        const action =
-          button?.dataset?.shellContextAction || "";
-
-        const actions = {
-          "nexus-manager":() => loadPage("AuroraCityFC_ManagerDashboard.html"),
-          "nexus-finance":() => loadPage("AuroraCityFC_FinanceDepartment.html"),
-          "nexus-transfer":() => loadPage("AuroraCityFC_TransferCentre.html"),
-
-          "manager-decision":() => routeManagerAction("decision"),
-          "manager-log":() => routeManagerAction("log"),
-          "manager-layout":() => routeManagerAction("layout"),
-
-          "finance-payday":() => openFinanceView("m13PaydayPlan"),
-          "finance-funding":() => openFinanceView("m13Funding"),
-          "finance-transfer":() => loadPage("AuroraCityFC_TransferCentre.html"),
-
-          "transfer-board":() => scrollChildTarget(
-            ["#top-transfer-board","#transfer-overview"],
-            ["top transfer board","transfer overview"]
-          ),
-          "transfer-execute":() => scrollChildTarget(
-            ["#payday-execution","#paydayExecutionPanel"],
-            ["payday execution","purchase record","execute purchases"]
-          ),
-          "transfer-register":() => scrollChildTarget(
-            ["#registration-desk","#registrationDesk"],
-            ["registration desk","register signings"]
-          ),
-
-          "matchday-report":() => scrollChildTarget(
-            ["#matchday-report","#daily-report","#report-output","#match-report"],
-            ["matchday report","today's report","match report"]
-          ) || topOfCurrentDepartment(),
-          "matchday-awards":() => scrollChildTarget(
-            ["#matchday-awards","#awards","#awards-panel"],
-            ["awards","man of the match","player of the week"]
-          ),
-          "matchday-refresh":() => clickChildTarget(
-            ["#refreshBtn","#refreshReport","#generateReport","[data-action='refresh-report']"],
-            ["refresh report","generate report","refresh"]
-          ),
-
-          "squad-overview":() => scrollChildTarget(
-            ["#squad-overview","main"],
-            ["squad overview","portfolio squad"]
-          ) || topOfCurrentDepartment(),
-          "squad-training":() => scrollChildTarget(
-            ["#trainingReportGrid"],
-            ["training report"]
-          ),
-          "squad-refresh":() => clickChildTarget(
-            ["#refreshBtn"],
-            ["refresh"]
-          ),
-
-          "analysis-match":() => scrollChildTarget(
-            ["#match-analysis"],
-            ["match analysis"]
-          ),
-          "analysis-quadrants":() => scrollChildTarget(
-            ["#yield-strength-workbench"],
-            ["recruitment quadrants","yield versus buy strength"]
-          ),
-          "analysis-decision":() => scrollChildTarget(
-            ["#manager-review"],
-            ["decision room","manager's review"]
-          ),
-
-          "scouting-pipeline":() => scrollChildTarget(
-            ["#scouting-pipeline","#shortlist","#scouting-shortlist"],
-            ["scouting pipeline","shortlist"]
-          ) || topOfCurrentDepartment(),
-          "scouting-compare":() => scrollChildTarget(
-            ["#target-comparison","#comparison","#compare-targets"],
-            ["compare targets","target comparison","comparison"]
-          ),
-          "scouting-transfer":() => loadPage("AuroraCityFC_TransferCentre.html"),
-
-          "training-focus":() => scrollChildTarget(
-            ["#trainingFocus"],
-            ["training focus"]
-          ),
-          "training-form":() => scrollChildTarget(
-            ["#formList"],
-            ["form report","form"]
-          ),
-          "training-refresh":() => clickChildTarget(
-            ["#refreshBtn"],
-            ["refresh"]
-          ),
-
-          "learning-path":() => scrollChildTarget(
-            ["#learning-path","#lesson-list","#modules"],
-            ["learning path","lessons","modules"]
-          ) || topOfCurrentDepartment(),
-          "learning-progress":() => scrollChildTarget(
-            ["#learning-progress","#progress","#progress-panel"],
-            ["learning progress","progress"]
-          ),
-          "learning-analysis":() => loadPage("AuroraCityFC_AnalysisRoom.html"),
-
-          "board-objectives":() => scrollChildTarget(
-            ["#objectiveList","#objectives"],
-            ["board objectives","objectives"]
-          ),
-          "board-decision":() => clickChildTarget(
-            ["#openDecisionPack","[data-action='open-decision-pack']"],
-            ["open decision pack","decision pack"]
-          ) || scrollChildTarget(
-            ["#executive-control-room"],
-            ["executive control room"]
-          ),
-          "board-risk":() => scrollChildTarget(
-            ["#riskRegister","#board-agenda-risk"],
-            ["risk register"]
-          ),
-
-          "media-press":() => scrollChildTarget(
-            ["#pressConference"],
-            ["press conference"]
-          ),
-          "media-report":() => scrollChildTarget(
-            ["#matchReport"],
-            ["match report"]
-          ),
-          "media-refresh":() => clickChildTarget(
-            ["#refreshBtn"],
-            ["refresh"]
-          )
-        };
-
-        const handler = actions[action];
-        if(typeof handler === "function"){
-          handler();
-        }
-      }
-
       function updateShellIdentity(){
         const route = routeFor(currentFile);
 
@@ -3758,7 +3362,6 @@
         document.title =
           `Aurora City FC | ${route.title}`;
 
-        updateContextControls();
         renderNavigation();
       }
 
@@ -4367,43 +3970,6 @@
         return true;
       }
 
-      function closeShellUtility(){
-        if(!utilityPanel) return;
-        utilityPanel.classList.remove("open");
-        utilityPanel.setAttribute("aria-hidden","true");
-        decisionButton?.classList.remove("is-active");
-        logButton?.classList.remove("is-active");
-        layoutButton?.classList.remove("is-active");
-      }
-
-      function openShellUtility(action){
-        const labels={
-          decision:{
-            title:"Decision Queue",
-            copy:"The Decision Queue is a Manager Dashboard workspace. Aurora will no longer move you there automatically from another department."
-          },
-          log:{
-            title:"Manager Action Log",
-            copy:"The Manager Action Log is stored on the Manager Dashboard. Your current department will remain open unless you explicitly choose to leave it."
-          },
-          layout:{
-            title:"Dashboard Controls",
-            copy:"These controls change the Manager Dashboard layout only. They no longer redirect you away from the department you are currently using."
-          }
-        };
-        const item=labels[action]||labels.layout;
-        document.getElementById("auroraShellNotificationPanel")?.classList.remove("open");
-        utilityTitle.textContent=item.title;
-        utilitySubtitle.textContent="Current page: "+(routeFor(currentFile)?.title||"Aurora department");
-        utilityMessage.innerHTML="<strong>Current page kept open</strong>"+item.copy;
-        utilityPanel.dataset.action=action;
-        utilityPanel.classList.add("open");
-        utilityPanel.setAttribute("aria-hidden","false");
-        decisionButton?.classList.toggle("is-active",action==="decision");
-        logButton?.classList.toggle("is-active",action==="log");
-        layoutButton?.classList.toggle("is-active",action==="layout");
-      }
-
       function routeManagerAction(action){
         /*
          * Notifications belong to the GameShell, not the Manager Dashboard.
@@ -4419,15 +3985,13 @@
           currentFile
           !== "AuroraCityFC_ManagerDashboard.html"
         ){
-          /*
-           * Never force a department change for shell tools. The user may
-           * explicitly choose to open Manager Dashboard from the shell panel.
-           */
-          openShellUtility(action);
+          pendingManagerAction = action;
+          loadPage(
+            "AuroraCityFC_ManagerDashboard.html"
+          );
           return;
         }
 
-        closeShellUtility();
         runManagerAction(action);
       }
 
@@ -4814,12 +4378,12 @@
 
       decisionButton.addEventListener(
         "click",
-        () => runContextAction(decisionButton)
+        () => routeManagerAction("decision")
       );
 
       logButton.addEventListener(
         "click",
-        () => runContextAction(logButton)
+        () => routeManagerAction("log")
       );
 
       notificationButton.addEventListener(
@@ -4838,17 +4402,8 @@
 
       layoutButton.addEventListener(
         "click",
-        () => runContextAction(layoutButton)
+        () => routeManagerAction("layout")
       );
-
-      utilityClose?.addEventListener("click",closeShellUtility);
-      utilityStay?.addEventListener("click",closeShellUtility);
-      utilityOpenManager?.addEventListener("click",()=>{
-        const action=utilityPanel?.dataset?.action||"layout";
-        closeShellUtility();
-        pendingManagerAction=action;
-        loadPage("AuroraCityFC_ManagerDashboard.html");
-      });
 
       document.addEventListener(
         "keydown",
@@ -4861,11 +4416,6 @@
             )
           ){
             closeLogout();
-            return;
-          }
-
-          if(utilityPanel?.classList.contains("open")){
-            closeShellUtility();
             return;
           }
 

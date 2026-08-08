@@ -4,67 +4,17 @@
 <head>
 
 <!-- Aurora Manager Dashboard -->
-<script id="auroraCrossBrowserCacheCleanup">
-(function(){
-  "use strict";
+<!-- Aurora Performance: browser/service-worker caches are preserved; versioned assets handle updates. -->
 
-  const CLEANUP_KEY = "aurora_browser_cache_cleanup_v1";
-
-  async function cleanBrowserCaches(){
-    let alreadyClean = false;
-
-    try{
-      alreadyClean = sessionStorage.getItem(CLEANUP_KEY) === "1";
-    }catch(_){}
-
-    if(alreadyClean) return;
-
-    try{
-      if("serviceWorker" in navigator){
-        const registrations =
-          await navigator.serviceWorker.getRegistrations();
-
-        await Promise.all(
-          registrations.map(registration =>
-            registration.unregister()
-          )
-        );
-      }
-    }catch(error){
-      console.warn("Aurora service-worker cleanup",error);
-    }
-
-    try{
-      if("caches" in window){
-        const names = await caches.keys();
-
-        await Promise.all(
-          names.map(name => caches.delete(name))
-        );
-      }
-    }catch(error){
-      console.warn("Aurora cache cleanup",error);
-    }
-
-    try{
-      sessionStorage.setItem(CLEANUP_KEY,"1");
-    }catch(_){}
-  }
-
-  cleanBrowserCaches();
-})();
-</script>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#030712" name="theme-color"/>
-<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
-<meta content="no-cache" http-equiv="Pragma"/>
-<meta content="0" http-equiv="Expires"/>
 <meta content="yes" name="mobile-web-app-capable"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="Aurora City FC" name="apple-mobile-web-app-title"/>
 <title>Aurora City FC — Manager Command</title>
+<meta name="aurora-performance-build" content="manager-performance-v1-20260808">
 <style>
 :root{
   --bg:#020612;
@@ -1629,12 +1579,23 @@ function transferRouteFromPlan(plan){
   }));
 }
 function requestTransferPlanSync(){
+  const existing=readTransferPlanSnapshot();
+  const updatedAt=existing?.updatedAt ? new Date(existing.updatedAt).getTime() : NaN;
+  const fresh=existing && (Number.isFinite(updatedAt) ? (Date.now()-updatedAt)<30*60*1000 : true);
+
+  // Aurora Performance: reuse the saved Transfer Centre plan whenever it is usable.
+  // Loading the whole Transfer Centre in a hidden iframe is now fallback-only.
+  if(fresh){
+    window.AuroraManagerValueGate?.markTransferReady();
+    return;
+  }
   if(document.getElementById('auroraTransferSyncFrame')) return;
   const frame=document.createElement('iframe');
   frame.id='auroraTransferSyncFrame';
   frame.title='Transfer Centre deal-sheet sync';
   frame.setAttribute('aria-hidden','true');
   frame.tabIndex=-1;
+  frame.loading='lazy';
   frame.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-9999px;top:-9999px';
   frame.src=`AuroraCityFC_TransferCentre.html?sync=1&ts=${Date.now()}`;
   document.body.appendChild(frame);
@@ -1813,8 +1774,8 @@ async function fetchMaster(force=false){
     const separator = String(AURORA_MASTER_URL).includes("?") ? "&" : "?";
     const url = `${AURORA_MASTER_URL}${separator}managerRefresh=${Date.now()}`;
     const res = await fetch(url, {
-      cache:"no-store",
-      headers:{"Cache-Control":"no-cache, no-store, must-revalidate"}
+      cache:force ? "reload" : "default",
+      headers:{"Accept":"application/json"}
     });
     if(!res.ok) throw new Error(`AuroraMaster failed: ${res.status}`);
     AURORA_MASTER_CACHE = await res.json();
@@ -3372,7 +3333,7 @@ setInterval(()=>{ if(!document.hidden&&$("tickerTime")) if($("tickerTime")) $("t
 
   window.AuroraManagerPanels=Object.freeze({openDecisionQueue,closeDecisionQueue,openNotifications(){q('beastNotificationPanel')?.classList.add('open')},closeNotifications(){q('beastNotificationPanel')?.classList.remove('open')},openLayout(){q('beastLayoutPanel')?.classList.add('open')},closeLayout(){q('beastLayoutPanel')?.classList.remove('open')},openLog(){const s=settings();if(!s.log)saveSettings({...s,log:true});setTimeout(()=>q('beastActionLog')?.scrollIntoView({behavior:'smooth',block:'start'}),40)}});
 
-  function start(){applySettings();assignPanelKeys();applyOrder();bindDrag();bind();enhanceBroadcastPanels();refreshBeast();setTimeout(refreshBeast,1600);setTimeout(refreshBeast,5200);setInterval(()=>{if(!document.hidden)refreshBeast()},30000);const observer=new MutationObserver(()=>{clearTimeout(window.__auroraBeastMut);window.__auroraBeastMut=setTimeout(refreshBeast,180)});['heroAnnualIncome','lastUpdated','actionList','topTransferPreview'].forEach(id=>q(id)&&observer.observe(q(id),{childList:true,subtree:true,characterData:true}))}
+  function start(){applySettings();assignPanelKeys();applyOrder();bindDrag();bind();enhanceBroadcastPanels();refreshBeast();setTimeout(()=>{if(!document.hidden)refreshBeast()},1800);setInterval(()=>{if(!document.hidden)refreshBeast()},60000);const observer=new MutationObserver(()=>{clearTimeout(window.__auroraBeastMut);window.__auroraBeastMut=setTimeout(refreshBeast,260)});['heroAnnualIncome','lastUpdated','actionList','topTransferPreview'].forEach(id=>q(id)&&observer.observe(q(id),{childList:true,subtree:true,characterData:true}))}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
