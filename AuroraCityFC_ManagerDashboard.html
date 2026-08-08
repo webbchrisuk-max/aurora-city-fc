@@ -446,7 +446,7 @@
     top:-16px!important;
     margin:-16px -16px 12px!important;
   }}
-</style><meta content="manager-natural-gameshell-navigation-v5-20260803" name="aurora-build"/>
+</style><meta content="manager-safe-render-longterm-target-v6-20260808" name="aurora-build"/>
 <meta content="manager-intelligence-logic-aligned-20260805" name="aurora-intelligence-build"/>
 <style id="auroraManagerScrollStability">
 .manager-command-grid > .command-panel{
@@ -1355,6 +1355,7 @@ body:before{
 <span class="panel-kicker">Income promotion race</span>
 <h3>Road to £625 per month</h3>
 <p id="beastJourneySummary">Aurora is calculating the current position, next transfer impact and remaining target gap.</p>
+<p id="beastLongTermSummary" style="margin:8px 0 0;color:#8fa3b8;font-size:10px;line-height:1.45">Long-term objective: £2,000/month.</p>
 <div class="beast-milestones" id="beastMilestones"></div>
 </div>
 <div class="beast-rating-card">
@@ -1476,11 +1477,15 @@ const TABS = [
   "AuroraIntelligence","ManagerBriefing"
 ];
 const MONTHLY_TARGET = 625;
+const LONG_TERM_MONTHLY_TARGET = 2000;
 const TRANSFER_PLAN_KEY = 'aurora_transfer_plan_v2';
 let syncedTransferPlan = null;
 const PLATFORM_RULES = window.AURORA_PLATFORM_RULES || {TRIG:'Trade 212',FSFL:'Trade 212',UKW:'IG ISA',ARCC:'IG ISA',RGL:'Trade 212',GCP:'Trade 212',PHP:'IG ISA / Trade 212',FGEN:'IG ISA',SEQI:'Trade 212',TW:'IG ISA',OSB:'IG ISA'};
 
 const $ = id => document.getElementById(id);
+function setText(id,value){ const el=$(id); if(el) el.textContent=value; return el; }
+function setClassName(id,value){ const el=$(id); if(el) el.className=value; return el; }
+function setStyleProperty(id,name,value){ const el=$(id); if(el) el.style.setProperty(name,value); return el; }
 const money = n => Number.isFinite(n) ? new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:2}).format(n) : "—";
 const money0 = n => Number.isFinite(n) ? new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n) : "—";
 const pct = n => Number.isFinite(n) ? `${(n*100).toFixed(2)}%` : "—";
@@ -2208,56 +2213,65 @@ function renderAll(){
 
   const dataStamp=latestDataTimestamp();
   if(window.AuroraFC) AuroraFC.setFreshness('lastUpdated',AURORA_MASTER_CACHE,{prefix:'Aurora generated'});
-  else $("lastUpdated").textContent = dataStamp ? `Aurora data: ${dataStamp.toLocaleString("en-GB")}` : 'Aurora generated: unavailable';
+  else setText("lastUpdated", dataStamp ? `Aurora data: ${dataStamp.toLocaleString("en-GB")}` : 'Aurora generated: unavailable');
   if($("tickerTime")) $("tickerTime").textContent = new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
   const nextDividendTickerText = nextDividend ? ` • Next dividend: ${nextDividend.ticker}${nextDividend.amountKnown ? ` ${money(nextDividend.amount)}` : ""} on ${nextDividend.date.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}` : "";
   if($("tickerText")) $("tickerText").textContent = route.length
     ? `Club News • Transfer Centre route ready: ${route.map(x=>displayTicker(x.row.ticker)).join(" / ")} • Estimated payday income ${money(routeIncome)}/yr${nextDividendTickerText} • Gap to £625/m: ${money(gap)}`
     : `Club News • Transfer Centre final deal sheet syncing • ${active.length} active squad players loaded${nextDividendTickerText} • Gap to £625/m: ${money(gap)}`;
 
-  $("heroSub").textContent = `Income rebuild at ${money(monthly)} per month. Gap to the £625/month target is ${money(gap)}. ${route.length ? "Transfer Centre final deal sheet is synced." : "Transfer Centre deal sheet is syncing."}`;
+  setText("heroSub", `Income rebuild at ${money(monthly)} per month. Gap to the £625/month target is ${money(gap)}. Long-term target: ${money(LONG_TERM_MONTHLY_TARGET)}/month. ${route.length ? "Transfer Centre final deal sheet is synced." : "Transfer Centre deal sheet is syncing."}`);
   const division = divisionProgress(monthly);
-  $("currentDivision").textContent = division.current[1];
-  $("divisionProgress").textContent = division.next
+  setText("currentDivision", division.current[1]);
+  setText("divisionProgress", division.next
     ? `Next: ${division.next[1]} • ${money(division.gap)}/month required`
-    : "Top division reached";
+    : "Top division reached");
 
-  $("heroClubValue").textContent = money(value);
+  setText("heroClubValue", money(value));
   const previousValue = previousClubValue(value);
   const valueChange = Number.isFinite(previousValue) ? value - previousValue : NaN;
   const valueChangePct = Number.isFinite(previousValue) && previousValue !== 0 ? valueChange / previousValue : NaN;
   const clubTrend = $("clubValueTrend");
-  if(Number.isFinite(valueChange)){
-    clubTrend.className = `hero-detail ${valueChange > 0 ? "positive" : valueChange < 0 ? "negative" : "neutral"}`;
-    clubTrend.textContent = `${valueChange > 0 ? "▲" : valueChange < 0 ? "▼" : "•"} ${money(Math.abs(valueChange))}${Number.isFinite(valueChangePct) ? ` (${Math.abs(valueChangePct*100).toFixed(2)}%)` : ""} since previous snapshot`;
-  }else{
-    clubTrend.className = "hero-detail neutral";
-    clubTrend.textContent = "Previous club-value snapshot not available yet";
+  if(clubTrend){
+    if(Number.isFinite(valueChange)){
+      clubTrend.className = `hero-detail ${valueChange > 0 ? "positive" : valueChange < 0 ? "negative" : "neutral"}`;
+      clubTrend.textContent = `${valueChange > 0 ? "▲" : valueChange < 0 ? "▼" : "•"} ${money(Math.abs(valueChange))}${Number.isFinite(valueChangePct) ? ` (${Math.abs(valueChangePct*100).toFixed(2)}%)` : ""} since previous snapshot`;
+    }else{
+      clubTrend.className = "hero-detail neutral";
+      clubTrend.textContent = "Previous club-value snapshot not available yet";
+    }
   }
 
-  $("heroAnnualIncome").textContent = money(income);
+  setText("heroAnnualIncome", money(income));
   const latestIncome = latestIncomeEvent();
   const incomeTrend = $("annualIncomeTrend");
-  if(latestIncome){
-    incomeTrend.className = `hero-detail ${latestIncome.change > 0 ? "positive" : "negative"}`;
-    incomeTrend.textContent = `${latestIncome.change > 0 ? "▲" : "▼"} ${money(Math.abs(latestIncome.change))}/yr • ${latestIncome.ticker}${latestIncome.date ? ` • ${latestIncome.date.toLocaleDateString("en-GB")}` : ""}`;
-  }else{
-    incomeTrend.className = "hero-detail neutral";
-    incomeTrend.textContent = "Latest purchase increase not recorded in IncomeLog";
+  if(incomeTrend){
+    if(latestIncome){
+      incomeTrend.className = `hero-detail ${latestIncome.change > 0 ? "positive" : "negative"}`;
+      incomeTrend.textContent = `${latestIncome.change > 0 ? "▲" : "▼"} ${money(Math.abs(latestIncome.change))}/yr • ${latestIncome.ticker}${latestIncome.date ? ` • ${latestIncome.date.toLocaleDateString("en-GB")}` : ""}`;
+    }else{
+      incomeTrend.className = "hero-detail neutral";
+      incomeTrend.textContent = "Latest purchase increase not recorded in IncomeLog";
+    }
   }
 
-  if($("heroMonthlyIncome")) $("heroMonthlyIncome").textContent = money(monthly);
-  $("heroTargetGap").textContent = gap > 0 ? money(gap) : "Target hit";
+  setText("heroMonthlyIncome", money(monthly));
+  setText("heroTargetGap", gap > 0 ? money(gap) : "Target hit");
   const targetPct = Math.max(0,Math.min(100,(monthly / MONTHLY_TARGET) * 100));
-  $("targetProgressText").textContent = gap > 0
+  const longTermGap = Math.max(0, LONG_TERM_MONTHLY_TARGET - monthly);
+  const longTermPct = Math.max(0,Math.min(100,(monthly / LONG_TERM_MONTHLY_TARGET) * 100));
+  setText("beastLongTermSummary", longTermGap > 0
+    ? `Long-term objective: ${money(LONG_TERM_MONTHLY_TARGET)}/month • ${longTermPct.toFixed(1)}% complete • ${money(longTermGap)}/month remaining.`
+    : `Long-term objective achieved: ${money(LONG_TERM_MONTHLY_TARGET)}/month.`);
+  setText("targetProgressText", gap > 0
     ? `${targetPct.toFixed(1)}% complete • ${money(gap * 12)}/year still required`
-    : "100% complete • promotion target achieved";
-  $("targetProgressFill").style.width = `${targetPct}%`;
+    : "100% complete • promotion target achieved");
+  setStyleProperty("targetProgressFill", "width", `${targetPct}%`);
 
-  $("monthlyIncome").textContent = money(monthly);
-  $("portfolioYield").textContent = Number.isFinite(yieldRate) ? `${(yieldRate*100).toFixed(2)}%` : "—";
+  setText("monthlyIncome", money(monthly));
+  setText("portfolioYield", Number.isFinite(yieldRate) ? `${(yieldRate*100).toFixed(2)}%` : "—");
   $("activeSquadCount").textContent = active.length;
-  $("portfolioStrength").textContent = `${board}/100`;
+  setText("portfolioStrength", `${board}/100`);
   $("paydayBoost").textContent = route.length ? `${money(routeIncome)}/yr` : "—";
   $("paydayBoostNote").textContent = route.length ? `${route.length} signings • Transfer Centre final sheet` : "Syncing Transfer Centre deal sheet";
   if(nextDividend){
